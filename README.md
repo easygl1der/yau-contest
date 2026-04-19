@@ -4,21 +4,19 @@ Collection of past exam papers from 2010 to 2025.
 
 ## Subject Categories
 
-| Subject | PDFs |
-|---------|------|
-| 代数与数论 | 48 |
-| 几何与拓扑 | 41 |
-| 概率与统计 | 59 |
-| 应用与计算数学 | 42 |
-| 分析与微分方程 | 46 |
-| 数学物理 | 8 |
-|---------|-------|------------|-------------|
-
+| Subject | Sample |
+|---------|--------|
+| 代数与数论 | ![代数与数论](.github/images/代数与数论.jpg) |
+| 几何与拓扑 | ![几何与拓扑](.github/images/几何与拓扑.jpg) |
+| 概率与统计 | ![概率与统计](.github/images/概率与统计.jpg) |
+| 应用与计算数学 | ![应用与计算数学](.github/images/应用与计算数学.jpg) |
+| 分析与微分方程 | ![分析与微分方程](.github/images/分析与微分方程.jpg) |
+| 数学物理 | ![数学物理](.github/images/数学物理.jpg) |
 
 ## Statistics
 - Total PDFs: 291
 - Total Markdown transcripts: 146
-- Last updated: 2026-04-20 02:47:02
+- Last updated: 2026-04-20
 
 ## Folder Structure
 
