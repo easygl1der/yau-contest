@@ -1,0 +1,34 @@
+# S.-T. Yau College Student Mathematics Contests 2015
+
+# Probability and Statistics Individual (5 problems)
+
+Problem 1. (a) Let $X$ and $Y$ be two random variables with zero means, variance 1, and correlation $\rho$ . Prove that
+
+$$
+\mathbb {E} [ \max \{X ^ {2}, Y ^ {2} \} ] \leq 1 + \sqrt {1 - \rho^ {2}}.
+$$
+
+(b) Let $X$ and $Y$ have a bivariate normal distribution with zero means, variances $\sigma ^ { 2 }$ and $\tau ^ { 2 }$ , respectively, and correlation $\rho$ . Find the conditional expectation $\mathbb { E } ( X | Y )$ .
+
+Problem 2. We flip a fair coin until heads turns out twice consecutively. What is the expected number of flips?
+
+Problem 3. Let $( X _ { n } , n \geq 1 )$ be a sequence of independent Gaussian variables, with respective mean $\mu _ { n }$ , and variance $\sigma _ { n } ^ { 2 }$ .
+
+(a) Prove that if $\textstyle \sum _ { n } X _ { n } ^ { 2 }$ converges in $L ^ { 1 }$ , then $\textstyle \sum _ { n } X _ { n } ^ { 2 }$ converges in $L ^ { p }$ , for every $p \in [ 1 , \infty )$ .
+
+(b) Assume that $\mu _ { n } = 0$ , for every $n$ . Prove that if $\textstyle \sum _ { n } \sigma _ { n } ^ { 2 } = \infty$ , then
+
+$$
+\mathbb {P} \left(\sum_ {n} X _ {n} ^ {2} = \infty\right) = 1.
+$$
+
+Problem 4. Let $X _ { 1 } , \ldots , X _ { n }$ be a random sample of size $n$ from the exponential distribution with pdf $f ( x ; \theta ) ~ = ~ \theta ^ { - 1 } \exp ( - x / \theta )$ for $x , \theta \ > \ 0$ , zero elsewhere. Let $Y _ { 1 } = \operatorname* { m i n } \{ X _ { 1 } , \dots , X _ { n } \}$ . Consider an estimator $n Y _ { 1 }$ .
+
+(a) Show this estimate is unbiased.   
+(b) Prove or disprove: This estimate is a consistent estimator.   
+(c) Prove or disprove: This estimate is an efficient estimator.
+
+Problem 5. Let the independent normal random variables $Y _ { 1 } , \dots , Y _ { n }$ have, respectively, the probability density functions $N ( \mu , \gamma ^ { 2 } x _ { i } ^ { 2 } )$ , $i = 1 , \ldots , n$ , where the given $x _ { 1 } , \ldots , x _ { n }$ are not all equal and no one of which is zero.
+
+(a) Construct a confidence interval for $\gamma$ with significance level $1 - \alpha$   
+(b) Discuss the test of the hypothesis $H _ { 0 } : \gamma = 1 , \mu$ unspecified, against all alternatives $H _ { 1 } : \gamma \neq 1 , \mu$ unspecified.

@@ -1,0 +1,46 @@
+# S.-T. Yau College Student Mathematics Contests 2018
+
+# Algebra and Number Theory Individual
+
+This test has 5 problems and is worth 100 points. Carefully justify your answers.
+
+Problem 1 (20 points).
+
+(a) (6 points) Show that if $2 ^ { k } - 1$ is a prime for some integer $k \geq 1$ , then $k$ is a prime.   
+(b) (6 points) Show that if $2 ^ { k } + 1$ is a prime for some integer $k \geq 1$ , then $k$ is a power of 2.   
+(c) (8 points) Prove the following theorem of Goldbach: for integers $i , j \geq 0$ with $i \neq j$ , the integers $2 ^ { 2 ^ { i } } + 1$ and $2 ^ { 2 ^ { j } } + 1$ are coprime.
+
+Problem 2 (20 points). Let $K = \mathbb { Q } ( { \sqrt [ { 3 } ] { 5 } } )$ and let $L$ be the Galois closure of $K$ .
+
+(a) (6 points) Prove that $L$ has a unique subfield $M$ satisfying $[ M : \mathbb { Q } ] = 2$ . Prove that every prime number $p \equiv 1$ (mod 3) splits in $M$ .   
+(b) (6 points) Determine all prime numbers which are ramified in $L$ .   
+(c) (8 points) Let $p \geq 7$ be a prime number. Let $f _ { p }$ be the inertia degree of a prime ideal of the ring of integers $\mathcal { O } _ { L }$ of $L$ above $p$ . Recall that 5 is called a cubic residue mod $p$ if $x ^ { 3 } \equiv 5$ (mod $p$ ) has a solution in $\mathbb { F } _ { p }$ . Prove the following decomposition law in $L$ .
+
+(i) If $p \equiv 1$ (mod 3) and 5 is a cubic residue mod $p$ , then $p$ splits completely in $L$ .   
+(ii) If $p \equiv 1$ (mod 3) and 5 is not a cubic residue mod $p$ , then $f _ { p } = 3$   
+(iii) If $p \equiv 2$ (mod 3), then 5 is a cubic residue and $f _ { p } = 2$
+
+Problem 3 (20 points). Prove that every group of order 99 is abelian.
+
+Problem 4 (20 points). Let $K$ be a field and let $V$ be a finite-dimensional $K$ -vector space.
+
+(a) (6 points) Assume that $K$ is infinite. Show that $V$ is not the union of finitely many proper linear $K$ -subspaces.   
+(b) (6 points) Assume that $K$ is finite and $V$ is non-zero. Let $S$ be the set of affine hyperplanes of $V$ . Let $g \colon V  \mathbb { R }$ be a function. The Radon transform $R g \colon S  \mathbb { R }$ is defined by $\begin{array} { r } { ( R g ) ( \xi ) = \sum _ { x \in \xi } g ( x ) } \end{array}$ for $\xi \in S$ . Show that $R g = 0$ implies $g = 0$ .   
+(c) (8 points) Let $v _ { 1 } , \dots , v _ { n } , w _ { 1 } , \dots , w _ { n } \ \in \ V$ . Assume that for every $K$ -linear map $f \colon V \ \to \ K$ , $( f ( v _ { 1 } ) , \ldots , f ( v _ { n } ) )$ and $( f ( w _ { 1 } ) , \ldots , f ( w _ { n } ) )$ coincide up to permutation of the indices. Deduce that $\left( v _ { 1 } , \ldots , v _ { n } \right)$ and $( w _ { 1 } , \ldots , w _ { n } )$ coincide up to permutation of the indices. Here we make no assumptions on $K$ .
+
+Problem 5 (20 points). Let $p$ be a prime number and let $v _ { p } ( \cdot )$ denote the $p$ -adic valuation on $\mathbb { Q } _ { p }$ . Let $A = ( a _ { i j } ) _ { 1 \leq i , j \leq n } \in \mathrm { M } _ { n } ( \mathbb { Q } _ { p } )$ be an $n \times n$ matrix with entries in $\mathbb { Q } _ { p }$ . Assume that we know the following:
+
+(1)   
+(2)
+
+Prove that $v _ { p } ( a _ { i j } ) \geq \operatorname* { m a x } \{ i , n + 1 - j \}$ and $a _ { i , n + 1 - i } \in p ^ { i } \mathbb { Z } _ { p } ^ { \times }$ , i.e.
+
+$$
+A \in \left( \begin{array}{c c c c c c c} p ^ {n} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} & \dots & p ^ {3} \mathbb {Z} _ {p} & p ^ {2} \mathbb {Z} _ {p} & p \mathbb {Z} _ {p} ^ {\times} \\ p ^ {n} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} & \dots & p ^ {3} \mathbb {Z} _ {p} & p ^ {2} \mathbb {Z} _ {p} ^ {\times} & p ^ {2} \mathbb {Z} _ {p} \\ p ^ {n} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} & \dots & p ^ {3} \mathbb {Z} _ {p} ^ {\times} & p ^ {3} \mathbb {Z} _ {p} & p ^ {3} \mathbb {Z} _ {p} \\ \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots \\ p ^ {n} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} ^ {\times} & \dots & p ^ {n - 2} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} & p ^ {n - 2} \mathbb {Z} _ {p} \\ p ^ {n} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} ^ {\times} & p ^ {n - 1} \mathbb {Z} _ {p} & \dots & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} & p ^ {n - 1} \mathbb {Z} _ {p} \\ p ^ {n} \mathbb {Z} _ {p} ^ {\times} & p ^ {n} \mathbb {Z} _ {p} & p ^ {n} \mathbb {Z} _ {p} & \dots & p ^ {n} \mathbb {Z} _ {p} & p ^ {n} \mathbb {Z} _ {p} & p ^ {n} \mathbb {Z} _ {p} \end{array} \right).
+$$
+
+Hint. Consider the antidiagonal matrix
+
+$$
+J = \left( \begin{array}{c c c c c} 0 & 0 & \dots & 0 & p \\ 0 & 0 & \dots & p ^ {2} & 0 \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ 0 & p ^ {n - 1} & \dots & 0 & 0 \\ p ^ {n} & 0 & \dots & 0 & 0 \end{array} \right).
+$$

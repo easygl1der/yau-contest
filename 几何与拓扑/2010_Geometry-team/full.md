@@ -1,0 +1,11 @@
+# Geometry and Topology
+
+Team (Please select 5 problems to solve)
+
+1. Let $S ^ { n } \subset \mathbb { R } ^ { n + 1 }$ be the unit sphere, and $\mathbb { R } ^ { n } \subset \mathbb { R } ^ { n + 1 }$ the equator $n$ - plane through the center of $S ^ { n }$ . Let $N$ be the north pole of $S ^ { n }$ . Define a mapping $\pi : S ^ { n } \backslash \{ N \} \longrightarrow \mathbb { R } ^ { n }$ called the stereographic projection that takes $A \in S ^ { n } \backslash \{ N \}$ into the intersection $A ^ { \prime } \in \mathbb { R } ^ { n }$ of the equator $n$ - plane $\mathbb { R } ^ { n }$ with the line which passes through $A$ and $N$ . Prove that the stereographic projection is a conformal change, and derive the standard metric of $S ^ { n }$ by the stereographic projection.   
+2. Let $M$ be a (connected) Riemannian manifold of dimension 2. Let $f$ be a smooth non-constant function on $M$ such that $f$ is bounded from above and $\Delta f \geq 0$ everywhere on $M$ . Show that there does not exist any point $p \in M$ such that $f ( p ) = \operatorname* { s u p } \{ f ( x ) : x \in M \}$ .   
+3. Let $M$ be a compact smooth manifold of dimension $d$ . Prove that there exists some $n \in \mathbb { Z } ^ { + }$ such that $M$ can be regularly embedded in the Euclidean space $\mathbb { R } ^ { n }$ .   
+4. Show that any $C ^ { \infty }$ function f on a compact smooth manifold $M$ (without boundary) must have at least two critical points. When $M$ is the 2-torus, show that $f$ must have more than two critical points.   
+5. Construct a space $X$ with $H _ { 0 } ( X ) = \mathbb { Z }$ , $H _ { 1 } ( X ) = \mathbb { Z } _ { 2 } \times \mathbb { Z } _ { 3 }$ , $H _ { 2 } ( X ) =$ $\mathbb { Z }$ , and all other homology groups of $X$ vanishing.   
+6. (a). Define the degree $\deg f$ of a $C ^ { \infty }$ map $f : S ^ { 2 } \longrightarrow S ^ { 2 }$ and prove that $\deg f$ as you present it is well-defined and independent of any choices you need to make in your definition.   
+(b). Prove in detail that for each integer $k$ (possibly negative), there is a $C ^ { \infty }$ map $f : S ^ { 2 } \longrightarrow S ^ { 2 }$ of degree $k$ .
