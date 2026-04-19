@@ -1,40 +1,28 @@
-# 2010-2025历年笔试真题
+# 2010-2025 Past Exam Papers
 
-A comprehensive collection of past written examination papers for university admission in Mathematics (2010-2025).
+Collection of past exam papers from 2010 to 2025.
 
-## Collection Overview
+## Subject Categories
 
-This repository contains historical exam papers collected from public sources, covering 16 years of entrance examinations in mathematics-related subjects.
+| Subject | Files | Year Range | Transcripts |
+|---------|-------|------------|-------------|
 
-## Repository Structure
 
-The exams are organized into **6 subject folders**:
+## Statistics
+- Total PDFs: 291
+- Total Markdown transcripts: 146
+- Last updated: 2026-04-20 02:36:24
 
-| Folder | Subject | Description |
-|--------|---------|-------------|
-| 代数与数论 | Algebra & Number Theory | Algebra, linear algebra, number theory |
-| 几何与拓扑 | Geometry & Topology | Euclidean geometry, topological spaces |
-| 概率与统计 | Probability & Statistics | Probability theory, statistical inference |
-| 应用与计算数学 | Applied & Computational Math | Numerical methods, applied mathematics |
-| 分析与微分方程 | Analysis & Differential Equations | Real analysis, ODEs, PDEs |
-| 数学物理 | Mathematical Physics | Mathematical methods in physics |
+## Folder Structure
 
-## Years Covered
+- **Year folders (2010-2025)**: Exam papers organized by year
+- **Subject folders**: Exam papers organized by subject category
 
-**2010 - 2025** (16 years)
+## File Naming Convention
 
-- 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
-- 2020, 2021, 2022, 2023, 2024, 2025
-
-## File Format
-
-Each year folder contains:
-- **Original PDF files** of the examination papers
-- **Markdown transcripts** of exam content (when available)
-
-## Usage
-
-Browse by year or subject to find relevant examination materials. PDFs are stored using Git LFS for efficient repository management.
+- `{Year}_{Subject}-individual.pdf` - Individual competition papers
+- `{Year}_{Subject}-team.pdf` - Team competition papers
+- `{Year}_{Subject}-soln.pdf` - Solutions
 
 ## Disclaimer
 
