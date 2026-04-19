@@ -4,14 +4,21 @@ Collection of past exam papers from 2010 to 2025.
 
 ## Subject Categories
 
-| Subject | Files | Year Range | Transcripts |
+| Subject | PDFs |
+|---------|------|
+| 代数与数论 | 48 |
+| 几何与拓扑 | 41 |
+| 概率与统计 | 59 |
+| 应用与计算数学 | 42 |
+| 分析与微分方程 | 46 |
+| 数学物理 | 8 |
 |---------|-------|------------|-------------|
 
 
 ## Statistics
 - Total PDFs: 291
 - Total Markdown transcripts: 146
-- Last updated: 2026-04-20 02:39:49
+- Last updated: 2026-04-20 02:47:02
 
 ## Folder Structure
 
