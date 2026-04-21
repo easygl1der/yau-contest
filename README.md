@@ -2,6 +2,18 @@
 
 Collection of past exam papers from 2010 to 2025.
 
+## LaTeX Edition
+
+The `latex-project/` directory contains a fully typeset compilation using the [kaobook](https://github.com/fmarotta/kaobook) LaTeX class.
+
+**To compile:**
+
+```bash
+cd latex-project && ./compile.sh
+```
+
+See `latex-project/README.md` for full documentation.
+
 ## Subject Categories
 
 | Subject | Files | Year Range | Transcripts |
@@ -11,7 +23,7 @@ Collection of past exam papers from 2010 to 2025.
 ## Statistics
 - Total PDFs: 291
 - Total Markdown transcripts: 146
-- Last updated: 2026-04-21 20:51:18
+- Last updated: 2026-04-22
 
 ## Folder Structure
 
