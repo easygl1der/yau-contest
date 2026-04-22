@@ -1,4 +1,4 @@
-\section{2019 Applied & Computational Mathematics}
+\section{2019 Applied \& Computational Mathematics}\label{sec:2019-app-vc}
 
 \subsection{Individual}
 
@@ -213,7 +213,9 @@ with $I$ being $n\times n$ identity, $X$ full-rank $n\times m$, $O$ zero $m\time
 \begin{exercise}
 %(25 pts) Let $f$ be $C^{1}$ convex function on $\mathbb{R}^{n}$ with Lipschitz gradient: $\|\nabla f(x)-\nabla f(y)\|_{2}\leq L\|x-y\|_{2}$.
 
-Prove:
+\medskip
+\noindent\textbf{Descent Lemma and Co-Coercivity.} For all $x,y\in\mathbb{R}^{n}$:
+
 \begin{enumerate}
 \item[(i)] $f(y)\leq f(x)+(\nabla f(x))^{T}(y-x)+\frac{L}{2}\|y-x\|_{2}^{2}$.
 \item[(ii)] $f(y)\geq f(x)+(\nabla f(x))^{T}(y-x)+\frac{1}{2L}\|\nabla f(y)-\nabla f(x)\|_{2}^{2}$.
@@ -250,6 +252,9 @@ Prove:
 \begin{exercise}
 %(30 pts)
 
+\medskip
+\noindent\textbf{Stormer's Method and the Wave Equation.}
+
 \begin{enumerate}
 \item[(i)] Determine order of St\"ormer's method:
 \[
@@ -258,6 +263,7 @@ y_{n+2}-2y_{n+1}+y_{n}=h^{2}f(t_{n+1},y_{n+1}),\quad n\geq 0,
 for $y''=f(t,y)$, $y(0)=y_{0}$, $y'(0)=y_{0}'$.
 \item[(ii)] Using central differences in space and St\"ormer's method in time, construct scheme for wave equation $u_{tt}=u_{xx}$.
 \item[(iii)] Determine stability condition.
+\item[(iv)] Show that the scheme converges with order 2 in both $\Delta t$ and $\Delta x$ (Lax equivalence theorem: consistency plus stability implies convergence).
 \end{enumerate}
 \end{exercise}
 
@@ -282,5 +288,12 @@ for $y''=f(t,y)$, $y(0)=y_{0}$, $y'(0)=y_{0}'$.
     The left inequality is $2\lambda^2 \sin^2(\theta/2) \leq 2 \implies \lambda^2 \sin^2(\theta/2) \leq 1$.
     This must hold for all $\theta$, so $\lambda^2 \leq 1 \implies \Delta t \leq \Delta x$.
     The stability condition is the CFL condition: $\frac{\Delta t}{\Delta x} \leq 1$.
+
+    \item[(iv)] The scheme is consistent: from the Taylor expansions,
+    $\tau_j^n = O(\Delta t^2 + \Delta x^2)$. The method is order 2 in time (from (i)) and the central spatial difference is order 2 in space, so the combined scheme has local truncation error $O(\Delta t^2 + \Delta x^2)$.
+    The scheme is stable under the CFL condition $\Delta t / \Delta x \leq 1$: by Von Neumann analysis, all amplification factors satisfy $|\xi| \leq 1$, so the solution operator is uniformly bounded in the $\ell_2$ norm.
+    By the Lax equivalence theorem (for linear PDEs with constant coefficients on a uniform grid), consistency plus stability implies convergence: there exists $C > 0$ such that
+    \[ \max_{n \leq T/\Delta t} \|u_j^n - U_j^n\|_{\ell_2} \leq C(\Delta t^2 + \Delta x^2), \]
+    where $U_j^n$ is the exact solution and $u_j^n$ is the numerical approximation. Thus the scheme converges with order 2 in both $\Delta t$ and $\Delta x$.
 \end{enumerate}
 \end{solution}

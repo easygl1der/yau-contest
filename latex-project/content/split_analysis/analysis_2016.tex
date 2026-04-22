@@ -1,162 +1,125 @@
-\section{2016 Analysis & Differential Equations}
+\section{2016 Analysis \& Differential Equations}
 
 \subsection{Individual}
 
 \begin{exercise}
-Suppose $f$ is integrable on $[-\pi,\pi]$. Prove that $\sum_{n=-\infty}^{\infty} a_n r^{|n|}e^{inx}$ tends to $f(x)$ for a.e. $x$, as $r\to 1$, $r<1$. Here $a_n = \frac{1}{2\pi}\int_{-\pi}^{\pi}f(x)e^{-inx}\,dx$.
+Suppose that $F$ is continuous on $[a,b]$, $F'(x)$ exists for every $x\in(a,b)$, and $F'(x)$ is integrable. Prove that $F$ is absolutely continuous and
+\[
+F(b) - F(a) = \int_a^b F'(x)\,dx.
+\]
 \end{exercise}
 
 \begin{solution}
-The sum $S_r(x) = \sum_{n=-\infty}^{\infty} a_n r^{|n|}e^{inx}$ is the Abel sum of the Fourier series of $f$. Substituting the definition of $a_n$, we have:
-\[
-S_r(x) = \sum_{n=-\infty}^{\infty} \left( \frac{1}{2\pi} \int_{-\pi}^{\pi} f(t) e^{-int} \, dt \right) r^{|n|} e^{inx} = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(t) \left( \sum_{n=-\infty}^{\infty} r^{|n|} e^{in(x-t)} \right) \, dt.
-\]
-The inner sum is the Poisson kernel $P_r(x-t)$:
-\[
-P_r(\theta) = \sum_{n=-\infty}^{\infty} r^{|n|} e^{in\theta} = 1 + \sum_{n=1}^{\infty} r^n (e^{in\theta} + e^{-in\theta}) = 1 + \frac{2r\cos\theta - 2r^2}{1 - 2r\cos\theta + r^2} = \frac{1-r^2}{1-2r\cos\theta + r^2}.
-\]
-Thus $S_r(x) = (f * P_r)(x)$. The Poisson kernel is a family of "good kernels" (or approximate identity) as $r \to 1^-$. Specifically, it satisfies:
-\begin{enumerate}
-    \item $\frac{1}{2\pi} \int_{-\pi}^{\pi} P_r(\theta) \, d\theta = 1$.
-    \item $P_r(\theta) > 0$.
-    \item For any $\delta > 0$, $\int_{\delta \leq |\theta| \leq \pi} P_r(\theta) \, d\theta \to 0$ as $r \to 1^-$.
-\end{enumerate}
-A standard result in harmonic analysis states that for $f \in L^1([-\pi, \pi])$, the convolution of $f$ with an approximate identity converges to $f(x)$ at every Lebesgue point of $f$. Since almost every $x \in [-\pi, \pi]$ is a Lebesgue point for an integrable function, $S_r(x) \to f(x)$ for a.e. $x$ as $r \to 1^-$.
+This is a standard result in real analysis (Lebesgue's fundamental theorem of calculus for functions with derivatives existing everywhere).
+Let $G(x) = \int_a^x F'(t) dt$. Since $F'$ is integrable, $G$ is absolutely continuous and $G'(x) = F'(x)$ almost everywhere.
+Let $H(x) = F(x) - G(x)$. $H$ is continuous on $[a,b]$.
+Since $F'(x)$ exists for every $x \in (a,b)$, $F$ has the Luzin N property (maps measure zero sets to measure zero sets). Since $G$ is absolutely continuous, it also has the Luzin N property. Thus $H$ has the Luzin N property.
+$H'(x) = F'(x) - G'(x) = 0$ for almost every $x$.
+A continuous function with the Luzin N property and zero derivative almost everywhere is constant.
+Thus $H(x) = H(a) = F(a) - 0 = F(a)$.
+So $F(x) = F(a) + \int_a^x F'(t) dt$, which implies $F$ is absolutely continuous.
 \end{solution}
 
 \begin{exercise}
-Let $H$ be a Hilbert space equipped with an inner product $(.,.)$ and a norm $\|.\| = (.,.)^{\frac{1}{2}}$. A sequence $\{f_k\}$ converges to $f\in H$ if $\|f_k-f\|\to 0$. A sequence $\{f_k\}\subset H$ is said to converge weakly to $f\in H$ if $(f_k,g)\to(f,g)$ for any $g\in H$. Prove the following statements:
-
-\begin{itemize}
-\item[a)] $\{f_k\}$ converges to $f$ if and only if $\|f_k\|\to\|f\|$ and $\{f_k\}$ converges weakly to $f$.
-\item[b)] If $H$ is a finite dimensional Hilbert space, then the weak convergence implies convergence. Give a counterexample to show that weak convergence does not necessarily imply convergence in an infinite dimensional Hilbert space.
-\end{itemize}
+Suppose that $f$ is integrable on $\mathbb{R}^n$, let $K_{\delta}(x) = \delta^{-\frac{n}{2}}e^{-\frac{\pi|x|^2}{\delta}}$ for each $\delta>0$. Prove that the convolution
+\[
+(f*K_{\delta})(x) = \int_{\mathbb{R}^n} f(x-y)K_{\delta}(y)\,dy
+\]
+is integrable and $\| (f*K_{\delta}) - f\|_{L^1(\mathbb{R}^n)} \to 0$ as $\delta\to 0$.
 \end{exercise}
 
 \begin{solution}
-a) Forward direction ($\implies$): Suppose $\|f_k - f\| \to 0$. By the reverse triangle inequality, $|\|f_k\| - \|f\|| \leq \|f_k - f\| \to 0$, so $\|f_k\| \to \|f\|$. For any $g \in H$, by the Cauchy-Schwarz inequality, $|(f_k, g) - (f, g)| = |(f_k - f, g)| \leq \|f_k - f\| \|g\| \to 0$, so $f_k \rightharpoonup f$.
+1) \textbf{Integrability:} By Young's Inequality for convolutions, $\|f * K_\delta\|_1 \leq \|f\|_1 \|K_\delta\|_1$.
+Since $K_\delta$ is a normalized Gaussian, $\|K_\delta\|_1 = \int \delta^{-n/2} e^{-\pi |x|^2/\delta} dx = 1$ (by substitution $u = x/\sqrt{\delta}$).
+Thus $\|f * K_\delta\|_1 \leq \|f\|_1$, so it is integrable.
 
-Backward direction ($\impliedby$): Suppose $\|f_k\| \to \|f\|$ and $f_k \rightharpoonup f$. Consider the expansion:
+2) \textbf{$L^1$ convergence:}
 \[
-\|f_k - f\|^2 = (f_k - f, f_k - f) = \|f_k\|^2 - (f_k, f) - (f, f_k) + \|f\|^2.
+\| f*K_\delta - f \|_1 = \int_{\mathbb{R}^n} \left| \int_{\mathbb{R}^n} (f(x-y)-f(x)) K_\delta(y) dy \right| dx \leq \int_{\mathbb{R}^n} K_\delta(y) \left( \int_{\mathbb{R}^n} |f(x-y) - f(x)| dx \right) dy.
 \]
-Since $f_k \rightharpoonup f$, we have $(f_k, f) \to (f, f) = \|f\|^2$. Also $(f, f_k) = \overline{(f_k, f)} \to \overline{(f, f)} = \|f\|^2$. Substituting these limits:
-\[
-\lim_{k \to \infty} \|f_k - f\|^2 = \|f\|^2 - \|f\|^2 - \|f\|^2 + \|f\|^2 = 0.
-\]
-Thus $\{f_k\}$ converges to $f$.
-
-b) Finite dimensional case: Let $\dim H = n$ and let $\{e_1, \dots, e_n\}$ be an orthonormal basis. If $f_k \rightharpoonup f$, then for each $j \in \{1, \dots, n\}$, $(f_k, e_j) \to (f, e_j)$. We can write $f_k = \sum_{j=1}^n (f_k, e_j) e_j$ and $f = \sum_{j=1}^n (f, e_j) e_j$. Then:
-\[
-\|f_k - f\|^2 = \sum_{j=1}^n |(f_k, e_j) - (f, e_j)|^2 \to 0,
-\]
-as it is a finite sum of sequences tending to 0.
-
-Infinite dimensional counterexample: Let $H = \ell^2(\mathbb{N})$ and let $\{e_k\}$ be the standard orthonormal basis. For any $g = (g_1, g_2, \dots) \in \ell^2$, we have $(e_k, g) = g_k$. Since $\sum |g_j|^2 < \infty$, it must be that $g_k \to 0$ as $k \to \infty$. Thus $e_k \rightharpoonup 0$. However, $\|e_k - 0\| = \|e_k\| = 1$ for all $k$, so $\{e_k\}$ does not converge to 0.
+Let $\omega_f(y) = \|f(\cdot-y) - f(\cdot)\|_1$. We know $\omega_f(y) \to 0$ as $y \to 0$ for any $f \in L^1$.
+Also $\omega_f(y) \leq 2\|f\|_1$.
+For any $\epsilon > 0$, choose $\eta > 0$ such that $|y| < \eta \implies \omega_f(y) < \epsilon$.
+Then the integral is $\leq \int_{|y|<\eta} K_\delta(y) \epsilon dy + \int_{|y|\geq\eta} K_\delta(y) 2\|f\|_1 dy$.
+The first part is $\leq \epsilon \cdot 1 = \epsilon$.
+The second part is $2\|f\|_1 \int_{|y|\geq\eta} K_\delta(y) dy$.
+As $\delta \to 0$, $K_\delta$ concentrates at the origin, so $\int_{|y|\geq\eta} K_\delta(y) dy \to 0$.
+Thus $\limsup_{\delta\to 0} \|f*K_\delta - f\|_1 \leq \epsilon$. Since $\epsilon$ is arbitrary, the limit is 0.
 \end{solution}
 
 \begin{exercise}
-Let $f:\mathbb{C}\setminus\{0\}\to\mathbb{C}$ be a holomorphic function and
-\[
-|f(z)| \leq |z|^2 + \frac{1}{|z|^{1/2}},
-\]
-for $z$ near $0$. Determine all such functions.
+Prove that a bounded function on interval $I=[a,b]$ is Riemann integrable if and only if its set of discontinuities has measure zero.
 \end{exercise}
 
 \begin{solution}
-Consider the function $g(z) = z f(z)$. The given inequality implies:
-\[
-|g(z)| = |z| |f(z)| \leq |z|^3 + |z|^{1/2}.
-\]
-As $z \to 0$, $|g(z)| \to 0$. By Riemann's Theorem on Removable Singularities, $g$ has a removable singularity at $z=0$, and we can define $g(0) = 0$. Since $g$ is holomorphic at 0 and $g(0)=0$, we can write $g(z) = z h(z)$ where $h$ is holomorphic at 0. This implies $f(z) = h(z)$ near $z=0$, so $f$ itself has a removable singularity at $z=0$. 
+This is Lebesgue's Criterion for Riemann Integrability.
+Let $D$ be the set of discontinuities of $f$. Let $D_\epsilon = \{x \in I \mid \text{osc}(f, x) \geq \epsilon\}$.
+Then $D = \bigcup_{n=1}^\infty D_{1/n}$.
+1) \textbf{If $\mu(D) = 0$:}
+Then $\mu(D_\epsilon) = 0$ for all $\epsilon$. $D_\epsilon$ is compact.
+For any $\eta > 0$, cover $D_\epsilon$ with open intervals of total length $< \eta$.
+Outside these intervals, $\text{osc}(f, x) < \epsilon$.
+This allows construction of a partition where the Darboux sum difference $U(P,f) - L(P,f)$ is small.
+Specifically, $U-L \leq \epsilon(b-a) + (M-m)\eta$.
+Taking $\epsilon, \eta \to 0$, we get $U-L \to 0$.
 
-Thus, $f$ can be extended to a holomorphic function on the entire complex plane (an entire function). The condition "near 0" means there exists some $\delta > 0$ such that for $0 < |z| < \delta$, $|f(z)| \leq |z|^2 + |z|^{-1/2}$. Since $f$ is continuous at 0, this inequality is easily satisfied by any entire function because $|f(z)|$ is bounded in a neighborhood of 0, while $|z|^2 + |z|^{-1/2} \to \infty$ as $z \to 0$. 
-
-If the problem implies that $f$ is defined on $\mathbb{C} \setminus \{0\}$ and the condition holds only near 0, then the set of such functions is exactly the set of all functions that are holomorphic on $\mathbb{C} \setminus \{0\}$ and have a removable singularity at 0 (i.e., they are restrictions of entire functions to $\mathbb{C} \setminus \{0\}$).
-\end{solution}
-
-\begin{exercise}
-Find a conformal mapping which maps the region $\{z\mid |z-i|<\sqrt{2}, |z+i|<\sqrt{2}\}$ onto the unit disk.
-\end{exercise}
-
-\begin{solution}
-The region $\Omega$ is the intersection of two disks. The boundary circles are $C_1: x^2 + (y-1)^2 = 2$ and $C_2: x^2 + (y+1)^2 = 2$. These circles intersect at points where $(y-1)^2 = (y+1)^2$, which gives $y=0$, and thus $x^2 + 1 = 2 \implies x = \pm 1$. The vertices of the region are $z = 1$ and $z = -1$.
-The angle between the circles at the vertices can be found by looking at the tangents at $(1,0)$. For $C_1$, $x + (y-1)y' = 0 \implies 1 - y' = 0 \implies y' = 1$. For $C_2$, $x + (y+1)y' = 0 \implies 1 + y' = 0 \implies y' = -1$. The slopes are $1$ and $-1$, so the angle is $\pi/2$.
-
-Step 1: Map the vertices $1, -1$ to $0, \infty$. Let $w_1 = \frac{z-1}{z+1}$. This maps the circles through $1, -1$ to rays from the origin. As calculated, the angle between the rays is $\pi/2$. 
-Specifically, $w_1(0) = -1$. The image of the arcs are lines. For $C_1$, $|\frac{1+w}{1-w} - i|^2 = 2$ leads to $v=u$. For $C_2$, $|\frac{1+w}{1-w} + i|^2 = 2$ leads to $v=-u$. The region $\Omega$ contains $z=0$, so its image contains $w_1(0)=-1$. The image is the sector $S = \{w \mid 3\pi/4 < \arg w < 5\pi/4\}$.
-
-Step 2: Rotate and power to map the sector to a half-plane. Let $w_2 = e^{-i\pi} w_1 = -w_1 = \frac{1-z}{z+1}$. The sector becomes $|\arg w_2| < \pi/4$. Then $w_3 = w_2^2 = (\frac{1-z}{z+1})^2$ maps this to the right half-plane $Re(w_3) > 0$.
-
-Step 3: Map the right half-plane to the unit disk. $w = \frac{w_3-1}{w_3+1}$ maps $Re(w_3) > 0$ to $|w| < 1$.
-Substituting $w_3$:
-\[
-w = \frac{(\frac{1-z}{1+z})^2 - 1}{(\frac{1-z}{1+z})^2 + 1} = \frac{(1-z)^2 - (1+z)^2}{(1-z)^2 + (1+z)^2} = \frac{-4z}{2z^2 + 2} = \frac{-2z}{z^2+1}.
-\]
-The mapping $f(z) = \frac{-2z}{z^2+1}$ (or $\frac{2z}{z^2+1}$) maps $\Omega$ onto the unit disk.
-\end{solution}
-
-\begin{exercise}
-If $E$ is a compact set in a region $\Omega$, prove that there exists a constant $M>0$, depending only on $E$ and $\Omega$, such that every positive harmonic function $u(z)$ in $\Omega$ satisfies $u(z_2)\leq Mu(z_1)$ for any two points $z_1,z_2\in E$.
-\end{exercise}
-
-\begin{solution}
-This is a global version of Harnack's Inequality.
-1. Local Harnack Inequality: Let $u$ be a positive harmonic function on a disk $B(a, R)$. For any $z \in B(a, R)$ with $|z-a| = r < R$, we have:
-\[
-\frac{R-r}{R+r} u(a) \leq u(z) \leq \frac{R+r}{R-r} u(a).
-\]
-This implies that for any $z_1, z_2 \in B(a, R/2)$, $u(z_1) \leq 3 u(a) \leq 9 u(z_2)$. Thus $u(z_1) \leq C u(z_2)$ for some universal constant $C$.
-
-2. Covering Argument: Since $E$ is compact and $\Omega$ is open, let $d = \text{dist}(E, \partial\Omega) > 0$. Let $r = d/4$. For each $z \in E$, the disk $B(z, 2r)$ is contained in $\Omega$. By the local inequality, for any $z' \in B(z, r)$, $u(z') \leq C u(z)$.
-Since $E$ is compact, we can cover $E$ with finitely many such disks $B(z_i, r)$, $i=1, \dots, N$.
-If $E$ is connected, for any $z_1, z_2 \in E$, we can find a chain of overlapping disks from the covering that connects $z_1$ to $z_2$. Let the chain be $B_1, B_2, \dots, B_k$ where $k \leq N$. Then $u(z_2) \leq C^k u(z_1) \leq C^N u(z_1)$.
-If $E$ is not connected, but $\Omega$ is a region (connected), we can connect any two points in $E$ by a path in $\Omega$. The path is compact, so we can cover it with disks in $\Omega$ and use the same chaining argument. The constant $M$ will depend on the number of disks needed to cover $E$ or the paths between its components, which depends only on the geometry of $E$ and $\Omega$.
+2) \textbf{If $f$ is Riemann integrable:}
+For any partition $P$, $U(P,f) - L(P,f) = \sum (M_i-m_i) \Delta x_i$.
+If $x \in D_\epsilon$ is in the interior of a subinterval, then $M_i-m_i \geq \epsilon$.
+One can show that the measure of $D_\epsilon$ must be zero, otherwise $U-L$ would be bounded away from 0.
+Thus $\mu(D_\epsilon) = 0$ for all $\epsilon$, so $\mu(D) = 0$.
 \end{solution}
 
 \begin{exercise}
 \begin{itemize}
-\item[1)] For any bounded domain $\Omega\subset\mathbb{R}^n$, there exists a smallest constant $C(\Omega)$, such that
-\[
-\int_{\Omega}|u|^2\,dx \leq C(\Omega)\int_{\Omega}\sum_{i=1}^n\left|\frac{\partial u}{\partial x_i}\right|^2\,dx
-\]
-for every function $u\in H_0^1(\Omega) = \overline{C_0^{\infty}(\Omega)}^{H^1(\Omega)}$, where $C_0^{\infty}(\Omega)$ is the space of smooth functions over $\Omega$ and vanishing on boundary of $\Omega$ and $H^1(\Omega)$ is the Banach space of functions $u\in L^2(\Omega)$, $\nabla u\in L^2(\Omega)^{\otimes n}$ with the norm:
-\[
-\|u\|_{H^1(\Omega)}^2 = \|u\|_{L^2(\Omega)}^2 + \|\nabla u\|_{L^2(\Omega)^{\otimes n}}^2 = \int_{\Omega}(|u|^2 + \sum_{i=1}^n|\frac{\partial u}{\partial x_i}|^2)\,dx.
-\]
-
-$H_0^1(\Omega)$ is the completion of $C^{\infty}(\Omega)$ in $H^1(\Omega)$ with the above norm.
-
-\item[2)] Let $\Pi = \{(x,y)\mid 0<x<a, 0<y<b\}$. Show that
-\[
-C(\Pi) \geq \frac{a^2b^2}{\pi^2(a^2+b^2)}.
-\]
+    \item[1)] Let $w=\frac{1}{2}(z+\frac{1}{z})$. Show that it maps $\{|z|>1\}$ to $\mathbb{C}\setminus[-1,1]$.
+    \item[2)] Compute $\int_0^\infty \frac{\log x}{x^2-1} dx$.
 \end{itemize}
 \end{exercise}
 
 \begin{solution}
-1) This is the Poincaré inequality for $H_0^1(\Omega)$. The constant $C(\Omega)$ is related to the first eigenvalue $\lambda_1$ of the Laplacian operator $-\Delta$ with Dirichlet boundary conditions on $\Omega$. Specifically,
-\[
-\lambda_1(\Omega) = \inf_{u \in H_0^1(\Omega), u \neq 0} \frac{\int_{\Omega} |\nabla u|^2 \, dx}{\int_{\Omega} u^2 \, dx}.
-\]
-By definition, $\int_{\Omega} u^2 \leq \frac{1}{\lambda_1(\Omega)} \int_{\Omega} |\nabla u|^2$. Thus the smallest constant $C(\Omega) = 1/\lambda_1(\Omega)$. The existence of $\lambda_1 > 0$ for bounded domains is a standard result in the theory of elliptic operators.
+1) Let $z = re^{i\theta}$ with $r > 1$.
+$w = \frac{1}{2}(r e^{i\theta} + \frac{1}{r} e^{-i\theta}) = \frac{1}{2}(r+1/r)\cos\theta + i\frac{1}{2}(r-1/r)\sin\theta$.
+This is an ellipse with semi-axes $a = \frac{1}{2}(r+1/r)$ and $b = \frac{1}{2}(r-1/r)$.
+As $r$ ranges from 1 to $\infty$, these ellipses fill the entire plane.
+For $r=1$, the ellipse collapses to the segment $[-1, 1]$.
+Thus the image of $|z|>1$ is $\mathbb{C} \setminus [-1, 1]$.
 
-2) For the rectangle $\Pi = (0, a) \times (0, b)$, we can explicitly find the eigenvalues of the Laplacian. The eigenfunctions for the Dirichlet problem $-\Delta u = \lambda u$ are:
-\[
-u_{m,n}(x,y) = \sin\left(\frac{m\pi x}{a}\right) \sin\left(\frac{n\pi y}{b}\right), \quad m,n = 1, 2, \dots
-\]
-The corresponding eigenvalues are:
-\[
-\lambda_{m,n} = \left(\frac{m\pi}{a}\right)^2 + \left(\frac{n\pi}{b}\right)^2 = \pi^2 \left( \frac{m^2}{a^2} + \frac{n^2}{b^2} \right).
-\]
-The smallest eigenvalue is $\lambda_{1,1}$:
-\[
-\lambda_1(\Pi) = \pi^2 \left( \frac{1}{a^2} + \frac{1}{b^2} \right) = \pi^2 \frac{a^2 + b^2}{a^2b^2}.
-\]
-The smallest constant is therefore:
-\[
-C(\Pi) = \frac{1}{\lambda_1(\Pi)} = \frac{a^2b^2}{\pi^2(a^2+b^2)}.
-\]
-Since $C(\Pi)$ is the smallest constant such that the inequality holds, it is exactly equal to this value, and thus $C(\Pi) \geq \frac{a^2b^2}{\pi^2(a^2+b^2)}$ is satisfied.
+2) $I = \int_0^\infty \frac{\log x}{x^2-1} dx = \int_0^1 \frac{\log x}{x^2-1} dx + \int_1^\infty \frac{\log x}{x^2-1} dx$.
+In the second integral, let $u = 1/x$, so $dx = -1/u^2 du$.
+$\int_1^\infty \frac{\log x}{x^2-1} dx = \int_1^0 \frac{\log(1/u)}{(1/u)^2-1} (-1/u^2) du = \int_0^1 \frac{\log u}{u^2-1} du$.
+Thus $I = 2 \int_0^1 \frac{\log x}{x^2-1} dx = 2 \int_0^1 \log x \sum_{n=0}^\infty (x^2)^n dx$.
+$I = 2 \sum_{n=0}^\infty \int_0^1 x^{2n} \log x dx$.
+Using $\int_0^1 x^m \log x dx = -1/(m+1)^2$:
+$I = 2 \sum_{n=0}^\infty \frac{1}{(2n+1)^2} = 2 (\sum_{k=1}^\infty \frac{1}{k^2} - \sum_{k=1}^\infty \frac{1}{(2k)^2}) = 2 (1 - 1/4) \zeta(2) = \frac{3}{2} \cdot \frac{\pi^2}{6} = \frac{\pi^2}{4}$.
 \end{solution}
 
+\begin{exercise}
+Let $f$ be a doubly periodic meromorphic function. Prove that the number of zeros and poles are equal.
+\end{exercise}
+
+\begin{solution}
+By the Argument Principle, the number of zeros minus the number of poles in the fundamental parallelogram $\Omega$ is:
+$Z - P = \frac{1}{2\pi i} \int_{\partial \Omega} \frac{f'(z)}{f(z)} dz$.
+Since $f$ is doubly periodic, $f'/f$ is also doubly periodic.
+The integral over opposite sides of the parallelogram cancel out because the path is in opposite directions and the function values are the same.
+$\int_{\text{side } 1} + \int_{\text{side } 3} = \int_{z_0}^{z_0+\omega_1} \frac{f'(z)}{f(z)} dz + \int_{z_0+\omega_1+\omega_2}^{z_0+\omega_2} \frac{f'(z)}{f(z)} dz = 0$.
+Similarly for the other pair of sides.
+Thus $Z - P = 0 \implies Z = P$.
+\end{solution}
+
+\begin{exercise}
+Prove that the spectrum of a bounded self-adjoint operator is a bounded closed subset of the real line.
+\end{exercise}
+
+\begin{solution}
+1) \textbf{Bounded and Closed:} The spectrum $\sigma(A)$ is always closed and contained in $\{|\lambda| \leq \|A\|\}$ for any bounded operator.
+2) \textbf{Real Line:} Let $\lambda = a + ib$ with $b \neq 0$.
+$\|(A-\lambda I)x\|^2 = \|(A-aI)x - ibx\|^2 = \|(A-aI)x\|^2 + b^2\|x\|^2$ (since $A-aI$ is self-adjoint, cross terms cancel).
+Thus $\|(A-\lambda I)x\| \geq |b|\|x\|$.
+This implies $A-\lambda I$ is injective and has a closed range.
+Since $(A-\lambda I)^* = A - \bar{\lambda} I$ also satisfies the same estimate, its kernel is $\{0\}$.
+So the range of $A-\lambda I$ is dense.
+A dense closed range is the whole space, so $A-\lambda I$ is invertible.
+Thus $\lambda \notin \sigma(A)$, so $\sigma(A) \subset \mathbb{R}$.
+\end{solution}
