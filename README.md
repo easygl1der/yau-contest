@@ -1,6 +1,12 @@
-# 2010-2025 Past Exam Papers
+# S.-T. Yau College Student Mathematics Contest
+## Past Exam Papers (2010--2025)
 
-Collection of past exam papers from the S.-T. Yau College Student Mathematics Contest.
+> A comprehensive collection of past exam papers spanning 6 mathematical disciplines across 16 years. Each subject includes official syllabi, problem statements, and solutions.
+
+[![Total PDFs](https://img.shields.io/badge/Total%20PDFs-535-blue?style=flat-square)](#)
+[![Markdown Transcripts](https://img.shields.io/badge/Transcripts-49-green?style=flat-square)](#)
+
+---
 
 ## Quick Compile
 
@@ -8,55 +14,73 @@ Collection of past exam papers from the S.-T. Yau College Student Mathematics Co
 cd latex-project && bash compile.sh
 ```
 
-The compiled PDF will be at `latex-project/main.pdf` (460+ pages).
-
-For a single-pass compile (faster for testing):
+Output: `latex-project/main.pdf` (~460 pages). For single-pass compile:
 
 ```bash
 cd latex-project && pdflatex -interaction=nonstopmode main.tex
 ```
 
-## Subject Categories
+---
 
-| Subject | Files | Year Range | Transcripts |
-|---------|-------|------------|-------------|
+## Subject Coverage
 
-## Statistics
+| Subject | PDFs | Years | Transcripts |
+|:---|---:|:---:|:---:|
+| Algebra & Number Theory | 48 | 2010-2025 | 0 |
+| Geometry & Topology | 41 | 2010-2025 | 0 |
+| Probability & Statistics | 59 | 2010-2025 | 17 |
+| Applied & Computational Mathematics | 42 | 2010-2025 | 0 |
+| Analysis & Differential Equations | 46 | 2010-2025 | 0 |
+| Mathematical Physics | 8 | 2025-2025 | 0 |
 
-- Total PDFs: 291
-- Total Markdown transcripts: 146
-- Last updated: 2026-04-22
+---
 
-## Folder Structure
-
-- **latex-project/** — Full LaTeX book project with chapter structure
-  - `main.tex` — Root document
-  - `content/` — Individual year/chapter tex files (split_algebra, split_analysis, etc.)
-  - `syllabi/` — Official contest syllabi (2010–2025)
-  - `compile.sh` — Compilation script
-- **Year folders (2010-2025)** — Exam papers organized by year
-- **Subject folders** — Exam papers organized by subject category
-
-## File Naming Convention
-
-- `{Year}_{Subject}-individual.pdf` - Individual competition papers
-- `{Year}_{Subject}-team.pdf` - Team competition papers
-- `{Year}_{Subject}-soln.pdf` - Solutions
-
-## Book Structure (latex-project)
+## Repository Structure
 
 ```
-main.tex
-├── introduction.tex          — Contest overview, recurring themes
-├── preparation_guide.tex     — Exam prep knowledge map (all 6 subjects)
-├── split_algebra/           — 2010–2025 Algebra & Number Theory
-├── split_analysis/          — 2010–2025 Analysis & Differential Equations
-├── split_geometry/         — 2011–2025 Geometry & Topology
-├── split_probability/       — 2010–2025 Probability & Statistics
-├── split_applied/          — 2011–2025 Applied & Computational Math
-└── split_physics/          — 2022–2025 Mathematical Physics
+yau-contest/
+├── latex-project/          # LaTeX book
+│   ├── main.tex           # Root document
+│   ├── compile.sh         # Two-pass compile script
+│   ├── content/           # Chapter files by subject + year
+│   └── syllabi/           # Official syllabi (6 PDFs)
+├── 2010--2025/           # Raw papers by year
+└── [subject folders]/    # Raw papers by subject (Chinese)
 ```
+
+---
+
+## What's in the Book
+
+The compiled PDF (`latex-project/main.pdf`) contains:
+
+- **Introduction** -- Contest structure, recurring themes (verified from actual exam data)
+- **Exam Preparation Guide** -- Topic-by-topic knowledge map for all 6 subjects
+- **Problem Sets (2010--2025)** -- Full problem statements and solutions
+
+### Subject Descriptions
+
+| Track | Topics |
+|:---|:---|
+| Algebra & Number Theory | Group theory, Galois theory, representation theory, algebraic geometry, $p$-adic analysis |
+| Analysis & Differential Equations | Complex analysis, measure theory, functional analysis, PDEs, Fourier analysis |
+| Geometry & Topology | Algebraic topology, differential geometry, Riemannian geometry, Lie groups |
+| Probability & Statistics | Stochastic processes, martingales, statistical estimation, random graphs |
+| Applied & Computational Mathematics | Numerical analysis, finite difference/element methods, optimization, dynamical systems |
+| Mathematical Physics (2022--) | Quantum mechanics, classical mechanics, electromagnetism, QFT, general relativity |
+
+---
+
+## File Naming
+
+| Pattern | Description |
+|:---|:---|
+| `Year_Subject-individual.pdf` | Individual competition paper |
+| `Year_Subject-team.pdf` | Team competition paper |
+| `Year_Subject-soln.pdf` | Official solutions |
+
+---
 
 ## Disclaimer
 
-These papers are collected from public sources for educational and research purposes only.
+All materials are collected from public sources for educational and research purposes only.
