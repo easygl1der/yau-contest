@@ -23,27 +23,62 @@ Hint: use Part (a).
 \end{exercise}
 
 \begin{solution}
+\subsection*{Part (1): Newton's Identity}
+
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with \textit{elementary symmetric polynomials} ($e_k$), \textit{power sum symmetric polynomials} ($p_k$), and the use of \textit{generating functions} (a way to encode a sequence of numbers as coefficients of a polynomial or power series).
+
+\textbf{Steps:}
 \begin{enumerate}
-\item Consider the generating function for elementary symmetric polynomials:
-\[ E(t) = \sum_{k=0}^n e_k t^k = \prod_{i=1}^n (1 + x_i t). \]
-The power sum symmetric polynomials $p_k$ appear in the logarithmic derivative:
-\[ \frac{E'(t)}{E(t)} = \frac{d}{dt} \sum_{i=1}^n \ln(1 + x_i t) = \sum_{i=1}^n \frac{x_i}{1 + x_i t} = \sum_{i=1}^n \sum_{j=1}^\infty x_i ( -x_i t)^{j-1} = \sum_{k=1}^\infty (-1)^{k-1} p_k t^{k-1}. \]
-Multiplying by $E(t)$, we get:
-\[ \sum_{k=1}^n k e_k t^{k-1} = \left( \sum_{m=1}^\infty (-1)^{m-1} p_m t^{m-1} \right) \left( \sum_{j=0}^n e_j t^j \right). \]
-Equating the coefficients of $t^{k-1}$ on both sides:
-\[ k e_k = \sum_{j=1}^k (-1)^{j-1} p_j e_{k-j}. \]
-Rearranging gives the desired identity: $p_k - e_1 p_{k-1} + \cdots + (-1)^{k-1} e_{k-1} p_1 + (-1)^k k e_k = 0$.
-
-\item A matrix $A$ is nilpotent if and only if all its eigenvalues $\lambda_1, \dots, \lambda_n$ are zero. This is equivalent to saying that the characteristic polynomial $\chi_A(t) = \det(tI - A) = t^n$.
-The coefficients of the characteristic polynomial are (up to sign) the elementary symmetric polynomials $e_k$ of the eigenvalues.
-Newton's identities allow us to express $e_k$ in terms of $p_1, \dots, p_k$ and vice versa in characteristic zero.
-If $\mathrm{Tr}(A^k) = p_k(\lambda_1, \dots, \lambda_n) = 0$ for all $k=1, \dots, n$, then $e_k = 0$ for $k=1, \dots, n$.
-Thus $\chi_A(t) = t^n$, so $A$ is nilpotent.
-
-\item Two matrices $A$ and $B$ have the same characteristic polynomial if and only if $e_k(A) = e_k(B)$ for $k=1, \dots, n$.
-Again, by Newton's identities in characteristic zero, the $e_k$ are determined by $p_1, \dots, p_k$ (where $p_k = \mathrm{Tr}(A^k)$) and vice versa.
-Thus, $e_k(A) = e_k(B)$ for all $k$ if and only if $p_k(A) = p_k(B)$ for all $k$.
+    \item Define the generating function for the elementary symmetric polynomials:
+    \[ E(t) = \sum_{k=0}^n e_k t^k = \prod_{i=1}^n (1 + x_i t). \]
+    \item Take the logarithmic derivative of $E(t)$. By the chain rule, $(\ln E(t))' = E'(t)/E(t)$. Since $E(t)$ is a product, its logarithm is a sum:
+    \[ \frac{E'(t)}{E(t)} = \frac{d}{dt} \sum_{i=1}^n \ln(1 + x_i t) = \sum_{i=1}^n \frac{x_i}{1 + x_i t}. \]
+    \item Expand each term in the sum as a geometric series in $t$:
+    \[ \sum_{i=1}^n x_i \sum_{j=0}^\infty (-x_i t)^j = \sum_{i=1}^n \sum_{k=1}^\infty (-1)^{k-1} x_i^k t^{k-1} = \sum_{k=1}^\infty (-1)^{k-1} p_k t^{k-1}. \]
+    \item Multiply both sides by $E(t)$ to clear the denominator:
+    \[ E'(t) = E(t) \cdot \left( \sum_{m=1}^\infty (-1)^{m-1} p_m t^{m-1} \right). \]
+    \item Match the coefficients of $t^{k-1}$ on both sides. On the left, the coefficient of $t^{k-1}$ in $E'(t) = \sum j e_j t^{j-1}$ is $k e_k$. On the right, use the Cauchy product of the two series.
 \end{enumerate}
+
+\textbf{Intuition:}
+Generating functions act like "suitcases" that hold all the symmetric polynomials at once. By applying calculus (differentiation and logarithms) to these suitcases, we can uncover hidden relationships between the different types of symmetric polynomials. Newton's identity is essentially a recursive way to build complex "power sums" from simpler "building blocks" (the elementary symmetric polynomials).
+
+\par\vspace{1.5em}
+
+\subsection*{Part (2): Nilpotent Matrices}
+
+\textbf{Prerequisites:} 
+Recall that a matrix $A$ is \textit{nilpotent} if $A^m = 0$ for some $m$. This is equivalent to all its eigenvalues being zero. The \textit{trace} of $A^k$ is the sum of the $k$-th powers of its eigenvalues.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $\lambda_1, \dots, \lambda_n$ be the eigenvalues of $A$. Then $\mathrm{Tr}(A^k) = p_k(\lambda_1, \dots, \lambda_n)$.
+    \item If $\mathrm{Tr}(A^k) = 0$ for all $k$, then $p_k = 0$ for all $k$.
+    \item Using Newton's identity from Part (1), if $p_1 = p_2 = \dots = p_n = 0$, then $e_1 = e_2 = \dots = e_n = 0$.
+    \item The characteristic polynomial of $A$ is $\chi_A(t) = t^n - e_1 t^{n-1} + \dots + (-1)^n e_n$. With all $e_k = 0$, $\chi_A(t) = t^n$.
+    \item By the Cayley-Hamilton theorem, $A^n = 0$, meaning $A$ is nilpotent.
+\end{enumerate}
+
+\textbf{Intuition:}
+The traces of a matrix tell us about the "moments" of its eigenvalues. If every single moment of the eigenvalues is zero, the only possible way for that to happen is if all the eigenvalues themselves are zero. A matrix with only zero eigenvalues is fundamentally "empty" in terms of growth, eventually shrinking to zero when multiplied repeatedly.
+
+\par\vspace{1.5em}
+
+\subsection*{Part (3): Same Characteristic Polynomial}
+
+\textbf{Prerequisites:} 
+Two matrices have the same characteristic polynomial if and only if they have the same set of eigenvalues (counting multiplicity).
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $e_k(A)$ and $e_k(B)$ be the coefficients of the characteristic polynomials of $A$ and $B$.
+    \item Newton's identities provide a bijective (one-to-one) mapping between the set of traces $\{p_1, \dots, p_n\}$ and the set of coefficients $\{e_1, \dots, e_n\}$ in characteristic zero.
+    \item Therefore, $p_k(A) = p_k(B)$ for all $k$ implies $e_k(A) = e_k(B)$ for all $k$, and vice versa.
+\end{enumerate}
+
+\textbf{Intuition:}
+This result shows that the traces of the powers of a matrix contain exactly the same amount of information as the characteristic polynomial itself. If you know the trace of $A, A^2, \dots, A^n$, you have "fingerprinted" the matrix's eigenvalues completely.
 \end{solution}
 
 \begin{exercise}
@@ -57,22 +92,43 @@ Hint: $p(t)$ is basically just the characteristic polynomial.
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-\item Let $\{m_1, \dots, m_n\}$ be a set of generators for $M$. Since $\phi(M) \subseteq \mathfrak{a}M$, we can write:
-\[ \phi(m_i) = \sum_{j=1}^n a_{ij} m_j, \quad \text{where } a_{ij} \in \mathfrak{a}. \]
-This can be rewritten as:
-\[ \sum_{j=1}^n (\delta_{ij} \phi - a_{ij}) m_j = 0. \]
-Let $A$ be the matrix $(\delta_{ij} \phi - a_{ij})$ with entries in the ring $R[\phi]$. Let $C$ be the adjugate matrix of $A$. Then $CA = \det(A) I$.
-Multiplying the vector $(m_1, \dots, m_n)^T$ by $CA = 0$ gives $\det(A) m_i = 0$ for all $i$.
-Since $\{m_i\}$ generate $M$, $\det(A) M = 0$.
-Expanding the determinant $p(t) = \det(t I - (a_{ij}))$ gives a monic polynomial in $t$ with other coefficients in $\mathfrak{a}$. Thus $p(\phi) = 0$ is the required relation.
+\subsection*{Part (1): Generalized Cayley-Hamilton}
 
-\item Assume $\mathfrak{a}M = M$. Let $\phi = \mathrm{Id}_M$. Then $\phi(M) = M = \mathfrak{a}M$.
-By part (a), there exists a monic polynomial $p(t) = t^n + a_{n-1} t^{n-1} + \dots + a_0$ with $a_i \in \mathfrak{a}$ such that $p(\mathrm{Id}_M) = 0$.
-This means $(1 + a_{n-1} + \dots + a_0) \mathrm{Id}_M = 0$.
-Let $x = -(a_{n-1} + \dots + a_0)$. Since $a_i \in \mathfrak{a}$, we have $x \in \mathfrak{a}$.
-The equation becomes $(1 - x) M = 0$.
+\textbf{Prerequisites:} 
+Understanding of \textit{modules} (which are like vector spaces over a ring), \textit{generators}, and \textit{adjugate matrices}. A module is finitely generated if there's a finite set of elements $\{m_1, \dots, m_n\}$ such that every element in $M$ is a linear combination of these.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Since $M$ is generated by $m_1, \dots, m_n$ and $\phi(m_i) \in \mathfrak{a}M$, we can express each $\phi(m_i)$ as:
+    \[ \phi(m_i) = \sum_{j=1}^n a_{ij} m_j, \quad \text{where each } a_{ij} \in \mathfrak{a}. \]
+    \item Rearrange this into a system of equations: $\sum_{j=1}^n (\delta_{ij} \phi - a_{ij}) m_j = 0$.
+    \item Think of this as a matrix equation $A \mathbf{m} = 0$, where $A$ is an $n \times n$ matrix with entries in the ring $R[\phi]$, and $\mathbf{m}$ is the vector of generators.
+    \item Multiply by the adjugate matrix $\mathrm{adj}(A)$. From linear algebra, $\mathrm{adj}(A) A = \det(A) I$.
+    \item This gives $\det(A) m_i = 0$ for every generator $m_i$. Since these generate $M$, we have $\det(A) M = 0$.
+    \item The determinant $p(\phi) = \det(\phi I - (a_{ij}))$ is a monic polynomial in $\phi$ with coefficients in $\mathfrak{a}$.
 \end{enumerate}
+
+\textbf{Intuition:}
+This is a beautiful extension of the Cayley-Hamilton theorem from linear algebra. In a vector space, a linear map satisfies its own characteristic polynomial. Here, we show that even in a more general "module" setting, if a map sends elements into a "smaller" part of the module (the ideal $\mathfrak{a}M$), the map must satisfy a polynomial whose coefficients reflect that restriction.
+
+\par\vspace{1.5em}
+
+\subsection*{Part (2): Nakayama's Lemma}
+
+\textbf{Prerequisites:} 
+This part is a direct application of Part (1). It is a version of the famous \textit{Nakayama's Lemma}.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Assume $\mathfrak{a}M = M$. Let $\phi$ be the identity map $\mathrm{Id}_M$.
+    \item Then $\phi(M) = M = \mathfrak{a}M$. By Part (1), there is a monic polynomial $p(t) = t^n + a_{n-1} t^{n-1} + \dots + a_0$ with $a_i \in \mathfrak{a}$ such that $p(\mathrm{Id}_M) = 0$.
+    \item Applying the identity map: $(\mathrm{Id}_M^n + a_{n-1} \mathrm{Id}_M^{n-1} + \dots + a_0) M = 0$.
+    \item This simplifies to $(1 + a_{n-1} + \dots + a_0) M = 0$.
+    \item Let $1-x = -(a_{n-1} + \dots + a_0)$. Since all $a_i \in \mathfrak{a}$, their sum is in $\mathfrak{a}$. Thus $1-x \in \mathfrak{a}$, and $x M = 0$ (or vice versa, the notation depends on how you define $x$). Specifically, if we set $1-x = \sum a_i$, then $x \cdot M = 0$.
+\end{enumerate}
+
+\textbf{Intuition:}
+Nakayama's Lemma roughly says that if an ideal "consumes" a module ($\mathfrak{a}M=M$), then there is some element "close to 1" (specifically $1-x \in \mathfrak{a}$) that acts as zero on the whole module. In many cases (like in local rings), this implies that the module $M$ must actually be zero. It's a powerful tool for showing that something is zero by checking it "modulo" an ideal.
 \end{solution}
 
 \begin{exercise}
@@ -86,20 +142,43 @@ Let $R = F[x, y]/(y^2 - x^2 - x^3)$ for some field $F$.
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-\item To show $R$ is an integral domain, we must show that $f(x, y) = y^2 - x^2 - x^3$ is irreducible in $F[x, y]$.
-$f$ is a quadratic in $y$. It is irreducible if and only if $x^2 + x^3 = x^2(1+x)$ is not a square in $F[x]$.
-In the polynomial ring $F[x]$, the degree of a square is even. $x^2(1+x)$ has degree 3, so it cannot be a square.
-Thus $y^2 - x^2(1+x)$ is irreducible in $F[x][y]$, so $R$ is an integral domain.
+\subsection*{Part (1): Proving $R$ is an Integral Domain}
 
-\item Let $K$ be the field of fractions of $R$. In $K$, we have $y^2 = x^2(1+x)$.
-Let $t = y/x$. Then $t^2 = 1+x$, so $x = t^2 - 1$.
-Then $y = x t = (t^2 - 1) t = t^3 - t$.
-The field of fractions $K = F(x, y) = F(t^2-1, t^3-t) = F(t)$ (since $t = y/x$).
-The element $t \in K$ is integral over $R$ because it satisfies $t^2 - (1+x) = 0$, and $1+x \in R$.
-The ring $F[t]$ is a polynomial ring, which is integrally closed.
-Since $R = F[t^2-1, t^3-t] \subseteq F[t]$ and $F[t]$ is the integral closure of $F$ in $F(t)$, the normalization of $R$ is $F[t] \cong F[y/x]$.
+\textbf{Prerequisites:} 
+A quotient ring $F[x,y]/(f)$ is an integral domain if and only if the polynomial $f$ is \textit{irreducible}. We use the fact that in a polynomial ring, a square must have even degree.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Consider $f(x, y) = y^2 - x^2(1+x)$. This is a polynomial in $y$ of degree 2.
+    \item For a quadratic $y^2 - g(x)$ to be reducible, $g(x)$ must be a perfect square in the ring $F[x]$.
+    \item Here $g(x) = x^2(1+x)$. The degree of $g(x)$ is 3.
+    \item In any polynomial ring, the degree of a perfect square $h(x)^2$ is $2 \cdot \deg(h)$, which is always an even number.
+    \item Since 3 is odd, $x^2(1+x)$ cannot be a square. Therefore, $f(x, y)$ is irreducible, and $R$ is an integral domain.
 \end{enumerate}
+
+\textbf{Intuition:}
+The equation $y^2 = x^2 + x^3$ defines a curve in the plane. Proving $R$ is an integral domain is like saying this curve doesn't "break apart" into two or more simpler curves (like two lines). Because the right-hand side isn't a square, the "square root" $y$ isn't a simple polynomial in $x$, so the relation is as simple as it can be.
+
+\par\vspace{1.5em}
+
+\subsection*{Part (2): Normalization}
+
+\textbf{Prerequisites:} 
+The \textit{normalization} is the process of adding all "missing" roots of monic polynomials to the ring. For curves, this often involves "smoothing out" a singularity (like the crossing point at the origin).
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item In the field of fractions, we can define $t = y/x$.
+    \item Square this: $t^2 = y^2/x^2 = (x^2 + x^3)/x^2 = 1 + x$.
+    \item From $t^2 = 1+x$, we get $x = t^2 - 1$.
+    \item Substitute this into $y = xt$: $y = (t^2 - 1)t = t^3 - t$.
+    \item Note that $t$ is \textit{integral} over $R$ because it satisfies the monic equation $t^2 - (1+x) = 0$, where $1+x \in R$.
+    \item The ring $F[t]$ is a polynomial ring, which is always integrally closed (normal).
+    \item Since $R = F[t^2-1, t^3-t] \subset F[t]$ and $t$ is in the field of fractions, the normalization of $R$ is exactly $F[t]$.
+\end{enumerate}
+
+\textbf{Intuition:}
+The curve $y^2 = x^2 + x^3$ has a "node" (a self-intersection) at the origin $(0,0)$. By introducing the new variable $t = y/x$, we are essentially "unwrapping" the curve. At the origin, $y/x$ has two possible values (the slopes of the two branches), so $t$ distinguishes between them. The resulting ring $F[t]$ represents a smooth line, which is the "normalized" version of our original curvy, self-intersecting shape.
 \end{solution}
 
 \begin{exercise}
@@ -117,21 +196,60 @@ Hint: Derive and use the formula for the number of elements in $\mathrm{GL}_m(\m
 \end{exercise}
 
 \begin{solution}
+\subsection*{Part (1): Irreducibility of $\Phi_\ell(x)$}
+
+\textbf{Prerequisites:} 
+\textit{Eisenstein's Criterion} is a standard way to check if a polynomial is irreducible. It requires a prime $p$ such that $p$ divides all coefficients except the leading one, and $p^2$ does not divide the constant term.
+
+\textbf{Steps:}
 \begin{enumerate}
-\item To prove $\Phi_\ell(x) = \frac{x^\ell - 1}{x - 1} = x^{\ell-1} + \dots + 1$ is irreducible over $\mathbb{Q}$, we consider $f(x) = \Phi_\ell(x+1) = \frac{(x+1)^\ell - 1}{x} = x^{\ell-1} + \binom{\ell}{\ell-1} x^{\ell-2} + \dots + \binom{\ell}{1}$.
-Since $\ell$ is prime, all binomial coefficients $\binom{\ell}{k}$ for $1 \leq k \leq \ell-1$ are divisible by $\ell$, and the constant term $\binom{\ell}{1} = \ell$ is not divisible by $\ell^2$.
-By Eisenstein's Criterion at the prime $\ell$, $\Phi_\ell(x+1)$ is irreducible, hence $\Phi_\ell(x)$ is irreducible.
-
-\item In $\mathbb{F}_\ell[x]$, we have $(x-1)^\ell = x^\ell - 1$ because the characteristic is $\ell$.
-Then $\Phi_\ell(x) = \frac{x^\ell - 1}{x - 1} = \frac{(x-1)^\ell}{x-1} = (x-1)^{\ell-1}$.
-Thus $[\ell_x]$ is divisible by $x-1$ in $\mathbb{F}_\ell[x]$. (Actually, $x=1$ is a root of multiplicity $\ell-1$).
-
-\item An element of order $\ell$ exists in $GL_m(\mathbb{F}_p)$ if and only if $\ell$ divides the order of the group:
-\[ |GL_m(\mathbb{F}_p)| = \prod_{i=0}^{m-1} (p^m - p^i) = p^{m(m-1)/2} \prod_{i=1}^m (p^i - 1). \]
-By Cauchy's Theorem, $GL_m(\mathbb{F}_p)$ has an element of order $\ell$ if and only if $\ell$ divides its order. Since $\ell \neq p$, this happens if and only if $\ell$ divides $p^i - 1$ for some $1 \leq i \leq m$.
-The smallest such $i$ is the order of $p$ in the multiplicative group $(\mathbb{Z}/\ell\mathbb{Z})^\times$, which is denoted by $a = \mathrm{ord}_\ell(p)$.
-Therefore, the first value of $m$ for which $GL_m(\mathbb{F}_p)$ contains an element of order $\ell$ is $m = a$.
+    \item Let $f(x) = \Phi_\ell(x) = \frac{x^\ell - 1}{x - 1}$. It's hard to apply Eisenstein directly here.
+    \item Perform a change of variables: $g(x) = f(x+1) = \frac{(x+1)^\ell - 1}{(x+1) - 1} = \frac{(x+1)^\ell - 1}{x}$.
+    \item Expand using the Binomial Theorem: $g(x) = \frac{1}{x} \left( x^\ell + \binom{\ell}{\ell-1}x^{\ell-1} + \dots + \binom{\ell}{1}x + 1 - 1 \right) = x^{\ell-1} + \binom{\ell}{\ell-1}x^{\ell-2} + \dots + \binom{\ell}{1}$.
+    \item Since $\ell$ is prime, every binomial coefficient $\binom{\ell}{k}$ for $1 \leq k < \ell$ is divisible by $\ell$.
+    \item The constant term is $\binom{\ell}{1} = \ell$, which is divisible by $\ell$ but \textit{not} by $\ell^2$.
+    \item By Eisenstein's Criterion, $g(x)$ is irreducible, so $f(x)$ is also irreducible.
 \end{enumerate}
+
+\textbf{Intuition:}
+Symmetry is key. The polynomial $\Phi_\ell(x)$ looks very uniform. By "shifting" it by 1 ($x \to x+1$), we break the symmetry in a way that reveals the prime $\ell$ lurking in the coefficients, allowing us to use a powerful divisibility test (Eisenstein).
+
+\par\vspace{1.5em}
+
+\subsection*{Part (2): Divisibility in Characteristic $p$}
+
+\textbf{Prerequisites:} 
+In a field of characteristic $p$, we have the "Freshman's Dream": $(a+b)^p = a^p + b^p$.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item If $p = \ell$, we are working in $\mathbb{F}_\ell$.
+    \item The polynomial $x^\ell - 1$ becomes $(x-1)^\ell$ because $(x-1)^\ell = x^\ell + (-1)^\ell = x^\ell - 1$ (since $\ell$ is prime, if $\ell=2$, $-1=1$; if $\ell$ is odd, $(-1)^\ell = -1$).
+    \item Then $\Phi_\ell(x) = \frac{x^\ell - 1}{x - 1} = \frac{(x-1)^\ell}{x-1} = (x-1)^{\ell-1}$.
+    \item This is clearly divisible by $(x-1)$, provided $\ell-1 \geq 1$ (which holds for any prime $\ell$).
+\end{enumerate}
+
+\textbf{Intuition:}
+When the characteristic of the field matches the degree of the roots we are looking for, things "collapse." Instead of having $\ell$ distinct roots, all the roots of $x^\ell-1$ merge into a single root at $x=1$ with high multiplicity.
+
+\par\vspace{1.5em}
+
+\subsection*{Part (3): Elements of order $\ell$ in $GL_m(\mathbb{F}_p)$}
+
+\textbf{Prerequisites:} 
+The size of the general linear group is $|GL_m(\mathbb{F}_p)| = (p^m-1)(p^m-p)\dots(p^m-p^{m-1})$. \textit{Cauchy's Theorem} states that a group has an element of order $\ell$ if and only if $\ell$ divides the group's order.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Factor out powers of $p$ from the order formula: $|GL_m(\mathbb{F}_p)| = p^{m(m-1)/2} \prod_{i=1}^m (p^i - 1)$.
+    \item Since $p \neq \ell$, $\ell$ can only divide $|GL_m(\mathbb{F}_p)|$ if it divides one of the factors $(p^i - 1)$.
+    \item This means $p^i \equiv 1 \pmod{\ell}$ for some $1 \leq i \leq m$.
+    \item The smallest such $i$ is, by definition, the \textit{order} of $p$ in the multiplicative group $(\mathbb{Z}/\ell\mathbb{Z})^\times$. Let's call this order $a$.
+    \item Thus, $\ell$ divides the group order for the first time when $m = a$. By Cauchy's Theorem, this is the first time an element of order $\ell$ appears.
+\end{enumerate}
+
+\textbf{Intuition:}
+In a finite field, the existence of certain "rotations" or "symmetries" (elements of order $\ell$) depends on whether the field's size allows for that specific arithmetic. The order $a$ tells us exactly how many dimensions we need to "room" an operation that cycles through $\ell$ states.
 \end{solution}
 
 \begin{exercise}
@@ -147,22 +265,42 @@ for some integer $t \in \{2, 3, \ldots, p-1\}$. (In particular, this condition h
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-\item For $p \geq 3$, the $p$-adic logarithm $\log: 1 + p\mathbb{Z}_p \to p\mathbb{Z}_p$ is an isomorphism of groups.
-An element $x \in 1 + p\mathbb{Z}_p$ is a $p$-th power if and only if $\log(x) \in p \cdot (p\mathbb{Z}_p) = p^2 \mathbb{Z}_p$.
-Since $x \in 1 + p^k \mathbb{Z}_p \iff \log(x) \in p^k \mathbb{Z}_p$ for $k \geq 1$, we have $x \in (1+p\mathbb{Z}_p)^p \iff x \in 1 + p^2 \mathbb{Z}_p$.
-Alternatively, using binomial expansion: $(1+pu)^p = 1 + p^2 u + \binom{p}{2} p^2 u^2 + \dots \equiv 1 + p^2 u \pmod{p^3}$ for $p \geq 3$. This shows that the image of the $p$-th power map on $1+p\mathbb{Z}_p$ is $1+p^2\mathbb{Z}_p$.
+\subsection*{Part (1): $p$-th powers in $p$-adic integers}
 
-\item If $a, b, c \in \mathbb{Z}_p^\times$, then $a^p + b^p = c^p$. Modulo $p^2$, we have $a^p \equiv a_0^p \pmod{p^2}$ where $a_0$ is the unique $(p-1)$-th root of unity (Teichmüller lift) such that $a \equiv a_0 \pmod p$.
-The condition $a^p + b^p = c^p$ implies $a_0^p + b_0^p \equiv c_0^p \pmod{p^2}$.
-Since $c_0 \equiv a_0 + b_0 \pmod p$, let $c_0 = a_0 + b_0 + k p$. Then $c_0^p \equiv (a_0+b_0)^p \pmod{p^2}$.
-Thus we need $a_0^p + b_0^p \equiv (a_0+b_0)^p \pmod{p^2}$.
-Dividing by $a_0^p$ and setting $t = b_0/a_0$, we get $1 + t^p \equiv (1+t)^p \pmod{p^2}$.
-Expanding $(1+t)^p = 1 + t^p + \sum_{i=1}^{p-1} \binom{p}{i} t^i$, we need $\sum_{i=1}^{p-1} \binom{p}{i} t^i \equiv 0 \pmod{p^2}$.
-Since $\frac{1}{p} \binom{p}{i} \equiv \frac{(-1)^{i-1}}{i} \pmod p$, the condition is $\sum_{i=1}^{p-1} \frac{(-1)^{i-1}}{i} t^i \equiv 0 \pmod p$.
-Substituting $-t$ for $t$ and using $i^{p-2} \equiv i^{-1} \pmod p$, this is equivalent to the Mirimanoff polynomial condition given in the problem.
-For $p=7, t=3$, $\sum_{i=1}^6 i^5 3^i \equiv \sum_{i=1}^6 \frac{3^i}{i} \equiv 3+1+2+1+1+6 = 14 \equiv 0 \pmod 7$.
+\textbf{Prerequisites:} 
+The \textit{$p$-adic logarithm} and \textit{exponential} functions. For $p \geq 3$, these provide an isomorphism between the multiplicative group $1 + p\mathbb{Z}_p$ and the additive group $p\mathbb{Z}_p$.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $x \in 1 + p\mathbb{Z}_p$. Then $x$ is a $p$-th power if $x = y^p$ for some $y$.
+    \item Applying the $p$-adic logarithm: $\log(x) = \log(y^p) = p \log(y)$.
+    \item This means $\log(x)$ must be divisible by $p$ in the additive space $p\mathbb{Z}_p$.
+    \item Thus $\log(x) \in p(p\mathbb{Z}_p) = p^2 \mathbb{Z}_p$.
+    \item Since $x \approx 1 + \log(x)$, the condition $\log(x) \in p^2 \mathbb{Z}_p$ is equivalent to $x \in 1 + p^2 \mathbb{Z}_p$.
 \end{enumerate}
+
+\textbf{Intuition:}
+The $p$-adic world behaves like a "stretched" version of regular arithmetic. Taking a $p$-th power "pushes" an element further away from 1 by exactly one power of $p$. If you start at $1+p$, you end up at $1+p^2$. This makes $p$-th powers easy to spot just by looking at their "depth" or precision.
+
+\par\vspace{1.5em}
+
+\subsection*{Part (2): Fermat's "Not" Last Theorem in $\mathbb{Z}_p$}
+
+\textbf{Prerequisites:} 
+\textit{Hensel's Lemma} (which lets us lift solutions from $\pmod p$ to $\mathbb{Z}_p$) and the \textit{Teichmüller lift} (a way to represent elements of $\mathbb{F}_p$ as actual $p$-adic numbers).
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item If $a^p + b^p = c^p$ in $\mathbb{Z}_p$, then modulo $p^2$, we have $a^p + b^p \equiv c^p \pmod{p^2}$.
+    \item By Fermat's Little Theorem, $x^p \equiv x \pmod p$. More precisely, $x^p \equiv \omega(x)^p \pmod{p^2}$ where $\omega(x)$ is the Teichmüller lift.
+    \item Setting $t = b/a \pmod p$, the condition becomes $1 + t^p \equiv (1+t)^p \pmod{p^2}$.
+    \item Expanding the right side: $(1+t)^p = 1 + t^p + \sum_{i=1}^{p-1} \binom{p}{i} t^i$.
+    \item We need $\sum_{i=1}^{p-1} \binom{p}{i} t^i \equiv 0 \pmod{p^2}$, which means $\sum_{i=1}^{p-1} \frac{1}{p}\binom{p}{i} t^i \equiv 0 \pmod p$.
+    \item Using the identity $\frac{1}{p}\binom{p}{i} \equiv \frac{(-1)^{i-1}}{i} \pmod p$ and $i^{p-2} \equiv 1/i \pmod p$, we get the polynomial condition in the problem.
+\end{enumerate}
+
+\textbf{Intuition:}
+Fermat's Last Theorem is famous because it's impossible for integers. But $p$-adic numbers are much more "flexible"—they allow for a lot of room to "wiggle" a solution into existence. The condition given is the "gatekeeper" that determines if that wiggle room is enough to satisfy the equation at the lowest level of precision.
 \end{solution}
 
 \begin{exercise}
@@ -184,17 +322,22 @@ Question: Which of the following are spherically complete? Explain why.
 \end{exercise}
 
 \begin{solution}
-A non-archimedean field is spherically complete if and only if it is maximally complete. For fields with a discrete valuation, spherical completeness is equivalent to completeness.
+\subsection*{General Rule for Spherical Completeness}
 
+\textbf{Prerequisites:} 
+In a standard metric space like $\mathbb{R}$, "complete" means every Cauchy sequence converges. In the "weird" world of $p$-adic numbers (non-archimedean), we have a stronger property: \textit{spherical completeness}. This means that even if the radii of a sequence of nested balls don't go to zero, they must still have a common point.
+
+\textbf{Steps \& Analysis:}
 \begin{enumerate}
-\item $\mathbb{Q}_p$ is spherically complete. It is a complete field with a discrete valuation (and is locally compact).
-
-\item $\mathbb{Q}_p(\mu_{p^n})$ is spherically complete. It is a finite extension of $\mathbb{Q}_p$, thus it is also a complete field with a discrete valuation.
-
-\item $\mathbb{Q}_p(\mu_{p^\infty})$ is NOT spherically complete. It is not even complete as a metric space (the union of an infinite chain of proper closed subfields is not complete). A spherically complete space must be complete.
-
-\item $\overline{\mathbb{Q}_p(\mu_{p^\infty})}$ is NOT spherically complete. While it is complete, its value group is $\{ p^r \mid r \in \mathbb{Q}, \text{ denom is power of } p \}$, which is not discrete. It is known that the completion of an infinite algebraic extension of $\mathbb{Q}_p$ (like $\mathbb{C}_p$ or this field) is not spherically complete unless the extension is finite. Specifically, one can construct a sequence of balls whose radii tend to a non-zero limit but have an empty intersection.
+    \item \textbf{$\mathbb{Q}_p$ is spherically complete.} It is a locally compact field with a discrete valuation. For discrete fields, completeness and spherical completeness are the same thing. Since $\mathbb{Q}_p$ is the completion of $\mathbb{Q}$, it fits the bill.
+    
+    \item \textbf{$\mathbb{Q}_p(\mu_{p^n})$ is spherically complete.} This is a finite extension of $\mathbb{Q}_p$. Finite extensions preserve the "discrete" nature of the valuation and the property of being complete.
+    
+    \item \textbf{$\mathbb{Q}_p(\mu_{p^\infty})$ is NOT spherically complete.} This is an infinite union of fields. It's like taking all fractions with power-of-2 denominators—it's full of "holes" that haven't been filled yet. It isn't even complete in the basic sense.
+    
+    \item \textbf{$\overline{\mathbb{Q}_p(\mu_{p^\infty})}$ is NOT spherically complete.} This is the trickiest one. Although it is "complete" (no holes for sequences), its "value group" (the possible sizes of elements) is not discrete—it's "dense." In such fields, you can have a sequence of balls that shrink but never quite reach a point.
 \end{enumerate}
+
+\textbf{Intuition:}
+Imagine a set of nested Russian dolls. If the dolls get infinitely thin (radii go to zero), you'd expect to find a "tiny center" (a point). But if the dolls stay "fat" (radii go to, say, 0.5), spherical completeness guarantees there's still something inside. $\mathbb{Q}_p$ is "solid" enough to have this, but infinite extensions like $\mathbb{C}_p$ are too "porous" at the microscopic level.
 \end{solution}
-
-

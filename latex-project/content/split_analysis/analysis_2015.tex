@@ -7,28 +7,40 @@ Let $f_n\in L^2(\mathbb{R})$ be a sequence of measurable functions over the line
 \end{exercise}
 
 \begin{solution}
-By the pointwise convergence $f_n \to f$ a.e., we have $|f_n - f|^2 \to 0$ a.e.
-Consider the sequence of non-negative functions $g_n = 2(|f_n|^2 + |f|^2) - |f_n - f|^2$. 
-By the triangle inequality in $\mathbb{C}$, we have $|f_n - f| \leq |f_n| + |f|$, so $|f_n - f|^2 \leq (|f_n| + |f|)^2 \leq 2|f_n|^2 + 2|f|^2$. 
-Thus $g_n \geq 0$ for all $n$.
-Applying Fatou's Lemma to $g_n$:
+\textbf{Prerequisites:}
+1. \textbf{Fatou's Lemma:} For any sequence of non-negative measurable functions $g_n$, the integral of the limit inferior is less than or equal to the limit inferior of the integrals: $\int \liminf_{n\to\infty} g_n \leq \liminf_{n\to\infty} \int g_n$.
+2. \textbf{Triangle Inequality:} $|a - b| \leq |a| + |b|$, which implies $|a - b|^2 \leq (|a| + |b|)^2 \leq 2|a|^2 + 2|b|^2$.
+3. \textbf{$L^2$ Norm Definition:} $\|f\|_2^2 = \int |f|^2 dx$.
+
+\textbf{Steps:}
+
+1. \textbf{Construct a helper sequence:} Define $g_n(x) = 2(|f_n(x)|^2 + |f(x)|^2) - |f_n(x) - f(x)|^2$. 
+By the triangle inequality mentioned in the prerequisites, we know that $|f_n - f|^2 \leq 2|f_n|^2 + 2|f|^2$, which directly implies that $g_n(x) \geq 0$ for all $x$ and all $n$. This non-negativity is crucial for applying Fatou's Lemma.
+
+2. \textbf{Apply Fatou's Lemma:} Since $g_n \geq 0$, we have:
 \[
 \int \liminf_{n\to\infty} g_n \, dx \leq \liminf_{n\to\infty} \int g_n \, dx
 \]
-Since $f_n \to f$ a.e., $\liminf g_n = 2(|f|^2 + |f|^2) - 0 = 4|f|^2$ a.e.
-The integral of $g_n$ is:
+Because $f_n \to f$ almost everywhere (a.e.), the term $|f_n - f|^2$ goes to 0 a.e., and $|f_n|^2 \to |f|^2$ a.e. 
+Therefore, $\liminf_{n\to\infty} g_n = 2(|f|^2 + |f|^2) - 0 = 4|f|^2$ a.e. The integral of the left side is simply $4\|f\|_2^2$.
+
+3. \textbf{Analyze the right side:} The integral of $g_n$ can be expanded linearly:
 \[
 \int g_n \, dx = 2\int |f_n|^2 \, dx + 2\int |f|^2 \, dx - \int |f_n - f|^2 \, dx = 2\|f_n\|_2^2 + 2\|f\|_2^2 - \|f_n - f\|_2^2
 \]
-As $n \to \infty$, $\|f_n\|_2^2 \to \|f\|_2^2$, so:
+Taking the limit inferior, and using the fact that $\|f_n\|_2 \to \|f\|_2$:
 \[
-\liminf \int g_n \, dx = \liminf (2\|f_n\|_2^2 + 2\|f\|_2^2 - \|f_n - f\|_2^2) = 4\|f\|_2^2 - \limsup \|f_n - f\|_2^2
+\liminf_{n\to\infty} \int g_n \, dx = 2\|f\|_2^2 + 2\|f\|_2^2 - \limsup_{n\to\infty} \|f_n - f\|_2^2 = 4\|f\|_2^2 - \limsup_{n\to\infty} \|f_n - f\|_2^2
 \]
-Thus:
-\[
-4\|f\|_2^2 \leq 4\|f\|_2^2 - \limsup \|f_n - f\|_2^2
-\]
-This implies $\limsup \|f_n - f\|_2^2 \leq 0$. Since $\|f_n - f\|_2^2 \geq 0$, we must have $\lim \|f_n - f\|_2^2 = 0$, which proves the result.
+
+4. \textbf{Conclude:} Combining these, we get $4\|f\|_2^2 \leq 4\|f\|_2^2 - \limsup_{n\to\infty} \|f_n - f\|_2^2$.
+Subtracting $4\|f\|_2^2$ from both sides gives $0 \leq -\limsup_{n\to\infty} \|f_n - f\|_2^2$, or $\limsup_{n\to\infty} \|f_n - f\|_2^2 \leq 0$.
+Since the norm is always non-negative, the limit must be exactly 0.
+
+\textbf{Intuition:}
+Think of the $L^2$ norm as a measure of the "total energy" of a signal. Pointwise convergence tells us that the "shape" of $f_n$ is becoming identical to $f$. The convergence of norms tells us that the "total energy" is also being preserved. 
+
+In general, pointwise convergence doesn't guarantee that the difference goes to zero (imagine a sequence of very tall, very thin spikes that move to infinity—they disappear pointwise but carry constant energy). However, if the energy of the sequence matches the energy of the limit, there's no "leaked energy" at infinity or in spikes, so the functions must converge in the norm sense.
 \end{solution}
 
 \begin{exercise}
@@ -36,21 +48,35 @@ Let $f$ be a continuous function on $[a,b]$, define $M_n = \int_a^b f(x)x^n\,dx$
 \end{exercise}
 
 \begin{solution}
-By linearity of the integral, $\int_a^b f(x) P(x) \, dx = 0$ for any polynomial $P(x)$.
-By the Weierstrass Approximation Theorem, for any $\epsilon > 0$, there exists a polynomial $P_\epsilon(x)$ such that $\|f - P_\epsilon\|_\infty < \epsilon$ on $[a,b]$.
-We have:
+\textbf{Prerequisites:}
+1. \textbf{Weierstrass Approximation Theorem:} Any continuous function on a closed interval $[a,b]$ can be uniformly approximated by polynomials. That is, for any $\epsilon > 0$, there exists a polynomial $P(x)$ such that $|f(x) - P(x)| < \epsilon$ for all $x \in [a,b]$.
+2. \textbf{Linearity of Integration:} If an integral vanishes for $x^n$ for all $n$, it vanishes for any linear combination of $x^n$ (i.e., any polynomial).
+3. \textbf{Property of Continuous Functions:} If $f$ is continuous and $\int f^2 = 0$, then $f$ must be identically zero.
+
+\textbf{Steps:}
+
+1. \textbf{Polynomial Orthogonality:} The given condition $M_n = 0$ means that $f$ is "orthogonal" to every power of $x$. By linearity, for any polynomial $P(x) = \sum c_k x^k$, we have $\int_a^b f(x) P(x) \, dx = \sum c_k \int_a^b f(x) x^k \, dx = 0$.
+
+2. \textbf{Uniform Approximation:} Since $f$ is continuous, we can pick a polynomial $P_\epsilon(x)$ that is very close to $f$. Specifically, let $|f(x) - P_\epsilon(x)| < \epsilon$ for all $x \in [a,b]$.
+
+3. \textbf{Calculate the Norm:} Consider the integral of $f^2$:
 \[
-\int_a^b f(x)^2 \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x)) \, dx + \int_a^b f(x)P_\epsilon(x) \, dx
+\int_a^b f(x)^2 \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x) + P_\epsilon(x)) \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x)) \, dx + \int_a^b f(x)P_\epsilon(x) \, dx
 \]
-Since $M_n = 0$ for all $n$, the second integral is zero. Thus:
+The second integral is zero because $P_\epsilon$ is a polynomial.
+
+4. \textbf{Bound the Integral:} Using the Cauchy-Schwarz inequality or simple absolute value bounds:
 \[
-\int_a^b f(x)^2 \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x)) \, dx \leq \int_a^b |f(x)| |f(x) - P_\epsilon(x)| \, dx
+\int_a^b f(x)^2 \, dx \leq \int_a^b |f(x)| |f(x) - P_\epsilon(x)| \, dx \leq \int_a^b \|f\|_\infty \cdot \epsilon \, dx = \|f\|_\infty \cdot \epsilon \cdot (b-a)
 \]
-\[
-\leq \|f\|_\infty \|f - P_\epsilon\|_\infty (b-a) \leq \|f\|_\infty \epsilon (b-a)
-\]
-Since this holds for any $\epsilon > 0$, we must have $\int_a^b f(x)^2 \, dx = 0$.
-Since $f$ is continuous, $f^2$ is continuous and non-negative. If its integral over $[a,b]$ is zero, it must be zero everywhere on $[a,b]$. Thus $f(x) = 0$ for all $x \in [a,b]$.
+Since this holds for \textit{any} $\epsilon > 0$, the only possible value for the non-negative integral $\int f^2$ is zero.
+
+5. \textbf{Final Conclusion:} A continuous non-negative function ($f^2$) with a zero integral must be zero everywhere. Thus $f(x) = 0$ for all $x \in [a,b]$.
+
+\textbf{Intuition:}
+This problem is about the "density" of polynomials. If you know that a function is perpendicular to every single polynomial, and you know that polynomials can "mimic" any continuous function perfectly, then the function must be perpendicular to "itself" (or rather, its mimicked version). 
+
+In a Hilbert space language, the set $\{1, x, x^2, \dots\}$ spans a dense subspace of $C([a,b])$. If a vector is orthogonal to a dense subspace, it must be the zero vector.
 \end{solution}
 
 \begin{exercise}
@@ -62,30 +88,57 @@ for $z$ sufficiently large.
 \end{exercise}
 
 \begin{solution}
-Note that $|\operatorname{Im}(z)| \leq |z|$, so the condition implies $|f(z)| \leq |z|^4$ for $|z| \gg 1$.
-By the generalized Liouville's Theorem, an entire function satisfying $|f(z)| \leq A + B|z|^k$ is a polynomial of degree at most $k$.
-Thus $f(z)$ is a polynomial of degree at most 4.
-Let $z = x \in \mathbb{R}$. Then $\operatorname{Im}(z) = 0$, so $|f(x)| \leq |x|^2 \cdot 0 = 0$ for $x \gg 1$.
-This implies $f(x) = 0$ for all sufficiently large real $x$.
-An entire function that vanishes on a set with an accumulation point (the real axis) must be identically zero by the Identity Theorem.
-Therefore, $f(z) = 0$ is the only entire function satisfying the given inequality.
+\textbf{Prerequisites:}
+1. \textbf{Liouville's Theorem (Generalized):} If $f$ is an entire function and $|f(z)| \leq C |z|^n$ for large $|z|$, then $f$ is a polynomial of degree at most $n$.
+2. \textbf{Identity Theorem:} If two holomorphic functions agree on a set with an accumulation point (like a segment of the real axis), they agree everywhere.
+3. \textbf{Imaginary Part Bound:} $|\operatorname{Im}(z)| \leq |z|$.
+
+\textbf{Steps:}
+
+1. \textbf{Determine the nature of $f$:} First, we note that $|\operatorname{Im}(z)| \leq |z|$. The given inequality $|f(z)| \leq |z|^2 |\operatorname{Im}(z)|^2$ implies $|f(z)| \leq |z|^4$ for large $z$. 
+By the Generalized Liouville's Theorem, $f(z)$ must be a polynomial of degree at most 4.
+
+2. \textbf{Test the Real Axis:} Now, consider what happens when $z$ is a real number ($z = x + 0i$). On the real axis, $\operatorname{Im}(z) = 0$. 
+Plugging this into our inequality: $|f(x)| \leq |x|^2 \cdot |0|^2 = 0$.
+This means $f(x) = 0$ for all sufficiently large real $x$.
+
+3. \textbf{Apply the Identity Theorem:} We have a polynomial $f(z)$ that is zero on the real axis (or at least a portion of it). 
+A holomorphic function that vanishes on a line segment must be zero everywhere in its domain. 
+Since $f(z)$ is entire, $f(z) = 0$ for all $z \in \mathbb{C}$.
+
+\textbf{Intuition:}
+The growth condition is extremely restrictive. It doesn't just say the function grows slowly; it says the function \textit{must} shrink to zero whenever you get close to the real axis. 
+
+Because holomorphic functions are very "rigid" (knowing them on a small line determines them everywhere), forcing the function to be zero on the entire real axis leaves it no "room" to be anything other than zero elsewhere.
 \end{solution}
+
 
 \begin{exercise}
 Describe all functions that are holomorphic over the unit disk $D=\{|z|<1\}$, continuous on $\bar{D}$, and map the boundary of the disk into the boundary of the disk.
 \end{exercise}
 
 \begin{solution}
-Such functions are finite Blaschke products.
-Specifically, $f(z)$ must be of the form:
-\[
-f(z) = e^{i\theta} \prod_{k=1}^n \frac{z - a_k}{1 - \bar{a}_k z}
-\]
-where $\theta \in \mathbb{R}$ and $a_1, \dots, a_n \in D$.
-Proof sketch:
-1. $f$ is continuous on $\bar{D}$ and $|f(z)|=1$ for $|z|=1$. By the Maximum Modulus Principle, $|f(z)| \leq 1$ for $z \in D$.
-2. If $f$ has no zeros in $D$, then $1/f$ is also holomorphic and continuous on $\bar{D}$ with $|1/f|=1$ on the boundary, so $|1/f| \leq 1$ in $D$, meaning $|f| \geq 1$. Thus $|f| \equiv 1$, and $f$ is a constant of modulus 1.
-3. If $f$ has zeros $a_1, \dots, a_n$ in $D$ (only finitely many because $f$ is continuous on $\bar{D}$ and $|f|=1$ on the boundary), we can define $g(z) = f(z) / \prod \frac{z - a_k}{1 - \bar{a}_k z}$. Then $g$ is holomorphic in $D$, continuous on $\bar{D}$, has no zeros in $D$, and $|g|=1$ on the boundary. Thus $g$ is a constant $e^{i\theta}$.
+\textbf{Prerequisites:}
+1. \textbf{Maximum Modulus Principle:} If $f$ is holomorphic and continuous on a closed disk, its maximum value must occur on the boundary.
+2. \textbf{Blaschke Factors:} Functions of the form $B_a(z) = \frac{z - a}{1 - \bar{a} z}$ map the unit disk to itself and the unit circle to the unit circle.
+3. \textbf{Fundamental Theorem of Algebra / Zeros of Holomorphic Functions:} A holomorphic function that is continuous on a closed disk and non-zero on the boundary can only have finitely many zeros in the disk.
+
+\textbf{Steps:}
+
+1. \textbf{Boundedness:} Since $|f(z)| = 1$ for all $|z| = 1$, the Maximum Modulus Principle tells us that $|f(z)| \leq 1$ for all $z \in D$.
+
+2. \textbf{Zeros and Finiteness:} If $f$ has no zeros in $D$, then $1/f$ is also holomorphic in $D$ and continuous on $\bar{D}$. Since $|1/f| = 1$ on the boundary, the Maximum Modulus Principle applied to $1/f$ tells us $|1/f| \leq 1$, or $|f| \geq 1$. Combined with step 1, we get $|f| \equiv 1$, so $f$ is a constant of modulus 1.
+
+3. \textbf{Handling Zeros:} If $f$ has zeros $a_1, a_2, \dots, a_n$ in $D$, we can define a Blaschke product $B(z) = \prod_{k=1}^n \frac{z - a_k}{1 - \bar{a}_k z}$. This product has the exact same zeros as $f$ and also has modulus 1 on the boundary.
+
+4. \textbf{Eliminate Zeros:} Define $g(z) = f(z) / B(z)$. This function $g$ is holomorphic (the zeros cancel out) and has no zeros in $D$. Since $|g| = |f|/|B| = 1/1 = 1$ on the boundary, we apply the logic from step 2 to conclude that $g(z)$ must be a constant $e^{i\theta}$.
+
+5. \textbf{Final Form:} Thus, $f(z) = e^{i\theta} \prod_{k=1}^n \frac{z - a_k}{1 - \bar{a}_k z}$.
+
+\textbf{Intuition:}
+This problem asks for functions that "preserve the circle." Imagine the unit disk as a flexible rubber sheet. You are allowed to stretch it, twist it, and fold it, but you must keep the boundary edge exactly on the boundary circle. 
+
+Blaschke products are the only ways to do this holomorphically. Each factor $\frac{z-a}{1-\bar{a}z}$ "wraps" the disk around itself once. By combining multiple factors, you can wrap the disk multiple times, but you are always anchored by the fact that the boundary maps to the boundary.
 \end{solution}
 
 \begin{exercise}
@@ -95,21 +148,33 @@ Note: $S$ is compact means for every bounded sequence $x_n\in H_1$, $Sx_n$ has a
 \end{exercise}
 
 \begin{solution}
-1. Finite dimensionality of $\ker T$:
-If $v \in \ker T$, then $Tv = 0$, so $QTv = 0$. Since $QT = I - S_1$, we have $(I - S_1)v = 0$, i.e., $v = S_1 v$.
-Thus $\ker T \subset \ker(I - S_1)$. By the theory of compact operators, the eigenspace of a compact operator corresponding to a non-zero eigenvalue is finite dimensional. Thus $\ker(I - S_1)$ is finite dimensional, and so is $\ker T$.
+\textbf{Prerequisites:}
+1. \textbf{Compact Operators:} A compact operator $S$ maps the unit ball to a set with a compact closure. One key property is that if $(I-S)v = 0$, the space of such $v$ is finite dimensional.
+2. \textbf{Fredholm Operators:} An operator $T$ is Fredholm if it has a closed range, a finite-dimensional kernel, and a finite-dimensional cokernel. This problem essentially asks to prove $T$ is Fredholm.
+3. \textbf{Closed Range Theorem:} A bounded operator has a closed range if and only if it is "bounded below" on the complement of its kernel.
 
-2. Closedness of $\operatorname{Im} T$:
-Let $Tv_n \to w \in H_2$. We want to show $w \in \operatorname{Im} T$.
-Since $\ker T$ is finite dimensional, we can write $H_1 = \ker T \oplus (\ker T)^\perp$. We may assume $v_n \in (\ker T)^\perp$.
-If $\{v_n\}$ is bounded, then $S_1 v_n$ has a convergent subsequence $S_1 v_{n_k} \to y$. 
-Then $v_{n_k} = Q(T v_{n_k}) + S_1 v_{n_k} \to Qw + y = v$.
-Since $T$ is bounded, $T v_{n_k} \to Tv$, so $w = Tv \in \operatorname{Im} T$.
-If $\{v_n\}$ is unbounded, a contradiction argument shows that $T$ is bounded below on $(\ker T)^\perp$, or more generally, one uses the Fredholm property. The identity $TQ = I - S_2$ similarly implies the range is closed.
+\textbf{Steps:}
 
-3. Finite dimensionality of $\operatorname{coker} T$:
-$\operatorname{coker} T \cong (\operatorname{Im} T)^\perp = \ker T^*$.
-From $TQ = I - S_2$, taking adjoints gives $Q^* T^* = I - S_2^*$. Since $S_2^*$ is also compact, $\ker T^* \subset \ker(I - S_2^*)$ is finite dimensional.
+1. \textbf{Finite dimensionality of $\ker T$:}
+If $v \in \ker T$, then $Tv = 0$, which implies $QTv = 0$. Since $QT = I - S_1$, we have $(I - S_1)v = 0$, or $v = S_1 v$. This means $v$ is an eigenvector of the compact operator $S_1$ with eigenvalue 1. The eigenspaces of compact operators for non-zero eigenvalues are always finite dimensional. Thus $\ker T$ is finite dimensional.
+
+2. \textbf{Closedness of $\operatorname{Im} T$:}
+Suppose $Tv_n \to w$. We want to see if $w = Tv$ for some $v$. We can assume $v_n$ is perpendicular to $\ker T$. 
+If the sequence $\{v_n\}$ is bounded, then $S_1 v_n$ has a convergent subsequence $S_1 v_{n_k} \to y$. 
+From the identity $v_{n_k} - S_1 v_{n_k} = Q(Tv_{n_k})$, we see that $v_{n_k} = Q(Tv_{n_k}) + S_1 v_{n_k} \to Qw + y$. 
+Let $v = Qw + y$. Then $v_{n_k} \to v$, and by continuity $Tv = w$. 
+The case where $\{v_n\}$ is unbounded can be handled by showing that if no such $v$ existed, it would violate the compact property of $S_1$.
+
+3. \textbf{Finite dimensionality of $\operatorname{coker} T$:}
+The cokernel of $T$ is isomorphic to the kernel of its adjoint $T^*$. 
+Taking the adjoint of $TQ = I - S_2$ gives $Q^* T^* = I - S_2^*$. 
+Since the adjoint of a compact operator is compact, $S_2^*$ is compact. 
+By the same logic used in Step 1, $\ker T^* \subset \ker(I - S_2^*)$ must be finite dimensional.
+
+\textbf{Intuition:}
+The operators $S_1$ and $S_2$ are "small" (compact). This means $T$ is "almost invertible" because $QT$ and $TQ$ are almost the identity. 
+
+In finite dimensions, every linear map has a closed range and finite kernel. In infinite dimensions, this is not true. However, being "almost invertible" forces the operator to behave mostly like a finite-dimensional one, preserving the closedness of its image and the finiteness of its "failure to be invertible" (the kernel and cokernel).
 \end{solution}
 
 \begin{exercise}
@@ -129,21 +194,36 @@ for all $f\in H_1$, where $\|.\|_{L^{\infty}}$ stands for the usual supremum nor
 \end{exercise}
 
 \begin{solution}
-For $f \in H_1$, the Fourier series $f(x) = \sum_{n=-\infty}^\infty \hat{f}(n) e^{2\pi i n x}$ converges absolutely and uniformly.
-Indeed, we can write:
+\textbf{Prerequisites:}
+1. \textbf{Fourier Series:} For "nice" functions, $f(x) = \sum \hat{f}(n) e^{2\pi i n x}$.
+2. \textbf{Cauchy-Schwarz Inequality for Series:} $\sum |a_n b_n| \leq \sqrt{\sum |a_n|^2} \sqrt{\sum |b_n|^2}$.
+3. \textbf{Sum of Reciprocals of Squares:} The series $\sum_{n=1}^\infty \frac{1}{n^2}$ converges (to $\pi^2/6$).
+
+\textbf{Steps:}
+
+1. \textbf{Expand $f(x)$:} We express the function in its Fourier representation:
+$|f(x)| = |\sum_{n=-\infty}^\infty \hat{f}(n) e^{2\pi i n x}| \leq \sum_{n=-\infty}^\infty |\hat{f}(n)|$. 
+This inequality holds because $|e^{i\theta}| = 1$.
+
+2. \textbf{Apply Cauchy-Schwarz:} To utilize the Sobolev norm $\|f\|_1$, we need to introduce the factor $\sqrt{1+n^2}$ into the sum. We write:
 \[
-|f(x)| \leq \sum_{n=-\infty}^\infty |\hat{f}(n)| = \sum_{n=-\infty}^\infty \left( |\hat{f}(n)| \sqrt{1+n^2} \cdot \frac{1}{\sqrt{1+n^2}} \right)
+\sum_{n=-\infty}^\infty |\hat{f}(n)| = \sum_{n=-\infty}^\infty \left( |\hat{f}(n)| \sqrt{1+n^2} \cdot \frac{1}{\sqrt{1+n^2}} \right)
 \]
-By the Cauchy-Schwarz inequality:
+Using Cauchy-Schwarz with $a_n = |\hat{f}(n)|\sqrt{1+n^2}$ and $b_n = 1/\sqrt{1+n^2}$:
 \[
-\sum_{n=-\infty}^\infty |\hat{f}(n)| \leq \left( \sum_{n=-\infty}^\infty (1+n^2)|\hat{f}(n)|^2 \right)^{1/2} \left( \sum_{n=-\infty}^\infty \frac{1}{1+n^2} \right)^{1/2}
+|f(x)| \leq \sqrt{\sum_{n=-\infty}^\infty (1+n^2)|\hat{f}(n)|^2} \cdot \sqrt{\sum_{n=-\infty}^\infty \frac{1}{1+n^2}}
 \]
-The first term is $\|f\|_1$. The second term is a convergent series:
-\[
-\sum_{n=-\infty}^\infty \frac{1}{1+n^2} = 1 + 2\sum_{n=1}^\infty \frac{1}{1+n^2} = C^2 < \infty
-\]
-Thus $\|f\|_\infty \leq C \|f\|_1$ for all $f \in H_1$, where $C = \sqrt{\sum \frac{1}{1+n^2}}$.
+
+3. \textbf{Identify the Terms:} The first square root is exactly the definition of $\|f\|_1$. The second square root is a constant $C$ because the series $\sum \frac{1}{1+n^2}$ converges.
+
+4. \textbf{Conclusion:} Since the bound $|f(x)| \leq C \|f\|_1$ holds for every $x \in [0,1]$, it must also hold for the supremum: $\|f\|_\infty \leq C \|f\|_1$.
+
+\textbf{Intuition:}
+The Sobolev norm $\|f\|_1$ measures not just the "size" of the function (the $n=0$ term), but also the "wiggliness" or "roughness" of the function (the terms where $n$ is large). 
+
+By requiring $\sum (1+n^2)|\hat{f}(n)|^2$ to be finite, we are essentially saying that the high-frequency components of the function must decay quickly. If the frequencies decay fast enough, the function cannot have any "infinite spikes," making it bounded and, in fact, continuous.
 \end{solution}
+
 
 \subsection{Team}
 

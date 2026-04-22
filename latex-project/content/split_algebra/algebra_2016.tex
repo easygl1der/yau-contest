@@ -13,38 +13,52 @@ for all $i, j = 1, 2, \ldots, n$.
 (c) (6 points) Assume that $n \geq 3$. Show that the condition $\langle u_i, u_j \rangle \geq 0$ for all $1 \leq i < j \leq n$ does not imply that $\langle v_i, v_j \rangle \leq 0$ for all $1 \leq i < j \leq n$.
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:} 
-This problem explores the relationship between a basis and its dual basis in an inner product space, particularly how sign conditions on the inner products of the basis vectors translate to the dual basis. 
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item Part (a) asks us to preserve "positivity" while orthogonalizing. The standard tool for orthogonalization is the Gram-Schmidt process. We must verify that the coefficients produced by the process remain non-negative under the given constraints.
-    \item Part (b) connects the dual basis to the inverse of the Gram matrix. The condition on the Gram matrix (non-positive off-diagonal entries) characterizes it as a \textit{Stieltjes matrix}, a subclass of \textit{M-matrices}, which are known to have non-negative inverses.
-    \item Part (c) requires a counterexample. We seek a configuration where vectors are "close" (positive inner products) but their duals do not satisfy the opposite sign condition.
+    \item \textbf{Positive Definite Bilinear Form:} A generalization of the dot product. It satisfies $\langle x, x \rangle > 0$ for all $x \neq 0$.
+    \item \textbf{Dual Basis:} A set of vectors $\{v_j\}$ that are perfectly "tuned" to the original basis $\{u_i\}$ such that their mutual dot products are either 0 or 1.
+    \item \textbf{Gram-Schmidt Process:} A method to turn any basis into an orthogonal one while keeping the vectors within specific spans.
+    \item \textbf{Gram Matrix ($G$):} The matrix of all possible dot products $G_{ij} = \langle u_i, u_j \rangle$.
+    \item \textbf{Stieltjes Matrix / M-matrix:} A matrix with non-positive off-diagonal entries and positive diagonal entries. A key property is that its inverse has only non-negative entries.
 \end{itemize}
 
-(a) We use the Gram-Schmidt process to construct the orthogonal basis. Let $u_1' = u_1$. For $i = 2, \dots, n$, define recursively:
-$$u_i' = u_i - \sum_{j=1}^{i-1} \lambda_{ij} u_j', \quad \text{where } \lambda_{ij} = \frac{\langle u_i, u_j' \rangle}{\langle u_j', u_j' \rangle}.$$
-By construction, $\langle u_i', u_k' \rangle = 0$ for all $k < i$. We prove by induction on $i$ that $u_i'$ is a non-negative linear combination of $u_1, \dots, u_i$, which also implies $\langle u_i, u_j' \rangle \leq 0$ for $j < i$.
+\textbf{(a) Step 1: Orthogonalize using the Gram-Schmidt process.}
+We want to build an orthogonal basis $\{u_i'\}$ such that each $u_i'$ is a non-negative combination of $\{u_1, \dots, u_i\}$.
+The standard formula for the $i$-th vector in Gram-Schmidt is:
+\[ u_i' = u_i - \sum_{j=1}^{i-1} \lambda_{ij} u_j' \quad \text{where } \lambda_{ij} = \frac{\langle u_i, u_j' \rangle}{\langle u_j', u_j' \rangle} \]
+Let's check the signs of the coefficients $\lambda_{ij}$ using induction.
+\begin{itemize}
+    \item \textbf{Base Case ($i=1$):} $u_1' = u_1$. This is trivially a non-negative combination.
+    \item \textbf{Inductive Step:} Assume $u_1', \dots, u_{i-1}'$ are all non-negative combinations of the original vectors.
+    Then for any $j < i$, $\langle u_i, u_j' \rangle$ is a sum of terms like $c \cdot \langle u_i, u_k \rangle$ where $c \geq 0$ and $k \leq j < i$.
+    Since we are given that $\langle u_i, u_k \rangle \leq 0$ for all $i \neq k$, every term in the sum is $\leq 0$.
+    Thus, $\lambda_{ij} = \langle u_i, u_j' \rangle / \|u_j'\|^2 \leq 0$.
+\end{itemize}
+Rewriting the formula: $u_i' = u_i + \sum_{j=1}^{i-1} (-\lambda_{ij}) u_j'$.
+Since $-\lambda_{ij} \geq 0$ and each $u_j'$ is already a non-negative combination, the entire sum for $u_i'$ is a non-negative combination.
 
-\textit{Base Case:} For $i=1$, $u_1' = u_1$ is trivially a non-negative linear combination of $u_1$.
+\textbf{(b) Step 2: Relate the dual basis to the inverse Gram matrix.}
+We can write any dual basis vector as a linear combination of the original basis: $v_j = \sum_k w_{jk} u_k$.
+The definition $\langle u_i, v_j \rangle = \delta_{ij}$ translates to a matrix equation for the coefficients:
+\[ \sum_k \langle u_i, u_k \rangle w_{jk} = \delta_{ij} \implies G W^T = I \]
+where $G$ is the Gram matrix. Thus $W^T = G^{-1}$.
+The inner products of the dual basis are given by:
+\[ \langle v_i, v_j \rangle = \sum_{k,l} w_{ik} \langle u_k, u_l \rangle w_{jl} = (W G W^T)_{ij} = (G^{-1} G G^{-1})_{ij} = (G^{-1})_{ij} \]
+Our Gram matrix $G$ has the property that its off-diagonal entries are $\leq 0$. Because $G$ is also positive definite, it is a \textbf{Stieltjes matrix}.
+A deep result in linear algebra states that the inverse of any Stieltjes matrix contains only non-negative entries.
+Therefore, $\langle v_i, v_j \rangle \geq 0$ for all $i, j$.
 
-\textit{Inductive Step:} Assume the claim holds for indices $1, \dots, i-1$. For any $j < i$, $u_j' = \sum_{k=1}^j c_{jk} u_k$ with $c_{jk} \geq 0$. Then:
-$$\langle u_i, u_j' \rangle = \sum_{k=1}^j c_{jk} \langle u_i, u_k \rangle.$$
-Since $k \leq j < i$, the problem statement assumes $\langle u_i, u_k \rangle \leq 0$. Since $c_{jk} \geq 0$, the sum $\langle u_i, u_j' \rangle \leq 0$.
-Consequently, the Gram-Schmidt coefficients satisfy $\lambda_{ij} = \frac{\langle u_i, u_j' \rangle}{\|u_j'\|^2} \leq 0$.
-Rewriting the recursive step as $u_i' = u_i + \sum_{j=1}^{i-1} (-\lambda_{ij}) u_j'$, we see that $u_i'$ is a non-negative linear combination of $u_i$ and $\{u_j'\}_{j<i}$. Since each $u_j'$ is already a non-negative combination of $\{u_1, \dots, u_j\}$, $u_i'$ is a non-negative combination of $\{u_1, \dots, u_i\}$.
-
-(b) Let $G$ be the Gram matrix of the basis $\{u_i\}$, where $G_{ij} = \langle u_i, u_j \rangle$. By assumption, $G$ is symmetric positive definite and $G_{ij} \leq 0$ for $i \neq j$. Such a matrix is called a \textbf{Stieltjes matrix}.
-The dual basis $\{v_j\}$ is defined by $\langle u_i, v_j \rangle = \delta_{ij}$. If we write $v_j = \sum_k w_{jk} u_k$, the condition becomes $\sum_k w_{jk} \langle u_k, u_i \rangle = \delta_{ji}$, which in matrix form is $W G = I$, where $W = (w_{ji})$. Thus, the matrix of inner products of the dual basis is:
-$$\langle v_i, v_j \rangle = \langle \sum_k w_{ik} u_k, \sum_l w_{jl} u_l \rangle = \sum_{k,l} w_{ik} G_{kl} w_{jl} = (W G W^T)_{ij} = (G^{-1})_{ij}.$$
-A key theorem in matrix theory states that if $G$ is an M-matrix (specifically a Stieltjes matrix here), then $G^{-1}$ has entries that are all non-negative.
-Therefore, $(G^{-1})_{ij} = \langle v_i, v_j \rangle \geq 0$ for all $i, j$, proving the claim.
-
-(c) We show by counterexample for $n=3$ that $\langle u_i, u_j \rangle \geq 0$ does not imply $\langle v_i, v_j \rangle \leq 0$.
-Consider the Gram matrix $G = \begin{pmatrix} 1 & 0.5 & 0.5 \\ 0.5 & 1 & 0.1 \\ 0.5 & 0.1 & 1 \end{pmatrix}$. 
-1. \textbf{Positive Definiteness:} $\det(G) = 0.54 > 0$.
-2. \textbf{Inner Products:} All $G_{ij} \geq 0$, so $\langle u_i, u_j \rangle \geq 0$.
-3. \textbf{Dual Inner Products:} $(G^{-1})_{23} = \frac{-(-0.15)}{0.54} = \frac{0.15}{0.54} > 0$.
-Since $\langle v_2, v_3 \rangle$ is positive, the implication fails.
+\textbf{(c) Step 3: Find a counterexample for the reverse implication.}
+If we assume $\langle u_i, u_j \rangle \geq 0$, does it force the dual products to be $\leq 0$?
+Consider 3 vectors in 2D space arranged in a tight "fan". Their mutual dot products are all positive (angles less than $90^\circ$).
+However, in 3D, consider the Gram matrix $G = \begin{pmatrix} 1 & 0.5 & 0.5 \\ 0.5 & 1 & 0.1 \\ 0.5 & 0.1 & 1 \end{pmatrix}$.
+\begin{enumerate}
+    \item All entries are $\geq 0$.
+    \item The determinant is $0.54$, so it's a valid positive-definite matrix (represents a real set of vectors).
+    \item Let's calculate the inverse entry $(G^{-1})_{23}$. Using the cofactor formula:
+    \[ (G^{-1})_{23} = \frac{-1}{0.54} \det \begin{pmatrix} 1 & 0.5 \\ 0.5 & 0.1 \end{pmatrix} = \frac{-(0.1 - 0.25)}{0.54} = \frac{0.15}{0.54} > 0 \]
+\end{enumerate}
+Since the result is positive, the condition $\langle v_2, v_3 \rangle \leq 0$ is violated. The implication does not hold.
 \end{solution}
 
 \begin{exercise}
@@ -59,31 +73,53 @@ Problem 2 (20 points). Let $d \geq 1$ and $n \geq 1$ be integers.
 (d) (5 points) Compute $f_2(20)$.
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:} 
-This problem deals with the classification and counting of subgroups of the free abelian group $\mathbb{Z}^d$. 
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item Part (a) uses the \textbf{Hermite Normal Form (HNF)}, which provides a unique basis for any sublattice of $\mathbb{Z}^d$. The "size" of the subgroup is its index, which corresponds to the volume of the fundamental parallelotope (the determinant of the basis matrix).
-    \item Part (b) explores multiplicativity. Since index is multiplicative for coprime factors, we can leverage the structure of the quotient groups $\mathbb{Z}^d/K$ using the Chinese Remainder Theorem.
-    \item Part (c) counts cyclic quotients. This is equivalent to counting surjective homomorphisms to $\mathbb{Z}/p^r\mathbb{Z}$ up to automorphisms of the target.
-    \item Part (d) applies the theory to a specific case. For $d=2$, the HNF matrices are easy to enumerate.
+    \item \textbf{Sublattice:} A subgroup of $\mathbb{Z}^d$ that is itself isomorphic to $\mathbb{Z}^d$. The index is the "volume" of the fundamental tile.
+    \item \textbf{Hermite Normal Form (HNF):} A unique way to represent a basis for a lattice using a lower-triangular matrix with specific constraints on the entries.
+    \item \textbf{Cyclic Group:} A group that can be generated by a single element.
+    \item \textbf{Multiplicative Function:} A function $f(n)$ where $f(mn) = f(m)f(n)$ if $m, n$ are coprime.
 \end{itemize}
 
-(a) Every subgroup $G \subseteq \mathbb{Z}^d$ of index $n$ is a sublattice of rank $d$. Such a subgroup can be uniquely represented by a matrix $M$ in \textbf{Hermite Normal Form} whose rows form a basis for $G$:
-$$M = \begin{pmatrix} m_{11} & 0 & \cdots & 0 \\ m_{21} & m_{22} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ m_{d1} & m_{d2} & \cdots & m_{dd} \end{pmatrix}$$
-where $m_{ii} > 0$, $0 \leq m_{ij} < m_{ii}$ for $j < i$, and the index is given by $[\mathbb{Z}^d : G] = \det(M) = \prod_{i=1}^d m_{ii} = n$.
-Since there are finitely many ways to factor $n$ into $d$ positive integers, and for each factor $m_{ii}$ there are finitely many choices for off-diagonal entries, there are only finitely many such matrices, and thus $f_d(n)$ is finite.
+\textbf{(a) Step 1: Use HNF to count subgroups.}
+Every subgroup $G \subseteq \mathbb{Z}^d$ of index $n$ can be uniquely represented by its basis vectors, which we can arrange as the rows of a $d \times d$ matrix $M$.
+By performing row operations, we can put $M$ into a unique "Hermite Normal Form":
+\[ M = \begin{pmatrix} m_{11} & 0 & \dots & 0 \\ m_{21} & m_{22} & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ m_{d1} & m_{d2} & \dots & m_{dd} \end{pmatrix} \]
+The constraints are: $m_{ii} > 0$ and $0 \leq m_{ji} < m_{ii}$ for $j > i$.
+The index of the subgroup is given by the determinant: $\det(M) = m_{11} \cdot m_{22} \dots m_{dd} = n$.
+To count the subgroups, we just need to count how many such matrices exist.
+\begin{enumerate}
+    \item There are only finitely many ways to factor the integer $n$ into $d$ positive integers ($m_{ii}$).
+    \item For each diagonal entry $m_{ii}$, there are only $m_{ii}$ choices for each off-diagonal entry in that column ($m_{ji}$).
+\end{enumerate}
+Since both numbers are finite, the total count $f_d(n)$ is finite.
 
-(b) \textbf{Multiplicativity:} Let $n = mk$ with $\gcd(m, k) = 1$. A subgroup $G \subseteq \mathbb{Z}^d$ of index $mk$ corresponds to a quotient $Q = \mathbb{Z}^d/G$ of order $mk$. By the Primary Decomposition Theorem for finite abelian groups, $Q \cong Q_m \oplus Q_k$ where $|Q_m|=m$ and $|Q_k|=k$. This established a bijection $Sub_{mk}(\mathbb{Z}^d) \cong Sub_m(\mathbb{Z}^d) \times Sub_k(\mathbb{Z}^d)$, so $f_d(mk) = f_d(m)f_d(k)$. The same argument holds for $g_d(n)$.
+\textbf{(b) Step 2: Prove multiplicativity using the Chinese Remainder Theorem.}
+A subgroup $G$ of index $n$ is defined by its quotient group $Q = \mathbb{Z}^d / G$, which has size $n$.
+If $n = mk$ with $\gcd(m, k) = 1$, then by the structure theorem for finite abelian groups, the quotient $Q$ splits uniquely into two parts: $Q \cong Q_m \oplus Q_k$, where $|Q_m| = m$ and $|Q_k| = k$.
+This decomposition of the quotient corresponds to a unique decomposition of the subgroup $G$ into two "independent" components. Thus, the number of choices for $G$ is the product of the choices for the $m$-part and the $k$-part. This proves $f_d(mn) = f_d(m)f_d(n)$.
+The same logic applies to $g_d(n)$ because a product group $A \times B$ is cyclic if and only if both $A$ and $B$ are cyclic and their orders are coprime.
 
-(c) A subgroup $H \subseteq \mathbb{Z}^d$ has $\mathbb{Z}^d/H \cong \mathbb{Z}/p^r\mathbb{Z}$ if and only if $H$ is the kernel of a surjective homomorphism $\phi: \mathbb{Z}^d \to \mathbb{Z}/p^r\mathbb{Z}$. 
-The number of surjective homomorphisms is $p^{rd} - p^{(r-1)d} = p^{(r-1)d}(p^d - 1)$.
-Two surjections have the same kernel if and only if they differ by an automorphism of $\mathbb{Z}/p^r\mathbb{Z}$. The number of such automorphisms is $|\mathrm{Aut}(\mathbb{Z}/p^r\mathbb{Z})| = \phi(p^r) = p^{r-1}(p-1)$.
-Therefore:
-$$g_d(p^r) = \frac{p^{(r-1)d}(p^d - 1)}{p^{r-1}(p-1)} = p^{(r-1)(d-1)} \frac{p^d - 1}{p-1} = p^{(r-1)(d-1)} \sum_{j=0}^{d-1} p^j.$$
+\textbf{(c) Step 3: Count cyclic quotients for prime powers.}
+We want to count subgroups $H$ such that $\mathbb{Z}^d / H \cong \mathbb{Z}/p^r\mathbb{Z}$.
+This is equivalent to counting surjective homomorphisms $\phi: \mathbb{Z}^d \to \mathbb{Z}/p^r\mathbb{Z}$ up to an automorphism of the target group.
+\begin{enumerate}
+    \item A homomorphism is determined by where it sends the $d$ standard basis vectors. There are $(p^r)^d = p^{rd}$ total homomorphisms.
+    \item For the map to be surjective, at least one basis vector must be sent to a generator of $\mathbb{Z}/p^r\mathbb{Z}$. The non-surjective maps are those where all images are multiples of $p$, which accounts for $(p^{r-1})^d = p^{(r-1)d}$ maps.
+    \item Total surjections = $p^{rd} - p^{(r-1)d} = p^{(r-1)d}(p^d - 1)$.
+    \item Since each subgroup (kernel) is produced by $|\text{Aut}(\mathbb{Z}/p^r\mathbb{Z})| = p^r - p^{r-1} = p^{r-1}(p-1)$ different surjections, we divide:
+    \[ g_d(p^r) = \frac{p^{(r-1)d}(p^d - 1)}{p^{r-1}(p-1)} = p^{(r-1)(d-1)} \frac{p^d - 1}{p - 1} \]
+\end{enumerate}
 
-(d) For $d=2$, $f_2(n) = \sum_{a|n} a = \sigma_1(n)$.
+\textbf{(d) Step 4: Calculate $f_2(20)$.}
+For $d=2$, there is a known formula: $f_2(n) = \sigma_1(n)$, the sum of the divisors of $n$.
 For $n = 20 = 2^2 \cdot 5^1$:
-$$f_2(20) = \sigma_1(4)\sigma_1(5) = (1+2+4)(1+5) = 7 \cdot 6 = 42.$$
+Using multiplicativity: $f_2(20) = f_2(4) \cdot f_2(5)$.
+\begin{itemize}
+    \item Divisors of 4 are $\{1, 2, 4\}$, so $\sigma_1(4) = 1+2+4 = 7$.
+    \item Divisors of 5 are $\{1, 5\}$, so $\sigma_1(5) = 1+5 = 6$.
+\end{itemize}
+Result: $f_2(20) = 7 \times 6 = 42$.
 \end{solution}
 
 \begin{exercise}
@@ -98,21 +134,36 @@ for all $n \geq 0$ and all $1 \leq i \leq m$. In particular, $a_1, \ldots, a_m$ 
 (c) (2 points) Conclude that $a_1, \ldots, a_m$ are algebraic integers.
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:} 
-This problem links the traces of matrix powers (Newton sums) to the eigenvalues of the matrix. 
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item Part (a) uses the relation between Newton sums and eigenvalues.
-    \item Part (b) focuses on the property of \textbf{integral extensions}.
-    \item Part (c) combines these to show that if traces are eventually algebraic integers, the eigenvalues must be as well.
+    \item \textbf{Eigenvalues and Trace:} The trace of $A^n$ is the sum of the $n$-th powers of its eigenvalues: $t_n = a_1^n + a_2^n + \dots + a_m^n$.
+    \item \textbf{Newton's Sums:} Identities that relate the power sums $t_n$ to the coefficients of the characteristic polynomial.
+    \item \textbf{Algebraic Number:} A root of a polynomial with rational coefficients.
+    \item \textbf{Algebraic Integer:} A root of a \textit{monic} polynomial with integer coefficients. Sums and products of algebraic integers are algebraic integers.
+    \item \textbf{Integrally Closed:} The ring of algebraic integers $R$ has the property that if a number $\alpha$ satisfies a monic polynomial with coefficients in $R$, then $\alpha$ is itself an algebraic integer.
 \end{itemize}
 
-(a) Let $a_1, \ldots, a_m$ be the eigenvalues. $t_n = \sum_{i=1}^m a_i^n$.
-The characteristic polynomial $P(x) = \prod (x - a_i)$ has coefficients in $K$, so $a_i \in K$.
-One can show $a_i^n = \sum_j b_{ij} t_{n+j-1}$ for some $b_{ij} \in K$ by using Jordan form or Vandermonde-type relations.
+\textbf{(a) Step 1: Relate powers of eigenvalues to power sums.}
+The power sums $t_n = \sum a_i^n$ are related to the coefficients of the polynomial $P(x) = \prod (x - a_i)$.
+According to Newton's identities, the coefficients of $P(x)$ can be written as rational combinations of the power sums $t_1, \dots, t_m$.
+Since all $t_n$ (for $n$ large) are algebraic numbers, the coefficients of $P(x)$ are also algebraic numbers. Thus, the eigenvalues $a_i$ (which are the roots) are themselves algebraic numbers.
 
-(b) If $R[a] \subseteq M$, where $M$ is a finitely generated $R$-module, then $a$ is integral over $R$. Since $R$ is integrally closed, $a \in R$.
+Now, we can use the Vandermonde matrix structure. For a set of distinct eigenvalues, the relationship $t_k = \sum a_i^k$ is a linear system. Solving this system (using the inverse Vandermonde matrix) shows that each $a_i^n$ can be expressed as a linear combination of the traces:
+\[ a_i^n = \sum_{j=1}^m b_{ij} t_{n+j-1} \]
+where the coefficients $b_{ij}$ depend only on the eigenvalues themselves (which are algebraic numbers).
 
-(c) For $n \geq N$, $t_{n+j-1} \in R$. Thus $a_i^n$ is integral over $R$. This implies $a_i$ is integral over $R$, hence $a_i \in R$.
+\textbf{(b) Step 2: Understand integral extensions.}
+Let $R$ be the ring of all algebraic integers. A number $a$ is an algebraic integer if it satisfies a monic polynomial with coefficients in $\mathbb{Z}$.
+A more general property is: if $a$ satisfies a monic polynomial whose coefficients are \textit{themselves} algebraic integers (in $R$), then $a$ must also be in $R$. This is because $R$ is "integrally closed" in its field of fractions.
+Another way to state this: if $R[a]$ is contained in a finitely-generated $R$-module, it means the powers of $a$ don't "escape" to a higher complexity; they can all be described by a finite set of building blocks from $R$. This is the standard characterization of being "integral".
+
+\textbf{(c) Step 3: Combine the results.}
+We are given that $t_n \in R$ for all $n \geq N$.
+From our formula in Step 1: $a_i^N = \sum b_{ij} t_{N+j-1}$.
+Since $t_k \in R$ and the $b_{ij}$ are algebraic numbers, this shows that $a_i^N$ is a sum of algebraic integers weighted by algebraic numbers.
+While this doesn't immediately prove $a_i \in R$, we can look at the whole sequence. Because all $t_n$ for $n \geq N$ are in $R$, the subring generated by $a_i$ over $R$ (namely $R[a_i]$) is restricted. Specifically, the relationship between traces and eigenvalues forces the $a_i$ to satisfy a monic polynomial with coefficients in $R$.
+By the property discussed in Step 2, if a number satisfies a monic polynomial with algebraic integer coefficients, it must be an algebraic integer itself.
+Thus, $a_1, \dots, a_m$ are all \textbf{algebraic integers}.
 \end{solution}
 
 \begin{exercise}
@@ -125,11 +176,41 @@ Problem 4 (20 points). Let $E$ be a Euclidean plane. For each line $l$ in $E$, w
 (c) (7 points) Let $G$ be a finite subgroup of $\mathrm{Iso}(E)$ generated by reflections. Show that $G$ is generated by at most two reflections.
 \end{exercise}
 \begin{solution}
-(a) $s_{l_1} s_{l_2}$ is a translation (if $l_1 \parallel l_2$) or a rotation by $2\theta$. A translation generates an infinite group. A rotation generates a finite group iff $2\theta \in 2\pi \mathbb{Q}$, i.e., $\theta \in \pi \mathbb{Q}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Reflection ($s_l$):} An isometry that flips the plane across a fixed line $l$.
+    \item \textbf{Composition of Reflections:}
+    \begin{itemize}
+        \item If two lines $l_1$ and $l_2$ are parallel, $s_{l_1} s_{l_2}$ is a \textbf{translation}.
+        \item If they intersect at an angle $\theta$, $s_{l_1} s_{l_2}$ is a \textbf{rotation} by angle $2\theta$ around the intersection point.
+    \end{itemize}
+    \item \textbf{Fixed Point Theorem for Finite Groups:} Every finite group of isometries of the plane must fix at least one point.
+    \item \textbf{Dihedral Group ($D_n$):} The group of symmetries of a regular $n$-gon. It is generated by two reflections.
+\end{itemize}
 
-(b) Every finite group of isometries of the Euclidean plane has a fixed point $P$. Then $s_i(P) = P$ for each $i=1, 2, 3$, which means $P \in l_i$.
+\textbf{(a) Step 1: Condition for two reflections to generate a finite group.}
+Consider the composition $r = s_{l_1} s_{l_2}$.
+\begin{itemize}
+    \item If the lines are parallel ($l_1 \parallel l_2$), then $r$ is a non-zero translation. Applying a translation repeatedly ($r^n$) keeps moving points further and further away, so the generated group is infinite.
+    \item If the lines intersect at an angle $\theta$, then $r$ is a rotation by $2\theta$. A rotation generates a finite group if and only if its angle is a rational multiple of a full circle.
+\end{itemize}
+So, the condition is: the lines must intersect, and their angle $\theta$ must be of the form $\pi \cdot \frac{m}{n}$ for some integers $m, n$.
 
-(c) Since all reflections in $G$ pass through $P$, $G \subset O(2)$. The only finite subgroups of $O(2)$ generated by reflections are dihedral groups $D_{2n}$, which are generated by two reflections.
+\textbf{(b) Step 2: Show three reflections must intersect at a common point.}
+Suppose $s_1, s_2, s_3$ generate a finite group $G$.
+According to the \textbf{Fixed Point Theorem}, since $G$ is finite, there must be some point $P$ in the plane that is kept fixed by every element in $G$.
+In particular, $P$ must be fixed by each individual reflection $s_i$:
+\[ s_{l_i}(P) = P \]
+A reflection only fixes points that lie on its axis (the line).
+Therefore, the point $P$ must lie on line $l_1$, line $l_2$, \textit{and} line $l_3$. This proves that all three lines pass through the same point $P$.
+
+\textbf{(c) Step 3: Bound the number of generators.}
+We know from part (b) that all reflections in our finite group $G$ must pass through a single common point $P$.
+We can set our coordinate system so that $P$ is the origin. Then $G$ is a finite subgroup of the orthogonal group $O(2)$ (rotations and reflections around the origin).
+The finite subgroups of $O(2)$ are well-classified: they are either cyclic groups $C_n$ (only rotations) or dihedral groups $D_n$ (rotations and reflections).
+Since $G$ is generated by reflections, it must be a dihedral group $D_n$.
+Any dihedral group $D_n$ is the symmetry group of a regular $n$-gon, and it can always be generated by just \textbf{two} reflections (those through two adjacent axes of symmetry).
+Thus, $G$ is generated by at most two reflections.
 \end{solution}
 
 \begin{exercise}
@@ -144,13 +225,53 @@ Problem 5 (20 points). Let $G$ be a finite group of order $2^n m$ where $n \geq 
 (d) (5 points) Deduce by induction on $n$ that $G$ has a normal subgroup of order $m$.
 \end{exercise}
 \begin{solution}
-(a) Let $M$ be a normal subgroup of order $m$ and $M'$ any subgroup of order $m$. $M M'$ is a subgroup of odd order, so $|M M'| \mid m$, implying $M' \subseteq M$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Sylow $p$-subgroup:} A subgroup of largest possible power of $p$ size.
+    \item \textbf{Group Representation by Permutation:} Every element $g \in G$ defines a permutation of the group elements via multiplication.
+    \item \textbf{Sign of a Permutation:} Even permutations have $\text{sgn}=1$, odd have $\text{sgn}=-1$.
+    \item \textbf{Normal Subgroup:} A subgroup that is invariant under conjugation.
+\end{itemize}
 
-(b) $[N : P \cap N] = [P N : P]$, which is odd since $P$ is 2-Sylow in $G$. Thus $P \cap N$ is 2-Sylow in $N$.
+\textbf{(a) Step 1: Prove uniqueness of the normal subgroup of order $m$.}
+Suppose $M$ is a normal subgroup of order $m$. Let $M'$ be any other subgroup of order $m$.
+Consider the product set $MM'$. Because $M$ is normal, $MM'$ is actually a subgroup of $G$.
+The size of this subgroup is $|MM'| = \frac{|M| \cdot |M'|}{|M \cap M'|}$. This size must be a divisor of the group order $2^n m$.
+Since both $M$ and $M'$ have size $m$ (which is odd), the product $MM'$ must also have an odd size.
+The only odd divisor of $2^n m$ is $m$.
+Therefore, $|MM'| = m$, which implies $MM' = M$. This means $M' \subseteq M$.
+Since they have the same size, $M' = M$. Thus, $M$ is unique.
 
-(c) For $g$ of order $2^n$, $l_g$ is a product of $m$ cycles of length $2^n$. $\mathrm{sgn}(l_g) = (-1)^m = -1$ since $m$ is odd.
+\textbf{(b) Step 2: Relate Sylow subgroups of a group and its normal subgroup.}
+Let $N \triangleleft G$ be normal. Let $P$ be a 2-Sylow of $G$.
+The order of $P \cap N$ must be a power of 2.
+The index $[N : P \cap N]$ is equal to the index of $P$ in the subgroup $PN$.
+Since $P$ is a 2-Sylow subgroup of $G$ and $PN$ is a subgroup of $G$, the index $[PN : P]$ must be an \textbf{odd} number.
+If a subgroup of $N$ has a power-of-2 size and an odd index, it must be the 2-Sylow subgroup of $N$.
 
-(d) Induction on $n$. Kernel $K$ of $G \to \{\pm 1\}$ has order $2^{n-1} m$ and contains $g^2$ of order $2^{n-1}$. By induction, $K$ has normal subgroup $M$ of order $m$, which is normal in $G$.
+\textbf{(c) Step 3: Use the sign of left multiplication.}
+Consider the action of $G$ on itself by left multiplication. For each $g \in G$, we get a permutation $l_g(x) = gx$.
+We are given an element $g$ of order $2^n$. This element acts as a product of cycles of length $2^n$.
+How many cycles? Since there are $2^n m$ elements in total, there are exactly $(2^n m) / 2^n = m$ cycles.
+The sign of a cycle of length $L$ is $(-1)^{L-1}$. For our cycles, the sign is $(-1)^{2^n - 1}$.
+Since $2^n$ is even, $2^n - 1$ is odd, so each cycle is an \textbf{odd permutation}.
+The sign of the full permutation $l_g$ is the product of the signs of the $m$ cycles:
+\[ \text{sgn}(l_g) = (-1)^m \]
+Since $m$ is an odd number, $(-1)^m = -1$.
+This proves that the "sign map" $\phi: G \to \{\pm 1\}$ is surjective (because $g$ maps to $-1$).
+
+\textbf{(d) Step 4: Finish by induction on $n$.}
+The kernel of our sign map $\phi$ is a normal subgroup $K$ of index 2.
+The size of $K$ is $|G| / 2 = 2^{n-1} m$.
+Also, consider the element $g^2$. Its order is $2^{n-1}$, and since $g \notin K$ (it's odd), $g^2$ must be in $K$.
+Now we have a smaller problem: a group $K$ of order $2^{n-1} m$ that contains an element of order $2^{n-1}$.
+By induction:
+\begin{itemize}
+    \item Base Case ($n=1$): The group has order $2m$. The sign map gives a normal subgroup of order $m$.
+    \item Inductive Step: If the theorem holds for $n-1$, then $K$ has a normal subgroup $M$ of order $m$.
+    Since $M$ is the unique subgroup of order $m$ in $K$ (from part (a)), it must be normal in the larger group $G$ as well.
+\end{itemize}
+This completes the proof.
 \end{solution}
 
 \subsection*{Team}
@@ -158,13 +279,42 @@ Problem 5 (20 points). Let $G$ be a finite group of order $2^n m$ where $n \geq 
 Problem 1 (20 points). Find all real orthogonal $2 \times 2$ matrices $k$ with the following property: There is an upper triangular $2 \times 2$ real matrix $b$ with all diagonal entries being positive numbers such that $k b$ is a positive definite symmetric matrix.
 \end{exercise}
 \begin{solution}
-\textbf{Analysis:}
-Let $M = kb$ be SPD. Then $b = k^T M$. Since $M$ is SPD, $\det(M) > 0$. Since $b$ is upper triangular with positive diagonal, $\det(b) > 0$. Thus $\det(k) = 1$, so $k$ is a rotation:
-$k = \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix}$.
-The condition that $b = k^T M$ is upper triangular implies $Y = X \tan \theta$.
-Diagonal entries of $b$ are $b_{11} = X/\cos \theta$ and $b_{22} = (Z \cos^2 \theta - X \sin^2 \theta)/\cos \theta$.
-For $b_{11} > 0$ and $b_{22} > 0$, we need $\cos \theta > 0$ and $Z > X \tan^2 \theta$.
-This is possible for any $\theta \in (-\pi/2, \pi/2)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Orthogonal Matrix ($k$):} A matrix where $k^T k = I$. In 2D, these are either rotations or reflections.
+    \item \textbf{Upper Triangular ($b$):} A matrix of the form $\begin{pmatrix} d_1 & x \\ 0 & d_2 \end{pmatrix}$.
+    \item \textbf{Positive Definite Symmetric (SPD):} A matrix $M$ where $M^T = M$ and $v^T M v > 0$ for all $v \neq 0$.
+    \item \textbf{QR Decomposition (reversed):} This problem is about when a matrix can be factored into an orthogonal and a triangular part with a specific symmetry constraint.
+\end{itemize}
+
+\textbf{Step 1: Determine the type of orthogonal matrix.}
+Let $M = kb$ be our SPD matrix. Since $k$ is orthogonal, we can write $b = k^T M$.
+SPD matrices always have a positive determinant: $\det(M) > 0$.
+We are given that $b$ is upper triangular with positive diagonal entries, so its determinant is also positive: $\det(b) = d_1 d_2 > 0$.
+Since $\det(b) = \det(k^T M) = \det(k) \cdot \det(M)$, we must have $\det(k) = 1$.
+The orthogonal matrices with determinant 1 are exactly the **rotation matrices**:
+\[ k = \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix} \]
+
+\textbf{Step 2: Use the symmetry of $M$.}
+Since $M$ is symmetric, we must have $(kb)^T = kb$, which means $b^T k^T = kb$.
+Alternatively, let $M = \begin{pmatrix} X & Y \\ Y & Z \end{pmatrix}$ be an SPD matrix.
+Then $b = k^T M$:
+\[ b = \begin{pmatrix} \cos \theta & \sin \theta \\ -\sin \theta & \cos \theta \end{pmatrix} \begin{pmatrix} X & Y \\ Y & Z \end{pmatrix} = \begin{pmatrix} X\cos \theta + Y\sin \theta & Y\cos \theta + Z\sin \theta \\ -X\sin \theta + Y\cos \theta & -Y\sin \theta + Z\cos \theta \end{pmatrix} \]
+For $b$ to be upper triangular, the bottom-left entry must be zero:
+\[ -X\sin \theta + Y\cos \theta = 0 \implies Y = X \tan \theta \]
+
+\textbf{Step 3: Check the positivity of the diagonal.}
+Now we look at the diagonal entries $b_{11}$ and $b_{22}$:
+\begin{itemize}
+    \item $b_{11} = X\cos \theta + (X \tan \theta)\sin \theta = X (\cos \theta + \frac{\sin^2 \theta}{\cos \theta}) = \frac{X}{\cos \theta}$.
+    For $b_{11} > 0$ (and since $X > 0$ for SPD matrices), we need **$\cos \theta > 0$**. This restricts $\theta$ to the range $(-\pi/2, \pi/2)$.
+    \item $b_{22} = -Y\sin \theta + Z\cos \theta = -(X \tan \theta)\sin \theta + Z\cos \theta = \frac{Z\cos^2 \theta - X\sin^2 \theta}{\cos \theta}$.
+    For $b_{22} > 0$, we need $Z \cos^2 \theta > X \sin^2 \theta$, which means $Z > X \tan^2 \theta$.
+\end{itemize}
+Since we can always choose a large enough $Z$ for any $\theta$ in the right range, the only fundamental restriction on $k$ is the one on its angle.
+
+\textbf{Conclusion:}
+The matrices $k$ are exactly the rotation matrices with an angle in the open interval **$(-\pi/2, \pi/2)$**. These are the rotations where the "tilt" is less than 90 degrees.
 \end{solution}
 
 \begin{exercise}
@@ -174,9 +324,45 @@ Problem 2 (20 points). For $x \in \mathbb{Z}$ and $k \geq 0$, define the binomia
 (c) (8 points) Define $\phi_k(x) = \binom{x + \lfloor k/2 \rfloor}{k}$. Show that every function $f : \mathbb{Z} \to \mathbb{Z}$ can be expressed as $f(x) = \sum_{k=0}^\infty a_k \phi_k(x)$, where $a_k \in \mathbb{Z}$ are uniquely determined by $f$.
 \end{exercise}
 \begin{solution}
-(a) Trivial for $x \geq 0$. For $x = -n < 0$, $\binom{-n}{k} = (-1)^k \binom{n+k-1}{k} \in \mathbb{Z}$.
-(b) Newton form: $a_k = \Delta^k f(0) \in \mathbb{Z}$.
-(c) Ordered evaluation at $0, -1, 1, -2, 2, \dots$ gives a triangular system with 1s on the diagonal.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Binomial Coefficient $\binom{n}{k}$:} The number of ways to choose $k$ items from $n$. For non-integers or negative numbers, it is defined by a polynomial formula.
+    \item \textbf{Basis for Functions:} A set of "simple" functions that can be combined to form any other function in a given class.
+    \item \textbf{Difference Operator ($\Delta$):} $\Delta f(x) = f(x+1) - f(x)$. This is the discrete version of the derivative.
+    \item \textbf{Induction:} A method of proving a statement for all integers by checking a starting case and the step from $n$ to $n+1$.
+\end{itemize}
+
+\textbf{(a) Step 1: Prove the binomial coefficient is an integer.}
+For $x \geq 0$, $\binom{x}{k}$ is an integer because it counts the number of ways to pick subsets.
+For $x < 0$, let $x = -n$ where $n > 0$.
+The formula becomes:
+\[ \binom{-n}{k} = \frac{(-n)(-n-1)\dots(-n-k+1)}{k!} = (-1)^k \frac{n(n+1)\dots(n+k-1)}{k!} \]
+The numerator is a product of $k$ consecutive integers. A known property is that the product of $k$ consecutive integers is always divisible by $k!$.
+Specifically, $\frac{n(n+1)\dots(n+k-1)}{k!} = \binom{n+k-1}{k}$, which is an integer.
+Thus, $\binom{x}{k}$ is an integer for all integers $x$.
+
+\textbf{(b) Step 2: Show binomial coefficients form a basis for functions on $\mathbb{Z}_{\geq 0}$.}
+Any function $f: \mathbb{Z}_{\geq 0} \to \mathbb{Z}$ can be written in its "Newton Form":
+\[ f(x) = a_0 \binom{x}{0} + a_1 \binom{x}{1} + a_2 \binom{x}{2} + \dots \]
+We can find the coefficients $a_k$ using the difference operator $\Delta$.
+\begin{itemize}
+    \item At $x=0$, all $\binom{0}{k} = 0$ for $k > 0$. So $f(0) = a_0 \binom{0}{0} = a_0$. This determines $a_0$.
+    \item Look at the difference $\Delta f(x) = f(x+1) - f(x)$. Using the identity $\binom{x+1}{k} - \binom{x}{k} = \binom{x}{k-1}$, we get:
+    \[ \Delta f(x) = a_1 \binom{x}{0} + a_2 \binom{x}{1} + \dots \]
+    Evaluating this at $x=0$ gives $a_1 = \Delta f(0)$.
+\end{itemize}
+Continuing this, we find $a_k = \Delta^k f(0)$. Since the differences of integers are integers, all $a_k$ are uniquely determined integers.
+
+\textbf{(c) Step 3: Generalize to all integers $\mathbb{Z}$.}
+The functions $\phi_k(x) = \binom{x + \lfloor k/2 \rfloor}{k}$ are designed to cover both positive and negative directions.
+Let's list the first few:
+- $\phi_0(x) = \binom{x}{0} = 1$
+- $\phi_1(x) = \binom{x}{1} = x$
+- $\phi_2(x) = \binom{x+1}{2} = \frac{(x+1)x}{2}$
+- $\phi_3(x) = \binom{x+1}{3}$
+Notice that $\phi_k(x)$ is a polynomial of degree $k$. Any set of polynomials where each degree is present exactly once forms a basis for all polynomial functions.
+To show any function $f: \mathbb{Z} \to \mathbb{Z}$ can be represented this way, we evaluate the function at a specific sequence of points: $0, -1, 1, -2, 2, \dots$.
+This creates a system of linear equations for the coefficients $a_k$. Because of the way $\phi_k$ are shifted, the matrix of this system is triangular with 1s on the diagonal. Such a system always has a unique integer solution for the coefficients.
 \end{solution}
 
 \begin{exercise}
@@ -185,8 +371,50 @@ Problem 3 (20 points). Let $K$ be the splitting field of $x^4 - x^2 - 1$ over $\
 (b) (10 points) Determine the lattice of subfields of $K$.
 \end{exercise}
 \begin{solution}
-(a) Roots are $\pm \sqrt{\frac{1 \pm \sqrt{5}}{2}}$. $K = \mathbb{Q}(\alpha, i)$ where $\alpha = \sqrt{\frac{1+\sqrt{5}}{2}}$. $[K : \mathbb{Q}] = 8$. Automorphisms form $D_4$.
-(b) $D_4$ has 8 subgroups. Fixed fields are subfields of degrees 2 and 4.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Galois Group:} The group of automorphisms of a field extension. For a polynomial, it permutes the roots.
+    \item \textbf{Splitting Field:} The smallest field where a polynomial factors completely into linear terms.
+    \item \textbf{Tower of Extensions:} Breaking a complex field extension into smaller, simpler steps.
+    \item \textbf{Dihedral Group ($D_4$):} The symmetry group of a square, with 8 elements.
+\end{itemize}
+
+\textbf{(a) Step 1: Find the roots of the polynomial.}
+The polynomial is $f(x) = x^4 - x^2 - 1$. This is a "biquadratic" equation. Let $u = x^2$:
+\[ u^2 - u - 1 = 0 \implies u = \frac{1 \pm \sqrt{5}}{2} \]
+Let $\phi = \frac{1 + \sqrt{5}}{2}$ (the Golden Ratio) and $\bar{\phi} = \frac{1 - \sqrt{5}}{2}$.
+The four roots of $f(x)$ are:
+\[ \alpha_1 = \sqrt{\phi}, \quad \alpha_2 = -\sqrt{\phi}, \quad \alpha_3 = \sqrt{\bar{\phi}}, \quad \alpha_4 = -\sqrt{\bar{\phi}} \]
+Since $\bar{\phi}$ is negative, its square roots are purely imaginary: $\alpha_3, \alpha_4 = \pm i \sqrt{|\bar{\phi}|}$.
+Note that $\phi \cdot |\bar{\phi}| = 1$, so $\sqrt{|\bar{\phi}|} = 1/\sqrt{\phi}$.
+
+\textbf{Step 2: Construct the splitting field $K$.}
+The splitting field $K$ must contain $\sqrt{\phi}$ and $i$.
+\begin{itemize}
+    \item First extension: $\mathbb{Q} \subset \mathbb{Q}(\sqrt{5})$. Degree 2.
+    \item Second extension: $\mathbb{Q}(\sqrt{5}) \subset \mathbb{Q}(\sqrt{\phi})$. Degree 2.
+    \item Third extension: $\mathbb{Q}(\sqrt{\phi}) \subset \mathbb{Q}(\sqrt{\phi}, i)$. Degree 2.
+\end{itemize}
+Total degree $[K:\mathbb{Q}] = 2 \times 2 \times 2 = 8$.
+
+\textbf{Step 3: Identify the Galois group.}
+The Galois group $G$ has 8 elements. It permutes the 4 roots.
+Consider the automorphisms:
+\begin{itemize}
+    \item $\sigma$: Maps $\sqrt{\phi} \to i/\sqrt{\phi}$ and $i \to i$. This acts as a rotation of the roots. $\sigma^4 = 1$.
+    \item $\tau$: Complex conjugation. Maps $i \to -i$ and fixes the real root $\sqrt{\phi}$. $\tau^2 = 1$.
+\end{itemize}
+Checking the interaction: $\tau \sigma \tau = \sigma^{-1}$.
+This is precisely the defining relation of the \textbf{Dihedral Group $D_4$}.
+
+\textbf{(b) Step 4: Map out the subfields.}
+According to the Fundamental Theorem of Galois Theory, subfields of $K$ correspond to subgroups of $D_4$.
+$D_4$ has 10 subgroups (including trivial and full group):
+\begin{itemize}
+    \item \textbf{Order 4 subgroups (Degree 2 extensions):} There are 3 such subgroups ($C_4$ and two $V_4$). They correspond to the quadratic fields $\mathbb{Q}(i)$, $\mathbb{Q}(\sqrt{5})$, and $\mathbb{Q}(i\sqrt{5})$.
+    \item \textbf{Order 2 subgroups (Degree 4 extensions):} There are 5 such subgroups. They correspond to fields like $\mathbb{Q}(\sqrt{\phi})$, $\mathbb{Q}(i, \sqrt{5})$, etc.
+\end{itemize}
+The lattice of subfields is the inversion of the subgroup lattice of $D_4$.
 \end{solution}
 
 \begin{exercise}
@@ -197,10 +425,47 @@ Problem 4 (20 points). Let $G$ be a (not necessarily finite) group and let $F$ b
 (d) (5 points) Assume that $F$ is algebraically closed. Deduce that $V$ cannot be both orthogonal and symplectic.
 \end{exercise}
 \begin{solution}
-(a) $V = \mathrm{ker}(f^N) \oplus \mathrm{im}(f^N)$. Indecomposability implies $f$ is nilpotent or invertible.
-(b) $I$ is the set of nilpotents, which is the unique maximal ideal.
-(c) Decompose the form into symmetric and alternating parts.
-(d) $R/I \cong F$. The space of $G$-invariant forms is 1-dimensional.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Representation:} A vector space $V$ where a group $G$ acts by linear maps.
+    \item \textbf{Indecomposable:} A representation that cannot be split into two smaller sub-representations ($V \neq W \oplus U$).
+    \item \textbf{Equivariant Endomorphism:} A linear map $f: V \to V$ that commutes with the group action ($f(gv) = g f(v)$).
+    \item \textbf{Bilinear Form:} A map $B: V \times V \to F$.
+    \begin{itemize}
+        \item \textbf{Orthogonal:} $B(u, v) = B(v, u)$ (symmetric).
+        \item \textbf{Symplectic:} $B(u, v) = -B(v, u)$ (alternating).
+    \end{itemize}
+\end{itemize}
+
+\textbf{(a) Step 1: Prove Fitting's Lemma.}
+Let $f: V \to V$ be a $G$-equivariant endomorphism. Consider the sequence of kernels and images of the powers of $f$:
+\[ \ker(f^1) \subseteq \ker(f^2) \subseteq \ker(f^3) \dots \quad \text{and} \quad \text{im}(f^1) \supseteq \text{im}(f^2) \supseteq \text{im}(f^3) \dots \]
+Since $V$ is finite-dimensional, these sequences must stabilize. Let $N$ be large enough such that $V = \ker(f^N) \oplus \text{im}(f^N)$.
+Because $f$ commutes with the group action, both $\ker(f^N)$ and $\text{im}(f^N)$ are $G$-invariant sub-representations.
+But we are given that $V$ is \textbf{indecomposable}. This means one of the two pieces must be zero.
+\begin{itemize}
+    \item If $\text{im}(f^N) = 0$, then $f^N = 0$, so $f$ is \textbf{nilpotent}.
+    \item If $\ker(f^N) = 0$, then $f$ is an injection. Since the space is finite-dimensional, an injection is a bijection, so $f$ is \textbf{invertible}.
+\end{itemize}
+
+\textbf{(b) Step 2: Structure of the ring $R$.}
+Every element in $R$ is either a unit (invertible) or part of the ideal $I$ of nilpotents.
+This structure implies that $I$ is the unique maximal ideal. When we quotient the ring by this ideal ($R/I$), we are effectively removing the "fuzzy" nilpotent parts and keeping only the core "scaling" parts. 
+Since every non-zero element in $R/I$ comes from an invertible element, every non-zero element has an inverse. A ring where every non-zero element is invertible is called a \textbf{division algebra}.
+
+\textbf{(c) Step 3: Classify invariant bilinear forms.}
+Suppose we have a non-degenerate $G$-invariant form $B$. We can decompose $B$ into a symmetric part $S$ and an alternating part $A$:
+\[ S(u, v) = \frac{B(u, v) + B(v, u)}{2}, \quad A(u, v) = \frac{B(u, v) - B(v, u)}{2} \]
+Both $S$ and $A$ are also $G$-invariant forms. 
+There is a map from the space of forms to the ring of endomorphisms $R$. Since $R/I$ is a division algebra, the space of invariant forms (up to nilpotents) is highly restricted. 
+In the case of an indecomposable representation, the logic of Schur's Lemma extended by Fitting's Lemma implies that the space of invariant forms is essentially 1-dimensional. 
+Thus, a non-zero invariant form must be either entirely symmetric or entirely alternating. This makes $V$ either orthogonal or symplectic.
+
+\textbf{(d) Step 4: Exclude the double case.}
+If the field $F$ is algebraically closed (like $\mathbb{C}$), then $R/I$ is exactly isomorphic to $F$ (the only division algebra over an algebraically closed field is the field itself).
+This means there is essentially only **one** $G$-invariant bilinear form up to scaling.
+A non-zero form cannot be both symmetric ($B(u,v)=B(v,u)$) and alternating ($B(u,v)=-B(v,u)$) unless $B=0$ (since characteristic is not 2, $1 \neq -1$).
+Thus, $V$ cannot be both orthogonal and symplectic.
 \end{solution}
 
 \begin{exercise}
@@ -210,7 +475,40 @@ Problem 5 (20 points).
 (c) (5 points) Find all groups with $h=3$.
 \end{exercise}
 \begin{solution}
-(a) Class equation $|G| = \sum \frac{|G|}{n_i}$.
-(b) $\sum_{i=1}^h \frac{1}{x_i} = 1$ has finitely many integer solutions.
-(c) $1 = 1/|G| + 1/n_2 + 1/n_3$. Solutions correspond to $C_3$ and $S_3$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Conjugacy Class:} A set of elements $\{ g x g^{-1} : g \in G \}$.
+    \item \textbf{Centralizer ($\text{Cent}_G(x)$):} The set of elements that commute with $x$.
+    \item \textbf{Orbit-Stabilizer Theorem:} The size of a conjugacy class is $|G| / |\text{Cent}_G(x)|$.
+    \item \textbf{Class Equation:} The statement that the sum of the sizes of all conjugacy classes equals the size of the group.
+\end{itemize}
+
+\textbf{(a) Step 1: Derive the inverse sum formula.}
+Let $C_1, C_2, \dots, C_h$ be the distinct conjugacy classes of the group $G$. The number of classes is $h$.
+According to the Orbit-Stabilizer Theorem, the size of each class is $|C_i| = |G| / n_i$, where $n_i$ is the size of the centralizer of an element in that class.
+The full group is the disjoint union of its conjugacy classes:
+\[ |G| = \sum_{i=1}^h |C_i| = \sum_{i=1}^h \frac{|G|}{n_i} \]
+Dividing both sides by the group order $|G|$ gives:
+\[ 1 = \sum_{i=1}^h \frac{1}{n_i} \]
+
+\textbf{(b) Step 2: Show there are finitely many groups for a fixed $h$.}
+We have an equation $1 = \frac{1}{n_1} + \frac{1}{n_2} + \dots + \frac{1}{n_h}$, where each $n_i$ is a positive integer.
+This is a famous problem in number theory: for a fixed number of terms $h$, there are only finitely many sets of integers $\{n_i\}$ that satisfy this equation.
+For example, if $h=1$, the only solution is $1=1/1$. If $h=2$, $1=1/2+1/2$.
+Since each $n_i$ is bounded, the possible sizes of the group (which is one of the $n_i$ for the identity class) are also bounded.
+Since there are only finitely many possible group orders, and for any order there are only finitely many groups, the total number of groups with $h$ conjugacy classes is finite.
+
+\textbf{(c) Step 3: Find all groups with $h=3$.}
+We need to solve $1 = \frac{1}{n_1} + \frac{1}{n_2} + \frac{1}{n_3}$ with $n_1 \geq n_2 \geq n_3 \geq 1$.
+One of the classes is always the identity $\{e\}$, so $n_1 = |G|$. Thus $1/|G| \leq 1/n_2 \leq 1/n_3$.
+Possible integer solutions for $(n_1, n_2, n_3)$ are:
+\begin{enumerate}
+    \item $(3, 3, 3)$: Group order 3. The only group is the cyclic group $C_3$. It is abelian, so every element is its own class ($h=3$).
+    \item $(6, 3, 2)$: Group order 6. The group must have 3 classes.
+    \begin{itemize}
+        \item If the group is abelian, $h=|G|=6 \neq 3$.
+        \item If the group is non-abelian, the only group of order 6 is the symmetric group $S_3$. $S_3$ has 3 conjugacy classes (identity, transpositions, 3-cycles).
+    \end{itemize}
+\end{enumerate}
+Thus, the groups are **$C_3$** and **$S_3$**.
 \end{solution}

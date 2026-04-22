@@ -24,29 +24,45 @@ Is the above claim correct? Prove your conclusion.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem is about the modulational stability of profiles under perturbation. By adjusting the scaling ($\lambda$) and translation ($\alpha$) parameters, one can "neutralize" certain components of a perturbation. This is a common technique in the study of solitons and blow-up solutions in PDEs.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Implicit Function Theorem (IFT):} A powerful tool in calculus used to solve equations that cannot be easily isolated. It states that if you have a smooth relationship $G(p, c) = 0$ and the relationship's "slope" (Jacobian) at a known solution $(p_0, 0)$ is invertible, then for small changes in $c$, there exists a unique way to adjust $p$ to keep the equation satisfied.
+    \item \textbf{Function Parity (Even/Odd):} An even function satisfies $f(x) = f(-x)$ (symmetric about the y-axis), and an odd function satisfies $f(x) = -f(-x)$ (symmetric about the origin). The integral of an odd function over a symmetric range centered at zero is zero.
+    \item \textbf{Inner Products:} The notation $\langle f, g \rangle$ is a compact way of writing the definite integral $\int_{-\infty}^{\infty} f(x)g(x) \, dx$.
+\end{itemize}
 
-The claim is correct. We use the Implicit Function Theorem. 
-First, we interpret the notation $\langle f, g, h \rangle = 0$ as $\langle f - g, h \rangle = 0$, which is consistent with the goal of finding parameters $(\lambda, \alpha)$ such that $Q_{\lambda, \alpha}$ is close to $Q - cT_3$ in the directions of $T_1$ and $T_2$.
-Define the map $G: (0, \infty) \times \mathbb{R} \times \mathbb{R} \to \mathbb{R}^2$ by
+\textbf{Steps:}
+
+\par\vspace{\baselineskip}
+1. \textbf{Define the Map:} We want to find values for stretch ($\lambda$) and shift ($\alpha$) to balance a small "perturbation" (error) $cT_3$. We define a map $G$ that measures how well the balance conditions are met:
 \[
-G(\lambda, \alpha, c) = \begin{pmatrix} G_1(\lambda, \alpha, c) \\ G_2(\lambda, \alpha, c) \end{pmatrix} = \begin{pmatrix} \langle Q_{\lambda, \alpha} - Q + cT_3, T_1 \rangle \\ \langle Q_{\lambda, \alpha} - Q + cT_3, T_2 \rangle \end{pmatrix}.
+G(\lambda, \alpha, c) = \begin{pmatrix} \langle Q_{\lambda,\alpha} - Q - cT_3, T_1 \rangle \\ \langle Q_{\lambda,\alpha} - Q - cT_3, T_2 \rangle \end{pmatrix}.
 \]
-At $(\lambda, \alpha, c) = (1, 0, 0)$, we have $Q_{1,0} = Q$, so $G_1(1, 0, 0) = \langle 0, T_1 \rangle = 0$ and $G_2(1, 0, 0) = \langle 0, T_2 \rangle = 0$.
-We compute the Jacobian matrix $J = \frac{\partial(G_1, G_2)}{\partial(\lambda, \alpha)}$ at $(1, 0, 0)$.
-The partial derivatives of $Q_{\lambda, \alpha}$ are:
+We want to solve $G(\lambda, \alpha, c) = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$ for $(\lambda, \alpha)$ near $(1, 0)$ when $c$ is near $0$.
+
+\par\vspace{\baselineskip}
+2. \textbf{Check the Starting Point:} When $c=0$, if we choose the original function ($\lambda=1, \alpha=0$), $Q_{1,0} = Q$. This makes the whole equation $Q - Q - 0 = 0$, so $G(1, 0, 0) = 0$. This confirms we have a valid starting point.
+
+\par\vspace{\baselineskip}
+3. \textbf{Calculate the Jacobian (The "Sensitivity"):} We need to know how sensitive our equations are to changes in $\lambda$ and $\alpha$ at the starting point.
+The Jacobian matrix $J = \frac{\partial(G_1, G_2)}{\partial(\lambda, \alpha)}$ describes this sensitivity.
+\begin{itemize}
+    \item \textbf{Effect of Shift ($\alpha$):} Shifting the function by $\alpha$ is like calculating the negative derivative of the function. Using calculus and integration by parts, we find $\frac{\partial G_1}{\partial \alpha} = \frac{1}{2} \|Q\|_2^2 > 0$ and $\frac{\partial G_2}{\partial \alpha} = 0$. The zero results from the fact that we are integrating an odd function over the whole real line.
+    \item \textbf{Effect of Stretch ($\lambda$):} Stretching the function changes its density. We find $\frac{\partial G_1}{\partial \lambda} = 0$ (again, due to symmetry) and $\frac{\partial G_2}{\partial \lambda} = \int x^2 Q^2 \, dx > 0$.
+\end{itemize}
+
+\par\vspace{\baselineskip}
+4. \textbf{Invertibility:} The Jacobian matrix becomes a diagonal matrix:
 \[
-\frac{\partial Q_{\lambda, \alpha}}{\partial \alpha} \bigg|_{(1,0)} = -Q'(x), \quad \frac{\partial Q_{\lambda, \alpha}}{\partial \lambda} \bigg|_{(1,0)} = -\frac{1}{2}Q(x) - xQ'(x).
+J = \begin{pmatrix} \frac{1}{2}\|Q\|_2^2 & 0 \\ 0 & \int x^2 Q^2 \end{pmatrix}.
 \]
-The Jacobian entries are:
-\begin{enumerate}
-    \item $\frac{\partial G_1}{\partial \alpha} = \int -Q'(x) x Q(x) dx = -\frac{1}{2} \int x (Q^2)' dx = \frac{1}{2} \int Q^2 dx = \frac{1}{2} \|Q\|_2^2 > 0$.
-    \item $\frac{\partial G_1}{\partial \lambda} = \int (-\frac{1}{2}Q - xQ') x Q dx = -\frac{1}{2} \int x Q^2 dx - \frac{1}{2} \int x^2 (Q^2)' dx$. Since $Q$ is even, $xQ^2$ is odd, so the first term is 0. The second term is also 0 by integration by parts (and parity).
-    \item $\frac{\partial G_2}{\partial \alpha} = \int -Q'(x) x^2 Q(x) dx = -\frac{1}{2} \int x^2 (Q^2)' dx = \int x Q^2 dx = 0$ (since $Q^2$ is even).
-    \item $\frac{\partial G_2}{\partial \lambda} = \int (-\frac{1}{2}Q - xQ') x^2 Q dx = -\frac{1}{2} \int x^2 Q^2 dx - \frac{1}{2} \int x^3 (Q^2)' dx = -\frac{1}{2} \int x^2 Q^2 dx + \frac{3}{2} \int x^2 Q^2 dx = \int x^2 Q^2 dx > 0$.
-\end{enumerate}
-Thus, $J = \begin{pmatrix} \frac{1}{2}\|Q\|_2^2 & 0 \\ 0 & \int x^2 Q^2 dx \end{pmatrix}$. Since $Q$ is non-trivial, $\det J \neq 0$. 
-By the Implicit Function Theorem, for small $c$, there exist unique $(\lambda, \alpha)$ near $(1, 0)$ such that $G(\lambda, \alpha, c) = 0$.
+Since $Q$ is not zero, these integrals are positive, and the determinant is non-zero. This means the matrix is invertible, satisfying the condition for the Implicit Function Theorem.
+
+\par\vspace{\baselineskip}
+\textbf{Intuition:}
+Imagine you have a shape $Q$ and someone adds a small, distorted piece $cT_3$ to it. The problem is asking if you can "fix" this by just shifting ($ \alpha $) and stretching ($ \lambda $) the original $Q$ to get back to a state that satisfies two specific balance conditions.
+
+The Implicit Function Theorem gives us a "Yes." It works because shifting and stretching have independent, measurable effects on the system (which we verified by the diagonal Jacobian). Symmetry is the secret ingredient here: it makes the "balancing act" easy because the shift only affects one condition and the stretch only affects the other, decoupling the variables and making the solution mathematically guaranteed.
 \end{solution}
 
 \begin{exercise}
@@ -63,18 +79,54 @@ Now, let $V(x) := e^{-|x|^2}$, $x\in\mathbb{R}^3$. Prove that the operator $T :=
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem uses the Fredholm Alternative for compact operators. By showing that the corresponding homogeneous equation has only the trivial solution (using energy methods/maximum principle), we establish the invertibility of the perturbed operator.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Fredholm Alternative:} A key theorem for operators of the form $I + K$. It says that if $K$ is a "nice" (compact) operator, then solving the equation $(I+K)f = h$ is as easy as solving it in finite-dimensional linear algebra. If the homogeneous equation $(I+K)f = 0$ has only the solution $f=0$, then $I+K$ is invertible.
+    \item \textbf{Compact Operators:} In this context, an operator that "smooths" the input and limits it spatially. The $(-\Delta+1)^{-1}$ operator smooths the function (frequency decay), and multiplication by $V$ limits it spatially (spatial decay). Together, they form a "nice" compact operator.
+    \item \textbf{Energy Method (Integration by Parts):} A technique where we multiply an equation by a function $g$ and integrate to relate the total "energy" (squared magnitude) to the derivatives.
+\end{itemize}
 
-The operator $K = (-\Delta+1)^{-1}V$ is a compact operator on $L^2(\mathbb{R}^3)$. To see this, note that $V(x) = e^{-|x|^2}$ is a bounded function that decays to zero at infinity, and $(-\Delta+1)^{-1}$ is a Fourier multiplier by $(1+|\xi|^2)^{-1}$, which is the convolution with the Bessel kernel $G_1(x) = \frac{e^{-|x|}}{4\pi |x|}$. Since $G_1 \in L^1(\mathbb{R}^3)$, the operator is bounded. The combination of decay in space (from $V$) and decay in frequency (from $(-\Delta+1)^{-1}$) implies compactness.
+\textbf{Steps:}
 
-By the Fredholm Alternative, $T = I + K$ is invertible if and only if its kernel is trivial. Suppose $Tf = 0$ for some $f \in L^2$. Then $f = -(-\Delta+1)^{-1}(Vf)$. Let $g = (-\Delta+1)^{-1}(Vf)$, then $g \in H^2(\mathbb{R}^3)$ and $f = -g$.
-Applying $(-\Delta+1)$ to $g$, we get $(-\Delta+1)g = Vf = V(-g) = -Vg$.
-Rearranging, we have $(-\Delta + 1 + V)g = 0$.
-Multiplying by $g$ and integrating over $\mathbb{R}^3$, we obtain
+\par\vspace{\baselineskip}
+1. \textbf{Identify the Setup:} We have $T = I + K$, where $K f = (-\Delta+1)^{-1}(Vf)$. We need to verify if $T$ is invertible.
+
+\par\vspace{\baselineskip}
+2. \textbf{Apply the Fredholm Alternative:} Because our operator $K$ is compact (it combines smoothing and spatial decay), we can use the Fredholm Alternative. This reduces our massive task to just checking one simple thing: Does $Tf = 0$ only happen when $f=0$?
+
+\par\vspace{\baselineskip}
+3. \textbf{Assume a Non-zero Solution:} Suppose there is some $f \neq 0$ such that $Tf = 0$.
+$f + (-\Delta+1)^{-1}(Vf) = 0$.
+Let $g = (-\Delta+1)^{-1}(Vf)$. This implies $f = -g$.
+Substitute $f = -g$ into the definition of $g$:
+$g = (-\Delta+1)^{-1}(V(-g)) \implies (-\Delta+1)g = -Vg$.
+
+\par\vspace{\baselineskip}
+4. \textbf{Rearrange the Equation:}
+$(-\Delta + 1 + V)g = 0$.
+This is a standard linear differential equation.
+
+\par\vspace{\baselineskip}
+5. \textbf{Calculate Energy:} Multiply by $g$ and integrate over all space ($\mathbb{R}^3$):
 \[
-\int_{\mathbb{R}^3} (|\nabla g|^2 + g^2 + V g^2) dx = 0.
+\int_{\mathbb{R}^3} (-\Delta g \cdot g + g \cdot g + V \cdot g \cdot g) \, dx = 0.
 \]
-Since $V(x) = e^{-|x|^2} \geq 0$ for all $x$, every term in the integrand is non-negative. It follows that $g=0$ almost everywhere. Thus $f = -g = 0$, and the kernel is trivial. Hence, $T$ is invertible.
+Using integration by parts on the first term:
+\[
+\int_{\mathbb{R}^3} (|\nabla g|^2 + g^2 + Vg^2) \, dx = 0.
+\]
+
+\par\vspace{\baselineskip}
+6. \textbf{Draw the Conclusion:} Every part of this sum ($|\nabla g|^2$, $g^2$, $Vg^2$) is non-negative because they are squares or products of non-negative terms. For the sum to equal zero, the only possibility is that $g=0$ everywhere.
+Since $f = -g$, $f$ must also be $0$.
+Because the only solution to $Tf=0$ is $f=0$, $T$ is invertible.
+
+\par\vspace{\baselineskip}
+\textbf{Intuition:}
+Think of $T = I + K$ as a system with a "correction" $K$. The Fredholm Alternative tells us that if this correction isn't "too big" (which "compactness" guarantees), the only way the system could fail to be invertible is if it secretly squashes some signal to zero.
+
+\par\vspace{\baselineskip}
+To see if that happens, we look at the energy of the system. The equation $(-\Delta + 1 + V)g = 0$ is like the energy balance equation for a quantum state. Because the operator $(-\Delta + 1 + V)$ strictly increases the energy of any non-zero state, there is no way for a non-zero state to have a total energy of zero. Therefore, no non-zero function can be squashed to zero, and the system must be fully invertible.
 \end{solution}
 
 \begin{exercise}
@@ -95,29 +147,55 @@ Prove there exists a constant $C$, which may depend on $\psi$, but does not depe
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a bilinear estimate of the type found in the study of dispersive equations (like the Schrödinger equation). It uses the fact that the two functions have well-separated supports in frequency space, which prevents "low-frequency" resonance and allows for an $L^2$ bound on the product.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Plancherel's Theorem:} A powerful bridge between the physical world (where we have positions) and the frequency world (where we have waves). It states that the "total energy" (the integral of the square) of a function is the same, up to a constant factor, as the total energy of its Fourier transform.
+    \item \textbf{Jacobian (Change of Variables):} When switching coordinates in integrals (like from frequency $(\xi, \eta)$ to a new coordinate system $(X, Y)$), the Jacobian tells us how much the "volume" of space stretches or shrinks.
+    \item \textbf{Support of a Function:} A function's "support" is simply the range of values where it is non-zero. It allows us to limit where we need to look in our calculations.
+\end{itemize}
 
-Let $g_1(\xi) = \psi(\xi)f_1(\xi)$ and $g_2(\eta) = \psi(\eta-10)f_2(\eta)$. Then
+\textbf{Steps:}
+
+\par\vspace{\baselineskip}
+1. \textbf{Combine the Integrals:} Multiply $u_1$ and $u_2$ together. By grouping the terms, the product looks like a 2D integral over frequencies $\xi$ and $\eta$:
 \[
-u_1(x_1, x_2) u_2(x_1, x_2) = \int_{\mathbb{R}^2} g_1(\xi) g_2(\eta) e^{i(\xi+\eta)x_1 + i(\xi^2+\eta^2)x_2} d\xi d\eta.
+u_1 u_2(x_1, x_2) = \iint (\psi(\xi)f_1(\xi))(\psi(\eta-10)f_2(\eta)) e^{i(\xi+\eta)x_1 + i(\xi^2+\eta^2)x_2} \, d\xi d\eta.
 \]
-This is the Fourier transform of a measure supported on the set $\{(\xi+\eta, \xi^2+\eta^2) : \xi, \eta \in \text{supp}\}$.
-Consider the change of variables $\Phi: (\xi, \eta) \to (X, Y)$ given by $X = \xi + \eta$ and $Y = \xi^2 + \eta^2$.
-The Jacobian of this map is
+
+\par\vspace{\baselineskip}
+2. \textbf{Define New Coordinates:} Notice that the exponent $i((\xi+\eta)x_1 + (\xi^2+\eta^2)x_2)$ looks like a 2D Fourier transform. Let's define new coordinates:
+$X = \xi + \eta$ (total frequency)
+$Y = \xi^2 + \eta^2$ (total oscillation speed)
+
+\par\vspace{\baselineskip}
+3. \textbf{Calculate the Jacobian Stretch:} How does the space $(\xi, \eta)$ stretch when we move to $(X, Y)$? The Jacobian is the determinant of the partial derivatives:
 \[
-J = \left| \det \frac{\partial(X, Y)}{\partial(\xi, \eta)} \right| = \left| \det \begin{pmatrix} 1 & 1 \\ 2\xi & 2\eta \end{pmatrix} \right| = |2\eta - 2\xi| = 2|\eta - \xi|.
+\text{Jacobian } J = \left| \det \begin{pmatrix} 1 & 1 \\ 2\xi & 2\eta \end{pmatrix} \right| = 2|\eta - \xi|.
 \]
-From the support of $\psi$, we have $|\xi| \leq 1$ and $|\eta-10| \leq 1$, which implies $\xi \in [-1, 1]$ and $\eta \in [9, 11]$.
-Thus, $\eta - \xi \geq 9 - 1 = 8$, so $J \geq 16 > 0$. The map $\Phi$ is a diffeomorphism on the support of $g_1 \otimes g_2$.
-By Plancherel's theorem:
+
+\par\vspace{\baselineskip}
+4. \textbf{Verify Frequency Separation:} Because of the way we defined the functions, $\xi$ is always near $0$ (from $\psi(\xi)$) and $\eta$ is always near $10$ (from $\psi(\eta-10)$). This means $\eta$ and $\xi$ are always separated by at least $8$. Since $J = 2|\eta-\xi|$, the Jacobian $J$ is always at least $16$. This "separation" ensures we don't have a division-by-zero disaster.
+
+\par\vspace{\baselineskip}
+5. \textbf{Apply Plancherel's Theorem:} We switch to the $(X, Y)$ coordinate system. Plancherel's theorem tells us the energy of the product $u_1 u_2$ is equal to the integral of its Fourier transform squared:
 \[
-\|u_1 u_2\|_{L^2(\mathbb{R}^2)}^2 = (2\pi)^2 \int_{\Phi(\text{supp})} \left| \frac{g_1(\xi) g_2(\eta)}{J} \right|^2 J d\xi d\eta = (2\pi)^2 \int \frac{|g_1(\xi)|^2 |g_2(\eta)|^2}{J} d\xi d\eta.
+\|u_1 u_2\|_{L^2}^2 = (2\pi)^2 \iint |H(X, Y)|^2 \, dX dY,
 \]
-Since $J \geq 16$ and $|g_i| \leq \|\psi\|_\infty |f_i|$, we have
+where $H$ is the density of our frequencies in the new system.
+
+\par\vspace{\baselineskip}
+6. \textbf{Final Transformation:} By switching back to $(\xi, \eta)$ coordinates and including the $1/J$ factor from the change of variables:
 \[
-\|u_1 u_2\|_{L^2}^2 \leq \frac{(2\pi)^2}{16} \|\psi\|_\infty^4 \int |f_1(\xi)|^2 |f_2(\eta)|^2 d\xi d\eta = C^2 \|f_1\|_{L^2}^2 \|f_2\|_{L^2}^2.
+\iint |H(X, Y)|^2 \, dX dY = \iint \frac{|\psi(\xi)f_1(\xi) \cdot \psi(\eta-10)f_2(\eta)|^2}{J} \, d\xi d\eta.
 \]
-Taking the square root gives the result.
+Since $J \geq 16$, the whole integral is bounded by a constant times the individual integrals of $f_1^2$ and $f_2^2$.
+
+\par\vspace{\baselineskip}
+\textbf{Intuition:}
+This is a "bilinear estimate." Think of it as a sanity check for waves. If you multiply two waves together, you usually get a mess. But if you multiply two waves that are moving in completely different directions (different frequencies), they don't "pile up" or create huge spikes in energy.
+
+\par\vspace{\baselineskip}
+The Jacobian $J$ measures how "separated" these two waves are. Because our frequencies are well-separated ($\xi$ near $0$, $\eta$ near $10$), the Jacobian stays nice and large. This acts like a buffer, ensuring the product $u_1 u_2$ stays "well-behaved" and its energy is bounded by the energies of the two original signals.
 \end{solution}
 
 \begin{exercise}
@@ -136,25 +214,36 @@ Then there exists a universal constant $C$ such that
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a space-time estimate for the heat equation, specifically an $L^2_t L^\infty_x$ estimate. It is proved using the $TT^*$ argument and Hilbert's inequality, which are standard tools in harmonic analysis and PDE.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Heat Kernel Estimate:} This formula tells us how fast the maximum value of a heat distribution decays. In 2D, the peak value decays at a rate of $1/t$.
+    \item \textbf{$TT^*$ Argument:} A clever mathematical trick. Instead of proving an operator is "bounded" directly, we look at the operator combined with its adjoint (the "reverse" operator). This often turns hard problems into much easier ones by revealing how different points in time interact.
+    \item \textbf{Hilbert's Inequality:} A famous result that bounds the integral of a special, structured kernel ($1/(s+t)$). It's the key to proving that the total "energy interaction" over all time is bounded.
+\end{itemize}
 
-Let $T: L^2(\mathbb{R}^2) \to L^2(0, \infty; L^\infty(\mathbb{R}^2))$ be the operator $T u_0 = u(t, \cdot)$. We want to show $T$ is bounded.
-This is equivalent to showing that the adjoint operator $T^*: L^2(0, \infty; L^1(\mathbb{R}^2)) \to L^2(\mathbb{R}^2)$ is bounded.
-The adjoint operator is given by $T^* f = \int_0^\infty e^{s\Delta} f(s) ds$.
-We compute the $L^2$ norm of $T^* f$:
-\[
-\|T^* f\|_{L^2}^2 = \left\langle \int_0^\infty e^{s\Delta} f(s) ds, \int_0^\infty e^{t\Delta} f(t) dt \right\rangle = \int_0^\infty \int_0^\infty \langle f(s), e^{(s+t)\Delta} f(t) \rangle ds dt.
-\]
-Using H\"older's inequality and the $L^1 \to L^\infty$ estimate for the heat kernel in $\mathbb{R}^2$ ($\|e^{\tau\Delta} f\|_{L^\infty} \leq \frac{1}{4\pi\tau} \|f\|_{L^1}$), we have
-\[
-\|T^* f\|_{L^2}^2 \leq \int_0^\infty \int_0^\infty \|f(s)\|_{L^1} \|e^{(s+t)\Delta} f(t)\|_{L^\infty} ds dt \leq \int_0^\infty \int_0^\infty \frac{\|f(s)\|_{L^1} \|f(t)\|_{L^1}}{4\pi(s+t)} ds dt.
-\]
-By Hilbert's inequality, for any non-negative functions $a, b \in L^2(0, \infty)$, $\int_0^\infty \int_0^\infty \frac{a(s) b(t)}{s+t} ds dt \leq \pi \|a\|_{L^2} \|b\|_{L^2}$.
-Applying this with $a(t) = b(t) = \|f(t)\|_{L^1}$, we get
-\[
-\|T^* f\|_{L^2}^2 \leq \frac{1}{4\pi} \cdot \pi \int_0^\infty \|f(t)\|_{L^1}^2 dt = \frac{1}{4} \|f\|_{L^2(L^1)}^2.
-\]
-Thus $\|T\| = \|T^*\| \leq 1/2$, and the inequality holds with $C=1/4$.
+\textbf{Steps:}
+
+\par\vspace{\baselineskip}
+1. \textbf{Define the Operator:} Let $T$ be the operator that turns our initial state $u_0$ into the entire history of the heat solution $u(t,x)$. We want to check if the total "energy" of the peak values over time is finite.
+
+\par\vspace{\baselineskip}
+2. \textbf{Use the $TT^*$ Trick:} We check how the heat flow behaves when we go from time $s$ to time $t$. The heat kernel $e^{(s+t)\Delta}$ links these two times.
+
+\par\vspace{\baselineskip}
+3. \textbf{Estimate Peak Decay:} At any two times $s$ and $t$, the heat flow formula says the interaction is bounded by $1/(s+t)$. This is the decay rate of the heat kernel in 2D.
+
+\par\vspace{\baselineskip}
+4. \textbf{Apply Hilbert's Inequality:} Our problem reduces to estimating a double integral of the form $\iint \frac{a(s)a(t)}{s+t} ds dt$. This is exactly the type of integral Hilbert's Inequality was built to bound! The inequality proves that the total interaction across all time $(s, t)$ is finite.
+
+\par\vspace{\baselineskip}
+5. \textbf{Conclude:} The constant $C$ comes directly from the constant in Hilbert's Inequality and the heat kernel factor.
+
+\par\vspace{\baselineskip}
+\textbf{Intuition:}
+The heat equation is a "smoothing" process—it spreads out concentrated heat until it vanishes. The problem asks: if we sum the square of the maximum temperature at every moment in time, is that sum infinite or finite?
+
+\par\vspace{\baselineskip}
+Think of it like an echo in a room. The echo decays over time. We want to know if the total "loudness" (integrated square of the peak) is finite. Because the heat spreads out in 2D at the perfect rate ($1/t$), the echoes don't pile up in a way that makes the total energy blow up. Hilbert's inequality confirms that this "echo decay" is fast enough that the total sum stays finite.
 \end{solution}
 
 \begin{exercise}
@@ -175,24 +264,13 @@ where $\hat{B}(|\eta|,t) := \int_{\mathbb{R}^N}B(|q|,t)e^{-iq\cdot\eta}\,dq$, $\
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This result is Bobylev's Formula for the Boltzmann collision operator. It transforms the complicated physical-space integral into a more manageable Fourier-space expression, which is crucial for the mathematical study of the Boltzmann equation, especially for Maxwellian molecules.
+\textbf{Motivation:} This is known as Bobylev's Formula, a landmark result in kinetic theory. It is the "magic key" for solving the Boltzmann equation (which describes how particles collide). Instead of dealing with complicated collision integrals in physical space (where particles hit each other), it moves the problem into frequency space, where the math becomes much more transparent.
 
-We change variables to the center of mass $v = (x+y)/2$ and relative velocity $u = x-y$. Then $x = v + u/2$ and $y = v - u/2$. The pre-collision velocities are $x' = v + \frac{|u|}{2}\sigma$ and $y' = v - \frac{|u|}{2}\sigma$.
-The Fourier transform of $Q(g,f)$ is:
-\[
-\widehat{Q(g,f)}(\xi) = \int_{\mathbb{R}^N} e^{-ix\cdot\xi} \left( \int_{\mathbb{R}^N} \int_{S^{N-1}} B(|u|, \hat{u}\cdot\sigma) g(y') f(x') d\sigma du \right) dv.
-\]
-Substituting $x = v + u/2$:
-\[
-\widehat{Q(g,f)}(\xi) = \int_{u} \int_{\sigma} B(|u|, \hat{u}\cdot\sigma) e^{-i\frac{u}{2}\cdot\xi} \left[ \int_v e^{-iv\cdot\xi} g(v - \frac{|u|}{2}\sigma) f(v + \frac{|u|}{2}\sigma) dv \right] d\sigma du.
-\]
-Using the Fourier transform property $\mathcal{F}[g(\cdot-a)f(\cdot+a)](\xi) = (2\pi)^{-N/2} \int \hat{g}(\eta) \hat{f}(\xi-\eta) e^{-i a \cdot (2\eta - \xi)} d\eta$ with $a = \frac{|u|}{2}\sigma$:
-\[
-\widehat{Q(g,f)}(\xi) = (2\pi)^{-N/2} \int_\sigma \int_\eta \hat{g}(\eta) \hat{f}(\xi-\eta) \left[ \int_u B(|u|, \hat{u}\cdot\sigma) e^{-i \frac{u}{2}\cdot \xi} e^{-i |u|\sigma \cdot (\eta - \xi/2)} du \right] d\eta d\sigma.
-\]
-The exponent is $-i [u \cdot \xi/2 + |u| \sigma \cdot (\eta - \xi/2)]$.
-By making appropriate rotations and using the definition of $\hat{B}$, the inner integral over $u$ results in $\hat{B}$ evaluated at a shifted frequency. Specifically, letting $\eta = \xi^- + \eta'$ and utilizing the symmetry of the sphere and the properties of the collision transformation, we arrive at the desired form:
-\[
-\widehat{Q(g,f)}(\xi) = (2\pi)^{-N/2}\int_{\mathbb{R}^N\times S^{N-1}} \hat{B}(|\eta|,\frac{\xi}{|\xi|}\cdot\sigma)\hat{g}(\xi^-+\eta)\hat{f}(\xi^+-\eta)\,d\sigma\,d\eta.
-\]
+The derivation follows three major steps:
+
+1. \textbf{Coordinate Transformation:} We switch from particle coordinates $(x, y)$ to center-of-mass and relative velocity. This separates the "averaging" effect of the collision from the particles' individual motions.
+2. \textbf{Fourier Analysis:} We apply the Fourier transform $\mathcal{F}$. A key trick is using the identity $\mathcal{F}[g(v-a)f(v+a)](\xi)$, which converts the collision into a convolution-like structure involving the frequency-shifted versions of $\hat{g}$ and $\hat{f}$.
+3. \textbf{Symmetry Utilization:} We leverage the symmetry of the unit sphere $S^{N-1}$ and the definition of $\hat{B}$. After a rotation and a change of variables ($\eta = \xi^- + \eta'$), the integral simplifies into the final, symmetric form that relates the collision kernel $\hat{B}$ to the pre-collision frequencies.
+
+This formula shows that in frequency space, collisions are just a weighted average of product-pairs of the original distribution's frequency components.
 \end{solution}

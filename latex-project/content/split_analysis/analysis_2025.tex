@@ -14,88 +14,97 @@ R(1) = 2025,\quad R'(1) = 0 \quad \text{and}\quad R''(1) = 1.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is an Euler-Cauchy differential equation. An Euler-Cauchy equation is a linear differential equation where the degree of the monomial coefficient $r^k$ matches the order of the derivative $R^{(k)}(r)$. A standard method to solve such equations is to use the substitution $r = e^t$, which transforms the equation into a linear ordinary differential equation (ODE) with constant coefficients, which we can easily solve.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Euler-Cauchy Equations:} Linear differential equations where the degree of the monomial $r^k$ matches the order of the derivative $R^{(k)}$.
+    \item \textbf{Change of Variables:} The substitution $r = e^t$ (or $t = \ln r$) converts Euler-Cauchy equations into linear ODEs with constant coefficients.
+    \item \textbf{Chain Rule:} Used to transform derivatives from the $r$-domain to the $t$-domain.
+    \item \textbf{Linear ODE Theory:} Methods for solving homogeneous equations (characteristic roots) and non-homogeneous equations (undetermined coefficients).
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+The given equation is a classic Euler-Cauchy equation. Notice how the power of $r$ exactly matches the "order" of the derivative it's attached to (e.g., $r^3$ with $R'''$). This tells us that the equation is "scale-invariant." By switching to a logarithmic scale ($t = \ln r$), we can flatten this scaling, turning it into a much simpler constant-coefficient equation that we already know how to solve using standard algebraic methods.
+
+\bigskip
 
 \textbf{Step 1: Transform the independent variable.}
-Let $r = e^t$. Since $r \geq 1$, we have $t = \ln r \geq 0$. We define a new function $y(t) = R(e^t)$, which means $y(\ln r) = R(r)$.
-We need to find the derivatives $R'(r), R''(r)$, and $R'''(r)$ in terms of $y$ and $t$. Using the chain rule:
+\par
+Let $r = e^t$, which means $t = \ln r$. We define a new function $y(t) = R(e^t)$. To rewrite the original ODE, we must express the derivatives of $R$ with respect to $r$ in terms of derivatives of $y$ with respect to $t$.
+
+\par\bigskip
+Using the chain rule repeatedly:
 \begin{align*}
-R'(r) &= \frac{d}{dr} y(\ln r) = y'(t) \cdot \frac{d}{dr}(\ln r) = \frac{1}{r} y'(t) \\
-R''(r) &= \frac{d}{dr} \left( \frac{1}{r} y'(t) \right) = -\frac{1}{r^2} y'(t) + \frac{1}{r} \frac{d}{dr} y'(t) \\
-      &= -\frac{1}{r^2} y'(t) + \frac{1}{r} \left( y''(t) \cdot \frac{1}{r} \right) = \frac{1}{r^2} (y''(t) - y'(t)) \\
-R'''(r) &= \frac{d}{dr} \left( \frac{1}{r^2} (y''(t) - y'(t)) \right) = -\frac{2}{r^3} (y''(t) - y'(t)) + \frac{1}{r^2} \frac{d}{dr} (y''(t) - y'(t)) \\
-       &= -\frac{2}{r^3} (y''(t) - y'(t)) + \frac{1}{r^2} \left( (y'''(t) - y''(t)) \cdot \frac{1}{r} \right) \\
-       &= \frac{1}{r^3} (y'''(t) - 3y''(t) + 2y'(t))
+R'(r) &= \frac{dy}{dt} \frac{dt}{dr} = y'(t) \cdot \frac{1}{r} \implies rR'(r) = y'(t) \\
+R''(r) &= \frac{d}{dr} \left( \frac{1}{r} y'(t) \right) = -\frac{1}{r^2} y'(t) + \frac{1}{r} \frac{d}{dr}[y'(t)] = -\frac{1}{r^2} y'(t) + \frac{1}{r^2} y''(t) = \frac{1}{r^2} (y''(t) - y'(t)) \\
+R'''(r) &= \frac{d}{dr} \left( \frac{1}{r^2} (y'' - y') \right) = -\frac{2}{r^3}(y'' - y') + \frac{1}{r^3}(y''' - y'') = \frac{1}{r^3}(y''' - 3y'' + 2y')
 \end{align*}
 
+\bigskip
+
 \textbf{Step 2: Substitute into the differential equation.}
-Substitute these derivatives back into the original equation $r^3 R'''(r) + 2r^2 R''(r) - rR'(r) + R(r) = 2025$:
+\par
+Substitute the expressions for $r^3 R'''$, $r^2 R''$, and $r R'$ into the original equation $r^3 R''' + 2r^2 R'' - rR' + R = 2025$:
 \[
-r^3 \left[ \frac{1}{r^3}(y''' - 3y'' + 2y') \right] + 2r^2 \left[ \frac{1}{r^2}(y'' - y') \right] - r \left[ \frac{1}{r} y' \right] + y = 2025.
+(y''' - 3y'' + 2y') + 2(y'' - y') - (y') + y = 2025
 \]
-The $r$ terms perfectly cancel out (as expected for an Euler-Cauchy equation), leaving:
+Simplifying the coefficients for each derivative:
 \[
-(y''' - 3y'' + 2y') + 2(y'' - y') - y' + y = 2025.
+y''' + (-3 + 2)y'' + (2 - 2 - 1)y' + y = 2025 \implies y''' - y'' - y' + y = 2025
 \]
-Simplify by grouping the derivatives:
-\[
-y''' + (-3 + 2)y'' + (2 - 2 - 1)y' + y = 2025 \implies y''' - y'' - y' + y = 2025.
-\]
+
+\bigskip
 
 \textbf{Step 3: Solve the homogeneous equation.}
-First, we solve the associated homogeneous equation: $y''' - y'' - y' + y = 0$.
-We assume a solution of the form $y = e^{mt}$, which leads to the characteristic equation:
+\par
+First, we solve the homogeneous part $y''' - y'' - y' + y = 0$. Assuming a solution $y = e^{mt}$, we get:
 \[
-m^3 - m^2 - m + 1 = 0.
+m^3 - m^2 - m + 1 = 0 \implies m^2(m - 1) - (m - 1) = 0 \implies (m^2 - 1)(m - 1) = 0 \implies (m - 1)^2(m + 1) = 0
 \]
-We can factor this by grouping:
+The roots are $m = 1$ (double root) and $m = -1$ (single root).
+The general homogeneous solution is:
 \[
-m^2(m - 1) - 1(m - 1) = 0 \implies (m^2 - 1)(m - 1) = 0 \implies (m + 1)(m - 1)^2 = 0.
+y_h(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t
 \]
-The roots are $m_1 = -1$ (a single root) and $m_2 = m_3 = 1$ (a double root).
-According to the theory of linear ODEs, the general solution for the homogeneous part $y_h(t)$ is:
-\[
-y_h(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t.
-\]
+
+\bigskip
 
 \textbf{Step 4: Find a particular solution.}
-Next, we find a particular solution $y_p(t)$ for the non-homogeneous equation $y''' - y'' - y' + y = 2025$.
-Since the right-hand side is a constant ($2025$), we guess a constant particular solution: $y_p(t) = A$.
-Substituting $y_p = A$ into the ODE gives:
+\par
+For the non-homogeneous equation with a constant RHS of $2025$, we guess a constant solution $y_p(t) = A$.
+Plugging this in: $0 - 0 - 0 + A = 2025 \implies A = 2025$.
+The total solution for $y(t)$ is:
 \[
-0 - 0 - 0 + A = 2025 \implies A = 2025.
-\]
-So, the general solution in terms of $t$ is:
-\[
-y(t) = y_h(t) + y_p(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t + 2025.
+y(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t + 2025
 \]
 
+\bigskip
+
 \textbf{Step 5: Convert back to $r$ and apply initial conditions.}
-Recall that $t = \ln r$, $e^t = r$, and $e^{-t} = r^{-1} = \frac{1}{r}$. Substituting these back gives the general solution for $R(r)$:
+\par
+Replace $e^t = r$ and $t = \ln r$:
 \[
-R(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r + 2025.
+R(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r + 2025
 \]
-Now, we use the initial conditions to find the constants $c_1, c_2,$ and $c_3$. We need $R'(r)$ and $R''(r)$:
+Now we find the constants using $R(1) = 2025, R'(1) = 0, R''(1) = 1$:
 \begin{align*}
 R'(r) &= -\frac{c_1}{r^2} + c_2 + c_3(\ln r + 1) \\
 R''(r) &= \frac{2c_1}{r^3} + \frac{c_3}{r}
 \end{align*}
-Apply the conditions at $r=1$ (note that $\ln 1 = 0$):
-1. $R(1) = c_1 + c_2 + 2025 = 2025 \implies c_1 + c_2 = 0 \implies c_1 = -c_2$.
-2. $R'(1) = -c_1 + c_2 + c_3 = 0$. Since $c_1 = -c_2$, this becomes $-(-c_2) + c_2 + c_3 = 0 \implies 2c_2 + c_3 = 0 \implies c_3 = -2c_2$.
-3. $R''(1) = 2c_1 + c_3 = 1$. Substitute $c_1 = -c_2$ and $c_3 = -2c_2$:
-\[
-2(-c_2) + (-2c_2) = 1 \implies -4c_2 = 1 \implies c_2 = -\frac{1}{4}.
-\]
-With $c_2 = -1/4$, we find the other constants:
-\[
-c_1 = -c_2 = \frac{1}{4}, \quad c_3 = -2c_2 = -2\left(-\frac{1}{4}\right) = \frac{1}{2}.
-\]
+Setting $r = 1$:
+1. $R(1) = c_1 + c_2 + 2025 = 2025 \implies c_1 + c_2 = 0$.
+2. $R'(1) = -c_1 + c_2 + c_3 = 0$.
+3. $R''(1) = 2c_1 + c_3 = 1$.
+From (1), $c_2 = -c_1$. Substituting into (2): $-2c_1 + c_3 = 0 \implies c_3 = 2c_1$.
+Substituting into (3): $2c_1 + 2c_1 = 1 \implies 4c_1 = 1 \implies c_1 = 1/4$.
+Then $c_2 = -1/4$ and $c_3 = 1/2$.
 
-\textbf{Final Solution:}
-Substituting these constants back into $R(r)$, the unique solution is:
+\par\bigskip
+\textbf{Final Result:}
+Substituting the constants back into $R(r)$:
 \[
-R(r) = \frac{1}{4r} - \frac{r}{4} + \frac{1}{2} r \ln r + 2025.
+R(r) = \frac{1}{4r} - \frac{r}{4} + \frac{r \ln r}{2} + 2025
 \]
 \end{solution}
 
@@ -186,21 +195,65 @@ M(r) \leq \frac{M(r_1)(\log r_2 - \log r) + M(r_2)(\log r - \log r_1)}{\log r_2 
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a version of Hadamard's Three-Circle Theorem for subharmonic functions. It establishes the logarithmic convexity of the maximum of a subharmonic function on concentric circles. This result is a powerful tool for analyzing the growth and behavior of subharmonic and holomorphic functions.
+\textbf{Motivation:} This problem is a classic application of the Maximum Principle for subharmonic functions, and the result in part (1) is known as Hadamard's Three-Circle Theorem. It shows that the maximum of a subharmonic function on concentric circles is convex with respect to the logarithm of the radius.
 
-(1) Let $L(z) = a \ln |z| + b$ be a harmonic function on the annulus. We choose $a$ and $b$ such that $L(z)$ matches the values $M(r_1)$ and $M(r_2)$ on the boundary circles:
-\[
-a \ln r_1 + b = M(r_1), \quad a \ln r_2 + b = M(r_2).
-\]
-Solving for $a$ gives $a = \frac{M(r_2) - M(r_1)}{\ln r_2 - \ln r_1}$.
-Define the function $v(z) = u(z) - L(z)$. Since $L$ is harmonic, $v$ is subharmonic. On the boundary $|z|=r_1$, $v(z) \leq M(r_1) - M(r_1) = 0$. On $|z|=r_2$, $v(z) \leq M(r_2) - M(r_2) = 0$. By the Maximum Principle for subharmonic functions, $v(z) \leq 0$ for all $r_1 < |z| < r_2$.
-Thus $u(z) \leq a \ln |z| + b$. Taking the maximum over $|z|=r$:
-\[
-M(r) \leq \frac{M(r_2) - M(r_1)}{\ln r_2 - \ln r_1} \ln r + \frac{M(r_1) \ln r_2 - M(r_2) \ln r_1}{\ln r_2 - \ln r_1}.
-\]
-Rearranging terms yields the desired logarithmic convexity formula.
+\textbf{Part (1): Proving Hadamard's Three-Circle Theorem}
+The key idea is to compare the subharmonic function $u(x,y)$ with a carefully chosen harmonic function on the annulus.
+Recall that in $\mathbb{R}^2$, the fundamental harmonic function (which depends only on the radius $r = \sqrt{x^2+y^2}$) is $\log r$. Any function of the form $L(x,y) = a \log r + b$, where $a$ and $b$ are constants, is harmonic in any region excluding the origin.
 
-(2) If $u$ is subharmonic on $\mathbb{R}^2 \setminus \{0\}$ and bounded above ($u \leq K$), the singularity at 0 is removable. Specifically, $u(z)$ can be extended to a subharmonic function on $\mathbb{R}^2$ by setting $u(0) = \limsup_{z \to 0} u(z)$. Since $u$ is subharmonic on $\mathbb{R}^2$ and bounded above, $u$ must be constant by Liouville's theorem for subharmonic functions. Alternatively, using part (1), let $r_1 \to 0$. If $M(r_1)$ is bounded, the term $\frac{M(r_1)(\log r_2 - \log r)}{\log r_2 - \log r_1}$ vanishes, and $M(r) \leq M(r_2)$ for any $r < r_2$. Letting $r_2 \to \infty$ for a bounded function shows $M(r)$ is constant.
+We want to choose $a$ and $b$ so that $L(x,y)$ perfectly matches $M(r_1)$ on the inner boundary (circle of radius $r_1$) and $M(r_2)$ on the outer boundary (circle of radius $r_2$).
+This gives us a system of two linear equations:
+\begin{align*}
+a \log r_1 + b &= M(r_1) \quad \text{(Equation 1)} \\
+a \log r_2 + b &= M(r_2) \quad \text{(Equation 2)}
+\end{align*}
+Subtracting Equation 1 from Equation 2 eliminates $b$:
+\[
+a(\log r_2 - \log r_1) = M(r_2) - M(r_1) \implies a = \frac{M(r_2) - M(r_1)}{\log r_2 - \log r_1}.
+\]
+Now, let's define a new function $v(x,y) = u(x,y) - L(x,y)$.
+Because $u$ is subharmonic and $L$ is harmonic, their difference $v$ is also subharmonic.
+Let's check the values of $v(x,y)$ on the boundaries of the annulus:
+- On the inner circle $|(x,y)| = r_1$:
+  $u(x,y) \leq M(r_1)$ by definition of $M$.
+  $L(x,y) = M(r_1)$ by our construction.
+  Therefore, $v(x,y) = u(x,y) - L(x,y) \leq M(r_1) - M(r_1) = 0$.
+- On the outer circle $|(x,y)| = r_2$:
+  Similarly, $u(x,y) \leq M(r_2)$ and $L(x,y) = M(r_2)$, so $v(x,y) \leq 0$.
+
+By the Maximum Principle for subharmonic functions, if a subharmonic function is $\leq 0$ on the boundary of a bounded domain, it must be $\leq 0$ everywhere inside the domain. Thus, $v(x,y) \leq 0$ for all $r_1 \leq r \leq r_2$.
+This implies $u(x,y) \leq L(x,y)$ for all points in the annulus. Taking the maximum of $u(x,y)$ over a circle of radius $r$ gives:
+\[
+M(r) \leq \max_{x^2+y^2=r} L(x,y) = a \log r + b.
+\]
+To get the final formula, we can substitute $a$ and $b$ back, or more simply, notice that $a \log r + b$ is the linear interpolation of the values $M(r_1)$ and $M(r_2)$ with respect to the variable $\log r$. Using the point-slope form:
+\[
+M(r) \leq M(r_1) + \frac{M(r_2) - M(r_1)}{\log r_2 - \log r_1} (\log r - \log r_1).
+\]
+Expanding and collecting terms for $M(r_1)$ and $M(r_2)$:
+\[
+M(r) \leq \frac{M(r_1)(\log r_2 - \log r_1) - M(r_1)(\log r - \log r_1) + M(r_2)(\log r - \log r_1)}{\log r_2 - \log r_1}.
+\]
+Notice that $(\log r_2 - \log r_1) - (\log r - \log r_1) = \log r_2 - \log r$. Thus:
+\[
+M(r) \leq \frac{M(r_1)(\log r_2 - \log r) + M(r_2)(\log r - \log r_1)}{\log r_2 - \log r_1}.
+\]
+
+\textbf{Part (2): Bounded subharmonic functions on the punctured plane}
+We are given that $u$ is subharmonic on $\mathbb{R}^2 \setminus \{0\}$ and bounded above, meaning there exists a constant $K$ such that $u(x,y) \leq K$ for all $(x,y)$.
+First, because $u$ is bounded above near the isolated singularity at the origin, a standard theorem states that the singularity is removable. This means we can extend $u$ to a function that is subharmonic on the entire plane $\mathbb{R}^2$ by defining $u(0) = \limsup_{(x,y) \to (0,0)} u(x,y)$.
+Once $u$ is subharmonic on all of $\mathbb{R}^2$ and bounded above, Liouville's Theorem for subharmonic functions immediately tells us that $u$ must be constant.
+
+Alternatively, we can use the result from Part (1) to prove this directly without the removability theorem.
+Assume $u \leq K$. Let $r_2 \to \infty$ in the Three-Circle formula:
+\[
+M(r) \leq \limsup_{r_2 \to \infty} \left( \frac{M(r_1) \log(r_2/r)}{\log(r_2/r_1)} + \frac{M(r_2) \log(r/r_1)}{\log(r_2/r_1)} \right).
+\]
+Since $M(r_2) \leq K$, the second term is bounded by $K \frac{\log(r/r_1)}{\log(r_2/r_1)}$, which goes to 0 as $r_2 \to \infty$.
+The first term coefficient $\frac{\log(r_2/r)}{\log(r_2/r_1)}$ goes to 1.
+Thus, taking the limit gives $M(r) \leq M(r_1)$ for any $r > r_1$.
+This means $M(r)$ is a decreasing function of $r$. However, by the Maximum Principle, the maximum of a subharmonic function on circles of radius $r$ must be a non-decreasing function of $r$.
+The only way a function can be both non-decreasing and decreasing is if it is constant. Therefore, $M(r)$ is constant, and $u(x,y)$ must be constant.
 \end{solution}
 
 \begin{exercise}
@@ -235,28 +288,61 @@ Prove that two smooth closed curves $\gamma_0$ and $\gamma_1$ are regularly homo
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem explores the concept of winding numbers and homotopy classes of maps from the circle to the punctured plane. It illustrates how topological invariants (like the degree/winding number) can classify continuous maps up to deformation.
+\textbf{Motivation:} This problem connects vector calculus (line integrals) with complex analysis (winding numbers) and algebraic topology (homotopy classes).
 
-(1) Identify $\mathbb{R}^2$ with $\mathbb{C}$ via $z = x + iy$. Then $dz = dx + i dy$. We have:
+\textbf{Part (1): Connecting real and complex integrals}
+Let's identify the Euclidean plane $\mathbb{R}^2$ with the complex plane $\mathbb{C}$ by letting $z = x + iy$.
+Then the differential is $dz = dx + i dy$.
+Let's evaluate the complex integral $\oint_\gamma \frac{dz}{z}$:
 \[
-\frac{dz}{z} = \frac{dx + i dy}{x + iy} = \frac{(dx + i dy)(x - iy)}{x^2 + y^2} = \frac{x dx + y dy + i(x dy - y dx)}{x^2 + y^2}.
+\frac{dz}{z} = \frac{dx + i dy}{x + iy}.
 \]
-Integrating along the closed curve $\gamma$:
+To separate the real and imaginary parts, we multiply the numerator and denominator by the complex conjugate of the denominator, $x - iy$:
+\[
+\frac{dz}{z} = \frac{(dx + i dy)(x - iy)}{(x + iy)(x - iy)} = \frac{(x dx + y dy) + i(x dy - y dx)}{x^2 + y^2}.
+\]
+Integrating this over the closed curve $\gamma$ gives:
 \[
 \oint_\gamma \frac{dz}{z} = \oint_\gamma \frac{x dx + y dy}{x^2 + y^2} + i \oint_\gamma \frac{x dy - y dx}{x^2 + y^2}.
 \]
-The real part is $\oint_\gamma d(\frac{1}{2} \ln(x^2 + y^2)) = 0$ because the curve is closed and $x^2+y^2 \neq 0$. Thus:
+Let's look at the real part. Notice that $d(x^2 + y^2) = 2x dx + 2y dy$. So the real integral is exactly:
 \[
-\oint_\gamma \frac{dz}{z} = i \oint_\gamma \frac{x dy - y dx}{x^2 + y^2} = 2\pi i d(\gamma).
+\oint_\gamma \frac{1}{2} \frac{d(x^2 + y^2)}{x^2 + y^2} = \oint_\gamma d\left(\frac{1}{2} \ln(x^2 + y^2)\right).
 \]
-Dividing by $2\pi i$ gives $d(\gamma) = \frac{1}{2\pi i} \oint_\gamma \frac{dz}{z}$, which is the winding number of $\gamma$ around the origin, necessarily an integer.
-
-(2) For $\gamma(s) = z_0 e^{2\pi i n s}$, we have $z(s) = z_0 e^{2\pi i n s}$ and $z'(s) = 2\pi i n z_0 e^{2\pi i n s} = 2\pi i n z(s)$. Then:
+Because $\gamma$ is a closed curve and the origin is not on the curve (implied by the denominator), the integral of an exact differential over a closed loop is zero.
+Thus, only the imaginary part remains:
 \[
-d(\gamma) = \frac{1}{2\pi i} \int_0^1 \frac{z'(s)}{z(s)} ds = \frac{1}{2\pi i} \int_0^1 2\pi i n ds = n.
+\oint_\gamma \frac{dz}{z} = i \oint_\gamma \frac{x dy - y dx}{x^2 + y^2}.
 \]
+Dividing both sides by $2\pi i$ (where $i = \sqrt{-1}$), we get:
+\[
+\frac{1}{2\pi \sqrt{-1}} \oint_\gamma \frac{dz}{z} = \frac{1}{2\pi} \oint_\gamma \frac{x dy - y dx}{x^2 + y^2}.
+\]
+By definition, the right side is $d(\gamma)$.
+From complex analysis (Cauchy's Argument Principle), $\frac{1}{2\pi i} \oint_\gamma \frac{dz}{z}$ counts the number of times the curve winds around the origin counterclockwise. This winding number is always an integer.
 
-(3) The "degree" $d(\gamma)$ is exactly the winding number of $\gamma$ around the origin. Maps $\mathbb{S}^1 \to \mathbb{R}^2 \setminus \{0\} \simeq \mathbb{C}^*$ are classified by their winding number (fundamental group $\pi_1(\mathbb{C}^*) \cong \mathbb{Z}$). If $\gamma_0$ and $\gamma_1$ are regularly homotopic, they are in particular homotopic in $\mathbb{C}^*$, and since the winding number is a homotopy invariant, $d(\gamma_0) = d(\gamma_1)$. Conversely, if $d(\gamma_0) = d(\gamma_1) = n$, the curves are homotopic in $\mathbb{C}^*$. Since they are smooth and their derivatives are non-zero, the Whitney-Graustein theorem ensures that they are regularly homotopic.
+\textbf{Part (2): Computing the degree of a specific curve}
+We are given $\gamma(s) = z_0 e^{2\pi i n s}$ for $s \in [0, 1]$.
+Let's parameterize the complex integral using $s$. We have $z(s) = z_0 e^{2\pi i n s}$.
+Taking the derivative with respect to $s$:
+\[
+dz = z'(s) ds = z_0 (2\pi i n) e^{2\pi i n s} ds = 2\pi i n \cdot z(s) ds.
+\]
+Now substitute this into the integral formula from Part (1):
+\[
+d(\gamma) = \frac{1}{2\pi i} \oint_\gamma \frac{dz}{z} = \frac{1}{2\pi i} \int_0^1 \frac{2\pi i n \cdot z(s) ds}{z(s)} = \frac{1}{2\pi i} \int_0^1 2\pi i n ds.
+\]
+The $2\pi i$ cancels out, leaving:
+\[
+d(\gamma) = \int_0^1 n ds = n [s]_0^1 = n.
+\]
+This makes intuitive sense: the curve $e^{2\pi i n s}$ wraps around the origin $n$ times.
+
+\textbf{Part (3): Regular homotopy and degrees}
+First, suppose $\gamma_0$ and $\gamma_1$ are regularly homotopic. This means there is a continuous deformation $\gamma_t(s)$ between them such that for every $t$, $\gamma_t$ is a smooth closed curve that does not pass through the origin (its derivative is never zero, which is the definition of a regular curve). Since $d(\gamma_t)$ is an integer for all $t \in [0, 1]$, and it depends continuously on $t$ (because the integral of a smooth family of curves is continuous), the function $f(t) = d(\gamma_t)$ is a continuous function from $[0, 1]$ to $\mathbb{Z}$. The only continuous functions from an interval to the discrete set of integers are constant functions. Therefore, $d(\gamma_0) = d(\gamma_1)$.
+
+Conversely, suppose $d(\gamma_0) = d(\gamma_1) = n$. This means both curves wind around the origin $n$ times.
+In algebraic topology, maps from the circle $\mathbb{S}^1$ to the punctured plane $\mathbb{R}^2 \setminus \{0\} \simeq \mathbb{C}^*$ are completely classified by their winding number (the fundamental group $\pi_1(\mathbb{C}^*) \cong \mathbb{Z}$). Because they have the same winding number, they are homotopic in $\mathbb{C}^*$. Furthermore, because the curves are smooth immersions (their derivatives are non-zero), a stronger theorem known as the Whitney-Graustein Theorem guarantees that they are not just homotopic, but *regularly* homotopic (meaning the deformation itself consists only of smooth immersions).
 \end{solution}
 
 \begin{exercise}
@@ -264,22 +350,42 @@ If $A$ and $B$ are disjoint closed subsets of a metric space $(X,d)$ and $[a,b]$
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is Urysohn's Lemma, a fundamental result in point-set topology. It shows that in a metric space (which is normal), disjoint closed sets can be separated by continuous functions. This lemma is a key stepping stone to the Tietze Extension Theorem and the existence of partitions of unity.
+\textbf{Motivation:} This statement is a special case of Urysohn's Lemma. Urysohn's Lemma is a fundamental topological theorem showing that in certain spaces (like metric spaces), any two disjoint closed sets can be strictly separated by a continuous function.
 
-Define the distance function $d(x, S) = \inf_{y \in S} d(x, y)$. The function $d(x, S)$ is Lipschitz continuous with constant 1. Since $A$ and $B$ are closed and disjoint, $d(x, A) = 0$ if and only if $x \in A$, and $d(x, B) = 0$ if and only if $x \in B$.
-Furthermore, the denominator $d(x, A) + d(x, B)$ is never zero because $A \cap B = \emptyset$.
-Define the function $f: X \to [a, b]$ as:
+\textbf{Step-by-step Proof:}
+To build this function, we will use the properties of the distance metric $d$.
+First, let's define the distance from a point $x \in X$ to a set $S \subset X$:
+\[
+d(x, S) = \inf \{ d(x, y) \mid y \in S \}.
+\]
+A well-known property of metric spaces is that the function $x \mapsto d(x, S)$ is always continuous. In fact, it is Lipschitz continuous.
+Furthermore, because $A$ is a closed set, $d(x, A) = 0$ if and only if $x \in A$.
+Similarly, because $B$ is a closed set, $d(x, B) = 0$ if and only if $x \in B$.
+
+We want to construct a function $f(x)$ that outputs $a$ when $x \in A$ and $b$ when $x \in B$.
+Let's look at the expression:
+\[
+\frac{d(x, A)}{d(x, A) + d(x, B)}.
+\]
+Let's analyze this expression carefully:
+1. \textbf{Denominator is never zero:} Since $A$ and $B$ are disjoint ($A \cap B = \emptyset$), a point $x$ cannot belong to both $A$ and $B$. Thus, $d(x, A)$ and $d(x, B)$ cannot both be zero at the same time. Since distances are non-negative, the sum $d(x, A) + d(x, B)$ is strictly greater than zero for all $x \in X$.
+2. \textbf{Continuity:} Because both $d(x, A)$ and $d(x, B)$ are continuous, and the denominator is never zero, the entire fraction is a continuous function.
+3. \textbf{Behavior on $A$:} If $x \in A$, then $d(x, A) = 0$. The fraction becomes $\frac{0}{0 + d(x, B)} = 0$.
+4. \textbf{Behavior on $B$:} If $x \in B$, then $d(x, B) = 0$. The fraction becomes $\frac{d(x, A)}{d(x, A) + 0} = 1$.
+5. \textbf{Range:} Since $d(x, A)$ and $d(x, B)$ are non-negative, the numerator is always less than or equal to the denominator, so the fraction always outputs a value in the interval $[0, 1]$.
+
+Now, we just need to scale and shift this function so that its range is $[a, b]$ instead of $[0, 1]$.
+We define our final continuous function $f: X \to [a, b]$ as:
 \[
 f(x) = a + (b - a) \frac{d(x, A)}{d(x, A) + d(x, B)}.
 \]
-\begin{itemize}
-    \item \textbf{Continuity:} $f$ is continuous because it is a composition of continuous distance functions and basic arithmetic operations where the denominator is strictly positive.
-    \item \textbf{Boundary Conditions:}
-        - If $x \in A$, then $d(x, A) = 0$, so $f(x) = a + (b-a) \cdot 0 = a$.
-        - If $x \in B$, then $d(x, B) = 0$, so $f(x) = a + (b-a) \cdot \frac{d(x, A)}{d(x, A)} = b$.
-    \item \textbf{Range:} Since $d(x, A), d(x, B) \geq 0$, the ratio $\frac{d(x, A)}{d(x, A) + d(x, B)}$ lies in $[0, 1]$. Thus $f(x) \in [a, b]$ for all $x \in X$.
-\end{itemize}
-This completes the proof.
+Let's verify it meets all conditions:
+- \textbf{Continuity:} It is a linear transformation of a continuous function, so it is continuous.
+- \textbf{Value on $A$:} For $x \in A$, the fraction is 0, so $f(x) = a + (b-a)(0) = a$.
+- \textbf{Value on $B$:} For $x \in B$, the fraction is 1, so $f(x) = a + (b-a)(1) = b$.
+- \textbf{Range:} Since the fraction is between 0 and 1, $f(x)$ ranges exactly from $a$ to $a + (b-a) = b$.
+
+This completely proves the existence of such a function.
 \end{solution}
 
 \begin{exercise}
@@ -307,27 +413,74 @@ Then $f\in\mathbf{BMO}(\mathbb{R}^n)$ and $\|f\|_{\mathbf{BMO}} \leq 2A$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} BMO (Bounded Mean Oscillation) is a space of functions that "almost" are bounded. It plays a central role in harmonic analysis as the dual space of $H^1$ (Hardy space) and as a replacement for $L^\infty$ in many interpolation results.
+\textbf{Motivation:} Bounded Mean Oscillation (BMO) is a crucial space in harmonic analysis. It contains functions that might be unbounded (unlike $L^\infty$), but their average deviation from their local mean is bounded.
 
-(1) For any constant function $f(x) = C$, $\mathbf{Avg}_Q f = C$, which implies $|f(x) - \mathbf{Avg}_Q f| = 0$ for all $x, Q$. Thus $\|C\|_{\mathbf{BMO}} = 0$. Since $\|f\| = 0$ does not imply $f = 0$ (it only implies $f$ is constant), $\|\cdot\|_{\mathbf{BMO}}$ is a seminorm. It becomes a norm on the space $\mathbf{BMO}(\mathbb{R}^n) / \mathbb{C}$ of functions modulo constants.
-
-(2) If $f \in L^\infty$, then for any cube $Q$:
+\textbf{Part (1): Seminorm vs. Norm}
+A norm $\|\cdot\|$ must satisfy the property that $\|f\| = 0$ if and only if $f$ is the zero function ($f(x) = 0$ almost everywhere).
+Let's test this property on the BMO definition. Consider a non-zero constant function, $f(x) = C \neq 0$ for all $x$.
+For any cube $Q$, the average of $f$ is:
 \[
-|f(x) - \mathbf{Avg}_Q f| \leq |f(x)| + |\mathbf{Avg}_Q f| \leq \|f\|_\infty + \frac{1}{|Q|} \int_Q |f(y)| dy \leq \|f\|_\infty + \|f\|_\infty = 2\|f\|_\infty.
+\mathbf{Avg}_Q f = \frac{1}{|Q|} \int_Q C \,dx = C.
 \]
-Averaging over $Q$: $\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| dx \leq \frac{1}{|Q|} \int_Q 2\|f\|_\infty dx = 2\|f\|_\infty$.
-Taking the supremum over $Q$ gives $\|f\|_{\mathbf{BMO}} \leq 2\|f\|_\infty$. Thus $L^\infty \subset \mathbf{BMO}$.
+Then, the deviation $|f(x) - \mathbf{Avg}_Q f|$ is exactly $|C - C| = 0$ everywhere.
+Therefore, the integral of the deviation is 0, and taking the supremum over all cubes yields $\|f\|_{\mathbf{BMO}} = 0$.
+Because a non-zero function has a BMO "norm" of 0, $\|\cdot\|_{\mathbf{BMO}}$ fails the strict positivity requirement. It is therefore only a seminorm. (To make it a true norm, we would have to consider the space of functions modulo constants).
 
-(3) For any cube $Q$ and constant $c_Q$:
+\textbf{Part (2): BMO contains $L^\infty$}
+Suppose $f \in L^\infty(\mathbb{R}^n)$, which means $|f(x)| \leq \|f\|_{L^\infty}$ almost everywhere.
+We want to bound the BMO expression for any arbitrary cube $Q$:
 \[
-|f(x) - \mathbf{Avg}_Q f| = |f(x) - c_Q + c_Q - \mathbf{Avg}_Q f| \leq |f(x) - c_Q| + |c_Q - \mathbf{Avg}_Q f|.
+|f(x) - \mathbf{Avg}_Q f|.
 \]
-Note that $|c_Q - \mathbf{Avg}_Q f| = |c_Q - \frac{1}{|Q|} \int_Q f(y) dy| = |\frac{1}{|Q|} \int_Q (c_Q - f(y)) dy| \leq \frac{1}{|Q|} \int_Q |c_Q - f(y)| dy$.
-Thus:
+By the triangle inequality:
 \[
-\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| dx \leq \frac{1}{|Q|} \int_Q |f(x) - c_Q| dx + \frac{1}{|Q|} \int_Q |f(y) - c_Q| dy \leq A + A = 2A.
+|f(x) - \mathbf{Avg}_Q f| \leq |f(x)| + |\mathbf{Avg}_Q f|.
 \]
-This shows $\|f\|_{\mathbf{BMO}} \leq 2A$.
+We know $|f(x)| \leq \|f\|_{L^\infty}$. Furthermore, the absolute value of the average is bounded by the maximum of the function:
+\[
+|\mathbf{Avg}_Q f| = \left| \frac{1}{|Q|} \int_Q f(y) \,dy \right| \leq \frac{1}{|Q|} \int_Q |f(y)| \,dy \leq \frac{1}{|Q|} \int_Q \|f\|_{L^\infty} \,dy = \|f\|_{L^\infty}.
+\]
+Thus, the integrand is bounded by:
+\[
+|f(x) - \mathbf{Avg}_Q f| \leq \|f\|_{L^\infty} + \|f\|_{L^\infty} = 2\|f\|_{L^\infty}.
+\]
+Now, plug this bound back into the BMO integral for the cube $Q$:
+\[
+\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| \,dx \leq \frac{1}{|Q|} \int_Q 2\|f\|_{L^\infty} \,dx = 2\|f\|_{L^\infty}.
+\]
+Since this holds for *every* cube $Q$, the supremum over all cubes is also bounded by $2\|f\|_{L^\infty}$.
+Thus, $\|f\|_{\mathbf{BMO}} \leq 2\|f\|_{L^\infty}$, which proves that every $L^\infty$ function is also a BMO function.
 
-(4) Consider $f(x) = \ln |x|$ on $\mathbb{R}^n$. This function is in $\mathbf{BMO}(\mathbb{R}^n)$ because its oscillation on any cube is bounded by a constant independent of the cube's size and position. However, $\ln |x|$ is clearly not in $L^\infty(\mathbb{R}^n)$ as it is unbounded near 0 and infinity. Thus $L^\infty$ is a proper subspace of $\mathbf{BMO}$.
+\textbf{Part (3): Any constant $c_Q$ works}
+We are given that for any cube $Q$, there is some constant $c_Q$ such that the average deviation from $c_Q$ is $\leq A$.
+We need to bound the deviation from the actual average, $\mathbf{Avg}_Q f$.
+Using the trick of adding and subtracting $c_Q$ inside the absolute value, and applying the triangle inequality:
+\[
+|f(x) - \mathbf{Avg}_Q f| = |(f(x) - c_Q) + (c_Q - \mathbf{Avg}_Q f)| \leq |f(x) - c_Q| + |c_Q - \mathbf{Avg}_Q f|.
+\]
+Let's analyze the second term. By definition of the average:
+\[
+|c_Q - \mathbf{Avg}_Q f| = \left| c_Q - \frac{1}{|Q|} \int_Q f(y) \,dy \right| = \left| \frac{1}{|Q|} \int_Q (c_Q - f(y)) \,dy \right|.
+\]
+Moving the absolute value inside the integral (which can only increase the value):
+\[
+|c_Q - \mathbf{Avg}_Q f| \leq \frac{1}{|Q|} \int_Q |c_Q - f(y)| \,dy.
+\]
+Notice that this right-hand side is exactly the integral given in the problem statement, which is $\leq A$.
+So, $|c_Q - \mathbf{Avg}_Q f| \leq A$.
+Now we integrate our initial triangle inequality over the cube $Q$:
+\begin{align*}
+\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| \,dx &\leq \frac{1}{|Q|} \int_Q \left( |f(x) - c_Q| + |c_Q - \mathbf{Avg}_Q f| \right) \,dx \\
+&\leq \left( \frac{1}{|Q|} \int_Q |f(x) - c_Q| \,dx \right) + \left( \frac{1}{|Q|} \int_Q A \,dx \right).
+\end{align*}
+The first term is $\leq A$ by hypothesis. The second term integrates the constant $A$, yielding exactly $A$.
+Thus, the sum is $\leq A + A = 2A$.
+Taking the supremum over all cubes gives $\|f\|_{\mathbf{BMO}} \leq 2A$.
+
+\textbf{Part (4): $L^\infty$ is a proper subspace}
+To show it is a *proper* subspace, we must find a function that is in BMO but NOT in $L^\infty$.
+Consider the function $f(x) = \ln |x|$ on $\mathbb{R}^n$.
+- Is it in $L^\infty$? No, because as $x \to 0$, $\ln |x| \to -\infty$, and as $x \to \infty$, $\ln |x| \to \infty$. It is unbounded.
+- Is it in BMO? Yes. Proving this rigorously takes some work, but intuitively, $\ln |x|$ only grows logarithmically. On any given cube, the function doesn't oscillate wildly; its average deviation from its mean remains bounded by a constant regardless of how close the cube is to the origin or infinity (this scales nicely because $\ln |cx| = \ln c + \ln |x|$).
+Because such a function exists, $L^\infty(\mathbb{R}^n) \subsetneq \mathbf{BMO}(\mathbb{R}^n)$.
 \end{solution}

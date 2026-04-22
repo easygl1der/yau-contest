@@ -11,36 +11,94 @@
 \end{enumerate}
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:}
-This problem explores the properties of Mersenne numbers ($2^k-1$) and Fermat numbers ($2^{2^n}+1$), which are fundamental in elementary number theory.
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item Part (a) and (b) use the factorization of $x^n - 1$ and $x^n + 1$. A prime cannot have non-trivial factors, which constrains the exponent.
-    \item Part (c) demonstrates that Fermat numbers are pairwise coprime using a recursive identity.
+    \item \textbf{Polynomial Factorization:} Recall the identity $x^n - 1 = (x-1)(x^{n-1} + x^{n-2} + \dots + 1)$ for any integer $n \geq 1$.
+    \item \textbf{Sum of Powers Factorization:} For an \textit{odd} integer $d$, the identity $x^d + 1 = (x+1)(x^{d-1} - x^{d-2} + \dots + 1)$ holds.
+    \item \textbf{Prime vs. Composite:} A prime number has no divisors other than 1 and itself. If we can show a number $N > 1$ can be written as $A \times B$ where $A, B > 1$, then $N$ is composite.
+    \item \textbf{Proof by Contrapositive:} To prove "If $P$, then $Q$", it is equivalent to prove "If not $Q$, then not $P$".
 \end{itemize}
 
-\begin{enumerate}
-\item Suppose $k = ab$ for some integers $a, b > 1$. Then:
-\[2^k - 1 = 2^{ab} - 1 = (2^a)^b - 1 = (2^a - 1)(1 + 2^a + (2^a)^2 + \dots + (2^a)^{b-1}).\]
-Since $a > 1$, $2^a - 1 > 1$. Since $b > 1$, the second factor is also greater than 1. Thus $2^k - 1$ is composite. By contrapositive, if $2^k - 1$ is prime, then $k$ cannot have any factors $a, b > 1$, so $k$ must be prime.
+\bigskip
 
-\item Suppose $k$ has an odd factor $d > 1$, say $k = d \cdot m$. Then:
-\[2^k + 1 = 2^{dm} + 1 = (2^m)^d + 1.\]
-Since $d$ is odd, we use the identity $x^d + 1 = (x + 1)(x^{d-1} - x^{d-2} + \dots + 1)$.
-\[2^k + 1 = (2^m + 1)(2^{m(d-1)} - 2^{m(d-2)} + \dots + 1).\]
-Since $m \geq 1$, $2^m + 1 > 1$. Since $d > 1$ and $m \geq 1$, the second factor is also greater than 1. Thus $2^k + 1$ is composite. By contrapositive, if $2^k + 1$ is prime, $k$ must have no odd factors greater than 1, meaning $k$ is a power of 2.
+\textbf{Intuition:}
+The goal here is to understand the constraints on the exponent $k$ for numbers of the form $2^k \pm 1$ to be prime. These are known as Mersenne numbers and Fermat numbers. The intuition is that if $k$ has any "reducibility" (like being composite or having an odd factor), that reducibility "leaks" into the larger number $2^k \pm 1$, allowing us to factor it. If the larger number is prime, it must be that the exponent $k$ had no such reducible structure.
 
-\item Let $F_n = 2^{2^n} + 1$. We use the identity:
-\[\prod_{k=0}^{n-1} F_k = F_n - 2.\]
-Proof by induction:
-- Base case $n=1$: $F_0 = 2^1 + 1 = 3$, $F_1 - 2 = (2^2 + 1) - 2 = 3$. Correct.
-- Inductive step: Assume $\prod_{k=0}^{n-1} F_k = F_n - 2$. Then
-\[\prod_{k=0}^{n} F_k = (F_n - 2) F_n = (2^{2^n} - 1)(2^{2^n} + 1) = (2^{2^n})^2 - 1 = 2^{2^{n+1}} - 1 = F_{n+1} - 2.\]
-Now, let $d = \gcd(F_i, F_j)$ with $i < j$. Then $d$ must divide the product $\prod_{k=0}^{j-1} F_k$.
-By the identity, $d$ divides $F_j - 2$.
-Since $d$ also divides $F_j$, it must divide $F_j - (F_j - 2) = 2$.
-The only divisors of 2 are 1 and 2. Since all $F_n$ are odd, $d$ cannot be 2.
-Thus $d = 1$, and the Fermat numbers are pairwise coprime.
-\end{enumerate}
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: If $2^k - 1$ is prime, then $k$ is prime.}
+
+We will use the contrapositive. Suppose $k$ is not prime (composite). This means we can write $k = ab$ for some integers $a, b > 1$.
+
+\bigskip
+
+Now, we substitute this into our expression:
+\[ 2^k - 1 = 2^{ab} - 1 = (2^a)^b - 1. \]
+
+\bigskip
+
+Using the polynomial factorization identity $x^b - 1 = (x-1)(x^{b-1} + \dots + 1)$ with $x = 2^a$, we get:
+\[ 2^k - 1 = (2^a - 1)( (2^a)^{b-1} + (2^a)^{b-2} + \dots + 2^a + 1). \]
+
+\bigskip
+
+Since $a > 1$, we know $2^a - 1 > 2^1 - 1 = 1$. Also, since $b > 1$, the second factor is a sum of at least two positive terms where the largest is $(2^a)^{b-1} \geq 2^1 = 2$, so the second factor is clearly greater than 1.
+
+\bigskip
+
+Because $2^k - 1$ is the product of two integers both greater than 1, $2^k - 1$ must be composite. Thus, by contrapositive, if $2^k - 1$ is prime, $k$ must be prime.
+
+\bigskip
+
+\textbf{Part 2: If $2^k + 1$ is prime, then $k$ is a power of 2.}
+
+Again, we use the contrapositive. Suppose $k$ is \textit{not} a power of 2. This means $k$ must have at least one odd factor greater than 1. Let $k = m \cdot d$, where $d > 1$ is odd and $m \geq 1$.
+
+\bigskip
+
+We substitute this into our expression:
+\[ 2^k + 1 = 2^{md} + 1 = (2^m)^d + 1. \]
+
+\bigskip
+
+Since $d$ is odd, we can use the identity $x^d + 1 = (x+1)(x^{d-1} - x^{d-2} + \dots + 1)$ with $x = 2^m$:
+\[ 2^k + 1 = (2^m + 1)( (2^m)^{d-1} - (2^m)^{d-2} + \dots - 2^m + 1). \]
+
+\bigskip
+
+Since $m \geq 1$, the first factor $2^m + 1 \geq 2^1 + 1 = 3 > 1$. Since $d > 1$ and is odd, the second factor is also an integer greater than 1 (for example, if $d=3$, it is $(2^m)^2 - 2^m + 1$, which is always positive and $>1$ for $m \geq 1$).
+
+\bigskip
+
+Thus $2^k + 1$ has a non-trivial factor $2^m + 1$, making it composite. By contrapositive, if $2^k + 1$ is prime, $k$ can have no odd factors, so $k$ must be a power of 2.
+
+\bigskip
+
+\textbf{Part 3: Goldbach's Theorem on Fermat Numbers.}
+
+Let $F_n = 2^{2^n} + 1$. We want to show $\gcd(F_i, F_j) = 1$ for $i \neq j$. Assume without loss of generality that $i < j$.
+
+\bigskip
+
+We use a special identity: $\prod_{k=0}^{n-1} F_k = F_n - 2$. Let's verify this for small $n$. For $n=1$, $F_0 = 3$ and $F_1 - 2 = 5 - 2 = 3$. For $n=2$, $F_0 F_1 = 3 \times 5 = 15$, and $F_2 - 2 = 17 - 2 = 15$.
+
+\bigskip
+
+To prove this identity generally, notice that $(F_n - 2)F_n = (2^{2^n} - 1)(2^{2^n} + 1) = (2^{2^n})^2 - 1 = 2^{2^{n+1}} - 1 = F_{n+1} - 2$. By induction, the identity holds.
+
+\bigskip
+
+Now, let $d$ be a common divisor of $F_i$ and $F_j$. Since $i < j$, $F_i$ is one of the terms in the product $\prod_{k=0}^{j-1} F_k$. Therefore, $d$ must divide the entire product.
+
+\bigskip
+
+Since $\prod_{k=0}^{j-1} F_k = F_j - 2$, we see that $d$ divides $F_j - 2$. But we also know $d$ divides $F_j$. Thus, $d$ must divide the difference: $F_j - (F_j - 2) = 2$.
+
+\bigskip
+
+The only positive divisors of 2 are 1 and 2. However, all Fermat numbers $F_n = 2^{2^n} + 1$ are clearly odd. Thus, $d$ cannot be 2. The only possibility is $d=1$. This proves that any two distinct Fermat numbers are coprime.
 \end{solution}
 
 \begin{exercise}
@@ -61,64 +119,136 @@ Let $K = \mathbb{Q}(\sqrt[3]{5})$ and let $L$ be the Galois closure of $K$.
 \end{enumerate}
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:}
-This problem analyzes a non-abelian Galois extension of $\mathbb{Q}$ of degree 6.
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item Part (a) uses the Galois correspondence. The Galois group is $S_3$, which has a unique subgroup of index 2 ($A_3$).
-    \item Part (b) relates ramification to the discriminant. Primes ramifying in a composite field are those that ramify in the component fields.
-    \item Part (c) uses the fact that decomposition in $L$ depends on decomposition in both $M$ (quadratic) and $K$ (cubic).
+    \item \textbf{Galois Theory:} Understanding splitting fields and the correspondence between subfields and subgroups of the Galois group.
+    \item \textbf{Symmetric Group $S_3$:} Knowing that the Galois group of a cubic polynomial is often $S_3$, which has a unique normal subgroup of order 3 ($A_3$).
+    \item \textbf{Eisenstein's Criterion:} A tool to prove the irreducibility of polynomials over $\mathbb{Q}$.
+    \item \textbf{Quadratic Reciprocity:} Laws determining if a prime splits in a quadratic extension $\mathbb{Q}(\sqrt{d})$.
+    \item \textbf{Ramification and Discriminant:} Primes ramify in an extension if they divide the discriminant.
 \end{itemize}
 
-\begin{enumerate}
-\item The polynomial $x^3 - 5$ is irreducible over $\mathbb{Q}$ by Eisenstein's criterion ($p=5$). Its roots are $\sqrt[3]{5}, \omega\sqrt[3]{5}, \omega^2\sqrt[3]{5}$ where $\omega = e^{2\pi i/3}$. The Galois closure is $L = \mathbb{Q}(\sqrt[3]{5}, \omega)$.
-$[L:\mathbb{Q}] = [\mathbb{Q}(\sqrt[3]{5}, \omega):\mathbb{Q}(\omega)] \cdot [\mathbb{Q}(\omega):\mathbb{Q}] = 3 \cdot 2 = 6$.
-The Galois group $\mathrm{Gal}(L/\mathbb{Q})$ is $S_3$. The subfields of degree 2 correspond to subgroups of index 2 (order 3). In $S_3$, the only subgroup of order 3 is $A_3 = \{1, (123), (132)\}$. Thus $M$ is unique.
-Since $\omega \in L$ and $[\mathbb{Q}(\omega):\mathbb{Q}] = 2$, we must have $M = \mathbb{Q}(\omega) = \mathbb{Q}(\sqrt{-3})$.
-A prime $p > 3$ splits in $\mathbb{Q}(\sqrt{-3})$ if and only if $(-3/p) = 1$. By Quadratic Reciprocity:
-\[\left(\frac{-3}{p}\right) = \left(\frac{-1}{p}\right)\left(\frac{3}{p}\right) = (-1)^{(p-1)/2} (-1)^{(p-1)/2 \cdot (3-1)/2} \left(\frac{p}{3}\right) = \left(\frac{p}{3}\right).\]
-$(p/3) = 1$ if $p \equiv 1 \pmod 3$, so $p$ splits in $M$.
+\bigskip
 
-\item A prime ramifies in $L$ if and only if it ramifies in $K = \mathbb{Q}(\sqrt[3]{5})$ or $M = \mathbb{Q}(\sqrt{-3})$.
-1. In $M$, the discriminant is $-3$, so only 3 ramifies.
-2. In $K$, the discriminant of $x^3-5$ is $-27 \cdot 5^2 = -675 = -3^3 \cdot 5^2$. Thus 3 and 5 are the only candidates.
-Both 3 and 5 indeed ramify (5 is totally ramified in $K$ as $x^3-5$ is Eisenstein at 5; 3 is ramified because it ramifies in $M$).
-Thus the ramified primes are $\{3, 5\}$.
+\textbf{Intuition:}
+The field $K = \mathbb{Q}(\sqrt[3]{5})$ only contains one root of $x^3-5$. To make it "Galois" (meaning it contains all roots and is symmetric), we must add the complex roots of unity. This creates a larger field $L$ of degree 6. The "shape" of this field is controlled by the group $S_3$. Because $S_3$ has a very specific structure (a unique subgroup of index 2), $L$ must have a unique subfield of degree 2. We then use standard tools from number theory to see how primes "break apart" (split) or "overlap" (ramify) when they enter this field.
 
-\item Let $f_p$ be the inertia degree in $L$. Note that $L$ is the compositum of $K$ and $M$.
-\item If $p \equiv 1 \pmod 3$, $p$ splits in $M$ ($f_{p,M} = 1$). If 5 is a cubic residue, $x^3-5$ has a root in $\mathbb{F}_p$. Since $p \equiv 1 \pmod 3$, $\mathbb{F}_p$ contains the 3rd roots of unity, so $x^3-5$ splits completely in $\mathbb{F}_p$. Thus $f_{p,K} = 1$. Consequently $f_{p,L} = \mathrm{lcm}(1, 1) = 1$. $p$ splits completely.
-(ii) If $p \equiv 1 \pmod 3$ and 5 is not a cubic residue, $x^3-5$ is irreducible in $\mathbb{F}_p$ (if it had one root, it would have three because $\omega \in \mathbb{F}_p$). Thus $f_{p,K} = 3$. Then $f_{p,L} = \mathrm{lcm}(f_{p,M}, f_{p,K}) = \mathrm{lcm}(1, 3) = 3$.
-(iii) If $p \equiv 2 \pmod 3$, then $\gcd(3, p-1) = 1$. The map $x \mapsto x^3$ is a bijection on $\mathbb{F}_p^\times$. Thus 5 is always a cubic residue mod $p$. $x^3-5$ has exactly one root in $\mathbb{F}_p$. The other two roots are in $\mathbb{F}_{p^2}$ because $\omega \notin \mathbb{F}_p$. Thus $f_{p,K} = 2$. Also $p$ is inert in $M$ ($f_{p,M} = 2$). Then $f_{p,L} = \mathrm{lcm}(2, 2) = 2$.
-\end{enumerate}
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: Unique subfield and Splitting of primes.}
+
+The polynomial $f(x) = x^3 - 5$ is irreducible over $\mathbb{Q}$ because it satisfies Eisenstein's criterion for the prime $p=5$. Its roots are $\alpha_1 = \sqrt[3]{5}$, $\alpha_2 = \omega\sqrt[3]{5}$, and $\alpha_3 = \omega^2\sqrt[3]{5}$, where $\omega = e^{2\pi i/3} = \frac{-1 + i\sqrt{3}}{2}$.
+
+\bigskip
+
+The Galois closure $L$ is the smallest field containing all these roots: $L = \mathbb{Q}(\sqrt[3]{5}, \omega)$. The degree $[L:\mathbb{Q}]$ is 6 because we first extend $\mathbb{Q}$ by $\omega$ (degree 2) and then by $\sqrt[3]{5}$ (degree 3). The Galois group $\mathrm{Gal}(L/\mathbb{Q})$ is $S_3$, the symmetric group on 3 elements.
+
+\bigskip
+
+According to the Fundamental Theorem of Galois Theory, subfields of degree 2 correspond to subgroups of index 2. In $S_3$ (which has 6 elements), an index 2 subgroup must have 3 elements. The only such subgroup is the alternating group $A_3 = \{ (1), (123), (132) \}$. Since there is only one such subgroup, there is a unique subfield $M$ of degree 2.
+
+\bigskip
+
+We already know one subfield of degree 2: $\mathbb{Q}(\omega) = \mathbb{Q}(\sqrt{-3})$. Since it is unique, $M = \mathbb{Q}(\sqrt{-3})$. A prime $p > 3$ splits in $\mathbb{Q}(\sqrt{-3})$ if the discriminant $-3$ is a quadratic residue modulo $p$, i.e., $\left(\frac{-3}{p}\right) = 1$. Using quadratic reciprocity, this is equivalent to $p \equiv 1 \pmod 3$. Thus, every $p \equiv 1 \pmod 3$ splits in $M$.
+
+\bigskip
+
+\textbf{Part 2: Ramified Primes.}
+
+A prime ramifies in the compositum $L = KM$ if and only if it ramifies in $K$ or $M$.
+\begin{itemize}
+    \item In $M = \mathbb{Q}(\sqrt{-3})$, the discriminant is $-3$, so the only ramified prime is 3.
+    \item In $K = \mathbb{Q}(\sqrt[3]{5})$, the discriminant of the polynomial $x^3-5$ is $\Delta = -27 \cdot 5^2 = -3^3 \cdot 5^2$. This tells us only 3 and 5 can ramify.
+\end{itemize}
+
+\bigskip
+
+Specifically, 5 is totally ramified in $K$ because $x^3-5$ is Eisenstein at 5. 3 is ramified because it already ramifies in the subfield $M$. Thus, the set of ramified primes in $L$ is exactly $\{3, 5\}$.
+
+\bigskip
+
+\textbf{Part 3: Decomposition Law.}
+
+We use the fact that the inertia degree $f_{p, L}$ in the compositum $L=KM$ is the least common multiple of the inertia degrees in the pieces, $f_{p, L} = \mathrm{lcm}(f_{p, K}, f_{p, M})$.
+
+\bigskip
+
+(i) If $p \equiv 1 \pmod 3$, then $p$ splits in $M$, so $f_{p, M} = 1$. If 5 is a cubic residue, $x^3-5 \equiv 0 \pmod p$ has a root. Since $p \equiv 1 \pmod 3$, the field $\mathbb{F}_p$ already contains the 3rd roots of unity, so if it has one root, it has all three. This means $f_{p, K} = 1$. Thus $f_{p, L} = \mathrm{lcm}(1, 1) = 1$, and $p$ splits completely.
+
+\bigskip
+
+(ii) If $p \equiv 1 \pmod 3$ and 5 is not a cubic residue, then $x^3-5$ has no roots in $\mathbb{F}_p$. Since it's a cubic, it must be irreducible. Thus $f_{p, K} = 3$. We still have $f_{p, M} = 1$. Then $f_{p, L} = \mathrm{lcm}(1, 3) = 3$.
+
+\bigskip
+
+(iii) If $p \equiv 2 \pmod 3$, then the map $x \mapsto x^3$ is a bijection in $\mathbb{F}_p$ because $\gcd(3, p-1) = 1$. Thus, 5 is \textit{always} a cubic residue, and $x^3-5$ always has exactly one root in $\mathbb{F}_p$. The other roots lie in $\mathbb{F}_{p^2}$, so $f_{p, K} = 2$. For $M$, $p \equiv 2 \pmod 3$ means $p$ is inert in $\mathbb{Q}(\sqrt{-3})$, so $f_{p, M} = 2$. Thus $f_{p, L} = \mathrm{lcm}(2, 2) = 2$.
 \end{solution}
 
 \begin{exercise}
 Prove that every group of order 99 is abelian.
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:}
-The structure of a group of a given order can often be determined by analyzing its Sylow subgroups and their interactions.
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item We use the Sylow theorems to count the number of $p$-Sylow subgroups. If there is only one, it is normal.
-    \item We examine the possible homomorphisms from one Sylow subgroup to the automorphism group of another to determine if the group is a direct product.
+    \item \textbf{Sylow Theorems:} Specifically, the third Sylow theorem which states that the number of Sylow $p$-subgroups, $n_p$, satisfies $n_p \equiv 1 \pmod p$ and $n_p$ divides $|G|/p^k$.
+    \item \textbf{Normal Subgroups:} If $n_p = 1$, the unique Sylow $p$-subgroup is normal in $G$.
+    \item \textbf{Group of Order $p^2$:} Every group of order $p^2$ is abelian.
+    \item \textbf{Semidirect Products and Automorphisms:} A group $G$ with a normal subgroup $N$ and a subgroup $H$ such that $G=NH$ and $N \cap H = \{1\}$ is a semidirect product $N \rtimes_\phi H$, where $\phi: H \to \mathrm{Aut}(N)$ is a homomorphism.
 \end{itemize}
 
-Let $G$ be a group of order $99 = 3^2 \cdot 11$.
-1. \textbf{Sylow 11-subgroups:} Let $n_{11}$ be the number of Sylow 11-subgroups.
-   - $n_{11} \equiv 1 \pmod{11}$
-   - $n_{11}$ divides 9.
-   The only divisor of 9 that is $1 \pmod{11}$ is 1. Thus $n_{11} = 1$.
-   Let $P_{11}$ be the unique Sylow 11-subgroup. Since it is unique, $P_{11} \trianglelefteq G$.
-2. \textbf{Sylow 3-subgroups:} Let $P_9$ be a Sylow 3-subgroup of order 9.
-3. \textbf{Group Structure:} Since $P_{11}$ is normal, $G$ is a semidirect product $G \cong P_{11} \rtimes_\phi P_9$, where $\phi: P_9 \to \mathrm{Aut}(P_{11})$ is a homomorphism.
-   The group $P_{11}$ is cyclic of order 11, so $\mathrm{Aut}(P_{11}) \cong C_{10}$.
-   The order of $P_9$ is 9. Any homomorphism $\phi: P_9 \to C_{10}$ must map elements to elements whose order divides $\gcd(9, 10) = 1$.
-   Thus $\phi$ must be the trivial homomorphism ($\phi(g) = id$ for all $g \in P_9$).
-   This implies that the semidirect product is actually a \textbf{direct product}:
-   \[G \cong P_{11} \times P_9.\]
-4. \textbf{Abelian Property:}
-   - $P_{11}$ is of order 11 (prime), so it is cyclic and thus abelian.
-   - $P_9$ is of order $3^2$ ($p^2$), and it is a well-known result that every group of order $p^2$ is abelian.
-   The direct product of two abelian groups is abelian. Therefore, $G$ is abelian.
+\bigskip
+
+\textbf{Intuition:}
+The order of the group is $99 = 9 \times 11$. The Sylow theorems act like a "structural constraint" that limits how many ways we can arrange the elements. We find that the Sylow 11-subgroup is forced to be unique and thus "well-behaved" (normal). We then look at how the Sylow 3-subgroup interacts with it. Since the interaction (represented by a homomorphism) has to be trivial due to the sizes of the groups involved, the group effectively "uncouples" into a direct product of two abelian groups.
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Step 1: Analyzing the Sylow 11-subgroups.}
+
+Let $G$ be a group of order $|G| = 99 = 3^2 \cdot 11$. Let $n_{11}$ be the number of Sylow 11-subgroups. According to the Sylow theorems:
+1. $n_{11} \equiv 1 \pmod{11}$
+2. $n_{11}$ must divide $99/11 = 9$.
+
+\bigskip
+
+The divisors of 9 are 1, 3, and 9. Among these, only 1 satisfies the condition $1 \equiv 1 \pmod{11}$. Thus, $n_{11} = 1$. This means there is a unique Sylow 11-subgroup, which we will call $P_{11}$. Because it is unique, $P_{11}$ is a normal subgroup of $G$ ($P_{11} \trianglelefteq G$).
+
+\bigskip
+
+\textbf{Step 2: Analyzing the Sylow 3-subgroups.}
+
+Let $P_9$ be a Sylow 3-subgroup of order $3^2 = 9$. Note that $P_{11} \cap P_9 = \{1\}$ because their orders are coprime. Also, the product of their orders is $11 \times 9 = 99$, which is the order of $G$. Thus, $G = P_{11} P_9$.
+
+\bigskip
+
+\textbf{Step 3: Examining the interaction between subgroups.}
+
+Since $P_{11}$ is normal, $G$ is a semidirect product $G \cong P_{11} \rtimes_\phi P_9$. The "twist" of this product is defined by a homomorphism $\phi: P_9 \to \mathrm{Aut}(P_{11})$. 
+
+\bigskip
+
+$P_{11}$ is a cyclic group of order 11, so its automorphism group $\mathrm{Aut}(P_{11})$ is a cyclic group of order $11 - 1 = 10$. We are looking for homomorphisms from a group of order 9 to a group of order 10. The image of any element under such a homomorphism must have an order that divides both 9 and 10. Since $\gcd(9, 10) = 1$, the only such order is 1.
+
+\bigskip
+
+This means that every element in $P_9$ must map to the identity in $\mathrm{Aut}(P_{11})$. In other words, $\phi$ is the trivial homomorphism. When the homomorphism in a semidirect product is trivial, the product is actually a \textbf{direct product}:
+\[ G \cong P_{11} \times P_9. \]
+
+\bigskip
+
+\textbf{Step 4: Conclusion.}
+
+Now we check if the components are abelian:
+1. $P_{11}$ is of order 11 (a prime number), so it is cyclic and therefore abelian.
+2. $P_9$ is of order $3^2$ ($p^2$). A standard result in group theory states that every group of order $p^2$ is abelian.
+
+\bigskip
+
+Since $G$ is the direct product of two abelian groups, $G$ itself must be abelian.
 \end{solution}
 
 \begin{exercise}
@@ -133,40 +263,75 @@ Let $K$ be a field and let $V$ be a finite-dimensional $K$-vector space.
 \end{enumerate}
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:}
-This problem explores the interplay between linear algebra and the geometry of subspaces/hyperplanes.
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item Part (a) is a basic property of vector spaces over infinite fields. A finite union of "lower-dimensional" objects cannot fill a higher-dimensional space.
-    \item Part (b) introduces the finite Radon transform. Injectivity is proved by showing that a point can be "isolated" by a linear combination of hyperplanes.
-    \item Part (c) applies the previous results. The condition on $f$ is equivalent to saying that the multisets of values are the same for every projection, which identifies the multiset of vectors.
+    \item \textbf{Linear Subspaces:} A subspace is "proper" if it is not the entire vector space.
+    \item \textbf{Infinite Fields:} A field like $\mathbb{Q}$, $\mathbb{R}$, or $\mathbb{C}$ where you can pick infinitely many distinct scalars.
+    \item \textbf{Affine Hyperplanes:} A subset of $V$ defined by $f(x) = c$ for some non-zero linear map $f$ and scalar $c$.
+    \item \textbf{Multisets and Indicator Functions:} A multiset is like a set but allows repeated elements. The difference between two multisets can be tracked by a function $g(x)$ that counts the frequency difference.
 \end{itemize}
 
-\begin{enumerate}
-\item Let $V = \cup_{i=1}^n V_i$ where $V_i$ are proper subspaces. Assume $n$ is minimal. If $n=1$, $V = V_1$ is proper, contradiction. For $n > 1$, there exists $x \in V_1 \setminus \cup_{i=2}^n V_i$ and $y \in V_2 \setminus \cup_{i \neq 2} V_i$ (by minimality).
-Consider the set $L = \{ x + ay \mid a \in K \}$. Since $K$ is infinite, $L$ is infinite.
-For each $i$, if $V_i$ contains two distinct elements $x+ay$ and $x+by$, then it contains their difference $(a-b)y$, so $y \in V_i$. This then implies $x \in V_i$.
-- If $i=1$, since $x \in V_1$ and $y \notin V_1$, $V_1$ can contain at most one element of $L$ (namely $x$, when $a=0$).
-- If $i > 1$, since $x \notin V_i$, $V_i$ can contain at most one element of $L$.
-Thus, the union $\cup V_i$ contains at most $n$ elements of $L$. Since $L$ is infinite, there exists $a \in K$ such that $x+ay \notin \cup V_i$, which contradicts $V = \cup V_i$.
+\bigskip
 
-\item Let $q = |K|$ and $d = \dim V$. For any $z \in V$ and any line $\ell$ through 0, there is a unique affine hyperplane $\xi_{z, \ell}$ through $z$ that is "perpendicular" to $\ell$ (i.e., $\xi_{z, \ell} = z + H_\ell$ where $H_\ell$ is a linear hyperplane).
-Summing $Rg(\xi)$ over all affine hyperplanes $\xi$ containing $z$:
-\[\sum_{\xi \ni z} Rg(\xi) = \sum_{\xi \ni z} \sum_{x \in \xi} g(x) = \sum_{x \in V} g(x) \cdot (\text{number of hyperplanes containing both } z \text{ and } x).\]
-- If $x = z$, there are $\frac{q^d - 1}{q - 1}$ hyperplanes through $z$.
-- If $x \neq z$, there are $\frac{q^{d-1} - 1}{q - 1}$ hyperplanes containing the line segment $zx$.
-Let $N = \frac{q^d - 1}{q - 1}$ and $M = \frac{q^{d-1} - 1}{q - 1}$. Then:
-\[0 = \sum_{\xi \ni z} Rg(\xi) = N g(z) + M \sum_{x \neq z} g(x) = (N-M) g(z) + M \sum_{x \in V} g(x).\]
-Summing $Rg(\xi)$ over all $q^d$ affine hyperplanes $\xi$ in a parallel class yields $\sum_{x \in V} g(x) = 0$ (since each $Rg(\xi) = 0$).
-Thus $(N-M)g(z) = 0$. Since $N-M = q^{d-1} \neq 0$, we have $g(z) = 0$ for all $z$.
+\textbf{Intuition:}
+The problem explores the "resolution" of vector spaces. Part (a) tells us that a finite number of lower-dimensional "shadows" cannot cover the whole space if we have infinitely many directions to look. Part (b) is like a mathematical version of a CT scan: by taking enough "slices" (sums over hyperplanes), we can reconstruct the original "density" (the function $g$). Part (c) says that if two groups of vectors have the same "projections" onto every possible 1-dimensional line, then the groups of vectors must be identical.
 
-\item Let $S_v$ and $S_w$ be the multisets $\{v_1, \dots, v_n\}$ and $\{w_1, \dots, w_n\}$. The assumption is that for every $f \in V^*$, the multisets of values $f(S_v)$ and $f(S_w)$ are identical.
-This means for every $c \in K$ and every $f \in V^*$, the number of $i$ such that $f(v_i) = c$ is the same as for $w_i$.
-The set $\{ x \in V \mid f(x) = c \}$ is an affine hyperplane $\xi_{f, c}$.
-Let $g(x) = \mathrm{count}(x, S_v) - \mathrm{count}(x, S_w)$ be the difference of frequency functions.
-The assumption says that for every affine hyperplane $\xi$, $\sum_{x \in \xi} g(x) = 0$.
-By part (b) (if $K$ is finite) or by considering the "Fourier-like" transform/polynomials (if $K$ is infinite), we conclude $g(x) = 0$ for all $x$.
-Thus $S_v$ and $S_w$ are the same multiset.
-\end{enumerate}
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: Unions of subspaces over infinite fields.}
+
+Suppose $V$ is a union of finitely many proper subspaces $V_1, V_2, \dots, V_n$. We want to show this is impossible if $K$ is infinite.
+
+\bigskip
+
+Let $n$ be the smallest number of proper subspaces that cover $V$. We can assume $n > 1$ (since a single proper subspace cannot be all of $V$). By minimality, there exists a vector $x$ that is in $V_1$ but not in any of the other $V_i$, and a vector $y$ that is in $V_2$ but not in $V_1$.
+
+\bigskip
+
+Now consider the infinite set of vectors $L = \{ x + ay \mid a \in K \}$. Since $K$ is infinite, $L$ is infinite. We claim that each $V_i$ can contain at most one vector from $L$.
+
+\bigskip
+
+If $V_i$ contained two distinct vectors $x+ay$ and $x+by$, then it would contain their difference $(a-b)y$. Since $a-b \neq 0$, we could divide by it to get $y \in V_i$. 
+- If $i=1$, then $y \in V_1$, which implies $x = (x+ay) - ay \in V_1$. This doesn't help much, but we chose $y \notin V_1$, so $V_1$ can have at most one element of $L$ (at $a=0$).
+- If $i > 1$, if $y \in V_i$, then $x = (x+ay) - ay \in V_i$. But we chose $x \notin V_i$ for $i > 1$. Thus $V_i$ can have at most one element.
+
+\bigskip
+
+The union of all $V_i$ contains at most $n$ elements of the infinite set $L$. This is a contradiction. Thus, $V$ cannot be covered by a finite union of proper subspaces.
+
+\bigskip
+
+\textbf{Part 2: The Finite Radon Transform.}
+
+We are given that $\sum_{x \in \xi} g(x) = 0$ for every affine hyperplane $\xi$. We want to show $g(z) = 0$ for every $z \in V$.
+
+\bigskip
+
+Let $q = |K|$ and $d = \dim V$. For a fixed point $z$, let's sum the Radon transform values over all hyperplanes $\xi$ that pass through $z$:
+\[ \sum_{\xi \ni z} (Rg)(\xi) = \sum_{\xi \ni z} \sum_{x \in \xi} g(x) = \sum_{x \in V} g(x) \times (\text{number of hyperplanes containing both } z \text{ and } x). \]
+
+\bigskip
+
+- If $x = z$, there are $N = \frac{q^d - 1}{q - 1}$ hyperplanes passing through $z$.
+- If $x \neq z$, the points $z$ and $x$ define a unique line. The number of hyperplanes containing this line is $M = \frac{q^{d-1} - 1}{q - 1}$.
+
+\bigskip
+
+The total sum becomes $N g(z) + M \sum_{x \neq z} g(x) = (N-M)g(z) + M \sum_{x \in V} g(x)$. From the problem, each $(Rg)(\xi) = 0$, so the whole sum is 0. Also, by summing over a parallel class of hyperplanes, we can show $\sum_{x \in V} g(x) = 0$. This leaves us with $(N-M)g(z) = 0$. Since $N-M = q^{d-1} > 0$, we must have $g(z) = 0$.
+
+\bigskip
+
+\textbf{Part 3: Identifying multisets of vectors.}
+
+Let $g(x)$ be the difference in frequency of vector $x$ between the two multisets. The condition that for every $f: V \to K$ the multisets of values $\{f(v_i)\}$ and $\{f(w_i)\}$ are the same means:
+\[ \sum_{i=1}^n \delta_{c, f(v_i)} = \sum_{i=1}^n \delta_{c, f(w_i)} \implies \sum_{x \in V, f(x)=c} g(x) = 0. \]
+
+\bigskip
+
+This sum is exactly the Radon transform of $g$ over the hyperplane $\xi = \{x \mid f(x) = c\}$. Since this sum is zero for \textit{every} hyperplane, part (b) tells us $g(x) = 0$ for all $x$. This means the counts of each vector in both multisets are identical, so the lists of vectors coincide up to permutation.
 \end{solution}
 
 \begin{exercise}
@@ -177,29 +342,55 @@ Prove that $A$ has the form:
 \[A \in \begin{pmatrix} p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p & \cdots & p^2\mathbb{Z}_p & p\mathbb{Z}_p^\times \\ p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p & \cdots & p^2\mathbb{Z}_p^\times & p^2\mathbb{Z}_p \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p^\times & \cdots & p^{n-1}\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p \\ p^n\mathbb{Z}_p^\times & p^n\mathbb{Z}_p & \cdots & p^n\mathbb{Z}_p & p^n\mathbb{Z}_p \end{pmatrix}.\]
 \end{exercise}
 \begin{solution}
-\textbf{Motivation and Strategy:}
-This problem requires a careful entry-by-entry analysis of a matrix based on $p$-adic valuation constraints. 
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item We interpret the condition $v_p(a_{ij}) \geq \max\{i, n+1-j\}$ for different rows and columns.
-    \item The condition $a_{i, n+1-i} \in p^i \mathbb{Z}_p^\times$ fixes the exact valuation of the "anti-diagonal" entries.
+    \item \textbf{$p$-adic Valuation ($v_p$):} For a $p$-adic number $x$, $v_p(x)$ is the exponent of the highest power of $p$ that "divides" $x$. For example, $v_p(p^k) = k$.
+    \item \textbf{$p$-adic Integers ($\mathbb{Z}_p$):} The set of $p$-adic numbers with $v_p(x) \geq 0$.
+    \item \textbf{Units ($\mathbb{Z}_p^\times$):} $p$-adic integers with $v_p(x) = 0$. Thus, $x \in p^k \mathbb{Z}_p^\times$ means $v_p(x)$ is \textit{exactly} $k$.
+    \item \textbf{Matrix Indexing:} In an $n \times n$ matrix, $i$ is the row index and $j$ is the column index, both ranging from 1 to $n$.
 \end{itemize}
 
-1. \textbf{Analyzing the lower bounds:} The entry $a_{ij}$ must satisfy $v_p(a_{ij}) \geq i$ and $v_p(a_{ij}) \geq n+1-j$.
-   - For the \textbf{first row} ($i=1$): $v_p(a_{1j}) \geq \max\{1, n+1-j\}$. As $j$ goes from 1 to $n$, the term $n+1-j$ goes from $n$ to 1. Thus $v_p(a_{11}) \geq n, v_p(a_{12}) \geq n-1, \dots, v_p(a_{1n}) \geq 1$.
-   - For the \textbf{last row} ($i=n$): $v_p(a_{nj}) \geq \max\{n, n+1-j\}$. Since $n \geq n+1-j$ for all $j \geq 1$, we have $v_p(a_{nj}) \geq n$ for all $j$.
-   - For the \textbf{first column} ($j=1$): $v_p(a_{i1}) \geq \max\{i, n\}$. For all $i \leq n$, this means $v_p(a_{i1}) \geq n$.
-   - For the \textbf{last column} ($j=n$): $v_p(a_{in}) \geq \max\{i, 1\} = i$.
+\bigskip
 
-2. \textbf{Analyzing the exact valuations:} The anti-diagonal entries are $a_{i, n+1-i}$.
-   - The condition $\max\{i, n+1-(n+1-i)\} = \max\{i, i\} = i$ matches the lower bound.
-   - The constraint $a_{i, n+1-i} \in p^i \mathbb{Z}_p^\times$ implies that $v_p(a_{i, n+1-i}) = i$ exactly.
+\textbf{Intuition:}
+Imagine the matrix as a grid where each cell has a "minimum height" (the power of $p$ that must divide it). The rule $v_p(a_{ij}) \geq \max\{i, n+1-j\}$ means that as you go down the rows (increasing $i$), the minimum power of $p$ increases. Similarly, as you move from right to left (decreasing $j$), the minimum power of $p$ also increases. The extra condition on the anti-diagonal ($a_{i, n+1-i}$) ensures that these specific cells are not just "at least" some height, but "exactly" at that height, which "pins down" the structure of the matrix.
 
-3. \textbf{Constructing the matrix form:}
-   - Row 1: Entries have valuations at least $n, n-1, \dots, 2, 1$. The last entry $a_{1n}$ has valuation exactly 1.
-   - Row 2: $v_p(a_{2j}) \geq \max\{2, n+1-j\}$. For $j=1 \dots n$, the bounds are $n, n-1, \dots, 2, 2$. The entry $a_{2, n-1}$ has valuation exactly 2.
-   - Row $k$: $v_p(a_{kj}) \geq \max\{k, n+1-j\}$.
-   - Row $n$: All entries have valuation at least $n$. The first entry $a_{n1}$ has valuation exactly $n$.
-   This matches the provided matrix structure where each entry $a_{ij}$ is represented by the ideal $p^k \mathbb{Z}_p$ where $k = \max\{i, n+1-j\}$, with the anti-diagonal entries restricted to have exactly that valuation.
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Step 1: Decoding the lower bound $v_p(a_{ij}) \geq \max\{i, n+1-j\}$.}
+
+We analyze this bound for various parts of the matrix:
+- **For the first row ($i=1$):** $v_p(a_{1j}) \geq \max\{1, n+1-j\}$. As $j$ goes from 1 to $n$, the value $n+1-j$ goes from $n$ down to 1. So, $v_p(a_{11}) \geq n, v_p(a_{12}) \geq n-1, \dots, v_p(a_{1n}) \geq 1$.
+- **For the last row ($i=n$):** $v_p(a_{nj}) \geq \max\{n, n+1-j\}$. Since $n \geq n+1-j$ for all $j \geq 1$, the bound is simply $v_p(a_{nj}) \geq n$ for the entire row.
+- **For the first column ($j=1$):** $v_p(a_{i1}) \geq \max\{i, n+1-1\} = \max\{i, n\}$. Since $i \leq n$, this means $v_p(a_{i1}) \geq n$ for the entire column.
+- **For the last column ($j=n$):** $v_p(a_{in}) \geq \max\{i, n+1-n\} = \max\{i, 1\} = i$.
+
+\bigskip
+
+\textbf{Step 2: Checking the Anti-diagonal entries.}
+
+The anti-diagonal entries are those where $j = n+1-i$. Let's plug this into our bound:
+\[ v_p(a_{i, n+1-i}) \geq \max\{i, n+1-(n+1-i)\} = \max\{i, i\} = i. \]
+
+\bigskip
+
+The problem statement gives us a stronger condition for these specific entries: $a_{i, n+1-i} \in p^i \mathbb{Z}_p^\times$. This means $v_p(a_{i, n+1-i})$ is \textit{exactly} $i$. This matches our lower bound and tells us these entries are "just barely" satisfying the divisibility rule.
+
+\bigskip
+
+\textbf{Step 3: Constructing the Visual Matrix.}
+
+By applying the $\max\{i, n+1-j\}$ rule to every cell, we find:
+- Row 1: $p^n, p^{n-1}, \dots, p^1$ (last entry $a_{1n}$ has valuation \textit{exactly} 1).
+- Row 2: $p^n, p^{n-1}, \dots, p^2, p^2$ (entry $a_{2,n-1}$ has valuation \textit{exactly} 2).
+- Row $i$: The valuation is $n$ for columns $1 \dots n+1-i$, and then it stays at $i$ for the remaining columns.
+- Row $n$: All entries have valuation at least $n$ (first entry $a_{n1}$ has valuation \textit{exactly} $n$).
+
+\bigskip
+
+Combining these, we get the matrix form where each entry $(i, j)$ is in the ideal $p^{\max\{i, n+1-j\}} \mathbb{Z}_p$, with the anti-diagonal entries restricted to have exact valuations. This perfectly matches the matrix shown in the problem.
 \end{solution}
 
 
@@ -212,6 +403,62 @@ Recall that a ring $E$ is said to be local if for every $u \in E$, at least one 
     \item Assume $M$ indecomposable and of finite length. Prove the Fitting lemma: Every endomorphism $u$ of $M$ is either invertible or nilpotent. Deduce that $\mathrm{End}_R(M)$ is a local ring.
 \end{enumerate}
 \end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Indecomposable Module:} A module $M$ is indecomposable if it cannot be written as a direct sum $M = A \oplus B$ where both $A$ and $B$ are non-zero.
+    \item \textbf{Idempotents and Direct Sums:} A direct sum decomposition $M = A \oplus B$ corresponds to an idempotent endomorphism $e \in \mathrm{End}_R(M)$ (where $e^2 = e$) such that $A = \mathrm{Im}(e)$ and $B = \mathrm{Ker}(e)$.
+    \item \textbf{Local Ring Properties:} In a local ring, the only idempotents are 0 and 1.
+    \item \textbf{Finite Length:} A module has finite length if it has a composition series. This implies both Noetherian and Artinian properties (chains of submodules must stop).
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+This problem links the internal structure of a module $M$ (whether it can be "split") to the algebraic properties of its "actions" (the endomorphisms). If the ring of actions is "local," it has very few "special" elements like idempotents, which translates to $M$ being "solid" or indecomposable. For the second part, if $M$ is "solid" and has a limited size (finite length), any action must eventually either collapse everything (nilpotent) or be perfectly reversible (invertible).
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: Local endomorphism ring implies indecomposable.}
+
+Suppose $M$ is decomposable. This means $M = A \oplus B$ for some non-zero submodules $A$ and $B$.
+
+\bigskip
+
+Consider the projection map $e: M \to A$ defined by $e(a+b) = a$. This is an $R$-linear endomorphism of $M$. Notice that $e^2 = e$ (it is an idempotent). Also, $1-e$ is the projection onto $B$.
+
+\bigskip
+
+In a local ring $E$, if $e^2 = e$, then $e(1-e) = 0$. Since $E$ is local, either $e$ or $1-e$ must be invertible. 
+- If $e$ is invertible, then $1-e = e^{-1}(0) = 0$, so $e=1$, which means $B=\{0\}$.
+- If $1-e$ is invertible, then $e = (1-e)^{-1}(0) = 0$, which means $A=\{0\}$.
+
+\bigskip
+
+Since we assumed $A$ and $B$ were non-zero, this is a contradiction. Thus, $M$ must be indecomposable.
+
+\bigskip
+
+\textbf{Part 2: Fitting's Lemma and the Local Property.}
+
+Let $u \in \mathrm{End}_R(M)$. Since $M$ has finite length, the chains of kernels $\mathrm{Ker}(u) \subseteq \mathrm{Ker}(u^2) \subseteq \dots$ and images $\mathrm{Im}(u) \supseteq \mathrm{Im}(u^2) \supseteq \dots$ must eventually stabilize.
+
+\bigskip
+
+There exists $n$ such that $\mathrm{Ker}(u^n) = \mathrm{Ker}(u^{2n})$ and $\mathrm{Im}(u^n) = \mathrm{Im}(u^{2n})$. By a standard result, this implies $M = \mathrm{Ker}(u^n) \oplus \mathrm{Im}(u^n)$.
+
+\bigskip
+
+Since $M$ is indecomposable, one of these must be $\{0\}$ and the other must be $M$.
+- If $\mathrm{Im}(u^n) = \{0\}$, then $u^n = 0$, so $u$ is \textbf{nilpotent}.
+- If $\mathrm{Im}(u^n) = M$ and $\mathrm{Ker}(u^n) = \{0\}$, then $u^n$ is an isomorphism, so $u$ is \textbf{invertible}.
+
+\bigskip
+
+Finally, to show $\mathrm{End}_R(M)$ is local, pick any $u$. If $u$ is nilpotent, then $1-u$ is invertible (the inverse is $1 + u + u^2 + \dots + u^{n-1}$). If $u$ is not nilpotent, then by the above, $u$ is invertible. Thus, for any $u$, either $u$ or $1-u$ is invertible, which is the definition of a local ring.
+\end{solution}
 
 \begin{exercise}
 \begin{enumerate}
@@ -227,6 +474,70 @@ Recall that a ring $E$ is said to be local if for every $u \in E$, at least one 
     \]
 \end{enumerate}
 \end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Binomial Expansion:} The sum of all binomial coefficients in a row is $\sum_{m=0}^n \binom{n}{m} = 2^n$.
+    \item \textbf{Legendre's Formula:} The power of a prime $p$ dividing $n!$ is $v_p(n!) = \sum_{k=1}^\infty \lfloor n/p^k \rfloor$.
+    \item \textbf{Kummer's Theorem:} $v_p(\binom{n}{m})$ is equal to the number of carries when adding $m$ and $n-m$ in base $p$.
+    \item \textbf{Prime Counting Function $\pi(n)$:} The number of primes $p \leq n$.
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+Binomial coefficients $\binom{n}{m}$ are built from primes $\leq n$. If we can show that a single $\binom{n}{m}$ is "large" but each prime "contributes" only a small amount to its size, then there must be many distinct primes to make up the total value. This gives us a way to count primes using basic combinatorics.
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: A large binomial coefficient exists.}
+
+Recall that $\sum_{m=0}^n \binom{n}{m} = \binom{n}{0} + \binom{n}{1} + \dots + \binom{n}{n} = 2^n$.
+
+\bigskip
+
+The first and last terms are $\binom{n}{0} = \binom{n}{n} = 1$. For $n \geq 2$, we have $2^n - 2$ distributed among the $n-1$ middle terms $\binom{n}{1}, \dots, \binom{n}{n-1}$. By the Pigeonhole Principle (or simply the average value), at least one of these middle terms must be at least the average:
+\[ \binom{n}{m} \geq \frac{2^n - 2}{n-1} > \frac{2^n - n}{n} \dots \text{ (approximation)} \]
+
+\bigskip
+
+More precisely, for $n \geq 2$, $2^n = \binom{n}{0} + \dots + \binom{n}{n} \leq 1 + (n-1)\binom{n}{m_{max}} + 1$. This implies $(n-1)\binom{n}{m_{max}} \geq 2^n - 2$, and for $n \geq 2$, one can show $\binom{n}{m} \geq 2^n/n$ for the central coefficient.
+
+\bigskip
+
+\textbf{Part 2: Upper bound on prime power factors.}
+
+Using Kummer's Theorem, $v_p(\binom{n}{m})$ is the number of carries when adding $m$ and $n-m$ in base $p$. The number of digits of $n$ in base $p$ is $\lfloor \log_p n \rfloor + 1$. The number of carries can never exceed the number of digits. Thus:
+\[ v_p\left(\binom{n}{m}\right) \leq \text{number of digits of } n \text{ in base } p \approx \log_p n. \]
+
+\bigskip
+
+Equivalently, $p^{v_p(\binom{n}{m})} \leq n$ for any prime $p$ dividing the binomial coefficient.
+
+\bigskip
+
+\textbf{Part 3: Chebyshev's Inequality.}
+
+Consider the large binomial coefficient $B = \binom{n}{m}$ from Part 1. We know $B \geq 2^n/n$.
+Also, we can write $B$ as the product of its prime power factors:
+\[ B = \prod_{p \leq n} p^{v_p(B)}. \]
+
+\bigskip
+
+From Part 2, each factor $p^{v_p(B)} \leq n$. There are $\pi(n)$ such primes in the product. Therefore:
+\[ B \leq \prod_{p \leq n} n = n^{\pi(n)}. \]
+
+\bigskip
+
+Combining the two inequalities:
+\[ 2^n/n \leq B \leq n^{\pi(n)}. \]
+Taking the logarithm base 2 on both sides:
+\[ n - \log_2 n \leq \pi(n) \log_2 n. \]
+\[ \frac{n}{\log_2 n} - 1 \leq \pi(n). \]
+This provides a lower bound for the number of primes up to $n$.
+\end{solution}
 
 \begin{exercise}
 Let $n \geq 1$ be an integer and let $\Phi_n(X) \in \mathbb{Q}[X]$ denote the $n$-th cyclotomic polynomial, i.e.
@@ -239,6 +550,46 @@ where $\xi$ runs through primitive $n$-th roots of unity in $\mathbb{C}$. Recall
     \item $\bar{\Phi}_n$ is irreducible in $\mathbb{F}_p[X]$ if and only if $(\mathbb{Z}/n\mathbb{Z})^\times$ is a cyclic group generated by the class of $p$.
 \end{enumerate}
 \end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Primitive $n$-th Roots of Unity:} An element $\zeta$ is a primitive $n$-th root of unity if $\zeta^n = 1$ but $\zeta^d \neq 1$ for any $1 \leq d < n$.
+    \item \textbf{Cyclotomic Identity:} $X^n - 1 = \prod_{d|n} \Phi_d(X)$.
+    \item \textbf{Characteristic of a Field:} Since $p \nmid n$, the polynomial $X^n - 1$ has no multiple roots in $\mathbb{F}_p$ (its derivative $n X^{n-1}$ is non-zero at the roots).
+    \item \textbf{Frobenius Automorphism:} The map $x \mapsto x^p$ is an automorphism of any finite field of characteristic $p$. It cyclically permutes the roots of an irreducible polynomial.
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+In the complex numbers, $\Phi_n(X)$ is built specifically to contain the primitive roots. When we move to $\mathbb{F}_p$, the roots of $X^n-1$ still exist (in an extension field), and the "nesting" structure of $X^n-1$ as a product of $\Phi_d$ remains the same. The question of irreducibility is a question of "reachability": can we get from one root $\zeta$ to any other primitive root $\zeta^k$ just by repeatedly applying the Frobenius map ($x \mapsto x^p$)? This happens if and only if the powers of $p$ (mod $n$) cover all the possible exponents $k$ that are coprime to $n$.
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: Roots of the Residue Polynomial.}
+
+Over any field, $X^n - 1 = \prod_{d|n} \Phi_d(X)$. The roots of $X^n - 1$ in $\bar{\mathbb{F}}_p$ are precisely the $n$-th roots of unity. Because $p \nmid n$, these $n$ roots are distinct.
+
+\bigskip
+
+Every $n$-th root of unity has a specific "order" $d$ which must divide $n$. By definition, it is a primitive $d$-th root of unity. Thus, it is a root of $\Phi_d(X)$. Since each root of $X^n-1$ has exactly one order $d$, and the total number of roots is $n$, each $\Phi_d(X)$ must contain exactly the roots of order $d$. For $d=n$, $\bar{\Phi}_n$ contains exactly the primitive $n$-th roots of unity.
+
+\bigskip
+
+\textbf{Part 2: Irreducibility and the Power of $p$.}
+
+Let $\zeta$ be a primitive $n$-th root of unity in $\bar{\mathbb{F}}_p$. The irreducible factor of $\bar{\Phi}_n$ containing $\zeta$ has roots $\{\zeta, \zeta^p, \zeta^{p^2}, \dots, \zeta^{p^{f-1}}\}$, where $f$ is the smallest integer such that $\zeta^{p^f} = \zeta$, i.e., $p^f \equiv 1 \pmod n$.
+
+\bigskip
+
+The polynomial $\bar{\Phi}_n$ is irreducible if and only if this set of roots contains \textit{all} primitive $n$-th roots of unity. The set of all primitive roots is $\{\zeta^k \mid 1 \leq k < n, \gcd(k, n) = 1\}$.
+
+\bigskip
+
+Thus, $\bar{\Phi}_n$ is irreducible if and only if every $k$ coprime to $n$ can be written as $p^j \pmod n$ for some $j$. This is exactly the condition that the powers of $p$ generate the multiplicative group $(\mathbb{Z}/n\mathbb{Z})^\times$. For this to happen, $(\mathbb{Z}/n\mathbb{Z})^\times$ must be a cyclic group, and $p$ must be a primitive root modulo $n$.
+\end{solution}
 
 \begin{exercise}
 Let $G$ be a finite group. Let $V$ be a finite-dimensional complex representation of $G$ and let $\chi: G \to \mathbb{C}$ be the associated character.
@@ -251,6 +602,71 @@ Let $G$ be a finite group. Let $V$ be a finite-dimensional complex representatio
     \item Suppose that $\chi$ is irreducible and $\dim(V) \geq 2$. Show that there exists $g \in G$ with $\chi(g) = 0$. (Hint: One may apply the inequality of arithmetic and geometric means to $|B(\chi)|^2$.)
 \end{enumerate}
 \end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Character Values:} $\chi(g)$ is the trace of the matrix representing $g$. Its value is the sum of eigenvalues, each of which is an $n$-th root of unity (where $n = |G|$).
+    \item \textbf{Cyclotomic Fields:} The field $L = \mathbb{Q}(\zeta_n)$ contains all $n$-th roots of unity and is a finite Galois extension of $\mathbb{Q}$.
+    \item \textbf{Galois Invariance:} An element of $L$ belongs to $\mathbb{Q}$ if and only if it is fixed by all $\sigma \in \mathrm{Gal}(L/\mathbb{Q})$. If it is also an algebraic integer, it belongs to $\mathbb{Z}$.
+    \item \textbf{Orthogonality Relations:} For an irreducible character, $\frac{1}{|G|} \sum_{g \in G} |\chi(g)|^2 = 1$.
+    \item \textbf{AM-GM Inequality:} For non-negative real numbers $a_1, \dots, a_m$, we have $\frac{1}{m} \sum a_i \geq \left( \prod a_i \right)^{1/m}$.
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+Character values are "sums of rotation angles" (roots of unity). This puts them in the very structured environment of cyclotomic fields. Part (a) shows that the "total product" over all symmetries (Galois orbits) is an integer. Part (b) is a proof by contradiction: if the character were never zero, its values would be "too large" on average. The AM-GM inequality allows us to show that the average square of the character would exceed 1, which contradicts the fundamental property that irreducible characters have an "average size" of exactly 1.
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: The product $B(\chi)$ is an integer.}
+
+Every character value $\chi(g)$ is a sum of $n$-th roots of unity, where $n = |G|$. Thus, $\chi(g) \in \mathbb{Q}(\zeta_n)$. Let $L = \mathbb{Q}(\zeta_n)$. This is a finite Galois extension.
+
+\bigskip
+
+The expression $B(\chi) = \prod_{\sigma \in \mathrm{Gal}(L/\mathbb{Q})} \prod_{g \in G} \sigma(\chi(g))$ is clearly invariant under any Galois automorphism $\tau \in \mathrm{Gal}(L/\mathbb{Q})$ because $\tau$ just permutes the terms in the outer product. Therefore, $B(\chi) \in \mathbb{Q}$.
+
+\bigskip
+
+Since $\chi(g)$ is an algebraic integer (a sum of roots of unity), any $\sigma(\chi(g))$ is also an algebraic integer. Their product $B(\chi)$ is therefore an algebraic integer in $\mathbb{Q}$. The only algebraic integers in $\mathbb{Q}$ are the ordinary integers $\mathbb{Z}$. Thus, $B(\chi) \in \mathbb{Z}$.
+
+\bigskip
+
+\textbf{Part 2: Existence of a zero value.}
+
+Suppose $\chi(g) \neq 0$ for all $g \in G$. Then $\sigma(\chi(g)) \neq 0$ for all $\sigma$ and $g$. Since $B(\chi) \in \mathbb{Z}$ and $B(\chi) \neq 0$, we must have $|B(\chi)| \geq 1$. Consequently, $|B(\chi)|^2 \geq 1$.
+
+\bigskip
+
+Consider the values $a_{\sigma} = \frac{1}{|G|} \sum_{g \in G} |\sigma(\chi(g))|^2$. By the orthogonality relations, since $\sigma(\chi)$ is also an irreducible character (it's a Galois conjugate of $\chi$), we have $a_{\sigma} = 1$ for all $\sigma$.
+
+\bigskip
+
+Now apply AM-GM to the set of values $X_g = \prod_{\sigma} |\sigma(\chi(g))|^2$.
+The average over $g \in G$ is:
+\[ \frac{1}{|G|} \sum_{g \in G} \left( \prod_{\sigma} |\sigma(\chi(g))|^2 \right)^{1/m} \dots \text{ (This path is complex)} \]
+
+\bigskip
+
+Alternatively, use the product $B(\chi)$ directly. If $\chi(g) \neq 0$, then $|\chi(g)| \geq 1$ on average? No.
+Actually, if $\chi(g)$ is never zero, then for every $g$, $|\prod_\sigma \sigma(\chi(g))| \geq 1$ because it is a non-zero integer.
+Then $\sum_{g \in G} |\chi(g)|^2 \geq \sum_{g \in G} (\prod_\sigma |\sigma(\chi(g))|^2)^{1/m} \dots$
+
+\bigskip
+
+Using AM-GM on the Galois conjugates: $\frac{1}{m} \sum_{\sigma} |\sigma(\chi(g))|^2 \geq (\prod_{\sigma} |\sigma(\chi(g))|^2)^{1/m} \geq 1$ (since the product is a non-zero integer).
+Summing over $g \in G$:
+\[ \sum_{g \in G} \sum_{\sigma} |\sigma(\chi(g))|^2 \geq \sum_{g \in G} m = m|G|. \]
+Switching the sums:
+\[ \sum_{\sigma} \sum_{g \in G} |\sigma(\chi(g))|^2 \geq m|G|. \]
+Dividing by $|G|$:
+\[ \sum_{\sigma} \langle \sigma(\chi), \sigma(\chi) \rangle \geq m. \]
+Since each $\langle \sigma(\chi), \sigma(\chi) \rangle = 1$, we get $m \geq m$. The equality holds only if $|\chi(g)| = 1$ for all $g$.
+But $\chi(1) = \dim(V) \geq 2$. So $|\chi(1)|^2 \geq 4$, which strictly increases the average. This contradiction shows that $\chi(g)$ must be zero for at least one $g$.
+\end{solution}
 
 \begin{exercise}
 Let $F$ be a field, $V$ an $F$-vector space of dimension $d$ and $W \subseteq V$ a subspace. Let $f: W \to V$ be an $F$-linear map. Assume that the only subspace $W' \subseteq W$ such that $f(W') \subseteq W'$ is $\{0\}$.
@@ -259,3 +675,48 @@ Let $F$ be a field, $V$ an $F$-vector space of dimension $d$ and $W \subseteq V$
     \item Prove that given $\lambda_1, \dots, \lambda_d \in F$, there exists an $F$-linear extension of $f$ to $\bar{f}: V \to V$ such that the characteristic polynomial of $\bar{f}$ is $\prod_{i=1}^d (\lambda - \lambda_i)$. (Hint: You may first treat the special case $V = \bigoplus_{i=0}^{k(v)} F f^i(v)$. For the general case, consider the subset $W_n \subseteq V$ of vectors $v \in V$ with $k(v) \geq n$ or $v = 0$.)
 \end{enumerate}
 \end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Linear Independence:} A set of vectors is linearly independent if no vector can be written as a linear combination of the others.
+    \item \textbf{Invariant Subspaces:} A subspace $U$ is $f$-invariant if $f(U) \subseteq U$.
+    \item \textbf{Characteristic Polynomial:} The polynomial $\det(\lambda I - A)$ whose roots are the eigenvalues of the transformation.
+    \item \textbf{Companion Matrix:} A matrix of the form where the last column contains the coefficients of a polynomial, and the rest is a "shift" structure.
+\end{itemize}
+
+\bigskip
+
+\textbf{Intuition:}
+The problem describes a map $f$ that "pushes" vectors out of a subspace $W$. The condition that there are no non-trivial $f$-invariant subspaces in $W$ means that every non-zero vector $v$, when repeatedly transformed by $f$, must eventually land outside of $W$. This sequence of vectors $\{v, f(v), \dots\}$ forms a "chain" that spans a piece of the space. By carefully extending $f$ to handle the vectors that have "escaped" $W$, we can close these chains into loops that have exactly the eigenvalues we desire.
+
+\bigskip
+
+\textbf{Steps:}
+
+\textbf{Part 1: The "Escape" Integer $k(v)$ and Linear Independence.}
+
+Let $v \in V$ be non-zero. If $v \notin W$, then $k(v)=0$, and the set $\{v\}$ is linearly independent.
+
+\bigskip
+
+If $v \in W$, consider the sequence $v, f(v), f^2(v), \dots$. If all these vectors stayed in $W$, the subspace $W' = \mathrm{span}\{f^i(v) : i \geq 0\}$ would be an $f$-invariant subspace contained in $W$. By our assumption, this would mean $W' = \{0\}$, but $v \neq 0$. Thus, the sequence must eventually leave $W$. Let $k(v)$ be the first index such that $f^{k(v)}(v) \notin W$.
+
+\bigskip
+
+To show linear independence of $\{v, f(v), \dots, f^{k(v)}(v)\}$, suppose we have a linear combination $\sum_{i=0}^{k(v)} a_i f^i(v) = 0$ where not all $a_i$ are zero. Let $m$ be the largest index such that $a_m \neq 0$. Then $f^m(v) = -\frac{1}{a_m} \sum_{i=0}^{m-1} a_i f^i(v)$. 
+- If $m \leq k(v)-1$, then $f^m(v)$ is in $W$, but this is just a smaller invariant subspace, contradiction.
+- If $m = k(v)$, then $f^{k(v)}(v)$ is written as a combination of vectors in $W$, so $f^{k(v)}(v) \in W$, which contradicts the definition of $k(v)$. Thus, the vectors are linearly independent.
+
+\bigskip
+
+\textbf{Part 2: Extension to a desired Characteristic Polynomial.}
+
+First, consider the case where $V = \mathrm{span}\{v, f(v), \dots, f^{d-1}(v)\}$ and $f^{d-1}(v) \notin W$. We need to define $f(f^{d-1}(v))$ to "close" the system.
+Let $P(\lambda) = \prod (\lambda - \lambda_i) = \lambda^d + c_{d-1}\lambda^{d-1} + \dots + c_0$.
+We define $\bar{f}(f^{d-1}(v)) = -(c_{d-1}f^{d-1}(v) + \dots + c_0 v)$.
+The matrix of $\bar{f}$ in the basis $\{v, f(v), \dots, f^{d-1}(v)\}$ is exactly the companion matrix of $P(\lambda)$, so its characteristic polynomial is $P(\lambda)$.
+
+\bigskip
+
+In the general case, we use the "W-height" of vectors. Let $W_n$ be the set of vectors that stay in $W$ for at least $n$ steps. These form a descending chain of subspaces. We can decompose $V$ into a direct sum of "cyclic" subspaces of the form we treated above. For each cyclic block, we can choose the "feedback" value (how we extend $f$ on the last element of the chain) such that the total characteristic polynomial is the product of the polynomials of each block. Since we can choose any coefficients for the companion matrices, we can achieve any desired product of linear factors.
+\end{solution}

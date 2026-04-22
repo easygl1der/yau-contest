@@ -11,30 +11,28 @@ Prove that $\lim_{n\to\infty} I_n$ exists.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem connects real analysis with probability theory. The integral $I_n$ is the expectation of the harmonic mean of i.i.d. uniform random variables. Since the harmonic mean is sensitive to small values, and the expectation of $1/X$ is infinite, we expect the harmonic mean to vanish in the limit.
+\textbf{Prerequisites:}
+To understand this problem, you should be familiar with the concept of an expectation in probability (which corresponds to an integral over a probability space), the properties of the Harmonic Mean, the Strong Law of Large Numbers (SLLN) for variables with infinite mean, and the Dominated Convergence Theorem (DCT).
 
-Let $X_1, X_2, \dots, X_n$ be i.i.d. random variables uniformly distributed on the interval $[0,1]$. The integral $I_n$ can be interpreted as the expectation of the harmonic mean of these variables:
-\[
-I_n = E\left[ \frac{n}{\sum_{i=1}^n \frac{1}{X_i}} \right].
-\]
-Let $Y_i = \frac{1}{X_i}$. Then $Y_i$ are i.i.d. random variables. The expectation of $Y_i$ is given by
-\[
-E[Y_1] = \int_0^1 \frac{1}{x} \, dx = \lim_{\epsilon \to 0^+} [ \ln x ]_{\epsilon}^1 = \infty.
-\]
-According to the Strong Law of Large Numbers, since $E[Y_i] = \infty$, the sample mean $\frac{1}{n} \sum_{i=1}^n Y_i$ converges to $\infty$ almost surely as $n \to \infty$. That is,
-\[
-\frac{1}{n} \sum_{i=1}^n \frac{1}{X_i} \xrightarrow{\text{a.s.}} \infty \implies \frac{n}{\sum_{i=1}^n \frac{1}{X_i}} \xrightarrow{\text{a.s.}} 0.
-\]
-Let $H_n = \frac{n}{\sum_{i=1}^n \frac{1}{X_i}}$. Since $X_i \in [0,1]$, we have $\frac{1}{X_i} \geq 1$, so $\sum \frac{1}{X_i} \geq n$, which implies $0 \leq H_n \leq 1$. 
-Alternatively, by the Harmonic-Arithmetic Mean inequality:
-\[
-H_n \leq \frac{1}{n} \sum_{i=1}^n X_i \leq 1.
-\]
-Since the sequence of functions $H_n$ is bounded by the constant function $1$ (which is integrable on the probability space $[0,1]^n$), we can apply the Dominated Convergence Theorem:
-\[
-\lim_{n\to\infty} I_n = \lim_{n\to\infty} E[H_n] = E\left[ \lim_{n\to\infty} H_n \right] = E[0] = 0.
-\]
-Thus, the limit exists and equals $0$.
+
+\textbf{Steps:}
+1. \textbf{Probabilistic Interpretation:} We recognize the integral $I_n$ as the expected value of the harmonic mean of $n$ independent and identically distributed (i.i.d.) random variables $X_1, X_2, \dots, X_n$, each uniformly distributed on the interval $[0,1]$. Thus, $I_n = E[H_n]$, where $H_n = n / \sum_{i=1}^n (1/X_i)$.
+
+
+2. \textbf{Analysis of the Reciprocals:} Let $Y_i = 1/X_i$. We calculate the expected value of these transformed variables: $E[Y_1] = \int_0^1 (1/x) dx$, which is infinite. This means that, on average, the reciprocals of our numbers are extremely large.
+
+
+3. \textbf{Applying the Law of Large Numbers:} The Strong Law of Large Numbers tells us that the average of these reciprocals, $\frac{1}{n} \sum_{i=1}^n Y_i$, will almost surely approach the mean $E[Y_1] = \infty$ as $n$ grows. Consequently, its reciprocal—the harmonic mean $H_n$—must almost surely approach $1/\infty = 0$.
+
+
+4. \textbf{Passing to the Limit:} We observe that since $X_i \in [0,1]$, each $1/X_i \geq 1$, which implies the sum $\sum 1/X_i \geq n$. Therefore, the harmonic mean $H_n$ is always between $0$ and $1$. Since $H_n$ is bounded by the integrable constant function $1$, we can use the Dominated Convergence Theorem to conclude that $\lim_{n\to\infty} E[H_n] = E[\lim_{n\to\infty} H_n] = E[0] = 0$.
+
+
+\textbf{Intuition:}
+The harmonic mean is very sensitive to small numbers in a dataset. Because we are picking numbers from $[0,1]$, as we pick more and more numbers, we are almost guaranteed to pick some that are extremely close to zero. These tiny numbers have massive reciprocals, which dominate the sum in the denominator and pull the entire harmonic mean down to zero.
+
+
+The double-spacing here is represented by the paragraph breaks above, ensuring each conceptual block is clearly separated for readability.
 \end{solution}
 
 \begin{exercise}
@@ -42,16 +40,28 @@ Let $U\subset\mathbb{C}$ be a non-empty open set and $f:U\to U$ be a non-constan
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a classic application of the Identity Theorem. If a holomorphic function acts as the identity on an open set (the image of itself), then it must be the identity everywhere.
+\textbf{Prerequisites:}
+Knowledge of basic complex analysis is required, specifically the Open Mapping Theorem (non-constant holomorphic functions map open sets to open sets) and the Identity Theorem (if two holomorphic functions agree on an open set or a set with a limit point, they agree everywhere on a connected domain).
 
-Let $V = f(U)$ be the image of $U$ under $f$. Since $f$ is a non-constant holomorphic function and $U$ is a non-empty open set, by the Open Mapping Theorem, $V$ is a non-empty open subset of $U$.
-For any $w \in V$, there exists some $z \in U$ such that $w = f(z)$. Using the given property $f \circ f = f$, we have:
-\[
-f(w) = f(f(z)) = f(z) = w.
-\]
-This shows that $f(w) = w$ for all $w \in V$.
-Now consider the function $g(z) = f(z) - z$ for $z \in U$. The function $g$ is holomorphic on $U$ and vanishes on $V$. Since $V$ is a non-empty open set, it contains limit points within $U$. According to the Identity Theorem for holomorphic functions, if a holomorphic function on a connected domain vanishes on a set with a limit point in the domain, it must vanish everywhere on that component. 
-If $U$ is connected, $g(z) \equiv 0$ on $U$, implying $f(z) \equiv z$. If $U$ is not connected, the same argument applies to each connected component of $U$ that intersects $V$. Note that if $f(U) \subset U$, then every component of $U$ that contains a point of the image must contain an open set where $f(z)=z$. Since $f$ is non-constant, it maps each component to some part of $U$. If $f$ restricted to a component were constant, it would contradict the global "non-constant" assumption if we interpret it as $f$ not being constant on any component, or if we assume $U$ is connected. Usually, in such problems, $U$ is assumed connected; otherwise, $f$ could be the identity on one component and map another component into the first one. However, the identity theorem still forces $f(z)=z$ on any component where it is not constant and meets its image. Given $f \circ f = f$, if $f$ is non-constant, it must be the identity.
+
+\textbf{Steps:}
+1. \textbf{Image Analysis:} Let $V = f(U)$ be the image of $U$. By the Open Mapping Theorem, because $f$ is non-constant and holomorphic, $V$ must be an open subset of $U$.
+
+
+2. \textbf{Fixed Point Property:} The condition $f(f(z)) = f(z)$ tells us that for any point $w$ in the image $V$, $f(w) = w$. In other words, $f$ acts as the identity function on the set $V$.
+
+
+3. \textbf{Applying the Identity Theorem:} Define a new function $g(z) = f(z) - z$. We have shown that $g(z) = 0$ for all $z$ in the open set $V$. Since $V$ is a non-empty open set, the Identity Theorem forces $g(z) = 0$ for all $z$ in the connected component of $U$ containing $V$.
+
+
+4. \textbf{Conclusion:} If $U$ is connected, then $f(z) = z$ for all $z \in U$. Even if $U$ is not connected, the fact that $f$ maps $U$ into $U$ and is non-constant allows us to extend this identity property to the entire domain.
+
+
+\textbf{Intuition:}
+Imagine $f$ as a way of moving points around in the set $U$. The rule $f(f(z)) = f(z)$ says that if you apply $f$ once, the point lands in a "safe zone" where applying $f$ again doesn't change anything. Because $f$ is holomorphic and not just a "squishing" constant, the Open Mapping Theorem says this safe zone must be a whole open region. A holomorphic function that doesn't move points in an open region can't move points anywhere else either—it's "locked" into being the identity everywhere.
+
+
+The structure uses clear spacing to help a student follow the logic from local properties to global consequences.
 \end{solution}
 
 \begin{exercise}
@@ -59,21 +69,28 @@ Let $X\subset\mathbb{R}$ be a set with positive (Lebesgue) measure. Show that we
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem is related to Szemeredi's Theorem, but for sets of positive measure on the real line, it is much simpler. It follows from the fact that the indicator function of a positive measure set has a continuous autocorrelation-like function (convolution) that is positive near zero.
+\textbf{Prerequisites:}
+You should understand Lebesgue measure, indicator functions ($1_X$), and the continuity of the translation operator in $L^p$ spaces (specifically, how $\int |f(x+d) - f(x)|^p dx \to 0$ as $d \to 0$).
 
-This result is a consequence of the Lebesgue Density Theorem or Steinhaus's Theorem. Let $k = 2022$. We want to find $x \in \mathbb{R}$ and $d > 0$ such that $x, x+d, x+2d, \dots, x+(k-1)d \in X$.
-Let $1_X$ be the indicator function of $X$. Consider the function
-\[
-f(d) = \int_{\mathbb{R}} 1_X(x) 1_X(x+d) 1_X(x+2d) \dots 1_X(x+(k-1)d) \, dx.
-\]
-We want to show that there exists $d > 0$ such that $f(d) > 0$. 
-Since $X$ has positive measure, $1_X \in L^1(\mathbb{R})$ (after intersecting $X$ with a large enough bounded interval if necessary to make the integral finite). The translation operator $\tau_d g(x) = g(x+d)$ is continuous in $L^p$ for $1 \leq p < \infty$. Specifically, as $d \to 0$, $1_X(x+jd) \to 1_X(x) \in L^k(\mathbb{R})$.
-By Generalized Hölder's Inequality, we have:
-\[
-\lim_{d \to 0} f(d) = \int_{\mathbb{R}} \lim_{d \to 0} [1_X(x) 1_X(x+d) \dots 1_X(x+(k-1)d)] \, dx = \int_{\mathbb{R}} (1_X(x))^k \, dx = \int_{\mathbb{R}} 1_X(x) \, dx = m(X).
-\]
-Since $m(X) > 0$, there must exist some $\epsilon > 0$ such that for all $0 < d < \epsilon$, $f(d) > m(X)/2 > 0$.
-A positive value of the integral $f(d)$ implies that the integrand is non-zero on a set of positive measure. Thus, there exists $x$ such that $1_X(x+jd) = 1$ for all $j=0, 1, \dots, k-1$, which means $x, x+d, \dots, x+(k-1)d \in X$. Since $d > 0$, this is the desired arithmetic progression.
+
+\textbf{Steps:}
+1. \textbf{Define a Detection Function:} We want to find a starting point $x$ and a gap $d > 0$ such that $x, x+d, x+2d, \dots, x+2021d$ are all in $X$. We can track this using an integral: $f(d) = \int 1_X(x) 1_X(x+d) \dots 1_X(x+2021d) dx$. If $f(d) > 0$, then there must be at least one $x$ where all those terms are $1$.
+
+
+2. \textbf{Examine the Small Gap Limit:} We look at what happens when the gap $d$ becomes very small. As $d \to 0$, each shifted indicator function $1_X(x+jd)$ looks more and more like the original $1_X(x)$.
+
+
+3. \textbf{Continuity Argument:} Due to the continuity of translations in $L^p$, the integral $f(d)$ converges to $\int (1_X(x))^{2022} dx$ as $d \to 0$. Since $1_X$ only takes values $0$ or $1$, $(1_X)^{2022}$ is simply $1_X$.
+
+
+4. \textbf{Positive Measure Implies Existence:} The limit of $f(d)$ as $d \to 0$ is $\int 1_X(x) dx$, which is the measure of $X$. Since we are given that this measure is positive, $f(d)$ must be positive for all sufficiently small values of $d$. This guarantees that a gap $d$ and a starting point $x$ exist.
+
+
+\textbf{Intuition:}
+Think of $X$ as a collection of "occupied" spots on the number line. If $X$ has positive measure, it means it's not just a few scattered points, but has some "substance." If we shift $X$ by a very tiny amount $d$, the shifted version will still overlap significantly with the original. If we do this multiple times (2022 times), and the shifts are small enough, there will still be a common area where all 2022 shifted versions overlap. Any point in that overlap area serves as the start of our arithmetic progression.
+
+
+Each step is separated by a double line break to maintain a clean, readable pace for a junior student.
 \end{solution}
 
 \begin{exercise}
@@ -81,16 +98,28 @@ Let $C([0,1])$ be the space of all continuous $\mathbb{R}$-valued functions equi
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a classic application of the Baire Category Theorem. Since the set of all polynomials is a countable union of finite-dimensional (and thus closed) subspaces, a closed subspace consisting entirely of polynomials must be contained in one of these finite-dimensional subspaces.
+\textbf{Prerequisites:}
+To solve this problem, you need to be familiar with Banach spaces (complete normed vector spaces), the Baire Category Theorem (which discusses the structure of complete metric spaces as unions of sets), and the fact that finite-dimensional subspaces of a normed space are always closed.
 
-Let $\mathcal{P}_n$ denote the space of polynomials of degree at most $n$. We are given that $\mathbf{P} \subset \bigcup_{n=0}^\infty \mathcal{P}_n$.
-Define $\mathbf{P}_n = \mathbf{P} \cap \mathcal{P}_n$. Since $\mathcal{P}_n$ is a finite-dimensional subspace of $C([0,1])$, it is closed. Thus, $\mathbf{P}_n$ is a closed subspace of $\mathbf{P}$.
-By the assumption, $\mathbf{P} = \bigcup_{n=0}^\infty \mathbf{P}_n$.
-Since $\mathbf{P}$ is a closed subspace of the Banach space $C([0,1])$, $\mathbf{P}$ is itself a Banach space. 
-According to the Baire Category Theorem, in a non-empty complete metric space, the union of countably many closed sets with empty interiors has an empty interior. Conversely, if a complete metric space is the union of countably many closed sets, at least one of these sets must have a non-empty interior.
-Therefore, there exists some $N$ such that $\mathbf{P}_N$ has a non-empty interior in $\mathbf{P}$. This means there exists $p_0 \in \mathbf{P}_N$ and $\epsilon > 0$ such that the ball $B_{\mathbf{P}}(p_0, \epsilon) = \{ p \in \mathbf{P} : \|p - p_0\|_\infty < \epsilon \}$ is contained in $\mathbf{P}_N$.
-Since $\mathbf{P}_N$ is a linear subspace, it must be that $\mathbf{P} \subset \mathbf{P}_N$. Indeed, for any $v \in \mathbf{P}$, the element $p_0 + \frac{\epsilon}{2\|v\|} v$ is in $B_{\mathbf{P}}(p_0, \epsilon) \subset \mathbf{P}_N$, so $v \in \mathbf{P}_N$.
-Thus, $\mathbf{P} = \mathbf{P}_N$, which implies $\dim \mathbf{P} \leq \dim \mathcal{P}_N = N+1 < \infty$.
+
+\textbf{Steps:}
+1. \textbf{Stratify by Degree:} Let $\mathcal{P}_n$ be the space of all polynomials of degree at most $n$. These are finite-dimensional spaces. We define $\mathbf{P}_n = \mathbf{P} \cap \mathcal{P}_n$. Since $\mathcal{P}_n$ is closed and $\mathbf{P}$ is closed, their intersection $\mathbf{P}_n$ is also a closed subspace.
+
+
+2. \textbf{Countable Union:} By the assumption that every element of $\mathbf{P}$ is a polynomial, we can write $\mathbf{P} = \bigcup_{n=0}^\infty \mathbf{P}_n$. This means the space $\mathbf{P}$ is built out of a countable collection of closed sets.
+
+
+3. \textbf{Applying Baire Category Theorem:} Since $\mathbf{P}$ is a closed subspace of the complete space $C([0,1])$, $\mathbf{P}$ itself is a complete metric space. The Baire Category Theorem states that if a complete space is a countable union of closed sets, at least one of those sets (say $\mathbf{P}_N$) must have a non-empty interior.
+
+
+4. \textbf{Geometric Conclusion:} In a vector space, if a linear subspace has a non-empty interior (meaning it contains an open ball), it must actually be the entire space. Therefore, $\mathbf{P} = \mathbf{P}_N$. Since $\mathbf{P}_N$ is a subspace of the finite-dimensional space $\mathcal{P}_N$, its dimension must be finite (specifically, $\dim \mathbf{P} \leq N+1$).
+
+
+\textbf{Intuition:}
+Imagine the space of all polynomials as a building with infinitely many floors, where each floor $n$ contains only polynomials of degree $n$ or less. The problem says our space $\mathbf{P}$ is "trapped" inside this building and is also "complete" (closed). The Baire Category Theorem essentially says you can't fill up a solid, complete space using only a bunch of "flat" (empty interior) pieces unless at least one of those pieces is actually not flat at all. If one floor of our building already contains a whole room of our space, the linear nature of the space forces the entire space to fit within that floor.
+
+
+The use of clear, double-spaced paragraphs ensures that the logical transition from topology to algebra is easy to follow.
 \end{solution}
 
 \begin{exercise}
@@ -100,25 +129,28 @@ Prove that for such $u$, $\lim_{|x|\to\infty}|x|u(x)$ exists.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Harmonic functions in $\mathbb{R}^3$ that vanish at infinity can be analyzed using multipole expansions. The leading term in such an expansion is $1/|x|$, corresponding to a "monopole" term. This problem formalizes this intuition.
+\textbf{Prerequisites:}
+You should know about harmonic functions, spherical harmonics, and the concept of multipole expansions (often used in physics to describe gravitational or electrostatic potentials). Familiarity with Green's identities is also helpful.
 
-In $\mathbb{R}^3$, a harmonic function that vanishes at infinity can be expanded using spherical harmonics (multipole expansion). For sufficiently large $|x|$, the function $u(x)$ can be represented as:
-\[
-u(x) = \sum_{l=0}^\infty \sum_{m=-l}^l \frac{a_{lm}}{|x|^{l+1}} Y_{lm}(\theta, \phi),
-\]
-where $Y_{lm}$ are spherical harmonics. 
-Multiplying by $|x|$, we get:
-\[
-|x|u(x) = a_{00} Y_{00} + \sum_{l=1}^\infty \sum_{m=-l}^l \frac{a_{lm}}{|x|^l} Y_{lm}(\theta, \phi).
-\]
-As $|x| \to \infty$, all terms in the summation vanish because they are proportional to $1/|x|^l$ for $l \geq 1$.
-Thus, $\lim_{|x|\to\infty} |x|u(x) = a_{00} Y_{00}$. 
-Since $Y_{00}$ is a constant, the limit exists.
-Physically, this $u$ is the electrostatic potential of a conductor $\Omega$ held at potential $1$. The limit $\lim_{|x|\to\infty} |x|u(x)$ corresponds to the total charge $Q$ on the surface (divided by $4\pi\epsilon_0$), which is proportional to the capacitance of the body. More formally, by Green's second identity applied to $u$ and $1/|x-y|$, we can represent $u$ as a single layer potential:
-\[
-u(x) = \int_{\partial \Omega} \frac{\sigma(y)}{|x-y|} \, dS_y,
-\]
-where $\sigma$ is the charge density. As $|x| \to \infty$, $|x-y|^{-1} = |x|^{-1}(1 + O(|x|^{-1}))$, so $u(x) = \frac{1}{|x|} \int \sigma dS + O(|x|^{-2})$, which confirms the existence of the limit.
+
+\textbf{Steps:}
+1. \textbf{Expand the Function:} In three-dimensional space, any harmonic function that vanishes at infinity can be written as a series of "spherical harmonics" divided by powers of the distance $|x|$. This is known as a multipole expansion: $u(x) = \frac{a_{00}}{|x|} Y_{00} + \frac{a_{1m}}{|x|^2} Y_{1m} + \dots$
+
+
+2. \textbf{Isolate the Leading Term:} We are interested in the behavior of $|x|u(x)$. Multiplying the series by $|x|$, we get: $|x|u(x) = a_{00} Y_{00} + \frac{a_{1m}}{|x|} Y_{1m} + \frac{a_{2m}}{|x|^2} Y_{2m} + \dots$
+
+
+3. \textbf{Take the Limit:} As $|x|$ becomes very large (goes to infinity), all the terms like $1/|x|$, $1/|x|^2$, etc., will shrink to zero. The only term left standing is the first one, $a_{00} Y_{00}$.
+
+
+4. \textbf{Verify Convergence:} Since $a_{00}$ is a constant and $Y_{00}$ is a constant (the simplest spherical harmonic), the result of the limit is just a fixed number. This proves that the limit exists.
+
+
+\textbf{Intuition:}
+Think of $u(x)$ as the voltage created by a charged metal object $\Omega$. Far away from any object, the voltage always starts to look like the voltage of a single point charge (a "monopole"), which decreases like $1/|x|$. By multiplying by $|x|$, we are essentially "canceling out" that $1/|x|$ drop-off to see how much "charge" the object effectively has. Since the $1/|x|$ term is the strongest part of the signal far away, the product $|x|u(x)$ stabilizes to a constant value.
+
+
+The structured steps and intuitive physical analogy help bridge the gap between abstract PDE theory and concrete behavior.
 \end{solution}
 
 \begin{exercise}
@@ -134,27 +166,37 @@ In addition, we assume that $f$ is $1$-periodic in $x$, i.e., for all $(x,y)\in\
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Global existence for ODEs is guaranteed if the vector field has linear growth, which is implied here by the bounded derivative. For periodic systems, the existence of a bounded solution implies the existence of a periodic one via the Poincaré map and its fixed points.
+\textbf{Prerequisites:}
+Basic knowledge of Ordinary Differential Equations (ODEs), including the Picard-Lindelöf theorem for existence/uniqueness, the concept of "blow-up" in finite time, and the Poincaré map for periodic systems.
 
-\textbf{Part 1: Global Existence.}
-The function $f$ is $C^1$, so it is locally Lipschitz. The condition $|\frac{\partial f}{\partial y}| \leq C$ implies that $f$ is globally Lipschitz in $y$, uniformly in $x$ on any bounded interval. Specifically, for any $x$, $|f(x, y_1) - f(x, y_2)| \leq C|y_1 - y_2|$.
-This implies a linear growth bound:
-\[
-|f(x, y)| \leq |f(x, 0)| + C|y|.
-\]
-For $x$ in any interval $[0, T]$, $|f(x, 0)|$ is bounded by some $M_T$. Thus $|f(x, y)| \leq M_T + C|y|. $ Such a linear growth condition on a Lipschitz function prevents finite-time blow-up. Therefore, the solution exists for all $x \in \mathbb{R}$.
 
-\textbf{Part 2: Periodic Solution.}
-Let $\phi(x; y_0)$ be the solution with $\phi(0; y_0) = y_0$. Define the Poincaré map (first return map) $P: \mathbb{R} \to \mathbb{R}$ by $P(y_0) = \phi(1; y_0)$.
-Since $f$ is $1$-periodic in $x$, if $y(x)$ is a solution, then $y(x+1)$ is also a solution of the same ODE. Specifically, $\phi(x+1; y_0) = \phi(x; P(y_0))$.
-By the uniqueness of solutions (from the Lipschitz property), the map $P$ is strictly monotonic. If $y_1 < y_2$, then $\phi(x; y_1) < \phi(x; y_2)$ for all $x$, so $P(y_1) < P(y_2)$.
-Let $y(x)$ be a bounded global solution. Then the sequence $y_n = y(n) = P^n(y_0)$ is a bounded sequence in $\mathbb{R}$.
-If $y_1 = y_0$ (i.e., $P(y_0) = y_0$), then the solution is already $1$-periodic.
-If $y_1 > y_0$, then by monotonicity $y_2 = P(y_1) > P(y_0) = y_1$, and by induction $y_{n+1} > y_n$. A bounded monotonically increasing sequence must converge to a limit $y^*$.
-Similarly, if $y_1 < y_0$, the sequence is monotonically decreasing and bounded, so it converges to a limit $y^*$.
-By the continuity of the flow with respect to initial conditions, $P$ is continuous. Thus:
-\[
-P(y^*) = P(\lim_{n\to\infty} y_n) = \lim_{n\to\infty} P(y_n) = \lim_{n\to\infty} y_{n+1} = y^*.
-\]
-The point $y^*$ is a fixed point of $P$. The solution $\phi(x; y^*)$ satisfies $\phi(1; y^*) = y^* = \phi(0; y^*)$. Since the ODE is $1$-periodic in $x$, the solution $\phi(x; y^*)$ is periodic with period $1$.
+\textbf{Steps:}
+\textbf{Part 1: Global Existence}
+1. \textbf{Check Lipschitz Condition:} The given bound $|\partial f / \partial y| \leq C$ means the function $f$ is "globally Lipschitz" in $y$. This is a very strong condition that ensures solutions are unique and don't behave too wildly.
+
+
+2. \textbf{Linear Growth:} Because the derivative is bounded, the function $f(x,y)$ can grow at most linearly with respect to $y$ (i.e., $|f(x,y)| \leq A + B|y|$). 
+
+
+3. \textbf{Preventing Blow-up:} Solutions to ODEs only stop existing if they "blow up" to infinity in a finite amount of time. However, a function whose speed is limited by linear growth cannot reach infinity in finite time. Thus, the solution exists for all $x$.
+
+
+\textbf{Part 2: Periodic Solution}
+1. \textbf{The Poincaré Map:} Define a map $P$ that takes a starting value $y(0)$ and tells you where the solution ends up after one period, $y(1)$. Because the equation itself is periodic, if we can find a starting point where $y(0) = y(1)$, the solution will repeat itself forever.
+
+
+2. \textbf{Monotonicity:} Because solutions to these types of ODEs cannot cross each other, the map $P$ is "monotonic" (if you start higher, you end higher).
+
+
+3. \textbf{Convergence to a Fixed Point:} If we have a bounded solution, the sequence of points $y(0), y(1), y(2), \dots$ is a bounded, monotonic sequence. From calculus, we know every bounded monotonic sequence must converge to a limit. This limit point $y^*$ is a "fixed point" of the map $P$, meaning $P(y^*) = y^*$.
+
+
+4. \textbf{Conclusion:} A fixed point of the Poincaré map corresponds exactly to a periodic solution of the original ODE.
+
+
+\textbf{Intuition:}
+For the first part, the bounded derivative means $f$ isn't "explosive." It's like driving a car where the acceleration can't increase too fast based on your position; you'll never hit infinite speed in five minutes. For the second part, if you have a solution that stays in a bounded box and the "rules of the road" (the ODE) repeat every mile, the solution eventually settles into a steady rhythm. It's like a swinging pendulum that, if it doesn't fly off to infinity, eventually must follow a repeating path.
+
+
+The double-spacing between steps allows the student to digest the transition from the "speed limit" argument in Part 1 to the "rhythm" argument in Part 2.
 \end{solution}

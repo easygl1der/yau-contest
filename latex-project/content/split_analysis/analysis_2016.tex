@@ -10,14 +10,48 @@ F(b) - F(a) = \int_a^b F'(x)\,dx.
 \end{exercise}
 
 \begin{solution}
-This is a standard result in real analysis (Lebesgue's fundamental theorem of calculus for functions with derivatives existing everywhere).
-Let $G(x) = \int_a^x F'(t) dt$. Since $F'$ is integrable, $G$ is absolutely continuous and $G'(x) = F'(x)$ almost everywhere.
-Let $H(x) = F(x) - G(x)$. $H$ is continuous on $[a,b]$.
-Since $F'(x)$ exists for every $x \in (a,b)$, $F$ has the Luzin N property (maps measure zero sets to measure zero sets). Since $G$ is absolutely continuous, it also has the Luzin N property. Thus $H$ has the Luzin N property.
-$H'(x) = F'(x) - G'(x) = 0$ for almost every $x$.
-A continuous function with the Luzin N property and zero derivative almost everywhere is constant.
-Thus $H(x) = H(a) = F(a) - 0 = F(a)$.
-So $F(x) = F(a) + \int_a^x F'(t) dt$, which implies $F$ is absolutely continuous.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Fundamental Theorem of Calculus (FTC):} In its simplest form, it relates differentiation and integration. Here we use the Lebesgue version.
+    \item \textbf{Absolute Continuity:} A function $F$ is absolutely continuous if it can be written as the integral of its derivative.
+    \item \textbf{Luzin N Property:} A function has this property if it maps sets of measure zero to sets of measure zero. Absolutely continuous functions possess this property.
+    \item \textbf{Lebesgue Integrability:} The derivative $F'$ is given as integrable, which is a necessary condition for the integral to be well-defined.
+\end{itemize}
+
+\textbf{Intuition:}
+The goal is to show that a function is completely determined by its derivative if that derivative exists everywhere and is "well-behaved" (integrable). The "Intuition" here is that if two functions have the same derivative almost everywhere and don't "jump" or "wiggle" too much (the Luzin N property), they must differ only by a constant. Since we can construct a function $G(x)$ that is the integral of $F'$, we just need to prove that $F(x) - G(x)$ is a constant.
+
+\textbf{Steps:}
+
+1. \textbf{Construct an auxiliary function:}
+Define $G(x) = \int_a^x F'(t) dt$ for $x \in [a, b]$. 
+Because $F'$ is integrable (given), this function $G(x)$ is well-defined. According to the properties of the Lebesgue integral, any function defined as an indefinite integral is automatically \textit{absolutely continuous}.
+
+2. \textbf{Examine the derivatives:}
+A key property of $G(x)$ is that $G'(x) = F'(x)$ for \textit{almost every} $x \in [a, b]$. 
+We are given that $F'(x)$ exists for \textit{every} $x \in (a, b)$.
+Now, consider the difference function $H(x) = F(x) - G(x)$.
+This function $H$ is continuous because both $F$ and $G$ are continuous.
+Furthermore, $H'(x) = F'(x) - G'(x) = 0$ for almost every $x \in [a, b]$.
+
+3. \textbf{Apply the Luzin N property:}
+$F(x)$ has a derivative everywhere in $(a, b)$. A theorem by Banach and Zarecki states that if a continuous function has a derivative everywhere (or even except on a countable set), it satisfies the \textit{Luzin N property}.
+Since $G$ is absolutely continuous, it also satisfies the Luzin N property.
+Therefore, their difference $H = F - G$ also satisfies the Luzin N property.
+
+4. \textbf{Conclude the constant nature of H:}
+We have a continuous function $H$ that:
+(a) Has a derivative equal to zero almost everywhere.
+(b) Satisfies the Luzin N property.
+A fundamental result in real analysis states that any such function must be \textit{constant}.
+Thus, $H(x) = C$ for some constant $C$.
+
+5. \textbf{Final Result:}
+To find $C$, we plug in $x = a$:
+$H(a) = F(a) - G(a) = F(a) - 0 = F(a)$.
+So, $H(x) = F(a)$ for all $x$.
+This means $F(x) - G(x) = F(a)$, or $F(x) = F(a) + \int_a^x F'(t) dt$.
+This identity confirms that $F$ is absolutely continuous and that $F(b) - F(a) = \int_a^b F'(x) dx$.
 \end{solution}
 
 \begin{exercise}
@@ -29,22 +63,55 @@ is integrable and $\| (f*K_{\delta}) - f\|_{L^1(\mathbb{R}^n)} \to 0$ as $\delta
 \end{exercise}
 
 \begin{solution}
-1) \textbf{Integrability:} By Young's Inequality for convolutions, $\|f * K_\delta\|_1 \leq \|f\|_1 \|K_\delta\|_1$.
-Since $K_\delta$ is a normalized Gaussian, $\|K_\delta\|_1 = \int \delta^{-n/2} e^{-\pi |x|^2/\delta} dx = 1$ (by substitution $u = x/\sqrt{\delta}$).
-Thus $\|f * K_\delta\|_1 \leq \|f\|_1$, so it is integrable.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Convolution:} The operation $(f * g)(x) = \int_{\mathbb{R}^n} f(x-y)g(y) dy$.
+    \item \textbf{Young's Inequality (for $L^1$):} $\|f * g\|_1 \leq \|f\|_1 \|g\|_1$.
+    \item \textbf{Gaussian Integral:} $\int_{-\infty}^\infty e^{-ax^2} dx = \sqrt{\pi/a}$. For $\mathbb{R}^n$, $\int_{\mathbb{R}^n} e^{-\pi |x|^2} dx = 1$.
+    \item \textbf{Continuity of Translation in $L^1$:} For any $f \in L^1(\mathbb{R}^n)$, the mapping $y \mapsto f(\cdot - y)$ is continuous from $\mathbb{R}^n$ to $L^1(\mathbb{R}^n)$. That is, $\lim_{y \to 0} \|f(\cdot - y) - f(\cdot)\|_1 = 0$.
+\end{itemize}
 
-2) \textbf{$L^1$ convergence:}
-\[
-\| f*K_\delta - f \|_1 = \int_{\mathbb{R}^n} \left| \int_{\mathbb{R}^n} (f(x-y)-f(x)) K_\delta(y) dy \right| dx \leq \int_{\mathbb{R}^n} K_\delta(y) \left( \int_{\mathbb{R}^n} |f(x-y) - f(x)| dx \right) dy.
-\]
-Let $\omega_f(y) = \|f(\cdot-y) - f(\cdot)\|_1$. We know $\omega_f(y) \to 0$ as $y \to 0$ for any $f \in L^1$.
-Also $\omega_f(y) \leq 2\|f\|_1$.
+\textbf{Intuition:}
+The function $K_\delta(x)$ is a "mollifier" or an "approximation to the identity." As $\delta$ becomes very small, $K_\delta$ becomes a very sharp peak at the origin, while the area under the curve remains exactly 1. Convolving $f$ with $K_\delta$ is like taking a weighted average of $f$ around each point $x$. Since the weight is concentrated near the origin when $\delta$ is small, the result $(f * K_\delta)(x)$ should be very close to $f(x)$.
+
+\textbf{Steps:}
+
+\textbf{Part 1: Proof of Integrability}
+1. \textbf{Apply Young's Inequality:}
+By Young's inequality for convolutions, the $L^1$ norm of the product is bounded by the product of the $L^1$ norms:
+$\|f * K_\delta\|_1 \leq \|f\|_1 \|K_\delta\|_1$.
+
+2. \textbf{Compute the norm of the Kernel:}
+We need to calculate $\|K_\delta\|_1 = \int_{\mathbb{R}^n} \delta^{-n/2} e^{-\pi |x|^2 / \delta} dx$.
+Use the substitution $u = x / \sqrt{\delta}$, which implies $dx = \delta^{n/2} du$.
+The integral becomes:
+$\int_{\mathbb{R}^n} \delta^{-n/2} e^{-\pi |u|^2} (\delta^{n/2} du) = \int_{\mathbb{R}^n} e^{-\pi |u|^2} du = 1$.
+Since $\|f\|_1$ is finite and $\|K_\delta\|_1 = 1$, the convolution $\|f * K_\delta\|_1$ is finite, meaning it is integrable.
+
+\textbf{Part 2: Proof of $L^1$ Convergence}
+1. \textbf{Setup the difference integral:}
+Since $\int K_\delta(y) dy = 1$, we can write $f(x) = \int f(x) K_\delta(y) dy$.
+Then, $\|f * K_\delta - f\|_1 = \int_{\mathbb{R}^n} | \int_{\mathbb{R}^n} (f(x-y) - f(x)) K_\delta(y) dy | dx$.
+By Fubini's Theorem (swapping the order of integration):
+$\|f * K_\delta - f\|_1 \leq \int_{\mathbb{R}^n} K_\delta(y) \left( \int_{\mathbb{R}^n} |f(x-y) - f(x)| dx \right) dy$.
+
+2. \textbf{Analyze the inner integral:}
+Let $\omega_f(y) = \int_{\mathbb{R}^n} |f(x-y) - f(x)| dx$. This is the $L^1$ "modulus of continuity."
+We know two things:
+(a) $\lim_{y \to 0} \omega_f(y) = 0$.
+(b) $\omega_f(y) \leq \|f(\cdot-y)\|_1 + \|f\|_1 = 2\|f\|_1$ (boundedness).
+
+3. \textbf{Split the domain of $y$:}
 For any $\epsilon > 0$, choose $\eta > 0$ such that $|y| < \eta \implies \omega_f(y) < \epsilon$.
-Then the integral is $\leq \int_{|y|<\eta} K_\delta(y) \epsilon dy + \int_{|y|\geq\eta} K_\delta(y) 2\|f\|_1 dy$.
-The first part is $\leq \epsilon \cdot 1 = \epsilon$.
-The second part is $2\|f\|_1 \int_{|y|\geq\eta} K_\delta(y) dy$.
-As $\delta \to 0$, $K_\delta$ concentrates at the origin, so $\int_{|y|\geq\eta} K_\delta(y) dy \to 0$.
-Thus $\limsup_{\delta\to 0} \|f*K_\delta - f\|_1 \leq \epsilon$. Since $\epsilon$ is arbitrary, the limit is 0.
+Split the outer integral into two parts: $|y| < \eta$ and $|y| \geq \eta$.
+$I_1 = \int_{|y|<\eta} K_\delta(y) \omega_f(y) dy < \epsilon \int K_\delta(y) dy = \epsilon$.
+$I_2 = \int_{|y|\geq \eta} K_\delta(y) \omega_f(y) dy \leq 2\|f\|_1 \int_{|y|\geq \eta} K_\delta(y) dy$.
+
+4. \textbf{Take the limit as $\delta \to 0$:}
+As $\delta \to 0$, the mass of $K_\delta$ concentrates at the origin.
+Specifically, $\int_{|y|\geq \eta} K_\delta(y) dy = \int_{|u| \geq \eta/\sqrt{\delta}} e^{-\pi |u|^2} du$.
+As $\delta \to 0$, the lower limit $\eta/\sqrt{\delta} \to \infty$, so the integral goes to 0.
+Thus, $\limsup_{\delta \to 0} \|f * K_\delta - f\|_1 \leq \epsilon$. Since $\epsilon$ is arbitrary, the limit is 0.
 \end{solution}
 
 \begin{exercise}
@@ -52,22 +119,41 @@ Prove that a bounded function on interval $I=[a,b]$ is Riemann integrable if and
 \end{exercise}
 
 \begin{solution}
-This is Lebesgue's Criterion for Riemann Integrability.
-Let $D$ be the set of discontinuities of $f$. Let $D_\epsilon = \{x \in I \mid \text{osc}(f, x) \geq \epsilon\}$.
-Then $D = \bigcup_{n=1}^\infty D_{1/n}$.
-1) \textbf{If $\mu(D) = 0$:}
-Then $\mu(D_\epsilon) = 0$ for all $\epsilon$. $D_\epsilon$ is compact.
-For any $\eta > 0$, cover $D_\epsilon$ with open intervals of total length $< \eta$.
-Outside these intervals, $\text{osc}(f, x) < \epsilon$.
-This allows construction of a partition where the Darboux sum difference $U(P,f) - L(P,f)$ is small.
-Specifically, $U-L \leq \epsilon(b-a) + (M-m)\eta$.
-Taking $\epsilon, \eta \to 0$, we get $U-L \to 0$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Riemann Integrability:} A bounded function $f$ on $[a, b]$ is Riemann integrable if for every $\epsilon > 0$, there exists a partition $P$ such that the difference between the upper and lower Darboux sums $U(P, f) - L(P, f) < \epsilon$.
+    \item \textbf{Oscillation:} The oscillation of $f$ at a point $x$ is $\omega(f, x) = \lim_{\delta \to 0} \sup \{|f(y) - f(z)| : y, z \in (x-\delta, x+\delta) \cap [a, b]\}$. A function is continuous at $x$ if and only if $\omega(f, x) = 0$.
+    \item \textbf{Lebesgue Measure Zero:} A set $S \subset \mathbb{R}$ has measure zero if for every $\epsilon > 0$, it can be covered by a countable collection of open intervals whose total length is less than $\epsilon$.
+\end{itemize}
 
-2) \textbf{If $f$ is Riemann integrable:}
-For any partition $P$, $U(P,f) - L(P,f) = \sum (M_i-m_i) \Delta x_i$.
-If $x \in D_\epsilon$ is in the interior of a subinterval, then $M_i-m_i \geq \epsilon$.
-One can show that the measure of $D_\epsilon$ must be zero, otherwise $U-L$ would be bounded away from 0.
-Thus $\mu(D_\epsilon) = 0$ for all $\epsilon$, so $\mu(D) = 0$.
+\textbf{Intuition:}
+Riemann integration works by approximating a function with rectangles. If a function has too many discontinuities, the heights of these rectangles (the "gap" between the maximum and minimum values in a subinterval) won't shrink to zero even as the widths do. Lebesgue's criterion tells us that as long as the "bad" points (discontinuities) are few enough to be ignored in terms of length (measure zero), the function remains integrable.
+
+\textbf{Steps:}
+
+\textbf{Step 1: Characterize the set of discontinuities}
+Let $D$ be the set of points where $f$ is discontinuous. As noted, $x \in D \iff \omega(f, x) > 0$.
+We can write $D$ as a countable union: $D = \bigcup_{k=1}^\infty D_{1/k}$, where $D_\epsilon = \{x \in [a, b] : \omega(f, x) \geq \epsilon\}$.
+It is a known property that $D_\epsilon$ is always a \textit{closed} and \textit{bounded} (hence compact) set.
+
+\textbf{Step 2: Proof that $m(D)=0 \implies$ Riemann Integrability}
+1. Assume $m(D) = 0$. This implies $m(D_\epsilon) = 0$ for all $\epsilon > 0$.
+2. Fix $\epsilon > 0$. Since $m(D_\epsilon) = 0$, we can cover $D_\epsilon$ by a finite number of open intervals $(a_i, b_i)$ with total length $\sum (b_i - a_i) < \epsilon$. (Finite because $D_\epsilon$ is compact).
+3. The remaining part of $[a, b] \setminus \bigcup (a_i, b_i)$ is a collection of closed intervals. On these intervals, the oscillation of $f$ is strictly less than $\epsilon$.
+4. We can create a partition $P$ using the endpoints of these intervals.
+5. In the sum $U(P, f) - L(P, f) = \sum (M_j - m_j) \Delta x_j$:
+   - For subintervals covering $D_\epsilon$, the total contribution is $\leq (M - m) \cdot \sum \Delta x_j < (M - m)\epsilon$, where $M, m$ are the global bounds of $f$.
+   - For the other subintervals, the contribution is $\leq \epsilon \cdot (b - a)$.
+6. Thus, $U - L \leq \epsilon(M - m + b - a)$. Since $\epsilon$ is arbitrary, $f$ is Riemann integrable.
+
+\textbf{Step 3: Proof that Riemann Integrability $\implies m(D)=0$}
+1. Assume $f$ is Riemann integrable. Then for any $\eta > 0$, there is a partition $P$ such that $U(P, f) - L(P, f) < \eta$.
+2. For a fixed $\epsilon > 0$, consider the set $D_\epsilon$. If a subinterval $I_j = [x_{j-1}, x_j]$ of the partition contains a point of $D_\epsilon$ in its interior, then $M_j - m_j \geq \epsilon$.
+3. Let $J$ be the set of indices of subintervals that contain points of $D_\epsilon$.
+4. Then $\eta > U - L \geq \sum_{j \in J} (M_j - m_j) \Delta x_j \geq \epsilon \sum_{j \in J} \Delta x_j$.
+5. This means the total length of subintervals covering $D_\epsilon$ (excluding partition points, which are finite) is $\sum_{j \in J} \Delta x_j < \eta / \epsilon$.
+6. Since $\eta$ can be chosen arbitrarily small, $m(D_\epsilon) = 0$.
+7. Since $D = \bigcup D_{1/k}$ and each $D_{1/k}$ has measure zero, their union $D$ also has measure zero.
 \end{solution}
 
 \begin{exercise}
@@ -78,20 +164,45 @@ Thus $\mu(D_\epsilon) = 0$ for all $\epsilon$, so $\mu(D) = 0$.
 \end{exercise}
 
 \begin{solution}
-1) Let $z = re^{i\theta}$ with $r > 1$.
-$w = \frac{1}{2}(r e^{i\theta} + \frac{1}{r} e^{-i\theta}) = \frac{1}{2}(r+1/r)\cos\theta + i\frac{1}{2}(r-1/r)\sin\theta$.
-This is an ellipse with semi-axes $a = \frac{1}{2}(r+1/r)$ and $b = \frac{1}{2}(r-1/r)$.
-As $r$ ranges from 1 to $\infty$, these ellipses fill the entire plane.
-For $r=1$, the ellipse collapses to the segment $[-1, 1]$.
-Thus the image of $|z|>1$ is $\mathbb{C} \setminus [-1, 1]$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Complex Mapping:} Representing $z = x + iy$ as $re^{i\theta}$.
+    \item \textbf{Ellipses:} The standard equation $u^2/a^2 + v^2/b^2 = 1$ with semi-axes $a$ and $b$.
+    \item \textbf{Improper Integrals:} Handling $\log x$ and singularities at $x=1$.
+    \item \textbf{Taylor Series:} $1/(1-r) = \sum r^n$ for $|r| < 1$.
+    \item \textbf{Riemann Zeta Function:} $\sum_{k=1}^\infty \frac{1}{k^2} = \frac{\pi^2}{6}$ (Basel Problem).
+\end{itemize}
 
-2) $I = \int_0^\infty \frac{\log x}{x^2-1} dx = \int_0^1 \frac{\log x}{x^2-1} dx + \int_1^\infty \frac{\log x}{x^2-1} dx$.
-In the second integral, let $u = 1/x$, so $dx = -1/u^2 du$.
-$\int_1^\infty \frac{\log x}{x^2-1} dx = \int_1^0 \frac{\log(1/u)}{(1/u)^2-1} (-1/u^2) du = \int_0^1 \frac{\log u}{u^2-1} du$.
-Thus $I = 2 \int_0^1 \frac{\log x}{x^2-1} dx = 2 \int_0^1 \log x \sum_{n=0}^\infty (x^2)^n dx$.
-$I = 2 \sum_{n=0}^\infty \int_0^1 x^{2n} \log x dx$.
-Using $\int_0^1 x^m \log x dx = -1/(m+1)^2$:
-$I = 2 \sum_{n=0}^\infty \frac{1}{(2n+1)^2} = 2 (\sum_{k=1}^\infty \frac{1}{k^2} - \sum_{k=1}^\infty \frac{1}{(2k)^2}) = 2 (1 - 1/4) \zeta(2) = \frac{3}{2} \cdot \frac{\pi^2}{6} = \frac{\pi^2}{4}$.
+\textbf{Intuition:}
+\textbf{Part 1:} The map $w = \frac{1}{2}(z + 1/z)$ is known as the Zhukovsky transform. It "squashes" the complex plane. Think of circles $|z|=r$. For $r=1$, it maps the circle to the segment $[-1, 1]$ twice. For $r > 1$, it maps circles to larger and larger ellipses that eventually cover the entire plane as $r \to \infty$.
+
+\textbf{Part 2:} The integral $\int_0^\infty \frac{\log x}{x^2-1} dx$ looks tricky because of the $x^2-1$ in the denominator. However, the $\log x$ also vanishes at $x=1$, making the singularity removable. The symmetry between $[0, 1]$ and $[1, \infty]$ under the map $x \to 1/x$ allows us to simplify the problem to an interval $[0, 1]$ where we can use series.
+
+\textbf{Steps:}
+
+\textbf{Part 1: The Mapping}
+1. Let $z = re^{i\theta}$ where $r > 1$. Then $1/z = \frac{1}{r}e^{-i\theta}$.
+2. Substitute into $w = u + iv$:
+   $u + iv = \frac{1}{2}(re^{i\theta} + \frac{1}{r}e^{-i\theta}) = \frac{1}{2}(r(\cos\theta + i\sin\theta) + \frac{1}{r}(\cos\theta - i\sin\theta))$.
+3. Separate the real and imaginary parts:
+   $u = \frac{1}{2}(r + 1/r)\cos\theta$ and $v = \frac{1}{2}(r - 1/r)\sin\theta$.
+4. Define $a = \frac{1}{2}(r + 1/r)$ and $b = \frac{1}{2}(r - 1/r)$. Then $\frac{u^2}{a^2} + \frac{v^2}{b^2} = \cos^2\theta + \sin^2\theta = 1$.
+5. This is an ellipse. Since $r > 1$, $a > 1$ and $b > 0$. As $r \to 1^+$, $a \to 1$ and $b \to 0$, so the ellipse collapses to the interval $[-1, 1]$.
+6. As $r \to \infty$, $a, b \to \infty$. Thus, the image of $\{|z| > 1\}$ is the entire plane $\mathbb{C}$ minus the "collapsed" starting segment $[-1, 1]$.
+
+\textbf{Part 2: The Integral}
+1. Split the integral: $I = \int_0^1 \frac{\log x}{x^2-1} dx + \int_1^\infty \frac{\log x}{x^2-1} dx$.
+2. In the second part, let $x = 1/t$. Then $dx = -1/t^2 dt$.
+   $\int_1^\infty \frac{\log x}{x^2-1} dx = \int_1^0 \frac{\log(1/t)}{(1/t)^2-1} (-1/t^2) dt = \int_0^1 \frac{-\log t}{\frac{1-t^2}{t^2}} \frac{1}{t^2} dt = \int_0^1 \frac{\log t}{t^2-1} dt$.
+3. Thus, $I = 2 \int_0^1 \frac{\log x}{x^2-1} dx$.
+4. Note that $\frac{1}{x^2-1} = \frac{-1}{1-x^2} = -\sum_{n=0}^\infty x^{2n}$.
+   $I = -2 \int_0^1 \log x \left( \sum_{n=0}^\infty x^{2n} \right) dx = 2 \sum_{n=0}^\infty \int_0^1 (-x^{2n} \log x) dx$.
+5. Using integration by parts (or the formula $\int_0^1 x^m \log x dx = \frac{-1}{(m+1)^2}$):
+   $\int_0^1 x^{2n} \log x dx = \left[ \frac{x^{2n+1}}{2n+1}\log x \right]_0^1 - \int_0^1 \frac{x^{2n+1}}{2n+1} \frac{1}{x} dx = 0 - \frac{1}{(2n+1)^2}$.
+6. $I = 2 \sum_{n=0}^\infty \frac{1}{(2n+1)^2}$.
+7. We know $\sum_{k=1}^\infty \frac{1}{k^2} = \sum_{k \text{ even}} \frac{1}{k^2} + \sum_{k \text{ odd}} \frac{1}{k^2} = \frac{1}{4}\sum \frac{1}{j^2} + \sum \frac{1}{(2n+1)^2}$.
+   So $\sum_{n=0}^\infty \frac{1}{(2n+1)^2} = (1 - 1/4) \zeta(2) = \frac{3}{4} \cdot \frac{\pi^2}{6} = \frac{\pi^2}{8}$.
+8. Therefore, $I = 2 \cdot \frac{\pi^2}{8} = \frac{\pi^2}{4}$.
 \end{solution}
 
 \begin{exercise}

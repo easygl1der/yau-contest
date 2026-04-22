@@ -6,15 +6,31 @@ Let $F$ be a field of characteristic $\neq 2$. Show that $F$ has a Galois extens
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This exercise connects Kummer theory (which classifies abelian extensions) with the concrete form of biquadratic polynomials.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Kummer Theory:} A theory describing abelian extensions of a field $F$ where the Galois group has exponent $n$, provided $F$ contains the $n$-th roots of unity.
+    \item \textbf{Galois Group $\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z}$:} Also known as the Klein four-group $V_4$, it is the smallest non-cyclic group, consisting of four elements where every element except the identity has order 2.
+    \item \textbf{Splitting Field:} The smallest field extension in which a given polynomial can be factored into linear factors.
+    \item \textbf{Biquadratic Polynomial:} A polynomial of the form $X^4 + aX^2 + b$.
+\end{itemize}
 
-By Kummer theory, $(\mathbb{Z}/2\mathbb{Z})^n$ extensions of $F$ correspond to $n$-dimensional $\mathbb{F}_2$-subspaces of $F^*/F^{*2}$.
-A 2-dimensional subspace exists if and only if $\dim_{\mathbb{F}_2}(F^*/F^{*2}) \geq 2$, which means the index $[F^*:F^{*2}]$ is at least $2^2=4$. The condition $>2$ for a power of 2 is equivalent to $\geq 4$.
+\textbf{Steps:}
 
-For the polynomial $f(X) = X^4 + aX^2 + b$, let $\alpha^2$ and $\beta^2$ be the roots of the quadratic $Z^2 + aZ + b = 0$. The roots of $f$ are $\pm \alpha, \pm \beta$.
-The splitting field is $F(\alpha, \beta)$. Since $\alpha\beta = \sqrt{b}$, we have $F(\alpha, \beta) = F(\alpha, \sqrt{b}/\alpha) = F(\alpha, \sqrt{b})$.
-For this to be a $V_4$ extension, we need $F(\alpha)/F$ to be quadratic and $\sqrt{b}$ to be in $F$ but not a square of a root of the quadratic? No.
-Actually, the Galois group of a biquadratic $X^4+aX^2+b$ is $V_4$ iff $b$ is a square in $F$ and $f$ is irreducible. If $b=k^2$, the roots are $\pm \sqrt{\frac{-a \pm \sqrt{a^2-4k^2}}{2}}$. The extension is $F(\sqrt{u}, \sqrt{v})$ for some $u, v \in F$.
+1. \textbf{Characterizing $V_4$ Extensions:} A Galois extension $L/F$ has Galois group $V_4 \cong \mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z}$ if and only if it is the compositum of two distinct quadratic extensions. That is, $L = F(\sqrt{u}, \sqrt{v})$ where $u, v \in F^*$ are such that neither $u$, $v$, nor $uv$ is a square in $F$.
+
+2. \textbf{Applying Kummer Theory:} According to Kummer theory, $(\mathbb{Z}/2\mathbb{Z})^n$ extensions of $F$ correspond to $n$-dimensional subspaces of the vector space $V = F^*/F^{*2}$ over the field $\mathbb{F}_2$. A 2-dimensional subspace exists if and only if $\dim_{\mathbb{F}_2}(V) \geq 2$. In terms of the index, this means $[F^* : F^{*2}] = 2^{\dim(V)} \geq 2^2 = 4$. Since the index must be a power of 2, the condition $[F^* : F^{*2}] > 2$ is exactly what is needed for a $V_4$ extension to exist.
+
+3. \textbf{Constructing the Biquadratic Polynomial:} Let $L = F(\sqrt{u}, \sqrt{v})$ be our $V_4$ extension. Consider the element $\alpha = \sqrt{u} + \sqrt{v}$. We want to find its minimal polynomial. First, square it: $\alpha^2 = u + v + 2\sqrt{uv}$. Rearrange to isolate the remaining root: $\alpha^2 - (u+v) = 2\sqrt{uv}$.
+
+4. \textbf{Deriving the Polynomial:} Squaring again gives $(\alpha^2 - (u+v))^2 = 4uv$. Expanding this yields $\alpha^4 - 2(u+v)\alpha^2 + (u+v)^2 - 4uv = 0$. Simplifying the constant term: $(u+v)^2 - 4uv = u^2 + 2uv + v^2 - 4uv = (u-v)^2$. Thus, $\alpha$ is a root of $f(X) = X^4 - 2(u+v)X^2 + (u-v)^2$.
+
+5. \textbf{Verifying the Conditions:} In this polynomial $f(X) = X^4 + aX^2 + b$, we have $a = -2(u+v)$ and $b = (u-v)^2$. Since $u, v \in F$, $b$ is clearly a square in $F$, so $b \in F^{*2}$. The roots are $\pm \sqrt{u} \pm \sqrt{v}$, so the splitting field is indeed $F(\sqrt{u}, \sqrt{v})$.
+
+\textbf{Intuition:}
+Imagine you are building a field by adding "new" numbers. A $V_4$ extension is like adding two independent "directions" of square roots, say $\sqrt{2}$ and $\sqrt{3}$. You can move along $\sqrt{2}$, move along $\sqrt{3}$, or move along both. 
+
+The requirement $[F^* : F^{*2}] > 2$ simply says there must be at least two "different" types of non-squares available in your field to pick from. If $b$ is a square in $X^4 + aX^2 + b$, it forces the two square roots we are adding to be related in a specific way that keeps the symmetry high enough to form the $V_4$ group.
+
 \end{solution}
 
 \begin{exercise}
@@ -24,40 +40,68 @@ Let $p$ be prime number, $e, f \in \mathbb{Z}_{\geq 1}$. Let $G$ be a finite gro
 \]
 
 \begin{enumerate}
-\item[(1)] Show that such a group $G$ exists if and only if $p^f \equiv 1 \pmod{e}$. If the latter condition is satisfied, there exists, up to isomorphisms, a unique finite group $G$ as described above.
-
-\item[(2)] Let $\mathbb{F}_{p^f}$ denote the finite field with $p^f$ elements, and $\eta \in \mathbb{F}_{p^f}$ a primitive $e$-th root of unity. Let $G$ act on $A := \mathbb{F}_{p^f}$ via
-\[
-\sigma(a) = a^p, \quad \tau(a) = \eta \cdot a.
-\]
-Show that the following three assertions are equivalent:
-\begin{enumerate}
-\item[(a)] The $\mathbb{F}_p$-representation $A$ of $G$ is absolutely irreducible in the sense that the $\mathbb{C}$-representation $\mathbb{C} \otimes_{\mathbb{F}_p} A$ of $G$ is irreducible, where $\mathbb{C}$ is any algebraically closed field containing $\mathbb{F}_p$;
-\item[(b)] the $\mathbb{F}_p$-representation $A$ of $G$ is irreducible;
-\item[(c)] $p$ is of order $f$ in $(\mathbb{Z}/e\mathbb{Z})^\times$.
-\end{enumerate}
+\item[(1)] Existence and uniqueness of such a group $G$ based on $p^f \equiv 1 \pmod{e}$.
+\item[(2)] Irreducibility of the representation on $A = \mathbb{F}_{p^f}$ where $\sigma(a)=a^p$ and $\tau(a)=\eta a$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem links group theory (semidirect products) with representation theory over finite fields.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Semidirect Product:} A way to construct a new group from two groups using a group action. Here, $G \cong C_e \rtimes C_f$.
+    \item \textbf{Frobenius Automorphism:} The map $x \mapsto x^p$ in a field of characteristic $p$.
+    \item \textbf{Representation Theory:} The study of how groups act on vector spaces. A representation is "irreducible" if it has no non-trivial stable subspaces.
+    \item \textbf{Roots of Unity:} Numbers $\eta$ such that $\eta^e = 1$.
+\end{itemize}
 
-(1) The condition $p^f \equiv 1 \pmod e$ ensures that $\sigma$ acts as a valid automorphism of $\langle \tau \rangle$ and that its $f$-th power is identity. This is the condition for the existence of the semidirect product $C_e \rtimes C_f$.
+\textbf{Steps:}
 
-(2) The representation $A$ has $\tau$ acting as multiplication by $\eta$ (a primitive $e$-th root) and $\sigma$ as Frobenius $x \mapsto x^p$.
-- If $p$ has order $f \pmod e$, then $\mathbb{F}_p(\eta) = \mathbb{F}_{p^f}$. Any $G$-invariant subspace is an $\mathbb{F}_p(\eta)$-module, hence a vector space over $\mathbb{F}_{p^f}$. Only $\{0\}$ and $A$ exist.
-- Absolute irreducibility over $\mathbb{F}_p$ means the only endomorphisms are scalars. Commuting with $\tau$ makes the map $\mathbb{F}_{p^f}$-linear. Commuting with $\sigma$ restricts scalars to $\mathbb{F}_p$.
+1. \textbf{Existence of the Group (Part 1):} The relation $\sigma\tau\sigma^{-1} = \tau^p$ defines an action of $\sigma$ on the cyclic group $\langle \tau \rangle$ of order $e$. For this to be well-defined, the map $\phi(\tau) = \tau^p$ must be an automorphism of order dividing $f$. An element $x \mapsto x^p$ is an automorphism of $C_e$ if $p$ is coprime to $e$. Furthermore, $\sigma^f = 1$ implies $\phi^f = \text{id}$, meaning $\tau^{p^f} = \tau$. This requires $p^f \equiv 1 \pmod e$.
+
+2. \textbf{Defining the Representation (Part 2):} We consider the field $A = \mathbb{F}_{p^f}$ as a vector space over $\mathbb{F}_p$. The action of $\tau$ as multiplication by $\eta$ (an $e$-th root) and $\sigma$ as the Frobenius map $a \mapsto a^p$ is consistent with the group relations. For example, $\sigma(\tau(a)) = \sigma(\eta a) = (\eta a)^p = \eta^p a^p = \tau^p(\sigma(a))$.
+
+3. \textbf{Condition for Irreducibility:} 
+    \begin{itemize}
+        \item If $p$ has order $f$ in $(\mathbb{Z}/e\mathbb{Z})^\times$, then the powers $1, p, p^2, \dots, p^{f-1}$ are all distinct modulo $e$.
+        \item This means the Frobenius map $\sigma$ cycles through $f$ different "versions" of the root $\eta$.
+        \item Since $\eta$ is a primitive $e$-th root, and its orbit under Frobenius has size $f$, the field generated by $\eta$ over $\mathbb{F}_p$ is exactly $\mathbb{F}_{p^f}$.
+        \item Any $G$-invariant subspace must be a module over the ring $\mathbb{F}_p[\eta] = \mathbb{F}_{p^f}$. Since $A$ is a 1-dimensional vector space over $\mathbb{F}_{p^f}$, its only subspaces are $\{0\}$ and $A$.
+    \end{itemize}
+
+\textbf{Intuition:}
+The group $G$ is like a "clock" where one hand ($\tau$) moves in $e$ steps, and another hand ($\sigma$) "warps" the first hand by multiplying its position by $p$. 
+
+Irreducibility means that you cannot find a "smaller" world inside $A$ that stays closed under both the warping ($\sigma$) and the stepping ($\tau$). If $p$ has a large enough order, the warping process is so chaotic that it touches every part of the field, making the whole field "one piece."
+
 \end{solution}
 
 \begin{exercise}
-(1) $\frac{1}{T-\alpha_i}$ basis of $R/(T^n)$.
+Let $R$ be a polynomial ring and $\alpha_i$ distinct roots. 
+(1) Show $\frac{1}{T-\alpha_i}$ form a basis of $R/(T^n)$.
 (2) Valuation set density $u_n/n \geq 1/[K:k]$.
 \end{exercise}
 
 \begin{solution}
-(1) These are $n$ elements in an $n$-dimensional space. Their linear independence follows from the uniqueness of partial fraction decompositions. If a sum $\sum \frac{c_i}{T-\alpha_i}$ is $0 \pmod{T^n}$, it has a zero of order $n$ at $T=0$, which is impossible for a rational function of this degree.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Partial Fraction Decomposition:} Every rational function can be written as a sum of simpler fractions.
+    \item \textbf{Linear Independence:} A set of vectors is independent if no vector can be written as a combination of others.
+    \item \textbf{Valuation:} A function on a field that measures the "size" or "order of vanishing" of elements.
+\end{itemize}
 
-(2) This is a clever application of the inequality between $k$-dimension and $K$-dimension. The set $\Omega$ of valuations tracks the "jumps" in the Taylor expansion at $\beta$. The density bound $1/d$ reflects that $K$ is at most $d$ times "larger" than $k$.
+\textbf{Steps:}
+
+1. \textbf{Proving Basis (Part 1):} Consider the space of rational functions in $R/(T^n)$. The elements $v_i = \frac{1}{T-\alpha_i}$ can be expanded as power series: $v_i = -\frac{1}{\alpha_i} \sum_{j=0}^{n-1} (T/\alpha_i)^j \pmod{T^n}$. These are $n$ vectors in an $n$-dimensional space. Their linear independence is guaranteed by the fact that they correspond to different poles in the complex plane. If a sum $\sum c_i v_i$ were zero, the resulting rational function would have no poles but be non-zero, a contradiction.
+
+2. \textbf{Valuation Density (Part 2):} Let $K/k$ be a field extension of degree $d$. The valuations $u_n$ count the number of possible "order of vanishing" values in a truncated space. The inequality $u_n/n \geq 1/d$ states that the "richness" of the valuation set is inversely proportional to the degree of the extension.
+
+3. \textbf{Linking the Two:} The partial fractions in Part 1 provide a way to "probe" every dimension of the space $R/(T^n)$. In Part 2, the valuations do something similar for the extension field. The bound $1/d$ appears because the extension $K$ can at most "spread out" the $k$-values by a factor of $d$.
+
+\textbf{Intuition:}
+Think of the partial fractions as different "musical notes." Each $\alpha_i$ is a different pitch. Because they are all distinct, you can't play one note using a combination of the others. 
+
+In the second part, the "density" is like the resolution of a screen. If you have a larger field (higher $d$), your "pixels" (valuations) might be more spread out, but you are guaranteed to hit at least a certain fraction of the possible "colors" (values).
+
 \end{solution}
 
 \begin{exercise}
@@ -65,13 +109,24 @@ Galois descent for unramified $p$-adic extensions.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Galois descent is a fundamental tool in arithmetic geometry. The unramified case is "nice" because it reduces to the theory of finite fields.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Galois Descent:} A technique to "lower" a mathematical object from a large field $E$ to a smaller subfield $F$ by looking at what stays fixed under the Galois group.
+    \item \textbf{Unramified Extension:} An extension of $p$-adic fields where the "prime" stays a "prime" (no splitting or bundling).
+    \item \textbf{Ring of Integers $O_F$:} The set of elements in a field that behave like "whole numbers."
+\end{itemize}
 
-(1) The isomorphism $O_E \otimes_{O_F} O_E \cong \prod O_E$ is the definition of a Galois cover in the context of rings of integers. It holds exactly when the extension is unramified (no discriminant in the residue field).
+\textbf{Steps:}
 
-(2-3) This is the statement that "descent is effective". Any module over $O_E$ with a compatible $G$-action comes from a unique module over $O_F$.
+1. \textbf{The Core Isomorphism:} For an unramified Galois extension $E/F$ with group $G$, the map $\theta: O_E \otimes_{O_F} O_E \to \prod_{\sigma \in G} O_E$ given by $a \otimes b \mapsto (a \sigma(b))_{\sigma}$ is an isomorphism. This is the hallmark of "unramified" behavior; it means the ring of integers behaves as smoothly as the fields themselves.
 
-(4) Ramification breaks this because the ring $O_E$ becomes "too large" (the different is non-trivial). The length of the modules doesn't match up under the tensor product functor.
+2. \textbf{Descent for Modules:} Suppose we have a module $M$ over $O_E$ equipped with a compatible action of $G$. Galois descent tells us that $M$ actually "comes from" $F$. Specifically, if we define $M_0 = M^G$ (the elements fixed by $G$), then $M \cong M_0 \otimes_{O_F} O_E$.
+
+3. \textbf{Why Unramified Matters:} Ramification is like a "kink" in a pipe. If the extension is ramified, the ring $O_E$ becomes "too thick" or "too thin" in certain spots (the Different is non-trivial). This prevents the smooth "spreading" of the module $M_0$ back to $M$.
+
+\textbf{Intuition:}
+Imagine you have a jigsaw puzzle ($M$) that looks the same when you rotate it ($G$). Galois descent is the claim that you can describe the whole puzzle just by looking at one "representative" piece ($M_0$) and knowing how to rotate it. This "smooth rotation" only works perfectly if the puzzle pieces aren't distorted—which is what "unramified" ensures.
+
 \end{solution}
 
 \begin{exercise}
@@ -79,10 +134,28 @@ Splitting field of $X^5 - X + 1$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a concrete example of a group $S_5$ appearing as a Galois group, with interesting ramification properties.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Discriminant:} A value calculated from the roots that tells us about the Galois group's symmetry (square vs. non-square).
+    \item \textbf{Inertia Group:} A subgroup of the Galois group that describes how a prime "breaks" in the extension.
+    \item \textbf{Symmetric Group $S_5$:} The group of all permutations of 5 objects.
+\end{itemize}
 
-(1) Irreducibility is checked mod 2 and 5.
-(2) Ramification only at primes dividing the discriminant $D = 19 \times 151$.
-(3) The inertia groups are transpositions. Transpositions are odd permutations, so they are not in $A_5$. Since $K = \mathbb{Q}(\sqrt{D})$ is the fixed field of $A_5$, the inertia groups act trivially on the residue field extension of $E/K$. Thus $E/K$ is unramified at finite primes.
-(4-5) The Galois group contains a transposition (inertia) and acts transitively on 5 roots, hence $G = S_5$. The unique quadratic subfield is $\mathbb{Q}(\sqrt{D})$.
+\textbf{Steps:}
+
+1. \textbf{Irreducibility:} The polynomial $f(X) = X^5 - X + 1$ has no roots in $\mathbb{Q}$ (check $\pm 1$). By checking its behavior modulo 2 ($X^5 + X + 1$, which has no roots and no quadratic factors), we confirm it is irreducible.
+
+2. \textbf{Computing the Discriminant:} The formula for the discriminant of $X^5 + pX + q$ is $D = 5^5 q^4 + 4^4 p^5$. Plugging in $p = -1, q = 1$, we get $D = 3125 - 256 = 2869$. Factorizing 2869 gives $19 \times 151$. Both are primes.
+
+3. \textbf{Identifying the Galois Group:} 
+    \begin{itemize}
+        \item Since $D$ is not a perfect square, the Galois group $G$ is not a subgroup of the Alternating group $A_5$.
+        \item Since $f(X)$ is irreducible and of degree 5, $G$ must contain a 5-cycle.
+        \item The primes 19 and 151 divide the discriminant exactly once ($p^1$). This implies that the inertia groups at these primes are generated by transpositions (simple swaps).
+        \item A subgroup of $S_5$ that contains a 5-cycle and a transposition must be the entire $S_5$.
+    \end{itemize}
+
+\textbf{Intuition:}
+The polynomial $X^5 - X + 1$ is a classic example of "total symmetry." The roots are so tangled that you can perform any swap you want ($S_5$). The discriminant $19 \times 151$ acts like a fingerprint—it tells us exactly where the "knots" (ramification) are. Because the knots are "simple" (transpositions) and the roots are "connected" (irreducible), the whole thing is as symmetric as possible.
+
 \end{solution}

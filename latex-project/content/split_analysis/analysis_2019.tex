@@ -15,28 +15,45 @@ where $\|u\|_{\infty} := \sup_{x\in[0,1]}|u(x)|$. Also determine when equality o
 \end{exercise}
 
 \begin{solution}
-Let $M = \|u\|_{\infty}$. Then for all $x \in [0, 1]$, $-M \leq u(x) \leq M$. Since $F$ is a convex function, for any $y \in [-M, M]$, we can express $y$ as a convex combination of $-M$ and $M$:
+\textbf{Prerequisites:}
+1. \textbf{Convexity:} A function $F$ is convex on an interval $[a, b]$ if for any $x \in [a, b]$, $F(x)$ lies below or on the line segment connecting $(a, F(a))$ and $(b, F(b))$.
+2. \textbf{Linear Interpolation:} For any $y \in [-M, M]$, we can write $y = \lambda M + (1-\lambda)(-M)$ where $\lambda = \frac{y+M}{2M}$.
+3. \textbf{Lineary of Integrals:} $\int (af(x) + bg(x)) dx = a \int f(x) dx + b \int g(x) dx$.
+
+\textbf{Steps:}
+Let $M = \|u\|_{\infty} = \sup_{x\in[0,1]}|u(x)|$. This means for all $x \in [0, 1]$, the value of $u(x)$ is trapped in the interval $[-M, M]$.
+
+Since $F$ is convex, the graph of $F$ on the interval $[-M, M]$ is bounded above by the secant line passing through $(-M, F(-M))$ and $(M, F(M))$. The equation of this line is:
 \[
-y = \lambda M + (1-\lambda)(-M), \quad \text{where } \lambda = \frac{y+M}{2M}.
+L(y) = \frac{y+M}{2M} F(M) + \frac{M-y}{2M} F(-M).
 \]
-By the definition of convexity:
+By the definition of convexity, for any $y \in [-M, M]$, we have $F(y) \leq L(y)$. Now, let's apply this to our function $u(x)$ by setting $y = u(x)$:
 \[
-F(y) \leq \frac{y+M}{2M} F(M) + \frac{M-y}{2M} F(-M).
+F(u(x)) \leq \frac{u(x)+M}{2M} F(M) + \frac{M-u(x)}{2M} F(-M).
 \]
-Substituting $y = u(x)$ and integrating over $[0, 1]$:
+Integrating both sides over $[0, 1]$ gives:
 \[
 \int_0^1 F(u(x))\,dx \leq \int_0^1 \left( \frac{u(x)+M}{2M} F(M) + \frac{M-u(x)}{2M} F(-M) \right) dx.
 \]
-Using the linearity of the integral and the fact that $\int_0^1 u(x)\,dx = 0$:
+Using the linearity of the integral, we can pull out the constants $F(M), F(-M)$, and $2M$:
 \[
-\int_0^1 F(u(x))\,dx \leq \frac{F(M)}{2M} \int_0^1 (u(x)+M) dx + \frac{F(-M)}{2M} \int_0^1 (M-u(x)) dx
+\int_0^1 F(u(x))\,dx \leq \frac{F(M)}{2M} \int_0^1 (u(x)+M) dx + \frac{F(-M)}{2M} \int_0^1 (M-u(x)) dx.
 \]
+We are given that $\int_0^1 u(x) dx = 0$. Also, $\int_0^1 M dx = M$. Thus:
 \[
-= \frac{F(M)}{2M} (0 + M) + \frac{F(-M)}{2M} (M - 0) = \frac{F(M) + F(-M)}{2}.
+\int_0^1 (u(x)+M) dx = 0 + M = M, \quad \text{and} \quad \int_0^1 (M-u(x)) dx = M - 0 = M.
 \]
-This proves the inequality.
+Substituting these back into our inequality:
+\[
+\int_0^1 F(u(x))\,dx \leq \frac{F(M)}{2M} \cdot M + \frac{F(-M)}{2M} \cdot M = \frac{F(M) + F(-M)}{2}.
+\]
+This completes the proof of the inequality.
 
-Now, we determine when equality occurs. Since $F$ is strictly convex, the inequality $F(y) \leq \lambda F(M) + (1-\lambda)F(-M)$ is strict for all $y \in (-M, M)$. Equality in the integral occurs if and only if $u(x) \in \{M, -M\}$ for almost all $x \in [0, 1]$. However, $u$ is given as a continuous function. If $M > 0$, a continuous function that takes values in $\{M, -M\}$ must be constant by the Intermediate Value Theorem. Thus, $u \equiv M$ or $u \equiv -M$. But the condition $\int_0^1 u(x)\,dx = 0$ would then imply $M = 0$, which means $u \equiv 0$. If $M=0$, then $u \equiv 0$ and equality clearly holds. Thus, equality occurs if and only if $u \equiv 0$.
+\textbf{Intuition:}
+Imagine $u(x)$ as a particle moving between $-M$ and $M$ such that its average position is $0$. The convexity of $F$ means that "averaging the function" ($\int F(u)$) is always less than "the function of the average" (if $F$ were linear) or, in this specific case, less than the average of the extreme values. Because the center of mass of $u$ is at $0$, the total "weight" of $F(u)$ is balanced by the edges $F(M)$ and $F(-M)$.
+
+\textbf{Equality Case:}
+For a \textit{strictly} convex function, the curve $F(y)$ only touches the secant line $L(y)$ at the endpoints $y=M$ and $y=-M$. Thus, for the integral to be equal, $u(x)$ must be either $M$ or $-M$ for almost all $x$. Since $u$ is continuous, if $M > 0$, $u$ cannot jump between $M$ and $-M$ without hitting values in between (by the Intermediate Value Theorem). Therefore, $u$ must be a constant. If $u \equiv C$, then $\int_0^1 C dx = 0 \implies C=0$. This means $M=0$, so $u \equiv 0$. In this case, equality holds as $F(0) \leq \frac{F(0)+F(0)}{2}$.
 \end{solution}
 
 \begin{exercise}
@@ -49,22 +66,47 @@ Can you provide constant $K$ so that $K<10$? In the problem, all the $L^p$-space
 \end{exercise}
 
 \begin{solution}
-By the Plancherel theorem, $\|f\|_{L^2}^2 = \|\hat{f}\|_{L^2}^2$, where $\hat{f}$ is the Fourier transform. We split the integral of $|\hat{f}|^2$ into two regions: $|\xi| \leq R$ and $|\xi| > R$.
+\textbf{Prerequisites:}
+1. \textbf{Plancherel Theorem:} $\|f\|_{L^2}^2 = \|\hat{f}\|_{L^2}^2$. The energy of a function in the spatial domain is equal to the energy in the frequency domain.
+2. \textbf{Fourier Transform Properties:} $|\hat{f}(\xi)| \leq \|f\|_{L^1}$ and the Fourier transform of a gradient corresponds to multiplying by frequency: $\mathcal{F}(\nabla f) = 2\pi i \xi \hat{f}(\xi)$.
+3. \textbf{Optimizing a Split:} When an integral is difficult to bound globally, we split it into "low frequency" and "high frequency" regions and optimize the boundary.
+
+\textbf{Steps:}
+We start in the frequency domain using Plancherel's theorem:
 \[
-\int_{\mathbb{R}^2} |\hat{f}(\xi)|^2 d\xi = \int_{|\xi| \leq R} |\hat{f}(\xi)|^2 d\xi + \int_{|\xi| > R} \frac{1}{|\xi|^2} |\xi|^2 |\hat{f}(\xi)|^2 d\xi.
+\|f\|_{L^2}^2 = \int_{\mathbb{R}^2} |\hat{f}(\xi)|^2 d\xi.
 \]
-We know that $\|\hat{f}\|_{L^\infty} \leq \|f\|_{L^1}$ and $\int |\xi|^2 |\hat{f}(\xi)|^2 d\xi = \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2$ (depending on the normalization of the Fourier transform). Using the standard normalization $\hat{f}(\xi) = \int f(x) e^{-2\pi i x \cdot \xi} dx$:
+We split this integral into a disk of radius $R$ (low frequencies) and the region outside (high frequencies):
 \[
-\int_{|\xi| \leq R} |\hat{f}(\xi)|^2 d\xi \leq \|\hat{f}\|_{L^\infty}^2 \cdot \text{Area}(\{|\xi| \leq R\}) = \|f\|_{L^1}^2 \pi R^2.
+\int_{\mathbb{R}^2} |\hat{f}(\xi)|^2 d\xi = \int_{|\xi| \leq R} |\hat{f}(\xi)|^2 d\xi + \int_{|\xi| > R} |\hat{f}(\xi)|^2 d\xi.
 \]
-For the second term:
+For the low frequencies ($|\xi| \leq R$), we use the fact that $|\hat{f}(\xi)|$ is bounded by $\|f\|_{L^1}$:
 \[
-\int_{|\xi| > R} \frac{1}{|\xi|^2} |\xi|^2 |\hat{f}(\xi)|^2 d\xi \leq \frac{1}{R^2} \int_{\mathbb{R}^2} |\xi|^2 |\hat{f}(\xi)|^2 d\xi = \frac{1}{R^2} \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2.
+\int_{|\xi| \leq R} |\hat{f}(\xi)|^2 d\xi \leq \int_{|\xi| \leq R} \|f\|_{L^1}^2 d\xi = \|f\|_{L^1}^2 \cdot \text{Area}(\text{Disk}_R) = \pi R^2 \|f\|_{L^1}^2.
 \]
-Thus, $\|f\|_{L^2}^2 \leq \pi R^2 \|f\|_{L^1}^2 + \frac{1}{4\pi^2 R^2} \|\nabla f\|_{L^2}^2$. Minimizing with respect to $R^2$:
-Setting $A = \pi \|f\|_{L^1}^2$ and $B = \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2$, the minimum occurs at $R^2 = \sqrt{B/A}$.
-The minimum value is $2\sqrt{AB} = 2 \sqrt{\pi \|f\|_{L^1}^2 \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2} = \frac{1}{\sqrt{\pi}} \|f\|_{L^1} \|\nabla f\|_{L^2}$.
-Thus, $K = \frac{1}{\sqrt{\pi}} \approx 0.564$, which is well below 10.
+For the high frequencies ($|\xi| > R$), we introduce a factor of $\frac{|\xi|^2}{|\xi|^2}$ to utilize the gradient:
+\[
+\int_{|\xi| > R} |\hat{f}(\xi)|^2 d\xi = \int_{|\xi| > R} \frac{1}{|\xi|^2} |\xi|^2 |\hat{f}(\xi)|^2 d\xi \leq \frac{1}{R^2} \int_{\mathbb{R}^2} |\xi|^2 |\hat{f}(\xi)|^2 d\xi.
+\]
+From Fourier theory, $\int |\xi|^2 |\hat{f}(\xi)|^2 d\xi = \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2$. Thus:
+\[
+\int_{|\xi| > R} |\hat{f}(\xi)|^2 d\xi \leq \frac{1}{4\pi^2 R^2} \|\nabla f\|_{L^2}^2.
+\]
+Combining these, we have an inequality that depends on our choice of $R$:
+\[
+\|f\|_{L^2}^2 \leq \pi R^2 \|f\|_{L^1}^2 + \frac{1}{4\pi^2 R^2} \|\nabla f\|_{L^2}^2.
+\]
+To find the best constant, we minimize this expression with respect to $R^2$. Let $A = \pi \|f\|_{L^1}^2$ and $B = \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2$. The expression is $A(R^2) + B/(R^2)$. The minimum of $Ax + B/x$ occurs when $Ax = B/x$, which gives $x = \sqrt{B/A}$ and a minimum value of $2\sqrt{AB}$.
+\[
+\text{Min Value} = 2 \sqrt{\pi \|f\|_{L^1}^2 \cdot \frac{1}{4\pi^2} \|\nabla f\|_{L^2}^2} = 2 \frac{\sqrt{\pi}}{2\pi} \|f\|_{L^1} \|\nabla f\|_{L^2} = \frac{1}{\sqrt{\pi}} \|f\|_{L^1} \|\nabla f\|_{L^2}.
+\]
+Thus, the constant $K = \frac{1}{\sqrt{\pi}} \approx 0.564$.
+
+\textbf{Intuition:}
+The $L^2$ norm represents the total "size" of the function. The $L^1$ norm controls how much the function can "peak" (the low frequencies), while the gradient norm $\|\nabla f\|_{L^2}$ controls how much the function can "wiggle" (the high frequencies). By balancing these two constraints, we find that the function's total size is naturally bounded.
+
+\textbf{Conclusion:}
+Since $K = \frac{1}{\sqrt{\pi}} \approx 0.564$, it is indeed much smaller than 10.
 \end{solution}
 
 \begin{exercise}
@@ -76,14 +118,36 @@ Prove or disprove that $f$ is a constant.
 \end{exercise}
 
 \begin{solution}
-This is a variation of Liouville's Theorem for harmonic functions. A harmonic function $f$ on $\mathbb{R}^2$ can be viewed as the real part of an entire function $g(z)$. If $f$ is harmonic and satisfies $|f(z)| \leq C(1+|z|^k)$, then $f$ is a polynomial of degree at most $k$.
-In our case, the condition $\lim_{|x|\to\infty} \frac{|f(x)|}{\ln |x|} = 0$ implies that for any $\epsilon > 0$, there exists $R$ such that for $|x| > R$, $|f(x)| \leq \epsilon \ln |x|$. Since $\ln |x| < |x|^\alpha$ for any $\alpha > 0$ and sufficiently large $|x|$, we have $|f(x)| \leq C_\alpha (1+|x|^\alpha)$ for all $\alpha > 0$.
-Taking $\alpha < 1$, the only polynomials of degree less than 1 are constants. Thus $f$ must be a constant.
-Alternatively, one can use the mean value property and gradient estimates for harmonic functions. For any $x_0 \in \mathbb{R}^2$ and $R > 0$:
+\textbf{Prerequisites:}
+1. \textbf{Harmonic Functions:} Functions that satisfy $\Delta f = 0$. They are the "flatest" possible functions.
+2. \textbf{Mean Value Property:} The value at a point is the average of values on any surrounding circle or ball.
+3. \textbf{Gradient Estimate:} For a harmonic function, the derivative at a point $x_0$ can be bounded by the values of the function in a larger ball $B_R(x_0)$:
 \[
-|\nabla f(x_0)| \leq \frac{2}{R} \sup_{B_R(x_0)} |f|.
+|\nabla f(x_0)| \leq \frac{2}{R} \sup_{x \in B_R(x_0)} |f(x)|.
 \]
-With the given growth condition, as $R \to \infty$, the right hand side goes to zero because $\frac{\ln R}{R} \to 0$. Thus $\nabla f \equiv 0$, and $f$ is constant.
+
+\textbf{Steps:}
+We want to show that $f$ is constant, which is equivalent to showing that its gradient $\nabla f$ is zero everywhere. Pick any point $x_0 \in \mathbb{R}^2$. Using the gradient estimate for a ball of radius $R$ centered at $x_0$:
+\[
+|\nabla f(x_0)| \leq \frac{2}{R} \sup_{x \in B_R(x_0)} |f(x)|.
+\]
+As we let $R \to \infty$, the ball $B_R(x_0)$ eventually covers the entire plane. The condition $\lim_{|x|\to\infty} \frac{|f(x)|}{\ln |x|} = 0$ tells us that for very large $|x|$, $|f(x)|$ grows slower than $\ln |x|$.
+Mathematically, for any $\epsilon > 0$, there exists an $R_0$ such that for all $|x| > R_0$, $|f(x)| < \epsilon \ln |x|$.
+Substituting this into our gradient bound for very large $R$:
+\[
+|\nabla f(x_0)| \leq \frac{2}{R} (\text{some constant for small } R + \epsilon \ln R).
+\]
+Taking the limit as $R \to \infty$:
+\[
+\lim_{R\to\infty} \frac{2 \epsilon \ln R}{R} = 0.
+\]
+Since the limit of the upper bound is zero, we must have $|\nabla f(x_0)| = 0$. Because $x_0$ was chosen arbitrarily, the gradient is zero everywhere. A function with a zero gradient everywhere on $\mathbb{R}^2$ must be a constant function.
+
+\textbf{Intuition:}
+Harmonic functions are incredibly "stiff". If you try to make a harmonic function grow, it has to grow at least at a certain rate (like a linear function $f(x)=x$ or a logarithm). If you constrain it so that it grows slower than even a logarithm, the only "harmonic" way to do that is to not grow at all—to stay perfectly flat.
+
+\textbf{Conclusion:}
+The statement is true; $f$ must be a constant.
 \end{solution}
 
 \begin{exercise}

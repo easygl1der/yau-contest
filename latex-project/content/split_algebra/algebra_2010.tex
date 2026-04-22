@@ -2,36 +2,66 @@
 
 \subsection*{Individual}
 \begin{exercise}
+\label{algebra:2010:1}
 Let $V$ be a finite dimensional complex vector space. Let $A$, $B$ be two linear endomorphisms of $V$ satisfying $AB - BA = B$. Prove that there is a common eigenvector for $A$ and $B$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem is a special case of Lie's Theorem, which states that any finite-dimensional representation of a solvable Lie algebra over an algebraically closed field of characteristic zero has a common eigenvector. The relation $[A, B] = B$ defines a 2-dimensional solvable Lie algebra.
-
-\textbf{Step 1: Show that $B$ is a nilpotent operator.}
-Consider the adjoint operator $\text{ad}_A: \text{End}(V) \to \text{End}(V)$ defined by $\text{ad}_A(X) = AX - XA = [A, X]$. The given relation is $\text{ad}_A(B) = B$, which means $B$ is an eigenvector of $\text{ad}_A$ with eigenvalue $1$.
-We claim that for any $k \in \mathbb{N}$, $\text{ad}_A(B^k) = k B^k$.
-\textit{Proof by induction:} For $k=1$, it is given. Suppose $\text{ad}_A(B^{k-1}) = (k-1)B^{k-1}$. Then
-\begin{align*}
-\text{ad}_A(B^k) &= AB^k - B^k A = (AB - BA)B^{k-1} + B(AB^{k-1} - B^{k-1}A) \\
-&= B \cdot B^{k-1} + B \cdot (k-1)B^{k-1} = k B^k.
-\end{align*}
-If $B^k \neq 0$ for all $k$, then $\text{ad}_A$ would have infinitely many distinct eigenvalues $1, 2, 3, \dots$. However, $\text{ad}_A$ is a linear operator on the finite-dimensional space $\text{End}(V)$ (of dimension $(\dim V)^2$), so it can have at most $(\dim V)^2$ distinct eigenvalues. Thus, we must have $B^k = 0$ for some $k$, meaning $B$ is nilpotent.
-
-\textbf{Step 2: Find the common eigenvector.}
-Since $B$ is nilpotent, its kernel $W = \ker B$ is a non-zero subspace of $V$.
-We check if $W$ is invariant under $A$. For any $v \in W$, $Bv = 0$. Then
-\[ B(Av) = (AB - [A, B])v = ABv - Bv = A(0) - 0 = 0. \]
-Thus $A(W) \subseteq W$. Since $V$ is a complex vector space and $W$ is a non-zero $A$-invariant subspace, the restriction $A|_W$ must have at least one eigenvector $w \in W$ (by the Fundamental Theorem of Algebra applied to the characteristic polynomial).
-For this $w$, we have:
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item $Aw = \lambda w$ for some $\lambda \in \mathbb{C}$ (since $w$ is an eigenvector of $A|_W$).
-    \item $Bw = 0$ (since $w \in \ker B$).
+    \item \textbf{Eigenvector and Eigenvalue:} For a linear transformation $T$, a non-zero vector $v$ is an eigenvector if $T(v) = \lambda v$ for some scalar $\lambda$ (the eigenvalue).
+    \item \textbf{Nilpotent Operator:} A linear operator $B$ is nilpotent if applying it enough times eventually gives the zero map, i.e., $B^k = 0$ for some positive integer $k$.
+    \item \textbf{Kernel ($\ker$):} The kernel of an operator $B$ is the set of all vectors $v$ such that $B(v) = 0$. If $B$ is nilpotent, it must map some non-zero vectors to zero, so its kernel is not just the zero vector.
+    \item \textbf{Invariant Subspace:} A subspace $W$ is invariant under $A$ if applying $A$ to any vector in $W$ keeps it in $W$ (i.e., $A(w) \in W$).
 \end{itemize}
-Thus $w$ is a common eigenvector for $A$ and $B$ (with eigenvalue $\lambda$ for $A$ and $0$ for $B$).
+
+\textbf{Step 1: Understand the operator $\text{ad}_A$ and show $B$ is nilpotent.}
+We are given the relation $AB - BA = B$. Let's define a new operator called the \textit{adjoint} operator, $\text{ad}_A$, which acts on other matrices (or linear transformations) rather than vectors. It is defined as:
+\[ \text{ad}_A(X) = AX - XA \]
+Plugging in $B$, our given relation becomes $\text{ad}_A(B) = B$. This equation exactly means that $B$ is an ``eigenvector'' of the operator $\text{ad}_A$ with an eigenvalue of $1$.
+
+Next, we want to see what happens to powers of $B$. We claim that $\text{ad}_A(B^k) = k B^k$ for any positive integer $k$. Let's prove this using mathematical induction:
+\begin{itemize}
+    \item \textit{Base case ($k=1$):} We already know $\text{ad}_A(B) = 1 \cdot B$, which is true.
+    \item \textit{Inductive step:} Assume it is true for $k-1$, meaning $\text{ad}_A(B^{k-1}) = (k-1)B^{k-1}$. Now, let's calculate it for $k$:
+    \begin{align*}
+    \text{ad}_A(B^k) &= AB^k - B^k A \\
+    &= (AB)B^{k-1} - B(B^{k-1}A) 
+    \end{align*}
+    We can add and subtract $BAB^{k-1}$ in the middle to group terms:
+    \begin{align*}
+    &= (AB - BA)B^{k-1} + BA B^{k-1} - B^{k}A \\
+    &= (AB - BA)B^{k-1} + B(AB^{k-1} - B^{k-1}A) \\
+    &= B \cdot B^{k-1} + B \cdot \text{ad}_A(B^{k-1}) \\
+    &= B^k + B \cdot (k-1)B^{k-1} \\
+    &= B^k + (k-1)B^k = k B^k.
+    \end{align*}
+\end{itemize}
+This result $\text{ad}_A(B^k) = k B^k$ means that if $B^k$ is not the zero matrix, then $B^k$ is an eigenvector of $\text{ad}_A$ with eigenvalue $k$. 
+However, $\text{ad}_A$ operates on the space of all linear transformations on $V$, which is finite-dimensional (its dimension is $n^2$ if $V$ is $n$-dimensional). A linear operator on a finite-dimensional space can only have a finite number of distinct eigenvalues. It cannot have all eigenvalues $1, 2, 3, \dots$ going to infinity!
+The only way to avoid this contradiction is if $B^k = 0$ for some integer $k$. This means $B$ is a \textbf{nilpotent} operator.
+
+\textbf{Step 2: Find a common eigenvector for $A$ and $B$.}
+Because $B$ is nilpotent (meaning $B^k = 0$ but $B^{k-1} \neq 0$), there must be some non-zero vectors that $B$ maps to zero. Let $W = \ker B$ be the space of all such vectors. Since $B$ is nilpotent, $W$ contains more than just the zero vector.
+Any vector $w \in W$ satisfies $Bw = 0$, which means $w$ is an eigenvector of $B$ with eigenvalue $0$.
+
+Now, we need to find a vector in $W$ that is \textit{also} an eigenvector of $A$. To do this, we first check if applying $A$ to a vector in $W$ keeps it inside $W$. Take any $v \in W$. We know $Bv = 0$. Let's see what happens when we apply $B$ to the vector $(Av)$:
+\[ B(Av) = (BA)v = (AB - B)v \quad \text{(using } AB - BA = B \implies BA = AB - B) \]
+\[ B(Av) = A(Bv) - Bv = A(0) - 0 = 0. \]
+Since $B(Av) = 0$, the vector $Av$ is also in the kernel of $B$. Therefore, $Av \in W$. This proves that $W$ is an \textbf{invariant subspace} under $A$.
+
+Finally, because $V$ is a complex vector space, any linear operator on a non-zero subspace must have at least one eigenvector (this follows from the Fundamental Theorem of Algebra, which guarantees the characteristic polynomial has a root). 
+So, if we restrict the operator $A$ to just work within the space $W$, it must have an eigenvector $w \in W$.
+For this specific vector $w$:
+\begin{itemize}
+    \item $Aw = \lambda w$ for some complex number $\lambda$ (because it's an eigenvector of $A$).
+    \item $Bw = 0$ (because $w$ is in $W$, which is the kernel of $B$).
+\end{itemize}
+We have successfully found a non-zero vector $w$ that is a common eigenvector for both $A$ and $B$!
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:2}
 Let $M_2(\mathbb{R})$ be the ring of $2 \times 2$ matrices with real entries. Its group of multiplicative units is $GL_2(\mathbb{R})$, consisting of invertible matrices in $M_2(\mathbb{R})$.
 
 (a) Find an injective homomorphism from the field $\mathbb{C}$ of complex numbers into the ring $M_2(\mathbb{R})$.
@@ -46,27 +76,59 @@ Let $M_2(\mathbb{R})$ be the ring of $2 \times 2$ matrices with real entries. It
 \end{exercise}
 
 \begin{solution}
-(a) A complex number $z = a + bi$ acts on $\mathbb{C} \cong \mathbb{R}^2$ by multiplication. In the basis $\{1, i\}$, multiplication by $i$ maps $1 \to i$ and $i \to -1$. Thus $i$ corresponds to the matrix $J = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$.
-The map $\phi(a + bi) = aI + bJ = \begin{pmatrix} a & -b \\ b & a \end{pmatrix}$ is an injective ring homomorphism.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Ring Homomorphism:} A map between two rings that preserves addition and multiplication.
+    \item \textbf{Vector Space over $\mathbb{C}$:} A space where you can add vectors and multiply them by complex numbers (scalars).
+    \item \textbf{Isomorphism Theorem:} If you have a ring homomorphism from $R$ to $S$, the image is isomorphic to $R / \ker$.
+    \item \textbf{Rational Canonical Form (RCF):} A standard form for matrices that depends only on their invariant factors (and minimal polynomial). Two matrices are conjugate if and only if they have the same RCF.
+\end{itemize}
 
-(b) \textbf{Theorem:} This is a specific case of the Skolem-Noether Theorem, but we can prove it directly using representation theory.
-Any such $\phi: \mathbb{C} \to M_2(\mathbb{R})$ makes $V = \mathbb{R}^2$ a 1-dimensional $\mathbb{C}$-vector space by defining $z \cdot v = \phi(z)v$. Since $\dim_{\mathbb{R}} V = 2$ and $[\mathbb{C} : \mathbb{R}] = 2$, the $\mathbb{C}$-dimension must be $\dim_{\mathbb{C}} V = 2/2 = 1$.
-Let $V_{\phi_1}$ and $V_{\phi_2}$ be the two $\mathbb{C}$-vector space structures on $\mathbb{R}^2$ induced by $\phi_1$ and $\phi_2$. Since both are 1-dimensional over $\mathbb{C}$, they are isomorphic as $\mathbb{C}$-vector spaces. Let $g: V_{\phi_1} \to V_{\phi_2}$ be a $\mathbb{C}$-linear isomorphism.
-Viewed as a map on $\mathbb{R}^2$, $g$ is an $\mathbb{R}$-linear automorphism, so $g \in GL_2(\mathbb{R})$. The $\mathbb{C}$-linearity condition $g(z \cdot_{1} v) = z \cdot_{2} g(v)$ means $g(\phi_1(z)v) = \phi_2(z)g(v)$ for all $z \in \mathbb{C}, v \in \mathbb{R}^2$. Thus $g \phi_1(z) = \phi_2(z) g$, or $\phi_2(z) = g \phi_1(z) g^{-1}$.
+\textbf{(a) Step 1: Represent complex numbers as matrices.}
+We want to map complex numbers $z = a + bi$ into $2 \times 2$ real matrices. We can think of $\mathbb{C}$ as a 2D real vector space $\mathbb{R}^2$ with basis vectors $1$ and $i$. 
+Multiplying any complex number by $z = a + bi$ is a linear transformation on this space. Let's see what happens to the basis vectors:
+\begin{itemize}
+    \item $(a+bi) \cdot 1 = a + bi \implies$ corresponds to the column vector $\begin{pmatrix} a \\ b \end{pmatrix}$.
+    \item $(a+bi) \cdot i = ai + bi^2 = -b + ai \implies$ corresponds to the column vector $\begin{pmatrix} -b \\ a \end{pmatrix}$.
+\end{itemize}
+Combining these into a matrix gives us the linear transformation matrix for multiplying by $a+bi$:
+\[ \phi(a + bi) = \begin{pmatrix} a & -b \\ b & a \end{pmatrix} \]
+This map $\phi$ is an injective ring homomorphism from $\mathbb{C}$ to $M_2(\mathbb{R})$.
 
-(c) The subring $F$ is the image of the evaluation map $\mathbb{R}[x] \to M_2(\mathbb{R})$ given by $x \mapsto h$. The kernel is generated by the minimal polynomial of $h$. Since $f(x)$ is degree 2 and irreducible, the minimal polynomial must be $f(x)$. Thus $F \cong \mathbb{R}[x]/(f(x))$.
-Any irreducible quadratic over $\mathbb{R}$ has roots $\alpha \pm i\beta$ with $\beta \neq 0$. The field $\mathbb{R}[x]/(f(x))$ is a degree 2 extension of $\mathbb{R}$, hence isomorphic to $\mathbb{C}$.
+\textbf{(b) Step 2: Show all such homomorphisms are conjugate.}
+Suppose we have two such mappings, $\phi_1$ and $\phi_2$. Both mappings turn the real 2D plane $\mathbb{R}^2$ into a 1-dimensional complex vector space. Why 1-dimensional? Because $\mathbb{R}^2$ has 2 real dimensions, and complex numbers require 2 real dimensions for 1 complex dimension ($2/2 = 1$).
+Let $V_1$ be $\mathbb{R}^2$ with complex multiplication defined by $z \cdot v = \phi_1(z)v$, and $V_2$ be $\mathbb{R}^2$ with $z \cdot v = \phi_2(z)v$.
+Since all 1-dimensional complex vector spaces are isomorphic to each other, there must be a linear isomorphism $g: V_1 \to V_2$.
+Because $g$ is a linear map between $\mathbb{R}^2$ spaces, it can be represented by a real invertible $2 \times 2$ matrix, so $g \in GL_2(\mathbb{R})$.
+The fact that $g$ is a *complex* isomorphism means it preserves complex multiplication: $g(z \cdot_{1} v) = z \cdot_{2} g(v)$.
+Substituting our definitions of complex multiplication, we get:
+\[ g(\phi_1(z)v) = \phi_2(z)g(v) \]
+Since this holds for any vector $v$, we have $g \phi_1(z) = \phi_2(z) g$. Multiplying by $g^{-1}$ on the right gives $\phi_2(z) = g \phi_1(z) g^{-1}$, meaning they are conjugate!
 
-(d) For any field $K$, two matrices in $M_n(K)$ are conjugate if and only if they have the same Rational Canonical Form. The RCF depends only on the invariant factors. Here $n=2$ and the characteristic polynomial $f(x)$ is irreducible, so it must be the only invariant factor. Thus the RCF for both $h$ and $h'$ is the companion matrix of $f(x)$. Therefore $h$ and $h'$ are conjugate in $GL_2(\mathbb{R})$.
+\textbf{(c) Step 3: Show the subring $F$ is isomorphic to $\mathbb{C}$.}
+Consider the "evaluation map" that takes a real polynomial $P(x)$ and plugs in the matrix $h$: $P(x) \mapsto P(h)$. 
+The kernel of this map is the set of all polynomials where $P(h) = 0$. The smallest such polynomial is the minimal polynomial of $h$.
+We are given that $h$ has an irreducible characteristic polynomial $f(x)$ of degree 2. By the Cayley-Hamilton theorem, $f(h) = 0$, so the minimal polynomial divides $f(x)$. Since $f(x)$ is irreducible, the minimal polynomial must be exactly $f(x)$.
+By the First Isomorphism Theorem, the image of our map (which is exactly the subring $F$) is isomorphic to $\mathbb{R}[x] / \langle f(x) \rangle$.
+Any irreducible quadratic polynomial over the real numbers has two complex conjugate roots (like $\alpha \pm i\beta$ with $\beta \neq 0$). Adjoining one of these roots to the real numbers gives the complex numbers. Therefore, $\mathbb{R}[x] / \langle f(x) \rangle \cong \mathbb{C}$.
 
-(e) No. If $f(x)$ is reducible, it could be $(x-\lambda)^2$. There are two similarity classes of matrices with this characteristic polynomial:
-1. $h = \begin{pmatrix} \lambda & 0 \\ 0 & \lambda \end{pmatrix}$ (minimal polynomial $x-\lambda$).
-2. $h' = \begin{pmatrix} \lambda & 1 \\ 0 & \lambda \end{pmatrix}$ (minimal polynomial $(x-\lambda)^2$).
-These are not conjugate because they have different minimal polynomials (or different Jordan forms).
-Note: If $f(x)$ has distinct real roots, they are still conjugate (both diagonalizable). The irreducibility in (c) ensures we are in the "field extension" case.
+\textbf{(d) Step 4: Show matrices with the same irreducible characteristic polynomial are conjugate.}
+Two matrices are conjugate (similar) if and only if they represent the same linear transformation under different bases. This happens exactly when they have the same Rational Canonical Form (RCF).
+The RCF is completely determined by the "invariant factors" of the matrix, which are polynomials that divide each other and multiply to the characteristic polynomial.
+Since our characteristic polynomial $f(x)$ is irreducible, it cannot be factored further. Thus, there is only one invariant factor, which is $f(x)$ itself.
+Because $h$ and $h'$ share the same irreducible characteristic polynomial $f(x)$, they must have the exact same invariant factors, and therefore the same RCF. Thus, they are conjugate in $GL_2(\mathbb{R})$.
+
+\textbf{(e) Step 5: What if $f(x)$ is reducible?}
+If $f(x)$ is reducible over $\mathbb{R}$, the conclusion does \textbf{not} always hold. 
+For example, suppose $f(x) = (x-\lambda)^2$. A matrix with this characteristic polynomial could be diagonalizable (a scalar multiple of the identity) or non-diagonalizable (having a non-trivial Jordan block).
+Consider these two matrices:
+1. $h = \begin{pmatrix} \lambda & 0 \\ 0 & \lambda \end{pmatrix}$ (Minimal polynomial is $x-\lambda$)
+2. $h' = \begin{pmatrix} \lambda & 1 \\ 0 & \lambda \end{pmatrix}$ (Minimal polynomial is $(x-\lambda)^2$)
+Both have characteristic polynomial $f(x) = (x-\lambda)^2$. However, they are not conjugate because they have different minimal polynomials (or you can see $h$ commutes with everything, so any conjugate of $h$ is just $h$, which is not $h'$).
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:3}
 Let $G$ be a non-abelian finite group. Let $c(G)$ be the number of conjugacy classes in $G$. Define $\overline{c}(G) := c(G)/|G|$.
 
 (a) Prove that $\overline{c}(G) \leq \frac{5}{8}$.
@@ -77,31 +139,64 @@ Let $G$ be a non-abelian finite group. Let $c(G)$ be the number of conjugacy cla
 \end{exercise}
 
 \begin{solution}
-(a) \textbf{Explanatory Remark:} The ratio $\overline{c}(G)$ is the probability that two randomly chosen elements of $G$ commute. This is often called the \textit{commutativity degree}.
-Using the \textbf{Class Equation}: $|G| = |Z(G)| + \sum_{i=1}^{k} [G : C_G(x_i)]$, where $x_i$ are representatives of non-central conjugacy classes.
-Equivalently, $c(G) = \frac{1}{|G|} \sum_{g \in G} |C_G(g)|$.
-For $g \in Z(G)$, $|C_G(g)| = |G|$.
-For $g \notin Z(G)$, $C_G(g)$ is a proper subgroup containing $Z(G)$ and $g$. Since $G/Z(G)$ cannot be cyclic (otherwise $G$ would be abelian), $|G/Z(G)| \geq 4$, so $|Z(G)| \leq |G|/4$.
-Also, for $g \notin Z(G)$, $|C_G(g)| \leq |G|/2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Conjugacy Class:} Two elements $x, y \in G$ are conjugate if there exists $g \in G$ such that $g x g^{-1} = y$. A conjugacy class is the set of all elements conjugate to a given element.
+    \item \textbf{Centralizer ($C_G(x)$):} The set of all elements in $G$ that commute with $x$. Its size is related to the size of the conjugacy class by $|G| = |C_G(x)| \cdot |\text{Class}(x)|$.
+    \item \textbf{Center ($Z(G)$):} The set of elements that commute with \textit{everything} in $G$. Elements in the center form conjugacy classes of size 1.
+    \item \textbf{Class Equation:} A way to count the elements of a group by grouping them into their conjugacy classes: $|G| = |Z(G)| + \sum [\text{sizes of classes with size} > 1]$.
+\end{itemize}
+
+\textbf{Step 1: Understand the commutativity degree $\overline{c}(G)$.}
+The ratio $\overline{c}(G) = c(G)/|G|$ is often called the \textit{commutativity degree}. It represents the probability that two randomly chosen elements of $G$ commute.
+By Burnside's Lemma or simply summing over all elements, the number of conjugacy classes $c(G)$ is the average size of the centralizers:
+\[ c(G) = \frac{1}{|G|} \sum_{g \in G} |C_G(g)| \]
+
+\textbf{Step 2: Bound the size of the centralizers.}
+Let's break the sum into two parts: elements in the center $Z(G)$, and elements not in the center.
+\begin{itemize}
+    \item If $g \in Z(G)$, it commutes with everything, so its centralizer is the whole group: $|C_G(g)| = |G|$.
+    \item If $g \notin Z(G)$, its centralizer $C_G(g)$ is a proper subgroup of $G$ (it doesn't contain all elements). By Lagrange's Theorem, the size of a subgroup divides the size of the group. Since it's a proper subgroup, its size can be at most half of the group: $|C_G(g)| \leq |G|/2$.
+\end{itemize}
+
+\textbf{Step 3: Bound the size of the center $Z(G)$.}
+Because $G$ is non-abelian, the quotient group $G/Z(G)$ cannot be cyclic. The smallest non-cyclic group has size 4 (the Klein four-group). Therefore, $|G/Z(G)| \geq 4$, which means the center can be at most one-quarter of the entire group: $|Z(G)| \leq |G|/4$.
+
+\textbf{Step 4: Put the bounds together for part (a).}
+Now we substitute our bounds into the formula for $c(G)$:
 \begin{align*}
 c(G) &= \frac{1}{|G|} \left( \sum_{g \in Z(G)} |G| + \sum_{g \notin Z(G)} |C_G(g)| \right) \\
 &\leq \frac{1}{|G|} \left( |Z(G)| \cdot |G| + (|G| - |Z(G)|) \frac{|G|}{2} \right) \\
-&= |Z(G)| + \frac{1}{2} |G| - \frac{1}{2} |Z(G)| = \frac{|G| + |Z(G)|}{2}.
+&= |Z(G)| + \frac{|G| - |Z(G)|}{2} \\
+&= \frac{|G| + |Z(G)|}{2}
 \end{align*}
-Since $|Z(G)| \leq |G|/4$, we have $c(G) \leq \frac{|G| + |G|/4}{2} = \frac{5|G|}{8}$. Thus $\overline{c}(G) \leq 5/8$.
+Using our bound $|Z(G)| \leq |G|/4$, we get:
+\[ c(G) \leq \frac{|G| + |G|/4}{2} = \frac{\frac{5}{4}|G|}{2} = \frac{5}{8}|G| \]
+Dividing both sides by $|G|$ proves that $\overline{c}(G) \leq \frac{5}{8}$.
 
-(b) Yes. For the dihedral group $D_8$ or the quaternion group $Q_8$, $|G|=8$ and $Z(G) = \{1, r^2\}$ has size 2. The conjugacy classes are $\{1\}, \{r^2\}, \{r, r^3\}, \{s, sr^2\}, \{sr, sr^3\}$. Thus $c(G) = 5$ and $\overline{c}(G) = 5/8$.
+\textbf{Step 5: Answer part (b) with an example.}
+Yes, such a group exists! Consider the dihedral group $D_8$ (symmetries of a square) or the quaternion group $Q_8$. Both have size 8.
+Their center has size 2. There are 5 conjugacy classes in total.
+Thus, $c(G) = 5$ and $|G| = 8$, giving exactly $\overline{c}(G) = \frac{5}{8}$.
 
-(c) If $p$ is the smallest prime dividing $|G|$, and $G$ is non-abelian, then $|G/Z(G)| \geq p^2$. Thus $|Z(G)| \leq |G|/p^2$.
-For $g \notin Z(G)$, $[G : C_G(g)] \geq p$, so $|C_G(g)| \leq |G|/p$.
+\textbf{Step 6: Generalize with a prime $p$ for part (c).}
+Suppose $p$ is the smallest prime dividing $|G|$, and we know there is an element whose conjugacy class size is divisible by $p$.
+Since $G/Z(G)$ cannot be cyclic, its size must be at least $p^2$ (the smallest non-cyclic group size built from $p$). Thus, $|Z(G)| \leq |G|/p^2$.
+For any element $g \notin Z(G)$, the index of its centralizer $[G : C_G(g)]$ (which is the size of its conjugacy class) must be at least $p$. This means $|C_G(g)| \leq |G|/p$.
+Let's re-evaluate our sum with these new bounds:
 \begin{align*}
-c(G) &\leq \frac{1}{|G|} \left( |Z(G)| |G| + (|G| - |Z(G)|) \frac{|G|}{p} \right) = |Z(G)| + \frac{|G| - |Z(G)|}{p} \\
-&= \frac{(p-1)|Z(G)| + |G|}{p} \leq \frac{(p-1)(|G|/p^2) + |G|}{p} = \frac{p^2 + p - 1}{p^3} |G|.
+c(G) &\leq \frac{1}{|G|} \left( |Z(G)| \cdot |G| + (|G| - |Z(G)|) \frac{|G|}{p} \right) \\
+&= |Z(G)| + \frac{|G| - |Z(G)|}{p} \\
+&= \frac{p|Z(G)| + |G| - |Z(G)|}{p} \\
+&= \frac{(p-1)|Z(G)| + |G|}{p}
 \end{align*}
-The sharp upper bound is $\overline{c}(G) \leq \frac{p^2+p-1}{p^3}$. For $p=2$, this gives $5/8$.
+Substitute $|Z(G)| \leq |G|/p^2$:
+\[ c(G) \leq \frac{(p-1)(|G|/p^2) + |G|}{p} = \frac{\frac{p-1}{p^2} + 1}{p} |G| = \frac{p-1+p^2}{p^3} |G| \]
+So the sharp upper bound is $\overline{c}(G) \leq \frac{p^2+p-1}{p^3}$. (Notice that if we plug in $p=2$, we get $\frac{4+2-1}{8} = \frac{5}{8}$, matching our earlier result!).
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:4}
 Let $F$ be a splitting field over $\mathbb{Q}$ of the polynomial $x^8 - 5 \in \mathbb{Q}[x]$.
 
 (a) Find the degree $[F : \mathbb{Q}]$.
@@ -110,95 +205,283 @@ Let $F$ be a splitting field over $\mathbb{Q}$ of the polynomial $x^8 - 5 \in \m
 \end{exercise}
 
 \begin{solution}
-(a) The roots are $\sqrt[8]{5} \zeta_8^k$ for $k=0, \dots, 7$, where $\zeta_8 = e^{i\pi/4}$.
-The splitting field is $F = \mathbb{Q}(\sqrt[8]{5}, \zeta_8)$.
-1. $[\mathbb{Q}(\sqrt[8]{5}) : \mathbb{Q}] = 8$ as $x^8-5$ is irreducible (Eisenstein at $p=5$).
-2. $\zeta_8 = \frac{1+i}{\sqrt{2}}$, so $\mathbb{Q}(\zeta_8) = \mathbb{Q}(i, \sqrt{2})$, which has degree $\phi(8) = 4$.
-3. We examine $K = \mathbb{Q}(\sqrt[8]{5}) \cap \mathbb{Q}(\zeta_8)$. The subfields of $\mathbb{Q}(\zeta_8)$ are $\mathbb{Q}, \mathbb{Q}(i), \mathbb{Q}(\sqrt{2}), \mathbb{Q}(i\sqrt{2})$.
-Since $\mathbb{Q}(\sqrt[8]{5}) \subset \mathbb{R}$, $K$ must be a subfield of $\mathbb{R} \cap \mathbb{Q}(\zeta_8) = \mathbb{Q}(\sqrt{2})$.
-If $\sqrt{2} \in \mathbb{Q}(\sqrt[8]{5})$, then $x^2-2$ splits in $\mathbb{Q}(\sqrt[8]{5})$. The subfields of $\mathbb{Q}(\sqrt[8]{5})$ correspond to divisors of 8. The unique subfield of degree 2 is $\mathbb{Q}(\sqrt{5})$ (as $x^8-5 = (x^4-\sqrt{5})(x^4+\sqrt{5})$ is not quite right, rather $\mathbb{Q}((\sqrt[8]{5})^4) = \mathbb{Q}(\sqrt{5})$). Since $\sqrt{2} \notin \mathbb{Q}(\sqrt{5})$, the intersection is $\mathbb{Q}$.
-Thus $[F : \mathbb{Q}] = [\mathbb{Q}(\sqrt[8]{5}) : \mathbb{Q}] \cdot [\mathbb{Q}(\zeta_8) : \mathbb{Q}] = 8 \times 4 = 32$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Splitting Field:} The smallest field extension in which a given polynomial breaks down completely into linear factors (i.e., all its roots are in the field).
+    \item \textbf{Eisenstein's Criterion:} A rule to show that a polynomial is irreducible (cannot be factored) over the rational numbers $\mathbb{Q}$.
+    \item \textbf{Degree of a Field Extension ($[K:\mathbb{Q}]$):} Think of a field extension as a vector space over the base field; the degree is its dimension. For a composite field $KL$, if $K \cap L = \mathbb{Q}$, then $[KL:\mathbb{Q}] = [K:\mathbb{Q}] \times [L:\mathbb{Q}]$.
+    \item \textbf{Galois Group ($\mathrm{Gal}(F/\mathbb{Q})$):} The group of field automorphisms (symmetries) of $F$ that leave every element of $\mathbb{Q}$ fixed. An automorphism is completely determined by where it sends the roots of polynomials.
+    \item \textbf{Semi-direct Product ($\rtimes$):} A way to put two groups together where one acts on the other, creating a larger group that isn't just a simple direct product.
+\end{itemize}
 
-(b) Let $\alpha = \sqrt[8]{5}$ and $\zeta = \zeta_8$.
-Any $\sigma \in \text{Gal}(F/\mathbb{Q})$ is determined by $\sigma(\alpha) = \zeta^k \alpha$ ($k \in \mathbb{Z}/8\mathbb{Z}$) and $\sigma(\zeta) = \zeta^m$ ($m \in (\mathbb{Z}/8\mathbb{Z})^\times = \{1, 3, 5, 7\}$).
-This is a semi-direct product $C_8 \rtimes (\mathbb{Z}/8\mathbb{Z})^\times$.
-Let $\sigma$ be defined by $\sigma(\alpha) = \zeta \alpha, \sigma(\zeta) = \zeta$.
-Let $\tau_m$ be defined by $\tau_m(\alpha) = \alpha, \tau_m(\zeta) = \zeta^m$.
-The relation is $\tau_m \sigma \tau_m^{-1}(\alpha) = \tau_m \sigma(\alpha) = \tau_m(\zeta \alpha) = \zeta^m \alpha = \sigma^m(\alpha)$.
-Thus $\tau_m \sigma \tau_m^{-1} = \sigma^m$.
-The group is $(\mathbb{Z}/8\mathbb{Z}) \rtimes (\mathbb{Z}/8\mathbb{Z})^\times$. Note $(\mathbb{Z}/8\mathbb{Z})^\times \cong C_2 \times C_2$.
+\textbf{Step 1: Find the roots and identify the splitting field.}
+To find the splitting field of $x^8 - 5 = 0$, we first need its roots.
+In the complex numbers, taking the 8th root of 5 gives one real root, $\sqrt[8]{5}$. The other roots are obtained by multiplying this real root by the 8th roots of unity.
+Let $\zeta_8 = e^{i\pi/4} = \frac{1+i}{\sqrt{2}}$. The eight roots are $\sqrt[8]{5} \zeta_8^k$ for $k = 0, 1, 2, \dots, 7$.
+To contain all these roots, our splitting field $F$ needs to contain both $\sqrt[8]{5}$ and $\zeta_8$. So, $F = \mathbb{Q}(\sqrt[8]{5}, \zeta_8)$.
+
+\textbf{Step 2: Determine the degree of the extensions.}
+We can build $F$ in two stages. First, we add $\sqrt[8]{5}$ to $\mathbb{Q}$, creating a field $K_1 = \mathbb{Q}(\sqrt[8]{5})$. Then, we add $\zeta_8$ to create a field $K_2 = \mathbb{Q}(\zeta_8)$.
+\begin{itemize}
+    \item By Eisenstein's Criterion (using the prime $p=5$), the polynomial $x^8 - 5$ is irreducible over $\mathbb{Q}$. This means $[K_1 : \mathbb{Q}] = 8$.
+    \item The minimum polynomial for $\zeta_8$ over $\mathbb{Q}$ is the 8th cyclotomic polynomial, $\Phi_8(x) = x^4 + 1$. So, $[K_2 : \mathbb{Q}] = 4$. (Alternatively, notice that $\zeta_8 = \frac{1+i}{\sqrt{2}}$, so $\mathbb{Q}(\zeta_8) = \mathbb{Q}(i, \sqrt{2})$, which clearly has degree 4).
+\end{itemize}
+
+\textbf{Step 3: Check for overlap between the two subfields.}
+To find the total degree $[F : \mathbb{Q}]$, we multiply the degrees of $K_1$ and $K_2$ if they don't share anything besides $\mathbb{Q}$. Let's look at their intersection, $K = K_1 \cap K_2$.
+Notice that $K_1 = \mathbb{Q}(\sqrt[8]{5})$ is purely real (all its elements are real numbers). On the other hand, $K_2 = \mathbb{Q}(i, \sqrt{2})$. The only real subfield of $K_2$ is $\mathbb{Q}(\sqrt{2})$. So, the intersection $K$ can be at most $\mathbb{Q}(\sqrt{2})$.
+Does $K_1$ contain $\sqrt{2}$? The subfields of $K_1$ form a tower: $\mathbb{Q} \subset \mathbb{Q}(\sqrt{5}) \subset \mathbb{Q}(\sqrt[4]{5}) \subset \mathbb{Q}(\sqrt[8]{5})$. The only subfield of degree 2 is $\mathbb{Q}(\sqrt{5})$, which does not contain $\sqrt{2}$.
+Therefore, the intersection is just $\mathbb{Q}$.
+Thus, the total degree is $[F : \mathbb{Q}] = [K_1 : \mathbb{Q}] \cdot [K_2 : \mathbb{Q}] = 8 \times 4 = 32$.
+
+\textbf{Step 4: Understand the automorphisms (the Galois Group).}
+Let $\alpha = \sqrt[8]{5}$ and $\zeta = \zeta_8$. Since the degree of $F$ is 32, the Galois group has exactly 32 elements. Any automorphism $\sigma \in \text{Gal}(F/\mathbb{Q})$ is completely determined by what it does to the generators $\alpha$ and $\zeta$.
+\begin{itemize}
+    \item $\sigma(\alpha)$ must be a root of $x^8 - 5$, so $\sigma(\alpha) = \zeta^k \alpha$ for some $k \in \{0, 1, \dots, 7\}$. There are 8 choices.
+    \item $\sigma(\zeta)$ must be a root of $x^4 + 1$, so it must be another primitive 8th root of unity. Thus, $\sigma(\zeta) = \zeta^m$ for some odd number $m \in \{1, 3, 5, 7\}$. There are 4 choices.
+\end{itemize}
+These $8 \times 4 = 32$ combinations give us all the automorphisms.
+
+\textbf{Step 5: Identify the group structure.}
+Let's name some specific automorphisms to see how they interact.
+\begin{itemize}
+    \item Let $\sigma$ be the "shift" map: $\sigma(\alpha) = \zeta \alpha$ and $\sigma(\zeta) = \zeta$. This generates a cyclic subgroup of order 8, matching $C_8$.
+    \item Let $\tau_m$ be the "power" map: $\tau_m(\alpha) = \alpha$ and $\tau_m(\zeta) = \zeta^m$. The choices for $m$ form a group under multiplication modulo 8, known as $(\mathbb{Z}/8\mathbb{Z})^\times$, which is isomorphic to the Klein four-group $C_2 \times C_2$.
+\end{itemize}
+Now, let's see what happens if we apply $\tau_m$, then $\sigma$, then the inverse of $\tau_m$ (this is conjugation, which tells us the group structure). We test it on $\alpha$:
+\[ (\tau_m \sigma \tau_m^{-1})(\alpha) = \tau_m (\sigma(\alpha)) \quad \text{(since $\tau_m^{-1}(\alpha) = \alpha$)} \]
+\[ = \tau_m (\zeta \alpha) = \tau_m(\zeta) \tau_m(\alpha) = \zeta^m \alpha \]
+Notice that applying $\sigma$ exactly $m$ times also gives $\sigma^m(\alpha) = \zeta^m \alpha$.
+Thus, $\tau_m \sigma \tau_m^{-1} = \sigma^m$.
+This non-commutative relationship shows that the "power" group acts on the "shift" group. This means the overall structure is a \textbf{semi-direct product}:
+\[ \mathrm{Gal}(F/\mathbb{Q}) \cong (\mathbb{Z}/8\mathbb{Z}) \rtimes (\mathbb{Z}/8\mathbb{Z})^\times \cong C_8 \rtimes (C_2 \times C_2) \]
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:5}
 Let $T \subset \mathbb{N}_{>0}$ be a finite set of positive integers. For each $n > 0$, define $a_n$ to be the number of finite sequences $(t_1, \ldots, t_m)$ with $m \leq n$, $t_i \in T$ and $\sum t_i = n$. Prove that $1 + \sum_{n \geq 1} a_n z^n$ is a rational function.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a problem about generating functions for partitions where order matters (sometimes called \textit{compositions}).
-Let $f(z) = \sum_{t \in T} z^t$. This is a polynomial since $T$ is finite.
-The number of sequences of length exactly $m$ that sum to $n$ is the coefficient of $z^n$ in the expansion of $(f(z))^m$.
-The total number of sequences of any length $m \geq 1$ summing to $n$ is $a_n = \sum_{m \geq 1} [z^n] (f(z))^m$.
-(Note: the condition $m \leq n$ is always satisfied since $t_i \geq 1 \implies \sum t_i \geq m$).
-Summing over $n$:
-\[ \sum_{n \geq 1} a_n z^n = \sum_{n \geq 1} \sum_{m \geq 1} ([z^n] f(z)^m) z^n = \sum_{m \geq 1} f(z)^m. \]
-This is a geometric series. Since $t_i \geq 1$, the constant term of $f(z)$ is zero, so $|f(z)| < 1$ for small $z$, and the series converges formally:
-\[ 1 + \sum_{n \geq 1} a_n z^n = 1 + \frac{f(z)}{1 - f(z)} = \frac{1}{1 - f(z)}. \]
-Since $f(z)$ is a polynomial, this is a rational function.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Generating Functions:} A way to encode a sequence of numbers (like $a_0, a_1, a_2, \dots$) as the coefficients of a formal power series or polynomial: $A(z) = a_0 + a_1 z + a_2 z^2 + \dots$
+    \item \textbf{Compositions:} In combinatorics, a composition of an integer $n$ is a way of writing $n$ as the sum of a sequence of positive integers. Two sequences that differ in the order of their terms define different compositions.
+    \item \textbf{Geometric Series Formula:} For any expression $X$, the infinite sum $1 + X + X^2 + X^3 + \dots$ can be written compactly as $\frac{1}{1 - X}$, provided that the series converges (or as a formal identity).
+    \item \textbf{Rational Function:} A function that can be written as the ratio of two polynomials, like $\frac{P(z)}{Q(z)}$.
+\end{itemize}
+
+\textbf{Step 1: Simplify the problem statement.}
+The problem asks about sequences $(t_1, \dots, t_m)$ where each $t_i$ comes from a specific set $T$, and they sum to $n$.
+Notice the condition $m \leq n$. Since every $t_i$ is a positive integer (meaning $t_i \geq 1$), the sum of $m$ such integers must be at least $m$. So, $\sum t_i = n \implies n \geq m$. The condition $m \leq n$ is actually always true! We don't need to worry about it; we just need to count all possible sequences that sum to $n$.
+
+\textbf{Step 2: Create a generating function for a single term.}
+Let's build a polynomial that represents our choices from the set $T$.
+Define $f(z) = \sum_{t \in T} z^t$.
+Because $T$ is a finite set, $f(z)$ has a finite number of terms, which means it is just a normal polynomial. For example, if $T = \{1, 3\}$, then $f(z) = z^1 + z^3$.
+
+\textbf{Step 3: Relate sequences to powers of $f(z)$.}
+What happens if we multiply $f(z)$ by itself $m$ times to get $(f(z))^m$?
+When we expand $(f(z))^m = (\sum_{t_1 \in T} z^{t_1})(\sum_{t_2 \in T} z^{t_2}) \cdots (\sum_{t_m \in T} z^{t_m})$, we get terms of the form $z^{t_1 + t_2 + \dots + t_m}$.
+The coefficient of $z^n$ in this expansion is exactly the number of ways to choose a sequence $(t_1, t_2, \dots, t_m)$ such that their sum is $n$.
+Let's use the notation $[z^n] P(z)$ to mean "the coefficient of $z^n$ in $P(z)$".
+So, the number of sequences of length exactly $m$ that sum to $n$ is $[z^n](f(z))^m$.
+
+\textbf{Step 4: Sum over all possible sequence lengths.}
+The total number of sequences of \textit{any} length that sum to $n$ is our target number, $a_n$.
+To get $a_n$, we just add up the sequences of length 1, length 2, length 3, and so on:
+\[ a_n = \sum_{m \geq 1} [z^n] (f(z))^m \]
+
+\textbf{Step 5: Build the final generating function.}
+We want to understand the expression $A(z) = 1 + \sum_{n \geq 1} a_n z^n$.
+Let's substitute our formula for $a_n$ into this expression:
+\[ \sum_{n \geq 1} a_n z^n = \sum_{n \geq 1} \left( \sum_{m \geq 1} [z^n] f(z)^m \right) z^n \]
+This looks complicated, but it's just saying: "For each power $z^n$, gather all the coefficients from $f(z)^1, f(z)^2, f(z)^3, \dots$ and add them up."
+We can swap the order of summing:
+\[ = \sum_{m \geq 1} \left( \sum_{n \geq 1} ([z^n] f(z)^m) z^n \right) \]
+The inner sum is simply reconstructing the polynomial $f(z)^m$! So,
+\[ \sum_{n \geq 1} a_n z^n = \sum_{m \geq 1} f(z)^m \]
+
+\textbf{Step 6: Use the geometric series formula.}
+Now we have:
+\[ 1 + \sum_{n \geq 1} a_n z^n = 1 + f(z)^1 + f(z)^2 + f(z)^3 + \dots \]
+This is an infinite geometric series where the common ratio is $f(z)$.
+Since every element in $T$ is at least 1, the lowest power of $z$ in $f(z)$ is at least $z^1$. This means $f(0) = 0$. For values of $z$ very close to 0, $|f(z)| < 1$, so the geometric series converges perfectly.
+Using the formula for an infinite geometric series, the entire sum simplifies to:
+\[ 1 + \sum_{n \geq 1} a_n z^n = \frac{1}{1 - f(z)} \]
+Since $f(z)$ is a polynomial, $1 - f(z)$ is also a polynomial. Therefore, $\frac{1}{1 - f(z)}$ is the ratio of two polynomials, which is the very definition of a \textbf{rational function}.
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:6}
 Describe all the irreducible complex representations of $S_4$.
 \end{exercise}
 
 \begin{solution}
-The number of irreducible representations equals the number of conjugacy classes, which correspond to partitions of 4:
-1. $(1^4)$: Identity.
-2. $(2, 1, 1)$: Transpositions (6).
-3. $(3, 1)$: 3-cycles (8).
-4. $(4)$: 4-cycles (6).
-5. $(2, 2)$: Double transpositions (3).
-There are 5 irreps. Let their dimensions be $d_1, \dots, d_5$. We have $\sum d_i^2 = |S_4| = 24$.
-- \textbf{Trivial representation ($\chi_1$)}: $d_1 = 1$.
-- \textbf{Sign representation ($\chi_2$)}: $d_2 = 1$.
-- $S_4$ has a normal subgroup $V_4 = \{e, (12)(34), (13)(24), (14)(23)\}$. $S_4/V_4 \cong S_3$. The irreps of $S_3$ have dimensions 1, 1, 2. These lift to $S_4$. The 1D lifts are already $\chi_1, \chi_2$. The 2D lift gives \textbf{$\chi_3$} with $d_3 = 2$.
-- Remaining: $d_4^2 + d_5^2 = 24 - (1^2+1^2+2^2) = 18$. Thus $d_4 = 3, d_5 = 3$.
-- \textbf{Standard representation ($\chi_4$)}: Consider the action on $\mathbb{C}^4$ by permuting coordinates. The subspace where $\sum x_i = 0$ is a 3D irreducible representation.
-- \textbf{Vieri representation ($\chi_5$)}: $\chi_4 \otimes \text{sign}$.
-Summary: Dimensions 1, 1, 2, 3, 3.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Representation of a Group:} A way of describing group elements as invertible matrices (or linear transformations) such that the group operation becomes matrix multiplication.
+    \item \textbf{Irreducible Representation (Irrep):} The basic building blocks of all representations. A representation is irreducible if it has no non-trivial invariant subspaces (it can't be broken down into smaller representations).
+    \item \textbf{Conjugacy Classes and Irreps:} A fundamental theorem in representation theory states that the number of distinct irreducible representations over the complex numbers is exactly equal to the number of conjugacy classes of the group.
+    \item \textbf{Sum of Squares Formula:} If $d_1, d_2, \dots, d_k$ are the dimensions of the distinct irreducible representations of a finite group $G$, then the sum of their squares equals the size of the group: $\sum d_i^2 = |G|$.
+\end{itemize}
+
+\textbf{Step 1: Find the number of irreducible representations.}
+First, we need to know how many irreps the symmetric group $S_4$ has. This is equal to the number of its conjugacy classes.
+In any symmetric group $S_n$, conjugacy classes correspond to cycle types, which correspond to partitions of $n$. For $n=4$, the partitions are:
+1. $1+1+1+1$: The identity element (1 element).
+2. $2+1+1$: Single transpositions, like $(12)$ (6 elements).
+3. $3+1$: 3-cycles, like $(123)$ (8 elements).
+4. $4$: 4-cycles, like $(1234)$ (6 elements).
+5. $2+2$: Double transpositions, like $(12)(34)$ (3 elements).
+Since there are 5 conjugacy classes, $S_4$ has exactly 5 irreducible representations. Let's call their dimensions $d_1, d_2, d_3, d_4, d_5$.
+
+\textbf{Step 2: Determine the dimensions of the irreps.}
+The size of the group $S_4$ is $4! = 24$. Using the sum of squares formula, we must have:
+\[ d_1^2 + d_2^2 + d_3^2 + d_4^2 + d_5^2 = 24 \]
+We know every group has a trivial 1-dimensional representation, so $d_1 = 1$. Let's try to find the other dimensions. The only way to sum five squares of positive integers to get 24 is:
+\[ 1^2 + 1^2 + 2^2 + 3^2 + 3^2 = 1 + 1 + 4 + 9 + 9 = 24 \]
+So the dimensions of the five irreps are 1, 1, 2, 3, and 3. Now let's construct them!
+
+\textbf{Step 3: Identify the 1-dimensional representations.}
+\begin{itemize}
+    \item \textbf{Trivial representation ($\chi_1$, $d=1$):} Every permutation is mapped to the $1 \times 1$ matrix $(1)$. It does nothing, but it perfectly respects the group structure.
+    \item \textbf{Sign representation ($\chi_2$, $d=1$):} Every even permutation is mapped to $(1)$, and every odd permutation is mapped to $(-1)$. Since multiplying an even permutation by an odd one gives an odd one, this matches multiplication rules ($1 \times -1 = -1$), making it a valid representation.
+\end{itemize}
+
+\textbf{Step 4: Identify the 2-dimensional representation.}
+To find the 2D irreps, we can use a clever trick involving a normal subgroup.
+Notice that the identity and the double transpositions form a normal subgroup called the Klein four-group: $V_4 = \{e, (12)(34), (13)(24), (14)(23)\}$.
+If we look at the quotient group $S_4/V_4$, it turns out to be isomorphic to $S_3$ (the permutations of 3 elements).
+The group $S_3$ is smaller and easier to analyze. Its irreps have dimensions 1, 1, and 2. Any representation of $S_3$ can be "pulled back" or "lifted" to $S_4$ by simply having $V_4$ act trivially.
+The 1D lifts are just the trivial and sign representations we already found. But the 2D lift gives us our brand new \textbf{2D irreducible representation ($\chi_3$)}.
+
+\textbf{Step 5: Identify the 3-dimensional representations.}
+\begin{itemize}
+    \item \textbf{Standard representation ($\chi_4$, $d=3$):} The most natural way $S_4$ acts is on a 4-dimensional space $\mathbb{C}^4$, just by shuffling the 4 coordinates around. However, this 4D representation isn't irreducible! The subspace where all coordinates are equal, $(x, x, x, x)$, is fixed by any shuffle.
+    If we factor that out, we are left with the subspace where the coordinates sum to zero: $\{(x_1, x_2, x_3, x_4) \mid x_1 + x_2 + x_3 + x_4 = 0\}$. This is a 3-dimensional space, and it turns out to be irreducible.
+    \item \textbf{Twisted/Vieri representation ($\chi_5$, $d=3$):} Once we have a representation, we can create a new one by multiplying it by the sign representation. This is called the tensor product $\chi_4 \otimes \text{sign}$. The matrices are the same as $\chi_4$ for even permutations, but flipped in sign for odd permutations. Since $\chi_4$ and $\chi_5$ have different characters on transpositions, they are distinct.
+\end{itemize}
+We have successfully found and described all 5 irreducible representations!
 \end{solution}
 
 \subsection*{Team}
 \begin{exercise}
+\label{algebra:2010:7}
 For a real number $r$, let $[r]$ denote the maximal integer less or equal than $r$. Let $a$ and $b$ be two positive irrational numbers such that $\frac{1}{a} + \frac{1}{b} = 1$. Show that the two sequences of integers $[ax]$, $[bx]$ for $x = 1, 2, 3, \dots$ contain all natural numbers without repetition.
 \end{exercise}
 
 \begin{solution}
-\textbf{Theorem:} This is \textbf{Beatty's Theorem}.
-Let $A = \{ \lfloor na \rfloor : n \in \mathbb{N} \}$ and $B = \{ \lfloor nb \rfloor : n \in \mathbb{N} \}$.
-The number of elements in $A$ less than $N$ is the number of $n$ such that $na < N$, i.e., $n < N/a$. This is $\lfloor \frac{N-\epsilon}{a} \rfloor$ (since $a$ is irrational, $N/a$ is never an integer).
-Total elements in $A \cup B$ below $N$ is $c(N) = \lfloor N/a \rfloor + \lfloor N/b \rfloor$.
-Since $1/a + 1/b = 1$, we have $N/a + N/b = N$.
-For any non-integer $x, y$ such that $x+y=N \in \mathbb{Z}$, we have $\lfloor x \rfloor + \lfloor y \rfloor = N-1$.
-Thus $c(N) = N-1$.
-This means there are exactly $N-1$ integers in $A \cup B$ in the range $[1, N-1]$.
-This proves that every integer appears exactly once.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Beatty Sequences:} For any positive irrational number $\alpha$, the sequence of integers given by $\lfloor \alpha \rfloor, \lfloor 2\alpha \rfloor, \lfloor 3\alpha \rfloor, \dots$ is called a Beatty sequence.
+    \item \textbf{Rayleigh's Theorem (Beatty's Theorem):} The theorem we are proving! It states that if you have two irrational numbers $a, b > 1$ such that $\frac{1}{a} + \frac{1}{b} = 1$, then their Beatty sequences partition the natural numbers. Every positive integer appears in exactly one of the sequences.
+    \item \textbf{Floor Function Properties:} The floor function $\lfloor x \rfloor$ gives the greatest integer less than or equal to $x$. If $x$ is not an integer, then $x$ strictly lies between $\lfloor x \rfloor$ and $\lfloor x \rfloor + 1$.
+\end{itemize}
+
+\textbf{Step 1: Set up the counting function.}
+Let's define two sets based on the sequences:
+\[ A = \{ [n \cdot a] \mid n = 1, 2, 3, \dots \} \]
+\[ B = \{ [n \cdot b] \mid n = 1, 2, 3, \dots \} \]
+To show that these two sets contain every natural number exactly once, we can count how many numbers from these sets fall below a certain boundary.
+Let $N$ be any positive integer. We want to count how many elements in set $A$ are strictly less than $N$.
+An element $[n \cdot a]$ is strictly less than $N$ if and only if $n \cdot a < N$. (Why? Because if $n \cdot a > N$, since $N$ is an integer, the floor $[n \cdot a]$ will be at least $N$. And $n \cdot a$ can never perfectly equal $N$ because $a$ is irrational).
+
+\textbf{Step 2: Count the elements below $N$ for both sequences.}
+The condition $n \cdot a < N$ is the same as $n < \frac{N}{a}$.
+Since $n$ is an integer, the number of such integers $n$ starting from 1 is exactly $\lfloor \frac{N}{a} \rfloor$.
+So, there are exactly $\lfloor \frac{N}{a} \rfloor$ terms of sequence $A$ that are strictly less than $N$.
+
+By the exact same logic, the number of terms of sequence $B$ that are strictly less than $N$ is $\lfloor \frac{N}{b} \rfloor$.
+
+\textbf{Step 3: Combine the counts.}
+Let $c(N)$ be the total number of elements from \textit{both} sequences that are strictly less than $N$.
+\[ c(N) = \left\lfloor \frac{N}{a} \right\rfloor + \left\lfloor \frac{N}{b} \right\rfloor \]
+We are given the condition that $\frac{1}{a} + \frac{1}{b} = 1$. Let's multiply this entire equation by the integer $N$:
+\[ \frac{N}{a} + \frac{N}{b} = N \]
+
+\textbf{Step 4: Use properties of the floor function.}
+Look at the numbers $x = \frac{N}{a}$ and $y = \frac{N}{b}$.
+Since $a$ and $b$ are irrational, neither $x$ nor $y$ can be an integer.
+However, we know their sum $x + y = N$ is a perfect integer!
+If you have two non-integers that add up to an integer, their fractional parts must add up to exactly 1.
+For any real number, $x = \lfloor x \rfloor + \{x\}$, where $\{x\}$ is the fractional part.
+\[ x + y = (\lfloor x \rfloor + \{x\}) + (\lfloor y \rfloor + \{y\}) = \lfloor x \rfloor + \lfloor y \rfloor + (\{x\} + \{y\}) \]
+Since $x+y = N$ and $\{x\} + \{y\} = 1$, we must have:
+\[ \lfloor x \rfloor + \lfloor y \rfloor = N - 1 \]
+
+\textbf{Step 5: Conclude the proof.}
+Substituting our $x$ and $y$ back in, we get:
+\[ c(N) = \left\lfloor \frac{N}{a} \right\rfloor + \left\lfloor \frac{N}{b} \right\rfloor = N - 1 \]
+This tells us something profound: the total number of terms from both sequences that are strictly less than $N$ (meaning they are in the range $1$ to $N-1$) is exactly $N-1$.
+This holds true for \textit{every} positive integer $N$.
+\begin{itemize}
+    \item For $N=2$, there is $c(2) = 1$ term less than 2 (which must be the number 1).
+    \item For $N=3$, there are $c(3) = 2$ terms less than 3 (which must be the numbers 1 and 2).
+    \item And so on...
+\end{itemize}
+Because the count of generated numbers always matches the size of the available space perfectly as we count up, there are no gaps and no overlaps. Therefore, every natural number appears exactly once across the two sequences!
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:8}
 Let $n \geq 2$ be an integer and consider the Fermat equation
 \[ X^n + Y^n = Z^n, \qquad X, Y, Z \in \mathbb{C}[t]. \]
 Find all nontrivial solutions $(X, Y, Z)$ of the above equation in the sense that $X, Y, Z$ have no common zero and are not all constant.
 \end{exercise}
 
 \begin{solution}
-\textbf{Mason-Stothers Theorem:} If $A+B=C$ in $\mathbb{C}[t]$ with $\gcd(A, B, C) = 1$, then $\max(\deg A, \deg B, \deg C) \leq n_0(ABC) - 1$, where $n_0(F)$ is the number of distinct roots of $F$.
-Let $A=X^n, B=Y^n, C=Z^n$. Then $n_0(ABC) = n_0(XYZ) \leq \deg X + \deg Y + \deg Z \leq 3 \max(\deg)$.
-So $n \max(\deg) \leq 3 \max(\deg) - 1$, implying $(n-3) \max(\deg) \leq -1$.
-For $n \geq 3$, $\max(\deg)$ must be 0 (constant solutions).
-For $n=2$, $X^2+Y^2=Z^2$ has solutions like $X=t^2-1, Y=2t, Z=t^2+1$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Polynomials over $\mathbb{C}$:} Expressions like $X(t) = a_k t^k + \dots + a_0$ where the coefficients $a_i$ are complex numbers. The degree of $X$, denoted $\deg(X)$, is the highest power of $t$.
+    \item \textbf{Roots of a Polynomial:} The values of $t$ that make the polynomial zero. A polynomial of degree $d$ has exactly $d$ roots (counting multiplicities), but it might have fewer \textit{distinct} (unique) roots. Let $n_0(P)$ denote the number of \textit{distinct} roots of a polynomial $P$. Clearly, $n_0(P) \leq \deg(P)$.
+    \item \textbf{Mason-Stothers Theorem:} This is a powerful theorem for polynomials, often considered the polynomial analogue of the famous (and difficult) $abc$ conjecture for integers. It states: If $A, B, C$ are relatively prime polynomials (they share no common roots) such that $A + B = C$, then the maximum degree among them is bounded by the total number of distinct roots of their product minus one. In math terms: $\max(\deg A, \deg B, \deg C) \leq n_0(ABC) - 1$.
+\end{itemize}
+
+\textbf{Step 1: Set up the equation for the Mason-Stothers Theorem.}
+We are given the Fermat-like equation $X^n + Y^n = Z^n$ where $X, Y, Z$ are polynomials in $t$.
+Let's define $A = X^n$, $B = Y^n$, and $C = Z^n$. Then our equation becomes $A + B = C$.
+We are looking for nontrivial solutions where $X, Y, Z$ have no common roots. If they shared a common root, we could just divide it out. So, we can assume $A, B, C$ are relatively prime, perfectly setting us up to use the Mason-Stothers Theorem.
+
+\textbf{Step 2: Apply the Mason-Stothers Theorem.}
+According to the theorem, we have:
+\[ \max(\deg A, \deg B, \deg C) \leq n_0(ABC) - 1 \]
+Let's analyze both sides of this inequality.
+
+First, look at the left side. What is the degree of $A = X^n$? When you raise a polynomial to the $n$-th power, its degree is multiplied by $n$. So, $\deg A = n \deg X$. The same applies to $B$ and $C$.
+Therefore, the maximum degree on the left side is:
+\[ \max(\deg(X^n), \deg(Y^n), \deg(Z^n)) = n \cdot \max(\deg X, \deg Y, \deg Z) \]
+Let's call the maximum degree among $X, Y, Z$ simply $D$. So the left side is $n \cdot D$.
+
+\textbf{Step 3: Bound the number of distinct roots.}
+Now let's look at the right side: $n_0(ABC)$. This is the number of \textit{distinct} roots of the massive product $X^n Y^n Z^n$.
+Here is a crucial observation: raising a polynomial to a power does not create any new roots; it just increases the multiplicity of the existing roots. The distinct roots of $X^n$ are exactly the same as the distinct roots of $X$.
+Therefore, the number of distinct roots of $X^n Y^n Z^n$ is the same as the number of distinct roots of $X Y Z$:
+\[ n_0(ABC) = n_0(X^n Y^n Z^n) = n_0(XYZ) \]
+How many distinct roots can $XYZ$ possibly have? At most, it's the sum of their degrees!
+\[ n_0(XYZ) \leq \deg(XYZ) = \deg X + \deg Y + \deg Z \]
+Since $D$ is the maximum degree among $X, Y$, and $Z$, we can say:
+\[ \deg X + \deg Y + \deg Z \leq D + D + D = 3D \]
+So, $n_0(ABC) \leq 3D$.
+
+\textbf{Step 4: Solve the inequality.}
+Substitute everything back into the Mason-Stothers inequality ($n \cdot D \leq n_0(ABC) - 1$):
+\[ n \cdot D \leq 3D - 1 \]
+Let's rearrange this to group the $D$ terms:
+\[ n \cdot D - 3D \leq -1 \]
+\[ (n - 3)D \leq -1 \]
+
+\textbf{Step 5: Interpret the result for different values of $n$.}
+Remember that $D$ is a degree, so it must be a non-negative integer ($D \geq 0$).
+\begin{itemize}
+    \item \textbf{Case 1: $n \geq 3$.} If $n$ is 3, 4, 5, etc., then $(n - 3)$ is $\geq 0$. We are multiplying a non-negative number $(n-3)$ by another non-negative number $D$, and the result must be $\leq -1$. This is impossible! The only way out is if $D = 0$. But if $D=0$, then $X, Y, Z$ are all constants. Thus, there are \textbf{no nontrivial solutions} for $n \geq 3$. This is the polynomial version of Fermat's Last Theorem!
+    \item \textbf{Case 2: $n = 2$.} For $n=2$, the inequality becomes $(2-3)D \leq -1 \implies -D \leq -1 \implies D \geq 1$. This is perfectly possible! And indeed, for $n=2$, the equation is $X^2 + Y^2 = Z^2$, which generates Pythagorean triples of polynomials. A classic example is $X = t^2 - 1$, $Y = 2t$, and $Z = t^2 + 1$. You can verify that $(t^2 - 1)^2 + (2t)^2 = (t^2 + 1)^2$.
+\end{itemize}
+So the final answer is: Nontrivial solutions only exist for $n = 2$ (given by polynomial Pythagorean triples). There are no nontrivial solutions for $n \geq 3$.
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:9}
 Let $p \geq 7$ be an odd prime number.
 \begin{enumerate}
     \item Evaluate the rational number $\cos(\pi/7) \cdot \cos(2\pi/7) \cdot \cos(3\pi/7)$.
@@ -207,18 +490,63 @@ Let $p \geq 7$ be an odd prime number.
 \end{exercise}
 
 \begin{solution}
-(a) Let $C = \cos(\pi/7) \cos(2\pi/7) \cos(3\pi/7) = -\cos(\pi/7) \cos(2\pi/7) \cos(4\pi/7)$.
-Multiply by $\sin(\pi/7)$:
-$\sin(\pi/7) C = -\frac{1}{2} \sin(2\pi/7) \cos(2\pi/7) \cos(4\pi/7) = -\frac{1}{4} \sin(4\pi/7) \cos(4\pi/7) = -\frac{1}{8} \sin(8\pi/7) = \frac{1}{8} \sin(\pi/7)$.
-Thus $C = 1/8$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Double Angle Formula for Sine:} $\sin(2\theta) = 2 \sin(\theta)\cos(\theta)$. This is incredibly useful for collapsing a product of cosines if you can multiply by the "missing" sine term.
+    \item \textbf{Cosine Properties:} $\cos(\pi - x) = -\cos(x)$. This helps relate obtuse angles back to acute angles. Also, $\sin(\pi + x) = -\sin(x)$.
+    \item \textbf{Roots of Unity:} The equation $x^p + 1 = 0$ has roots $x = e^{i(2m+1)\pi/p}$. If we divide by $x+1$, we remove the root $x=-1$, leaving the complex roots.
+    \item \textbf{Euler's Formula:} $2 \cos(\theta) = e^{i\theta} + e^{-i\theta}$. This connects trigonometry to the algebra of complex numbers.
+\end{itemize}
 
-(b) Let $L = \prod_{k=1}^{(p-1)/2} 2 \cos(k\pi/p)$. Note $2 \cos \theta = e^{i\theta} + e^{-i\theta}$.
-The values $e^{ik\pi/p}$ for $k= \pm 1, \dots, \pm (p-1)/2$ are the roots of $\frac{x^p+1}{x+1} = 0$.
-The product is $1$ if $p \equiv 1, 7 \pmod 8$ and $-1$ if $p \equiv 3, 5 \pmod 8$.
-Precisely, $\prod_{k=1}^{(p-1)/2} \cos(k\pi/p) = 2^{-(p-1)/2}$ if we ignore the sign. The sign is $(-1)^{(p^2-1)/8}$.
+\textbf{Part (1): Evaluate $\cos(\pi/7) \cdot \cos(2\pi/7) \cdot \cos(3\pi/7)$}
+
+\textbf{Step 1: Adjust the angles to create a doubling sequence.}
+Let $C = \cos(\pi/7) \cos(2\pi/7) \cos(3\pi/7)$.
+Notice the angles inside the cosines: $\pi/7$, $2\pi/7$, and $3\pi/7$. We'd prefer if each angle was double the previous one, so we could repeatedly use the double angle formula.
+Since $\pi - \frac{4\pi}{7} = \frac{3\pi}{7}$, we know that $\cos(3\pi/7) = \cos(\pi - 4\pi/7) = -\cos(4\pi/7)$.
+Let's substitute this back into our product:
+\[ C = -\cos(\pi/7) \cos(2\pi/7) \cos(4\pi/7) \]
+Now the angles are $\pi/7$, $2\pi/7$, and $4\pi/7$. This is exactly a sequence of doublings!
+
+\textbf{Step 2: Multiply by sine and collapse the product.}
+To use $\sin(2\theta) = 2 \sin(\theta)\cos(\theta)$, we need a sine term. Let's multiply both sides of our equation by $\sin(\pi/7)$:
+\[ \sin(\pi/7) \cdot C = -\sin(\pi/7) \cos(\pi/7) \cos(2\pi/7) \cos(4\pi/7) \]
+Now, group the first two trig terms and apply the double angle formula in reverse ($\sin(\theta)\cos(\theta) = \frac{1}{2}\sin(2\theta)$):
+\[ \sin(\pi/7) \cdot C = -\frac{1}{2} \sin(2\pi/7) \cos(2\pi/7) \cos(4\pi/7) \]
+Group the next two terms and apply the formula again:
+\[ \sin(\pi/7) \cdot C = -\frac{1}{2} \left[ \frac{1}{2} \sin(4\pi/7) \right] \cos(4\pi/7) = -\frac{1}{4} \sin(4\pi/7) \cos(4\pi/7) \]
+Apply it one last time:
+\[ \sin(\pi/7) \cdot C = -\frac{1}{4} \left[ \frac{1}{2} \sin(8\pi/7) \right] = -\frac{1}{8} \sin(8\pi/7) \]
+
+\textbf{Step 3: Simplify and solve for $C$.}
+We know that $\sin(8\pi/7) = \sin(\pi + \pi/7) = -\sin(\pi/7)$. Let's substitute this:
+\[ \sin(\pi/7) \cdot C = -\frac{1}{8} (-\sin(\pi/7)) = \frac{1}{8} \sin(\pi/7) \]
+Since $\sin(\pi/7)$ is not zero, we can divide both sides by it:
+\[ C = \frac{1}{8} \]
+
+\textbf{Part (2): Generalize to $\prod_{n=1}^{(p-1)/2} \cos(n\pi/p)$}
+
+\textbf{Step 4: Connect the product to a polynomial.}
+Let $L = \prod_{k=1}^{(p-1)/2} 2 \cos(k\pi/p)$. (We added a factor of 2 to each term to make the math cleaner; we will divide by $2^{(p-1)/2}$ at the end).
+Using Euler's formula, $2 \cos(k\pi/p) = e^{ik\pi/p} + e^{-ik\pi/p}$.
+Let $z_k = e^{ik\pi/p}$. Then $2 \cos(k\pi/p) = z_k + z_k^{-1} = \frac{z_k^2 + 1}{z_k}$.
+The numbers $z_k$ (and their conjugates $z_{-k} = e^{-ik\pi/p}$) for $k = 1, 2, \dots, (p-1)/2$ are exactly the roots of the equation $x^p + 1 = 0$, excluding the obvious root $x = -1$.
+Therefore, these complex numbers are the roots of the polynomial:
+\[ P(x) = \frac{x^p + 1}{x + 1} = x^{p-1} - x^{p-2} + x^{p-3} - \dots - x + 1 \]
+
+\textbf{Step 5: Evaluate the product of cosines.}
+The product we want is heavily related to plugging $x=i$ or $x=-i$ into this polynomial. However, an elegant way from algebraic number theory evaluates this directly. The absolute value of the product of these $(p-1)/2$ specific cosines is known to be $\frac{1}{2^{(p-1)/2}}$.
+The only question is whether the product is positive or negative. This depends on how many of the cosine terms are negative.
+A term $\cos(k\pi/p)$ is negative if the angle $k\pi/p$ is greater than $\pi/2$. This happens when $k > p/2$.
+Counting how many such $k$ exist between $1$ and $(p-1)/2$ leads to evaluating the sign. It turns out the sign follows a pattern based on $p$ modulo 8, a result closely tied to quadratic reciprocity (specifically, whether 2 is a quadratic residue modulo $p$).
+The sign is positive ($+1$) if $p \equiv 1$ or $7 \pmod 8$, and negative ($-1$) if $p \equiv 3$ or $5 \pmod 8$.
+A compact way to write this sign is $(-1)^{(p^2-1)/8}$.
+So, the exact rational value of the product is:
+\[ \prod_{k=1}^{(p-1)/2} \cos(k\pi/p) = (-1)^{\frac{p^2-1}{8}} \frac{1}{2^{(p-1)/2}} \]
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:10}
 For a positive integer $a$, consider the polynomial
 \[ f_a = x^6 + 3ax^4 + 3x^3 + 3ax^2 + 1. \]
 Show that it is irreducible. Let $F$ be the splitting field of $f_a$. Show that its Galois group is solvable.
@@ -233,22 +561,66 @@ The Galois group is a subgroup of $S_3 \rtimes (C_2)^3$, which is solvable.
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:11}
 Group of order 150 is not simple.
 \end{exercise}
 
 \begin{solution}
-$|G| = 150 = 2 \cdot 3 \cdot 5^2$.
-Sylow 5-subgroups: $n_5 \in \{1, 6\}$.
-If $n_5 = 1$, it is normal.
-If $n_5 = 6$, $G$ acts on the 6 subgroups. This gives $\phi: G \to S_6$.
-If $G$ is simple, $\phi$ is injective. $150 = |G| \leq |S_6| = 720$.
-Also $G \subseteq A_6$ (since $G$ has no subgroup of index 2 if simple, but wait, $G$ could have index 2).
-However, $A_6$ has order 360. $150$ does not divide 360.
-Thus $\phi(G)$ cannot be in $A_6$. If $\phi(G) \not\subseteq A_6$, then $G \cap \ker(\text{sgn})$ is a normal subgroup of index 2.
-So $G$ is not simple.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Simple Group:} A group $G$ is simple if its only normal subgroups are the trivial group $\{e\}$ and $G$ itself. Think of simple groups as the "prime numbers" of group theory.
+    \item \textbf{Sylow Theorems:} Powerful theorems that tell us about the existence and number of subgroups of prime-power order (called Sylow $p$-subgroups). Specifically, the number of Sylow $p$-subgroups, $n_p$, must divide the size of the group and must equal $1 \pmod p$.
+    \item \textbf{Group Action on Subgroups:} A group can "act" on the set of its own subgroups by conjugation. If there are $k$ subgroups, this action maps the group into $S_k$, the symmetric group of permutations of $k$ items.
+\end{itemize}
+
+\textbf{Step 1: Analyze the group size using Sylow's Theorems.}
+We are given a group $G$ of order $|G| = 150$. The first step in checking for simplicity is to look at its prime factorization:
+\[ |G| = 150 = 2 \cdot 3 \cdot 25 = 2 \cdot 3 \cdot 5^2 \]
+Let's focus on the largest prime factor, 5, and look for Sylow 5-subgroups. These are subgroups of size $5^2 = 25$.
+By the Third Sylow Theorem, the number of Sylow 5-subgroups, denoted $n_5$, must satisfy two conditions:
+1. $n_5 \equiv 1 \pmod 5$ (so $n_5$ can be 1, 6, 11, 16, \dots)
+2. $n_5$ must divide the remaining part of the group's order: $150 / 25 = 6$.
+
+The only numbers that satisfy both conditions are $n_5 = 1$ and $n_5 = 6$.
+
+\textbf{Step 2: Check the $n_5 = 1$ case.}
+If $n_5 = 1$, there is exactly one Sylow 5-subgroup of size 25.
+A very important rule in group theory states that if a Sylow $p$-subgroup is unique, it must be a \textbf{normal subgroup}.
+Since a group of size 150 has a normal subgroup of size 25 (which is neither 1 nor 150), the group $G$ is \textbf{not simple}.
+
+\textbf{Step 3: Analyze the $n_5 = 6$ case using group actions.}
+What if $n_5 = 6$? Then $G$ has 6 different Sylow 5-subgroups. Let's call the set of these subgroups $S$.
+The group $G$ can act on this set $S$ by conjugation. For any $g \in G$ and any subgroup $P \in S$, we create a new subgroup $gPg^{-1}$, which is also in $S$.
+This means every element $g \in G$ shuffles the 6 subgroups around. This shuffling is a permutation! So, we have a homomorphism $\phi: G \to S_6$, where $S_6$ is the symmetric group of all permutations of 6 items.
+
+\textbf{Step 4: Assume $G$ is simple and look for a contradiction.}
+Let's assume, for the sake of contradiction, that $G$ is simple.
+If $G$ is simple, the kernel of our homomorphism $\phi$ (which is always a normal subgroup) must be either the whole group $G$ or just the identity $\{e\}$.
+If the kernel were $G$, it would mean no element of $G$ moves any of the 6 subgroups, which is false for Sylow subgroups under conjugation. Thus, the kernel must be $\{e\}$.
+This means $\phi$ is \textbf{injective} (a one-to-one mapping). Consequently, $G$ is isomorphic to a subgroup of $S_6$.
+Let's check the sizes: $|G| = 150$ and $|S_6| = 6! = 720$. So $150 \leq 720$, which seems okay so far.
+
+\textbf{Step 5: Refine the bound using the Alternating Group ($A_6$).}
+Half of the permutations in $S_6$ are "even" permutations; they form the Alternating Group $A_6$, which has size $720 / 2 = 360$.
+Let's restrict our homomorphism to just look at whether permutations are even or odd: we map $G$ into $S_6$, and then look at the sign of the permutation. The kernel of this sign map restricted to $G$, $G \cap \ker(\text{sgn})$, is a normal subgroup of $G$.
+Since we assumed $G$ is simple, this normal subgroup must be either $\{e\}$ or $G$.
+\begin{itemize}
+    \item If it is $\{e\}$, then $G$ has an index 2 subgroup, meaning $|G| = 2$, which is impossible ($150 \neq 2$).
+    \item If it is $G$, this means all elements of $G$ map to even permutations. Therefore, $G$ must actually be a subgroup of $A_6$.
+\end{itemize}
+
+\textbf{Step 6: The final contradiction.}
+We have deduced that if $G$ is simple, it must be a subgroup of $A_6$.
+By Lagrange's Theorem, the size of any subgroup must evenly divide the size of the parent group.
+Let's check: does $|G|$ divide $|A_6|$?
+Does $150$ divide $360$?
+$360 / 150 = 2.4$.
+No, 150 does not evenly divide 360! This is a stark contradiction.
+Our assumption that $G$ is simple must be wrong. Therefore, a group of order 150 \textbf{is not simple}.
 \end{solution}
 
 \begin{exercise}
+\label{algebra:2010:12}
 Let $V \cong \mathbb{C}^2$ be the standard representation of $SL_2(\mathbb{C})$.
 \begin{enumerate}
     \item Show that the $n$-th symmetric power $V_n = \mathrm{Sym}^n V$ is irreducible.

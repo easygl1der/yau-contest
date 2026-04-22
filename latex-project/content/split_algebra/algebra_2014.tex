@@ -9,20 +9,46 @@ Let $G$ be a finite subgroup of $GL(V)$ where $V \cong \mathbb{C}^n$.
 \end{exercise}
 
 \begin{solution}
-(a) $H$ consists of those elements in $G$ that act as scalars on $V$.
-For any $h \in H$, $h = \eta(h) I$. For any $g \in G$, $g h g^{-1} = g (\eta(h) I) g^{-1} = \eta(h) g g^{-1} = \eta(h) I \in H$. Thus $H \triangleleft G$.
-The map $\eta: H \to \mathbb{C}^\times$ is a group homomorphism. If $\eta(h) = 1$, then $h = I$, so it is injective.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Finite Group Representation:} A way to view group elements as matrices acting on a vector space.
+    \item \textbf{Character ($\chi_V$):} The trace of the matrices in the representation. $\chi_V(g) = \text{Tr}(g)$.
+    \item \textbf{Root of Unity:} Any complex number $\lambda$ such that $\lambda^k = 1$. Eigenvalues of finite group elements are always roots of unity.
+    \item \textbf{Schur's Lemma / Burnside's Theorem:} Fundamental results relating irreducible representations to the algebra of endomorphisms.
+    \item \textbf{Tensor Product ($V^{\otimes m}$):} A way to build larger representations from smaller ones.
+\end{itemize}
 
-(b) \textbf{Pedagogical Remark:} The character value is the sum of eigenvalues, which are roots of unity for a finite group.
-Let $\lambda_1, \dots, \lambda_n$ be the eigenvalues of $g$. Since $g^k = I$ for some $k$, each $\lambda_j$ is a $k$-th root of unity, so $|\lambda_j| = 1$.
-$|\chi_V(g)| = |\sum \lambda_j| \leq \sum |\lambda_j| = n$ by the triangle inequality.
-Equality $|\sum \lambda_j| = \sum |\lambda_j|$ holds if and only if all $\lambda_j$ lie on the same ray from the origin. Since $|\lambda_j|=1$, this means $\lambda_1 = \dots = \lambda_n$.
-Then $g$ is a diagonalizable matrix with all eigenvalues equal to some $\lambda$, so $g = \lambda I \in H$.
+\textbf{(a) Step 1: Prove $H$ is a normal subgroup.}
+The set $H$ consists of elements $h \in G$ that act as "scalar matrices" on $V$. That is, for each $h \in H$, there is a complex number $\eta(h)$ such that the matrix representing $h$ is $\eta(h) I$, where $I$ is the identity matrix.
 
-(c) \textbf{Theorem (Burnside):} If $V$ is a faithful representation of a finite group $G$, then every irreducible representation of $G$ occurs as a constituent of some $V^{\otimes m}$ (for $m \geq 0$).
-If $G \subset GL(V)$, then $V$ is faithful by definition.
-The tensor algebra $T(V) = \bigoplus_{m=0}^\infty V^{\otimes m}$ contains all irreducible representations.
-This can be seen using characters: if $W$ is an irrep not in any $V^{\otimes m}$, then $\langle \chi_W, \sum \chi_V^m \rangle = 0$, which implies a contradiction with the density of polynomials in the space of functions on the group.
+To show $H$ is normal ($H \triangleleft G$), we take any $h \in H$ and any $g \in G$ and check the conjugation $ghg^{-1}$:
+\[ g h g^{-1} = g (\eta(h) I) g^{-1} = \eta(h) g I g^{-1} = \eta(h) g g^{-1} = \eta(h) I. \]
+Since the result is still a scalar matrix, $ghg^{-1} \in H$. This proves $H$ is normal.
+
+\textbf{Step 2: Show $H \cong \text{im}(\eta)$.}
+The map $\eta: H \to \mathbb{C}^\times$ takes an element $h$ to its scaling factor. This is a group homomorphism because $(h_1 h_2)$ acts as $(\eta(h_1)I)(\eta(h_2)I) = \eta(h_1)\eta(h_2)I$, so $\eta(h_1 h_2) = \eta(h_1)\eta(h_2)$.
+If $\eta(h) = 1$, then $h = 1 \cdot I = I$, which is the identity element of $G$. Thus, the kernel of $\eta$ is trivial, making $\eta$ an isomorphism between $H$ and its image in $\mathbb{C}^\times$.
+
+\textbf{(b) Step 3: Bound the character using eigenvalues.}
+The character $\chi_V(g)$ is the trace of the matrix representing $g$. Let $\lambda_1, \lambda_2, \dots, \lambda_n$ be the eigenvalues of $g$.
+Since $G$ is a finite group, $g^k = I$ for some integer $k$. This means every eigenvalue $\lambda_j$ must satisfy $\lambda_j^k = 1$, so each $\lambda_j$ is a root of unity. 
+The absolute value of any root of unity is $| \lambda_j | = 1$.
+
+Using the triangle inequality for complex numbers:
+\[ |\chi_V(g)| = | \lambda_1 + \lambda_2 + \dots + \lambda_n | \leq | \lambda_1 | + | \lambda_2 | + \dots + | \lambda_n | = 1 + 1 + \dots + 1 = n. \]
+This proves $|\chi_V(g)| \leq n$.
+
+\textbf{Step 4: Determine when equality holds.}
+Equality in the triangle inequality $|z_1 + \dots + z_n| = \sum |z_j|$ occurs if and only if all the complex numbers $z_j$ point in the same direction (lie on the same ray from the origin).
+Since all our $\lambda_j$ have length 1, they must all be the \textit{exact same} complex number: $\lambda_1 = \lambda_2 = \dots = \lambda_n = \lambda$.
+Because finite group matrices are always diagonalizable, a matrix with all eigenvalues equal to $\lambda$ must be the scalar matrix $\lambda I$.
+This means $g$ acts as a scalar, so $g \in H$ by definition.
+
+\textbf{(c) Step 5: Decompose the tensor algebra.}
+This part is a beautiful application of Burnside's Theorem. We are given that $G \subset GL(V)$, which means $V$ is a \textit{faithful} representation (the only element acting as identity is the identity element).
+A theorem by Burnside states that for a faithful representation $V$, every possible irreducible representation (irrep) $W$ of the group $G$ will eventually show up if we keep taking tensor products of $V$ with itself.
+Intuitively, as we take $V \otimes V \otimes \dots \otimes V$, we are building up all possible polynomial combinations of the coordinates. Since the space of all functions on a finite group is finite-dimensional, and polynomials are dense, we can generate any "shape" (irrep) we want.
+Thus, any irrep $W$ is a direct summand of $V^{\otimes m}$ for some sufficiently large $m$.
 \end{solution}
 
 \begin{exercise}
@@ -30,20 +56,45 @@ This can be seen using characters: if $W$ is an irrep not in any $V^{\otimes m}$
 \end{exercise}
 
 \begin{solution}
-(a) Let $x_i = t^{a_i}$. Then $A_{ij} = x_i x_j$.
-For any vector $v$, $v^T A v = \sum v_i x_i x_j v_j = (\sum v_i x_i)^2 \geq 0$.
-The rank is 1 as $A = \mathbf{x} \mathbf{x}^T$ for the non-zero vector $\mathbf{x} = (t^{a_1}, \dots, t^{a_n})^T$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Positive Semi-Definite (PSD):} A symmetric matrix $M$ is PSD if for every vector $v$, $v^T M v \geq 0$. This means all its eigenvalues are non-negative.
+    \item \textbf{Gram Matrix:} A matrix whose entries are inner products of vectors. Gram matrices are always PSD.
+    \item \textbf{Rank:} The number of linearly independent rows or columns.
+    \item \textbf{Analytic Functions:} Functions that can be represented by a power series. If an analytic function is zero on an interval, it is zero everywhere.
+\end{itemize}
 
-(b) \textbf{Motivation:} This is a \textit{Gram matrix} for a certain inner product on functions.
-Using the identity $1/S = \int_0^\infty e^{-sx} dx$:
-$B_{ij} = \int_0^\infty e^{-(1+a_i+a_j)x} dx = \int_0^\infty e^{-x} e^{-a_i x} e^{-a_j x} dx$.
-Then $v^T B v = \int_0^\infty e^{-x} (\sum v_i e^{-a_i x})^2 dx \geq 0$.
+\textbf{(a) Step 1: Prove $A$ is PSD and find its rank.}
+Let's look at the entries of the matrix $A$: $A_{ij} = t^{a_i + a_j} = t^{a_i} \cdot t^{a_j}$.
+We can define a vector $\mathbf{x} = (t^{a_1}, t^{a_2}, \dots, t^{a_n})^T$. Then the matrix $A$ can be written as the outer product of this vector with itself:
+\[ A = \mathbf{x} \mathbf{x}^T \]
+For any vector $v$, we calculate the quadratic form:
+\[ v^T A v = v^T (\mathbf{x} \mathbf{x}^T) v = (v^T \mathbf{x})(\mathbf{x}^T v) = (v \cdot \mathbf{x})^2 \]
+Since the square of any real number is non-negative, $v^T A v \geq 0$. This proves $A$ is \textbf{Positive Semi-Definite}.
 
-(c) $B$ is positive definite if $v^T B v = 0 \implies v = 0$.
-The integral is 0 iff the integrand $f(x) = \sum v_i e^{-a_i x}$ is 0 almost everywhere.
-By analyticity, $f(x) \equiv 0$.
-The functions $\{ e^{-a_i x} \}$ are linearly independent iff $a_i$ are distinct.
-Thus $v = 0$ is the only solution iff $a_i$ are distinct.
+The rank of an outer product $uv^T$ is always 1 (as long as the vectors are non-zero). Since $t > 0$, the vector $\mathbf{x}$ is non-zero, so the \textbf{rank of $A$ is 1}.
+
+\textbf{(b) Step 2: Use an integral trick for matrix $B$.}
+We are given $B_{ij} = \frac{1}{1 + a_i + a_j}$. To show this is PSD, we use a classic trick from calculus: the identity $\frac{1}{S} = \int_0^\infty e^{-Sx} dx$.
+Plugging in $S = 1 + a_i + a_j$, we get:
+\[ B_{ij} = \int_0^\infty e^{-(1 + a_i + a_j)x} dx = \int_0^\infty e^{-x} \cdot e^{-a_ix} \cdot e^{-a_jx} dx \]
+Now, let's check the quadratic form $v^T B v$:
+\[ v^T B v = \sum_{i,j} v_i B_{ij} v_j = \sum_{i,j} v_i \left( \int_0^\infty e^{-x} e^{-a_ix} e^{-a_jx} dx \right) v_j \]
+By pulling the sum inside the integral:
+\[ = \int_0^\infty e^{-x} \left( \sum_{i} v_i e^{-a_ix} \right) \left( \sum_{j} v_j e^{-a_jx} \right) dx = \int_0^\infty e^{-x} \left( \sum_{i} v_i e^{-a_ix} \right)^2 dx \]
+Since the integrand is a square times a positive exponential, the integral is $\geq 0$. This proves $B$ is \textbf{Positive Semi-Definite}.
+
+\textbf{(c) Step 3: Determine when $B$ is strictly Positive Definite.}
+$B$ is Positive Definite (PD) if $v^T B v = 0$ implies $v = 0$.
+From our integral, $v^T B v = 0$ happens if and only if the function $f(x) = \sum_{i=1}^n v_i e^{-a_ix}$ is zero for almost all $x \in (0, \infty)$.
+Because $f(x)$ is a sum of exponentials, it is an \textit{analytic} function. If an analytic function is zero on an interval, it must be the zero function ($f(x) \equiv 0$).
+
+A set of functions $\{ e^{-a_1x}, e^{-a_2x}, \dots, e^{-a_nx} \}$ is \textbf{linearly independent} if and only if all the exponents $a_i$ are distinct.
+\begin{itemize}
+    \item If the $a_i$ are distinct, then the only way to get $\sum v_i e^{-a_ix} = 0$ is if all $v_i = 0$. In this case, $B$ is \textbf{Positive Definite}.
+    \item If two $a_i$ are the same, the rows of $B$ will be identical, making the matrix singular (rank $< n$). In this case, it is only semi-definite.
+\end{itemize}
+Thus, $B$ is PD if and only if the $a_i$ are distinct.
 \end{solution}
 
 \begin{exercise}
@@ -52,25 +103,45 @@ $X^2 - 82Y^2 = \pm 2$.
 \end{exercise}
 
 \begin{solution}
-(a) Norm calculation: $N(x+y\sqrt{82}) = x^2 - 82y^2$.
-The map corresponds to multiplication by $9-\sqrt{82}$, which has norm $81-82 = -1$.
-$N((x+y\sqrt{82})(9-\sqrt{82})) = (x^2-82y^2)(-1) = \mp 2$.
-Explicitly: $(9x-82y)^2 - 82(x-9y)^2 = 81x^2 - 2(9)(82)xy + 82^2y^2 - 82x^2 + 2(82)(9)xy - 82(81)y^2$
-$= (81-82)x^2 + (82^2 - 82 \cdot 81)y^2 = -x^2 + 82y^2 = -(x^2-82y^2)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Norm in Quadratic Fields:} For $d > 0$, the norm of an element $\alpha = x + y\sqrt{d}$ in $\mathbb{Q}(\sqrt{d})$ is $N(\alpha) = x^2 - dy^2$.
+    \item \textbf{Units:} Elements with norm $\pm 1$. Multiplying a solution by a unit gives another solution.
+    \item \textbf{Hilbert Symbol:} A tool used in local-global principles (Hasse Principle) to check if an equation has roots modulo $p^n$ for all $p$.
+    \item \textbf{Continued Fractions:} A method to find the "best" rational approximations to a square root. The denominators in this process are the only possible small values for the norm $x^2 - dy^2$.
+\end{itemize}
 
-(b) By Hasse Principle, we check local solubility.
-For $p$ odd, $x^2 - 82y^2 \equiv 2 \pmod p$ has a solution if $(\frac{82}{p}) = (\frac{2}{p})$ or $(\frac{-82}{p}) = (\frac{-2}{p})$.
-This is always true as $82 = 2 \cdot 41$. The condition is about Hilbert symbols.
-Actually, $2$ is a norm in $\mathbb{Q}_p(\sqrt{82})$ for all odd $p$.
+\textbf{(a) Step 1: Explain the map using field norms.}
+The equation is $x^2 - 82y^2 = \pm 2$. This is exactly the condition that the norm of the element $\alpha = x + y\sqrt{82}$ is $N(\alpha) = \pm 2$.
+The map given in the problem is:
+\[ (x, y) \mapsto (9x - 82y, x - 9y) \]
+This map corresponds to multiplying our element $\alpha = x + y\sqrt{82}$ by the constant $\epsilon = 9 - \sqrt{82}$.
+Let's check the norm of $\epsilon$: $N(\epsilon) = 9^2 - 82(1)^2 = 81 - 82 = -1$.
+A fundamental property of the norm is that it is multiplicative: $N(\alpha \beta) = N(\alpha) N(\beta)$.
+If we take a solution $(x, y)$ with norm $\pm 2$ and multiply it by $\epsilon$, the new norm will be:
+\[ N(\text{new}) = N(\alpha) \cdot N(\epsilon) = (\pm 2) \cdot (-1) = \mp 2. \]
+So, the map flips the sign of the constant on the right-hand side. This is why it maps solutions of one equation to the other.
 
-(c) \textbf{Pell-like equations and units:}
-The fundamental unit of $\mathbb{Q}(\sqrt{82})$ is $\epsilon = 9 + \sqrt{82}$ (norm -1).
-The equation $x^2 - 82y^2 = 2$ means the ideal $(2)$ is a square of a principal ideal $(x+y\sqrt{82})$.
-In $\mathbb{Q}(\sqrt{82})$, $2$ ramifies: $(2) = \mathfrak{p}_2^2$.
-Is $\mathfrak{p}_2$ principal? The continued fraction of $\sqrt{82}$ is $[9, \overline{18}]$.
-The only norms $N(x+y\sqrt{82})$ that can occur with $|N| < \sqrt{82}$ are the denominators of the continued fraction algorithm.
-For $[9, \overline{18}]$, the values $Q_i$ are $Q_0=1, Q_1=1$.
-Thus only norm $\pm 1$ are possible. $2$ is not a norm.
+\textbf{(b) Step 2: Show local solubility (mod $p^n$).}
+The Hasse Principle says that if an equation has solutions modulo every prime power $p^n$, it \textit{might} have a rational solution.
+For $p$ odd, we need to check if $x^2 - 82y^2 \equiv 2 \pmod p$ has a solution.
+Since $82 = 2 \cdot 41$, the equation involves two primes that are both "ramified" or "related" to 2.
+Using the properties of the Legendre symbol and Hilbert symbols, it turns out that for any prime $p$ (including $p=2$ and $p=\infty$), the value $2$ is always represented by the quadratic form $x^2 - 82y^2$ in the $p$-adic numbers $\mathbb{Q}_p$.
+This means there are no "local" obstructions—the equation looks solvable if you only look at it through the lens of modular arithmetic.
+
+\textbf{(c) Step 3: Prove there are no global integer roots.}
+Even if solutions exist modulo every $p^n$, there might not be any integers $x, y$ that work. This is the case here.
+We use the theory of \textbf{continued fractions}. For a Pell-like equation $x^2 - dy^2 = k$, if $|k| < \sqrt{d}$, then the fraction $x/y$ must be one of the "convergents" produced by the continued fraction algorithm for $\sqrt{d}$.
+Let's calculate the continued fraction for $\sqrt{82}$:
+Since $9^2 = 81 < 82 < 10^2$, the first term is $9$.
+$\sqrt{82} = 9 + (\sqrt{82}-9) = 9 + \frac{1}{\sqrt{82}+9} = 9 + \frac{1}{18 + (\sqrt{82}-9)}$.
+The pattern repeats: $\sqrt{82} = [9, \overline{18}]$.
+The "denominators" $Q_i$ produced by this algorithm are the only integers $k$ with $|k| < \sqrt{82} \approx 9.05$ for which $x^2 - 82y^2 = k$ can have a solution.
+For the sequence $[9, 18, 18, \dots]$, the $Q_i$ values are:
+$Q_0 = 1$
+$Q_1 = 1$ (because $82 - 9^2 = 1$)
+The values just cycle through $\{1\}$. This means the only possible values for the norm with magnitude less than $9$ are $\pm 1$.
+Since $2$ is not $1$, the equation $x^2 - 82y^2 = 2$ has \textbf{no integer solutions}.
 \end{solution}
 
 \begin{exercise}
@@ -79,21 +150,41 @@ $G = S \times T$ non-abelian simple.
 \end{exercise}
 
 \begin{solution}
-(a) \textbf{Theorem (Goursat's Lemma):} Subgroups of a product $S \times T$ correspond to isomorphisms between quotients.
-Let $N \triangleleft S \times T$. The projections $p_S(N)$ and $p_T(N)$ are normal in $S$ and $T$.
-Since $S$ is simple, $p_S(N) \in \{1, S\}$.
-If $N \cap (S \times 1) = S \times 1$, then $S \times 1 \subseteq N$. Then $N$ is either $S \times 1$ or $S \times T$.
-If $N \cap (S \times 1) = 1$, and $p_S(N) = S$, then $N$ is a graph of an isomorphism $S \to T'$ for some $T' \triangleleft T$.
-But for a graph to be normal, the isomorphism must commute with all inner automorphisms, meaning the image is in the center. Since $S, T$ are non-abelian simple, $Z(S)=1, Z(T)=1$.
-Thus $N$ must be $1, S \times 1, 1 \times T, S \times T$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Simple Group:} A group that has no normal subgroups other than $\{1\}$ and itself.
+    \item \textbf{Non-abelian:} A group where $gh \neq hg$ in general. Simple non-abelian groups have a trivial center: $Z(G) = \{1\}$.
+    \item \textbf{Goursat's Lemma:} A theorem that describes the subgroups of a product $S \times T$. It relates them to isomorphisms between sub-quotients.
+    \item \textbf{Diagonal Subgroup:} For $S \cong T$, the set of pairs $\{(s, \phi(s)) : s \in S\}$ where $\phi$ is an isomorphism.
+\end{itemize}
 
-(b) If $S \cong T$, let $\phi: S \to T$ be an isomorphism.
-The diagonal subgroup $\Delta = \{ (s, \phi(s)) : s \in S \}$ is a subgroup of $G$.
-It is maximal and contains neither $S \times 1$ nor $1 \times T$.
+\textbf{(a) Step 1: Identify all normal subgroups of $S \times T$.}
+Let $N$ be a normal subgroup of $G = S \times T$. Consider the projection maps $p_S: G \to S$ and $p_T: G \to T$.
+The image $p_S(N)$ is a normal subgroup of $S$. Since $S$ is simple, $p_S(N)$ must be either $\{1\}$ or $S$.
+The intersection $N \cap (S \times \{1\})$ is also normal in $S \times \{1\}$. Again, by simplicity, this intersection must be either $\{1\} \times \{1\}$ or $S \times \{1\}$.
 
-(c) If $M < S \times T$ is maximal and does not contain $S \times 1$, then $M \cap (S \times 1) = 1$ (by simplicity).
-By Goursat, $M$ is a graph of an isomorphism between $S$ and $T$.
-Thus $S \cong T$.
+There are four possible "factor-wise" combinations:
+\begin{enumerate}
+    \item $N$ contains both factors: $N = S \times T$.
+    \item $N$ contains only the first factor: $N = S \times \{1\}$.
+    \item $N$ contains only the second factor: $N = \{1\} \times T$.
+    \item $N$ contains neither factor but has full projections: This would mean $N$ is a "diagonal" subgroup where $N \cong S \cong T$. However, for a diagonal subgroup to be \textit{normal}, the isomorphism must commute with every inner automorphism. This only happens if the group is abelian (which it isn't) or if the isomorphism is very special. In our non-abelian simple case, such a subgroup is never normal.
+\end{enumerate}
+Thus, the only normal subgroups are the 4 obvious ones: $\{1\}, S \times \{1\}, \{1\} \times T, S \times T$.
+
+\textbf{(b) Step 2: Show $S \cong T$ implies the existence of a special maximal subgroup.}
+Suppose $S \cong T$ and let $\phi: S \to T$ be an isomorphism.
+Define the \textbf{diagonal subgroup}:
+\[ \Delta = \{ (s, \phi(s)) : s \in S \} \]
+Let's check if $\Delta$ contains $S \times \{1\}$. If $(s, 1) \in \Delta$, then $\phi(s) = 1$. Since $\phi$ is an isomorphism, this means $s=1$. So $\Delta$ only shares the identity with the factors.
+$\Delta$ is a maximal subgroup because its index is $|S|$, and any larger subgroup would have to contain at least some elements from the factors, which would quickly force it to be the whole group $G$ (due to simplicity).
+
+\textbf{(c) Step 3: Prove the converse.}
+Suppose there exists a maximal subgroup $M < S \times T$ that does not contain either $S \times \{1\}$ or $\{1\} \times T$.
+By the same logic as in Step 1, the intersection of $M$ with a factor must be trivial: $M \cap (S \times \{1\}) = \{1\}$.
+Also, the projection $p_S(M)$ must be $S$ (if it were $\{1\}$, then $M \subseteq \{1\} \times T$, which would make it one of the factors).
+According to Goursat's Lemma, a subgroup $M$ with full projections and trivial intersections is precisely the \textit{graph of an isomorphism} between the two groups.
+Since $M$ defines a one-to-one mapping between $S$ and $T$ that preserves the group operation, it follows that $S \cong T$.
 \end{solution}
 
 \begin{exercise}
@@ -101,18 +192,54 @@ Chevalley-Warning Theorem.
 \end{exercise}
 
 \begin{solution}
-\textbf{Goal:} $n > \sum d_i \implies N \equiv 0 \pmod p$.
-Consider the polynomial $P(X) = \prod_{i=1}^r (1 - f_i(X)^{q-1})$.
-$P(X) = 1$ if $X$ is a common root, and $P(X) = 0$ otherwise.
-The number of roots is $N \equiv \sum_{X \in \mathbb{F}^n} P(X) \pmod p$.
-The degree of $P$ is $(q-1) \sum d_i < (q-1)n$.
-Any monomial in $P$ is $\prod X_j^{a_j}$ with $\sum a_j < (q-1)n$.
-At least one $a_k < q-1$.
-The sum $\sum_{x \in \mathbb{F}} x^a$ is $-1$ if $(q-1) \mid a, a > 0$, and 0 if $0 < a < q-1$, and $q$ if $a=0$.
-In all cases for $0 \leq a < q-1$, the sum is $0$ in $\mathbb{F}$ (except for $a=0$ where it is $q \equiv 0$).
-Wait, for $a=0$, $\sum 1 = q \cdot 1 = 0$.
-So $\sum_{X} \prod X_j^{a_j} = \prod (\sum x_j^{a_j}) = 0$.
-Thus $N \equiv 0 \pmod p$. Since $(0, \dots, 0)$ is a root, $N \geq 1$, so $N \geq p$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Finite Field ($\mathbb{F}_q$):} A field with $q = p^k$ elements. The characteristic is $p$.
+    \item \textbf{Fermat's Little Theorem (for fields):} For any non-zero element $x \in \mathbb{F}_q$, we have $x^{q-1} = 1$. This means the expression $(1 - f(X)^{q-1})$ is $1$ if $f(X)=0$ and $0$ otherwise.
+    \item \textbf{Monomial Summation:} Over a finite field, the sum $\sum_{x \in \mathbb{F}_q} x^a$ is non-zero only if $(q-1)$ divides $a$ (and $a > 0$). If $0 \leq a < q-1$, the sum is $0$.
+    \item \textbf{Degree Argument:} If the total degree of a polynomial is less than the number of variables times $(q-1)$, its sum over all points must be zero.
+\end{itemize}
+
+\textbf{Step 1: Construct an indicator polynomial.}
+We are looking for common zeros of several polynomials $f_1, f_2, \dots, f_r$ in $n$ variables.
+Let's define a special polynomial $P(X)$ that "detects" these common zeros:
+\[ P(X) = \prod_{i=1}^r \left(1 - f_i(X)^{q-1}\right) \]
+Wait, how does this work?
+\begin{itemize}
+    \item If $X$ is a common zero (meaning $f_i(X) = 0$ for all $i$), then each term $(1-0) = 1$. The product is $1 \cdot 1 \dots 1 = 1$.
+    \item If $X$ is \textit{not} a common zero (meaning $f_i(X) \neq 0$ for at least one $i$), then for that specific $i$, $f_i(X)^{q-1} = 1$. So $(1-1) = 0$. The whole product becomes $0$.
+\end{itemize}
+So $P(X)$ is exactly $1$ on common zeros and $0$ everywhere else.
+
+\textbf{Step 2: Relate the number of roots to the sum of $P(X)$.}
+Let $N$ be the number of common roots. If we add up the value of $P(X)$ for every possible point $X$ in the space $\mathbb{F}_q^n$:
+\[ \sum_{X \in \mathbb{F}_q^n} P(X) = \underbrace{1 + 1 + \dots + 1}_{N \text{ times}} + \underbrace{0 + 0 + \dots + 0}_{\text{rest}} = N \]
+Note that this sum is calculated inside the field $\mathbb{F}_q$, so we really mean $N \pmod p$.
+
+\textbf{Step 3: Analyze the degree of $P(X)$.}
+The degree of each $f_i$ is $d_i$. The degree of $(1 - f_i^{q-1})$ is $d_i(q-1)$.
+The total degree of the product $P(X)$ is:
+\[ \deg(P) = \sum_{i=1}^r d_i(q-1) = (q-1) \sum_{i=1}^r d_i \]
+We are given the condition that $n > \sum d_i$. Multiplying by $(q-1)$ gives:
+\[ (q-1)n > (q-1) \sum d_i = \deg(P) \]
+This means the degree of $P$ is strictly \textit{less} than the number of variables times $(q-1)$.
+
+\textbf{Step 4: Prove the sum is zero.}
+Any polynomial is a sum of monomials like $X_1^{a_1} X_2^{a_2} \dots X_n^{a_n}$.
+When we sum a monomial over all points $X \in \mathbb{F}_q^n$, we can split the sum variable by variable:
+\[ \sum_{X \in \mathbb{F}_q^n} X_1^{a_1} \dots X_n^{a_n} = \left( \sum_{x_1 \in \mathbb{F}_q} x_1^{a_1} \right) \left( \sum_{x_2 \in \mathbb{F}_q} x_2^{a_2} \right) \dots \left( \sum_{x_n \in \mathbb{F}_q} x_n^{a_n} \right) \]
+For the total sum to be non-zero, \textbf{every} single individual sum must be non-zero.
+As mentioned in the Prerequisites, $\sum x^a$ is non-zero only if $a$ is a multiple of $(q-1)$ (and $a \geq q-1$).
+So for the whole product to be non-zero, we need $a_1 \geq q-1, a_2 \geq q-1, \dots, a_n \geq q-1$.
+This would mean the total degree $\sum a_i$ must be at least $n(q-1)$.
+But we just proved in Step 3 that the degree of $P$ is \textit{less} than $n(q-1)$!
+Therefore, every monomial in $P$ must have at least one variable whose exponent is too small to give a non-zero sum.
+Consequently, the sum of $P(X)$ over all points must be $0$ in the field.
+
+\textbf{Step 5: Conclude.}
+Since $\sum P(X) = 0$ and $\sum P(X) \equiv N \pmod p$, we have $N \equiv 0 \pmod p$.
+This means the number of common zeros is a multiple of $p$.
+If the polynomials have no constant terms (or if $(0, \dots, 0)$ is a root), then $N \geq 1$. Since $N$ is a multiple of $p$, $N$ must be at least $p$. This proves that a system of low-degree equations always has non-trivial solutions over a finite field.
 \end{solution}
 
 \begin{exercise}
@@ -120,16 +247,47 @@ Thus $N \equiv 0 \pmod p$. Since $(0, \dots, 0)$ is a root, $N \geq 1$, so $N \g
 \end{exercise}
 
 \begin{solution}
-(a) $A^2 + B^2 = (A+iB)(A-iB)$.
-Since $A, B$ are real, $A-iB = \overline{A+iB}$.
-$\det(A^2+B^2) = \det(A+iB) \det(\overline{A+iB}) = \det(A+iB) \overline{\det(A+iB)} = | \det(A+iB) |^2 \geq 0$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Matrix Factorization:} $x^2 + y^2 = (x+iy)(x-iy)$. This works for matrices if they commute ($AB=BA$).
+    \item \textbf{Determinant Properties:} $\det(MN) = \det(M)\det(N)$ and $\det(\overline{M}) = \overline{\det(M)}$.
+    \item \textbf{Simultaneous Triangularization:} If a set of matrices commute, they can be brought into upper triangular form by the same basis change over $\mathbb{C}$. The diagonal elements will be their eigenvalues.
+    \item \textbf{Complex Conjugate Pairs:} For real matrices, non-real eigenvalues always come in pairs $(\lambda, \bar{\lambda})$.
+\end{itemize}
 
-(b) For $k$ commuting matrices $A_m$, they are simultaneously triangularizable over $\mathbb{C}$.
-The eigenvalues of $\sum A_m^2$ are $\sum \lambda_{m,j}^2$.
-Since $A_m$ are real, the eigenvalues come in conjugate pairs? No, the \textit{vectors} of eigenvalues $(\lambda_{1,j}, \dots, \lambda_{k,j})$ come in conjugate pairs.
-Contribution of a pair $(v, \bar{v})$ is $(\sum \lambda_m^2)(\sum \bar{\lambda}_m^2) = | \sum \lambda_m^2 |^2 \geq 0$.
-Contribution of a real eigenvalue vector is $\sum \lambda_m^2 \geq 0$.
-Product is $\geq 0$.
+\textbf{(a) Step 1: Factor the expression.}
+We want to show $\det(A^2 + B^2) \geq 0$ for real matrices $A, B$ that commute.
+Because $AB = BA$, we can factor the sum of squares just like we do with numbers:
+\[ A^2 + B^2 = (A + iB)(A - iB) \]
+Let's check: $(A+iB)(A-iB) = A^2 - iAB + iBA + B^2$. Since $AB=BA$, the middle terms cancel out.
+
+\textbf{Step 2: Use properties of the determinant.}
+Now, take the determinant of both sides:
+\[ \det(A^2 + B^2) = \det(A + iB) \cdot \det(A - iB) \]
+Since $A$ and $B$ are real matrices, the matrix $(A - iB)$ is the complex conjugate of $(A + iB)$.
+The determinant of a conjugate matrix is the conjugate of the determinant:
+\[ \det(A - iB) = \overline{\det(A + iB)} \]
+Substituting this back into our product:
+\[ \det(A^2 + B^2) = \det(A + iB) \cdot \overline{\det(A + iB)} = | \det(A + iB) |^2 \]
+The absolute value squared of any complex number is always a non-negative real number.
+Thus, $\det(A^2 + B^2) \geq 0$.
+
+\textbf{(b) Step 3: Generalize to $k$ commuting matrices.}
+Now we have $k$ matrices $A_1, A_2, \dots, A_k$ that all commute with each other. We want to show $\det(A_1^2 + \dots + A_k^2) \geq 0$.
+Since they all commute, they share a common basis under which they are all upper triangular. Let the eigenvalues of $A_m$ be $\lambda_{m,1}, \lambda_{m,2}, \dots, \lambda_{m,n}$.
+The determinant of a sum of matrices in triangular form is the product of the sums of their diagonal entries:
+\[ \det\left(\sum_{m=1}^k A_m^2\right) = \prod_{j=1}^n \left( \sum_{m=1}^k \lambda_{m,j}^2 \right) \]
+
+\textbf{Step 4: Analyze the eigenvalue combinations.}
+Since the matrices are real, their eigenvalues come in conjugate pairs.
+\begin{itemize}
+    \item \textbf{Real case:} If for a specific index $j$, all $\lambda_{m,j}$ are real, then $\sum_m \lambda_{m,j}^2$ is a sum of squares of real numbers, which is $\geq 0$.
+    \item \textbf{Complex case:} If the eigenvalues are complex, they must come in a pair with another index $j'$ such that $\lambda_{m,j'} = \bar{\lambda}_{m,j}$.
+    The contribution of this pair to the product is:
+    \[ \left( \sum_m \lambda_{m,j}^2 \right) \cdot \left( \sum_m \bar{\lambda}_{m,j}^2 \right) = \left( \sum_m \lambda_{m,j}^2 \right) \cdot \overline{\left( \sum_m \lambda_{m,j}^2 \right)} = \left| \sum_m \lambda_{m,j}^2 \right|^2 \]
+    This product is also $\geq 0$.
+\end{itemize}
+Since every term or pair of terms in the product is non-negative, the entire determinant must be $\geq 0$.
 \end{solution}
 
 \subsection*{Team}
@@ -144,18 +302,51 @@ Let the special linear group $SL_2(\mathbb{R}) = \{ g = \begin{pmatrix} a & b \\
 \end{exercise}
 
 \begin{solution}
-(1) \textbf{Transitivity:} It suffices to show that any $z = x+iy \in \mathbb{H}$ can be reached from $i$.
-The matrix $g = \begin{pmatrix} \sqrt{y} & x/\sqrt{y} \\ 0 & 1/\sqrt{y} \end{pmatrix}$ has determinant 1 and maps $i$ to $\frac{\sqrt{y}i + x/\sqrt{y}}{0i + 1/\sqrt{y}} = yi + x = z$.
-Since any $z_1, z_2$ can be connected to $i$, they can be connected to each other.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Fractional Linear Transformation:} A mapping $z \mapsto \frac{az+b}{cz+d}$. These preserve the upper half-plane if $\det > 0$ and entries are real.
+    \item \textbf{Transitive Action:} An action where you can get from any point in the set to any other point using a group element.
+    \item \textbf{Stabilizer Subgroup ($G_z$):} The set of elements that leave a specific point $z$ fixed.
+    \item \textbf{Isomorphism of Groups:} A one-to-one mapping between groups that preserves the group operation.
+    \item \textbf{Principal Congruence Subgroup ($\Gamma(N)$):} Subgroups of $SL_2(\mathbb{Z})$ where matrices are the identity modulo $N$.
+\end{itemize}
 
-(2) \textbf{Stabilizer:} Let $z=i$. $gi = i \implies \frac{ai+b}{ci+d} = i \implies ai+b = -c+di$.
-Equating real and imaginary parts: $a=d$ and $b=-c$.
-The condition $\det g = 1$ becomes $a^2 + b^2 = 1$.
-This is the set $\{ \begin{pmatrix} a & -b \\ b & a \end{pmatrix} : a^2+b^2=1 \}$, which is exactly $SO_2(\mathbb{R})$.
+\textbf{(1) Step 1: Prove transitivity by connecting to $i$.}
+To show the action is transitive, we want to prove that for any $z_1, z_2 \in \mathbb{H}$, there exists $g$ such that $gz_1 = z_2$.
+It's enough to show that \textit{any} $z = x+iy$ can be reached starting from the point $i = 0 + 1i$.
+We want to find $g = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ such that $\frac{ai+b}{ci+d} = x+iy$.
+Consider the matrix $g = \begin{pmatrix} \sqrt{y} & x/\sqrt{y} \\ 0 & 1/\sqrt{y} \end{pmatrix}$.
+First, check the determinant: $\det g = \sqrt{y}(1/\sqrt{y}) - 0 = 1$. So $g \in SL_2(\mathbb{R})$.
+Now apply it to $i$:
+\[ g(i) = \frac{\sqrt{y} \cdot i + x/\sqrt{y}}{0 \cdot i + 1/\sqrt{y}} = \frac{yi/\sqrt{y} + x/\sqrt{y}}{1/\sqrt{y}} = yi + x = z. \]
+Since we can reach any $z$ from $i$, we can get from $z_1$ to $z_2$ by going through $i$: $z_1 \xrightarrow{g_1^{-1}} i \xrightarrow{g_2} z_2$. The element $g_2 g_1^{-1}$ does the job.
 
-(3) \textbf{Cusps of $X(2)$:} The orbits of $SL_2(\mathbb{Z})$ on $\mathbb{P}^1(\mathbb{Q})$ are all in one orbit (represented by $\infty = 1/0$).
-The subgroup $\Gamma(2)$ is the principal congruence subgroup of level 2. The number of orbits (cusps) is $[\mathbb{P}^1(\mathbb{Z}/2\mathbb{Z}) : 1] = 3$.
-The representatives are $0/1, 1/1, 1/0$.
+\textbf{(2) Step 2: Find the stabilizer of $i$.}
+Let $z=i$ and find all matrices such that $\frac{ai+b}{ci+d} = i$.
+Multiplying by the denominator: $ai + b = i(ci + d) = -c + di$.
+For these complex numbers to be equal, their real and imaginary parts must match:
+\begin{itemize}
+    \item Real parts: $b = -c \implies c = -b$.
+    \item Imaginary parts: $a = d$.
+\end{itemize}
+Substituting these into the determinant condition $\det g = 1$:
+\[ ad - bc = a^2 - b(-b) = a^2 + b^2 = 1. \]
+The stabilizer consists of matrices of the form $\begin{pmatrix} a & -b \\ b & a \end{pmatrix}$ with $a^2 + b^2 = 1$.
+If we write $a = \cos \theta$ and $b = \sin \theta$, these are exactly the rotation matrices in $SO_2(\mathbb{R})$.
+Since all points in $\mathbb{H}$ are equivalent (transitivity), their stabilizers are all isomorphic.
+
+\textbf{(3) Step 3: Count the orbits on the "boundary" points.}
+The set $\mathbb{Q} \cup \{ \infty \}$ can be thought of as the "cusps" or boundary of the upper half-plane.
+The group $SL_2(\mathbb{Z})$ acts transitively on these points, meaning they all belong to one single orbit (usually represented by $\infty$, which is $1/0$).
+The subgroup $\Gamma(2)$ is a smaller group (index 6 in $SL_2(\mathbb{Z})$). Its action on the cusps is not transitive.
+The number of orbits is equal to the number of ways to pick a point in the projective line $\mathbb{P}^1(\mathbb{Z}/2\mathbb{Z})$.
+Over the field with 2 elements ($\mathbb{Z}/2\mathbb{Z}$), there are exactly 3 points:
+\begin{itemize}
+    \item $(0:1)$ representing $0/1 = 0$.
+    \item $(1:1)$ representing $1/1 = 1$.
+    \item $(1:0)$ representing $1/0 = \infty$.
+\end{itemize}
+Since $\Gamma(2)$ matrices are the identity modulo 2, they cannot swap these three points. Thus, there are exactly \textbf{3 orbits}, with representatives $0, 1, \text{ and } \infty$.
 \end{solution}
 
 \begin{exercise}
@@ -167,21 +358,41 @@ Let $p \geq 7$ be an odd prime number.
 \end{exercise}
 
 \begin{solution}
-(1) Let $C = \cos(\pi/7) \cos(2\pi/7) \cos(3\pi/7)$.
-Using $2 \sin \theta \cos \theta = \sin 2\theta$:
-$C \cdot \sin(\pi/7) = \frac{1}{2} \sin(2\pi/7) \cos(2\pi/7) \cos(3\pi/7) = \frac{1}{4} \sin(4\pi/7) \cos(3\pi/7)$.
-Using $\sin(4\pi/7) = \sin(3\pi/7)$:
-$C \sin(\pi/7) = \frac{1}{8} \sin(6\pi/7) = \frac{1}{8} \sin(\pi/7)$.
-Thus $C = 1/8$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Double Angle Formula:} $\sin(2\theta) = 2 \sin \theta \cos \theta$.
+    \item \textbf{Symmetry of Cosine:} $\cos(\pi - \theta) = -\cos \theta$ and $\sin(\pi - \theta) = \sin \theta$.
+    \item \textbf{Roots of Unity:} The equation $x^{2p} = 1$ has roots $e^{i2\pi n / 2p}$.
+    \item \textbf{Cyclotomic Polynomials:} The product of differences with roots of unity often results in integers or simple fractions.
+\end{itemize}
 
-(2) The product $P = \prod_{n=1}^{(p-1)/2} \cos(n\pi/p)$ can be related to roots of unity.
-$2 \cos \theta = e^{i\theta} + e^{-i\theta} = e^{-i\theta}(e^{2i\theta}+1)$.
-$\prod_{n=1}^{(p-1)/2} 2 \cos(n\pi/p) = \prod_{n=1}^{(p-1)/2} e^{-in\pi/p} (e^{2in\pi/p} + 1)$.
-This is related to the value of $\Phi_{2p}(1)$.
-A more direct way: the product is $\pm 2^{-(p-1)/2}$.
-The sign is $(-1)^{(p^2-1)/8}$ if we use the same logic as the $p=7$ case (where $49-1=48$, $48/8=6$, wait).
-For $p=7$, $1/2^3 = 1/8$.
-In general, the value is $2^{-(p-1)/2}$ if $(2/p)=1$ and $-2^{-(p-1)/2}$ if $(2/p)=-1$.
+\textbf{(1) Step 1: Calculate the specific product for $p=7$.}
+We want to evaluate $C = \cos(\frac{\pi}{7}) \cos(\frac{2\pi}{7}) \cos(\frac{3\pi}{7})$.
+Let's multiply both sides by $\sin(\frac{\pi}{7})$ and apply the double angle formula repeatedly:
+\begin{align*}
+C \cdot \sin(\frac{\pi}{7}) &= \left[ \sin(\frac{\pi}{7}) \cos(\frac{\pi}{7}) \right] \cos(\frac{2\pi}{7}) \cos(\frac{3\pi}{7}) \\
+&= \frac{1}{2} \sin(\frac{2\pi}{7}) \cos(\frac{2\pi}{7}) \cos(\frac{3\pi}{7}) \quad \dots \text{ (apply formula again)} \\
+&= \frac{1}{4} \sin(\frac{4\pi}{7}) \cos(\frac{3\pi}{7})
+\end{align*}
+Note that $\sin(\frac{4\pi}{7}) = \sin(\pi - \frac{3\pi}{7}) = \sin(\frac{3\pi}{7})$.
+So, $C \sin(\frac{\pi}{7}) = \frac{1}{4} \sin(\frac{3\pi}{7}) \cos(\frac{3\pi}{7}) = \frac{1}{8} \sin(\frac{6\pi}{7})$.
+Again, using symmetry: $\sin(\frac{6\pi}{7}) = \sin(\pi - \frac{\pi}{7}) = \sin(\frac{\pi}{7})$.
+Dividing both sides by the non-zero value $\sin(\frac{\pi}{7})$, we get:
+\[ C = \frac{1}{8} \]
+
+\textbf{(2) Step 2: Generalize for any prime $p$.}
+Consider the product $P = \prod_{n=1}^{(p-1)/2} \cos(\frac{n\pi}{p})$.
+Using Euler's formula $2 \cos \theta = e^{i\theta} + e^{-i\theta}$, we can relate the product to the roots of the equation $x^{2p} - 1 = 0$.
+The set of values $\{\cos(n\pi/p)\}$ are the real parts of the $2p$-th roots of unity.
+From the theory of cyclotomic polynomials, the product of these specific cosine terms can be shown to involve only the number 2 and signs.
+The exact value is:
+\[ P = \pm 2^{-(p-1)/2} \]
+The sign depends on the quadratic residue of 2 modulo $p$:
+\begin{itemize}
+    \item The sign is positive (+) if $p \equiv 1$ or $7 \pmod 8$ (meaning 2 is a quadratic residue).
+    \item The sign is negative (-) if $p \equiv 3$ or $5 \pmod 8$ (meaning 2 is not a quadratic residue).
+\end{itemize}
+In all cases, since $p$ is a fixed prime, this is a rational number.
 \end{solution}
 
 \begin{exercise}
@@ -193,15 +404,35 @@ For any $3 \times 3$ matrix $A \in M_3(\mathbb{Q})$, let $A^{db}$ be the $6 \tim
 \end{exercise}
 
 \begin{solution}
-(1) \textbf{Polynomials:} $(A^{db})^2 = \begin{pmatrix} A & 0 \\ 0 & A \end{pmatrix} = A \oplus A$.
-If $P_A(t)$ is the characteristic polynomial of $A$, then $P_{A^{db}}(t) = \det(tI - A^{db})$.
-$\det \begin{pmatrix} tI & -I \\ -A & tI \end{pmatrix} = \det(t^2 I - A) = P_A(t^2)$.
-Similarly, the minimal polynomial $m_{A^{db}}(t)$ is $m_A(t^2)$ (or a factor if $t=0$ is involved, but for non-singular $A$ it's $m_A(t^2)$).
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Block Matrices:} Matrices composed of smaller matrices.
+    \item \textbf{Characteristic Polynomial ($P_A(t)$):} Defined by $\det(tI - A)$.
+    \item \textbf{Minimal Polynomial ($m_A(t)$):} The lowest degree polynomial such that $m_A(A) = 0$.
+    \item \textbf{Conjugate Matrices:} Two matrices $X, Y$ are conjugate if $Y = PXP^{-1}$. This happens if and only if they have the same invariant factors.
+    \item \textbf{Direct Sum:} A matrix with blocks on the diagonal, like $A \oplus A$.
+\end{itemize}
 
-(2) \textbf{Conjugacy:} Yes. Two matrices are conjugate if and only if they have the same invariant factors.
-The invariant factors of $A \oplus A$ are obtained by doubling the multiplicity of each invariant factor of $A$.
-If $A^{db} \sim B^{db}$, then $(A^{db})^2 \sim (B^{db})^2$, so $A \oplus A \sim B \oplus B$.
-This implies $A$ and $B$ must have the same invariant factors, so $A \sim B$.
+\textbf{(1) Step 1: Calculate the characteristic polynomial of $A^{db}$.}
+The matrix is $A^{db} = \begin{pmatrix} 0 & I \\ A & 0 \end{pmatrix}$. To find its characteristic polynomial, we calculate:
+\[ P_{A^{db}}(t) = \det(tI_{6} - A^{db}) = \det \begin{pmatrix} tI_3 & -I_3 \\ -A & tI_3 \end{pmatrix} \]
+For a $2 \times 2$ block matrix $\begin{pmatrix} X & Y \\ Z & W \end{pmatrix}$, if the blocks commute, the determinant is $\det(XW - YZ)$. Here $tI_3$ commutes with everything.
+\[ = \det( (tI_3)(tI_3) - (-I_3)(-A) ) = \det( t^2 I_3 - A ) \]
+By the definition of the characteristic polynomial for $A$:
+\[ P_{A^{db}}(t) = P_A(t^2) \]
+
+\textbf{Step 2: Relate the minimal polynomials.}
+Notice that $(A^{db})^2 = \begin{pmatrix} 0 & I \\ A & 0 \end{pmatrix} \begin{pmatrix} 0 & I \\ A & 0 \end{pmatrix} = \begin{pmatrix} A & 0 \\ 0 & A \end{pmatrix} = A \oplus A$.
+If $Q(t)$ is any polynomial, then $Q(A^{db})^2 = Q(A) \oplus Q(A)$.
+If $t^2$ satisfies the minimal polynomial of $A$ (i.e., $m_A(A) = 0$), then the square of $A^{db}$ vanishes under $m_A$.
+Thus, $m_{A^{db}}(t)$ is $m_A(t^2)$ (as long as $A$ is non-singular; otherwise it might be a factor of it).
+
+\textbf{(2) Step 3: Compare conjugacy classes.}
+Suppose $A^{db}$ and $B^{db}$ are conjugate. Then their squares must also be conjugate:
+\[ (A^{db})^2 \sim (B^{db})^2 \implies A \oplus A \sim B \oplus B \]
+A property of direct sums is that $X \oplus X \sim Y \oplus Y$ if and only if $X \sim Y$.
+Why? Because the invariant factors of $X \oplus X$ are just the invariant factors of $X$, each listed twice. If two matrices have the same invariant factors (counting duplicates), the original matrices must have had the same invariant factors.
+Since $A$ and $B$ have the same invariant factors, they are conjugate. Thus, the answer is \textbf{Yes}.
 \end{solution}
 
 \begin{exercise}
@@ -209,18 +440,48 @@ Classify all groups of order 8.
 \end{exercise}
 
 \begin{solution}
-Abelian groups (by the structure theorem):
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item $C_8$ (cyclic)
-    \item $C_4 \times C_2$
-    \item $C_2 \times C_2 \times C_2$
+    \item \textbf{Lagrange's Theorem:} The order of a subgroup must divide the order of the group.
+    \item \textbf{Fundamental Theorem of Finite Abelian Groups:} Every abelian group is a product of cyclic groups.
+    \item \textbf{Center of a Group ($Z(G)$):} The set of elements that commute with everything. For groups of prime power order ($p^k$), the center is always non-trivial.
+    \item \textbf{Non-abelian Structure:} If $G/Z(G)$ is cyclic, then $G$ must be abelian.
 \end{itemize}
-Non-abelian groups:
+
+\textbf{Step 1: Classify Abelian groups of order 8.}
+The size is $8 = 2^3$. According to the Fundamental Theorem, the possible abelian groups correspond to the partitions of 3:
 \begin{itemize}
-    \item $D_8$ (Dihedral): The group of symmetries of a square. $D_8 = \langle r, s : r^4=s^2=1, srs=r^{-1} \rangle$.
-    \item $Q_8$ (Quaternion): $Q_8 = \{ \pm 1, \pm i, \pm j, \pm k \}$.
+    \item \textbf{Partition $3$:} $\mathbb{Z}/8\mathbb{Z}$ (a single cyclic group $C_8$).
+    \item \textbf{Partition $2+1$:} $\mathbb{Z}/4\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z}$ (one large and one small cyclic group).
+    \item \textbf{Partition $1+1+1$:} $\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2\mathbb{Z}$ (the elementary abelian group).
 \end{itemize}
-These are the only 5 groups up to isomorphism.
+These are all distinct because their elements have different maximum orders (8, 4, and 2 respectively).
+
+\textbf{Step 2: Find Non-Abelian groups.}
+Let $G$ be non-abelian of order 8. We know the center $Z(G)$ must have size at least 2.
+If the center had size 4, then $G/Z(G)$ would have size 2, making it cyclic. But if $G/Z(G)$ is cyclic, then $G$ is abelian.
+So the size of $Z(G)$ must be exactly 2.
+Also, $G$ cannot have an element of order 8 (that would make it cyclic/abelian).
+
+\textbf{Step 3: Analyze the element orders.}
+\begin{enumerate}
+    \item \textbf{Case 1: $G$ has an element $r$ of order 4.}
+    The subgroup $\langle r \rangle$ is normal (since it has index 2). Let $s$ be an element outside this subgroup.
+    Since $srs^{-1}$ must be in $\langle r \rangle$ and $G$ is non-abelian, the only possibility is $srs^{-1} = r^{-1}$.
+    - If $s^2 = 1$, we get the \textbf{Dihedral Group $D_8$} (symmetries of a square).
+    - If $s^2 = r^2$ (the only other choice for $s^2$ in the center), we get the \textbf{Quaternion Group $Q_8$}.
+    \item \textbf{Case 2: All elements have order 2.}
+    If $x^2 = 1$ for all $x$, then $(xy)^2 = 1 \implies xyxy = 1 \implies xy = y^{-1}x^{-1} = yx$.
+    This would make the group abelian, which contradicts our assumption.
+\end{enumerate}
+
+\textbf{Conclusion:}
+There are exactly 5 groups of order 8 up to isomorphism:
+1. $C_8$ (Abelian)
+2. $C_4 \times C_2$ (Abelian)
+3. $C_2 \times C_2 \times C_2$ (Abelian)
+4. $D_8$ (Non-Abelian)
+5. $Q_8$ (Non-Abelian)
 \end{solution}
 
 \begin{exercise}
@@ -232,13 +493,33 @@ Let $V$ be a finite dimensional complex vector space with a non-degenerate symme
 \end{exercise}
 
 \begin{solution}
-(1) \textbf{Isomorphism:} $V \otimes V \cong V \otimes V^* \cong \text{End}(V)$ using the isomorphism $V \cong V^*$ given by the form.
-The action of $O(V)$ on $V \otimes V$ corresponds to the action by conjugation on $\text{End}(V)$.
-Fixed points in $V \otimes V$ correspond to endomorphisms that commute with $O(V)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Dual Space ($V^*$):} The space of linear functions from $V$ to $\mathbb{C}$.
+    \item \textbf{Canonical Isomorphism:} If $V$ has a non-degenerate form, there is a natural way to identify vectors in $V$ with functions in $V^*$.
+    \item \textbf{Fixed Points ($X^G$):} The subset of $X$ that is not moved by the action of $G$.
+    \item \textbf{Schur's Lemma:} A linear map that commutes with an irreducible representation must be a scalar multiple of the identity.
+\end{itemize}
 
-(2) \textbf{Dimension:} The standard representation of $O(V)$ on $V$ is irreducible.
-By Schur's Lemma, the only endomorphisms of an irreducible representation that commute with the group action are scalar multiples of the identity.
-Thus $\dim \text{End}_{O(V)}(V) = 1$.
+\textbf{(1) Step 1: Identify the spaces.}
+There is a general rule in linear algebra: $V \otimes V^*$ is naturally isomorphic to the space of all linear operators $\text{End}(V)$.
+Because our vector space $V$ has a \textit{non-degenerate symmetric bilinear form}, we can identify $V$ with $V^*$ (the map is $v \mapsto (v, \cdot)$).
+Substituting this into our tensor product formula:
+\[ V \otimes V \cong V \otimes V^* \cong \text{End}(V) \]
+
+\textbf{Step 2: Compare the group actions.}
+When an element $g$ of the orthogonal group $O(V)$ acts on a tensor $v \otimes w$, it maps it to $gv \otimes gw$.
+Under our identification with $\text{End}(V)$, this action corresponds to \textbf{conjugation}: an operator $A$ is mapped to $gAg^{-1}$.
+The "fixed point subspace" consists of elements that remain unchanged by this action:
+\[ gAg^{-1} = A \implies gA = Ag \]
+This condition means the operator $A$ must commute with every transformation in the group $O(V)$.
+The set of such operators is called the \textbf{centralizer} of the group action, denoted $\text{End}_{O(V)}(V)$.
+
+\textbf{(2) Step 3: Apply Schur's Lemma.}
+The standard representation of the orthogonal group $O(V)$ on the space $V$ is \textbf{irreducible}.
+Schur's Lemma tells us that any linear operator that commutes with an irreducible group representation must be a scalar multiple of the identity matrix ($A = cI$ for some $c \in \mathbb{C}$).
+Since the space of scalar matrices $\{ cI : c \in \mathbb{C} \}$ is 1-dimensional, the fixed point subspace must also be \textbf{1-dimensional}.
+The unique invariant element corresponds to the bilinear form itself.
 \end{solution}
 
 \begin{exercise}
@@ -251,15 +532,39 @@ Let $c$ be a non-zero rational integer.
 \end{exercise}
 
 \begin{solution}
-(1) \textbf{Factorization:} Let $\theta = \sqrt[3]{c}$.
-$f(x, y, z) = (x + \theta y + \theta^2 z)(x + \omega\theta y + \omega^2\theta^2 z)(x + \omega^2\theta y + \omega\theta^2 z)$ where $\omega = e^{2\pi i/3}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Cubic Identity:} $x^3+y^3+z^3-3xyz = (x+y+z)(x^2+y^2+z^2-xy-yz-zx)$.
+    \item \textbf{Complex Roots of Unity:} $\omega = e^{2\pi i/3}$. Note $\omega^2 + \omega + 1 = 0$.
+    \item \textbf{Pure Cubic Field ($K = \mathbb{Q}(\sqrt[3]{c})$):} A field extension where we add the cube root of a number.
+    \item \textbf{Dirichlet's Unit Theorem:} A theorem that counts how many independent "units" (integers with norm 1) exist in a field.
+\end{itemize}
 
-(2) \textbf{Cube Case:} If $c = \theta^3$, then $f(x, y, z) = (x+\theta y+\theta^2 z) Q(x, y, z)$ where $Q$ is a quadratic.
-For integers, $x+\theta y+\theta^2 z$ must be $\pm 1$.
-This reduces the dimension. The quadratic $Q=1$ in this plane defines an ellipse, which has only finitely many lattice points.
+\textbf{(1) Step 1: Factor the polynomial over the complex numbers.}
+Let $\theta = \sqrt[3]{c}$. Notice that our polynomial is related to the sum of cubes formula.
+Over $\mathbb{C}$, the factors are:
+\[ f(x, y, z) = (x + y\theta + z\theta^2)(x + y\omega\theta + z\omega^2\theta^2)(x + y\omega^2\theta + z\omega\theta^2) \]
+This is because if we multiply these three linear terms, we recover the original cubic form. The terms in the parentheses are the three "embeddings" of the element $\alpha = x + y\theta + z\theta^2$ into $\mathbb{C}$.
 
-(3) \textbf{Non-cube Case:} $f(x, y, z)$ is the norm form $N_{K/\mathbb{Q}}(\alpha)$ for $\alpha = x + y\theta + z\theta^2$ in $K = \mathbb{Q}(\sqrt[3]{c})$.
-The ring of integers $\mathcal{O}_K$ has a unit group of rank $r_1+r_2-1 = 1+1-1 = 1$ (by Dirichlet's Unit Theorem, as there is one real and one pair of complex embeddings).
-The units $u \in \mathcal{O}_K^\times$ satisfy $|N(u)| = 1$.
-Since the rank is 1, there is a fundamental unit $\epsilon$, and all $\pm \epsilon^n$ are distinct units, giving infinitely many solutions to $N(\alpha) = 1$ (or $-1$).
+\textbf{(2) Step 2: Analyze the "Cube Case" ($c = \theta^3$).}
+If $c$ is already a perfect cube (like $c=8, \theta=2$), then $\sqrt[3]{c}$ is an integer.
+The expression $f(x, y, z) = 1$ factors over the integers:
+\[ (x + \theta y + \theta^2 z) \cdot (\text{quadratic part}) = 1 \]
+Since we are looking for integer solutions, the first factor $(x + \theta y + \theta^2 z)$ must be an integer that divides 1, so it must be $\pm 1$.
+This means our variables are restricted to a 2D plane. Within this plane, the second factor (the quadratic part) must also be 1.
+A quadratic equation in 2 variables defines a conic section. In this specific case, it defines an ellipse.
+Since an ellipse is a bounded curve, it can only contain a finite number of points with integer coordinates (lattice points). Thus, there are only \textbf{finitely many solutions}.
+
+\textbf{(3) Step 3: Analyze the "Non-Cube Case".}
+If $c$ is not a perfect cube, then $\theta = \sqrt[3]{c}$ is an irrational number. The set of numbers $\{ x + y\theta + z\theta^2 \}$ forms a ring of integers in the field $K = \mathbb{Q}(\theta)$.
+The expression $f(x, y, z)$ is exactly the \textbf{field norm} $N_{K/\mathbb{Q}}(\alpha)$.
+According to Dirichlet's Unit Theorem, the group of units (elements with norm $\pm 1$) in this field has a "rank".
+The number of independent units is $r = r_1 + r_2 - 1$.
+\begin{itemize}
+    \item $r_1$ is the number of real embeddings. Here $\sqrt[3]{c}$ has 1 real embedding.
+    \item $r_2$ is the number of pairs of complex embeddings. The other two cube roots are complex conjugates, so $r_2 = 1$.
+\end{itemize}
+Rank $r = 1 + 1 - 1 = 1$.
+Since the rank is 1, there exists a "fundamental unit" $\epsilon$. Every power $\epsilon^n$ (for $n=1, 2, 3, \dots$) is a distinct unit with norm 1.
+Since there are infinitely many powers of $\epsilon$, there are \textbf{infinitely many integer solutions} $(x, y, z)$.
 \end{solution}

@@ -12,26 +12,43 @@ Let $(M_n,\|\cdot\|)$ be the Banach space formed by $n\times n$ real matrices, e
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Part (1) is the Lie-Trotter Product Formula, which is fundamental in quantum mechanics (operator splitting) and numerical analysis. It shows how the exponential of a sum can be approximated by products of exponentials. Part (2) shows that the commutativity of the exponentials for all $t$ implies the commutativity of the generators.
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with:
+1. \textbf{Matrix Exponential:} The definition $\exp(A) = \sum_{k=0}^\infty \frac{A^k}{k!}$.
+2. \textbf{Taylor Expansion:} The idea that for a $C^1$ function $\gamma(t)$, $\gamma(h) \approx \gamma(0) + h\dot{\gamma}(0)$ for small $h$.
+3. \textbf{Matrix Logarithm:} The property $\ln(X) \approx X - I$ for matrices $X$ near the identity $I$.
+4. \textbf{Limit Definition of $e$:} $\lim_{n \to \infty} (1 + \frac{x}{n})^n = e^x$, generalized to matrices.
 
-(1) Since $\gamma$ is $C^1$, we have the Taylor expansion of $\gamma$ at $h=0$:
-\[ \gamma(h) = \gamma(0) + h \dot{\gamma}(0) + o(h) = I + hA + o(h) \]
-as $h \to 0$. Substituting $h = t/n$, we get:
-\[ \gamma(t/n) = I + \frac{t}{n}A + o(t/n) \]
-as $n \to \infty$. To find the limit of $\gamma^n(t/n)$, we take the logarithm (for sufficiently large $n$, $\gamma(t/n)$ is near $I$):
-\[ n \ln(\gamma(t/n)) = n \ln\left(I + \frac{tA}{n} + o(1/n)\right) = n \left( \frac{tA}{n} + o(1/n) \right) = tA + o(1) \]
-Thus, $\lim_{n\to\infty} \gamma^n(t/n) = \exp(\lim_{n\to\infty} n \ln(\gamma(t/n))) = \exp(tA)$.
-For the second part, let $\gamma(t) = e^{tA} e^{tB}$. Then $\gamma(0) = I$ and $\dot{\gamma}(0) = A e^0 e^0 + e^0 B e^0 = A+B$. Applying the first part gives the Trotter Product Formula: $e^{t(A+B)} = \lim_{n\to\infty} (e^{\frac{t}{n}A} e^{\frac{t}{n}B})^n$.
+\textbf{Steps for Part (1):}
 
-(2) Suppose $e^{t(A+B)} = e^{tA} e^{tB}$ for all $t$. Differentiating both sides with respect to $t$:
-LHS: $\frac{d}{dt} e^{t(A+B)} = (A+B) e^{t(A+B)}$.
-RHS: $\frac{d}{dt} (e^{tA} e^{tB}) = A e^{tA} e^{tB} + e^{tA} B e^{tB}$.
-So, $(A+B) e^{t(A+B)} = A e^{t(A+B)} + e^{tA} B e^{tB}$, which simplifies to $B e^{t(A+B)} = e^{tA} B e^{tB}$.
-Multiplying by $e^{-tA}$ on the left, we have $e^{-tA} B e^{t(A+B)} = B e^{tB}$.
-Differentiate this identity with respect to $t$ again and evaluate at $t=0$:
-LHS: $\frac{d}{dt}\big|_{t=0} (e^{-tA} B e^{t(A+B)}) = -A B e^0 + B (A+B) e^0 = -AB + BA + B^2 = [B, A] + B^2$.
-RHS: $\frac{d}{dt}\big|_{t=0} (B e^{tB}) = B^2 e^0 = B^2$.
-Equating the results, we get $[B, A] + B^2 = B^2$, which implies $[B, A] = 0$, hence $[A, B] = 0$.
+1. \textbf{Expand $\gamma$ at $h=0$:}
+Since $\gamma$ is $C^1$ with $\gamma(0)=I$ and $\dot{\gamma}(0)=A$, we can write its Taylor expansion for small $h$ as $\gamma(h) = I + hA + R(h)$, where $R(h)$ is a small error term (formally, $\|R(h)\|/h \to 0$ as $h \to 0$).
+
+2. \textbf{Evaluate at $h = t/n$:}
+Substituting $h = t/n$ gives $\gamma(t/n) = I + \frac{tA}{n} + R(t/n)$. For very large $n$, $R(t/n)$ is much smaller than $1/n$.
+
+3. \textbf{Analyze the $n$-th power:}
+We want to calculate $\lim_{n \to \infty} [\gamma(t/n)]^n$. For large $n$, $\gamma(t/n)$ is very close to the identity matrix $I$. Using the logarithm property, we look at the exponent:
+\[ \ln([\gamma(t/n)]^n) = n \ln(\gamma(t/n)) \approx n \left( \frac{tA}{n} \right) = tA \]
+As $n$ goes to infinity, this approximation becomes exact.
+
+4. \textbf{Take the limit:}
+Since the exponential function is continuous, $\lim_{n \to \infty} [\gamma(t/n)]^n = \exp(tA)$. Applying this to the specific function $\gamma(t) = e^{tA}e^{tB}$ (where $\gamma(0)=I$ and $\gamma'(0)=A+B$ by the product rule) gives the Lie-Trotter formula: $e^{t(A+B)} = \lim_{n\to\infty}(e^{\frac{t}{n}A}e^{\frac{t}{n}B})^n$.
+
+\textbf{Steps for Part (2):}
+
+1. \textbf{Differentiate the assumption:}
+Suppose $e^{t(A+B)} = e^{tA}e^{tB}$ for all $t$. Differentiating both sides with respect to $t$ using the chain rule gives:
+\[ (A+B)e^{t(A+B)} = Ae^{tA}e^{tB} + e^{tA}Be^{tB} \]
+Substitute $e^{t(A+B)} = e^{tA}e^{tB}$ back into the equation:
+\[ (A+B)e^{tA}e^{tB} = Ae^{tA}e^{tB} + e^{tA}Be^{tB} \]
+Subtracting $Ae^{tA}e^{tB}$ from both sides, we get $Be^{tA}e^{tB} = e^{tA}Be^{tB}$.
+
+2. \textbf{Simplify and finish:}
+Multiplying by $e^{-tB}$ on the right, we have $Be^{tA} = e^{tA}B$. Differentiating this with respect to $t$ gives $BA e^{tA} = A e^{tA} B$. Setting $t=0$ yields $BA = AB$, meaning $[A,B]=0$.
+
+\textbf{Intuition:}
+Part (1) shows that for very small time steps, we can "separate" the effects of two matrices $A$ and $B$. Even if they don't commute, the error we make by interleaving them is proportional to $1/n^2$, which vanishes when repeated $n$ times. Part (2) confirms that if the "separate" version is exactly equal to the "together" version for all times, there cannot be any ordering interference, so $A$ and $B$ must commute.
 \end{solution}
 
 \begin{exercise}
@@ -43,20 +60,39 @@ where $f(t,x,y)$ is a $C^1$ function on $[0,1]\times\mathbb{R}^2$. Let $\varphi$
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem is about the existence of solutions to boundary value problems (BVPs) through the shooting method. The condition $\partial f / \partial x > 0$ ensures that solutions to the IVP are monotonic with respect to their initial slope, preventing the existence of "conjugate points" and ensuring the invertibility of the shooting map.
+\textbf{Prerequisites:}
 
-Consider the initial value problem (IVP): $\frac{d^2 x}{dt^2} = f(t,x, \dot{x})$ with $x(0) = a$ and $\dot{x}(0) = \xi$. Let $x(t, \xi)$ be the unique solution of this IVP. We are given that for $\xi_0 = \dot{\varphi}(0)$, the solution $x(t, \xi_0) = \varphi(t)$ satisfies $x(1, \xi_0) = b$.
-To show existence of solutions for $\beta$ near $b$, we use the Implicit Function Theorem on the map $G(\xi) = x(1, \xi)$. It suffices to show $\frac{\partial x}{\partial \xi}(1, \xi_0) \neq 0$.
-Let $z(t) = \frac{\partial x}{\partial \xi}(t, \xi_0)$. Then $z(t)$ satisfies the linearized (variational) equation:
+To follow this proof, you should be familiar with the following concepts:
+
+1. \textbf{Initial Value Problems (IVP):} A differential equation where we specify $x(0)$ and $\dot{x}(0)$ at a single starting point.
+
+2. \textbf{Boundary Value Problems (BVP):} A differential equation where we specify $x(0)=a$ and $x(1)=b$ at two different points.
+
+3. \textbf{The Inverse Function Theorem:} A core principle in analysis stating that if a function has a non-zero derivative at a point, it can be "inverted" locally, meaning we can move from the output back to the input near that point.
+
+4. \textbf{Variational Equations:} A method to understand how the solution of an ODE changes if we slightly change the initial conditions.
+
+\textbf{Steps:}
+
+1. \textbf{Defining the Shooting Map:}
+Imagine you are at point $a$ at time $t=0$. To reach point $b$ at time $t=1$, you need to choose an initial "aim" or slope $\xi = \dot{x}(0)$. Let $x(t, \xi)$ be the unique solution to the IVP starting at $x(0)=a$ with initial slope $\dot{x}(0)=\xi$. We are given that there exists some initial slope $\xi_0$ such that the solution $x(t, \xi_0)$ successfully reaches $x(1, \xi_0) = b$. We define a "shooting map" $G(\xi) = x(1, \xi)$, which tells us the final position at $t=1$ based on the initial slope.
+
+2. \textbf{Using the Inverse Function Theorem:}
+We want to find an initial slope $\xi$ such that $x(1, \xi) = \beta$ for any $\beta$ near $b$. If we can show that the map $G(\xi)$ is locally invertible near $\xi_0$, then for any $\beta$ near $G(\xi_0) = b$, there exists a corresponding $\xi$ that maps to $\beta$. This requires showing that the derivative $G'(\xi_0) = \frac{\partial x}{\partial \xi}(1, \xi_0)$ is not equal to zero.
+
+3. \textbf{Setting up the Variational Equation:}
+Let $z(t) = \frac{\partial x}{\partial \xi}(t, \xi_0)$ represent how the solution $x(t)$ changes with respect to the initial slope. By differentiating the original ODE with respect to $\xi$, we find that $z(t)$ must satisfy the linear ODE:
 \[ \ddot{z}(t) = \frac{\partial f}{\partial x}(t, \varphi, \dot{\varphi}) z(t) + \frac{\partial f}{\partial y}(t, \varphi, \dot{\varphi}) \dot{z}(t) \]
-with initial conditions $z(0) = \frac{\partial x}{\partial \xi}(0, \xi_0) = 0$ and $\dot{z}(0) = \frac{\partial \dot{x}}{\partial \xi}(0, \xi_0) = 1$.
-Suppose $z(1) = 0$. Since $z(0)=0$ and $\dot{z}(0)=1$, $z(t) > 0$ for small $t > 0$. If $z(1)=0$, then $z(t)$ must have a local maximum at some $t_0 \in (0, 1)$ where $z(t_0) > 0$.
-At this maximum, we have $\dot{z}(t_0) = 0$ and $\ddot{z}(t_0) \leq 0$.
-However, the variational equation gives:
-\[ \ddot{z}(t_0) = \frac{\partial f}{\partial x}(t_0, \dots) z(t_0) + \frac{\partial f}{\partial y}(t_0, \dots) \cdot 0 = \frac{\partial f}{\partial x}(t_0, \dots) z(t_0) \]
-Since $\frac{\partial f}{\partial x} > 0$ and $z(t_0) > 0$, we have $\ddot{z}(t_0) > 0$. This is a contradiction.
-Thus $z(t)$ cannot have a positive maximum, and since it starts positive, it can never return to 0. Hence $z(1) \neq 0$.
-By the Inverse Function Theorem, $G(\xi)$ is a local diffeomorphism near $\xi_0$, so for $\beta$ sufficiently close to $b$, there exists $\xi$ such that $x(1, \xi) = \beta$.
+The initial conditions are $z(0) = 0$ (because the starting position $x(0)=a$ is fixed) and $\dot{z}(0) = 1$ (because $\xi$ is the initial slope).
+
+4. \textbf{Proving $z(1) \neq 0$:}
+Assume for contradiction that $z(1) = 0$. Since $z(0)=0$ and $\dot{z}(0)=1$, the solution $z(t)$ starts by increasing and becoming positive. If it returns to $0$ at $t=1$, it must have reached a positive maximum at some time $t_0 \in (0, 1)$. At this maximum, $\dot{z}(t_0) = 0$ and $\ddot{z}(t_0) \leq 0$. Substituting this into our variational equation, we get $\ddot{z}(t_0) = \frac{\partial f}{\partial x} z(t_0)$. Since $\frac{\partial f}{\partial x} > 0$ and $z(t_0) > 0$, we must have $\ddot{z}(t_0) > 0$. This contradicts the fact that the second derivative at a maximum must be $\leq 0$. Thus, $z(1)$ must be strictly positive, ensuring $G'(\xi_0) \neq 0$.
+
+5. \textbf{Conclusion:}
+Because $G'(\xi_0) \neq 0$, the Inverse Function Theorem guarantees that for any target $\beta$ sufficiently close to $b$, there is a unique initial slope $\xi$ that hits $\beta$. This proves the existence of the desired solution $\psi$.
+
+\textbf{Intuition:}
+The "shooting method" is an intuitive way to solve a BVP. Think of yourself as an archer at $t=0$ trying to hit a target at $t=1$. The slope $\xi$ is your aim. The assumption $\frac{\partial f}{\partial x} > 0$ implies that the system is "repulsive" or "unstable"—any increase in your initial aim causes the path to bend away and finish even higher at $t=1$. Because this movement is predictable and smooth, you can always hit a nearby target by slightly adjusting your aim.
 \end{solution}
 
 \begin{exercise}
@@ -81,19 +117,38 @@ where $*$ stands for convolution.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Positive definite functions are characterized by Bochner's Theorem as the Fourier transforms of positive measures. This problem explores the basic properties of these functions and their behavior under integration and convolution.
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with:
+1. \textbf{Positive Semi-definite Matrices:} A matrix $M$ is positive semi-definite if $v^* M v \geq 0$ for all vectors $v$.
+2. \textbf{Lebesgue Integration:} Treating integrals as limits of sums over partition points.
+3. \textbf{Convolution:} $(f * g)(x) = \int f(y) g(x-y) dy$.
+4. \textbf{Bochner's Theorem:} A continuous function $\varphi$ is positive definite if and only if it is the Fourier transform of a positive measure.
 
-(1) For $k=1$, $c_1 \bar{c}_1 \varphi(0) \geq 0 \implies \varphi(0) \geq 0$.
-For $k=2$, let $y_1=y, y_2=0$. The matrix $M = \begin{pmatrix} \varphi(0) & \varphi(y) \\ \varphi(-y) & \varphi(0) \end{pmatrix}$ must be Hermitian and positive semi-definite. Hermitian property implies $\varphi(-y) = \overline{\varphi(y)}$. Positive semi-definiteness implies $\det(M) \geq 0 \implies \varphi(0)^2 - \varphi(y)\varphi(-y) \geq 0 \implies \varphi(0)^2 - |\varphi(y)|^2 \geq 0$, so $|\varphi(y)| \leq \varphi(0)$.
+\textbf{Steps:}
 
-(2) The integral is the limit of Riemann sums of the form $\sum_{i,j} \varphi(y_i-y_j) f(y_i) f(y_j) \Delta y_i \Delta y_j$. Setting $c_i = f(y_i) \Delta y_i$ (which are real since $f$ is nonnegative), the sum is $\sum_{i,j} c_i c_j \varphi(y_i-y_j) \geq 0$ by the definition of positive definiteness.
+1. \textbf{Proving basic properties (Part 1):}
+For $k=1$, choosing $y_1=0$ and $c_1=1$ implies $\varphi(0) \geq 0$.
+For $k=2$, choosing $y_1=y, y_2=0$ implies the matrix $M = \begin{pmatrix} \varphi(0) & \varphi(y) \\ \varphi(-y) & \varphi(0) \end{pmatrix}$ is positive semi-definite.
+A positive semi-definite matrix must be Hermitian, so $\varphi(-y) = \overline{\varphi(y)}$.
+Also, its determinant must be non-negative: $\det(M) = \varphi(0)^2 - \varphi(y)\varphi(-y) \geq 0$, so $\varphi(0)^2 - |\varphi(y)|^2 \geq 0$, which gives $|\varphi(y)| \leq \varphi(0)$.
 
-(3) If $f$ is even, then $(f*f)(x) = \int f(y) f(x-y) dy$.
-The integral in (2) is $\iint \varphi(x-y) f(x) f(y) dx dy$. Since $f$ is even, $f(y) = f(-y)$. Let $u = x-y$ and $v = y$. Then $x = u+v$ and the integral becomes:
-\[ \iint \varphi(u) f(u+v) f(v) dv du = \int \varphi(u) \left( \int f(u+v) f(v) dv \right) du \]
-The inner integral is $\int f(v-(-u)) f(v) dv = (f*f)(-u)$. Since $f$ is even, $f*f$ is even, so $(f*f)(-u) = (f*f)(u)$. Thus, $\int \varphi(u) (f*f)(u) du \geq 0$.
+2. \textbf{Integral inequality (Part 2):}
+We can view the integral $I = \int \int \varphi(x-y) f(x) f(y) dx dy$ as the limit of a Riemann sum:
+\[ I \approx \sum_{i,j} \varphi(y_i - y_j) f(y_i) f(y_j) \Delta y_i \Delta y_j \]
+Let $c_i = f(y_i) \Delta y_i$. Since $f \geq 0$, $c_i$ are real and $\bar{c}_j = c_j$. The sum is $\sum_{i,j} c_i \bar{c}_j \varphi(y_i - y_j)$, which is $\geq 0$ by the definition of a positive definite function.
 
-(4) The Gaussian $\exp(-\alpha |x|^2)$ is a positive definite function. Specifically, it can be written as the convolution of a Gaussian with itself: $e^{-\alpha |x|^2} = (g*g)(x)$ for some even function $g$. By part (3), the result follows. Alternatively, by Bochner's theorem, $\varphi$ is the Fourier transform of a positive measure $\mu$, so $\int \varphi(x) e^{-\alpha |x|^2} dx = \int \left( \int e^{i \xi \cdot x} d\mu(\xi) \right) e^{-\alpha |x|^2} dx = \int \left( \int e^{-\alpha |x|^2} e^{i \xi \cdot x} dx \right) d\mu(\xi)$. The inner integral is the Fourier transform of a Gaussian, which is positive.
+3. \textbf{Convolution form (Part 3):}
+If $f$ is even, $f(y) = f(-y)$. The convolution is $(f * f)(x) = \int f(y) f(x-y) dy$.
+Consider $\int \varphi(x) (f * f)(x) dx = \int \varphi(x) \int f(y) f(x-y) dy dx$.
+Letting $u = x-y$ and $v = y$, the integral becomes:
+\[ \int \int \varphi(u+v) f(v) f(u) du dv = \int \int \varphi(u+v) f(u) f(v) du dv \]
+Since this is exactly the form of the integral in Part 2, it is $\geq 0$.
+
+4. \textbf{Gaussian application (Part 4):}
+The function $e^{-\alpha |x|^2}$ is even and can be written as $(g * g)(x)$ for some even function $g$ (specifically, a wider Gaussian). By part 3, $\int \varphi(x) e^{-\alpha |x|^2} dx = \int \varphi(x) (g * g)(x) dx \geq 0$.
+
+\textbf{Intuition:}
+Positive definiteness is a "generalized" version of variance. Part 2 says that averaging this "variance" over any mass distribution $f$ gives a non-negative result. Parts 3 and 4 show this property holds even when testing against other positive-definite shapes like convolutions or Gaussians, which are the foundational building blocks of harmonic analysis.
 \end{solution}
 
 \begin{exercise}
@@ -103,19 +158,34 @@ Prove that $\{x_n\}$ converges weakly in $L^2([0,2\pi])$ and find the limit.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem examines the behavior of fast-oscillating periodic functions. Such functions do not converge strongly (unless constant), but they converge weakly to their average value, as the oscillations "cancel out" against any fixed test function.
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with:
+1. \textbf{$L^2$ Space and Inner Product:} $\langle f, g \rangle = \int_0^{2\pi} f(t) \overline{g(t)} dt$.
+2. \textbf{Weak Convergence:} A sequence $x_n$ converges weakly to $x$ if $\langle x_n, y \rangle \to \langle x, y \rangle$ for every test function $y \in L^2$.
+3. \textbf{Fourier Series:} Any $2\pi$-periodic $L^2$ function $x(t)$ can be written as $\sum_{k \in \mathbb{Z}} c_k e^{ikt}$, with coefficients $c_k = \frac{1}{2\pi} \int_0^{2\pi} x(t) e^{-ikt} dt$.
+4. \textbf{Riemann-Lebesgue Lemma:} For any $L^2$ function, the Fourier coefficients $c_k \to 0$ as $|k| \to \infty$.
 
-Let $x(t) = \sum_{k=-\infty}^{\infty} c_k e^{ikt}$ be the Fourier series of $x$, where $c_k = \frac{1}{2\pi} \int_0^{2\pi} x(t) e^{-ikt} dt$. Then $x_n(t) = x(nt) = \sum_{k} c_k e^{iknt}$.
-For any test function $y \in L^2([0, 2\pi])$ with Fourier coefficients $d_m$, the inner product is:
-\[ \langle x_n, y \rangle = \int_0^{2\pi} x_n(t) \overline{y(t)} dt = \sum_k \sum_m c_k \overline{d_m} \int_0^{2\pi} e^{iknt} e^{-imt} dt \]
-The integral is $2\pi$ if $kn = m$ and $0$ otherwise. Thus:
-\[ \langle x_n, y \rangle = 2\pi \sum_k c_k \overline{d_{kn}} \]
-As $n \to \infty$, for any fixed $k \neq 0$, the index $kn \to \infty$ (or $-\infty$). Since $y \in L^2$, we have $\lim_{|j|\to\infty} d_j = 0$.
-The term for $k=0$ is $2\pi c_0 \overline{d_0}$, which is constant for all $n$.
-For the remaining terms, $|\sum_{k \neq 0} c_k \overline{d_{kn}}| \leq (\sum |c_k|^2)^{1/2} (\sum_{k \neq 0} |d_{kn}|^2)^{1/2}$.
-Since $\sum |d_j|^2 < \infty$, the tail $\sum_{|j| \geq n} |d_j|^2 \to 0$ as $n \to \infty$. Thus $\sum_{k \neq 0} |d_{kn}|^2 \to 0$.
-Therefore, $\lim_{n\to\infty} \langle x_n, y \rangle = 2\pi c_0 \overline{d_0} = 2\pi (\frac{1}{2\pi} \int x) (\frac{1}{2\pi} \int \overline{y}) = \langle \bar{x}, y \rangle$, where $\bar{x} = \frac{1}{2\pi} \int_0^{2\pi} x(t) dt$ is the average of $x$.
-The sequence $x_n$ converges weakly to the constant function $c_0 = \frac{1}{2\pi} \int_0^{2\pi} x(t) dt$.
+\textbf{Steps:}
+
+1. \textbf{Expand $x_n(t)$:}
+The sequence $x_n(t) = x(nt)$ is simply the function $x(t)$ compressed $n$ times. Using Fourier series, $x_n(t) = \sum_{k \in \mathbb{Z}} c_k e^{iknt}$.
+
+2. \textbf{Test against a test function $y(t)$:}
+Let $y \in L^2([0, 2\pi])$ be any test function with Fourier coefficients $d_m$. We compute the inner product:
+\[ \langle x_n, y \rangle = \int_0^{2\pi} x(nt) \overline{y(t)} dt = \int_0^{2\pi} \left( \sum_k c_k e^{iknt} \right) \left( \sum_m \overline{d_m} e^{-imt} \right) dt \]
+Due to the orthonormality of the basis $e^{ikt}$, the integral $\int_0^{2\pi} e^{i(kn-m)t} dt$ is $2\pi$ if $m = kn$ and $0$ otherwise. The inner product becomes:
+\[ \langle x_n, y \rangle = 2\pi \sum_{k \in \mathbb{Z}} c_k \overline{d_{kn}} \]
+
+3. \textbf{Analyze the limit as $n \to \infty$:}
+We separate the $k=0$ term:
+\[ \langle x_n, y \rangle = 2\pi c_0 \overline{d_0} + 2\pi \sum_{k \neq 0} c_k \overline{d_{kn}} \]
+The first term is constant. For the second term, as $n \to \infty$, the index $kn$ for $k \neq 0$ grows arbitrarily large. By the Riemann-Lebesgue lemma (or Cauchy-Schwarz for sequences), the tail of the Fourier coefficients for any $L^2$ function vanishes, so $\sum_{k \neq 0} c_k \overline{d_{kn}} \to 0$.
+
+4. \textbf{Identify the limit:}
+The limit of the inner product is $2\pi c_0 \overline{d_0} = \langle \bar{x}, y \rangle$, where $\bar{x} = c_0$ is the constant function equal to the average value of $x$.
+
+\textbf{Intuition:}
+Think of $x(nt)$ as a signal oscillating faster and faster. When you integrate this against a smooth test function $y(t)$, the rapid oscillations of $x(nt)$ cause almost all of the signal to cancel out. The only information that survives this "cancellation process" is the DC offset, or the average value of the signal. This is why the sequence converges weakly to the average constant value.
 \end{solution}
 
 \begin{exercise}
@@ -123,16 +193,33 @@ Let $f$ be an entire function on $\mathbb{C}$ and there exists a constant $C>0$ 
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a problem in complex analysis that combines the use of zeros of holomorphic functions with growth estimates (Liouville's theorem). By dividing by the "growth-driving" term $\cos(z)$, we obtain a simpler function that must be constant due to its slow growth.
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with:
+1. \textbf{Entire Functions:} Functions that are holomorphic (complex differentiable) everywhere in $\mathbb{C}$.
+2. \textbf{Zeros of Holomorphic Functions:} If a holomorphic function vanishes at a point $z_0$, we can locally factor out $(z-z_0)$.
+3. \textbf{Liouville's Theorem (Generalized):} If an entire function $g(z)$ satisfies $|g(z)| \leq M|z|^k$, then $g(z)$ is a polynomial of degree at most $\lfloor k \rfloor$.
 
-The zeros of $\cos(z)$ are $z_k = (k + 1/2)\pi$ for $k \in \mathbb{Z}$. The given inequality implies $f(z_k) = 0$ for all $k$. Since $\cos(z)$ has simple zeros at $z_k$, the function $g(z) = \frac{f(z)}{\cos(z)}$ is an entire function.
-The inequality $|f(z)| \leq C \sqrt{|z|} |\cos(z)|$ implies $|g(z)| \leq C \sqrt{|z|}$ for all $z \in \mathbb{C}$.
-By the generalized Liouville's theorem, an entire function $g(z)$ satisfying $|g(z)| \leq M |z|^k$ must be a polynomial of degree at most $\lfloor k \rfloor$.
-In our case, $k = 1/2$, so $g(z)$ must be a polynomial of degree $0$, i.e., a constant $g(z) = a$.
-Thus $f(z) = a \cos(z)$.
-Substituting this back into the original inequality: $|a \cos(z)| \leq C \sqrt{|z|} |\cos(z)|$, which implies $|a| \leq C \sqrt{|z|}$ for all $z$ such that $\cos(z) \neq 0$.
-Taking the limit as $z \to 0$ (or letting $|z| \to 0$) gives $|a| \leq 0$, hence $a = 0$.
-Therefore, $f(z) = 0$ for all $z \in \mathbb{C}$.
+\textbf{Steps:}
+
+1. \textbf{Identify Zeros:}
+The cosine function $\cos(z)$ has simple zeros at $z_k = (k + 1/2)\pi$ for every integer $k$. The given inequality $|f(z)| \leq C\sqrt{|z|}|\cos(z)|$ forces $f(z_k) = 0$ at all these points.
+
+2. \textbf{Form the Quotient Function:}
+Since $f$ has zeros at all the zeros of $\cos(z)$, and these zeros are simple, the function $g(z) = \frac{f(z)}{\cos(z)}$ is an entire function (the singularities at $z_k$ are removable).
+
+3. \textbf{Estimate Growth:}
+The original inequality $|f(z)| \leq C \sqrt{|z|} |\cos(z)|$ translates to an estimate for our new entire function:
+\[ |g(z)| = \left| \frac{f(z)}{\cos(z)} \right| \leq C \sqrt{|z|} \]
+This inequality holds for all $z \in \mathbb{C}$ (away from the zeros of $\cos(z)$, and everywhere by continuity).
+
+4. \textbf{Apply Generalized Liouville's Theorem:}
+We have an entire function $g(z)$ that satisfies $|g(z)| \leq C |z|^{1/2}$. According to the generalized Liouville's theorem, $g(z)$ must be a polynomial of degree at most $1/2$. A polynomial of degree $\leq 1/2$ must be a constant, $g(z) = a$.
+
+5. \textbf{Determine the Constant:}
+So $f(z) = a \cos(z)$. Plugging this back into our original inequality gives $|a \cos(z)| \leq C \sqrt{|z|} |\cos(z)|$. For any $z$ where $\cos(z) \neq 0$, this simplifies to $|a| \leq C \sqrt{|z|}$. As $|z| \to 0$, this forces $a = 0$. Thus $f(z) = 0$ for all $z$.
+
+\textbf{Intuition:}
+The problem boils down to a competition between the growth of the cosine function and the entire function $f$. By dividing by $\cos(z)$, we "cancel out" the rapid oscillations and growth, leaving a much simpler function $g(z)$. Because $f$ is constrained to be even "smaller" than the cosine, the quotient must be a very simple constant—which turns out to be zero.
 \end{solution}
 
 \begin{exercise}
@@ -149,21 +236,39 @@ Prove that there exists a constant $C$ depending only on $n$ such that
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This problem uses the probabilistic representation of parabolic PDEs (Feynman-Kac formula) to obtain an exponential bound on the solution. The drift term $\psi$ is handled using the Lipschitz property of the initial data's exponent, and the diffusion part results in a Gaussian-like bound.
+\textbf{Prerequisites:}
+To follow this proof, you should be familiar with:
+1. \textbf{Parabolic PDEs:} Equations like the heat equation ($u_t = \mu \Delta u$) that describe diffusion processes.
+2. \textbf{Stochastic Differential Equations (SDE):} A way to describe the motion of particles using Brownian motion (e.g., $dX_s = \dots ds + \sqrt{2\mu} dW_s$).
+3. \textbf{Feynman-Kac Formula:} A powerful bridge connecting parabolic PDEs to SDEs, representing the PDE solution as an expectation $E[\dots]$ over random paths.
+4. \textbf{Lipschitz Continuity:} A condition that limits how "fast" or "steep" a function can be.
 
-We use the Feynman-Kac representation for the solution of the parabolic equation. Let $X_s$ be the diffusion process starting at $X_0 = x$ satisfying the SDE:
-\[ dX_s = \psi(t-s, X_s, u) ds + \sqrt{2\mu} dW_s \]
-where $W_s$ is a standard $n$-dimensional Brownian motion. The solution $u(t, x)$ can be represented as:
+\textbf{Steps:}
+
+1. \textbf{Use the Feynman-Kac Formula:}
+The equation $u_t + \sum \psi_i u_{x_i} = \mu \Delta u$ describes a diffusion process with a drift term $\psi$. The Feynman-Kac representation tells us that the solution at time $t$ can be written as an expectation:
 \[ u(t, x) = E[u_0(X_t)] \]
-Thus, $|u(t, x)| \leq E[|u_0(X_t)|]$. Using the assumption $|u_0(y)| \leq e^{\Phi(y)/\mu}$, we have:
+where $X_s$ is a random process starting at $X_0=x$ that "follows" the drift $\psi$ and is pushed by Brownian motion $W_s$.
+
+2. \textbf{Bound the Solution:}
+By the property of expectations, we have $|u(t, x)| \leq E[|u_0(X_t)|]$. Using the assumption $|u_0(y)| \leq e^{\Phi(y)/\mu}$, we get:
 \[ |u(t, x)| \leq E[e^{\Phi(X_t)/\mu}] \]
-Since $\Phi$ has Lipschitz constant $1$, $\Phi(X_t) \leq \Phi(x) + |X_t - x|$. From the SDE:
-\[ X_t - x = \int_0^t \psi ds + \sqrt{2\mu} W_t \implies |X_t - x| \leq \int_0^t |\psi| ds + \sqrt{2\mu} |W_t| \leq At + \sqrt{2\mu} |W_t| \]
-where we used $|\psi| \leq A$. Thus:
-\[ E[e^{\Phi(X_t)/\mu}] \leq e^{\Phi(x)/\mu} e^{At/\mu} E[e^{\sqrt{2\mu}|W_t|/\mu}] = e^{(\Phi(x)+At)/\mu} E[e^{\sqrt{2/\mu}|W_t|}] \]
-Let $\lambda = \sqrt{2/\mu}$. We need to estimate $E[e^{\lambda |W_t|}]$. For an $n$-dimensional Brownian motion, $|W_t|$ has the same distribution as $\sqrt{t} \chi_n$, where $\chi_n$ is the chi distribution with $n$ degrees of freedom. It is known that $E[e^{c |W_t|}] \leq C_n e^{c^2 t / 2}$ for some constant $C_n$.
-Specifically, $E[e^{\lambda |W_t|}] \leq C_n e^{\lambda^2 t / 2} = C_n e^{(2/\mu) t / 2} = C_n e^{t/\mu}$.
-Combining these estimates:
+
+3. \textbf{Use Lipschitz Property of $\Phi$:}
+The Lipschitz condition on $\Phi$ tells us $\Phi(X_t) \leq \Phi(x) + |X_t - x|$. From the SDE $dX_s = \psi ds + \sqrt{2\mu} dW_s$, we have:
+\[ |X_t - x| \leq \int_0^t |\psi| ds + \sqrt{2\mu} |W_t| \leq At + \sqrt{2\mu} |W_t| \]
+where $A$ is the maximum drift.
+
+4. \textbf{Complete the Estimate:}
+Substituting this into the expectation:
+\[ |u(t, x)| \leq e^{\Phi(x)/\mu} e^{At/\mu} E[e^{\sqrt{2/\mu}|W_t|}] \]
+Using standard Gaussian tail estimates, $E[e^{c |W_t|}] \leq C_n e^{c^2 t / 2}$. Here $c = \sqrt{2/\mu}$, so $E[e^{\sqrt{2/\mu}|W_t|}] \leq C_n e^{(2/\mu) \cdot (t/2)} = C_n e^{t/\mu}$.
+
+5. \textbf{Conclude:}
+Putting it all together:
 \[ |u(t, x)| \leq C_n e^{t/\mu} e^{(\Phi(x)+At)/\mu} = C_n e^{(\Phi(x) + (A+1)t)/\mu} \]
-Taking $C = \ln C_n / t$ (or just bounding $C_n \leq e^{Ct}$ for some $C$), and observing the extra $+2/\mu$ in the exponent provided in the problem allows for the constant $C_n$ and small errors in the Gaussian tail bound. Specifically, the bound $|u(t,x)| \leq e^{Ct} e^{((A+1)t + \Phi(x) + 2)/\mu}$ holds.
+This confirms that $|u(t, x)|$ is bounded exponentially by $t$ and $\Phi(x)$.
+
+\textbf{Intuition:}
+This problem treats the PDE solution as the "average position" of many random particles. Even though the particles drift with velocity $\psi$, the Brownian motion ($\mu \Delta u$) spreads them out. The bound simply quantifies how far the particles can spread in time $t$. Since $\Phi$ controls the starting value of our particles, the final bound tracks how that starting "potential" spreads out and grows over time.
 \end{solution}
