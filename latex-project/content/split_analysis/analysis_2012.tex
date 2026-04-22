@@ -1,0 +1,209 @@
+\section{2012 Analysis \& Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Compute the integral
+\[
+\int_0^{\infty} \frac{x^p}{1+x^2}\,dx, \quad -1<p<1.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This integral involves a power function and a rational function. The standard tool for such improper integrals is contour integration in the complex plane. Because $x^p$ is multi-valued, we must choose a branch cut.
+
+Consider the function $f(z) = \frac{z^p}{1+z^2}$ with a branch cut along the positive real axis, $0 < \arg z < 2\pi$.
+We use a "keyhole" contour $C$ consisting of a large circle $C_R$, a small circle $C_\epsilon$ around the origin, and two segments $L_1$ and $L_2$ along the branch cut.
+1. \textbf{Integrals over circles:} As $R \to \infty$ and $\epsilon \to 0$, the integrals vanish since $|f(z)| \sim |z|^{p-2}$ (for $p < 1$) and $|f(z)| \sim |z|^p$ (for $p > -1$).
+2. \textbf{Integrals along segments:}
+   - Above the cut ($L_1$): $\int_{L_1} f(z) dz \to \int_0^\infty \frac{x^p}{1+x^2} dx = I$.
+   - Below the cut ($L_2$): $z = x e^{i2\pi}$, so $z^p = x^p e^{i2\pi p}$. $\int_{L_2} f(z) dz \to \int_\infty^0 \frac{x^p e^{i2\pi p}}{1+x^2} dx = -e^{i2\pi p} I$.
+3. \textbf{Residues:} The poles are at $z = e^{i\pi/2}$ and $z = e^{i3\pi/2}$.
+   - $\text{Res}(f, e^{i\pi/2}) = \frac{(e^{i\pi/2})^p}{2e^{i\pi/2}} = \frac{e^{ip\pi/2}}{2i}$.
+   - $\text{Res}(f, e^{i3\pi/2}) = \frac{(e^{i3\pi/2})^p}{2e^{i3\pi/2}} = \frac{e^{i3p\pi/2}}{-2i}$.
+4. \textbf{Summing up:}
+   \[
+   I(1 - e^{i2\pi p}) = 2\pi i \left( \frac{e^{ip\pi/2} - e^{i3p\pi/2}}{2i} \right) = \pi (e^{ip\pi/2} - e^{i3p\pi/2}).
+   \]
+   \[
+   I = \pi \frac{e^{ip\pi/2} - e^{i3p\pi/2}}{1 - e^{i2\pi p}} = \pi \frac{e^{ip\pi}(e^{-ip\pi/2} - e^{ip\pi/2})}{e^{ip\pi}(e^{-ip\pi} - e^{ip\pi})} = \pi \frac{\sin(p\pi/2)}{\sin(p\pi)} = \frac{\pi}{2\cos(p\pi/2)}.
+   \]
+\end{solution}
+
+\begin{exercise}
+Construct a one to one conformal mapping from the region
+\[
+U = \{z\in\mathbb{C} \mid |z-\frac{i}{2}|<\frac{1}{2}\} \setminus \{z \mid |z-\frac{i}{4}|<\frac{1}{4}\}
+\]
+onto the unit disk.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The region is the interior of one circle minus the closure of an interior circle, where both are tangent at the origin. This "lune-like" or "crescent" shape is best handled by mapping the tangency point to infinity, which transforms the circles into parallel lines.
+
+1. \textbf{Inversion:} $w_1 = 1/z$. The circles $x^2+y^2-y=0$ and $x^2+y^2-y/2=0$ map to the parallel lines $\text{Im}(w_1) = -1$ and $\text{Im}(w_1) = -2$. The region $U$ maps to the strip $S = \{u+iv \mid -2 < v < -1\}$.
+2. \textbf{Scaling and Shifting:} $w_2 = \pi(w_1 + 1.5i)$ maps the strip to $\{u'+iv' \mid -\pi/2 < v' < \pi/2\}$.
+3. \textbf{Exponential:} $w_3 = e^{w_2}$ maps this strip to the right half-plane $\text{Re}(w_3) > 0$.
+4. \textbf{M\"obius:} $w = \frac{w_3-1}{w_3+1}$ maps the right half-plane to the unit disk $\mathbb{D}$.
+\end{solution}
+
+\begin{exercise}
+Let $f(x)$ be a nonlinear $C^2$ function on $\mathbb{R}$. Show that
+\[
+\sup|f'(x)|^2 \leq 4\sup|f(x)|\sup|f''(x)|.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a classic Landau-Kolmogorov inequality. Taylor's theorem allows us to estimate the derivative using values of the function and its second derivative over an interval of length $h$. Optimizing $h$ yields the result.
+
+Let $M_0, M_1, M_2$ be the suprema of $|f|, |f'|, |f''|$ respectively.
+By Taylor's theorem: $f(x+h) = f(x) + hf'(x) + \frac{h^2}{2} f''(\xi)$.
+Rearranging: $hf'(x) = f(x+h) - f(x) - \frac{h^2}{2} f''(\xi)$.
+Taking absolute values:
+\[
+h|f'(x)| \leq |f(x+h)| + |f(x)| + \frac{h^2}{2}|f''(\xi)| \leq 2M_0 + \frac{h^2}{2}M_2.
+\]
+Thus $|f'(x)| \leq \frac{2M_0}{h} + \frac{hM_2}{2}$.
+To minimize the RHS, set $h = 2\sqrt{M_0/M_2}$ (if $M_2 \neq 0$).
+Then $|f'(x)| \leq \frac{2M_0}{2\sqrt{M_0/M_2}} + \frac{M_2}{2} 2\sqrt{M_0/M_2} = 2\sqrt{M_0 M_2}$.
+Squaring both sides gives $M_1^2 \leq 4M_0 M_2$.
+\end{solution}
+
+\begin{exercise}
+Let $f(x)$ be a real measurable function defined on $[a,b]$. Let $n(y)$ be the number of solutions of the equation $f(x)=y$. Prove that $n(y)$ is a measurable function on $\mathbb{R}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The measurability of the "fiber count" $n(y) = \#\{x \in [a,b] : f(x)=y\}$ is a fundamental result in descriptive set theory and measure theory. For continuous functions of bounded variation, this relates to the Banach Area Formula. For general measurable functions, it relies on the properties of the graph in the product space and projection theorems.
+
+1. \textbf{Graph of $f$:} Since $f$ is a measurable function on $[a, b]$, its graph $G = \{(x, f(x)) \mid x \in [a,b]\}$ is a measurable subset of $[a, b] \times \mathbb{R}$. If $f$ is a Borel function, $G$ is a Borel set.
+2. \textbf{Fiber Sets:} For any $k \in \mathbb{N}$, we want to show that the set $E_k = \{y \in \mathbb{R} \mid n(y) \geq k\}$ is measurable. This set consists of values $y$ for which there exist $k$ distinct points $x_1, \dots, x_k \in [a, b]$ such that $f(x_i) = y$.
+3. \textbf{Measurable Projection:} Define the set $S_k \subset [a, b]^k \times \mathbb{R}$ by:
+\[
+S_k = \{(x_1, \dots, x_k, y) \mid f(x_i) = y \text{ for all } i, \text{ and } |x_i - x_j| \geq \frac{1}{m} \text{ for some } m\}.
+\]
+Since $f$ is measurable, the condition $f(x_i) = y$ defines a measurable set in the product space. The condition that points are distinct can be handled by taking the union over $m$ of sets where points are separated by at least $1/m$.
+4. \textbf{Analytic Sets:} The set $E_k$ is the projection of $S_k$ onto the $y$-coordinate. The Measurable Projection Theorem (or Lusin's theorem on projections) states that the projection of a Borel set (or more generally a Suslin/analytic set) into a Polish space is Lebesgue measurable. Since $S_k$ is constructed from measurable sets, its projection $E_k$ is measurable.
+5. \textbf{Summation:} The function $n(y)$ can be expressed as:
+\[
+n(y) = \sum_{k=1}^\infty \chi_{E_k}(y).
+\]
+Since each $E_k$ is a measurable set, its characteristic function $\chi_{E_k}$ is a measurable function. The sum (possibly infinite) of measurable functions is measurable. Thus, $n(y)$ is a measurable function.
+\end{solution}
+
+\begin{exercise}
+For $1<p,q<\infty$, $\frac{1}{p}+\frac{1}{q}=1$, let $g$ in $L^q$. Consider the linear functional $F$ on $L^p$ given by: $F(f) = \int fg$. Show that $\|F\| = \|g\|_q$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This identifies the dual of $L^p$ as $L^q$. One direction is Hölder's inequality; the other requires picking an "optimal" function $f$ that achieves the bound.
+
+1. \textbf{Upper Bound:} By Hölder's: $|F(f)| \leq \int |fg| \leq \|f\|_p \|g\|_q$, so $\|F\| \leq \|g\|_q$.
+2. \textbf{Lower Bound:} Assume $g \not\equiv 0$. Define $f(x) = \text{sgn}(g(x)) |g(x)|^{q-1} / \|g\|_q^{q-1}$.
+   Check the $L^p$ norm: $|f|^p = |g|^{p(q-1)} / \|g\|_q^{p(q-1)} = |g|^q / \|g\|_q^q$ (since $1/p+1/q=1 \implies p(q-1)=q$).
+   Thus $\int |f|^p = 1$, so $\|f\|_p = 1$.
+   $F(f) = \int \frac{|g|^q}{\|g\|_q^{q-1}} = \frac{\|g\|_q^q}{\|g\|_q^{q-1}} = \|g\|_q$.
+   Thus $\|F\| \geq \|g\|_q$.
+\end{solution}
+
+\begin{exercise}
+Show that the Poisson integral formula $u(x) = \frac{2x_n}{n\alpha_n}\int_{\partial\mathbb{R}_+^n} \frac{g(y)}{|x-y|^n}\,dy$ solves the Dirichlet problem in the half-space.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The Poisson kernel for the half-space is the normal derivative of the Green's function. It acts as an approximation of the identity as $x$ approaches the boundary.
+
+1. \textbf{Harmonicity:} The kernel $K(x,y) = \frac{2x_n}{\omega_n |x-y|^n}$ (where $\omega_n = n\alpha_n$) is harmonic in $x$ for $x_n > 0$. This can be seen by observing $K(x,y) = \frac{\partial G}{\partial y_n}$ where $G$ is the Green's function, and the Laplacian $\Delta_x$ commutes with the boundary derivative.
+2. \textbf{Identity:} It can be shown that $\int_{\mathbb{R}^{n-1}} K(x,y) dy = 1$ for all $x_n > 0$.
+3. \textbf{Boundary behavior:} As $x \to x_0 \in \partial\mathbb{R}_+^n$, the kernel $K(x,y)$ concentrates its mass at $x_0$, behaving like a Dirac delta. For a continuous $g$, $u(x) \to g(x_0)$.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Prove that $f(x) = \exp(-\frac{1}{2}x^T A x)$ is in $L^1(\mathbb{R}^n)$ iff $A$ is positive definite. Compute the integral with a linear term $b^T x$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Multi-variable Gaussian integrals are fundamental. Integrability requires the exponent to be negative for all directions at infinity, which is the definition of positive definiteness.
+
+1. \textbf{Integrability:} Diagonalize $A = Q D Q^T$. Let $x = Qy$, so $x^T A x = \sum \lambda_i y_i^2$.
+   The integral splits: $\int e^{-\frac{1}{2}\sum \lambda_i y_i^2} dy = \prod \int e^{-\frac{1}{2}\lambda_i y_i^2} dy_i$.
+   Each 1D integral converges iff $\lambda_i > 0$. Thus $A$ must be positive definite.
+2. \textbf{Linear Term:} Complete the square: $-\frac{1}{2}x^T A x + b^T x = -\frac{1}{2}(x - A^{-1}b)^T A (x - A^{-1}b) + \frac{1}{2}b^T A^{-1}b$.
+   The integral becomes:
+   \[
+   e^{\frac{1}{2}b^T A^{-1}b} \int_{\mathbb{R}^n} e^{-\frac{1}{2}z^T A z} dz = e^{\frac{1}{2}b^T A^{-1}b} \frac{(2\pi)^{n/2}}{\sqrt{\det A}}.
+   \]
+\end{solution}
+
+\begin{exercise}
+In a simply connected region $V \neq \mathbb{C}$, if two biholomorphisms $\phi_1, \phi_2$ agree at two distinct points, show they are identical.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a consequence of the Schwarz Lemma. An automorphism of a "disk-like" region with too many fixed points must be the identity.
+
+1. Let $h = \phi_2^{-1} \circ \phi_1$. $h$ is an automorphism of $V$ fixing two distinct points $a, b$.
+2. By the Riemann Mapping Theorem, there is a biholomorphism $g: V \to \mathbb{D}$.
+3. Let $f = g \circ h \circ g^{-1}$. $f$ is an automorphism of the unit disk $\mathbb{D}$ fixing $g(a)$ and $g(b)$.
+4. An automorphism of $\mathbb{D}$ is a M\"obius transform. If it fixes one point, say $0$ (via another transformation), it is a rotation $z \mapsto e^{i\theta} z$. If it also fixes a non-zero point, then $e^{i\theta} = 1$, so it is the identity.
+5. Thus $f = \text{id} \implies h = \text{id} \implies \phi_1 = \phi_2$.
+\end{solution}
+
+\begin{exercise}
+Calculate the measure of the set $E \subset [0,1]$ of numbers with no '4' in their decimal expansion.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This set is a variant of the Cantor set. We calculate the measure of the "complementary" set (those that DO have a 4).
+
+1. In the first decimal place, we remove the interval $(0.4, 0.5)$, length $1/10$.
+2. In the second place, for each of the $9$ remaining intervals, we remove a sub-interval of length $1/100$. Total removed: $9/100$.
+3. At step $k$, we remove $9^{k-1}$ intervals of length $10^{-k}$.
+4. Total measure removed: $\sum_{k=1}^\infty 9^{k-1} 10^{-k} = \frac{1}{10} \sum_{k=0}^\infty (9/10)^k = \frac{1}{10} \frac{1}{1-9/10} = 1$.
+5. The measure of $E$ is $1 - 1 = 0$.
+\end{solution}
+
+\begin{exercise}
+For $f \in L^p([0,1])$, show that $\lim_{\lambda\to\infty} \lambda^p m(\{|f|>\lambda\}) = 0$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a refinement of Markov's inequality. For $f \in L^p$, the "tail" of the integral must vanish.
+
+1. $\int_0^1 |f|^p dm \geq \int_{\{|f|>\lambda\}} |f|^p dm \geq \lambda^p m(\{|f|>\lambda\})$.
+2. Let $g = |f|^p$. Then $g \in L^1$. We want to show $\lambda^p m(\{g > \lambda^p\}) \to 0$.
+3. Let $E_\lambda = \{|f| > \lambda\}$. As $\lambda \to \infty$, $E_\lambda \downarrow \emptyset$ a.e.
+4. By the Dominated Convergence Theorem, $\int_{E_\lambda} |f|^p dm \to 0$ because $f \in L^p$ and the measure of $E_\lambda$ goes to $0$.
+5. Since $\lambda^p m(E_\lambda) \leq \int_{E_\lambda} |f|^p dm$, the limit is 0.
+\end{solution}
+
+\begin{exercise}
+Show that the trigonometric basis is complete in $L^2[0,2\pi]$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Completeness means the span is dense. We use the fact that continuous functions are dense in $L^2$ and trigonometric polynomials are dense in continuous periodic functions.
+
+1. Continuous functions $C[0,2\pi]$ are dense in $L^2[0,2\pi]$.
+2. For any $f \in C[0,2\pi]$, we can approximate it by periodic continuous functions by slightly modifying it near the boundaries.
+3. By the Stone-Weierstrass Theorem, the span of $\{1, \cos nx, \sin nx\}$ is dense in $C_{per}[0,2\pi]$ under the sup-norm.
+4. Since $\| \cdot \|_2 \leq \sqrt{2\pi} \| \cdot \|_\infty$, density in sup-norm implies density in $L^2$.
+\end{solution}
+
+\begin{exercise}
+Show that the Volterra operator $(Kf)(s) = \int_0^s f(t) dt$ is compact and has no eigenvalues.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The Volterra operator is a classic example of a compact operator without eigenvalues (its spectrum is $\{0\}$, but it's not a nil-potent operator).
+
+1. \textbf{Compactness:} Let $\|f_n\|_2 \leq 1$. Then $|Kf_n(s)| \leq 1$ and $|Kf_n(s_1) - Kf_n(s_2)| \leq \sqrt{|s_1-s_2|}$. By Arzel\`a-Ascoli, $\{Kf_n\}$ is precompact in $C[0,1]$, and thus in $L^2[0,1]$.
+2. \textbf{Eigenvalues:} $Kf = \lambda f$.
+   - If $\lambda=0$, $\int_0^s f = 0 \implies f=0$ a.e.
+   - If $\lambda \neq 0$, $f(s) = \frac{1}{\lambda} \int_0^s f(t) dt$. This implies $f$ is continuous, then $C^1$.
+   - Differentiating gives $f'(s) = \frac{1}{\lambda} f(s) \implies f(s) = C e^{s/\lambda}$.
+   - At $s=0$, $f(0) = \frac{1}{\lambda} \int_0^0 f = 0$. Thus $C e^0 = 0 \implies C = 0 \implies f=0$.
+\end{solution}

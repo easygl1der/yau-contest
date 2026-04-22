@@ -1,0 +1,320 @@
+\section{2014 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 5 problems.
+
+\begin{exercise}
+Let $X$ be a real valued random variable such that for all smooth functions $f: \mathbb{R} \to \mathbb{R}$ with compact support we have $E[Xf(X)] = E[f'(X)]$. Show that $X$ has the standard normal distribution.
+\end{exercise}
+
+\begin{solution}
+Let $p(x)$ be the probability density function of $X$. The given condition $E[Xf(X)] = E[f'(X)]$ can be written in terms of the density as:
+\[
+\int_{-\infty}^{\infty} x f(x) p(x) dx = \int_{-\infty}^{\infty} f'(x) p(x) dx
+\]
+Applying integration by parts to the right-hand side, assuming $p(x)$ is differentiable and vanishes at infinity (which is consistent with it being a density):
+\[
+\int_{-\infty}^{\infty} f'(x) p(x) dx = [f(x) p(x)]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} f(x) p'(x) dx = - \int_{-\infty}^{\infty} f(x) p'(x) dx
+\]
+where the boundary term vanishes because $f$ has compact support. Thus, we have:
+\[
+\int_{-\infty}^{\infty} f(x) [x p(x) + p'(x)] dx = 0
+\]
+Since this holds for all smooth functions $f$ with compact support, the term in the brackets must vanish almost everywhere:
+\[
+p'(x) = -x p(x)
+\]
+This is a first-order linear differential equation. Separating variables gives:
+\[
+\frac{d p}{p} = -x dx \implies \ln p(x) = -\frac{1}{2} x^2 + C \implies p(x) = A e^{-x^2/2}
+\]
+The normalization constant $A$ is determined by the condition $\int_{-\infty}^{\infty} p(x) dx = 1$:
+\[
+A \int_{-\infty}^{\infty} e^{-x^2/2} dx = A \sqrt{2\pi} = 1 \implies A = \frac{1}{\sqrt{2\pi}}
+\]
+Thus, $p(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2}$, which is the density of the standard normal distribution $N(0,1)$.
+\end{solution}
+
+\begin{exercise}
+Let $(X_n)$ be a sequence of uncorrelated random variables of mean zero such that
+\[
+\sum_{n=1}^\infty nE|X_n|^2 < \infty.
+\]
+Show that $S_n = \sum_{i=1}^n X_i$ converges almost surely.
+\end{exercise}
+
+\begin{solution}
+The variables $X_n$ are uncorrelated with mean zero, so $E[X_n X_m] = 0$ for $n \neq m$, and $Var(X_n) = E|X_n|^2$. The Rademacher-Menshov theorem states that for a sequence of uncorrelated random variables $X_n$, the series $\sum X_n$ converges almost surely if:
+\[
+\sum_{n=1}^\infty Var(X_n) \log^2 n < \infty
+\]
+In this problem, we are given that $\sum_{n=1}^\infty n E|X_n|^2 < \infty$. We compare $n$ and $\log^2 n$. For sufficiently large $n$, we have $\log^2 n < n$. Specifically, the ratio $\frac{\log^2 n}{n} \to 0$ as $n \to \infty$. Thus, there exists a constant $C$ such that $\log^2 n \le C n$ for all $n \ge 1$. It follows that:
+\[
+\sum_{n=1}^\infty Var(X_n) \log^2 n \le C \sum_{n=1}^\infty n E|X_n|^2 < \infty
+\]
+By the Rademacher-Menshov theorem, $S_n = \sum_{i=1}^n X_i$ converges almost surely.
+\end{solution}
+
+\begin{exercise}
+Let $(\Omega, \mathcal{F})$ be a measurable space and $\mathcal{G}$ be a sub-$\sigma$-field of $\mathcal{F}$. Let $P$ and $Q$ be two probabilities which are mutually absolutely continuous on $\mathcal{F}$. We denote by $X_0$ the Radon-Nikodym density of $Q$ with respect to $P$ on $\mathcal{F}$. Show that:
+
+(a) $0 < E_P[X_0 | \mathcal{G}] < +\infty$, $P$-a.s.;
+
+(b) for every $\mathcal{F}$-measurable non-negative random variable $f$,
+\[
+E_P[fX_0 | \mathcal{G}] = E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}].
+\]
+\end{exercise}
+
+\begin{solution}
+(a) Since $P$ and $Q$ are mutually absolutely continuous, $X_0 = dQ/dP$ satisfies $X_0 > 0$ $P$-a.s. and $X_0 \in L^1(P)$.
+The conditional expectation $E_P[X_0 | \mathcal{G}]$ is a $\mathcal{G}$-measurable version of the Radon-Nikodym density of $Q|_\mathcal{G}$ with respect to $P|_\mathcal{G}$. Since $Q|_\mathcal{G} \sim P|_\mathcal{G}$, its density must be strictly positive $P$-a.s. Also, $E_P[X_0 | \mathcal{G}] < \infty$ $P$-a.s. follows from $E_P[E_P[X_0 | \mathcal{G}]] = E_P[X_0] = 1 < \infty$.
+
+(b) This is a standard result in change of probability measures for conditional expectations. For any $G \in \mathcal{G}$, by the definition of conditional expectation under $Q$:
+\[
+\int_G E_Q[f | \mathcal{G}] dQ = \int_G f dQ
+\]
+Using the Radon-Nikodym derivative $X_0 = dQ/dP$:
+\[
+\int_G f dQ = \int_G f X_0 dP = \int_G E_P[f X_0 | \mathcal{G}] dP
+\]
+On the other hand,
+\[
+\int_G E_Q[f | \mathcal{G}] dQ = \int_G E_Q[f | \mathcal{G}] X_0 dP = \int_G E_P[E_Q[f | \mathcal{G}] X_0 | \mathcal{G}] dP
+\]
+Since $E_Q[f | \mathcal{G}]$ is $\mathcal{G}$-measurable, we can pull it out:
+\[
+\int_G E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}] dP
+\]
+Thus, for all $G \in \mathcal{G}$:
+\[
+\int_G E_P[f X_0 | \mathcal{G}] dP = \int_G E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}] dP
+\]
+Since both $E_P[f X_0 | \mathcal{G}]$ and $E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}]$ are $\mathcal{G}$-measurable, they must be equal $P$-a.s.
+\end{solution}
+
+\begin{exercise}
+Suppose $X_1, \dots, X_n, \dots$ is a sequence of random numbers drawn from the uniform distribution $U(0,1)$. One observes these numbers sequentially. At time $n$, one keeps a record of $Y_n = X_{(n)} = \max_{i=1}^n X_i = \max\{Y_{n-1}, X_n\}$ and $Z_n = \bar{X}_n = \sum_{i=1}^n X_i / n = (n-1)/n Z_{n-1} + 1/n X_n$ and discards all previous recordings.
+
+(a) What is the best guess of $X_1$ if one only observes $Y_n$?
+
+(b) What is the best guess of $X_1$ if one only observes $Z_n$?
+
+(c) Comparing the two guesses of $X_1$, which one is better (and in what sense)?
+
+Give good reasoning to justify your answers.
+\end{exercise}
+
+\begin{solution}
+(a) The "best guess" in terms of minimizing mean squared error is the conditional expectation $E[X_1 | Y_n]$. By symmetry, $E[X_1 | Y_n] = E[X_i | Y_n]$ for all $i=1, \dots, n$. Summing over $i$:
+\[
+\sum_{i=1}^n E[X_i | Y_n] = E[\sum_{i=1}^n X_i | Y_n]
+\]
+However, it is easier to use the fact that $X_1$ is either the maximum $Y_n$ (with probability $1/n$) or one of the other $n-1$ values which are distributed as $U(0, Y_n)$ given $Y_n$ and the event that they are not the maximum. Thus:
+\[
+E[X_1 | Y_n] = P(X_1 = Y_n | Y_n) Y_n + P(X_1 < Y_n | Y_n) E[X_1 | X_1 < Y_n, Y_n]
+\]
+\[
+E[X_1 | Y_n] = \frac{1}{n} Y_n + \frac{n-1}{n} \frac{Y_n}{2} = \frac{2 + n - 1}{2n} Y_n = \frac{n+1}{2n} Y_n
+\]
+
+(b) For $Z_n = \frac{1}{n} \sum X_i$, by symmetry $E[X_1 | Z_n] = E[X_i | Z_n]$ for all $i$. Thus:
+\[
+n E[X_1 | Z_n] = E[\sum X_i | Z_n] = E[n Z_n | Z_n] = n Z_n \implies E[X_1 | Z_n] = Z_n
+\]
+
+(c) We compare the two estimators $\hat{X}_Y = \frac{n+1}{2n} Y_n$ and $\hat{X}_Z = Z_n$. Both are unbiased since $E[E[X_1 | \cdot]] = E[X_1] = 1/2$. The better estimator is the one with smaller variance.
+The variance of $Z_n$ is $Var(\bar{X}) = \frac{Var(X_1)}{n} = \frac{1}{12n}$.
+The variance of $Y_n$ is $\frac{n}{(n+1)^2(n+2)}$. Thus:
+\[
+Var(\hat{X}_Y) = \left(\frac{n+1}{2n}\right)^2 \frac{n}{(n+1)^2(n+2)} = \frac{1}{4n(n+2)}
+\]
+Comparing the denominators: $12n$ vs $4n(n+2) = 4n^2 + 8n$.
+For $n=1$, $12 = 12$. For $n=2$, $24 < 32$. For $n \ge 2$, $12n < 4n^2 + 8n$, which implies $\frac{1}{12n} > \frac{1}{4n(n+2)}$.
+Thus, $Var(\hat{X}_Y) < Var(\hat{X}_Z)$ for $n > 1$. This means $\hat{X}_Y$ is a better estimator in the sense of having a smaller mean squared error. Intuitively, the maximum $Y_n$ provides more information about the location of the sample in $U(0,1)$ than the sample mean $Z_n$.
+\end{solution}
+
+\begin{exercise}
+Suppose we take a random sample of size $n$ from a bag of colored balls (red, blue and yellow balls) with replacement. Let $X_1$ denote the number of red balls, $X_2$ denote the number of blue balls, and $X_3$ denote the number of yellow balls in the sample. Assuming we know that the total number of yellow balls is triple the total number of red balls in the bag. Or in other words, the red, blue and yellow balls occur with probability $p_1$, $p_2$ and $p_3 = 3p_1$, respectively in the bag.
+
+1. Find the asymptotic distribution (after appropriate normalization) for the MLE of $p_2$.
+
+2. Construct the likelihood ratio test statistic for the null hypothesis that $p_1 = p_2 = p_3/3$ (the alternative is that $p_1 = p_2 = p_3/3$ is not true). What is the asymptotic distribution of your test statistic under null?
+\end{exercise}
+
+\begin{solution}
+The probabilities are $p_1, p_2, p_3$ with $p_3 = 3p_1$. Since $p_1 + p_2 + p_3 = 1$, we have $4p_1 + p_2 = 1$, so $p_1 = (1-p_2)/4$.
+The likelihood function is:
+\[
+L(p_2) \propto p_1^{X_1} p_2^{X_2} (3p_1)^{X_3} = \left(\frac{1-p_2}{4}\right)^{X_1} p_2^{X_2} \left(\frac{3(1-p_2)}{4}\right)^{X_3} \propto (1-p_2)^{X_1+X_3} p_2^{X_2}
+\]
+The log-likelihood is $\ell(p_2) = (X_1+X_3) \ln(1-p_2) + X_2 \ln p_2 + \text{const}$.
+Taking the derivative:
+\[
+\ell'(p_2) = -\frac{X_1+X_3}{1-p_2} + \frac{X_2}{p_2} = 0 \implies p_2(X_1+X_3) = X_2(1-p_2) \implies p_2(n-X_2) = X_2 - p_2 X_2 \implies \hat{p}_2 = \frac{X_2}{n}
+\]
+1. The Fisher Information is $I(p_2) = -E[\ell''(p_2)]$. $\ell''(p_2) = -\frac{X_1+X_3}{(1-p_2)^2} - \frac{X_2}{p_2^2}$.
+\[
+I(p_2) = \frac{n(1-p_2)}{(1-p_2)^2} + \frac{n p_2}{p_2^2} = \frac{n}{1-p_2} + \frac{n}{p_2} = \frac{n}{p_2(1-p_2)}
+\]
+The asymptotic distribution of the MLE is $\sqrt{n}(\hat{p}_2 - p_2) \xrightarrow{d} N(0, p_2(1-p_2))$.
+
+2. The null hypothesis $p_1 = p_2 = p_3/3$ implies $p_1 = p_2$. Combined with $4p_1 + p_2 = 1$, we get $5p_2 = 1 \implies p_2^0 = 0.2$.
+The likelihood ratio statistic is $\Lambda = \frac{L(0.2)}{L(\hat{p}_2)}$. The test statistic is:
+\[
+-2 \ln \Lambda = 2 [ \ell(\hat{p}_2) - \ell(0.2) ] = 2 \left[ (X_1+X_3) \ln\left(\frac{1-\hat{p}_2}{0.8}\right) + X_2 \ln\left(\frac{\hat{p}_2}{0.2}\right) \right]
+\]
+Under $H_0$, this statistic follows an asymptotic $\chi^2$ distribution with degrees of freedom $df = \text{dim}(\Theta) - \text{dim}(\Theta_0) = 1 - 0 = 1$.
+\end{solution}
+
+\subsection{Team}
+Please solve the following 5 problems.
+
+\begin{exercise}
+Suppose that $X_n$ converges to $X$ in distribution and $Y_n$ converges to a constant $c$ in distribution. Show that:
+
+(a) $Y_n$ converges to $c$ in probability;
+
+(b) $X_n Y_n$ converges to $cX$ in distribution.
+\end{exercise}
+
+\begin{solution}
+(a) To show $Y_n \xrightarrow{p} c$, we need to show $P(|Y_n - c| > \epsilon) \to 0$ for any $\epsilon > 0$.
+Since $Y_n \xrightarrow{d} c$, the distribution function $F_{Y_n}(y) \to F_c(y) = \mathbb{I}(y \ge c)$ at all continuity points of $F_c$, which are all $y \neq c$.
+$P(|Y_n - c| > \epsilon) = P(Y_n < c-\epsilon) + P(Y_n > c+\epsilon)$.
+As $n \to \infty$, $P(Y_n < c-\epsilon) \le F_{Y_n}(c-\epsilon) \to F_c(c-\epsilon) = 0$.
+And $P(Y_n > c+\epsilon) = 1 - P(Y_n \le c+\epsilon) \le 1 - F_{Y_n}(c+\epsilon) \to 1 - F_c(c+\epsilon) = 1 - 1 = 0$.
+Thus $P(|Y_n - c| > \epsilon) \to 0$, so $Y_n \xrightarrow{p} c$.
+
+(b) This is Slutsky's Theorem. Let $X_n \xrightarrow{d} X$ and $Y_n \xrightarrow{p} c$. To show $X_n Y_n \xrightarrow{d} cX$:
+By the property of convergence in distribution, it suffices to show that for any bounded continuous function $f$: $E[f(X_n Y_n)] \to E[f(cX)]$.
+Alternatively, we can use the fact that $(X_n, Y_n) \xrightarrow{d} (X, c)$ (since $Y_n$ converges to a constant). Then by the Continuous Mapping Theorem, any continuous function $g(x,y) = xy$ applied to the sequence will converge in distribution: $g(X_n, Y_n) \xrightarrow{d} g(X, c)$, i.e., $X_n Y_n \xrightarrow{d} Xc$.
+\end{solution}
+
+\begin{exercise}
+Let $X$ and $Y$ be two random variables with $|Y| > 0$, a.s. Let $Z = X/Y$.
+
+(a) Assume the distribution function of $(X,Y)$ has the density $p(x,y)$. What is the density function of $Z$?
+
+(b) Assume $X$ and $Y$ are independent and $X$ is $N(0,1)$ distributed, $Y$ has the uniform distribution on $(0,1)$. Give the density function of $Z$.
+\end{exercise}
+
+\begin{solution}
+(a) The cumulative distribution function of $Z$ is $F_Z(z) = P(X/Y \le z)$.
+\[
+F_Z(z) = \iint_{x/y \le z} p(x,y) dx dy = \int_{0}^{\infty} \int_{-\infty}^{zy} p(x,y) dx dy + \int_{-\infty}^{0} \int_{zy}^{\infty} p(x,y) dx dy
+\]
+Differentiating with respect to $z$ using Leibniz rule:
+\[
+f_Z(z) = \frac{d}{dz} F_Z(z) = \int_{0}^{\infty} y p(zy, y) dy + \int_{-\infty}^{0} (-y) p(zy, y) dy = \int_{-\infty}^{\infty} |y| p(zy, y) dy
+\]
+
+(b) Since $X \perp Y$, $p(x,y) = \phi(x) f_Y(y) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \cdot \mathbb{I}(0 < y < 1)$.
+Using the formula from part (a):
+\[
+f_Z(z) = \int_{0}^{1} y \frac{1}{\sqrt{2\pi}} e^{-(zy)^2/2} dy = \frac{1}{\sqrt{2\pi}} \int_{0}^{1} y e^{-z^2 y^2 / 2} dy
+\]
+Let $u = z^2 y^2 / 2$, then $du = z^2 y dy$.
+\[
+f_Z(z) = \frac{1}{\sqrt{2\pi} z^2} \int_{0}^{z^2/2} e^{-u} du = \frac{1}{\sqrt{2\pi} z^2} [ -e^{-u} ]_{0}^{z^2/2} = \frac{1 - e^{-z^2/2}}{\sqrt{2\pi} z^2}
+\]
+For $z=0$, the limit is $\frac{1}{2\sqrt{2\pi}}$ (by L'Hopital's rule).
+\end{solution}
+
+\begin{exercise}
+Let $(\Omega, \mathcal{F}, P)$ be a probability space.
+
+(a) Let $\mathcal{G}$ be a sub $\sigma$-algebra of $\mathcal{F}$, and $\Gamma \in \mathcal{F}$. Prove that the following properties are equivalent:
+\begin{itemize}
+\item[(i)] $\Gamma$ is independent of $\mathcal{G}$ under $P$;
+\item[(ii)] for every probability $Q$ on $(\Omega, \mathcal{F})$, equivalent to $P$, with $dQ/dP$ being $\mathcal{G}$-measurable, we have $Q(\Gamma) = P(\Gamma)$.
+\end{itemize}
+
+(b) Let $X, Y, Z$ be random variables and $Y$ is integrable. Show that if $(X,Y)$ and $Z$ are independent, then $E[Y | X, Z] = E[Y | X]$.
+\end{exercise}
+
+\begin{solution}
+(a) (i) $\implies$ (ii): Let $X_0 = dQ/dP$ be $\mathcal{G}$-measurable. Then $Q(\Gamma) = E_P[\mathbb{I}_\Gamma X_0]$. Since $X_0$ is $\mathcal{G}$-measurable and $\Gamma$ is independent of $\mathcal{G}$, we have:
+\[
+E_P[\mathbb{I}_\Gamma X_0] = E_P[\mathbb{I}_\Gamma] E_P[X_0] = P(\Gamma) \cdot 1 = P(\Gamma)
+\]
+(ii) $\implies$ (i): Assume (ii) holds for all $Q$ with $\mathcal{G}$-measurable density. Let $A \in \mathcal{G}$ with $P(A) > 0$. Define $X_0 = \frac{\mathbb{I}_A}{P(A)}$. This $X_0$ is $\mathcal{G}$-measurable and $E_P[X_0] = 1$. Although it's not strictly positive, any such density can be approximated by equivalent ones. By (ii), $E_P[\mathbb{I}_\Gamma \frac{\mathbb{I}_A}{P(A)}] = P(\Gamma) \implies P(\Gamma \cap A) = P(\Gamma) P(A)$. This shows $\Gamma$ is independent of every set in $\mathcal{G}$, hence independent of $\mathcal{G}$.
+
+(b) To show $E[Y | X, Z] = E[Y | X]$, we verify the definition of conditional expectation. Let $g(X)$ and $h(Z)$ be bounded measurable functions.
+$E[ E[Y | X] g(X) h(Z) ] = E[ E[Y | X] g(X) ] E[h(Z)]$ (since $X$ and $Z$ are independent).
+$E[ E[Y | X] g(X) ] E[h(Z)] = E[ Y g(X) ] E[h(Z)]$.
+Since $(X,Y)$ and $Z$ are independent, $E[ Y g(X) h(Z) ] = E[ Y g(X) ] E[h(Z)]$.
+Thus $E[ Y g(X) h(Z) ] = E[ E[Y | X] g(X) h(Z) ]$. Since the sets of the form $\{X \in A, Z \in B\}$ generate $\sigma(X, Z)$, the equality holds for all $\sigma(X, Z)$-measurable functions.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, ..., X_n$ be i.i.d. $N(0, \sigma^2)$, and let $M$ be the mean of $|X_1|, ..., |X_n|$.
+
+1. Find $c \in \mathbb{R}$ so that $\hat{\sigma} = cM$ is a consistent estimator of $\sigma$.
+
+2. Determine the limiting distribution for $\sqrt{n}(\hat{\sigma} - \sigma)$.
+
+3. Identify an approximate $(1-\alpha)\%$ confidence interval for $\sigma$.
+
+4. Is $\hat{\sigma} = cM$ asymptotically efficient? Please justify your answer.
+\end{exercise}
+
+\begin{solution}
+1. For $X \sim N(0, \sigma^2)$, we have $E|X| = \sigma \sqrt{2/\pi}$.
+By the Weak Law of Large Numbers, $M = \frac{1}{n} \sum |X_i| \xrightarrow{p} E|X_1| = \sigma \sqrt{2/\pi}$.
+To have $\hat{\sigma} = cM \xrightarrow{p} \sigma$, we must have $c \sigma \sqrt{2/\pi} = \sigma \implies c = \sqrt{\pi/2}$.
+
+2. By the Central Limit Theorem, $\sqrt{n}(M - E|X|) \xrightarrow{d} N(0, Var(|X|))$.
+$Var(|X|) = E[X^2] - (E|X|)^2 = \sigma^2 - \frac{2}{\pi} \sigma^2 = \sigma^2 \frac{\pi-2}{\pi}$.
+Then $\sqrt{n}(\hat{\sigma} - \sigma) = \sqrt{n}(cM - cE|X|) \xrightarrow{d} N(0, c^2 Var(|X|))$.
+The asymptotic variance is $c^2 Var(|X|) = \frac{\pi}{2} \sigma^2 \frac{\pi-2}{\pi} = \frac{\pi-2}{2} \sigma^2$.
+So $\sqrt{n}(\hat{\sigma} - \sigma) \xrightarrow{d} N(0, \frac{\pi-2}{2} \sigma^2)$.
+
+3. An approximate $(1-\alpha)$ confidence interval is $\hat{\sigma} \pm z_{\alpha/2} \text{se}(\hat{\sigma})$, where $z_{\alpha/2}$ is the upper $\alpha/2$ quantile of $N(0,1)$ and $\text{se}(\hat{\sigma}) = \hat{\sigma} \sqrt{\frac{\pi-2}{2n}}$.
+CI: $\left[ \hat{\sigma} \left(1 - z_{\alpha/2} \sqrt{\frac{\pi-2}{2n}}\right), \hat{\sigma} \left(1 + z_{\alpha/2} \sqrt{\frac{\pi-2}{2n}}\right) \right]$.
+
+4. The Fisher Information for $\sigma$ in a $N(0, \sigma^2)$ model is $I(\sigma) = 2n/\sigma^2$. The Cram\'er-Rao lower bound for the asymptotic variance of an unbiased estimator is $1/I(\sigma) = \sigma^2/2n$.
+Our estimator's asymptotic variance is $\frac{\pi-2}{2} \frac{\sigma^2}{n}$.
+Comparing the coefficients: $\frac{\pi-2}{2} \approx \frac{3.1416 - 2}{2} = 0.5708$, whereas the bound is $0.5$.
+Since $0.5708 > 0.5$, the estimator $\hat{\sigma} = cM$ is not asymptotically efficient. The MLE $\sqrt{\frac{1}{n} \sum X_i^2}$ achieves the bound.
+\end{solution}
+
+\begin{exercise}
+The shifted exponential distribution has the density function
+\[
+f(y; \phi, \theta) = \frac{1}{\theta}\exp\{-(y-\phi)/\theta\}, \qquad y > \phi, \theta > 0.
+\]
+
+Let $Y_1, \dots, Y_n$ be a random sample from this distribution. Find the maximum likelihood estimator (MLE) of $\phi$ and $\theta$ and the limiting distribution of the MLE.
+
+You may use the following R\'enyi representation of the order statistics: Let $E_1, \ldots, E_n$ be a random sample from the standard exponential distribution. Let $E_{(r)}$ denote the $r$-th order statistics. According to the R\'enyi representation,
+\[
+E_{(r)} \stackrel{D}{=} \sum_{j=1}^r \frac{E_j}{n+1-j}, \qquad r = 1, \ldots, n.
+\]
+\end{exercise}
+
+\begin{solution}
+The likelihood function is:
+\[
+L(\phi, \theta) = \theta^{-n} \exp\left\{ - \frac{1}{\theta} \sum_{i=1}^n (Y_i - \phi) \right\} \mathbb{I}(Y_{(1)} \ge \phi)
+\]
+For any fixed $\theta$, $L$ is an increasing function of $\phi$ for $\phi \le Y_{(1)}$. Thus $\hat{\phi} = Y_{(1)}$.
+Substituting $\hat{\phi}$ into the log-likelihood:
+\[
+\ell(\theta) = -n \ln \theta - \frac{1}{\theta} \sum (Y_i - Y_{(1)})
+\]
+Differentiating with respect to $\theta$ and setting to 0:
+\[
+-\frac{n}{\theta} + \frac{1}{\theta^2} \sum (Y_i - Y_{(1)}) = 0 \implies \hat{\theta} = \bar{Y} - Y_{(1)}
+\]
+Using the R\'enyi representation, let $Y_i = \phi + \theta E_i$. Then $Y_{(1)} = \phi + \theta E_{(1)}$.
+$E_{(1)} \stackrel{D}{=} \frac{E_1}{n}$, so $Y_{(1)} = \phi + \frac{\theta E_1}{n}$.
+This implies $n(Y_{(1)} - \phi) \xrightarrow{d} \text{Exp}(1/\theta)$, or $P(n(Y_{(1)} - \phi) > z) = e^{-z/\theta}$.
+For $\hat{\theta}$, note $\sum (Y_i - Y_{(1)}) = \theta \sum (E_i - E_{(1)}) = \theta \sum_{i=2}^n (n+1-i) (E_{(i)} - E_{(i-1)})$.
+By R\'enyi representation, these gaps are independent and distributed as $E_j / (n+1-j)$.
+So $\sum (Y_i - Y_{(1)}) \stackrel{D}{=} \theta \sum_{j=2}^n E_j$.
+This is a Gamma distribution $\Gamma(n-1, \theta)$.
+$\hat{\theta} = \frac{\theta}{n} \sum_{j=2}^n E_j \implies E[\hat{\theta}] = \frac{n-1}{n} \theta$.
+By CLT, $\sqrt{n}(\hat{\theta} - \theta) \xrightarrow{d} N(0, \theta^2)$.
+The MLEs $\hat{\phi}$ and $\hat{\theta}$ are asymptotically independent.
+\end{solution}

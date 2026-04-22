@@ -1,0 +1,199 @@
+\section{2016 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+Consider the implicit leapfrog scheme:
+\[
+\frac{u_{m}^{n+1}-u_{m}^{n-1}}{2k}+a\left(1+\frac{h^{2}}{6}\delta^{2}\right)^{-1}\delta_{0}u_{m}^{n}=f_{m}^{n}
+\]
+for the one-way wave equation $u_{t}+au_{x}=f$.
+
+Here $\delta^{2}$ is the central second difference operator and $\delta_{0}$ is the central first difference operator.
+
+\begin{enumerate}
+\item Show that the scheme is of order $(2,4)$.
+\item Show that the scheme is stable if and only if $|ak/h|<1/\sqrt{3}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item We expand the operators in Taylor series. The time derivative approximation is:
+    \[ \frac{u(x, t+k) - u(x, t-k)}{2k} = u_t + \frac{k^2}{6} u_{ttt} + O(k^4). \]
+    The spatial operators are:
+    \[ \delta_0 u = \frac{u(x+h) - u(x-h)}{2h} = u_x + \frac{h^2}{6} u_{xxx} + \frac{h^4}{120} u_{xxxxx} + O(h^6), \]
+    \[ \delta^2 u = \frac{u(x+h) - 2u(x) + u(x-h)}{h^2} = u_{xx} + \frac{h^2}{12} u_{xxxx} + O(h^4). \]
+    The implicit operator $(1 + \frac{h^2}{6} \delta^2)^{-1}$ can be expanded as $1 - \frac{h^2}{6} \delta^2 + O(h^4)$. Thus:
+    \begin{align*}
+        \left(1 + \frac{h^2}{6} \delta^2\right)^{-1} \delta_0 u &= \left(1 - \frac{h^2}{6} \frac{\partial^2}{\partial x^2} + O(h^4)\right) \left(u_x + \frac{h^2}{6} u_{xxx} + O(h^4)\right) \\
+        &= u_x + \frac{h^2}{6} u_{xxx} - \frac{h^2}{6} u_{xxx} + O(h^4) = u_x + O(h^4).
+    \end{align*}
+    Substituting back into the scheme, we get $u_t + O(k^2) + a(u_x + O(h^4)) = f$, which proves the order is $(2, 4)$.
+
+    \item Let $f=0$ and substitute the ansatz $u_m^n = g^n e^{im\xi h}$. Let $\theta = \xi h$. We have:
+    \[ \delta_0 e^{im\theta} = \frac{i \sin \theta}{h} e^{im\theta}, \quad \delta^2 e^{im\theta} = -\frac{4 \sin^2(\theta/2)}{h^2} e^{im\theta}. \]
+    The amplification factor $g$ satisfies:
+    \[ \frac{g - g^{-1}}{2k} + a \frac{1}{1 - \frac{h^2}{6} \frac{4 \sin^2(\theta/2)}{h^2}} \frac{i \sin \theta}{h} = 0. \]
+    Using $1 - \frac{2}{3} \sin^2(\theta/2) = \frac{2 + \cos \theta}{3}$, the equation becomes:
+    \[ g^2 + 2i \lambda \phi(\theta) g - 1 = 0, \quad \text{where } \lambda = \frac{ak}{h}, \, \phi(\theta) = \frac{3 \sin \theta}{2 + \cos \theta}. \]
+    For stability, we require $|g| \leq 1$. The roots are $g = -i \lambda \phi(\theta) \pm \sqrt{1 - \lambda^2 \phi(\theta)^2}$. Stability holds if $\lambda^2 \phi(\theta)^2 \leq 1$ for all $\theta$. 
+    Analyzing $\phi(\theta)$: $\phi'(\theta) = \frac{3(6\cos \theta + 3)}{(2+\cos \theta)^2}$. The maximum occurs at $\cos \theta = -1/2$ (i.e., $\theta = 2\pi/3$), where $\phi(2\pi/3) = \sqrt{3}$.
+    Thus, stability requires $|\lambda| \sqrt{3} \leq 1$, or $|ak/h| \leq 1/\sqrt{3}$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+A simple version of an enzyme-mediated chemical reaction is:
+\[
+\mathrm{S}+\mathrm{E}\xleftarrow[k_{2}]{k_{1}}\mathrm{C}\xrightarrow[k_{3}]{k_{3}}\mathrm{P}+\mathrm{E}
+\]
+where $S$ is substrate reactant, $P$ is product concentration, and $E$ is enzyme (catalyst).
+
+Assume initial conditions: $S(0)=S_{0}$, $E(0)=E_{0}$, $C(0)=0$, $P(0)=0$; $\mathbf{k}_{1},\mathbf{k}_{2},\mathbf{k}_{3}$ are reaction rate constants.
+
+\begin{enumerate}
+\item[(a)] Convert the chemical reaction into rate equations (ODEs) for $S(T)$, $E(T)$, $C(T)$, $P(T)$. Nondimensionalize using:
+\[
+T=t/(k_{1}E_{0}),\quad S(T)=S_{0}s(t),\quad P(T)=S_{0}p(t),\quad E(T)=E_{0}e(t),\quad C(T)=E_{0}c(t),
+\]
+\[
+\epsilon=\frac{E_{0}}{S_{0}}\ll 1,\quad \lambda=\frac{k_{2}}{k_{1}S_{0}},\quad \mu=\frac{k_{2}+k_{3}}{k_{1}S_{0}}.
+\]
+\item[(b)] Use expansions $s(t)=s_{0}(t)+\epsilon s_{1}(t)+O(\epsilon^{2})$, etc., to determine equations for leading order slow solution. Show $s_{0}(t)$ and $p_{0}(t)$ satisfy Michaelis-Menten equations:
+\[
+\dot{s}_{0}(t)=-(\mu-\lambda)\frac{s_{0}}{\mu+s_{0}},\quad \dot{p}_{0}(t)=(\mu-\lambda)\frac{s_{0}}{\mu+s_{0}}.
+\]
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] The law of mass action yields:
+    \begin{align*}
+        \frac{dS}{dT} &= -k_1 SE + k_2 C, \\
+        \frac{dE}{dT} &= -k_1 SE + (k_2 + k_3) C, \\
+        \frac{dC}{dT} &= k_1 SE - (k_2 + k_3) C, \\
+        \frac{dP}{dT} &= k_3 C.
+    \end{align*}
+    From $dE/dT + dC/dT = 0$, we have $E+C = E_0$, so $e+c=1$. Using the provided scaling $t = k_1 E_0 T$:
+    \begin{align*}
+        \frac{ds}{dt} &= -s(1-c) + \lambda c, \\
+        \epsilon \frac{dc}{dt} &= s(1-c) - \mu c, \\
+        \frac{dp}{dt} &= (\mu - \lambda) c.
+    \end{align*}
+    
+    \item[(b)] In the limit $\epsilon \to 0$, the fast equation for $c$ reaches quasi-steady state:
+    \[ s_0(1-c_0) - \mu c_0 = 0 \implies c_0 = \frac{s_0}{s_0 + \mu}. \]
+    Substituting $c_0$ into the slow equations for $s$ and $p$:
+    \[ \dot{s}_0 = -s_0(1-c_0) + \lambda c_0 = - \left( s_0 \frac{\mu}{s_0 + \mu} - \lambda \frac{s_0}{s_0 + \mu} \right) = -(\mu - \lambda) \frac{s_0}{s_0 + \mu}. \]
+    Similarly,
+    \[ \dot{p}_0 = (\mu - \lambda) c_0 = (\mu - \lambda) \frac{s_0}{s_0 + \mu}. \]
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+A vector $\mathbf{u}=(u_{1},\dots,u_{n})\in\mathbb{N}^{n}$ is multiplicatively dependent if there is a nonzero vector $\mathbf{k}=(k_{1},\dots,k_{n})\in\mathbb{Z}^{n}$ for which:
+\[
+u_{1}^{k_{1}}\dots u_{n}^{k_{n}}=1.
+\]
+
+This is important in factorization and primality testing algorithms. Prove that if $\mathbf{u}=(u_{1},\dots,u_{n})\in\mathbb{N}^{n}$ is multiplicatively dependent with $\|\mathbf{u}\|_{\infty}\leq H$ where $\|\mathbf{u}\|_{\infty}=\max_{1\leq i\leq n}|u_{i}|$, then there exists a nonzero $\mathbf{k}=(k_{1},\dots,k_{n})\in\mathbb{Z}^{n}$ with:
+\[
+\|\mathbf{k}\|_{\infty}\leq\left(\frac{2n\log H}{\log 2}\right)^{n-1}.
+\]
+
+Thus for fixed $n$, it can be found in polynomial time of order $(\log H)^{n(n-1)}$.
+
+Comment: Use the statement (without proof): Let $A=(a_{ij})_{i,j=1}^{m,n}$ be an $m\times n$ matrix of rank $r\leq n-1$ with integer entries of size at most $H$. Then there is a nonzero integer vector $\mathbf{x}=(x_{1},\dots,x_{n})\in\mathbb{Z}^{n}$ such that $A\mathbf{x}=\mathbf{0}$ and $\|\mathbf{x}\|_{\infty}\leq(2nH)^{n-1}$.
+\end{exercise}
+
+\begin{solution}
+Let $p_1, \dots, p_m$ be all the distinct prime factors of the integers $u_1, \dots, u_n$. We can write each $u_i$ as a product of these primes:
+\[ u_i = \prod_{j=1}^m p_j^{a_{ji}}, \quad a_{ji} \in \mathbb{N} \cup \{0\}. \]
+The condition $u_1^{k_1} \dots u_n^{k_n} = 1$ is equivalent to:
+\[ \prod_{j=1}^m p_j^{\sum_{i=1}^n a_{ji} k_i} = 1 \iff \sum_{i=1}^n a_{ji} k_i = 0 \text{ for each } j=1, \dots, m. \]
+This is a system of linear equations $A\mathbf{k} = \mathbf{0}$, where $A = (a_{ji})$ is an $m \times n$ matrix. Since $\mathbf{u}$ is multiplicatively dependent, there exists a nonzero $\mathbf{k} \in \mathbb{Z}^n$ in the kernel, implying $\text{rank}(A) \leq n-1$.
+The entries $a_{ji}$ are bounded as follows: $2^{a_{ji}} \leq p_j^{a_{ji}} \leq u_i \leq H$, so $a_{ji} \leq \frac{\log H}{\log 2}$.
+Applying the provided statement with the bound $H' = \frac{\log H}{\log 2}$ on the entries of $A$, there exists a nonzero $\mathbf{k} \in \mathbb{Z}^n$ such that:
+\[ \|\mathbf{k}\|_\infty \leq (2nH')^{n-1} = \left( \frac{2n \log H}{\log 2} \right)^{n-1}. \]
+The complexity result follows as we search for $\mathbf{k}$ in a box of volume $(2\|\mathbf{k}\|_\infty + 1)^n$, which is $O((\log H)^{n(n-1)})$.
+\end{solution}
+
+\begin{exercise}
+Consider a symmetric matrix $A_{n\times n}$ with simple eigenvalue $\lambda_{i}$ satisfying $| \lambda_{j}-\lambda_{i}|=O(1)$ for $j\neq i$.
+
+In inverse iteration to compute eigenvalue and eigenvector, one solves:
+\[
+(A-\mu I)y_{k+1}=x_{k},
+\]
+where $\mu$ is approximation of $\lambda_{i}$, $\|x_{k}\|=1$, and obtains $x_{k+1}=y_{k+1}/\|y_{k+1}\|$.
+
+However, for $\mu$ close to $\lambda_{i}$, $A-\mu I$ has very small eigenvalue and the linear system is ill-conditioned. There may be large error in numerical solution $\tilde{y}_{k+1}$. Even with large error in $\tilde{y}_{k+1}$, the $\tilde{x}_{k+1}=\tilde{y}_{k+1}/\|\tilde{y}_{k+1}\|$ is accurate.
+
+\begin{enumerate}
+\item[(1)] $\tilde{y}_{k+1}$ satisfies $(A-\mu I+\delta A)\tilde{y}_{k+1}=x_{k}$ where $\|\delta A\|=O(\epsilon)$ and $\epsilon$ is machine precision. Show:
+\[
+\|(A-\lambda_{i})\frac{\tilde{y}_{k+1}}{\|\tilde{y}_{k+1}\|}\|\leq|\mu-\lambda_{i}|+\|\delta A\|+\frac{1}{\|\tilde{y}_{k+1}\|}.
+\]
+\item[(2)] Let $\alpha_{i}=x_{k}^{t}q_{i}$ where $q_{i}$ is normalized eigenvector for $\lambda_{i}$. Show:
+\[
+\|\tilde{y}_{k+1}\|\geq\frac{|\alpha_{i}|}{|\mu-\lambda_{i}|+\|\delta A\|}.
+\]
+\item[(3)] Conclude: $\|x_{k+1}-(\pm)q_{i}\|=O(|\lambda_{i}-\mu|+\epsilon)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(1)] From $(A - \mu I + \delta A) \tilde{y}_{k+1} = x_k$, we rewrite $(A - \lambda_i I) \tilde{y}_{k+1}$ as:
+    \[ (A - \lambda_i I) \tilde{y}_{k+1} = (A - \mu I + \delta A) \tilde{y}_{k+1} + (\mu - \lambda_i) \tilde{y}_{k+1} - \delta A \tilde{y}_{k+1} = x_k + (\mu - \lambda_i) \tilde{y}_{k+1} - \delta A \tilde{y}_{k+1}. \]
+    Dividing by $\|\tilde{y}_{k+1}\|$ and taking the norm:
+    \begin{align*}
+        \left\| (A - \lambda_i I) \frac{\tilde{y}_{k+1}}{\|\tilde{y}_{k+1}\|} \right\| &\leq \frac{\|x_k\|}{\|\tilde{y}_{k+1}\|} + |\mu - \lambda_i| \frac{\|\tilde{y}_{k+1}\|}{\|\tilde{y}_{k+1}\|} + \|\delta A\| \frac{\|\tilde{y}_{k+1}\|}{\|\tilde{y}_{k+1}\|} \\
+        &= \frac{1}{\|\tilde{y}_{k+1}\|} + |\mu - \lambda_i| + \|\delta A\|.
+    \end{align*}
+    
+    \item[(2)] Project the relation $x_k = (A - \mu I + \delta A) \tilde{y}_{k+1}$ onto $q_i$:
+    \[ \alpha_i = q_i^T x_k = q_i^T (A - \lambda_i I + (\lambda_i - \mu) I + \delta A) \tilde{y}_{k+1}. \]
+    Since $q_i^T (A - \lambda_i I) = 0$, we have $\alpha_i = (\lambda_i - \mu) q_i^T \tilde{y}_{k+1} + q_i^T \delta A \tilde{y}_{k+1}$. Thus:
+    \[ |\alpha_i| \leq |\lambda_i - \mu| \|q_i\| \|\tilde{y}_{k+1}\| + \|q_i\| \|\delta A\| \|\tilde{y}_{k+1}\| = (|\lambda_i - \mu| + \|\delta A\|) \|\tilde{y}_{k+1}\|, \]
+    which gives $\|\tilde{y}_{k+1}\| \geq \frac{|\alpha_i|}{|\mu - \lambda_i| + \|\delta A\|}$.
+    
+    \item[(3)] From (1) and (2), we see that the residual $\eta = \|(A - \lambda_i) \tilde{x}_{k+1}\|$ is bounded by $O(|\lambda_i - \mu| + \epsilon)$. For a symmetric matrix with a simple eigenvalue $\lambda_i$, the distance from a unit vector $\tilde{x}_{k+1}$ to the eigenspace spanned by $q_i$ is $O(\eta / \text{gap})$, where $\text{gap} = \min_{j \neq i} |\lambda_j - \lambda_i|$. Since the gap is $O(1)$, we conclude $\|\tilde{x}_{k+1} - (\pm q_i)\| = O(|\lambda_i - \mu| + \epsilon)$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+A function $f:\mathbb{R}^{n}\to\mathbb{R}$ in $C^{2}$ is called strongly convex if its Hessian satisfies $\nabla^{2}f\succeq mI$ for some $m>0$. Show the following are equivalent:
+
+\begin{enumerate}
+\item[(a)] $f$ is strongly convex: $\nabla^{2}f(x)\succeq mI$ for all $x$.
+\item[(b)] For any $t\in[0,1]$, any $x,y\in\mathbb{R}^{n}$:
+\[
+f(tx+(1-t)y)\leq tf(x)+(1-t)f(y)-\frac{m}{2}t(1-t)\|x-y\|^{2}.
+\]
+\item[(c)] $\langle\nabla f(x)-\nabla f(y),x-y\rangle\geq m\|x-y\|^{2}$ for any $x,y\in\mathbb{R}^{n}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{itemize}
+    \item \textbf{(a) $\implies$ (b):} Let $g(x) = f(x) - \frac{m}{2}\|x\|^2$. Then $\nabla^2 g(x) = \nabla^2 f(x) - mI \succeq 0$, so $g$ is convex. The convexity of $g$ implies:
+    \[ g(tx + (1-t)y) \leq tg(x) + (1-t)g(y). \]
+    Substituting back $f$:
+    \[ f(tx+(1-t)y) - \frac{m}{2}\|tx+(1-t)y\|^2 \leq t\left(f(x) - \frac{m}{2}\|x\|^2\right) + (1-t)\left(f(y) - \frac{m}{2}\|y\|^2\right). \]
+    Rearranging and using the identity $\|tx+(1-t)y\|^2 = t\|x\|^2 + (1-t)\|y\|^2 - t(1-t)\|x-y\|^2$, we obtain:
+    \[ f(tx+(1-t)y) \leq tf(x) + (1-t)f(y) - \frac{m}{2}t(1-t)\|x-y\|^2. \]
+
+    \item \textbf{(b) $\implies$ (c):} Divide (b) by $t$ and rearrange:
+    \[ \frac{f(y+t(x-y)) - f(y)}{t} \leq f(x) - f(y) - \frac{m}{2}(1-t)\|x-y\|^2. \]
+    Taking the limit $t \to 0$ yields $f(x) \geq f(y) + \langle \nabla f(y), x-y \rangle + \frac{m}{2}\|x-y\|^2$. Summing this with the symmetric inequality for $f(y)$ gives:
+    \[ f(x) + f(y) \geq f(y) + f(x) + \langle \nabla f(y), x-y \rangle + \langle \nabla f(x), y-x \rangle + m\|x-y\|^2, \]
+    which simplifies to $\langle \nabla f(x) - \nabla f(y), x-y \rangle \geq m\|x-y\|^2$.
+
+    \item \textbf{(c) $\implies$ (a):} For any $v \in \mathbb{R}^n$ and $t > 0$, (c) with $y = x+tv$ gives:
+    \[ \langle \nabla f(x+tv) - \nabla f(x), tv \rangle \geq m\|tv\|^2 \implies \frac{\langle \nabla f(x+tv) - \nabla f(x), v \rangle}{t} \geq m\|v\|^2. \]
+    Taking $t \to 0$ gives the directional derivative of the gradient, which is $v^T \nabla^2 f(x) v \geq m\|v\|^2$. Since this holds for all $v$, $\nabla^2 f(x) \succeq mI$.
+\end{itemize}
+\end{solution}

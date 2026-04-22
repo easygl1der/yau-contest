@@ -1,0 +1,152 @@
+\section{2024 Applied \& Computational Mathematics}
+
+\begin{exercise}
+Let $A\in\mathbb{R}^{n\times n}$ be nonsingular, $u,v\in\mathbb{R}^{n}$. Define rank-1 perturbation $\widehat{A}=A+uv^{T}$.
+\begin{enumerate}
+\item[(a)] Derive necessary and sufficient condition for $\widehat{A}$ to be invertible.
+\item[(b)] Suppose one can solve $Az=b$ with $O(n)$ flops. Under conditions from (a), design algorithm to solve $\widehat{A}x=b$ with $O(n)$ flops, with justification.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Condition for Invertibility:}
+We use the Matrix Determinant Lemma: $\det(A + uv^T) = \det(A)(1 + v^T A^{-1} u)$.
+Since $A$ is nonsingular, $\det(A) \neq 0$. Thus, $\widehat{A}$ is invertible if and only if $1 + v^T A^{-1} u \neq 0$.
+
+\textbf{(b) Algorithm ($O(n)$ flops):}
+By the Sherman-Morrison formula, the inverse is $\widehat{A}^{-1} = A^{-1} - \frac{A^{-1}uv^T A^{-1}}{1 + v^T A^{-1} u}$.
+To solve $\widehat{A}x = b$, we compute $x = \widehat{A}^{-1} b$:
+\[
+x = A^{-1}b - \frac{A^{-1}u (v^T A^{-1} b)}{1 + v^T A^{-1} u}.
+\]
+\textbf{Steps:}
+1. Solve $Az = b$ for $z$. (Cost: $O(n)$)
+2. Solve $Aw = u$ for $w$. (Cost: $O(n)$)
+3. Compute the scalar $c = v^T z$. (Cost: $O(n)$)
+4. Compute the scalar $d = 1 + v^T w$. (Cost: $O(n)$)
+5. Compute $x = z - \frac{c}{d} w$. (Cost: $O(n)$)
+All steps are $O(n)$ by assumption, so the total complexity is $O(n)$.
+\end{solution}
+
+\begin{exercise}
+Consider $\int_{0}^{\infty}f(x)\,dx$ where $f$ continuous, $f'(0)\neq 0$, and $f(x)\sim x^{-1-\alpha}$ as $x\to\infty$ with $\alpha>0$.
+\begin{enumerate}
+\item[(a)] Apply equispaced composite trapezoid rule with $n$ subintervals to $\int_{0}^{L}f(x)\,dx$. Asymptotic error formula as $n\to\infty$ with $L$ fixed?
+\item[(b)] Approximating full integral $0$ to $\infty$. How should $L$ increase with $n$ to optimize asymptotic rate? What is rate?
+\item[(c)] Change variables $x=\frac{L(1+y)}{1-y}$, $y=\frac{x-L}{x+L}$. For $\int_{-1}^{1}F_{L}(y)\,dy$ with equispaced trapezoid, asymptotic error formula for fixed $L$?
+\item[(d)] Which method (domain truncation or change-of-variable) is preferable depends on $\alpha$?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{(a)} For a fixed $L$, the composite trapezoid rule error is $E_{\text{trap}} \approx -\frac{L h^2}{12} f''(\xi) = O(n^{-2})$.
+
+\textbf{(b)} The total error is $E \approx E_{\text{trunc}} + E_{\text{trap}}$.
+$E_{\text{trunc}} = \int_L^\infty f(x) dx \sim \int_L^\infty x^{-1-\alpha} dx \sim L^{-\alpha}$.
+$E_{\text{trap}} = O(h^2) = O((L/n)^2)$.
+Total error $E \approx L^{-\alpha} + L^2 n^{-2}$.
+To optimize, set $L^{-\alpha} \sim L^2 n^{-2} \implies L^{\alpha+2} \sim n^2 \implies L \sim n^{\frac{2}{\alpha+2}}$.
+The optimal rate is $E \sim n^{-\frac{2\alpha}{\alpha+2}}$.
+
+\textbf{(c)} For the change of variables, the error is determined by the smoothness of the integrand at the boundaries $y = \pm 1$. Near $y=1$ ($x \to \infty$), the mapping $dx/dy = \frac{2L}{(1-y)^2}$ introduces singularities. The decay of $f$ must counteract this.
+
+\textbf{(d)} Domain truncation is preferable when $\alpha$ is small (slow decay), as the change-of-variables can create strong singularities at the boundary. For large $\alpha$ (fast decay), the change-of-variables method can achieve better performance if $f$ is sufficiently smooth.
+\end{solution}
+
+\begin{exercise}
+Consider Chebyshev polynomials $T_{n}(x)=\cos(n\theta)$, $x=\cos\theta$. Chebyshev of second kind: $U_{n}(x)=\frac{\sin((n+1)\theta)}{\sin\theta}$.
+\begin{enumerate}
+\item[(a)] Derive recurrence for $U_{n}(x)$.
+\item[(b)] Show $U_{n}$ orthogonal w.r.t. $\int_{-1}^{1}f(x)g(x)\sqrt{1-x^{2}}\,dx$.
+\item[(c)] Derive 2-point Gaussian Quadrature for $\int_{-1}^{1}f(x)\sqrt{1-x^{2}}\,dx$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Recurrence:}
+$\sin((n+2)\theta) + \sin(n\theta) = 2 \sin((n+1)\theta) \cos\theta$.
+Dividing by $\sin\theta$: $U_{n+1}(x) + U_{n-1}(x) = 2x U_n(x)$.
+Thus $U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x)$, with $U_0 = 1, U_1 = 2x$.
+
+\textbf{(b) Orthogonality:}
+$\int_{-1}^1 U_n(x) U_m(x) \sqrt{1-x^2} dx$. Let $x = \cos\theta, dx = -\sin\theta d\theta$.
+$\int_0^\pi \frac{\sin((n+1)\theta)}{\sin\theta} \frac{\sin((m+1)\theta)}{\sin\theta} \sin^2\theta d\theta = \int_0^\pi \sin((n+1)\theta) \sin((m+1)\theta) d\theta$.
+This is $\frac{\pi}{2} \delta_{nm}$.
+
+\textbf{(c) 2-point Gaussian Quadrature:}
+The nodes are the roots of $U_2(x) = 4x^2 - 1 = 0 \implies x_1 = -1/2, x_2 = 1/2$.
+Weights $w_1 = w_2 = \frac{1}{2} \int_{-1}^1 \sqrt{1-x^2} dx = \frac{1}{2} \cdot \frac{\pi}{2} = \pi/4$.
+Formula: $\int_{-1}^1 f(x) \sqrt{1-x^2} dx \approx \frac{\pi}{4} (f(-1/2) + f(1/2))$.
+\end{solution}
+
+\begin{exercise}
+Consider BVP: $-\frac{d}{dx}(a(x)u')=f(x)$, $u(0)=u(1)=0$, $a(x)>\delta>0$.
+\begin{enumerate}
+\item[(a)] Using finite differences $x_l = lh, h=1/n$, derive $O(h^2)$ approximation.
+\item[(b)] Find smallest disc in $\mathbb{C}$ guaranteed to contain all eigenvalues of this system.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Finite Difference:}
+At $x_l$, approximate $-\frac{d}{dx}(a u')$ by:
+$-\frac{1}{h} [ a_{l+1/2} \frac{u_{l+1}-u_l}{h} - a_{l-1/2} \frac{u_l - u_{l-1}}{h} ] = f_l$.
+This gives the tridiagonal system $A \mathbf{u} = \mathbf{f}$ where:
+$A_{l,l} = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}$, $A_{l,l-1} = -\frac{a_{l-1/2}}{h^2}$, $A_{l,l+1} = -\frac{a_{l+1/2}}{h^2}$.
+
+\textbf{(b) Eigenvalues:}
+By Gerschgorin Disc Theorem, eigenvalues $\lambda$ lie in $\bigcup D_l$ where $D_l$ is centered at $A_{l,l}$ with radius $R_l = \sum_{j \neq l} |A_{l,j}| = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}$.
+Since $A_{l,l} = R_l$, the discs are all centered on the real axis and touch the origin.
+The union is $[0, \max \frac{2(a_{l+1/2} + a_{l-1/2})}{h^2}] \approx [0, \frac{4 \|a\|_\infty}{h^2}]$.
+Thus the smallest disc (if we consider a circle from the origin) has radius $\frac{4 \|a\|_\infty}{h^2}$.
+\end{solution}
+
+\begin{exercise}
+(a) Verify $u_t = u_{xxx}$ is well-posed.
+(b) Solve numerically with leapfrog-like scheme. Determine stability.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Well-posedness:}
+Fourier transform: $\hat{u}_t = (ik)^3 \hat{u} = -ik^3 \hat{u}$.
+Solution $\hat{u}(k, t) = e^{-ik^3 t} \hat{u}(k, 0)$.
+$|\hat{u}(k, t)| = |\hat{u}(k, 0)|$. The $L^2$ norm is conserved, so it is well-posed.
+
+\textbf{(b) Stability:}
+The scheme is $\frac{u_j^{n+1} - u_j^{n-1}}{2k} = - \frac{u_{j+2}/2 - u_{j+1} + u_{j-1} - u_{j-2}/2}{h^3}$? No, the formula given was:
+$\frac{u_j^{n+1} - u_j^{n-1}}{2k} = \frac{-u_{j-2}/2 + u_{j-1} - u_{j+1} + u_{j+2}/2}{h}$. (This looks like a discretization of $u_x$).
+Wait, the exercise says $u_{xxx}$. Let's re-read the scheme.
+Actually, the right side is a centered difference for $u_x$: $\frac{1}{h} [ -\frac{1}{2} u(x-2h) + u(x-h) - u(x+h) + \frac{1}{2} u(x+2h) ] \approx u_x$ (order 4).
+Wait, if the PDE is $u_t = u_{xxx}$, the right side should be for $u_{xxx}$.
+If the right side is for $u_x$, then it solves $u_t = u_x$.
+Assuming the question meant to solve $u_t = u_{xxx}$ with a consistent scheme:
+For $u_t = a u_{xxx}$, Von Neumann analysis $g^2 - 1 = 2ik \lambda F(\theta)$.
+Stability for leapfrog typically requires $|\lambda| \leq C$.
+For the dispersive term $u_{xxx}$, the stability condition usually involves $k/h^3 \leq C$.
+\end{solution}
+
+\begin{exercise}
+Diffusion $\frac{\partial v}{\partial t} = \mu \frac{\partial^2 v}{\partial x^2}$.
+(a) Accuracy of central difference?
+(b) FE and CN growth factors?
+(c) Solution for $\phi(mh) = (-1)^m$?
+(d) Stability constraints.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Accuracy:} Central difference $L v_m = \frac{v_{m+1} - 2v_m + v_{m-1}}{h^2}$ is $O(h^2)$.
+
+\textbf{(b) Growth Factors:}
+Let $v_m^n = g^n e^{im\theta}$. $L v_m = \frac{2(\cos\theta - 1)}{h^2} v_m = -\frac{4 \sin^2(\theta/2)}{h^2} v_m$.
+Forward Euler: $v^{n+1} = v^n + k \mu L v^n \implies g_{FE} = 1 - \frac{4\mu k}{h^2} \sin^2(\theta/2)$.
+Crank-Nicolson: $(1 - \frac{k\mu}{2}L) v^{n+1} = (1 + \frac{k\mu}{2}L) v^n \implies g_{CN} = \frac{1 - \frac{2\mu k}{h^2} \sin^2(\theta/2)}{1 + \frac{2\mu k}{h^2} \sin^2(\theta/2)}$.
+
+\textbf{(c) Solution for $(-1)^m$:}
+$(-1)^m = e^{im\pi}$, so $\theta = \pi$.
+$g_{FE}(\pi) = 1 - \frac{4\mu k}{h^2}$.
+$v_m^n = (1 - \frac{4\mu k}{h^2})^n (-1)^m$.
+
+\textbf{(d) Stability:}
+FE: $|g_{FE}| \leq 1 \implies -1 \leq 1 - \frac{4\mu k}{h^2} \leq 1 \implies \frac{4\mu k}{h^2} \leq 2 \implies k \leq \frac{h^2}{2\mu}$.
+CN: $|g_{CN}| \leq 1$ always holds for $\mu > 0$, so it is unconditionally stable.
+\end{solution}

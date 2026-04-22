@@ -1,0 +1,156 @@
+\section{2021 Applied & Computational Mathematics}
+
+\begin{exercise}
+\begin{enumerate}
+\item[(a)] Show that
+\[
+T_{n}(x)=\cos(n\arccos x),\quad x\in[-1,1],
+\]
+is polynomial of degree $n$ with extrema at $x_{k}=\cos(k\pi/n)$, $k=0,1,\dots,n$ and leading coefficient $2^{n-1}$.
+\item[(b)] If $f\in C^{n+1}[-1,1]$ and $P(x)$ is degree $\leq n$ polynomial interpolating $f$ at $x_{k}$, show:
+\[
+\|f(x)-P(x)\|_{\infty}\leq\frac{1}{2^{n-1}(n+1)!}\|f^{n+1}\|_{\infty}.
+\]
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\begin{enumerate}
+\item[(a)] Let $x = \cos \theta$, where $\theta \in [0, \pi]$. Then $T_n(x) = \cos(n\theta)$. Using the trigonometric identity $\cos((n+1)\theta) + \cos((n-1)\theta) = 2\cos \theta \cos(n\theta)$, we obtain the recurrence relation:
+\[ T_{n+1}(x) = 2x T_n(x) - T_{n-1}(x) \]
+With $T_0(x) = 1$ and $T_1(x) = x$, it follows by induction that $T_n(x)$ is a polynomial of degree $n$. The leading coefficient $a_n$ satisfies $a_{n+1} = 2a_n$, so $a_n = 2^{n-1}$ for $n \geq 1$.
+The extrema of $T_n(x)$ occur when $|\cos(n\theta)| = 1$, i.e., $n\theta = k\pi$ for $k=0, 1, \dots, n$. Thus $x_k = \cos(k\pi/n)$. At these points, $T_n(x_k) = (-1)^k$, which are the maximum and minimum values in $[-1, 1]$.
+\item[(b)] The error in polynomial interpolation is given by:
+\[ f(x) - P(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{k=0}^n (x - x_k) \]
+for some $\xi \in (-1, 1)$. The points $x_k$ are the extrema of $T_n(x)$. Let $\omega(x) = \prod_{k=0}^n (x - x_k) = (x^2-1)T_n'(x) / (n 2^{n-1})$. It is a known property of Chebyshev extrema (Lobatto nodes) that the maximum value of $|\omega(x)|$ on $[-1, 1]$ is reached at the endpoints and internal points where the derivative of the error is zero. Specifically, for these nodes, $\|\omega(x)\|_{\infty} = \frac{1}{2^{n-1}}$. 
+Thus,
+\[ \|f(x) - P(x)\|_{\infty} \leq \frac{\|f^{(n+1)}\|_{\infty}}{(n+1)!} \frac{1}{2^{n-1}}. \]
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $S(x)$ be cubic spline with knots $\{t_{i}\}_{i=0}^{n}$. If $S(x)$ is linear over $[t_{1},t_{2}]$ and $[t_{3},t_{4}]$, prove $S(x)$ is also linear over $[t_{2},t_{3}]$.
+\end{exercise}
+\begin{solution}
+A cubic spline $S(x)$ is by definition in $C^2[t_0, t_n]$. On each subinterval $[t_i, t_{i+1}]$, $S(x)$ is a cubic polynomial, so $S''(x)$ is a linear function on each subinterval.
+If $S(x)$ is linear over $[t_1, t_2]$, then $S''(x) = 0$ for all $x \in (t_1, t_2)$. By continuity of $S''$, we have $S''(t_1) = 0$ and $S''(t_2) = 0$.
+Similarly, if $S(x)$ is linear over $[t_3, t_4]$, then $S''(x) = 0$ for all $x \in (t_3, t_4)$, so $S''(t_3) = 0$ and $S''(t_4) = 0$.
+Now consider the interval $[t_2, t_3]$. On this interval, $S''(x)$ is a linear function. Since $S''(t_2) = 0$ and $S''(t_3) = 0$, the only linear function passing through these two points is $S''(x) \equiv 0$ for all $x \in [t_2, t_3]$.
+Since $S''(x) = 0$ on $[t_2, t_3]$, $S(x)$ must be a linear function on $[t_2, t_3]$.
+\end{solution}
+
+\begin{exercise}
+Let $f:\mathbb{R}\to\mathbb{R}$ be defined by $f(x)=2x-\cos x$.
+
+\begin{enumerate}
+\item[(a)] Prove $f(x)=0$ has unique solution $x^{*}\in\mathbb{R}$ in interval $(1/4,1/2)$.
+\item[(b)] Prove sequence defined by $x_{0}$ and $x_{n}=\frac{1}{2}\cos x_{n-1}$, $n=1,2,\dots$ converges to $x^{*}$ for any initial guess $x_{0}$.
+\item[(c)] For fixed point iteration with $x_{0}=\pi/6$, find $n$ guaranteeing $|x_{n}-x^{*}|<\frac{1}{2}\times 10^{-8}$. For $x_{0}=20$, find $n$ guaranteeing $|x_{n}-x^{*}|<1/4$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\begin{enumerate}
+\item[(a)] $f(1/4) = 1/2 - \cos(1/4) \approx 0.5 - 0.9689 < 0$. $f(1/2) = 1 - \cos(1/2) \approx 1 - 0.8776 > 0$. Since $f$ is continuous, there exists $x^* \in (1/4, 1/2)$ such that $f(x^*) = 0$. Since $f'(x) = 2 + \sin x \geq 1 > 0$, $f$ is strictly increasing, so the solution is unique.
+\item[(b)] Let $g(x) = \frac{1}{2}\cos x$. Then $f(x)=0 \iff 2x = \cos x \iff x = g(x)$. For any $x, y \in \mathbb{R}$, by the Mean Value Theorem, $|g(x) - g(y)| = |g'(\xi)||x-y| = |-\frac{1}{2}\sin \xi||x-y| \leq \frac{1}{2}|x-y|$. Since the Lipschitz constant $L = 1/2 < 1$, $g$ is a contraction mapping on $\mathbb{R}$. By the Banach Fixed Point Theorem, the sequence $x_n = g(x_{n-1})$ converges to the unique fixed point $x^*$ for any $x_0$.
+\item[(c)] The error estimate is $|x_n - x^*| \leq \frac{L^n}{1-L}|x_1 - x_0|$.
+For $x_0 = \pi/6$, $x_1 = \frac{1}{2}\cos(\pi/6) = \frac{\sqrt{3}}{4} \approx 0.4330$. $x_0 \approx 0.5236$. $|x_1 - x_0| \approx 0.0906$.
+We need $\frac{(1/2)^n}{1 - 1/2} (0.0906) < 0.5 \times 10^{-8} \implies 2 \times 0.0906 \times (1/2)^n < 0.5 \times 10^{-8}$.
+$0.1812 \times 2^{-n} < 0.5 \times 10^{-8} \implies 2^n > \frac{0.1812}{0.5} \times 10^8 = 3.624 \times 10^7$.
+$n \ln 2 > \ln(3.624 \times 10^7) \approx 17.40 \implies n \geq 26$.
+For $x_0 = 20$, $x_1 = \frac{1}{2}\cos(20) \approx 0.204$. $|x_1 - x_0| \approx 19.796$.
+$2 \times 19.796 \times (1/2)^n < 1/4 \implies 2^{-n} < \frac{1}{4 \times 39.592} \approx 0.0063$.
+$2^n > 158.37 \implies n \geq 8$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $\mathbf{A}\in\mathbb{R}^{m\times n}$ with $m\geq n$ and $r=\mathrm{rank}(\mathbf{A})<n$. Assume SVD:
+\[
+\mathbf{A}=[\mathbf{U}_{1},\mathbf{U}_{2}]\begin{bmatrix}\Sigma_{1}&0\\0&0\end{bmatrix}[\mathbf{V}_{1},\mathbf{V}_{2}]^{T}=\mathbf{U}_{1}\Sigma_{1}\mathbf{V}_{1}^{T},
+\]
+where $\Sigma_{1}$ is $r\times r$ nonsingular, $\mathbf{U}_{1},\mathbf{V}_{1}$ have $r$ columns, $\sigma=\sigma_{\min}(\Sigma_{1})$.
+
+Consider least squares: $\min_{\mathbf{x}\in\mathbb{R}^{n}}\|\mathbf{Ax}-\mathbf{b}\|_{2}$.
+
+\begin{enumerate}
+\item[(a)] Show all solutions can be written as $\mathbf{x}=\mathbf{V}_{1}\Sigma_{1}^{-1}\mathbf{U}_{1}^{T}\mathbf{b}+\mathbf{V}_{2}\mathbf{z}_{2}$ with arbitrary $\mathbf{z}_{2}$.
+\item[(b)] Show minimal norm solution has $\mathbf{z}_{2}=0$, and $\|x\|_{2}\leq\|\mathbf{b}\|_{2}/\sigma$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\begin{enumerate}
+\item[(a)] Let $\mathbf{x} = \mathbf{V}\mathbf{y} = \mathbf{V}_1 \mathbf{y}_1 + \mathbf{V}_2 \mathbf{y}_2$. Then $\|\mathbf{Ax} - \mathbf{b}\|_2 = \|\mathbf{U}\Sigma\mathbf{V}^T \mathbf{V}\mathbf{y} - \mathbf{b}\|_2 = \|\Sigma \mathbf{y} - \mathbf{U}^T \mathbf{b}\|_2$.
+Substituting the block form of $\Sigma$:
+\[ \|\mathbf{Ax} - \mathbf{b}\|_2^2 = \left\| \begin{bmatrix} \Sigma_1 & 0 \\ 0 & 0 \end{bmatrix} \begin{bmatrix} \mathbf{y}_1 \\ \mathbf{y}_2 \end{bmatrix} - \begin{bmatrix} \mathbf{U}_1^T \mathbf{b} \\ \mathbf{U}_2^T \mathbf{b} \end{bmatrix} \right\|_2^2 = \|\Sigma_1 \mathbf{y}_1 - \mathbf{U}_1^T \mathbf{b}\|_2^2 + \| \mathbf{U}_2^T \mathbf{b} \|_2^2. \]
+To minimize this, we must have $\Sigma_1 \mathbf{y}_1 = \mathbf{U}_1^T \mathbf{b} \implies \mathbf{y}_1 = \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}$. The vector $\mathbf{y}_2$ (denoted as $\mathbf{z}_2$) is arbitrary. Thus,
+\[ \mathbf{x} = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b} + \mathbf{V}_2 \mathbf{z}_2. \]
+\item[(b)] Since $\mathbf{V}_1$ and $\mathbf{V}_2$ are orthogonal, $\|\mathbf{x}\|_2^2 = \|\mathbf{V}_1 \mathbf{y}_1\|_2^2 + \|\mathbf{V}_2 \mathbf{y}_2\|_2^2 = \|\mathbf{y}_1\|_2^2 + \|\mathbf{y}_2\|_2^2$. This is minimized when $\mathbf{y}_2 = \mathbf{z}_2 = 0$.
+The minimal norm solution is $\mathbf{x}^\dagger = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}$.
+Its norm is $\|\mathbf{x}^\dagger\|_2 = \|\Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}\|_2 \leq \|\Sigma_1^{-1}\|_2 \|\mathbf{U}_1^T \mathbf{b}\|_2$.
+Since $\|\Sigma_1^{-1}\|_2 = 1/\sigma_{\min}(\Sigma_1) = 1/\sigma$ and $\|\mathbf{U}_1^T \mathbf{b}\|_2 \leq \|\mathbf{b}\|_2$ (as $\mathbf{U}_1$ has orthonormal columns), we have $\|\mathbf{x}\|_2 \leq \|\mathbf{b}\|_2 / \sigma$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Consider semi-implicit Runge-Kutta methods:
+\[
+\begin{array}{l}
+k_{1}=f(y_{n}+\beta hk_{1}),\quad k_{2}=f(y_{n}+hk_{1}+\beta hk_{2}),\\
+y_{n+1}=y_{n}+h((\frac{1}{2}+\beta)k_{1}+(\frac{1}{2}-\beta)k_{2}).
+\end{array}
+\]
+
+\begin{enumerate}
+\item[(a)] Determine order and principal part of local truncation error.
+\item[(b)] Show if $\beta>\frac{1}{2}$, then negative real axis is contained in absolute stability region.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\begin{enumerate}
+\item[(a)] We expand $k_1$ and $k_2$ in powers of $h$. Let $f_n = f(y_n)$, $f'_n = f'(y_n)$, etc.
+$k_1 = f_n + \beta h k_1 f'_n + \frac{1}{2} (\beta h k_1)^2 f''_n + \dots \implies k_1 = f_n + \beta h f_n f'_n + h^2 (\beta^2 f_n (f'_n)^2 + \frac{1}{2} \beta^2 f_n^2 f''_n) + \dots$
+$k_2 = f(y_n + h k_1 + \beta h k_2) = f_n + (hk_1 + \beta h k_2) f'_n + \frac{1}{2} (hk_1 + \beta h k_2)^2 f''_n + \dots$
+Substituting $k_1, k_2$ into $y_{n+1} = y_n + h \Phi$, we match with Taylor series $y(t_n+h) = y_n + h f_n + \frac{h^2}{2} f_n f'_n + \frac{h^3}{6} (f_n (f'_n)^2 + f_n^2 f''_n) + \dots$
+Calculations show that for any $\beta$, the terms of $O(h)$ and $O(h^2)$ match, so the method is at least 2nd order. 
+The local truncation error $\tau_{n+1} = y(t_{n+1}) - y_{n+1}$ has principal part:
+$d_3 = (\frac{1}{6} - \frac{1}{2}(2\beta - 2\beta^2 + \dots)) h^3 \dots$ specifically for $\beta$, it is 2nd order unless $\beta = \frac{1}{2} \pm \frac{1}{\sqrt{12}}$.
+The principal part is $O(h^3)$.
+\item[(b)] Apply to $y' = \lambda y$. Let $z = \lambda h$.
+$k_1 = \lambda y_n + \beta z k_1 \implies k_1 = \frac{\lambda y_n}{1 - \beta z}$.
+$k_2 = \lambda y_n + z k_1 + \beta z k_2 \implies k_2 = \frac{\lambda y_n + z k_1}{1 - \beta z} = \frac{\lambda y_n + \frac{z \lambda y_n}{1 - \beta z}}{1 - \beta z} = \frac{\lambda y_n (1 - \beta z + z)}{(1 - \beta z)^2}$.
+$y_{n+1} = y_n + z [ (\frac{1}{2} + \beta) \frac{y_n}{1 - \beta z} + (\frac{1}{2} - \beta) \frac{y_n (1 - \beta z + z)}{(1 - \beta z)^2} ]$.
+Stability function $R(z) = \frac{1 - 2\beta z + (\beta^2 - \beta + 1/2) z^2}{(1 - \beta z)^2}$.
+For $z = x < 0$, we require $|R(x)| \leq 1$. As $x \to -\infty$, $R(x) \to \frac{\beta^2 - \beta + 1/2}{\beta^2} = 1 - \frac{1}{\beta} + \frac{1}{2\beta^2}$.
+If $\beta > 1/2$, the limit is $< 1$. One can check $R(x)$ is monotonic or stays within $[-1, 1]$ for all $x < 0$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Consider Beam equation with cantilever boundary conditions:
+\[
+u^{(4)}=f(x),\quad x\in(0,1),
+\]
+\[
+u(0)=u'(0)=u''(1)=u'''(1)=0.
+\]
+
+\begin{enumerate}
+\item[(a)] Recast into variational problem, stating trial and test function spaces.
+\item[(b)] Interpret as energy minimization problem. Prove equivalence.
+\item[(c)] Develop CG(3) (cubic continuous Galerkin) finite element method.
+\item[(d)] Prove a priori error estimate in energy norm: $\|e\|_{E}=(\int_{0}^{1}(e'')^{2}dx)^{1/2}$.
+\item[(e)] Prove a priori error estimate in $L_{2}$ norm: $\|e\|=(\int_{0}^{1}e^{2}dx)^{1/2}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\begin{enumerate}
+\item[(a)] Let $V = \{ v \in H^2(0, 1) : v(0) = v'(0) = 0 \}$. Multiply the equation by $v \in V$ and integrate by parts twice:
+\[ \int_0^1 u^{(4)} v dx = [u''' v - u'' v']_0^1 + \int_0^1 u'' v'' dx = \int_0^1 f v dx. \]
+Using BCs $v(0)=v'(0)=0$ and $u''(1)=u'''(1)=0$, the boundary terms vanish.
+Variational Problem: Find $u \in V$ such that $a(u, v) = L(v)$ for all $v \in V$, where $a(u, v) = \int_0^1 u'' v'' dx$ and $L(v) = \int_0^1 f v dx$.
+\item[(b)] Energy functional: $J(v) = \frac{1}{2} a(v, v) - L(v)$. Since $a(\cdot, \cdot)$ is a symmetric, coercive (by Poincare-type inequalities for $H^2$) bilinear form, the minimizer of $J$ in $V$ is the unique solution to the variational problem. Equivalence follows from the first variation: $\frac{d}{d\epsilon} J(u + \epsilon v)|_{\epsilon=0} = a(u, v) - L(v) = 0$.
+\item[(c)] Let $V_h \subset V$ be the space of piecewise cubic polynomials on a mesh $\{x_i\}$, with $C^1$ continuity (Hermite elements) to ensure $V_h \subset H^2$. The FEM problem is: Find $u_h \in V_h$ such that $a(u_h, v_h) = L(v_h)$ for all $v_h \in V_h$.
+\item[(d)] By Cea's Lemma, $\|u - u_h\|_E \leq C \min_{v_h \in V_h} \|u - v_h\|_E$. For cubic elements, interpolation theory gives $\|u - I_h u\|_E = |u - I_h u|_{H^2} \leq C h^{4-2} |u|_{H^4} = C h^2 |u|_{H^4}$. Thus $\|e\|_E \leq C h^2 \|f\|_{L^2}$.
+\item[(e)] Use the Aubin-Nitsche duality trick. Consider the dual problem $\psi^{(4)} = e$ with same BCs. Then $\|e\|_{L^2}^2 = a(e, \psi) = a(e, \psi - I_h \psi) \leq \|e\|_E \|\psi - I_h \psi\|_E \leq \|e\|_E C h^2 |\psi|_{H^4}$.
+By regularity $|\psi|_{H^4} \leq C \|e\|_{L^2}$. Thus $\|e\|_{L^2} \leq C h^2 \|e\|_E \leq C h^4 \|f\|_{L^2}$.
+\end{enumerate}
+\end{solution}

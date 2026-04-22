@@ -1,0 +1,29 @@
+\begin{minted}
+  [
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  linenos
+  ]
+  {coq}
+
+Definition Ens {A : Type} := A -> Prop.
+
+Definition subset {A : Type} (C D : Ens) :=
+  forall (x : A), C x -> D x.
+
+Infix "⊆" := subset (at level 30).
+
+Definition image {A B : Type} (f : A -> B) (C : Ens) : Ens :=
+  fun y => exists x, C x /\ y = f x.
+
+Definition preimage {A B : Type} (f : A -> B) (C : Ens) : Ens :=
+  fun x => C (f x).
+
+Definition injective {A B : Type} (f : A -> B) :=
+  forall x x', f x = f x' -> x = x'.
+
+Context (A B : Type).
+
+\end{minted}

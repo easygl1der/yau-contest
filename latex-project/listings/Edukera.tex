@@ -1,0 +1,74 @@
+\begin{minted}
+  [
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  linenos
+  ]
+  {coq}
+
+(* Declaration of constants used in the statement of the riddle *)
+
+Context (i : Type).
+Context (Rich : i -> Prop).
+Context (mother : i -> i).
+Context (h : i).
+
+(* Statement of the riddle *)
+
+Theorem rich_mothers :
+  (forall x, ~Rich(x) -> Rich(mother(x))) ->
+  (forall x,  ~Rich(mother(mother(x))) \/ ~Rich(x)) ->
+  False.
+
+(* Proof of the riddle *)
+
+Proof.
+  intros H1 H2.
+  (** 2 clicks on the conclusion *)
+
+  destruct (H2 h) as [H | H].
+  (** DnD of [h] onto [H2], then click on the resulting hypothesis *)
+
+  * pose proof (H1 _ H) as H'.
+    (* If one naively uses [apply _ in], then one loses [H] although
+       it is needed later! Hence the use of [pose proof]. *)
+    (** DnD of [H1] onto [H] *)
+    
+    destruct (H2 (mother h)) as [H2' | H2'].
+    apply H2'. exact H'.
+    (** DnD of [H'] onto [H2]. Could also be performed stepwise:  
+        - Selection of [mother(h)] in [H']
+        - DnD of [H'] onto [H2]
+        - Click on the resulting hypothesis
+        - DnD of [H2'] onto [H'] *)
+
+    apply H1 in H2'.
+    (** DnD of [H1] onto [H2'] *)
+
+    apply H. exact H2'.
+    (** DnD of [H] onto [H2'] *)
+
+  * pose proof (H1 _ H) as H'.
+    (** DnD of [H1] onto [H] *)
+
+    destruct (H2 (mother h)) as [H2' | H2'].
+    2: { apply H2'. exact H'. }
+    (** DnD of [H'] onto [H2] *)
+
+    pose proof (H1 _ H2') as H2''.
+    (** DnD of [H1] onto [H2'] *)
+
+    destruct (H2 (mother (mother h))) as [H2''' | H2'''].
+    apply H2'''. exact H2''.
+    (** DnD of [H2''] onto [H2] *)
+
+    apply H1 in H2'''.
+    (** DnD of [H1] onto [H2'''] *)
+
+    apply H2'. exact H2'''.
+    (** DnD of [H2'] onto [H2'''] *)
+Qed.
+
+\end{minted}

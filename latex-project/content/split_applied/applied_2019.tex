@@ -1,0 +1,286 @@
+\section{2019 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+Given set $\mathcal{X}$, $m\in\mathbb{N}$ and hypothesis space $\mathcal{H}$, define:
+\[
+\Pi_{\mathcal{H}}(m)=\max_{\{x_{1},x_{2},\dots,x_{m}\}\subseteq\mathcal{X}}|\{(h(x_{1}),h(x_{2}),\dots,h(x_{m}))|h\in\mathcal{H}\}|.
+\]
+
+VC dimension of $\mathcal{H}$ is:
+\[
+\mathrm{VC}(\mathcal{H})=\max\{m:\Pi_{\mathcal{H}}(m)=2^{m}\}.
+\]
+
+\begin{enumerate}
+\item[(i)] Let $\mathcal{X}=\mathbb{R}$. If $a\leq b$, define $h(x;a,b)=1$ if $x\in[a,b]$ and $h(x)=-1$ otherwise. Find VC dimension of $\mathcal{H}=\{h(x;a,b)|a,b\in\mathbb{R},a\leq b\}$.
+\item[(ii)] Let $\mathcal{X}=\mathbb{R}^{d}$, $\mathcal{H}$ be linear classifiers: $\mathcal{H}=\{f(x)|f(x)=\mathrm{sign}(w^{\top}x+b),w\in\mathbb{R}^{d},b\in\mathbb{R}\}$. Show VC dimension of $\mathcal{H}$ is $d+1$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] Consider $m=2$. Let $x_1 < x_2$. We can obtain all $2^2=4$ labelings:
+    \begin{itemize}
+        \item $(-1, -1)$: pick $[a, b]$ far from $\{x_1, x_2\}$.
+        \item $(+1, -1)$: pick $[a, b]$ such that $a < x_1 < b < x_2$.
+        \item $(-1, +1)$: pick $[a, b]$ such that $x_1 < a < x_2 < b$.
+        \item $(+1, +1)$: pick $[a, b]$ such that $a < x_1 < x_2 < b$.
+    \end{itemize}
+    Thus $\text{VC}(\mathcal{H}) \geq 2$.
+    For $m=3$, let $x_1 < x_2 < x_3$. We cannot realize the labeling $(+1, -1, +1)$. If $h(x_1)=1$ and $h(x_3)=1$, then $x_1, x_3 \in [a, b]$. Since $[a, b]$ is an interval, $x_2 \in [x_1, x_3] \subseteq [a, b]$, so $h(x_2)=1$. Thus, no set of 3 points can be shattered. Hence, $\text{VC}(\mathcal{H}) = 2$.
+
+    \item[(ii)] First, show $\text{VC}(\mathcal{H}) \geq d+1$. Consider the set of points $S = \{0, e_1, \dots, e_d\} \subset \mathbb{R}^d$, where $e_i$ are standard basis vectors. For any labeling $y \in \{-1, 1\}^{d+1}$, we seek $w, b$ such that $\text{sign}(b) = y_0$ and $\text{sign}(w_i + b) = y_i$. This is easily satisfied by choosing $b = y_0 \epsilon$ and $w_i = (y_i - y_0) \epsilon$ for small $\epsilon$.
+    Second, show $\text{VC}(\mathcal{H}) < d+2$. By Radon's Theorem, any set $S$ of $d+2$ points in $\mathbb{R}^d$ can be partitioned into two disjoint sets $S_1, S_2$ such that their convex hulls intersect: $\text{conv}(S_1) \cap \text{conv}(S_2) \neq \emptyset$. Any linear classifier that assigns $+1$ to all points in $S_1$ and $-1$ to all points in $S_2$ would imply a hyperplane separating $\text{conv}(S_1)$ and $\text{conv}(S_2)$, which is impossible. Thus $d+2$ points cannot be shattered. Hence, $\text{VC}(\mathcal{H}) = d+1$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Consider Richardson's difference scheme for heat equation $u_{t}=u_{xx}$:
+\[
+\frac{1}{2k}(u(x,t+k)-u(x,t-k))=\frac{1}{h^{2}}(u(x-h,t)-2u(x,t)+u(x+h,t)).
+\]
+
+\begin{enumerate}
+\item[(i)] Show this scheme has second-order truncation error.
+\item[(ii)] Use ODE principles or von Neumann analysis to show this scheme is unconditionally unstable.
+\item[(iii)] Demonstrate a minor modification of Richardson's scheme that yields a familiar unconditionally stable scheme and prove it.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] Let $u_j^n$ denote $u(jh, nk)$. Expanding $u$ in Taylor series around $(x, t)$:
+    \[ \frac{u(x, t+k) - u(x, t-k)}{2k} = u_t + \frac{k^2}{6} u_{ttt} + O(k^4) \]
+    \[ \frac{u(x-h, t) - 2u(x, t) + u(x+h, t)}{h^2} = u_{xx} + \frac{h^2}{12} u_{xxxx} + O(h^4) \]
+    The truncation error $\tau = \left(u_t - u_{xx}\right) + O(k^2 + h^2)$. Since $u_t = u_{xx}$, we have $\tau = O(k^2 + h^2)$, which is second-order in both space and time.
+
+    \item[(ii)] Substitute the von Neumann ansatz $u_j^n = \xi^n e^{ij\theta}$:
+    \[ \frac{\xi - \xi^{-1}}{2k} = \frac{e^{i\theta} - 2 + e^{-i\theta}}{h^2} = -\frac{4}{h^2} \sin^2(\theta/2) \]
+    Let $\mu = k/h^2$ and $s = \sin^2(\theta/2)$. Then $\xi^2 + 8\mu s \xi - 1 = 0$.
+    The product of the roots is $\xi_1 \xi_2 = -1$. Unless both roots have magnitude 1, one root must have $|\xi| > 1$. Here, the discriminant is $D = (8\mu s)^2 + 4 > 0$, so the roots are real and distinct. Since their product is $-1$, one root satisfies $|\xi| > 1$ for any $s \in (0, 1]$. Thus, the scheme is unconditionally unstable.
+
+    \item[(iii)] Replacing $u_j^n$ in the spatial derivative with the average $\frac{1}{2}(u_j^{n+1} + u_j^{n-1})$ yields the DuFort-Frankel scheme:
+    \[ \frac{u_j^{n+1} - u_j^{n-1}}{2k} = \frac{u_{j+1}^n - (u_j^{n+1} + u_j^{n-1}) + u_{j-1}^n}{h^2} \]
+    Von Neumann analysis: $(1+2\mu)\xi^2 - 2\mu(2\cos\theta)\xi + (2\mu-1) = 0$.
+    The roots $\xi = \frac{2\mu\cos\theta \pm \sqrt{1-4\mu^2\sin^2\theta}}{1+2\mu}$ satisfy $|\xi| \leq 1$ for all $\mu > 0$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $\emptyset\neq K$ be a closed convex set in $\mathbb{R}^{n}$ (i.e., $K$ closed and for any $x,y\in K$, $\lambda\in(0,1)$, $\lambda x+(1-\lambda)y\in K$). For any $z\in\mathbb{R}^{n}$, let $\Pi_{K}(z)$ denote metric projection of $z$ onto $K$: unique optimal solution of $\min\frac{1}{2}\|y-z\|_{2}^{2}$ s.t. $y\in K$.
+
+Show:
+
+\begin{enumerate}
+\item[(i)] $y\in K$ solves this problem iff $(z-y)^{T}(d-y)\leq 0$ for all $d\in K$.
+\item[(ii)] For any $y,z\in\mathbb{R}^{n}$: $\|\Pi_{K}(y)-\Pi_{K}(z)\|_{2}\leq\|y-z\|_{2}$.
+\item[(iii)] $\Theta(\cdot)$ is continuously differentiable with gradient $\nabla\Theta(z)=z-\Pi_{K}(z)$, where $\Theta(z)=\frac{1}{2}\|z-\Pi_{K}(z)\|_{2}^{2}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] The function $f(y) = \frac{1}{2}\|y-z\|^2$ is convex. For a convex set $K$, $y^* = \Pi_K(z)$ is the unique minimizer if and only if $\nabla f(y^*)^T(d - y^*) \geq 0$ for all $d \in K$.
+    Computing the gradient: $\nabla f(y) = y - z$.
+    Thus, $(y - z)^T(d - y) \geq 0 \iff (z - y)^T(d - y) \leq 0$ for all $d \in K$.
+
+    \item[(ii)] Let $u = \Pi_K(y)$ and $v = \Pi_K(z)$. From (i):
+    $(y - u)^T(v - u) \leq 0$ and $(z - v)^T(u - v) \leq 0$.
+    Adding these inequalities:
+    $(y - u)^T(v - u) + (z - v)^T(u - v) \leq 0$
+    $(y - u - z + v)^T(v - u) \leq 0 \implies (y - z)^T(v - u) + \|u - v\|^2 \leq 0$
+    $\|u - v\|^2 \leq (z - y)^T(v - u) \leq \|z - y\| \|v - u\|$ (by Cauchy-Schwarz).
+    Dividing by $\|u - v\|$ (if $u \neq v$) gives $\|u - v\| \leq \|y - z\|$.
+
+    \item[(iii)] $\Theta(z) = \min_{y \in K} \frac{1}{2}\|z - y\|^2$. Let $g(z, y) = \frac{1}{2}\|z - y\|^2$. Since $g$ is strongly convex in $y$ and $K$ is closed convex, the minimizer $\Pi_K(z)$ is unique and continuous. By Danskin's Theorem or direct verification:
+    $\Theta(z + \delta) - \Theta(z) = \frac{1}{2}\|z + \delta - \Pi_K(z + \delta)\|^2 - \frac{1}{2}\|z - \Pi_K(z)\|^2$.
+    Using the optimality of $\Pi_K$:
+    $\Theta(z + \delta) - \Theta(z) \leq \frac{1}{2}\|z + \delta - \Pi_K(z)\|^2 - \frac{1}{2}\|z - \Pi_K(z)\|^2 = (z - \Pi_K(z))^T \delta + \frac{1}{2}\|\delta\|^2$.
+    Similarly, $\Theta(z + \delta) - \Theta(z) \geq (z + \delta - \Pi_K(z + \delta))^T \delta - \frac{1}{2}\|\delta\|^2$.
+    By continuity of $\Pi_K$, the gradient exists and is $\nabla \Theta(z) = z - \Pi_K(z)$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+FitzHugh-Nagumo model for neuron behavior under externally injected current $I$:
+\[
+\begin{cases}
+\frac{dV}{dt}=V-\frac{1}{3}V^{3}-W+I,\\[2pt]
+\frac{dW}{dt}=\frac{1}{\tau}(V+a-bW),
+\end{cases}
+\]
+with typical values $a=0.7$, $b=0.8$, $\tau=13$.
+
+\begin{enumerate}
+\item[(i)] For small positive constant current $I$, describe neuron behavior.
+\item[(ii)] For large positive constant current $I$, describe neuron behavior.
+\item[(iii)] Suppose pulse current $I=I_{0}\delta(t-t_{0})$ injected at $t_{0}$. Analyze dynamical behavior when $I_{0}$ is small or large.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] For small $I$, the $V$-nullcline ($W = V - \frac{1}{3}V^3 + I$) and $W$-nullcline ($W = \frac{1}{b}(V+a)$) intersect at a single stable equilibrium point on the left branch of the cubic nullcline. This corresponds to a quiescent state where the neuron remains at a resting potential.
+
+    \item[(ii)] As $I$ increases, the cubic nullcline shifts upward. For large $I$, the intersection moves to the middle (unstable) branch of the cubic nullcline. A supercritical Hopf bifurcation occurs, and the system enters a stable limit cycle. This corresponds to tonic spiking behavior, where the neuron fires repetitive action potentials.
+
+    \item[(iii)] An impulse $I_0 \delta(t - t_0)$ causes an instantaneous shift in $V$ by $I_0$.
+    If $I_0$ is small, $V(t_0^+)$ remains within the basin of attraction of the stable resting state. The system returns to equilibrium quickly (subthreshold response).
+    If $I_0$ is large, $V(t_0^+)$ exceeds the "threshold" (the middle branch of the cubic nullcline). The trajectory follows a large excursion in phase space, mimicking a single action potential, before eventually returning to the resting state (excitable behavior).
+\end{enumerate}
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+%(10 pts) Show that the quadrature formula
+\[
+\int_{-1}^{1}\frac{f(x)}{\sqrt{1-x^{2}}}\,dx=\frac{\pi}{n}\sum_{k=0}^{n-1}f\left(\cos\frac{\pi(2k+1)}{2n}\right)
+\]
+is exact for all polynomials of degree up to $2n-1$.
+\end{exercise}
+
+\begin{solution}
+This is the Gauss-Chebyshev quadrature formula of the first kind. The weight function is $w(x) = (1-x^2)^{-1/2}$. The orthogonal polynomials associated with $w(x)$ are the Chebyshev polynomials $T_n(x) = \cos(n \arccos x)$.
+The roots of $T_n(x)$ are $x_k = \cos\left(\frac{2k+1}{2n}\pi\right)$ for $k=0, \dots, n-1$.
+A Gaussian quadrature formula with $n$ nodes is exact for polynomials of degree up to $2n-1$.
+The weights are given by $w_k = \int_{-1}^1 w(x) L_k(x) dx$, where $L_k$ are Lagrange basis polynomials. For Chebyshev polynomials:
+$w_k = \frac{\pi}{n}$.
+Thus, $\int_{-1}^1 \frac{f(x)}{\sqrt{1-x^2}} dx = \sum_{k=0}^{n-1} \frac{\pi}{n} f(x_k)$ is exact for $f \in \mathcal{P}_{2n-1}$.
+\end{solution}
+
+\begin{exercise}
+%(15 pts) Let $x=(x_{0},\dots,x_{N-1})\in\mathbb{R}^{N}$, $x\neq 0$ and $\hat{x}$ be discrete Fourier transform:
+\[
+\hat{x}_{w}=\frac{1}{\sqrt{N}}\sum_{t=0}^{N-1}x_{t}\exp(-2\pi iwt/N),\quad w=0,\dots,N-1.
+\]
+
+Prove $\|x\|_{0}\|\hat{x}\|_{0}\geq N$ where $\|x\|_{0}$ denotes number of nonzero entries in $x$.
+
+Hint: Show $\hat{x}$ cannot have $\|x\|_{0}$ consecutive zeros.
+\end{exercise}
+
+\begin{solution}
+Let $L = \|x\|_0$ and $K = \|\hat{x}\|_0$. Suppose $\hat{x}$ has $L$ consecutive zeros. Without loss of generality (by cyclic shifting), let $\hat{x}_w = 0$ for $w = 0, 1, \dots, L-1$.
+Then $\sum_{t \in \text{supp}(x)} x_t \omega^{wt} = 0$ for $w = 0, \dots, L-1$, where $\omega = \exp(-2\pi i/N)$.
+This is a system of $L$ equations: $V c = 0$, where $c$ is the vector of non-zero $x_t$ and $V$ is an $L \times L$ submatrix of the Vandermonde matrix.
+$V_{wt} = (\omega^t)^w$. Since $\omega^t$ are distinct for $t \in \{0, \dots, N-1\}$, $V$ is non-singular.
+Thus $c = 0$, which contradicts $x \neq 0$. Thus $\hat{x}$ can have at most $L-1$ consecutive zeros.
+In any sequence of $N$ indices, if we have at most $L-1$ consecutive zeros, then the number of non-zeros $K$ must satisfy $K \geq N/L \implies LK \geq N$.
+Rigorous bound: $\|x\|_0 \|\hat{x}\|_0 \geq N$ follows from the fact that any $L \times L$ minor of the DFT matrix is non-singular (Chebotarev's Theorem on roots of unity).
+\end{solution}
+
+\begin{exercise}
+%(20 pts) Let $m\leq n$. Consider $(n+m)\times(n+m)$ matrix:
+\[
+A=\begin{bmatrix}I&X\\X^{\top}&O\end{bmatrix},
+\]
+with $I$ being $n\times n$ identity, $X$ full-rank $n\times m$, $O$ zero $m\times m$.
+
+\begin{enumerate}
+\item[(i)] Show $A$ is nonsingular.
+\item[(ii)] Find eigenvalues of $A$ in terms of singular values of $X$.
+\item[(iii)] Under what conditions on $X$ does $x_{n+1}=x_{n}-(Ax_{n}-b)$ converge for any $(n+m)\times(n+m)$ vector $b$?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] $\det A = \det(I) \det(0 - X^T I^{-1} X) = \det(-X^T X)$. Since $X$ is $n \times m$ with full rank $m \leq n$, $X^T X$ is an $m \times m$ symmetric positive definite matrix, hence $\det(-X^T X) \neq 0$. Thus $A$ is nonsingular.
+
+    \item[(ii)] Let $A \begin{pmatrix} u \\ v \end{pmatrix} = \lambda \begin{pmatrix} u \\ v \end{pmatrix} \implies u + Xv = \lambda u$ and $X^T u = \lambda v$.
+    If $\lambda = 1$, then $Xv = 0 \implies v = 0$ (since $X$ is full rank). Then $X^T u = 0$. There are $n-m$ linearly independent vectors $u$ in the null space of $X^T$. Thus $\lambda = 1$ has multiplicity $n-m$.
+    If $\lambda \neq 1$, $u = \frac{1}{\lambda - 1} Xv$. Substituting into the second equation: $X^T \left(\frac{1}{\lambda-1} Xv\right) = \lambda v \implies X^T X v = \lambda(\lambda - 1) v$.
+    Let $\sigma_i^2$ be the eigenvalues of $X^T X$ (squared singular values of $X$).
+    Then $\lambda^2 - \lambda - \sigma_i^2 = 0 \implies \lambda = \frac{1 \pm \sqrt{1 + 4\sigma_i^2}}{2}$ for $i=1, \dots, m$.
+
+    \item[(iii)] The iteration is $x_{n+1} = (I - A)x_n + b$. Convergence occurs if and only if the spectral radius $\rho(I - A) < 1$.
+    The eigenvalues of $I - A$ are $1 - \lambda$.
+    For $\lambda = 1$, $1 - \lambda = 0$.
+    For $\lambda = \frac{1 \pm \sqrt{1 + 4\sigma_i^2}}{2}$, we require $|1 - \frac{1 \pm \sqrt{1 + 4\sigma_i^2}}{2}| < 1$.
+    This implies $|\frac{1 \mp \sqrt{1+4\sigma_i^2}}{2}| < 1$.
+    The condition $\frac{1 + \sqrt{1+4\sigma_i^2}}{2} < 1$ is impossible for $\sigma_i > 0$.
+    Wait, the question asks for convergence of $x_{n+1} = x_n - (Ax_n - b)$.
+    As shown, $\lambda_{max} = \frac{1 + \sqrt{1+4\sigma_{max}^2}}{2}$. For $\sigma_i > 0$, $\lambda_{max} > 1$.
+    Then $1 - \lambda_{max} < 0$. We need $1 - \lambda_{max} > -1 \implies \lambda_{max} < 2$.
+    $\frac{1 + \sqrt{1+4\sigma_{max}^2}}{2} < 2 \implies \sqrt{1+4\sigma_{max}^2} < 3 \implies 1+4\sigma_{max}^2 < 9 \implies \sigma_{max}^2 < 2$.
+    The condition is that all squared singular values of $X$ must be less than 2.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+%(25 pts) Let $f$ be $C^{1}$ convex function on $\mathbb{R}^{n}$ with Lipschitz gradient: $\|\nabla f(x)-\nabla f(y)\|_{2}\leq L\|x-y\|_{2}$.
+
+Prove:
+\begin{enumerate}
+\item[(i)] $f(y)\leq f(x)+(\nabla f(x))^{T}(y-x)+\frac{L}{2}\|y-x\|_{2}^{2}$.
+\item[(ii)] $f(y)\geq f(x)+(\nabla f(x))^{T}(y-x)+\frac{1}{2L}\|\nabla f(y)-\nabla f(x)\|_{2}^{2}$.
+\item[(iii)] $\frac{1}{L}\|\nabla f(y)-\nabla f(x)\|_{2}^{2}\leq(\nabla f(y)-\nabla f(x))^{T}(y-x)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] By the fundamental theorem of calculus:
+    $f(y) - f(x) = \int_0^1 \nabla f(x + t(y-x))^T (y-x) dt$.
+    $f(y) - f(x) - \nabla f(x)^T(y-x) = \int_0^1 (\nabla f(x + t(y-x)) - \nabla f(x))^T (y-x) dt$.
+    Using Cauchy-Schwarz and L-Lipschitz property:
+    $|f(y) - f(x) - \nabla f(x)^T(y-x)| \leq \int_0^1 L t \|y-x\|^2 dt = \frac{L}{2} \|y-x\|^2$.
+
+    \item[(ii)] Let $g(z) = f(z) - \nabla f(x)^T z$. Then $\nabla g(z) = \nabla f(z) - \nabla f(x)$. Note $g$ is convex and $\nabla g(x) = 0$, so $x$ minimizes $g$.
+    By (i) applied to $g$: $g(x) \leq g(z) - \nabla g(z)^T(z-x) + \frac{L}{2}\|z-x\|^2$.
+    Minimizing the RHS over $z$ gives the tightest bound. Setting $z = x - \frac{1}{L} \nabla g(y)$ is not quite right.
+    Actually, for convex $f$ with $L$-Lipschitz gradient, the conjugate $f^*$ is $1/L$-strongly convex. This implies the property.
+    Alternatively, let $\phi(z) = f(z) - \nabla f(x)^T z$. $\phi$ is minimized at $x$.
+    $\phi(x) \leq \phi(y - \frac{1}{L} \nabla \phi(y)) \leq \phi(y) - \frac{1}{2L} \|\nabla \phi(y)\|^2$.
+    Substituting $\phi$ back gives the result.
+
+    \item[(iii)] Sum (ii) with the same inequality swapping $x$ and $y$:
+    $f(y) \geq f(x) + \nabla f(x)^T(y-x) + \frac{1}{2L} \|\nabla f(y) - \nabla f(x)\|^2$
+    $f(x) \geq f(y) + \nabla f(y)^T(x-y) + \frac{1}{2L} \|\nabla f(x) - \nabla f(y)\|^2$
+    Adding these:
+    $0 \geq (\nabla f(x) - \nabla f(y))^T(y-x) + \frac{1}{L} \|\nabla f(y) - \nabla f(x)\|^2$
+    $\frac{1}{L} \|\nabla f(y) - \nabla f(x)\|^2 \leq (\nabla f(y) - \nabla f(x))^T(y-x)$.
+    This is known as the co-coercivity of the gradient.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+%(30 pts)
+
+\begin{enumerate}
+\item[(i)] Determine order of St\"ormer's method:
+\[
+y_{n+2}-2y_{n+1}+y_{n}=h^{2}f(t_{n+1},y_{n+1}),\quad n\geq 0,
+\]
+for $y''=f(t,y)$, $y(0)=y_{0}$, $y'(0)=y_{0}'$.
+\item[(ii)] Using central differences in space and St\"ormer's method in time, construct scheme for wave equation $u_{tt}=u_{xx}$.
+\item[(iii)] Determine stability condition.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(i)] The local truncation error is $\tau_n = \frac{y(t+h) - 2y(t) + y(t-h)}{h^2} - y''(t)$.
+    Taylor expansion: $y(t \pm h) = y(t) \pm h y'(t) + \frac{h^2}{2} y''(t) \pm \frac{h^3}{6} y'''(t) + \frac{h^4}{24} y^{(4)}(t) + O(h^5)$.
+    $y(t+h) - 2y(t) + y(t-h) = h^2 y''(t) + \frac{h^4}{12} y^{(4)}(t) + O(h^6)$.
+    Thus $\tau_n = \frac{h^2}{12} y^{(4)}(t) + O(h^4)$. The method is of order 2.
+
+    \item[(ii)] Let $u_j^n \approx u(jh, n \Delta t)$. The wave equation is $u_{tt} = u_{xx}$.
+    Using St\"ormer's method for $u_{tt}$ and central difference for $u_{xx}$:
+    \[ \frac{u_j^{n+1} - 2u_j^n + u_j^{n-1}}{\Delta t^2} = \frac{u_{j+1}^n - 2u_j^n + u_{j-1}^n}{\Delta x^2} \]
+    Rearranging: $u_j^{n+1} = 2u_j^n - u_j^{n-1} + \left(\frac{\Delta t}{\Delta x}\right)^2 (u_{j+1}^n - 2u_j^n + u_{j-1}^n)$.
+
+    \item[(iii)] Let $\lambda = \Delta t / \Delta x$. Von Neumann analysis:
+    $\xi - 2 + \xi^{-1} = \lambda^2 (e^{i\theta} - 2 + e^{-i\theta}) = -4\lambda^2 \sin^2(\theta/2)$.
+    $\xi^2 - 2(1 - 2\lambda^2 \sin^2(\theta/2))\xi + 1 = 0$.
+    For stability, the roots of the quadratic $z^2 - 2bz + 1 = 0$ must satisfy $|z| \leq 1$. This occurs if $|b| \leq 1$.
+    $-1 \leq 1 - 2\lambda^2 \sin^2(\theta/2) \leq 1$.
+    The right inequality is $2\lambda^2 \sin^2(\theta/2) \geq 0$, which is always true.
+    The left inequality is $2\lambda^2 \sin^2(\theta/2) \leq 2 \implies \lambda^2 \sin^2(\theta/2) \leq 1$.
+    This must hold for all $\theta$, so $\lambda^2 \leq 1 \implies \Delta t \leq \Delta x$.
+    The stability condition is the CFL condition: $\frac{\Delta t}{\Delta x} \leq 1$.
+\end{enumerate}
+\end{solution}

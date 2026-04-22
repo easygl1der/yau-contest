@@ -1,0 +1,255 @@
+\section{2011 Analysis \& Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Let $H^2(\Delta)$ be the space of holomorphic functions in the unit disk $\Delta=\{|z|<1\}$ such that $\int_{\Delta}|f|^2|dz|^2 < \infty$. Prove that $H^2(\Delta)$ is a Hilbert space and that for any $r<1$, the map $T:H^2(\Delta)\to H^2(\Delta)$ given by $Tf(z):=f(rz)$ is a compact operator.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This space is the Bergman space. The completeness follows from the fact that holomorphic functions are well-behaved under $L^2$ limits due to the mean value property. The compactness of the composition operator (scaling) follows from the fact that it maps the disk into a strictly smaller compact sub-disk, allowing us to use Montel's theorem.
+
+1. \textbf{$H^2(\Delta)$ is a Hilbert space:}
+The inner product is $\langle f, g \rangle = \int_{\Delta} f(z) \overline{g(z)} dA$. $L^2(\Delta)$ is a Hilbert space, and $H^2(\Delta)$ is a subspace. We need to show it is closed.
+For any $f \in H^2(\Delta)$ and $z_0 \in \Delta$, let $R = \text{dist}(z_0, \partial\Delta)$. By the mean value property for the harmonic components of $f$:
+\[
+f(z_0) = \frac{1}{\pi R^2} \int_{D(z_0, R)} f(z) dA(z).
+\]
+By Cauchy-Schwarz:
+\[
+|f(z_0)| \leq \frac{1}{\pi R^2} \sqrt{\int_{D(z_0, R)} |f|^2 dA} \sqrt{\pi R^2} = \frac{1}{\sqrt{\pi} R} \|f\|_{L^2}.
+\]
+This inequality shows that point evaluation is a bounded linear functional on $H^2(\Delta)$ for any $z_0 \in \Delta$. If $\{f_n\}$ is a Cauchy sequence in $H^2(\Delta)$, it converges to some $f \in L^2(\Delta)$. The point evaluation estimate implies $f_n$ converges uniformly on compact subsets to $f$. By Weierstrass's theorem, the limit of a sequence of holomorphic functions converging uniformly on compacta is holomorphic. Thus $f \in H^2(\Delta)$.
+
+2. \textbf{Compactness of $T$:}
+Let $\{f_n\}$ be a sequence in the unit ball of $H^2(\Delta)$. The point evaluation estimate implies $\{f_n\}$ is uniformly bounded on any compact subset $K \subset \Delta$. By Montel's theorem, there exists a subsequence $\{f_{n_k}\}$ that converges uniformly on compact subsets to a holomorphic function $f$.
+For $r < 1$, the map $z \mapsto rz$ maps $\Delta$ to the disk $D_r = \{|w| \leq r\}$, which is a compact subset of $\Delta$.
+Thus $Tf_{n_k}(z) = f_{n_k}(rz)$ converges uniformly to $f(rz)$ on $\Delta$.
+In the $L^2$ norm:
+\[
+\|Tf_{n_k} - Tf\|^2 = \int_\Delta |f_{n_k}(rz) - f(rz)|^2 dA \leq \pi \sup_{|w| \leq r} |f_{n_k}(w) - f(w)|^2.
+\]
+The RHS goes to 0 as $k \to \infty$. Thus $T$ maps bounded sequences to sequences with convergent subsequences, so it is compact.
+\end{solution}
+
+\begin{exercise}
+For any continuous function $f(t)$ of period $1$, show that the equation
+\[
+\frac{d\varphi}{dt} = 2\pi\varphi + f(t)
+\]
+has a unique solution of period $1$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a non-homogeneous linear ODE. The periodicity of the solution depends on the boundary condition $\varphi(0) = \varphi(1)$.
+
+The general solution to the ODE $\varphi' - 2\pi\varphi = f(t)$ is found using the integrating factor $e^{-2\pi t}$:
+\[
+\varphi(t) = e^{2\pi t} \left[ \varphi(0) + \int_0^t e^{-2\pi s} f(s) ds \right].
+\]
+To have a periodic solution, we must have $\varphi(1) = \varphi(0)$:
+\[
+\varphi(0) = e^{2\pi} \left[ \varphi(0) + \int_0^1 e^{-2\pi s} f(s) ds \right].
+\]
+Rearranging:
+\[
+\varphi(0) (1 - e^{2\pi}) = e^{2\pi} \int_0^1 e^{-2\pi s} f(s) ds \implies \varphi(0) = \frac{\int_0^1 e^{-2\pi s} f(s) ds}{e^{-2\pi} - 1}.
+\]
+Since $e^{-2\pi} - 1 \neq 0$, there exists a unique value for $\varphi(0)$. Because the ODE is $1$-periodic ($f(t+1)=f(t)$), the solution starting at this $\varphi(0)$ will satisfy $\varphi(t+1) = \varphi(t)$ for all $t$ by the uniqueness of the solution to the IVP.
+\end{solution}
+
+\begin{exercise}
+Let $h(x)$ be a $C^{\infty}$ function on the real line $\mathbb{R}$. Find a $C^{\infty}$ function $u(x,y)$ on an open subset of $\mathbb{R}^2$ containing the $x$-axis such that $u_x + 2u_y = u^2$ and $u(x,0) = h(x)$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The method of characteristics reduces a first-order PDE to a system of ODEs along curves (characteristics).
+
+1. \textbf{Characteristic ODEs:}
+\[
+\frac{dx}{dt} = 1, \quad x(0) = s \implies x(t) = s+t.
+\]
+\[
+\frac{dy}{dt} = 2, \quad y(0) = 0 \implies y(t) = 2t.
+\]
+\[
+\frac{du}{dt} = u^2, \quad u(0) = h(s) \implies u(t) = \frac{1}{1/h(s) - t} = \frac{h(s)}{1 - t h(s)}.
+\]
+2. \textbf{Changing variables:}
+From $y=2t$, we get $t = y/2$.
+From $x=s+t$, we get $s = x - y/2$.
+3. \textbf{Final solution:}
+\[
+u(x,y) = \frac{h(x-y/2)}{1 - \frac{y}{2}h(x-y/2)} = \frac{2h(x-y/2)}{2 - y h(x-y/2)}.
+\]
+This solution is defined where $y h(x-y/2) \neq 2$. On the $x$-axis ($y=0$), the denominator is $2$, so the solution is well-defined and $C^\infty$ in a neighborhood of the $x$-axis.
+\end{solution}
+
+\begin{exercise}
+Let $S = \{x\in\mathbb{R} \mid |x-\frac{p}{q}|\leq c/q^3, \text{ for infinitely many relatively prime } p,q\in\mathbb{Z}, q>0, \text{ for a fixed } c>1\}$. Show that $S$ is uncountable and its measure is zero.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This set is a set of "well-approximable" numbers, often related to Diophantine approximation. The measure zero part is a standard Borel-Cantelli argument. The uncountability requires constructing a nested sequence of sets (a Cantor set) where each point satisfies the property.
+
+1. \textbf{Measure Zero:}
+Fix an interval $I = [0, 1]$. Let $E_q$ be the set of points $x \in I$ such that $|x - p/q| \leq c/q^3$ for some $p$. For a fixed $q$, the number of $p$ such that $p/q$ has a non-empty intersection with $I$ is at most $q+1$.
+The measure $\mu(E_q) \leq (q+1) \cdot \frac{2c}{q^3} \leq \frac{4c}{q^2}$ for $q \geq 1$.
+Since $\sum_{q=1}^\infty \mu(E_q) \leq \sum \frac{4c}{q^2} < \infty$, the Borel-Cantelli Lemma implies that the set of points belonging to infinitely many $E_q$ (which is $\limsup E_q$) has measure zero. Thus $\mu(S \cap I) = 0$ for any unit interval $I$, so $\mu(S) = 0$ by the $\sigma$-additivity of Lebesgue measure.
+
+2. \textbf{Uncountability:}
+We construct a Cantor set $K \subset S$. We define a sequence of collections of disjoint closed intervals $\mathcal{I}_n$.
+- $\mathcal{I}_0 = \{[0, 1]\}$.
+- Given an interval $J \in \mathcal{I}_n$, we can find two rational numbers $p_{n+1,1}/q_{n+1,1}$ and $p_{n+1,2}/q_{n+1,2}$ inside $J$ such that their $c/q^3$ neighborhoods are disjoint and contained in $J$, with $q_{n+1,i} > q_n$. This is possible because rational numbers are dense.
+- Let $\mathcal{I}_{n+1}$ be the union of these small neighborhoods for all $J \in \mathcal{I}_n$.
+- The set $K = \bigcap_{n=1}^\infty (\bigcup_{J \in \mathcal{I}_n} J)$ is a nested intersection of non-empty compact sets. By construction, $K$ is homeomorphically equivalent to the standard Cantor set $\{0, 1\}^\mathbb{N}$, and thus it is uncountable.
+- Every $x \in K$ belongs to at least one neighborhood of the form $[p/q - c/q^3, p/q + c/q^3]$ for each $n$, with $q$ increasing at each step. Thus, $x$ is approximated by infinitely many such $p/q$, so $x \in S$. Since $K \subset S$ and $K$ is uncountable, $S$ is uncountable.
+\end{solution}
+
+\begin{exercise}
+Let $sl(n)$ denote the set of all $n\times n$ real matrices with trace equal to zero and let $SL(n)$ be the set of all $n\times n$ real matrices with determinant equal to one. Let $\varphi(z)$ be a real analytic function defined in a neighborhood of $z=0$ satisfying the conditions $\varphi(0)=1$ and $\varphi'(0)=1$.
+
+\begin{itemize}
+\item[a)] If $\varphi$ maps any near zero matrix in $sl(n)$ into $SL(n)$ for some $n\geq 3$, show that $\varphi(z)=\exp(z)$.
+\item[b)] Is the conclusion of (a) still true in the case $n=2$? If it is true, prove it. If not, give a counterexample.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The condition $\det(\varphi(A)) = 1$ for $\text{tr}(A) = 0$ relates the sum of logarithms of eigenvalues to the sum of eigenvalues. This is a functional equation problem.
+
+a) Let $g(z) = \log \varphi(z)$. Then $g(0)=0$ and $g'(0)=1$. The condition $\det(\varphi(A))=1$ for $\text{tr}(A)=0$ implies $\sum_{i=1}^n g(\lambda_i) = 0$ whenever $\sum_{i=1}^n \lambda_i = 0$.
+For $n \geq 3$, we can set $\lambda_1 = x, \lambda_2 = y, \lambda_3 = -(x+y)$ and $\lambda_k = 0$ for $k > 3$.
+Then $g(x) + g(y) + g(-(x+y)) + (n-3)g(0) = 0 \implies g(x) + g(y) + g(-(x+y)) = 0$.
+Taking $y=0$ gives $g(x) + g(-x) = 0$, so $g$ is odd.
+Then $g(x) + g(y) = -g(-(x+y)) = g(x+y)$. This is Cauchy's functional equation. Since $g$ is analytic, $g(z) = cz$. $g'(0)=1 \implies c=1$.
+Thus $g(z) = z$, so $\varphi(z) = e^z$.
+
+b) For $n=2$, the condition is $g(\lambda) + g(-\lambda) = 0$ for $\lambda$ near $0$. This only requires $g$ to be an odd function.
+Any $\varphi(z) = \exp(g(z))$ where $g$ is odd, $g(0)=0, g'(0)=1$ works.
+Example: $\varphi(z) = \exp(z + z^3)$. For $A \in sl(2)$, eigenvalues are $\pm \lambda$, so $\det(\varphi(A)) = e^{\lambda+\lambda^3} e^{-\lambda-\lambda^3} = 1$.
+\end{solution}
+
+\begin{exercise}
+Use mathematical analysis to show that:
+\begin{itemize}
+\item[a)] $e$ and $\pi$ are irrational numbers;
+\item[b)] $e$ and $\pi$ are also transcendental numbers.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Irrationality proofs typically use contradiction and an integral or sum that would have to be an integer between 0 and 1. Transcendence proofs are more advanced and involve showing that no polynomial with integer coefficients can have the number as a root.
+
+a) \textbf{Irrationality of $e$:} Suppose $e = p/q$. Then $q! e$ must be an integer.
+$q! e = q! \sum_{n=0}^\infty \frac{1}{n!} = (\text{integer}) + \sum_{n=q+1}^\infty \frac{q!}{n!}$.
+The remainder $R = \frac{1}{q+1} + \frac{1}{(q+1)(q+2)} + \dots$ satisfies $0 < R < 1/q \leq 1$.
+Since $R$ is between 0 and 1, $q! e$ cannot be an integer. Contradiction.
+\textbf{Irrationality of $\pi$:} Suppose $\pi = a/b$. Let $f(x) = \frac{x^n(a-bx)^n}{n!}$.
+$I_n = \int_0^\pi f(x) \sin x dx$. For large $n$, $I_n$ is a positive integer (by integration by parts) but $I_n \to 0$, contradiction.
+
+b) \textbf{Transcendence of $e$:} Hermite's proof uses the identity:
+\[
+\int_0^z e^{z-u} f(u) du = e^z \sum_{k=0}^n f^{(k)}(0) - \sum_{k=0}^n f^{(k)}(z).
+\]
+By choosing $f(x)$ appropriately, one shows that if $\sum a_i e^i = 0$, a certain integer sum is non-zero but arbitrarily small, contradiction.
+\textbf{Transcendence of $\pi$:} Lindemann proved that if $\alpha$ is algebraic and non-zero, $e^\alpha$ is transcendental. If $\pi$ were algebraic, $i\pi$ would be algebraic, so $e^{i\pi} = -1$ would be transcendental, but $-1$ is algebraic.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Suppose that $F$ is continuous on $[a,b]$, $F'(x)$ exists for every $x\in(a,b)$, and $F'(x)$ is integrable. Prove that $F$ is absolutely continuous and
+\[
+F(b) - F(a) = \int_a^b F'(x)\,dx.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a standard result in real analysis. The key is that differentiability \emph{everywhere} (or at least everywhere in $(a,b)$) plus integrability of the derivative is enough to recover the function from its derivative.
+
+Let $G(x) = \int_a^x F'(t) dt$. Since $F'$ is integrable, $G$ is absolutely continuous and $G'(x) = F'(x)$ almost everywhere.
+Let $H(x) = F(x) - G(x)$. $H$ is continuous on $[a,b]$ and $H'(x) = 0$ for almost every $x$.
+Because $F'(x)$ exists everywhere, $F$ satisfies the Luzin N property. Since $G$ is absolutely continuous, it also satisfies the Luzin N property. Thus $H$ satisfies the Luzin N property.
+A continuous function with the Luzin N property that has derivative zero a.e. is constant.
+Thus $H(x) = H(a) = F(a) - G(a) = F(a)$.
+So $F(x) = F(a) + \int_a^x F'(t) dt$, which implies $F$ is absolutely continuous.
+\end{solution}
+
+\begin{exercise}
+Suppose that $f$ is integrable on $\mathbb{R}^n$, let $K_{\delta}(x) = \delta^{-\frac{n}{2}}e^{-\frac{\pi|x|^2}{\delta}}$ for each $\delta>0$. Prove that the convolution
+\[
+(f*K_{\delta})(x) = \int_{\mathbb{R}^n} f(x-y)K_{\delta}(y)\,dy
+\]
+is integrable and $\| (f*K_{\delta}) - f\|_{L^1(\mathbb{R}^n)} \to 0$ as $\delta\to 0$.
+\end{exercise}
+
+\begin{solution}
+1) \textbf{Integrability:} By Young's Inequality, $\|f * K_\delta\|_1 \leq \|f\|_1 \|K_\delta\|_1$.
+By change of variables $z = x/\sqrt{\delta}$, $\|K_\delta\|_1 = \int e^{-\pi |z|^2} dz = 1$. Thus $f * K_\delta$ is in $L^1$.
+2) \textbf{$L^1$ convergence:} We use the fact that translation is continuous in $L^1$: $\|f(\cdot-y) - f(\cdot)\|_1 \to 0$ as $y \to 0$.
+\[
+\| f*K_\delta - f \|_1 = \int | \int (f(x-y)-f(x)) K_\delta(y) dy | dx \leq \int K_\delta(y) \|f(\cdot-y) - f\|_1 dy.
+\]
+For any $\epsilon > 0$, there exists $\eta > 0$ such that $|y| < \eta \implies \|f(\cdot-y) - f\|_1 < \epsilon$.
+Split the integral into $|y| < \eta$ and $|y| \geq \eta$.
+The first part is $\leq \epsilon \int K_\delta dy = \epsilon$.
+The second part is $\leq 2\|f\|_1 \int_{|y| \geq \eta} K_\delta(y) dy$.
+As $\delta \to 0$, the Mass of $K_\delta$ concentrates at the origin, so $\int_{|y| \geq \eta} K_\delta(y) dy \to 0$.
+Thus $\|f*K_\delta - f\|_1 \to 0$.
+\end{solution}
+
+\begin{exercise}
+Prove that a bounded function on interval $I=[a,b]$ is Riemann integrable if and only if its set of discontinuities has measure zero.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Lebesgue's criterion for Riemann integrability connects the discrete-like nature of Riemann sums to the measure-theoretic properties of the function.
+
+1. \textbf{Oscillation:} Let $\text{osc}(f, c) = \lim_{\delta \to 0} \sup_{x,y \in B_\delta(c)} |f(x)-f(y)|$. $f$ is continuous at $c$ iff $\text{osc}(f, c) = 0$.
+2. \textbf{Compactness of $D_\epsilon$:} Let $D_\epsilon = \{x \in I \mid \text{osc}(f, x) \geq \epsilon\}$. This set is closed and thus compact because the oscillation function is upper semi-continuous.
+3. \textbf{If $\mu(D) = 0$:} Then $\mu(D_\epsilon) = 0$. Since $D_\epsilon$ is compact and measure zero, it can be covered by finitely many intervals with total length $<\epsilon$. Outside these intervals, $f$ has small oscillation. This allows us to construct a partition where the Darboux sum difference $U(P,f) - L(P,f)$ is small.
+4. \textbf{Only if:} If $f$ is Riemann integrable, then for any $\epsilon$, the set $D_\epsilon$ cannot contain any subset of positive measure, as that would force a lower bound on the Darboux sum difference.
+\end{solution}
+
+\begin{exercise}
+1) Let $w=\frac{1}{2}(z+\frac{1}{z})$. Show that it maps $\{|z|>1\}$ to $\mathbb{C}\setminus[-1,1]$.
+2) Compute $\int_0^\infty \frac{\log x}{x^2-1} dx$.
+\end{exercise}
+
+\begin{solution}
+1) \textbf{Joukowski Map:} Let $z = re^{i\theta}$ with $r > 1$.
+$w = \frac{1}{2}(re^{i\theta} + \frac{1}{r}e^{-i\theta}) = \frac{1}{2}(r+1/r)\cos\theta + i\frac{1}{2}(r-1/r)\sin\theta$.
+This describes an ellipse with semi-axes $a = \frac{1}{2}(r+1/r)$ and $b = \frac{1}{2}(r-1/r)$.
+As $r \to 1^+$, the ellipse collapses to the segment $[-1, 1]$. As $r \to \infty$, the ellipse expands to fill the plane. Thus the image is $\mathbb{C} \setminus [-1, 1]$.
+
+2) \textbf{Integral:} Let $I = \int_0^\infty \frac{\log x}{x^2-1} dx$. Use symmetry $x \to 1/x$.
+$\int_1^\infty \frac{\log x}{x^2-1} dx = \int_0^1 \frac{-\log u}{(1/u)^2-1} \frac{du}{u^2} = \int_0^1 \frac{\log u}{u^2-1} du$.
+Thus $I = 2 \int_0^1 \frac{\log x}{x^2-1} dx = 2 \int_0^1 \log x \sum_{n=0}^\infty (x^2)^n dx = 2 \sum_{n=0}^\infty \int_0^1 x^{2n} \log x dx$.
+Using $\int_0^1 x^m \log x dx = -1/(m+1)^2$:
+$I = 2 \sum_{n=0}^\infty \frac{1}{(2n+1)^2} = 2 (\sum_{k=1}^\infty \frac{1}{k^2} - \sum_{k=1}^\infty \frac{1}{(2k)^2}) = 2 (1 - 1/4) \zeta(2) = \frac{3}{2} \frac{\pi^2}{6} = \frac{\pi^2}{4}$.
+\end{solution}
+
+\begin{exercise}
+Let $f$ be a doubly periodic meromorphic function. Prove that the number of zeros and poles are equal.
+\end{exercise}
+
+\begin{solution}
+By the Argument Principle, the number of zeros minus poles in the fundamental parallelogram $\Gamma$ is $\frac{1}{2\pi i} \int_{\partial \Gamma} \frac{f'(z)}{f(z)} dz$.
+Since $f$ is doubly periodic, $f'/f$ is also doubly periodic. The integrals over opposite sides of the parallelogram cancel out due to periodicity and opposite directions.
+$\int_{\text{side } 1} + \int_{\text{side } 3} = \int_0^1 \frac{f'(t)}{f(t)} dt - \int_0^1 \frac{f'(t+i)}{f(t+i)} dt = 0$.
+Similarly for the other two sides. Thus $Z - P = 0$.
+\end{solution}
+
+\begin{exercise}
+Prove that the spectrum of a bounded self-adjoint operator is a bounded closed subset of the real line.
+\end{exercise}
+
+\begin{solution}
+1. \textbf{Bounded and Closed:} The spectrum $\sigma(A)$ is always closed and contained in $\{|\lambda| \leq \|A\|\}$ for any bounded operator.
+2. \textbf{Real Line:} Suppose $\lambda = a + ib$ with $b \neq 0$.
+$\|(A-\lambda I)x\|^2 = \|(A-aI)x - ibx\|^2 = \|(A-aI)x\|^2 + b^2\|x\|^2$ (cross terms cancel because $A-aI$ is self-adjoint).
+Thus $\|(A-\lambda I)x\| \geq |b|\|x\|$. This implies $A-\lambda I$ is injective and has a closed range.
+Since $(A-\lambda I)^* = A - \bar{\lambda} I$ also satisfies the same bound, its kernel is $\{0\}$, so the range of $A-\lambda I$ is dense.
+A dense closed range is the whole space, so $A-\lambda I$ is invertible. Thus $\lambda \notin \sigma(A)$.
+\end{solution}

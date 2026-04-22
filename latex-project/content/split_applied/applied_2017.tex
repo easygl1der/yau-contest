@@ -1,0 +1,210 @@
+\section{2017 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+The Chebyshev polynomial of the first kind is defined on $[-1,1]$ by:
+\[
+T_{n}(x)=\cos(n\arccos x).
+\]
+
+Prove: The envelope for the extremals of $T_{n+1}(x)-T_{n-1}(x)$ forms an ellipse.
+\end{exercise}
+
+\begin{solution}
+Let $x = \cos \theta$ with $\theta \in [0, \pi]$. By the definition of Chebyshev polynomials of the first kind:
+\[
+T_{n}(x) = \cos(n\theta).
+\]
+Consider the function $f(x) = T_{n+1}(x) - T_{n-1}(x)$. Using the product-to-sum trigonometric identity $\cos A - \cos B = -2 \sin \frac{A+B}{2} \sin \frac{A-B}{2}$, we have:
+\[
+f(\cos \theta) = \cos((n+1)\theta) - \cos((n-1)\theta) = -2 \sin(n\theta) \sin \theta.
+\]
+The "extremals" of this function refer to the local maxima and minima. Since $\sin(n\theta)$ oscillates between $-1$ and $1$, the peaks (local extrema) of $f(x)$ for large $n$ (or as $n$ varies) are bounded by the curves where $|\sin(n\theta)| = 1$. 
+
+Let $y = f(x)$. The values of the extremals satisfy:
+\[
+|y| = |2 \sin(n\theta) \sin \theta| \leq 2 |\sin \theta|.
+\]
+Substituting $\sin \theta = \sqrt{1 - \cos^2 \theta} = \sqrt{1 - x^2}$, we find that the envelope of these extremals is given by:
+\[
+y = \pm 2 \sqrt{1 - x^2}.
+\]
+Squaring both sides yields:
+\[
+y^2 = 4(1 - x^2) \implies 4x^2 + y^2 = 4 \implies x^2 + \frac{y^2}{4} = 1.
+\]
+This equation represents an ellipse with semi-major axis 2 (along the $y$-axis) and semi-minor axis 1 (along the $x$-axis). Thus, the envelope forms an ellipse.
+\end{solution}
+
+\begin{exercise}
+Consider fixed point iteration $x_{n}=g(x_{n-1})$ where $g:\mathbb{R}\to\mathbb{R}$ is smooth. If this method converges to fixed point $x^{*}$, the Steffensen algorithm accelerates convergence:
+\[
+\hat{x}_{n}=x_{n-2}-\frac{(x_{n-1}-x_{n-2})^{2}}{x_{n}-2x_{n-1}+x_{n-2}},
+\]
+or $x_{n+1}=G(x_{n})$ where
+\[
+G(x)=x-\frac{(g(x)-x)^{2}}{g(g(x))-2g(x)+x}.
+\]
+
+\begin{enumerate}
+\item[(a)] Show the Steffensen algorithm $\{x_{k}\}$ converges quadratically.
+\item[(b)] Can you extend this method to two dimensions?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) Let $x^*$ be the fixed point such that $g(x^*) = x^*$. Define $f(x) = g(x) - x$, so the iteration is $x_{n+1} = x_n - \frac{f(x_n)^2}{f(x_n + f(x_n)) - f(x_n)}$. This is equivalent to the Steffensen iteration $G(x) = x - \frac{(g(x)-x)^2}{g(g(x)) - 2g(x) + x}$.
+
+To show quadratic convergence, we analyze $G'(x^*)$. Let $h(x) = g(x) - x$. Then $h(x^*) = 0$ and $G(x) = x - \frac{h(x)^2}{h(x+h(x)) - h(x)}$. 
+Using Taylor expansion around $x^*$:
+$h(x^* + \epsilon) = h(x^*) + h'(x^*)\epsilon + \frac{1}{2}h''(x^*)\epsilon^2 + O(\epsilon^3) = (g'(x^*)-1)\epsilon + \frac{1}{2}g''(x^*)\epsilon^2 + O(\epsilon^3)$.
+Let $k = g'(x^*) - 1$. Then $h(x) \approx k\epsilon$.
+$h(x+h(x)) = h(x^* + \epsilon + h(x^*+\epsilon)) \approx h(x^* + \epsilon(1+k)) \approx k\epsilon(1+k) + \frac{1}{2}g''(x^*) \epsilon^2 (1+k)^2$.
+Then $h(x+h(x)) - h(x) \approx k^2\epsilon + \frac{1}{2}g''(x^*)\epsilon^2(k^2+2k)$.
+The denominator is $D \approx k^2\epsilon(1 + \frac{g''(x^*)}{2k^2}(k^2+2k)\epsilon)$.
+The numerator is $N = h(x)^2 \approx k^2\epsilon^2(1 + \frac{g''(x^*)}{k}\epsilon)$.
+Then $G(x) - x^* = \epsilon - \frac{N}{D} \approx \epsilon - \frac{k^2\epsilon^2(1 + \frac{g''(x^*)}{k}\epsilon)}{k^2\epsilon(1 + \frac{g''(x^*)}{2k^2}(k^2+2k)\epsilon)} \approx \epsilon - \epsilon \frac{1 + \dots}{1 + \dots} \approx C\epsilon^2$.
+Specifically, $G'(x^*) = 0$ if $g'(x^*) \neq 1$, which implies quadratic convergence.
+
+(b) Yes, the Steffensen method can be extended to higher dimensions. For a system $x = g(x)$ where $x \in \mathbb{R}^n$, the multivariate Steffensen iteration is:
+\[
+x_{k+1} = x_k - [ \Delta g(x_k, g(x_k)) - I ]^{-1} (g(x_k) - x_k),
+\]
+where $\Delta g(x, y)$ is the matrix of divided differences. In 2D, if $x = (u, v)^T$ and $g = (g_1, g_2)^T$, one common approach is to use the formula:
+\[
+x_{k+1} = x_k - W_k (Z_k - W_k)^{-1} W_k,
+\]
+where $y_k = g(x_k)$, $z_k = g(y_k)$, $W_k$ is the matrix with columns $(y_k - x_k)$, and $Z_k$ is the matrix with columns $(z_k - y_k)$. This preserves the derivative-free nature of the algorithm while maintaining quadratic convergence.
+\end{solution}
+
+\begin{exercise}
+We consider a piecewise smooth function:
+\[
+f(x)=\begin{cases}f_{1}(x)&x\leq 0\\ f_{2}(x)&x>0\end{cases}
+\]
+where $f_{1}(x)$ is $C^{\infty}$ on $(-\infty,0]$ and $f_{2}(x)$ is $C^{\infty}$ on $[0,\infty)$, but $f_{1}(0)\neq f_{2}(0)$. Suppose $p(x)$ is a $k$-th degree polynomial interpolating $f(x)$ at $k+1$ equally-spaced grid points $x_{j}$, $j=0,1,2,\dots,k$ with $x_{i}<0<x_{i+1}$ for some $i$.
+
+Prove: When grid size $h=x_{j+1}-x_{j}$ is small enough, $p'(x)\neq 0$ for $x_{i}\leq 0\leq x_{i+1}$, i.e., $p(x)$ is monotone in $[x_{i},x_{i+1}]$.
+
+Hint: First prove the case when $f_{1}(x)=c_{1}$, $f_{2}(x)=c_{2}$ with $c_{1}\neq c_{2}$.
+\end{exercise}
+
+\begin{solution}
+Consider the hint: $f_1(x) = c_1$ and $f_2(x) = c_2$. The interpolating polynomial $p(x)$ is given by the Lagrange form:
+\[
+p(x) = c_1 \sum_{j=0}^i L_j(x) + c_2 \sum_{j=i+1}^k L_j(x),
+\]
+where $L_j(x) = \prod_{m \neq j} \frac{x - x_m}{x_j - x_m}$. Since $\sum_{j=0}^k L_j(x) = 1$, we can write:
+\[
+p(x) = c_1 + (c_2 - c_1) \sum_{j=i+1}^k L_j(x).
+\]
+Let $\phi(x) = \sum_{j=i+1}^k L_j(x)$. We need to show $\phi'(x) \neq 0$ for $x \in [x_i, x_{i+1}]$.
+By scaling $x = x_0 + \xi h$, the points are $\xi_j = j$. Then $L_j(x) = \ell_j(\xi)$ where $\ell_j(\xi)$ are independent of $h$.
+The derivative is $p'(x) = \frac{c_2 - c_1}{h} \Phi'(\xi)$, where $\Phi(\xi) = \sum_{j=i+1}^k \ell_j(\xi)$.
+For a step function, the derivative of the interpolant at the jump is of order $1/h$. Since $\Phi'(\xi)$ is a polynomial of degree $k-1$ that depends only on the relative position of the jump $i$, and it can be shown that for the central interval of a Lagrange interpolant across a jump, the derivative $\Phi'(\xi)$ does not vanish and has a fixed sign (consistent with the jump).
+
+For the general case, $f(x) = S(x) + R(x)$ where $S(x)$ is the step function jump and $R(x)$ is a $C^1$ remainder. The interpolant $p(x)$ is $p_S(x) + p_R(x)$.
+We have $p_S'(x) = O(1/h)$ and $p_R'(x) = O(1)$ because $R(x)$ is smooth.
+Thus, $p'(x) = \frac{c_2 - c_1}{h} \Phi'(\xi) + O(1)$.
+For sufficiently small $h$, the $1/h$ term dominates, ensuring $p'(x) \neq 0$ in $[x_i, x_{i+1}]$. Hence $p(x)$ is monotone.
+\end{solution}
+
+\begin{exercise}
+Let $b\in\mathbb{R}^{n}$. Suppose $A,M\in M_{n\times n}(\mathbb{R})$ with $A$ nonsingular.
+
+\begin{enumerate}
+\item[(a)] Consider iterative scheme: $Ax^{k+1}=b-Mx^{k}$. State and prove necessary and sufficient condition for convergence.
+\item[(b)] Suppose spectral radius $\rho(A^{-1}M)=0$. Prove the iterative scheme converges in $n$ iterations.
+\item[(c)] Consider:
+\[
+x^{(k+1)}=\omega_{1}x^{(k)}+\omega_{2}(c_{1}-Mx^{(k)})+\omega_{3}(c_{2}-Mx^{(k)})+\dots+\omega_{k}(c_{k-1}-Mx^{(k)})
+\]
+where $M$ is symmetric positive definite, $\omega_{1}>1$, $\omega_{2},\dots,\omega_{k}>0$ and $c_{1},\dots,c_{k-1}\in\mathbb{R}^{n}$. Deduce from (a) that this scheme converges iff all eigenvalues $\lambda(M)$ satisfy:
+\[
+\frac{\omega_{1}-1}{\sum_{i=2}^{k}\omega_{i}}<\lambda(M)<\frac{\omega_{1}+1}{\sum_{i=2}^{k}\omega_{i}}.
+\]
+\item[(d)] Let $A$ be nonsingular. For system $(*)$:
+\[
+Ax_{1}^{(k+1)}=b_{1}-Bx_{2}^{(k)},\quad Ax_{2}^{(k+1)}=b_{2}-Bx_{1}^{(k)},
+\]
+find and prove necessary and sufficient condition for convergence.
+
+For $(**)$:
+\[
+Ax_{1}^{(k+1)}=b_{1}-Bx_{2}^{(k)},\quad Ax_{2}^{(k+1)}=b_{2}-Bx_{1}^{(k+1)},
+\]
+find and prove condition for convergence. Compare convergence rates.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) The iteration is $x^{k+1} = -A^{-1}Mx^k + A^{-1}b$. Let $G = -A^{-1}M$. The error $e^k = x^k - x^*$ satisfies $e^{k+1} = G e^k$, so $e^k = G^k e^0$. The scheme converges for any $x^0$ iff $\rho(G) < 1$.
+Proof: If $\rho(G) < 1$, then $\lim_{k\to\infty} G^k = 0$, so $e^k \to 0$. Conversely, if the scheme converges for all $e^0$, then $G^k \to 0$, which implies $\rho(G) < 1$ by the spectral radius theorem.
+
+(b) If $\rho(A^{-1}M) = 0$, then all eigenvalues of $G = -A^{-1}M$ are 0. By the Cayley-Hamilton theorem, or the fact that any $n \times n$ matrix with only 0 eigenvalues is nilpotent of index at most $n$, we have $G^n = 0$. Thus $e^n = G^n e^0 = 0$, meaning the scheme converges in at most $n$ iterations.
+
+(c) Let $W = \sum_{i=2}^k \omega_i$ and assume $c_i = b$. The iteration is $x^{(k+1)} = \omega_1 x^{(k)} + W(b - Mx^{(k)}) = (\omega_1 I - WM)x^{(k)} + Wb$.
+This is in the form of (a) with iteration matrix $G = \omega_1 I - WM$.
+Convergence requires $\rho(\omega_1 I - WM) < 1$. Since $M$ is SPD, its eigenvalues $\lambda$ are real and positive. The eigenvalues of $G$ are $\mu = \omega_1 - W\lambda$.
+The condition $|\omega_1 - W\lambda| < 1$ is equivalent to:
+$-1 < \omega_1 - W\lambda < 1 \iff \omega_1 - 1 < W\lambda < \omega_1 + 1$.
+Dividing by $W$: $\frac{\omega_1-1}{W} < \lambda < \frac{\omega_1+1}{W}$, as required.
+
+(d) System (*): In block form, $\begin{bmatrix} A & 0 \\ 0 & A \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}^{k+1} = \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} - \begin{bmatrix} 0 & B \\ B & 0 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}^k$.
+Iteration matrix $H_1 = \begin{bmatrix} 0 & -A^{-1}B \\ -A^{-1}B & 0 \end{bmatrix}$. The eigenvalues of $H_1$ are $\pm \mu$ where $\mu$ are eigenvalues of $A^{-1}B$.
+Convergence condition: $\rho(A^{-1}B) < 1$.
+
+System (**): $\begin{bmatrix} A & 0 \\ B & A \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}^{k+1} = \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} - \begin{bmatrix} 0 & B \\ 0 & 0 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}^k$.
+Iteration matrix $H_2 = -\begin{bmatrix} A & 0 \\ B & A \end{bmatrix}^{-1} \begin{bmatrix} 0 & B \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & -A^{-1}B \\ 0 & (A^{-1}B)^2 \end{bmatrix}$.
+The eigenvalues are 0 and the eigenvalues of $(A^{-1}B)^2$.
+Convergence condition: $\rho((A^{-1}B)^2) < 1 \iff \rho(A^{-1}B)^2 < 1 \iff \rho(A^{-1}B) < 1$.
+Comparison: Since $\rho(H_2) = \rho(H_1)^2$, and $\rho(H_1) < 1$, we have $\rho(H_2) < \rho(H_1)$. System (**) converges twice as fast.
+\end{solution}
+
+\begin{exercise}
+Consider the differential equation:
+\[
+-u''+\alpha u=f,\quad x\in(0,1),
+\]
+with mixed boundary condition: $u(0)=0$, $u'(1)-bu(0)=0$.
+
+Approximated by standard finite difference:
+\[
+\frac{-U_{j-1}+2U_{j}-U_{j+1}}{h^{2}}+\alpha U_{j}=f_{j},\quad j=1,\dots,N-1,
+\]
+with boundary approximation: $U_{0}=0$, $\frac{U_{N}-U_{N-1}}{h}-bU_{N}=0$.
+
+The resulting linear system is $AU=F$ with coefficient matrix:
+\[
+\begin{bmatrix}\beta&-1&0&\dots&0\\-1&\beta&-1&\dots&0\\&\ddots&\ddots&\ddots&\\0&\dots&-1&\beta&-1\\0&\dots&0&-1&\beta\end{bmatrix}
+\]
+where $\beta=2+\alpha h^{2}$.
+
+\begin{enumerate}
+\item[(a)] Prove the $L^{2}$ stability:
+\[
+\frac{d}{dt}E(t)\leq 0
+\]
+where $E(t)=\sum_{j=1}^{N}|u_{j}|^{2}\Delta x$.
+\item[(b)] Is the result true for $E(t)=\sum_{j=1}^{N}|u_{j}|^{2p}\Delta x$ for arbitrary integer $p\geq 1$?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) The stability question refers to the corresponding parabolic problem $u_t = u_{xx} - \alpha u$. In discrete form, let $U(t)$ be the vector of values, then $\frac{dU}{dt} = - \frac{1}{h^2} A U$. 
+The energy $E(t) = h U^T U$. Its derivative is $\frac{dE}{dt} = 2h U^T \frac{dU}{dt} = -\frac{2}{h} U^T A U$.
+Stability requires $U^T A U \geq 0$, i.e., $A$ is positive semi-definite.
+For the given matrix $A$, which is symmetric tridiagonal with diagonal $\beta = 2 + \alpha h^2$ and off-diagonal $-1$, the Gershgorin Circle Theorem states that eigenvalues $\lambda$ satisfy $|\lambda - \beta| \leq 2$ (for rows 1 to $N-1$) and $|\lambda - \beta| \leq 1$ (for row $N$).
+Thus $\lambda \geq \beta - 2 = (2 + \alpha h^2) - 2 = \alpha h^2$.
+If $\alpha \geq 0$, then $\lambda \geq 0$, so $A$ is positive semi-definite and $\frac{dE}{dt} \leq 0$.
+
+(b) Yes, the result holds for $E(t) = \sum |u_j|^{2p} \Delta x$.
+Consider $\frac{dE}{dt} = 2p \sum u_j^{2p-1} \dot{u}_j h$. Substituting the finite difference scheme:
+$\dot{u}_j = \frac{1}{h^2}(u_{j-1} - 2u_j + u_{j+1}) - \alpha u_j$.
+Then $\frac{dE}{dt} = \frac{2p}{h} \sum u_j^{2p-1} (u_{j+1} - 2u_j + u_{j-1}) - 2p \alpha \sum u_j^{2p} h$.
+The first term can be written using a discrete version of $\int u^{2p-1} u_{xx} dx = -(2p-1) \int u^{2p-2} (u_x)^2 dx \leq 0$.
+By discrete summation by parts and the fact that $(u_{j+1}-u_j)(u_{j+1}^{2p-1} - u_j^{2p-1}) \geq 0$ (since $x^{2p-1}$ is monotone), each term in the sum is non-positive. Combined with $\alpha \geq 0$, we have $\frac{dE}{dt} \leq 0$.
+\end{solution}
+
+

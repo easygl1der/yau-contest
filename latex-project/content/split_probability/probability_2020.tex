@@ -1,0 +1,148 @@
+\section{2020 Probability and Statistics}
+
+Solve every problem.
+
+\subsection{Part I: Probability}
+
+\begin{exercise}
+Let $X$ be an essentially bounded random variable with mean zero. Show that
+\[
+\mathbb{E}e^X \leq \cosh\|X\|_\infty,
+\]
+where $\cosh x = \frac{e^x + e^{-x}}{2}$ is the hyperbolic cosine function.
+\end{exercise}
+
+\begin{solution}
+Let $M = \|X\|_\infty$. Since $\mathbb{E}[X] = 0$, we have $X \in [-M, M]$ almost surely.
+The function $f(x) = e^x$ is convex. Any $x \in [-M, M]$ can be written as a convex combination of the endpoints:
+\[ x = \frac{M-x}{2M}(-M) + \frac{x+M}{2M}(M). \]
+By the property of convex functions,
+\[ e^x \leq \frac{M-x}{2M}e^{-M} + \frac{x+M}{2M}e^M. \]
+Taking the expectation of both sides and using the linearity of expectation and the fact that $\mathbb{E}[X] = 0$:
+\begin{align*}
+\mathbb{E}[e^X] &\leq \mathbb{E}\left[ \frac{M-X}{2M}e^{-M} + \frac{X+M}{2M}e^M \right] \\
+&= \frac{M-\mathbb{E}[X]}{2M}e^{-M} + \frac{\mathbb{E}[X]+M}{2M}e^M \\
+&= \frac{M}{2M}e^{-M} + \frac{M}{2M}e^M \\
+&= \frac{e^{-M} + e^M}{2} = \cosh M = \cosh \|X\|_\infty.
+\end{align*}
+Thus, $\mathbb{E}e^X \leq \cosh \|X\|_\infty$.
+\end{solution}
+
+\begin{exercise}
+Let $\lambda$ be a positive number. Suppose that $X$ is a random variable with $\mathbb{E}|X| < \infty$. Suppose that
+\[
+\lambda\mathbb{E}f(X+1) = \mathbb{E}\{Xf(X)\}
+\]
+for all bounded smooth functions. Show that $X$ has the Poisson distribution $\mathrm{Poisson}(\lambda)$.
+\end{exercise}
+
+\begin{solution}
+Let $\phi(t) = \mathbb{E}[e^{itX}]$ be the characteristic function of $X$. Since $\mathbb{E}|X| < \infty$, $\phi(t)$ is continuously differentiable and $\phi'(t) = i \mathbb{E}[X e^{itX}]$.
+The given condition is $\lambda \mathbb{E}f(X+1) = \mathbb{E}[X f(X)]$. Let $f(x) = e^{itx}$. Since $e^{itx}$ is bounded and smooth (as a function of $x$), we have:
+\[ \lambda \mathbb{E}[e^{it(X+1)}] = \mathbb{E}[X e^{itX}]. \]
+Substituting $\phi(t)$ and $\phi'(t)$ into this equation:
+\[ \lambda e^{it} \phi(t) = \frac{1}{i} \phi'(t) \implies \phi'(t) = i \lambda e^{it} \phi(t). \]
+This is a first-order linear ordinary differential equation for $\phi(t)$. We can solve it by integration:
+\[ \frac{d}{dt} \ln \phi(t) = i \lambda e^{it} \implies \ln \phi(t) = \int i \lambda e^{it} dt = \lambda e^{it} + C. \]
+Using the initial condition $\phi(0) = \mathbb{E}[e^0] = 1$, we have:
+\[ \ln 1 = \lambda e^0 + C \implies 0 = \lambda + C \implies C = -\lambda. \]
+Thus, $\ln \phi(t) = \lambda (e^{it} - 1)$, which implies:
+\[ \phi(t) = e^{\lambda(e^{it} - 1)}. \]
+This is the characteristic function of the Poisson distribution with parameter $\lambda$. By the uniqueness theorem for characteristic functions, $X$ has the distribution $\mathrm{Poisson}(\lambda)$.
+\end{solution}
+
+\begin{exercise}
+Consider the random walk
+\[
+S_n = a + X_1 + X_2 + \dots + X_n,
+\]
+where $a$ is a positive integer and $\{X_i\}$ are i.i.d. random variables with
+\[
+\mathbb{P}\{X_i = 1\} = p, \quad \mathbb{P}\{X_i = -1\} = 1-p.
+\]
+
+Let $\tau_0 = \inf\{n: S_n = 0\}$ be the first time the random walk reaches the state $x=0$. For all $p \in [0,1]$ find the probability $\mathbb{P}_a\{\tau_0 < \infty\}$ that the random walk will eventually hit the state $x=0$.
+\end{exercise}
+
+\begin{solution}
+Let $q = 1-p$. Let $h_a = \mathbb{P}_a(\tau_0 < \infty)$. By conditioning on the first step $X_1$:
+\[ h_a = p h_{a+1} + q h_{a-1}, \quad a \geq 1, \]
+with boundary condition $h_0 = 1$. Note that for $a \geq 1$, hitting 0 from $a$ requires hitting $a-1$ and then from $a-1$ hitting 0. Due to the spatial homogeneity and independence of steps, $h_a = (h_1)^a$.
+Substituting this into the recurrence relation:
+\[ h_1 = p h_1^2 + q \implies p h_1^2 - h_1 + q = 0. \]
+The roots of this quadratic equation are:
+\[ r = \frac{1 \pm \sqrt{1 - 4pq}}{2p} = \frac{1 \pm \sqrt{1 - 4p(1-p)}}{2p} = \frac{1 \pm \sqrt{(1-2p)^2}}{2p} = \frac{1 \pm |1-2p|}{2p}. \]
+The roots are $r_1 = \frac{1 + (1-2p)}{2p} = \frac{2-2p}{2p} = \frac{q}{p}$ and $r_2 = \frac{1 - (1-2p)}{2p} = 1$.
+The hitting probability $h_1$ is the smallest non-negative root of the equation $s = \mathbb{E}[s^{X_1}]$.
+\begin{itemize}
+    \item If $p \leq 1/2$, then $q \geq p$, so $q/p \geq 1$. The only root in $[0,1]$ is $h_1 = 1$.
+    \item If $p > 1/2$, then $q < p$, so $q/p < 1$. The smallest root in $[0,1]$ is $h_1 = q/p$.
+\end{itemize}
+In general, $h_a = (\min\{1, q/p\})^a$.
+Thus, $\mathbb{P}_a\{\tau_0 < \infty\} = \begin{cases} 1 & \text{if } p \leq 1/2 \\ (q/p)^a & \text{if } p > 1/2 \end{cases}$.
+\end{solution}
+
+\begin{exercise}
+Let $Z = (X,Y)$ be an $\mathbb{R}^2$-valued random variable such that: (1) $X$ and $Y$ are independent; (2) both $X$ and $Y$ have mean zero and finite (nonvanishing) second moments; (3) the distribution of $Z$ is invariant under the rotation counter-clockwise around the origin by an angle $\theta$ not a multiple of 90 degrees. Show that $X$ and $Y$ must be normal random variables with the same variance.
+\end{exercise}
+
+\begin{solution}
+Let $\phi_X(t)$ and $\phi_Y(t)$ be the characteristic functions of $X$ and $Y$. Since $X$ and $Y$ are independent, the joint characteristic function of $Z=(X,Y)$ is $\Phi(t_1, t_2) = \phi_X(t_1) \phi_Y(t_2)$.
+The rotational invariance by angle $\theta$ implies:
+\[ \phi_X(t_1) \phi_Y(t_2) = \phi_X(t_1 \cos \theta - t_2 \sin \theta) \phi_Y(t_1 \sin \theta + t_2 \cos \theta). \]
+Taking logarithms (near the origin where characteristic functions are non-zero), let $\psi_X(t) = \ln \phi_X(t)$ and $\psi_Y(t) = \ln \phi_Y(t)$:
+\[ \psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta - t_2 \sin \theta) + \psi_Y(t_1 \sin \theta + t_2 \cos \theta). \]
+Since $X$ and $Y$ have mean zero and finite second moments $\sigma_X^2, \sigma_Y^2$, we have $\psi(0)=0, \psi'(0)=0, \psi''(0)=-\sigma^2$.
+Differentiating twice with respect to $t_1$ and evaluating at $(0,0)$:
+\[ \psi_X''(0) = \psi_X''(0) \cos^2 \theta + \psi_Y''(0) \sin^2 \theta \implies -\sigma_X^2 = -\sigma_X^2 \cos^2 \theta - \sigma_Y^2 \sin^2 \theta. \]
+This gives $\sigma_X^2(1 - \cos^2 \theta) = \sigma_Y^2 \sin^2 \theta \implies \sigma_X^2 \sin^2 \theta = \sigma_Y^2 \sin^2 \theta$.
+Since $\theta$ is not a multiple of 90 degrees, $\sin \theta \neq 0$, so $\sigma_X^2 = \sigma_Y^2 = \sigma^2$.
+Now, consider the functional equation $\psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta - t_2 \sin \theta) + \psi_Y(t_1 \sin \theta + t_2 \cos \theta)$. For $\theta$ not a multiple of 90 degrees, the Maxwell-Herschel Theorem states that the only solution for independent $X, Y$ with zero mean and finite variance is that they are Gaussian.
+Specifically, differentiating the equation with respect to $t_1$ and $t_2$ leads to $\psi_X(t)$ and $\psi_Y(t)$ being quadratic forms.
+Thus $\phi_X(t) = \phi_Y(t) = e^{-\frac{1}{2}\sigma^2 t^2}$, so $X, Y \sim N(0, \sigma^2)$.
+\end{solution}
+
+
+\subsection{Part II: Statistics}
+
+\begin{exercise}
+Prove that if the two groups are of the same size (i.e., $N/2$ for even $N$), the plan of re-randomization will result in unbiased estimates of the A versus B causal effect based on the sample means of $Y$ in groups A and B, where $Y$ is any linear function of $X$.
+\end{exercise}
+
+\begin{solution}
+In causal inference, let $Y_i(1)$ and $Y_i(0)$ be the potential outcomes for unit $i$. The observed outcome is $Y_i = W_i Y_i(1) + (1-W_i) Y_i(0)$, where $W_i \in \{0, 1\}$ is the treatment assignment. The causal effect estimate is:
+\[ \hat{\tau} = \bar{Y}_1 - \bar{Y}_0 = \frac{1}{N_1} \sum_{i: W_i=1} Y_i - \frac{1}{N_0} \sum_{i: W_i=0} Y_i. \]
+For $N$ even and $N_1 = N_0 = N/2$, re-randomization restricts the assignment vector $\mathbf{W}$ to a subset $\mathcal{W}$ that satisfies some balance criteria $M(\mathbf{W}, \mathbf{X}) \leq a$.
+If the balance criterion $M$ is symmetric in the sense that if $\mathbf{W} \in \mathcal{W}$ then $(\mathbf{1} - \mathbf{W}) \in \mathcal{W}$ (which holds for criteria based on covariate mean differences), and each assignment in $\mathcal{W}$ is equally likely, then for any unit $i$:
+\[ \mathbb{P}(W_i = 1) = \frac{\sum_{\mathbf{w} \in \mathcal{W}} w_i}{|\mathcal{W}|}. \]
+Since $\mathbf{w} \in \mathcal{W} \iff \mathbf{1}-\mathbf{w} \in \mathcal{W}$, we have $\sum_{\mathbf{w} \in \mathcal{W}} w_i = \sum_{\mathbf{w} \in \mathcal{W}} (1-w_i) = |\mathcal{W}| - \sum w_i$.
+Thus $2 \sum w_i = |\mathcal{W}| \implies \mathbb{P}(W_i = 1) = 1/2$.
+Then the expectation of the estimator is:
+\begin{align*}
+\mathbb{E}[\hat{\tau}] &= \mathbb{E}\left[ \frac{2}{N} \sum W_i Y_i(1) - \frac{2}{N} \sum (1-W_i) Y_i(0) \right] \\
+&= \frac{2}{N} \sum \mathbb{P}(W_i=1) Y_i(1) - \frac{2}{N} \sum \mathbb{P}(W_i=0) Y_i(0) \\
+&= \frac{2}{N} \sum \frac{1}{2} Y_i(1) - \frac{2}{N} \sum \frac{1}{2} Y_i(0) = \frac{1}{N} \sum (Y_i(1) - Y_i(0)) = \tau_{ATE}.
+\end{align*}
+This unbiasedness holds for any potential outcomes as long as $\mathbb{P}(W_i=1) = 1/2$.
+\end{solution}
+
+\begin{exercise}
+Provide a counter-example to the assertion that Problem 5 is true in small samples with odd $N$.
+\end{exercise}
+
+\begin{solution}
+Suppose $N=3$ and we want to assign one unit to treatment ($N_1=1$) and two to control ($N_0=2$). Let the covariates be $X = (1, 2, 3)$. The possible assignments $\mathbf{W} = (W_1, W_2, W_3)$ are $(1,0,0), (0,1,0), (0,0,1)$.
+The covariate differences $\bar{X}_1 - \bar{X}_0$ for these assignments are:
+\begin{enumerate}
+    \item $1 - (2+3)/2 = -1.5$
+    \item $2 - (1+3)/2 = 0$
+    \item $3 - (1+2)/2 = 1.5$
+\end{enumerate}
+If the re-randomization criterion is $|\bar{X}_1 - \bar{X}_0| \leq 0.5$, then only assignment 2 ($\mathbf{W} = (0,1,0)$) is allowed.
+Under this plan, $\mathbb{P}(W_2=1) = 1$ and $\mathbb{P}(W_1=1) = \mathbb{P}(W_3=1) = 0$.
+The expected estimate is $\mathbb{E}[\hat{\tau}] = Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2}$.
+However, the true ATE is $\frac{1}{3} \sum_{i=1}^3 (Y_i(1) - Y_i(0))$.
+In general, $Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2} \neq \frac{1}{3} \sum (Y_i(1) - Y_i(0))$.
+For instance, if $Y_i(1) = X_i^2$ and $Y_i(0) = 0$, then true ATE is $(1+4+9)/3 = 14/3$, while the estimate is $2^2 - 0 = 4$.
+The bias arises because with odd $N$, we cannot have symmetric group sizes, so $\mathbf{w} \in \mathcal{W}$ does not imply $\mathbf{1}-\mathbf{w} \in \mathcal{W}$ (since they have different numbers of treated units), breaking the $\mathbb{P}(W_i=1)=1/2$ symmetry.
+\end{solution}

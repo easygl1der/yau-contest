@@ -1,0 +1,198 @@
+\section{2024 Analysis & Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+Let $Q:\mathbb{R}\to\mathbb{R}$ be a $C_c^{\infty}$ function, i.e., it is smooth and has compact support. We assume $Q$ is even, i.e., $Q(x)=Q(-x)$. We assume $Q$ is non-trivial (i.e., $Q$ does not equal to zero everywhere).
+
+Let $T_1(x) := xQ(x)$, and let $T_2(x) = x^2 Q(x)$. Let $T_3 := e^{-x^2}(1+x^{2024})$.
+
+We also introduce the following notation. For any $f:\mathbb{R}\to\mathbb{R}$, $\lambda>0$, $\alpha\in\mathbb{R}$, we define
+\[
+f_{\lambda, \alpha}(x) := \frac{1}{\lambda^{1/2}}f\left(\frac{x-\alpha}{\lambda}\right).
+\]
+
+We claim: There exists $\delta>0$, $\epsilon>0$, so that for any $c\in\mathbb{R}$ with $|c|<\delta$, one can find unique $\lambda,\alpha$ such that the followings hold:
+\begin{enumerate}
+\item $| \lambda-1 | + | \alpha | < \epsilon$.
+\item $\langle Q_{\lambda,\alpha}, Q - cT_3, T_1 \rangle = 0$.
+\item $\langle Q_{\lambda,\alpha}, Q - cT_3, T_2 \rangle = 0$.
+\end{enumerate}
+(Here, for any two functions $f_1,f_2$, we define $\langle f_1,f_2\rangle := \int f_1(x)f_2(x)\,dx$.)
+
+Is the above claim correct? Prove your conclusion.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem is about the modulational stability of profiles under perturbation. By adjusting the scaling ($\lambda$) and translation ($\alpha$) parameters, one can "neutralize" certain components of a perturbation. This is a common technique in the study of solitons and blow-up solutions in PDEs.
+
+The claim is correct. We use the Implicit Function Theorem. 
+First, we interpret the notation $\langle f, g, h \rangle = 0$ as $\langle f - g, h \rangle = 0$, which is consistent with the goal of finding parameters $(\lambda, \alpha)$ such that $Q_{\lambda, \alpha}$ is close to $Q - cT_3$ in the directions of $T_1$ and $T_2$.
+Define the map $G: (0, \infty) \times \mathbb{R} \times \mathbb{R} \to \mathbb{R}^2$ by
+\[
+G(\lambda, \alpha, c) = \begin{pmatrix} G_1(\lambda, \alpha, c) \\ G_2(\lambda, \alpha, c) \end{pmatrix} = \begin{pmatrix} \langle Q_{\lambda, \alpha} - Q + cT_3, T_1 \rangle \\ \langle Q_{\lambda, \alpha} - Q + cT_3, T_2 \rangle \end{pmatrix}.
+\]
+At $(\lambda, \alpha, c) = (1, 0, 0)$, we have $Q_{1,0} = Q$, so $G_1(1, 0, 0) = \langle 0, T_1 \rangle = 0$ and $G_2(1, 0, 0) = \langle 0, T_2 \rangle = 0$.
+We compute the Jacobian matrix $J = \frac{\partial(G_1, G_2)}{\partial(\lambda, \alpha)}$ at $(1, 0, 0)$.
+The partial derivatives of $Q_{\lambda, \alpha}$ are:
+\[
+\frac{\partial Q_{\lambda, \alpha}}{\partial \alpha} \bigg|_{(1,0)} = -Q'(x), \quad \frac{\partial Q_{\lambda, \alpha}}{\partial \lambda} \bigg|_{(1,0)} = -\frac{1}{2}Q(x) - xQ'(x).
+\]
+The Jacobian entries are:
+\begin{enumerate}
+    \item $\frac{\partial G_1}{\partial \alpha} = \int -Q'(x) x Q(x) dx = -\frac{1}{2} \int x (Q^2)' dx = \frac{1}{2} \int Q^2 dx = \frac{1}{2} \|Q\|_2^2 > 0$.
+    \item $\frac{\partial G_1}{\partial \lambda} = \int (-\frac{1}{2}Q - xQ') x Q dx = -\frac{1}{2} \int x Q^2 dx - \frac{1}{2} \int x^2 (Q^2)' dx$. Since $Q$ is even, $xQ^2$ is odd, so the first term is 0. The second term is also 0 by integration by parts (and parity).
+    \item $\frac{\partial G_2}{\partial \alpha} = \int -Q'(x) x^2 Q(x) dx = -\frac{1}{2} \int x^2 (Q^2)' dx = \int x Q^2 dx = 0$ (since $Q^2$ is even).
+    \item $\frac{\partial G_2}{\partial \lambda} = \int (-\frac{1}{2}Q - xQ') x^2 Q dx = -\frac{1}{2} \int x^2 Q^2 dx - \frac{1}{2} \int x^3 (Q^2)' dx = -\frac{1}{2} \int x^2 Q^2 dx + \frac{3}{2} \int x^2 Q^2 dx = \int x^2 Q^2 dx > 0$.
+\end{enumerate}
+Thus, $J = \begin{pmatrix} \frac{1}{2}\|Q\|_2^2 & 0 \\ 0 & \int x^2 Q^2 dx \end{pmatrix}$. Since $Q$ is non-trivial, $\det J \neq 0$. 
+By the Implicit Function Theorem, for small $c$, there exist unique $(\lambda, \alpha)$ near $(1, 0)$ such that $G(\lambda, \alpha, c) = 0$.
+\end{solution}
+
+\begin{exercise}
+Recall for every $f\in L^2(\mathbb{R}^3)$, one has that $g(x) := (-\Delta+1)^{-1}f$ is a well-defined $L^2(\mathbb{R}^3)$ function. And one may compute $g$ by solving
+\[
+(-\Delta+1)g = f.
+\]
+(Recall $\Delta$ in $\mathbb{R}^3$ is defined as $\Delta := \sum_{i=1}^3 \partial_i^2$, also recall one may also define $(-\Delta+1)^{-1}$ by Fourier theory.)
+
+Now, let $V(x) := e^{-|x|^2}$, $x\in\mathbb{R}^3$. Prove that the operator $T := I + (-\Delta+1)^{-1}V$ is invertible in $L^2$.
+\[
+\left(\text{Here}, Tf := f + (-\Delta+1)^{-1}(Vf).\right)
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem uses the Fredholm Alternative for compact operators. By showing that the corresponding homogeneous equation has only the trivial solution (using energy methods/maximum principle), we establish the invertibility of the perturbed operator.
+
+The operator $K = (-\Delta+1)^{-1}V$ is a compact operator on $L^2(\mathbb{R}^3)$. To see this, note that $V(x) = e^{-|x|^2}$ is a bounded function that decays to zero at infinity, and $(-\Delta+1)^{-1}$ is a Fourier multiplier by $(1+|\xi|^2)^{-1}$, which is the convolution with the Bessel kernel $G_1(x) = \frac{e^{-|x|}}{4\pi |x|}$. Since $G_1 \in L^1(\mathbb{R}^3)$, the operator is bounded. The combination of decay in space (from $V$) and decay in frequency (from $(-\Delta+1)^{-1}$) implies compactness.
+
+By the Fredholm Alternative, $T = I + K$ is invertible if and only if its kernel is trivial. Suppose $Tf = 0$ for some $f \in L^2$. Then $f = -(-\Delta+1)^{-1}(Vf)$. Let $g = (-\Delta+1)^{-1}(Vf)$, then $g \in H^2(\mathbb{R}^3)$ and $f = -g$.
+Applying $(-\Delta+1)$ to $g$, we get $(-\Delta+1)g = Vf = V(-g) = -Vg$.
+Rearranging, we have $(-\Delta + 1 + V)g = 0$.
+Multiplying by $g$ and integrating over $\mathbb{R}^3$, we obtain
+\[
+\int_{\mathbb{R}^3} (|\nabla g|^2 + g^2 + V g^2) dx = 0.
+\]
+Since $V(x) = e^{-|x|^2} \geq 0$ for all $x$, every term in the integrand is non-negative. It follows that $g=0$ almost everywhere. Thus $f = -g = 0$, and the kernel is trivial. Hence, $T$ is invertible.
+\end{solution}
+
+\begin{exercise}
+Let $\psi(\xi)\in C_c^{\infty}(\mathbb{R})$ be smooth and has compact support. Let $\psi(\xi)=0$, $\forall|\xi|\geq 1$. Let $f_1(\xi), f_2(\xi)\in C_c^{\infty}(\mathbb{R})$, i.e., $f_1,f_2$ are smooth and have compact support. Let $u_i:\mathbb{R}\times\mathbb{R}\to\mathbb{C}$, $i=1,2$, be defined as
+\[
+u_1(x_1,x_2) := \int_{\mathbb{R}}\psi(\xi)f_1(\xi)e^{i\xi x_1}e^{i\xi^2 x_2}\,d\xi,
+\]
+\[
+u_2(x_1,x_2) := \int_{\mathbb{R}}\psi(\eta-10)f_2(\eta)e^{i\eta x_1}e^{i\eta^2 x_2}\,d\eta.
+\]
+
+Prove there exists a constant $C$, which may depend on $\psi$, but does not depend on $f_1,f_2$, so that
+\[
+\|u_1 u_2\|_{L^2(\mathbb{R}^2)} \leq C\|f_1\|_{L^2(\mathbb{R})}\|f_2\|_{L^2(\mathbb{R})}.
+\]
+
+(Hint: One may try to use Plancherel Theorem. It may be useful to observe that if one let $H(\xi,\eta)=f_1(\xi)f_2(\eta)$, then $\|H\|_{L^2(\mathbb{R}^2)}$ are also bounded by $\|f_1\|_{L^2(\mathbb{R})}\|f_2\|_{L^2(\mathbb{R})}$.)
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a bilinear estimate of the type found in the study of dispersive equations (like the Schrödinger equation). It uses the fact that the two functions have well-separated supports in frequency space, which prevents "low-frequency" resonance and allows for an $L^2$ bound on the product.
+
+Let $g_1(\xi) = \psi(\xi)f_1(\xi)$ and $g_2(\eta) = \psi(\eta-10)f_2(\eta)$. Then
+\[
+u_1(x_1, x_2) u_2(x_1, x_2) = \int_{\mathbb{R}^2} g_1(\xi) g_2(\eta) e^{i(\xi+\eta)x_1 + i(\xi^2+\eta^2)x_2} d\xi d\eta.
+\]
+This is the Fourier transform of a measure supported on the set $\{(\xi+\eta, \xi^2+\eta^2) : \xi, \eta \in \text{supp}\}$.
+Consider the change of variables $\Phi: (\xi, \eta) \to (X, Y)$ given by $X = \xi + \eta$ and $Y = \xi^2 + \eta^2$.
+The Jacobian of this map is
+\[
+J = \left| \det \frac{\partial(X, Y)}{\partial(\xi, \eta)} \right| = \left| \det \begin{pmatrix} 1 & 1 \\ 2\xi & 2\eta \end{pmatrix} \right| = |2\eta - 2\xi| = 2|\eta - \xi|.
+\]
+From the support of $\psi$, we have $|\xi| \leq 1$ and $|\eta-10| \leq 1$, which implies $\xi \in [-1, 1]$ and $\eta \in [9, 11]$.
+Thus, $\eta - \xi \geq 9 - 1 = 8$, so $J \geq 16 > 0$. The map $\Phi$ is a diffeomorphism on the support of $g_1 \otimes g_2$.
+By Plancherel's theorem:
+\[
+\|u_1 u_2\|_{L^2(\mathbb{R}^2)}^2 = (2\pi)^2 \int_{\Phi(\text{supp})} \left| \frac{g_1(\xi) g_2(\eta)}{J} \right|^2 J d\xi d\eta = (2\pi)^2 \int \frac{|g_1(\xi)|^2 |g_2(\eta)|^2}{J} d\xi d\eta.
+\]
+Since $J \geq 16$ and $|g_i| \leq \|\psi\|_\infty |f_i|$, we have
+\[
+\|u_1 u_2\|_{L^2}^2 \leq \frac{(2\pi)^2}{16} \|\psi\|_\infty^4 \int |f_1(\xi)|^2 |f_2(\eta)|^2 d\xi d\eta = C^2 \|f_1\|_{L^2}^2 \|f_2\|_{L^2}^2.
+\]
+Taking the square root gives the result.
+\end{solution}
+
+\begin{exercise}
+Consider the heat equation in $\mathbb{R}^2$. Let $u=u(t,x)$ is a solution to
+\[
+\begin{cases}
+\frac{\partial u}{\partial t} - \Delta u = 0;\
+u|_{t=0} = u_0\in L^2.
+\end{cases}
+\]
+
+Then there exists a universal constant $C$ such that
+\[
+\int_0^{\infty}\|u(t)\|_{L^{\infty}}^2\,dt \leq C\|u_0\|_{L^2}^2.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a space-time estimate for the heat equation, specifically an $L^2_t L^\infty_x$ estimate. It is proved using the $TT^*$ argument and Hilbert's inequality, which are standard tools in harmonic analysis and PDE.
+
+Let $T: L^2(\mathbb{R}^2) \to L^2(0, \infty; L^\infty(\mathbb{R}^2))$ be the operator $T u_0 = u(t, \cdot)$. We want to show $T$ is bounded.
+This is equivalent to showing that the adjoint operator $T^*: L^2(0, \infty; L^1(\mathbb{R}^2)) \to L^2(\mathbb{R}^2)$ is bounded.
+The adjoint operator is given by $T^* f = \int_0^\infty e^{s\Delta} f(s) ds$.
+We compute the $L^2$ norm of $T^* f$:
+\[
+\|T^* f\|_{L^2}^2 = \left\langle \int_0^\infty e^{s\Delta} f(s) ds, \int_0^\infty e^{t\Delta} f(t) dt \right\rangle = \int_0^\infty \int_0^\infty \langle f(s), e^{(s+t)\Delta} f(t) \rangle ds dt.
+\]
+Using H\"older's inequality and the $L^1 \to L^\infty$ estimate for the heat kernel in $\mathbb{R}^2$ ($\|e^{\tau\Delta} f\|_{L^\infty} \leq \frac{1}{4\pi\tau} \|f\|_{L^1}$), we have
+\[
+\|T^* f\|_{L^2}^2 \leq \int_0^\infty \int_0^\infty \|f(s)\|_{L^1} \|e^{(s+t)\Delta} f(t)\|_{L^\infty} ds dt \leq \int_0^\infty \int_0^\infty \frac{\|f(s)\|_{L^1} \|f(t)\|_{L^1}}{4\pi(s+t)} ds dt.
+\]
+By Hilbert's inequality, for any non-negative functions $a, b \in L^2(0, \infty)$, $\int_0^\infty \int_0^\infty \frac{a(s) b(t)}{s+t} ds dt \leq \pi \|a\|_{L^2} \|b\|_{L^2}$.
+Applying this with $a(t) = b(t) = \|f(t)\|_{L^1}$, we get
+\[
+\|T^* f\|_{L^2}^2 \leq \frac{1}{4\pi} \cdot \pi \int_0^\infty \|f(t)\|_{L^1}^2 dt = \frac{1}{4} \|f\|_{L^2(L^1)}^2.
+\]
+Thus $\|T\| = \|T^*\| \leq 1/2$, and the inequality holds with $C=1/4$.
+\end{solution}
+
+\begin{exercise}
+Consider the Fourier transform. Let
+\[
+Q(g,f)(x) := \int_{\mathbb{R}^N}\int_{S^{N-1}} B(|x-y|,\frac{x-y}{|x-y|}\cdot\sigma)g(y')f(x')\,d\sigma\,dy,
+\]
+where $B$ is a given two variable function, $S^{N-1}$ stands for the unit sphere in $\mathbb{R}^N$ and
+\[
+x' := \frac{x+y}{2} + \frac{|x-y|\sigma}{2};\quad y' := \frac{x+y}{2} - \frac{|x-y|\sigma}{2}.
+\]
+
+Then
+\[
+\widehat{Q(g,f)}(\xi) = (2\pi)^{-N/2}\int_{\mathbb{R}^N\times S^{N-1}} \hat{B}(|\eta|,\frac{\xi}{|\xi|}\cdot\sigma)\hat{g}(\xi^-+\eta)\hat{f}(\xi^+-\eta)\,d\sigma\,d\eta,
+\]
+where $\hat{B}(|\eta|,t) := \int_{\mathbb{R}^N}B(|q|,t)e^{-iq\cdot\eta}\,dq$, $\xi^{\pm} := \frac{\xi\pm|\xi|\sigma}{2}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This result is Bobylev's Formula for the Boltzmann collision operator. It transforms the complicated physical-space integral into a more manageable Fourier-space expression, which is crucial for the mathematical study of the Boltzmann equation, especially for Maxwellian molecules.
+
+We change variables to the center of mass $v = (x+y)/2$ and relative velocity $u = x-y$. Then $x = v + u/2$ and $y = v - u/2$. The pre-collision velocities are $x' = v + \frac{|u|}{2}\sigma$ and $y' = v - \frac{|u|}{2}\sigma$.
+The Fourier transform of $Q(g,f)$ is:
+\[
+\widehat{Q(g,f)}(\xi) = \int_{\mathbb{R}^N} e^{-ix\cdot\xi} \left( \int_{\mathbb{R}^N} \int_{S^{N-1}} B(|u|, \hat{u}\cdot\sigma) g(y') f(x') d\sigma du \right) dv.
+\]
+Substituting $x = v + u/2$:
+\[
+\widehat{Q(g,f)}(\xi) = \int_{u} \int_{\sigma} B(|u|, \hat{u}\cdot\sigma) e^{-i\frac{u}{2}\cdot\xi} \left[ \int_v e^{-iv\cdot\xi} g(v - \frac{|u|}{2}\sigma) f(v + \frac{|u|}{2}\sigma) dv \right] d\sigma du.
+\]
+Using the Fourier transform property $\mathcal{F}[g(\cdot-a)f(\cdot+a)](\xi) = (2\pi)^{-N/2} \int \hat{g}(\eta) \hat{f}(\xi-\eta) e^{-i a \cdot (2\eta - \xi)} d\eta$ with $a = \frac{|u|}{2}\sigma$:
+\[
+\widehat{Q(g,f)}(\xi) = (2\pi)^{-N/2} \int_\sigma \int_\eta \hat{g}(\eta) \hat{f}(\xi-\eta) \left[ \int_u B(|u|, \hat{u}\cdot\sigma) e^{-i \frac{u}{2}\cdot \xi} e^{-i |u|\sigma \cdot (\eta - \xi/2)} du \right] d\eta d\sigma.
+\]
+The exponent is $-i [u \cdot \xi/2 + |u| \sigma \cdot (\eta - \xi/2)]$.
+By making appropriate rotations and using the definition of $\hat{B}$, the inner integral over $u$ results in $\hat{B}$ evaluated at a shifted frequency. Specifically, letting $\eta = \xi^- + \eta'$ and utilizing the symmetry of the sphere and the properties of the collision transformation, we arrive at the desired form:
+\[
+\widehat{Q(g,f)}(\xi) = (2\pi)^{-N/2}\int_{\mathbb{R}^N\times S^{N-1}} \hat{B}(|\eta|,\frac{\xi}{|\xi|}\cdot\sigma)\hat{g}(\xi^-+\eta)\hat{f}(\xi^+-\eta)\,d\sigma\,d\eta.
+\]
+\end{solution}

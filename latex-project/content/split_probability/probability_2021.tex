@@ -1,0 +1,192 @@
+\section{2021 Probability and Statistics}
+
+Solve every problem.
+
+\begin{exercise}
+Let $\{X_n\}$ be a sequence of Gaussian random variables. Suppose that $X$ is a random variable such that $X_n$ converges to $X$ in distribution as $n \to \infty$. Show that $X$ is also a (possibly degenerate) Gaussian random variable.
+\end{exercise}
+
+\begin{solution}
+Let $X_n \sim N(\mu_n, \sigma_n^2)$. The characteristic function of $X_n$ is given by
+\[ \phi_n(t) = \mathbb{E}[e^{itX_n}] = \exp\left(it\mu_n - \frac{1}{2}t^2\sigma_n^2\right). \]
+By the Lévy Continuity Theorem, since $X_n \xrightarrow{d} X$, the sequence of characteristic functions $\phi_n(t)$ converges pointwise to a function $\phi(t)$, which is the characteristic function of $X$. Since $\phi(t)$ is a characteristic function, it is continuous at $t=0$ with $\phi(0) = 1$.
+
+Consider the absolute value $|\phi_n(t)| = \exp(-\frac{1}{2}t^2\sigma_n^2)$. As $n \to \infty$, $|\phi_n(t)| \to |\phi(t)|$. Since $\phi(t)$ is continuous and $\phi(0)=1$, there exists some $\delta > 0$ such that $|\phi(t)| > 0$ for all $|t| < \delta$.
+For any such $t \neq 0$, the convergence $\exp(-\frac{1}{2}t^2\sigma_n^2) \to |\phi(t)| > 0$ implies that the sequence $\{\sigma_n^2\}$ must be bounded. If $\sigma_{n_k}^2 \to \infty$ for some subsequence, then $|\phi_{n_k}(t)| \to 0$ for $t \neq 0$, contradicting $|\phi(t)| > 0$.
+If $\sigma_n^2$ has two limit points $\sigma_a^2$ and $\sigma_b^2$, then $\exp(-\frac{1}{2}t^2\sigma_a^2) = \exp(-\frac{1}{2}t^2\sigma_b^2)$ for all $|t| < \delta$, implying $\sigma_a^2 = \sigma_b^2$. Thus, $\sigma_n^2 \to \sigma^2$ for some $\sigma^2 \in [0, \infty)$.
+
+Now consider the phase. We have $e^{it\mu_n} = \phi_n(t) e^{\frac{1}{2}t^2\sigma_n^2} \to \phi(t) e^{\frac{1}{2}t^2\sigma^2}$ as $n \to \infty$ for $|t| < \delta$. Let $g(t) = \phi(t) e^{\frac{1}{2}t^2\sigma^2}$. Then $|g(t)| = 1$ and $g(t)$ is continuous with $g(0)=1$.
+For small $t$, we can write $g(t) = e^{it\mu(t)}$ for some continuous function $\mu(t)$. The convergence $e^{it\mu_n} \to e^{it\mu(t)}$ implies that for each $t$, $t\mu_n \pmod{2\pi}$ converges. This forces $\mu_n$ to converge to some $\mu \in \mathbb{R}$. Indeed, if $\mu_n$ were unbounded, one could find $t$ such that $t\mu_n$ does not converge modulo $2\pi$.
+Thus, $\mu_n \to \mu$ and $\sigma_n^2 \to \sigma^2$. The limit characteristic function is
+\[ \phi(t) = \lim_{n \to \infty} \exp\left(it\mu_n - \frac{1}{2}t^2\sigma_n^2\right) = \exp\left(it\mu - \frac{1}{2}t^2\sigma^2\right), \]
+which is the characteristic function of $N(\mu, \sigma^2)$. If $\sigma^2 = 0$, $X$ is the degenerate Gaussian random variable constant at $\mu$.
+\end{solution}
+
+\begin{exercise}
+For two probability measures $\mu$ and $\nu$ on the real line, the total variation distance $\|\mu - \nu\|_{TV}$ is defined as
+\[
+\|\mu - \nu\|_{TV} = \sup\{\mu(C) - \nu(C): C \in \mathcal{B}(\mathbb{R})\},
+\]
+where $\mathcal{B}(\mathbb{R})$ is the Borel $\sigma$-algebra. Let $\mathcal{C}(\mu, \nu)$ be the space of couplings of $\mu$ and $\nu$. Show that
+\[
+\|\mu - \nu\|_{TV} = \inf\{\mathbb{P}(X \neq Y): (X,Y) \in \mathcal{C}(\mu, \nu)\}.
+\]
+\end{exercise}
+
+\begin{solution}
+First, we show $\|\mu - \nu\|_{TV} \leq \mathbb{P}(X \neq Y)$ for any coupling $(X, Y) \in \mathcal{C}(\mu, \nu)$. For any Borel set $C$, we have
+\begin{align*}
+\mu(C) - \nu(C) &= \mathbb{P}(X \in C) - \mathbb{P}(Y \in C) \\
+&= \mathbb{P}(X \in C, Y \in C) + \mathbb{P}(X \in C, Y \notin C) - (\mathbb{P}(Y \in C, X \in C) + \mathbb{P}(Y \in C, X \notin C)) \\
+&= \mathbb{P}(X \in C, Y \notin C) - \mathbb{P}(X \notin C, Y \in C) \\
+&\leq \mathbb{P}(X \in C, Y \notin C) \leq \mathbb{P}(X \neq Y).
+\end{align*}
+Taking the supremum over all $C \in \mathcal{B}(\mathbb{R})$, we obtain $\|\mu - \nu\|_{TV} \leq \mathbb{P}(X \neq Y)$. Taking the infimum over all couplings gives $\|\mu - \nu\|_{TV} \leq \inf \mathbb{P}(X \neq Y)$.
+
+To show the reverse inequality, we construct a "maximal coupling". Let $\lambda$ be a measure dominating both $\mu$ and $\nu$ (e.g., $\lambda = \mu + \nu$), and let $f = d\mu/d\lambda$ and $g = d\nu/d\lambda$ be the Radon-Nikodym derivatives.
+The TV distance can be expressed as:
+\[ \|\mu - \nu\|_{TV} = \mu(A) - \nu(A) = \int (f-g)^+ d\lambda = 1 - \int \min(f, g) d\lambda. \]
+where $A = \{f > g\}$. Let $p = \int \min(f, g) d\lambda$. If $p=1$, then $\mu = \nu$ and we can take $X=Y$. If $p < 1$, we define the coupling as follows:
+With probability $p$, let $X=Y$ with distribution $h(x) = \min(f(x), g(x))/p$.
+With probability $1-p$, let $X$ and $Y$ be independent with distributions $f_{res}(x) = (f(x) - \min(f, g))/(1-p)$ and $g_{res}(x) = (g(x) - \min(f, g))/(1-p)$ respectively.
+One can verify that the marginals are correct:
+\[ \mathbb{P}(X \in C) = p \int_C \frac{\min(f, g)}{p} d\lambda + (1-p) \int_C \frac{f - \min(f, g)}{1-p} d\lambda = \int_C f d\lambda = \mu(C). \]
+Similarly for $Y$. For this coupling:
+\[ \mathbb{P}(X = Y) \geq \mathbb{P}(\text{case 1}) = p = 1 - \|\mu - \nu\|_{TV}. \]
+Thus $\mathbb{P}(X \neq Y) \leq 1 - p = \|\mu - \nu\|_{TV}$.
+Since we found a coupling achieving the bound, the equality holds.
+\end{solution}
+
+\begin{exercise}
+We throw a fair die repeatedly and independently. Let $\tau_{11}$ be the first time the pattern 11 (two consecutive 1's) appears and $\tau_{12}$ the first time the pattern 12 (1 followed by 2) appears.
+
+(a) Calculate $\mathbb{E}\tau_{11}$.
+
+(b) Which is larger, $\mathbb{E}\tau_{11}$ or $\mathbb{E}\tau_{12}$? Justify your answer.
+\end{exercise}
+
+\begin{solution}
+(a) Let $e = \mathbb{E}\tau_{11}$. We use the method of conditional expectation based on the first few outcomes.
+Let $S$ be the state where we haven't rolled a 1, and $S_1$ be the state where the last roll was a 1.
+Let $E_0$ be the expected remaining time from $S$, and $E_1$ be the expected remaining time from $S_1$.
+From $S$:
+- With probability $1/6$, we roll a 1 and move to $S_1$.
+- With probability $5/6$, we roll something else and stay in $S$.
+So, $E_0 = 1 + \frac{1}{6}E_1 + \frac{5}{6}E_0 \Rightarrow \frac{1}{6}E_0 = 1 + \frac{1}{6}E_1 \Rightarrow E_0 = 6 + E_1$.
+From $S_1$:
+- With probability $1/6$, we roll a 1 and the process ends.
+- With probability $5/6$, we roll something else and return to $S$.
+So, $E_1 = 1 + \frac{1}{6}(0) + \frac{5}{6}E_0 = 1 + \frac{5}{6}E_0$.
+Substituting $E_1$ into the first equation:
+$E_0 = 6 + 1 + \frac{5}{6}E_0 \Rightarrow \frac{1}{6}E_0 = 7 \Rightarrow E_0 = 42$.
+Thus, $\mathbb{E}\tau_{11} = 42$.
+
+(b) For $\tau_{12}$, let $F_0$ be the expected time from the start and $F_1$ be the expected time given the last roll was 1.
+From start: $F_0 = 1 + \frac{1}{6}F_1 + \frac{5}{6}F_0 \Rightarrow F_0 = 6 + F_1$.
+From $F_1$:
+- Roll 2 (prob 1/6): done.
+- Roll 1 (prob 1/6): stay in $F_1$.
+- Roll 3,4,5,6 (prob 4/6): return to $F_0$.
+So, $F_1 = 1 + \frac{1}{6}(0) + \frac{1}{6}F_1 + \frac{4}{6}F_0$.
+$F_1 = 1 + \frac{1}{6}(F_0 - 6) + \frac{4}{6}F_0 = \frac{5}{6}F_0$.
+Then $F_0 = 6 + \frac{5}{6}F_0 \Rightarrow \frac{1}{6}F_0 = 6 \Rightarrow F_0 = 36$.
+Thus $\mathbb{E}\tau_{12} = 36$.
+$\mathbb{E}\tau_{11} = 42 > \mathbb{E}\tau_{12} = 36$.
+The reason $\mathbb{E}\tau_{11}$ is larger is that the pattern "11" can overlap with itself. If you have "1" and you fail to get the second "1" by rolling something other than 1, you lose the "1" you had. However, in "12", if you roll "11", you still have a "1" towards the pattern "12". More formally, according to Guibas and Odlyzko's formula, for a pattern $A$, $\mathbb{E}\tau_A = \sum_{k=1}^m 6^k \mathbb{1}_{A^{(k)} = A_{(k)}}$, where $A^{(k)}$ is the prefix of length $k$ and $A_{(k)}$ is the suffix of length $k$.
+For $A=11$, overlaps are length 1 and 2. $\mathbb{E}\tau_{11} = 6^1 + 6^2 = 6 + 36 = 42$.
+For $A=12$, the only overlap is length 2. $\mathbb{E}\tau_{12} = 6^2 = 36$.
+\end{solution}
+
+\begin{exercise}
+Let $\{X_n\}$ be a Markov chain on a discrete state space $S$ with transition function $p(x,y), x,y \in S$. Suppose that there is a state $y_0 \in S$ and a positive number $\theta$ such that $p(x,y_0) \geq \theta$ for all $x \in S$.
+
+(a) Show that there exists a positive constant $\lambda < 1$ such that for any two initial distributions $\mu$ and $\nu$:
+\[
+\sum_{y \in S} |\mathbb{P}_\mu\{X_1 = y\} - \mathbb{P}_\nu\{X_1 = y\}| \leq \lambda \sum_{y \in S}|\mu(y) - \nu(y)|.
+\]
+
+(b) Show that the Markov chain has a unique stationary distribution $\pi$ and
+\[
+\sum_{y \in S} |\mathbb{P}_\mu\{X_n = y\} - \pi(y)| \leq 2\lambda^n.
+\]
+\end{exercise}
+
+\begin{solution}
+(a) Let $\mu_1(y) = \mathbb{P}_\mu\{X_1 = y\} = \sum_{x \in S} \mu(x) p(x, y)$ and $\nu_1(y) = \mathbb{P}_\nu\{X_1 = y\} = \sum_{x \in S} \nu(x) p(x, y)$.
+We want to bound $\sum_y |\mu_1(y) - \nu_1(y)| = 2\|\mu_1 - \nu_1\|_{TV}$.
+Consider the transition kernels. The condition $p(x, y_0) \geq \theta$ allows us to write:
+\[ p(x, y) = \theta \delta_{y, y_0} + (1-\theta) Q(x, y) \]
+where $Q(x, y) = \frac{p(x, y) - \theta \delta_{y, y_0}}{1-\theta}$. Since $\sum_y p(x, y) = 1$, we have $\sum_y Q(x, y) = \frac{1 - \theta}{1 - \theta} = 1$. Also $Q(x, y) \geq 0$ because $p(x, y) \geq 0$ for $y \neq y_0$ and $p(x, y_0) \geq \theta$. Thus $Q$ is a valid transition kernel.
+Then $\mu_1(y) = \theta \delta_{y, y_0} \sum_x \mu(x) + (1-\theta) \sum_x \mu(x) Q(x, y) = \theta \delta_{y, y_0} + (1-\theta) (\mu Q)(y)$.
+Similarly, $\nu_1(y) = \theta \delta_{y, y_0} + (1-\theta) (\nu Q)(y)$.
+The difference is:
+\[ \mu_1(y) - \nu_1(y) = (1-\theta) \sum_x (\mu(x) - \nu(x)) Q(x, y). \]
+Summing the absolute values:
+\[ \sum_y |\mu_1(y) - \nu_1(y)| \leq (1-\theta) \sum_y \sum_x |\mu(x) - \nu(x)| Q(x, y) = (1-\theta) \sum_x |\mu(x) - \nu(x)|. \]
+Taking $\lambda = 1-\theta$, we have $\lambda < 1$ since $\theta > 0$.
+
+(b) Let $\mathcal{P}(S)$ be the space of probability distributions on $S$ equipped with the $\ell^1$ metric $d(\mu, \nu) = \sum_y |\mu(y) - \nu(y)|$. This is a complete metric space.
+Part (a) shows that the map $T: \mu \mapsto \mu P$ is a contraction with factor $\lambda < 1$.
+By the Banach Fixed Point Theorem, there exists a unique $\pi \in \mathcal{P}(S)$ such that $\pi P = \pi$.
+For any initial distribution $\mu$, let $\mu_n = \mu P^n$. Then
+\[ d(\mu_n, \pi) = d(\mu_{n-1}P, \pi P) \leq \lambda d(\mu_{n-1}, \pi) \leq \lambda^n d(\mu, \pi). \]
+Since $d(\mu, \pi) = \sum_y |\mu(y) - \pi(y)| \leq \sum_y \mu(y) + \sum_y \pi(y) = 2$, we have
+\[ \sum_{y \in S} |\mathbb{P}_\mu\{X_n = y\} - \pi(y)| \leq 2\lambda^n. \]
+\end{solution}
+
+\begin{exercise}
+Consider a linear regression model with $p$ predictors and $n$ observations:
+\[
+\mathbf{Y} = X\boldsymbol{\beta} + \mathbf{e},
+\]
+where $X_{n \times p}$ is the design matrix, $\beta$ is the unknown coefficient vector, and $\mathbf{e} \sim N(0, \sigma^2 I_n)$.
+
+Here $\mathrm{rank}(X) = k \leq p$ and we assume $n - k > 1$. Let $\mathbf{x}_1 = (x_{1,1}, \hdots, x_{1,p})$ be the first row of $X$ and define
+\[
+\gamma = \frac{\mathbf{x}_1\boldsymbol{\beta}}{\sigma}.
+\]
+
+Find the UMVUE of $\gamma$ or prove it does not exist.
+\end{exercise}
+
+\begin{solution}
+The sufficient and complete statistics for the model with unknown $(\boldsymbol{\beta}, \sigma^2)$ are the least squares estimator $\hat{\boldsymbol{\beta}}$ (or more precisely, the projection $P_X \mathbf{Y}$) and the residual sum of squares $S^2 = \|\mathbf{Y} - X\hat{\boldsymbol{\beta}}\|^2$.
+Specifically, $X\hat{\boldsymbol{\beta}} \sim N(X\boldsymbol{\beta}, \sigma^2 P_X)$ and $S^2 \sim \sigma^2 \chi^2_{n-k}$, where $k = \text{rank}(X)$.
+Since $\mathbf{x}_1$ is a row of $X$, the linear combination $\theta = \mathbf{x}_1 \boldsymbol{\beta}$ is estimable. Its BLUE is $\hat{\theta} = \mathbf{x}_1 \hat{\boldsymbol{\beta}}$.
+The distribution of $\hat{\theta}$ is $N(\theta, \sigma^2 v)$ where $v = \mathbf{x}_1 (X^T X)^- \mathbf{x}_1^T$. Note that $v = \mathbf{x}_1 (X^T X)^- X^T X (X^T X)^- \mathbf{x}_1^T$, which is the first diagonal element of the hat matrix $H = X(X^T X)^- X^T$.
+We seek an unbiased estimator of $\gamma = \theta/\sigma$ that is a function of $(\hat{\theta}, S^2)$.
+By independence of $\hat{\theta}$ and $S^2$:
+\[ \mathbb{E}[\hat{\theta} S^{-1}] = \mathbb{E}[\hat{\theta}] \mathbb{E}[S^{-1}] = \theta \cdot \mathbb{E}[(\sigma^2 \chi^2_{n-k})^{-1/2}] = \frac{\theta}{\sigma} \mathbb{E}[(\chi^2_{n-k})^{-1/2}]. \]
+For $W \sim \chi^2_m$, $\mathbb{E}[W^{-1/2}] = \frac{1}{\sqrt{2}} \frac{\Gamma((m-1)/2)}{\Gamma(m/2)}$ for $m > 1$.
+Here $m = n-k > 1$. Thus
+\[ \mathbb{E}[\hat{\theta} S^{-1}] = \frac{\theta}{\sigma} \frac{1}{\sqrt{2}} \frac{\Gamma((n-k-1)/2)}{\Gamma((n-k)/2)}. \]
+Define
+\[ T = \hat{\theta} S^{-1} \cdot \sqrt{2} \frac{\Gamma((n-k)/2)}{\Gamma((n-k-1)/2)}. \]
+$T$ is unbiased for $\gamma$. Since $T$ is a function of the complete sufficient statistics $(X\hat{\boldsymbol{\beta}}, S^2)$, by the Lehmann-Scheffé Theorem, $T$ is the unique UMVUE of $\gamma$.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, \dots, X_{2022}$ be independent random variables with $X_i \sim N(\theta_i, i^2)$, $1 \leq i \leq 2022$. For estimating the unknown mean vector $\theta \in \mathbb{R}^{2022}$, consider the loss function
+\[
+L(\boldsymbol{\theta}, \mathbf{d}) = \sum_{i=1}^{2022} (d_i - \theta_i)^2 / i^2.
+\]
+Prove that $\mathbf{X} = (X_1, \dots, X_{2022})$ is a minimax estimator of $\boldsymbol{\theta}$.
+\end{exercise}
+
+\begin{solution}
+Transform the variables to standardize the problem. Let $Y_i = X_i/i$ and $\eta_i = \theta_i/i$.
+Then $Y_1, \dots, Y_p$ (where $p=2022$) are independent with $Y_i \sim N(\eta_i, 1)$.
+The loss function becomes:
+\[ L(\boldsymbol{\theta}, \mathbf{d}) = \sum_{i=1}^p \left(\frac{d_i}{i} - \frac{\theta_i}{i}\right)^2 = \sum_{i=1}^p (\delta_i - \eta_i)^2 \]
+where $\delta_i = d_i/i$. This is the standard problem of estimating the mean $\boldsymbol{\eta}$ of a multivariate normal distribution with identity covariance matrix under squared error loss.
+The estimator $\mathbf{d} = \mathbf{X}$ corresponds to $\delta_i = X_i/i = Y_i$.
+The risk of the estimator $\boldsymbol{\delta} = \mathbf{Y}$ is:
+\[ R(\boldsymbol{\eta}, \mathbf{Y}) = \mathbb{E}_{\boldsymbol{\eta}} \left[ \sum_{i=1}^p (Y_i - \eta_i)^2 \right] = \sum_{i=1}^p \mathbb{E}_{\eta_i} (Y_i - \eta_i)^2 = \sum_{i=1}^p 1 = p. \]
+This is a constant risk. To prove minimaxity, it suffices to show that for any $\epsilon > 0$, there exists a prior $\pi$ such that the Bayes risk $r(\pi) \geq p - \epsilon$.
+Consider the independent priors $\eta_i \sim N(0, \tau^2)$. The posterior distribution of $\eta_i$ given $Y_i$ is $N(\frac{\tau^2}{\tau^2+1} Y_i, \frac{\tau^2}{\tau^2+1})$.
+The Bayes estimator is $\hat{\eta}_i = \frac{\tau^2}{\tau^2+1} Y_i$, and the Bayes risk for the $i$-th component is $\frac{\tau^2}{\tau^2+1}$.
+The total Bayes risk is $r(\tau^2) = \sum_{i=1}^p \frac{\tau^2}{\tau^2+1} = p \frac{\tau^2}{\tau^2+1}$.
+As $\tau^2 \to \infty$, $r(\tau^2) \to p$.
+Since the constant risk $p$ is the supremum of the Bayes risks for a sequence of priors (specifically, the limit of the Bayes risks), the estimator $\mathbf{Y}$ (and thus $\mathbf{X}$) is minimax.
+(Note: Although for $p \geq 3$ this estimator is inadmissible due to the James-Stein paradox, it remains minimax as its risk equals the minimax value of the problem.)
+\end{solution}

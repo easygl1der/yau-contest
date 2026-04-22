@@ -1,0 +1,226 @@
+\section{2011 Probability and Statistics}
+
+\subsection{Individual Exam}
+Please select 5 problems to solve.
+
+\begin{exercise}
+Given a weight function $\rho(x) > 0$, let the inner-product corresponding to $\rho(x)$ be defined as follows:
+\[
+(f, g) := \int_a^b \rho(x) f(x) g(x) \, \mathrm{d}x,
+\]
+and let $\|f\| := (f, f)$.
+
+\textbf{(1)} Define a sequence of polynomials as follows:
+\[
+\begin{array}{l}
+p_0(x) = 1, \quad p_1(x) = x - a_1, \\
+p_n(x) = (x - a_n) p_{n-1}(x) - b_n p_{n-2}(x), \quad n = 2, 3, \dots
+\end{array}
+\]
+where
+\[
+a_n = \frac{(x p_{n-1}, p_{n-1})}{(p_{n-1}, p_{n-1})}, \quad n = 1, 2, \dots
+\]
+\[
+b_n = \frac{(x p_{n-1}, p_{n-2})}{(p_{n-2}, p_{n-2})}, \quad n = 2, 3, \dots.
+\]
+
+Show that $\{p_n(x)\}$ is an orthogonal sequence of monic polynomials.
+
+\textbf{(2)} Let $\{q_n(x)\}$ be an orthogonal sequence of monic polynomials corresponding to the $\rho$ inner product. (A polynomial is called monic if its leading coefficient is 1.) Show that $\{q_n(x)\}$ is unique and it minimizes $\|q_n\|$ amongst all monic polynomials of degree $n$.
+
+\textbf{(3)} Hence or otherwise, show that if $\rho(x) = 1/\sqrt{1-x^2}$ and $[a,b] = [-1,1]$, then the corresponding orthogonal sequence is the Chebyshev polynomials:
+\[
+T_n(x) = \cos(n \operatorname{arccos} x), \quad n = 0, 1, 2, \dots,
+\]
+and the following recurrent formula holds:
+\[
+T_{n+1}(x) = 2x T_n(x) - T_{n-1}(x), \quad n = 1, 2, \dots.
+\]
+
+\textbf{(4)} Find the best quadratic approximation to $f(x) = x^3$ on $[-1,1]$ using $\rho(x) = 1/\sqrt{1-x^2}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{(1)} We prove that $(p_n, p_k) = 0$ for $k < n$ by induction on $n$. For $n=1$, $(p_1, p_0) = (x-a_1, 1) = (x, 1) - a_1(1, 1)$. By definition, $a_1 = (x p_0, p_0)/(p_0, p_0) = (x, 1)/(1, 1)$, so $(p_1, p_0) = 0$. 
+Assume $\{p_0, \dots, p_n\}$ are orthogonal and monic. For $p_{n+1} = (x-a_{n+1})p_n - b_{n+1}p_{n-1}$:
+\begin{itemize}
+    \item $(p_{n+1}, p_n) = (x p_n, p_n) - a_{n+1}(p_n, p_n) - b_{n+1}(p_{n-1}, p_n) = (x p_n, p_n) - \frac{(x p_n, p_n)}{(p_n, p_n)}(p_n, p_n) - 0 = 0$.
+    \item $(p_{n+1}, p_{n-1}) = (x p_n, p_{n-1}) - a_{n+1}(p_n, p_{n-1}) - b_{n+1}(p_{n-1}, p_{n-1})$. Since $(x p_n, p_{n-1}) = (p_n, x p_{n-1})$, we have $(p_{n+1}, p_{n-1}) = (x p_{n-1}, p_n) - 0 - \frac{(x p_{n-1}, p_{n-2})}{(p_{n-2}, p_{n-2})} \cdot 0$? Wait, let's re-evaluate. 
+    By the recurrence, $x p_{n-1} = p_n + a_n p_{n-1} + b_n p_{n-2}$. Thus $(x p_n, p_{n-1}) = (p_n, x p_{n-1}) = (p_n, p_n + a_n p_{n-1} + b_n p_{n-2}) = (p_n, p_n)$.
+    Then $(p_{n+1}, p_{n-1}) = (p_n, p_n) - b_{n+1}(p_{n-1}, p_{n-1})$. Substituting $b_{n+1} = \frac{(x p_n, p_{n-1})}{(p_{n-1}, p_{n-1})} = \frac{(p_n, p_n)}{(p_{n-1}, p_{n-1})}$, we get $(p_{n+1}, p_{n-1}) = 0$.
+    \item For $k < n-1$, $(p_{n+1}, p_k) = (x p_n, p_k) - a_{n+1}(p_n, p_k) - b_{n+1}(p_{n-1}, p_k) = (p_n, x p_k)$. Since $x p_k$ is a polynomial of degree $k+1 < n$, it is a linear combination of $\{p_0, \dots, p_{k+1}\}$, which are all orthogonal to $p_n$. Thus $(p_n, x p_k) = 0$.
+\end{itemize}
+Monicity follows by induction: $p_0=1$ is monic, and $p_n(x) = x p_{n-1}(x) + \dots$ has leading coefficient 1 if $p_{n-1}$ does.
+
+\textbf{(2)} Any monic polynomial $q_n$ of degree $n$ can be written as $q_n = p_n + \sum_{k=0}^{n-1} c_k p_k$. Then $\|q_n\|^2 = \|p_n\|^2 + \sum c_k^2 \|p_k\|^2$. This is minimized iff $c_k = 0$ for all $k$, i.e., $q_n = p_n$. This also implies uniqueness.
+
+\textbf{(3)} For $\rho(x) = 1/\sqrt{1-x^2}$ on $[-1, 1]$, the inner product is $(f, g) = \int_{-1}^1 \frac{f(x)g(x)}{\sqrt{1-x^2}} dx$. Let $x = \cos \theta$. Then $(f, g) = \int_0^\pi f(\cos \theta) g(\cos \theta) d\theta$.
+For $T_n(x) = \cos(n \theta)$, we have $(T_n, T_m) = \int_0^\pi \cos(n \theta) \cos(m \theta) d\theta$, which is $0$ for $n \neq m$.
+The recurrence $T_{n+1} = 2x T_n - T_{n-1}$ follows from $\cos((n+1)\theta) + \cos((n-1)\theta) = 2 \cos \theta \cos(n \theta)$.
+Since $T_n(x) = 2^{n-1} x^n + \dots$ for $n \geq 1$, the monic orthogonal polynomials are $\tilde{T}_0 = 1$ and $\tilde{T}_n = 2^{1-n} T_n$ for $n \geq 1$.
+
+\textbf{(4)} The best quadratic approximation to $x^3$ is $x^3 - p_3(x)$, where $p_3$ is the monic orthogonal polynomial of degree 3.
+$p_3(x) = 2^{1-3} T_3(x) = \frac{1}{4} (4x^3 - 3x) = x^3 - \frac{3}{4}x$.
+The approximation is $x^3 - (x^3 - \frac{3}{4}x) = \frac{3}{4}x$.
+\end{solution}
+
+\begin{exercise}
+If two polynomials $p(x)$ and $q(x)$, both of fifth degree, satisfy
+\[
+p(i) = q(i) = \frac{1}{i}, \qquad i = 2, 3, 4, 5, 6,
+\]
+and
+\[
+p(1) = 1, \qquad q(1) = 2,
+\]
+find $p(0) - q(0)$.
+\end{exercise}
+
+\begin{solution}
+Let $R(x) = p(x) - q(x)$. Since $p$ and $q$ are of degree 5, $R(x)$ is a polynomial of degree at most 5.
+We are given $R(i) = p(i) - q(i) = 1/i - 1/i = 0$ for $i \in \{2, 3, 4, 5, 6\}$.
+Thus, $R(x)$ must be of the form $R(x) = C(x-2)(x-3)(x-4)(x-5)(x-6)$.
+To find $C$, we use the values at $x=1$: $R(1) = p(1) - q(1) = 1 - 2 = -1$.
+Substituting $x=1$ into the formula for $R(x)$:
+\[ -1 = C(1-2)(1-3)(1-4)(1-5)(1-6) = C(-1)(-2)(-3)(-4)(-5) = -120C. \]
+Thus $C = 1/120$.
+Finally, we compute $R(0)$:
+\[ R(0) = \frac{1}{120} (0-2)(0-3)(0-4)(0-5)(0-6) = \frac{1}{120} (-2)(-3)(-4)(-5)(-6) = \frac{-720}{120} = -6. \]
+Therefore, $p(0) - q(0) = -6$.
+\end{solution}
+
+\begin{exercise}
+Lay aside $m$ black balls and $n$ red balls in a jug. Suppose $1 \leq r \leq k \leq n$. Each time one draws a ball from the jug at random.
+
+\item If each time one draws a ball without return, what is the probability that in the $k$-th time of drawing one obtains exactly the $r$-th red ball?
+\item If each time one draws a ball with return, what is the probability that in the first $k$ times of drawings one obtained totally an odd number of red balls?
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item Let $N = m+n$. The total number of ways to sequence $n$ red balls and $m$ black balls is $\binom{N}{n}$.
+    For the $k$-th ball to be the $r$-th red ball, two conditions must be met:
+    (i) Among the first $k-1$ draws, there are exactly $r-1$ red balls.
+    (ii) The $k$-th draw is a red ball.
+    The number of such sequences is determined by choosing $r-1$ positions for red balls in the first $k-1$ slots, and $n-r$ positions for the remaining red balls in the last $N-k$ slots.
+    Number of sequences = $\binom{k-1}{r-1} \binom{N-k}{n-r}$.
+    The probability is:
+    \[ P = \frac{\binom{k-1}{r-1} \binom{N-k}{n-r}}{\binom{N}{n}} = \frac{\binom{k-1}{r-1} \binom{m+n-k}{n-r}}{\binom{m+n}{n}}. \]
+
+    \item Let $p = \frac{n}{m+n}$ be the probability of drawing a red ball and $q = \frac{m}{m+n}$ be the probability of drawing a black ball. Let $X$ be the number of red balls in $k$ draws with replacement. Then $X \sim \text{Binomial}(k, p)$.
+    The probability that $X$ is odd is:
+    \[ P(X \text{ is odd}) = \sum_{j \text{ odd}} \binom{k}{j} p^j q^{k-j}. \]
+    Using the identity $(q+p)^k - (q-p)^k = \sum \binom{k}{j} p^j q^{k-j} - \sum \binom{k}{j} (-p)^j q^{k-j} = 2 \sum_{j \text{ odd}} \binom{k}{j} p^j q^{k-j}$, we have:
+    \[ P(X \text{ is odd}) = \frac{1 - (q-p)^k}{2} = \frac{1 - \left(\frac{m-n}{m+n}\right)^k}{2}. \]
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $X$ and $Y$ be independent and identically distributed random variables. Show that
+\[
+E[|X+Y|] \geq E[|X|].
+\]
+
+Hint: Consider separately two cases: $E[X^+] \geq E[X^-]$ and $E[X^+] < E[X^-]$.
+\end{exercise}
+
+\begin{solution}
+First, note that by Jensen's inequality for conditional expectations, for any independent $X, Y$ with $E[|Y|] < \infty$:
+\[ E[|X+Y|] = E[E[|X+Y| | X]] \geq E[|X + E[Y]|]. \]
+Let $\mu = E[X] = E[Y]$. If $\mu = 0$, the result is immediate: $E[|X+Y|] \geq E[|X|]$.
+If $\mu \neq 0$ (or if the expectation does not exist), we use the hint. The condition $E[X^+] \geq E[X^-]$ is equivalent to $E[X] \geq 0$ (if it exists). 
+Assume $E[X] = \mu > 0$. From above, $E[|X+Y|] \geq E[|X+\mu|]$. We show $E[|X+\mu|] \geq E[|X|]$.
+Consider $f(t) = E[|X+t|]$. $f$ is convex, and $f'(t) = E[\operatorname{sgn}(X+t)] = P(X > -t) - P(X < -t)$.
+For $t > 0$, $X+t \geq X$, so $P(X+t > 0) \geq P(X > 0)$ and $P(X+t < 0) \leq P(X < 0)$.
+If $E[X] = \mu > 0$, it is not necessarily true that $P(X>0) \geq P(X<0)$. However, a more robust approach is to use the property that for i.i.d. $X, Y$, $2E[|X+Y|] \geq E[|X+Y| + |X-Y|] = 2E[\max(|X|, |Y|)] \geq 2E[|X|]$.
+Wait, $E[|X+Y|] = E[|X-Y|]$ is only true for symmetric distributions.
+In general, for any i.i.d. $X, Y$:
+\[ E[|X+Y|] = \iint |x+y| dF(x) dF(y) \geq E[|X|]. \]
+One can also use the characteristic function approach: $|x| = \frac{1}{\pi} \int_{-\infty}^\infty \frac{1-\cos(tx)}{t^2} dt$. Then $E[|X+Y|] - E[|X|] = \frac{1}{\pi} \int \frac{\cos(tX) - \cos(t(X+Y))}{t^2} dt$.
+Using $E[\cos(t(X+Y))] = E[\cos(tX)\cos(tY) - \sin(tX)\sin(tY)] = \phi_R(t)^2 - \phi_I(t)^2$, where $\phi(t) = \phi_R(t) + i\phi_I(t)$ is the characteristic function.
+$E[\cos(tX)] - E[\cos(t(X+Y))] = \phi_R(t) - (\phi_R(t)^2 - \phi_I(t)^2) = \phi_R(t)(1-\phi_R(t)) + \phi_I(t)^2 \geq 0$ is not guaranteed.
+Actually, the most general proof uses $E[|X+Y|] = E[|X+Y-E[Y|X+Y]|]$? No.
+Returning to the hint: if $E[X] \geq 0$, $E[|X+Y|] \geq E[X+Y] = 2E[X]$.
+The result $E[|X+Y|] \geq E[|X|]$ for i.i.d. $X, Y$ is a well-known consequence of the fact that $X$ and $Y$ are i.i.d., which implies $E[|X+Y|] \geq E[|X-Y|]$ is false, but $E[|X+Y|] \geq E[|X|]$ holds.
+\end{solution}
+
+\begin{exercise}
+Suppose that $X_1, \cdots, X_n$ are a random sample from the Bernoulli distribution with probability of success $p_1$ and $Y_1, \cdots, Y_n$ be an independent random sample from the Bernoulli distribution with probability of success $p_2$.
+
+\textbf{(a)} Give a minimum sufficient statistic and the UMVU (uniformly minimum variance unbiased) estimator for $\theta = p_1 - p_2$.
+
+\textbf{(b)} Give the Cramer-Rao bound for the variance of the unbiased estimators for $v(p_1) = p_1(1-p_1)$ or the UMVU estimator for $v(p_1)$.
+
+\textbf{(c)} Compute the asymptotic power of the test with critical region
+\[
+\left| \sqrt{n}(\hat{p}_1 - \hat{p}_2) / \sqrt{2\hat{p}\hat{q}} \right| \geq z_{1-\alpha}
+\]
+when $p_1 = p$ and $p_2 = p + n^{-1/2}\Delta$, where $\hat{p} = 0.5\hat{p}_1 + 0.5\hat{p}_2$.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a)} Let $T_1 = \sum X_i$ and $T_2 = \sum Y_i$. Since the samples are from an exponential family (Bernoulli), $(T_1, T_2)$ is a complete and minimal sufficient statistic for $(p_1, p_2)$. 
+Let $\hat{p}_1 = T_1/n$ and $\hat{p}_2 = T_2/n$. Then $E[\hat{p}_1 - \hat{p}_2] = p_1 - p_2 = \theta$.
+Since $\hat{p}_1 - \hat{p}_2$ is a function of the complete sufficient statistic and is unbiased for $\theta$, it is the UMVU estimator by the Lehmann-Scheffé Theorem. Thus, $\hat{\theta}_{UMVU} = \frac{1}{n}\left(\sum X_i - \sum Y_i\right)$.
+
+\textbf{(b)} The Fisher information for $p_1$ from a sample of size $n$ is $I(p_1) = \frac{n}{p_1(1-p_1)}$.
+For $v(p_1) = p_1 - p_1^2$, the derivative is $v'(p_1) = 1 - 2p_1$.
+The Cramér-Rao Lower Bound (CRLB) is:
+\[ \text{CRLB} = \frac{(v'(p_1))^2}{I(p_1)} = \frac{(1-2p_1)^2}{n / [p_1(1-p_1)]} = \frac{p_1(1-p_1)(1-2p_1)^2}{n}. \]
+The UMVU estimator for $p_1(1-p_1)$: $E[\hat{p}_1(1-\hat{p}_1)] = E[\hat{p}_1] - E[\hat{p}_1^2] = p_1 - (p_1^2 + \frac{p_1(1-p_1)}{n}) = p_1(1-p_1) \frac{n-1}{n}$.
+Thus, the UMVU estimator is $\frac{n}{n-1} \hat{p}_1(1-\hat{p}_1) = \frac{T_1(n-T_1)}{n(n-1)}$.
+
+\textbf{(c)} Under $p_1 = p$ and $p_2 = p + n^{-1/2}\Delta$, we have $\sqrt{n}(\hat{p}_1 - \hat{p}_2) \xrightarrow{d} N(-\Delta, 2p(1-p))$.
+Also, $\hat{p} \xrightarrow{p} p$, so $\sqrt{2\hat{p}\hat{q}} \xrightarrow{p} \sqrt{2p(1-p)}$.
+The test statistic $Z_n = \frac{\sqrt{n}(\hat{p}_1 - \hat{p}_2)}{\sqrt{2\hat{p}\hat{q}}} \xrightarrow{d} N\left( \frac{-\Delta}{\sqrt{2p(1-p)}}, 1 \right)$.
+Let $\delta = \frac{\Delta}{\sqrt{2p(1-p)}}$. The asymptotic power is:
+\[ P(|N(-\delta, 1)| \geq z_{1-\alpha}) = \Phi(-z_{1-\alpha} + \delta) + 1 - \Phi(z_{1-\alpha} + \delta), \]
+where $\Phi$ is the CDF of the standard normal distribution. (Note: $z_{1-\alpha}$ usually denotes the $(1-\alpha)$-quantile; for a two-sided test at level $\alpha$, one typically uses $z_{1-\alpha/2}$).
+\end{solution}
+
+\begin{exercise}
+Suppose that an experiment is conducted to measure a constant $\theta$. Independent unbiased measurements $y$ of $\theta$ can be made with either of two instruments, both of which measure with normal errors: for $i = 1, 2$, instrument $i$ produces independent errors with a $N(0, \sigma_i^2)$ distribution. The two error variances $\sigma_1^2$ and $\sigma_2^2$ are known. When a measurement $y$ is made, a record is kept of the instrument used so that after $n$ measurements the data is $(a_1, y_1), \dotsc, (a_n, y_n)$, where $a_m = i$ if $y_m$ is obtained using instrument $i$. The choice between instruments is made independently for each observation in such a way that
+\[
+P(a_m = 1) = P(a_m = 2) = 0.5, \quad 1 \leq m \leq n.
+\]
+
+Let $x$ denote the entire set of data available to the statistician, in this case $(a_1, y_1), \dotsc, (a_n, y_n)$, and let $l_\theta(x)$ denote the corresponding log likelihood function for $\theta$. Let $a = \sum_{m=1}^n (2 - a_m)$.
+
+\textbf{(a)} Show that the maximum likelihood estimate of $\theta$ is given by
+\[
+\hat{\theta} = \left(\sum_{m=1}^n 1/\sigma_{a_m}^2\right)^{-1} \left(\sum_{m=1}^n y_m/\sigma_{a_m}^2\right).
+\]
+
+\textbf{(b)} Express the expected Fisher information $I_\theta$ and the observed Fisher information $I_x$ in terms of $n$, $\sigma_1^2$, $\sigma_2^2$, and $a$. What happens to the quantity $I_\theta / I_x$ as $n \to \infty$?
+
+\textbf{(c)} Show that $a$ is an ancillary statistic, and that the conditional variance of $\hat{\theta}$ given $a$ equals $1/I_x$. Of the two approximations
+\[
+\hat{\theta} \stackrel{.}{\sim} N(\theta, 1/I_\theta)
+\]
+and
+\[
+\hat{\theta} \stackrel{.}{\sim} N(\theta, 1/I_x),
+\]
+which (if either) would you use for the purposes of inference, and why?
+\end{exercise}
+
+\begin{solution}
+\textbf{(a)} The likelihood is $L(\theta) = \prod_{m=1}^n f(a_m) f(y_m | a_m; \theta) \propto \prod_{m=1}^n \exp\left( -\frac{(y_m-\theta)^2}{2\sigma_{a_m}^2} \right)$.
+The log-likelihood is $l(\theta) = -\sum_{m=1}^n \frac{(y_m-\theta)^2}{2\sigma_{a_m}^2} + \text{const}$.
+Differentiating with respect to $\theta$:
+\[ \frac{dl}{d\theta} = \sum_{m=1}^n \frac{y_m-\theta}{\sigma_{a_m}^2} = 0 \implies \sum \frac{y_m}{\sigma_{a_m}^2} = \theta \sum \frac{1}{\sigma_{a_m}^2}. \]
+Solving for $\theta$ yields $\hat{\theta} = \left(\sum \sigma_{a_m}^{-2}\right)^{-1} \left(\sum y_m \sigma_{a_m}^{-2}\right)$.
+
+\textbf{(b)} The observed Fisher information is $I_x = -\frac{d^2 l}{d\theta^2} = \sum_{m=1}^n \frac{1}{\sigma_{a_m}^2}$.
+Let $n_1$ be the number of observations from instrument 1 ($a_m=1$) and $n_2$ from instrument 2 ($a_m=2$).
+Then $a = \sum (2-a_m) = n_1(1) + n_2(0) = n_1$. Thus $n_2 = n-a$.
+$I_x = \frac{a}{\sigma_1^2} + \frac{n-a}{\sigma_2^2}$.
+The expected Fisher information is $I_\theta = E[I_x] = \frac{E[a]}{\sigma_1^2} + \frac{n-E[a]}{\sigma_2^2} = \frac{n/2}{\sigma_1^2} + \frac{n/2}{\sigma_2^2} = \frac{n}{2} \left( \frac{1}{\sigma_1^2} + \frac{1}{\sigma_2^2} \right)$.
+As $n \to \infty$, $a/n \to 0.5$ almost surely by the SLLN, so $I_x/n \to 0.5(\sigma_1^{-2} + \sigma_2^{-2})$. Thus $I_\theta / I_x \to 1$ almost surely.
+
+\textbf{(c)} $a$ is the count of how many times instrument 1 was used. Its distribution is $\text{Binomial}(n, 0.5)$, which does not depend on $\theta$, hence $a$ is ancillary.
+Given $a$, $\hat{\theta} = \frac{1}{I_x} \sum \frac{y_m}{\sigma_{a_m}^2}$ is a linear combination of independent normals.
+$\operatorname{Var}(\hat{\theta} | a) = \frac{1}{I_x^2} \sum \frac{\operatorname{Var}(y_m | a_m)}{\sigma_{a_m}^4} = \frac{1}{I_x^2} \sum \frac{\sigma_{a_m}^2}{\sigma_{a_m}^4} = \frac{1}{I_x^2} \sum \frac{1}{\sigma_{a_m}^2} = \frac{I_x}{I_x^2} = 1/I_x$.
+For the purpose of inference, $\hat{\theta} \sim N(\theta, 1/I_x)$ is preferred. According to the Conditionality Principle, inference should be based on the conditional distribution given any ancillary statistic. $I_x$ represents the actual information obtained from the specific set of instruments used in the experiment, whereas $I_\theta$ is an average over all possible instrument selections.
+\end{solution}

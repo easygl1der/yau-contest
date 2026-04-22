@@ -1,0 +1,131 @@
+\section{2024 Mathematical Physics}
+
+\subsection{Classical Mechanics}
+
+\begin{exercise}
+Consider the motion of a particle of mass $m$ in an attractive central potential of the form $V(r) = \alpha r^k$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+Central force problems are a cornerstone of classical mechanics. Because the force is directed solely towards or away from a central point, the system possesses spherical symmetry. By Noether's theorem, this continuous rotational symmetry leads to the conservation of angular momentum. This conservation law restricts the particle's motion to a 2D plane and allows us to mathematically reduce the 3D problem to an equivalent 1D problem. We do this by introducing an "effective potential" that combines the true physical potential with a centrifugal repulsive term, representing the tendency of the particle to fly outward due to its angular velocity. Analyzing this 1D effective potential helps us easily determine the types of orbits (circular, bound, scattering), their stability, and the frequency of small oscillations around circular orbits.
+
+\textbf{(a)} In polar coordinates, the velocity is $\mathbf{v} = \dot{r}\hat{r} + r\dot{\phi}\hat{\phi}$. The Lagrangian is:
+\[ L = T - V = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\phi}^2) - \alpha r^k \]
+
+\textbf{(b)} Angular momentum $J = \frac{\partial L}{\partial \dot{\phi}} = mr^2\dot{\phi}$ is conserved. Substituting $\dot{\phi} = J/mr^2$:
+\[ L_{\text{eff}} = \frac{1}{2}m\dot{r}^2 + \frac{J^2}{2mr^2} - \alpha r^k \]
+The effective potential is $V_{\text{eff}}(r) = \frac{J^2}{2mr^2} + \alpha r^k$.
+
+\textbf{(c)} Circular orbits occur at $V_{\text{eff}}'(r) = 0$:
+\[ -\frac{J^2}{mr^3} + k\alpha r^{k-1} = 0 \implies r_0^{k+2} = \frac{J^2}{m k \alpha} \]
+Note that for an attractive potential, $\alpha$ and $k$ have the same sign (e.g., $k=2, \alpha>0$ or $k=-1, \alpha<0$).
+The period is $T = 2\pi / \dot{\phi} = 2\pi m r_0^2 / J$.
+
+\textbf{(d)} Stability requires $V_{\text{eff}}''(r_0) > 0$:
+\[ V_{\text{eff}}''(r) = \frac{3J^2}{mr^4} + k(k-1)\alpha r^{k-2} \]
+Using $\frac{J^2}{mr_0^4} = k\alpha r_0^{k-2}$:
+\[ V_{\text{eff}}''(r_0) = 3k\alpha r_0^{k-2} + k^2\alpha r_0^{k-2} - k\alpha r_0^{k-2} = k\alpha r_0^{k-2}(k+2) \]
+For stability, $k\alpha(k+2) > 0$. Since $k\alpha > 0$ for existence, we need $k > -2$.
+
+\textbf{(e)} Small oscillations frequency $\omega^2 = V_{\text{eff}}''(r_0)/m = \frac{k\alpha(k+2)r_0^{k-2}}{m}$.
+Orbital frequency $\Omega^2 = \dot{\phi}^2 = J^2/m^2r_0^4 = k\alpha r_0^{k-2}/m$.
+Thus $\omega = \Omega\sqrt{k+2}$.
+The orbit closes if $\omega/\Omega = \sqrt{k+2}$ is a rational number. For $k=-1$ (gravity), $\sqrt{1}=1$ (closed). For $k=2$ (harmonic), $\sqrt{4}=2$ (closed).
+
+\textbf{(f)} Let $u = 1/r$. The Binet equation is $\frac{d^2u}{d\phi^2} + u = -\frac{m}{J^2 u^2} F(1/u)$.
+With $F(r) = -V'(r) = -k\alpha r^{k-1}$, we have $F(1/u) = -k\alpha u^{1-k}$.
+\[ \frac{d^2u}{d\phi^2} + u = \frac{mk\alpha}{J^2} u^{-k-1} \]
+\end{solution}
+
+\subsection{Quantum Mechanics}
+
+\begin{exercise}
+Transient perturbation $\Delta H = F(t)x$ on a harmonic oscillator.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+When a quantum harmonic oscillator is subjected to an external, time-dependent driving force, its state evolves. If the driving force is linear in position (like a uniform but time-varying electric field acting on a charged particle), we can analyze the dynamics exactly. Intuitively, such a linear drive doesn't change the fundamental "spring-like" nature of the potential; it merely shifts the center of the potential well back and forth. In quantum mechanics, a classical-like driving force shifts the ground state into a "coherent state"—a quantum state that most closely mimics the behavior of a classical particle oscillating back and forth. The probability of finding the system in excited states follows a Poisson distribution, characteristic of coherent states. The Heisenberg picture is particularly powerful here, as the equations of motion for the creation and annihilation operators closely mirror their classical counterparts.
+
+\textbf{(a)} $\hat{H} = \hbar\omega(\hat{a}^\dagger\hat{a} + 1/2) + F(t)\sqrt{\frac{\hbar}{2m\omega}}(\hat{a} + \hat{a}^\dagger)$.
+Heisenberg equations: $\dot{\hat{a}} = \frac{1}{i\hbar}[\hat{a}, \hat{H}] = -i\omega\hat{a} - \frac{iF(t)}{\sqrt{2m\hbar\omega}}$.
+Solution: $\hat{a}(t) = \hat{a}(-\infty)e^{-i\omega t} - \frac{i}{\sqrt{2m\hbar\omega}}\int_{-\infty}^t F(t')e^{-i\omega(t-t')}dt'$.
+As $t \to \infty$, $\hat{a}(+\infty) = e^{-i\omega t}(\hat{a}(-\infty) - i\beta)$ where $\beta = \frac{1}{\sqrt{2m\hbar\omega}}\int_{-\infty}^\infty F(t)e^{i\omega t}dt$.
+
+\textbf{(b)} This is a coherent state shift. The probability to be in state $n$ is a Poisson distribution:
+\[ |c_n|^2 = \frac{|\beta|^{2n}}{n!}e^{-|\beta|^2} \]
+
+\textbf{(c)} $\langle E \rangle = \hbar\omega(\langle \hat{a}^\dagger\hat{a} \rangle + 1/2) = \hbar\omega(|\beta|^2 + 1/2)$.
+
+\textbf{(d)} $F(t) = F_0 e^{-t^2/2\sigma_t^2}$. $\beta = \frac{F_0}{\sqrt{2m\hbar\omega}} \sqrt{2\pi}\sigma_t e^{-\omega^2\sigma_t^2/2}$.
+For $\sigma_t\omega \ll 1$, $\beta \approx \frac{F_0 \sigma_t \sqrt{2\pi}}{\sqrt{2m\hbar\omega}}$. Ground state population $e^{-|\beta|^2} > 0.99 \implies |\beta|^2 < 0.01$.
+For $\sigma_t\omega \gg 1$, $\beta \to 0$ exponentially, suppressing transitions.
+\end{solution}
+
+\subsection{Electromagnetism}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+When an electromagnetic wave encounters a conducting material (a metal), the free charges inside the metal rapidly redistribute to oppose the incoming fields. This response causes the wave to be strongly absorbed and reflected, rather than transmitted. Inside the metal, the displacement current is typically negligible compared to the conduction current at frequencies below the plasma frequency. As a result, the wave equation becomes a diffusion equation, leading to the "skin effect," where the electromagnetic fields decay exponentially over a short distance known as the skin depth. By solving Maxwell's equations with appropriate boundary conditions, we can find the complex wave number in the metal, determine the relationship between the electric and magnetic fields (the impedance), and calculate the exact reflection and transmission coefficients.
+
+\textbf{(a)} In metal, $\nabla \times \mathbf{H} = \frac{4\pi\sigma}{c}\mathbf{E}$ (neglecting displacement current for $\sigma \gg \omega$). $\nabla \times \mathbf{E} = -\frac{1}{c}\dot{\mathbf{H}}$.
+$\nabla^2 \mathbf{H} = \frac{4\pi\sigma}{c^2}\dot{\mathbf{H}}$. For $e^{-i\omega t}$, $-k_c^2 = -i\frac{4\pi\sigma\omega}{c^2} \implies k_c = \sqrt{i\frac{4\pi\sigma\omega}{c^2}} = (1+i)\sqrt{\frac{2\pi\sigma\omega}{c^2}}$.
+In Heaviside-Lorentz, $4\pi$ is absorbed or defined differently. $k_c = \frac{1+i}{\delta}$ where $\delta = c/\sqrt{2\pi\sigma\omega}$.
+
+\textbf{(b)} $\mathbf{E}_c = \frac{c k_c}{4\pi\sigma}\hat{\mathbf{z}} \times \mathbf{H}_c = \frac{c(1+i)\sqrt{2\pi\sigma\omega}}{4\pi\sigma c}\hat{\mathbf{z}} \times \mathbf{H}_c = (1+i)\sqrt{\frac{\omega}{8\pi\sigma}}\hat{\mathbf{z}} \times \mathbf{H}_c$.
+
+\textbf{(c)} Boundary conditions at $\sigma = \infty$: $E_{\parallel} = 0$. Incident $E_I$ and reflected $E_R$ must satisfy $E_I + E_R = 0 \implies E_R = -E_I$.
+
+\textbf{(d)} For finite $\sigma$, $E_R = E_I \frac{1-Z}{1+Z}$ where $Z = \frac{E}{H}$ in metal. $Z \approx (1-i)\sqrt{\frac{\omega}{8\pi\sigma}}$.
+$E_{\text{metal}} \approx \frac{2Z}{1+Z}E_I \approx 2ZE_I e^{ik_c z}$.
+\end{solution}
+
+\subsection{Statistical Mechanics}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+The Ising model with infinite-range (mean-field) interactions serves as a fundamental paradigm for understanding phase transitions, such as the onset of ferromagnetism. In this approximation, every spin interacts equally with the average magnetization of the entire system, replacing the complex local interactions with an effective global "mean field." This greatly simplifies the statistical mechanics, allowing us to exactly compute the partition function. At high temperatures, thermal fluctuations dominate, and the spins point randomly, resulting in zero net magnetization (paramagnetic phase). As the temperature is lowered below a critical threshold $T_c$, the cooperative interaction overcomes thermal noise, and the system spontaneously develops a non-zero magnetization (ferromagnetic phase). Expanding the free energy near $T_c$ allows us to extract the critical exponents that describe how quantities like magnetization, susceptibility, and specific heat scale near the transition point.
+
+\textbf{(a)} $Z = e^{-\beta \frac{1}{2}NJm^2} \left(\sum_{\sigma = \pm 1} e^{\beta(Jm+h)\sigma}\right)^N = e^{-\beta \frac{1}{2}NJm^2} [2\cosh\beta(Jm+h)]^N$.
+$f = \frac{1}{2}Jm^2 - \frac{1}{\beta}\ln[2\cosh\beta(Jm+h)]$.
+
+\textbf{(b)} $\frac{\partial f}{\partial m} = 0 \implies m = \tanh\beta(Jm+h)$. For $h=0$, $m = \tanh(\beta J m)$.
+Non-trivial solutions exist if $\frac{d}{dm}\tanh(\beta J m)|_{m=0} > 1 \implies \beta J > 1 \implies T < J/k_B$.
+$T_c = J/k_B$.
+
+\textbf{(c)} Near $T_c$, $m \approx \beta J m - \frac{1}{3}(\beta J m)^3 \implies m^2 \approx 3(1 - T/T_c) \sim |t|^1 \implies \beta_c = 1/2$.
+$\chi = \left.\frac{\partial m}{\partial h}\right|_{h=0} \approx \frac{\beta}{1 - \beta J} \sim |t|^{-1} \implies \gamma_c = 1$.
+$U \propto -m^2 \sim -|t|$. $C = dU/dT \sim \text{const}$ (discontinuity), $\alpha_c = 0$.
+\end{solution}
+
+\subsection{General Relativity}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+In general relativity, spacetimes with constant curvature provide important exact solutions to Einstein's equations, serving as idealized models for the universe (e.g., de Sitter and anti-de Sitter spaces). The problem explores a spacetime embedded in a higher-dimensional flat space, analogous to how a 2D sphere is embedded in 3D Euclidean space, but generalized to spacetime with Lorentzian signatures. By restricting coordinates to a hyperboloid-like surface, we naturally inherit a metric that exhibits high symmetry. Performing coordinate transformations reveals the intrinsic metric in terms of physically meaningful coordinates (like time, radius, and angles). Calculating the Ricci tensor and scalar curvature confirms whether the space is an Einstein manifold (where the Ricci tensor is proportional to the metric), which corresponds to a universe dominated by a cosmological constant.
+
+\textbf{(a)} The coordinates satisfy $-(x^0)^2 + (x^1)^2 + \sum (x^i)^2 = -(\alpha^2-r^2)\sinh^2(t/\alpha) + (\alpha^2-r^2)\cosh^2(t/\alpha) + r^2 = (\alpha^2-r^2) + r^2 = \alpha^2$.
+
+\textbf{(b)} $dx^0 = \frac{-r}{\sqrt{\alpha^2-r^2}}\sinh \frac{t}{\alpha} dr + \frac{\sqrt{\alpha^2-r^2}}{\alpha}\cosh \frac{t}{\alpha} dt$.
+$dx^1 = \frac{-r}{\sqrt{\alpha^2-r^2}}\cosh \frac{t}{\alpha} dr + \frac{\sqrt{\alpha^2-r^2}}{\alpha}\sinh \frac{t}{\alpha} dt$.
+$ds^2 = -(dx^0)^2 + (dx^1)^2 + dr^2 + r^2 d\Omega_{n-2}^2 = -(1-r^2/\alpha^2)dt^2 + \frac{dr^2}{1-r^2/\alpha^2} + r^2 d\Omega_{n-2}^2$.
+
+\textbf{(c)} For $n=3$, $ds^2 = -(1-r^2/\alpha^2)dt^2 + (1-r^2/\alpha^2)^{-1}dr^2 + r^2 d\phi^2$.
+This is a space of constant curvature. $R_{\mu\nu} = \frac{2}{\alpha^2}g_{\mu\nu}$, $R = \frac{6}{\alpha^2}$. Yes, it is an Einstein metric.
+
+\textbf{(d)} Yes, the metric components are independent of $t$ and $\phi$.
+\end{solution}
+
+\subsection{Quantum Field Theory}
+
+\begin{solution}
+\textbf{Motivation \& Intuition:} 
+In interacting quantum field theories, calculating physical processes beyond the leading order inherently leads to infinite results (divergences) due to virtual particles having unbounded momenta in loop diagrams. Renormalization is the systematic procedure to handle these infinities. Intuitively, we absorb the mathematical infinities into a redefinition of the theory's fundamental parameters (like bare mass and bare coupling constants) to yield finite, measurable physical quantities. In a Yukawa theory involving a scalar field coupled to a fermion field, computing one-loop self-energy diagrams reveals specific divergent structures. By introducing counter-terms of the exact same form as the original Lagrangian terms, we can cancel the divergences. Since all divergences in 4D Yukawa theory can be absorbed by a finite number of such counter-terms, the theory is deemed "renormalizable," meaning it retains its predictive power at all energy scales without needing new, unknown physics to fix the infinities.
+
+\textbf{(a)} Scalar self-energy $\Sigma(p^2)$ from fermion loop. Divergent part $\sim \Lambda^2$ and $\log \Lambda$. Counter-terms: $\delta_m \phi^2$ and $\delta_Z (\partial \phi)^2$.
+
+\textbf{(b)} Fermion self-energy $\Sigma(p)$ from scalar loop. Divergent part $\sim \log \Lambda$. Counter-terms: $\delta_M \bar{\psi}\psi$ and $\delta_{Z2} \bar{\psi}i\partial\!\!/\psi$.
+
+\textbf{(c)} Yukawa theory in 4D is renormalizable. All divergences can be absorbed into the parameters of the Lagrangian.
+\end{solution}

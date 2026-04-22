@@ -1,0 +1,94 @@
+\section{2021 Analysis & Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+Prove that $f(x)\equiv 0$ is the only solution in $L^2(\mathbb{R}^n)$ such that
+\[
+\triangle f = 0.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a classic result showing that the only $L^2$ harmonic function on $\mathbb{R}^n$ is the zero function. In contrast, on bounded domains, there are many harmonic functions (the Dirichlet problem), but on the whole space, the $L^2$ constraint is extremely restrictive.
+
+If $f \in L^2(\mathbb{R}^n)$ and $\triangle f = 0$ in the sense of distributions, we can take the Fourier transform of both sides. We have $\widehat{\triangle f}(\xi) = -|\xi|^2 \hat{f}(\xi) = 0$ as a tempered distribution. This implies that the support of $\hat{f}$ is contained in the set $\{\xi \mid |\xi|^2 = 0\} = \{0\}$. Therefore, $\hat{f}$ must be a linear combination of the Dirac delta function and its derivatives. However, since $f \in L^2(\mathbb{R}^n)$, its Fourier transform $\hat{f}$ must also be in $L^2(\mathbb{R}^n)$ by Plancherel's theorem. Any distribution supported at a point that is a linear combination of $\delta$ and its derivatives is in $L^2$ only if it is identically zero (since $\delta \notin L^2$ and its derivatives are even more singular). Thus $\hat{f} = 0$, which implies $f = 0$ almost everywhere.
+\end{solution}
+
+\begin{exercise}
+Let $X\subset C([0,1])$ be a finite dimensional linear subspace of the space of real-valued continuous functions on $[0,1]$. Show that, for a sequence of functions $\{f_k\}_{k\geq 1}\subset X$, if it converges pointwise, it converges uniformly.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem highlights a fundamental property of finite-dimensional spaces: all norms are equivalent, and convergence in one sense (like pointwise at a sufficient number of points) implies convergence in any other sense (like uniform convergence).
+
+Let $n = \dim X$ and $\{e_1, \dots, e_n\}$ be a basis for $X$. Any $f \in X$ can be written as $f(x) = \sum_{i=1}^n c_i e_i(x)$. Since all norms on a finite-dimensional space are equivalent, the supremum norm $\|f\|_\infty = \sup_{x \in [0,1]} |f(x)|$ is equivalent to the coefficient norm $\|f\|_c = \max |c_i|$. 
+Suppose $f_k \in X$ converges pointwise to $f$. Since $X$ is finite dimensional, we can choose $n$ points $x_1, \dots, x_n$ in $[0,1]$ such that the vectors $v_i = (e_1(x_i), \dots, e_n(x_i)) \in \mathbb{R}^n$ are linearly independent. Let $M$ be the $n \times n$ matrix with entries $M_{ij} = e_j(x_i)$. Then $M$ is invertible. The pointwise convergence at these $n$ points gives $f_k(x_i) \to f(x_i)$, which can be written as $M \mathbf{c}_k \to \mathbf{b}$, where $\mathbf{c}_k$ is the vector of coefficients for $f_k$. Thus $\mathbf{c}_k \to M^{-1} \mathbf{b}$, meaning the coefficients converge. Since the coefficients converge, $f_k$ converges in the norm $\|\cdot\|_c$, and by norm equivalence, it converges uniformly in $\|\cdot\|_\infty$.
+\end{solution}
+
+\begin{exercise}
+\begin{itemize}
+\item[(a)] For $f\in L^1(\mathbb{R}^n)$, $g\in L^{\infty}(\mathbb{R}^n)$, show that their convolution $f*g$ is a well-defined continuous function.
+\item[(b)] Let $E\subset\mathbb{R}^n$ be a Lebesgue measurable set with Lebesgue measure $m(E)>0$. Prove that
+\[
+E-E := \{x-y\mid x\in E, y\in E\}
+\]
+contains an open neighborhood of $\mathbf{0}\in\mathbb{R}^n$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Part (a) demonstrates how convolution regularizes functions. Part (b) is the Steinhaus Theorem, a surprising result showing that even a "ragged" measurable set has a difference set with internal structure (an open neighborhood of zero).
+
+(a) For $f \in L^1(\mathbb{R}^n)$ and $g \in L^\infty(\mathbb{R}^n)$, the convolution is $(f*g)(x) = \int_{\mathbb{R}^n} f(x-y)g(y)dy$. By Hölder's inequality, $|(f*g)(x)| \leq \|f\|_1 \|g\|_\infty$, so $f*g$ is well-defined and bounded. For continuity, consider $|(f*g)(x+h) - (f*g)(x)| = |\int (f(x+h-y) - f(x-y))g(y) dy| \leq \|g\|_\infty \int |f(x+h-y) - f(x-y)| dy = \|g\|_\infty \|f(\cdot+h) - f(\cdot)\|_1$. As $h \to 0$, $\|f(\cdot+h) - f(\cdot)\|_1 \to 0$ because translation is continuous in $L^1$. Thus $f*g$ is continuous.
+
+(b) Let $\chi_E$ be the characteristic function of $E$. Let $f = \chi_E * \chi_{-E}$, where $-E = \{-x \mid x \in E\}$. Then $f(z) = \int \chi_E(y) \chi_{-E}(z-y) dy = \int \chi_E(y) \chi_E(y-z) dy = m(E \cap (E+z))$. Since $\chi_E \in L^1$ and $\chi_{-E} \in L^\infty$, $f$ is continuous by part (a). Note that $f(0) = m(E) > 0$. Since $f$ is continuous, there exists a neighborhood $V$ of $0$ such that $f(z) > 0$ for all $z \in V$. $f(z) > 0$ implies $E \cap (E+z) \neq \emptyset$, so there exist $x, y \in E$ such that $x = y+z$, meaning $z = x-y \in E-E$. Thus $V \subset E-E$.
+\end{solution}
+
+\begin{exercise}
+Assume that $P$ is a polynomial with complex coefficients. Prove that there exists infinitely many solutions of the following equations on $\mathbb{C}$:
+\[
+e^z = P(z).
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem is a common application of the Hadamard Factorization Theorem or Picard's Little Theorem. It explores the growth properties of transcendental entire functions vs. polynomials. A transcendental function like $e^z$ takes every value infinitely often (with one possible exception, here 0).
+
+Consider $f(z) = e^z - P(z)$. $f(z)$ is an entire function. Suppose $f(z)$ has only finitely many zeros. Then $f(z) = Q(z)e^{g(z)}$ for some polynomial $Q(z)$ and entire function $g(z)$. The order of growth of $e^z - P(z)$ is $\rho = 1$. By the Hadamard Factorization Theorem, $g(z)$ must be a polynomial of degree $\leq 1$. Let $g(z) = az+b$. Then $e^z - P(z) = Q(z)e^{az+b}$. 
+If $a=1$, then $e^z(1 - Q(z)e^b) = P(z)$. If $1 - Q(z)e^b$ is not zero, the left side is a transcendental function while the right is a polynomial. This can only happen if $1 - Q(z)e^b = 0$ and $P(z) = 0$, which contradicts $P$ being any polynomial (unless $P \equiv 0$, but $e^z = 0$ has no solutions).
+If $a \neq 1$, then $e^z - Q(z)e^{az+b} = P(z)$. This would imply $e^z$ and $e^{az}$ are linearly dependent over the field of rational functions, which is impossible for $a \neq 1$. Thus $f(z)$ must have infinitely many zeros.
+\end{solution}
+
+\begin{exercise}
+Let $f$ be a bounded holomorphic function defined on $B=\{z\mid 0<\operatorname{Re}(z)<1\}$ that can be extended as a continuous function on $\bar{B}$. Let
+\[
+A_0 = \sup_{\operatorname{Re}(z)=0}|f(z)| > 0,\quad A_1 = \sup_{\operatorname{Re}(z)=1}|f(z)| > 0.
+\]
+Prove that for all $z\in B$, we have
+\[
+|f(z)| \leq (A_0)^{1-\operatorname{Re}(z)}(A_1)^{\operatorname{Re}(z)}.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is the Hadamard Three-Lines Theorem. It states that the maximum of a holomorphic function on the lines in a strip is a log-convex function of the real part. It is a foundational result for the theory of interpolation of operators (Riesz-Thorin Theorem).
+
+For $\epsilon > 0$, define $F_\epsilon(z) = f(z) A_0^{z-1} A_1^{-z} e^{\epsilon(z^2-1)}$. Since $f$ is bounded and the exponential term $e^{\epsilon z^2}$ decays rapidly as $|\operatorname{Im}(z)| \to \infty$ within the strip, $F_\epsilon(z)$ vanishes at infinity. On the boundary $\operatorname{Re}(z)=0$, $z=iy$, $|F_\epsilon(iy)| = |f(iy)| A_0^{-1} A_1^0 e^{\epsilon(-y^2-1)} \leq A_0 A_0^{-1} e^{-\epsilon} < 1$. On the boundary $\operatorname{Re}(z)=1$, $z=1+iy$, $|F_\epsilon(1+iy)| = |f(1+iy)| A_0^0 A_1^{-1} e^{\epsilon((1+iy)^2-1)} = |f(1+iy)| A_1^{-1} e^{-\epsilon y^2} \leq A_1 A_1^{-1} = 1$. By the Maximum Modulus Principle on the strip, $|F_\epsilon(z)| \leq 1$ for all $z \in B$. Taking $\epsilon \to 0$, we get $|f(z) A_0^{\operatorname{Re}(z)-1} A_1^{-\operatorname{Re}(z)}| \leq 1$, which is $|f(z)| \leq A_0^{1-\operatorname{Re}(z)} A_1^{\operatorname{Re}(z)}$.
+\end{solution}
+
+\begin{exercise}
+Assume that $\Omega\subset\mathbb{R}^n$ is a bounded domain with smooth boundary. Prove that there exists a positive constant $\varepsilon_0$ so that for all real numbers $\varepsilon<\varepsilon_0$, for all $f\in L^2(\Omega)$, there exists a unique $u\in H_0^1(\Omega)$ so that
+\[
+-\triangle u + \varepsilon\sin(u) = f
+\]
+in the sense of distributions.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem illustrates how to solve non-linear elliptic PDEs using perturbation theory and the contraction mapping principle. When the non-linearity is small (controlled by $\varepsilon$), the behavior is dominated by the linear Laplacian operator.
+
+We use the method of fixed point argument. Let $L = -\triangle$ with Dirichlet boundary conditions. The operator $L^{-1}: L^2(\Omega) \to H_0^1(\Omega)$ is well-defined. The equation can be written as $u = L^{-1}(f - \varepsilon \sin u)$. Let $T(u) = L^{-1}(f - \varepsilon \sin u)$. We show $T$ is a contraction on $H_0^1(\Omega)$ for small $\varepsilon$. 
+For $u, v \in H_0^1(\Omega)$, $\|T(u) - T(v)\|_{H_0^1} = \|L^{-1}(\varepsilon(\sin v - \sin u))\|_{H_0^1}$. By elliptic regularity, $\|L^{-1} g\|_{H_0^1} \leq C \|g\|_{L^2}$ for some constant $C$ depending on $\Omega$. Thus $\|T(u) - T(v)\|_{H_0^1} \leq C \varepsilon \|\sin v - \sin u\|_{L^2}$. Using $|\sin v - \sin u| \leq |v - u|$, we have $\|\sin v - \sin u\|_{L^2} \leq \|v - u\|_{L^2} \leq C' \|v - u\|_{H_0^1}$ by Poincaré inequality. So $\|T(u) - T(v)\|_{H_0^1} \leq \varepsilon C C' \|u - v\|_{H_0^1}$. By choosing $\varepsilon_0 = 1/(CC')$, for $\varepsilon < \varepsilon_0$, $T$ is a contraction and by the Banach Fixed Point Theorem, it has a unique fixed point in $H_0^1(\Omega)$.
+\end{solution}
+

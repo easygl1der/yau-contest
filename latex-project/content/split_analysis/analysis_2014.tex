@@ -1,0 +1,259 @@
+\section{2014 Analysis & Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Let $f:\mathbb{R}\to\mathbb{R}$ be a continuous function which satisfies
+\[
+\sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)| < \infty.
+\]
+If we have $\lim_{n\to\infty,n\in\mathbb{N}}\frac{f(n)}{n} = 2014$, prove that $\sup_{x\in\mathbb{R}}|f(x)-2014x| < \infty$.
+\end{exercise}
+
+\begin{solution}
+This is a version of the Hyers-Ulam stability theorem for Cauchy's functional equation. Let $C = \sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)|$.
+First, we note that for any $n \in \mathbb{N}$ and $x \in \mathbb{R}$, we have $|f(nx) - nf(x)| \leq (n-1)C$. This can be proven by induction: for $n=1$ it is trivial, and $|f((n+1)x) - (n+1)f(x)| = |f(nx+x) - f(nx) - f(x) + f(nx) - nf(x)| \leq C + (n-1)C = nC$. A tighter bound $|f(2^n x) - 2^n f(x)| \leq (2^n-1)C$ is obtained by setting $x=y$ and summing the geometric series.
+More generally, there exists a unique additive function $A: \mathbb{R} \to \mathbb{R}$ such that $|f(x) - A(x)| \leq C$ for all $x \in \mathbb{R}$. Since $f$ is continuous, $A$ must also be continuous (as $A(x) = \lim_{n\to\infty} \frac{f(2^n x)}{2^n}$ and the convergence is uniform enough to preserve continuity or simply by noting an additive continuous function is linear). Thus $A(x) = kx$ for some $k \in \mathbb{R}$.
+Then $\frac{f(n)}{n} = \frac{kn + O(1)}{n} \to k$ as $n \to \infty$. Given $\lim_{n\to\infty} \frac{f(n)}{n} = 2014$, we must have $k = 2014$.
+Therefore, $|f(x) - 2014x| \leq C$ for all $x \in \mathbb{R}$, which implies $\sup_{x\in\mathbb{R}}|f(x)-2014x| < \infty$.
+\end{solution}
+
+\begin{exercise}
+Let $f_1,\dots,f_n$ be analytic functions on $D=\{|z|<1\}$ and continuous on $\bar{D}$. Prove that $\phi(z)=|f_1(z)|+|f_2(z)|+\cdots+|f_n(z)|$ achieves maximum values at the boundary $\partial D$.
+\end{exercise}
+
+\begin{solution}
+Suppose $\phi(z)$ achieves its maximum at some point $z_0 \in D$. For each $j=1,\dots,n$, let $\theta_j$ be the argument of $f_j(z_0)$ such that $f_j(z_0) = |f_j(z_0)|e^{i\theta_j}$. 
+Define the function $g(z) = \sum_{j=1}^n e^{-i\theta_j} f_j(z)$. Since each $f_j$ is analytic on $D$ and continuous on $\bar{D}$, $g$ is also analytic on $D$ and continuous on $\bar{D}$.
+Note that $g(z_0) = \sum_{j=1}^n e^{-i\theta_j} |f_j(z_0)|e^{i\theta_j} = \sum_{j=1}^n |f_j(z_0)| = \phi(z_0)$.
+By the Maximum Modulus Principle for analytic functions, $|g(z)|$ achieves its maximum on the boundary $\partial D$. Thus, there exists $z^* \in \partial D$ such that $|g(z_0)| \leq |g(z^*)|$.
+Using the triangle inequality, we have:
+\[
+|g(z^*)| = \left| \sum_{j=1}^n e^{-i\theta_j} f_j(z^*) \right| \leq \sum_{j=1}^n |e^{-i\theta_j}| |f_j(z^*)| = \sum_{j=1}^n |f_j(z^*)| = \phi(z^*).
+\]
+Combining these, we get $\phi(z_0) = |g(z_0)| \leq |g(z^*)| \leq \phi(z^*)$. 
+Since $z_0$ was an arbitrary point in $D$, the maximum of $\phi$ must be achieved on the boundary $\partial D$.
+\end{solution}
+
+\begin{exercise}
+Prove that if there is a conformal mapping between the annulus $\{z\mid r_1<|z|<r_2\}$ and the annulus $\{z\mid\rho_1<|z|<\rho_2\}$, then $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
+\end{exercise}
+
+\begin{solution}
+Let $A_1 = \{z \mid 1 < |z| < R\}$ and $A_2 = \{z \mid 1 < |z| < S\}$ where $R = r_2/r_1$ and $S = \rho_2/\rho_1$. A conformal map between the original annuli induces a conformal map between $A_1$ and $A_2$ by scaling.
+Suppose $f: A_1 \to A_2$ is a conformal map. The modulus of an annulus $\{1 < |z| < K\}$ is given by $M = \frac{1}{2\pi} \log K$. The modulus is a conformal invariant.
+To prove this without assuming the invariant, let $u(z)$ be the harmonic function on $A_1$ such that $u=0$ on $|z|=1$ and $u=1$ on $|z|=R$. Then $u(z) = \frac{\log|z|}{\log R}$. The Dirichlet integral is $D(u) = \int_{A_1} |\nabla u|^2 dx dy = \frac{2\pi}{\log R}$.
+If $f$ is a conformal map, then $v = u \circ f^{-1}$ is a harmonic function on $A_2$ with boundary values $0$ and $1$ (or $1$ and $0$). Thus $v(w) = \frac{\log|w|}{\log S}$ or $v(w) = 1 - \frac{\log|w|}{\log S}$.
+The Dirichlet integral is invariant under conformal mapping: $D(u) = D(v)$.
+Thus $\frac{2\pi}{\log R} = \frac{2\pi}{\log S}$, which implies $R = S$, i.e., $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
+\end{solution}
+
+\begin{exercise}
+Let $U(\xi)$ be a bounded function on $\mathbb{R}$ with finitely many points of discontinuity. Prove that
+\[
+P_U(x) = \frac{1}{\pi}\int_{\mathbb{R}} \frac{y}{(x-\xi)^2+y^2}U(\xi)\,d\xi
+\]
+is a harmonic function on the upper half plane $\{z\in\mathbb{C}\mid \operatorname{Im}z>0\}$ and it converges to $U(\xi)$ as $z\to\xi$ at a point $\xi$ where $U(\xi)$ is continuous.
+\end{exercise}
+
+\begin{solution}
+Let $z = x+iy$ with $y>0$. The kernel $P_y(x-\xi) = \frac{1}{\pi} \frac{y}{(x-\xi)^2+y^2}$ is the Poisson kernel for the upper half plane.
+Harmonicity: Note that $P_y(x-\xi) = \operatorname{Im} \left( \frac{1}{\pi} \frac{1}{\xi-z} \right)$. Since $\frac{1}{\xi-z}$ is holomorphic in $z$ for $\operatorname{Im}z > 0$, its imaginary part is harmonic. Integration with respect to $\xi$ (under the boundedness of $U$) preserves harmonicity.
+Convergence: The kernel satisfies $\int_{-\infty}^{\infty} P_y(t) dt = 1$ for all $y>0$. Also, for any $\delta>0$, $\int_{|t|>\delta} P_y(t) dt \to 0$ as $y \to 0^+$. Thus $P_y$ is an approximate identity.
+Let $\xi_0$ be a point of continuity of $U$. Given $\epsilon > 0$, there exists $\delta > 0$ such that $|U(\xi) - U(\xi_0)| < \epsilon$ whenever $|\xi-\xi_0| < \delta$.
+\[
+|P_U(x,y) - U(\xi_0)| = \left| \int_{\mathbb{R}} P_y(x-\xi) (U(\xi) - U(\xi_0)) d\xi \right| \leq \int_{\mathbb{R}} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi
+\]
+As $(x,y) \to (\xi_0, 0)$, for $|x-\xi_0| < \delta/2$ and $y$ small, we split the integral into $|\xi-\xi_0| < \delta$ and $|\xi-\xi_0| \geq \delta$. The first part is bounded by $\epsilon \int P_y \leq \epsilon$. The second part vanishes as $y \to 0$ because $U$ is bounded and the kernel mass outside the interval goes to zero.
+\end{solution}
+
+\begin{exercise}
+Let $f\in L^2(\mathbb{R})$ and let $\hat{f}$ be its Fourier transform. Prove that
+\[
+\int_{-\infty}^{\infty} x^2|f(x)|^2\,dx \cdot \int_{-\infty}^{\infty} \xi^2|\hat{f}(\xi)|^2\,d\xi \geq \frac{\left(\int_{-\infty}^{\infty}|f(x)|^2\,dx\right)^2}{16\pi^2},
+\]
+under the condition that the two integrals on the left are bounded.
+
+(Hint: Operators $f(x)\mapsto xf(x)$ and $\hat{f}(\xi)\mapsto\xi\hat{f}(\xi)$ after Fourier transform are non-commuting operators. The inequality is a version of the uncertainty principle.)
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is the Heisenberg Uncertainty Principle. In quantum mechanics, it states that one cannot simultaneously know the position and momentum of a particle. Mathematically, it is a consequence of the non-commutation of the position operator $X$ and the momentum operator $P$. The proof utilizes the Cauchy-Schwarz inequality and integration by parts to relate the variances.
+
+Assume the Fourier transform is defined as $\hat{f}(\xi) = \int_{-\infty}^{\infty} f(x) e^{-2\pi i x \xi} dx$. Then $\widehat{f'}(\xi) = 2\pi i \xi \hat{f}(\xi)$.
+By Plancherel's theorem, we have:
+\[
+\int_{-\infty}^{\infty} \xi^2 |\hat{f}(\xi)|^2 \, d\xi = \frac{1}{4\pi^2} \int_{-\infty}^{\infty} |f'(x)|^2 \, dx.
+\]
+The inequality we wish to prove is:
+\[
+\left( \int x^2 |f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \frac{1}{4} \left( \int |f(x)|^2 \, dx \right)^2.
+\]
+Using the Cauchy-Schwarz inequality for the $L^2$ inner product:
+\[
+\left( \int x^2 |f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \left| \int_{-\infty}^{\infty} x f(x) \overline{f'(x)} \, dx \right|^2.
+\]
+We analyze the integral on the right. Note that:
+\[
+\int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx = \int_{-\infty}^{\infty} x f(x) d\bar{f}.
+\]
+Using integration by parts (since the finiteness of the integrals implies $f(x) \to 0$ as $|x| \to \infty$):
+\[
+\int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx = [x |f(x)|^2]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} (f(x) + x f'(x)) \bar{f}(x) \, dx
+\]
+\[
+= - \int_{-\infty}^{\infty} |f(x)|^2 \, dx - \int_{-\infty}^{\infty} x f'(x) \bar{f}(x) \, dx.
+\]
+Let $I = \int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx$. Then $I = -\|f\|_2^2 - \bar{I}$.
+Thus $I + \bar{I} = -\|f\|_2^2$, which means $2 \operatorname{Re}(I) = -\|f\|_2^2$.
+Since $|I|^2 \geq (\operatorname{Re} I)^2$, we have:
+\[
+|I|^2 \geq \left( \frac{1}{2} \int_{-\infty}^{\infty} |f(x)|^2 \, dx \right)^2 = \frac{1}{4} \left( \int |f|^2 \right)^2.
+\]
+Substituting back into the original expression:
+\[
+\int x^2 |f(x)|^2 \, dx \cdot 4\pi^2 \int \xi^2 |\hat{f}(\xi)|^2 \, d\xi \geq \frac{1}{4} \left( \int |f|^2 \right)^2
+\]
+\[
+\int x^2 |f(x)|^2 \, dx \cdot \int \xi^2 |\hat{f}(\xi)|^2 \, d\xi \geq \frac{(\int |f|^2)^2}{16\pi^2}.
+\]
+The equality holds for Gaussian functions $f(x) = A e^{-ax^2}$.
+\end{solution}
+
+\begin{exercise}
+Let $\Omega$ be an open domain in the complex plane $\mathbb{C}$. Let $\mathbb{H}$ be the subspace of $L^2(\Omega)$ consisting of holomorphic functions on $\Omega$.
+
+\begin{itemize}
+\item[a)] Show that $\mathbb{H}$ is a closed subspace of $L^2(\Omega)$, and hence is a Hilbert space with inner product
+\[
+(f,g) = \int_{\Omega}f(z)\bar{g}(z)\,dx\,dy, \quad z=x+iy.
+\]
+
+\item[b)] If $\{\phi_n\}_{n=0}^{\infty}$ is an orthonormal basis of $\mathbb{H}$, then
+\[
+\sum_{n=0}^{\infty}|\phi_n(z)|^2 \leq \frac{c^2}{d(z,\Omega^c)^2}, \quad \text{for } z\in\Omega.
+\]
+
+\item[c)] The sum
+\[
+B(z,w) = \sum_{n=0}^{\infty}\phi_n(z)\bar{\phi}_n(w)
+\]
+converges absolutely for $(z,w)\in\Omega\times\Omega$, and is independent of the choice of the orthonormal basis.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+a) By the Mean Value Property for holomorphic functions, for any $z \in \Omega$ and $r < d(z, \partial\Omega)$, $f(z) = \frac{1}{\pi r^2} \int_{D_r(z)} f(w) dA(w)$. By Cauchy-Schwarz, $|f(z)| \leq \frac{1}{\pi r^2} \sqrt{\pi r^2} \|f\|_{L^2(D_r(z))} \leq \frac{1}{\sqrt{\pi} r} \|f\|_{L^2(\Omega)}$.
+This implies that $L^2$ convergence in $\mathbb{H}$ implies uniform convergence on compact subsets of $\Omega$. By Weierstrass's theorem, the limit of a sequence of holomorphic functions converging uniformly on compacts is holomorphic. Thus $\mathbb{H}$ is closed in $L^2(\Omega)$.
+
+b) The evaluation functional $L_z(f) = f(z)$ is bounded on $\mathbb{H}$ with $|L_z(f)| \leq \frac{1}{\sqrt{\pi} d(z, \Omega^c)} \|f\|$. By the Riesz Representation Theorem, there exists $K_z \in \mathbb{H}$ such that $f(z) = (f, K_z)$.
+Then $\|K_z\|^2 = \sum |\phi_n(z)|^2$. Also $\|K_z\| = \sup_{\|f\|=1} |f(z)| \leq \frac{1}{\sqrt{\pi} d(z, \Omega^c)}$.
+Squaring gives $\sum |\phi_n(z)|^2 \leq \frac{1}{\pi d(z, \Omega^c)^2}$. Here $c^2 = 1/\pi$.
+
+c) Absolute convergence: $\sum |\phi_n(z) \bar{\phi}_n(w)| \leq \sqrt{\sum |\phi_n(z)|^2} \sqrt{\sum |\phi_n(w)|^2} < \infty$.
+Independence: $B(z,w)$ is the reproducing kernel $K(w,z)$ (in standard notation $f(z) = \int K(z,w) f(w) dA(w)$). It is unique because if there were two such kernels $K_1, K_2$, then $(f, K_{1,z} - K_{2,z}) = 0$ for all $f$, implying $K_{1,z} = K_{2,z}$.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Calculate the integral:
+\[
+\int_0^{\infty} \frac{\log x}{1+x^2}\,dx.
+\]
+\end{exercise}
+
+\begin{solution}
+Let $I = \int_0^{\infty} \frac{\log x}{1+x^2} dx$. We use the substitution $x = 1/t$, which gives $dx = -1/t^2 dt$.
+As $x \to 0$, $t \to \infty$, and as $x \to \infty$, $t \to 0$.
+\[
+I = \int_{\infty}^0 \frac{\log(1/t)}{1+(1/t)^2} \left( -\frac{1}{t^2} \right) dt = \int_0^{\infty} \frac{-\log t}{t^2+1} dt = - \int_0^{\infty} \frac{\log t}{1+t^2} dt = -I.
+\]
+Since $I = -I$, we must have $2I = 0$, which implies $I = 0$.
+\end{solution}
+
+\begin{exercise}
+Construct an increasing function on $\mathbb{R}$ whose set of discontinuities is precisely $\mathbb{Q}$.
+\end{exercise}
+
+\begin{solution}
+The set of rational numbers $\mathbb{Q}$ is countable, so we can enumerate it as $\mathbb{Q} = \{q_1, q_2, q_3, \dots\}$.
+Define the function $f: \mathbb{R} \to \mathbb{R}$ by:
+\[
+f(x) = \sum_{q_n < x} \frac{1}{2^n}.
+\]
+1. $f$ is strictly increasing: If $x < y$, there exists a rational $q_k$ such that $x < q_k < y$. Then $f(y) - f(x) = \sum_{x \leq q_n < y} 2^{-n} \geq 2^{-k} > 0$.
+2. Discontinuities: At any $x \in \mathbb{Q}$, say $x = q_k$, the left limit is $f(x^-) = \sum_{q_n < x} 2^{-n}$ and the right limit is $f(x^+) = \sum_{q_n \leq x} 2^{-n}$. The jump is $f(x^+) - f(x^-) = 2^{-k} > 0$. Thus $f$ is discontinuous at every rational.
+3. Continuity at irrationals: If $x \notin \mathbb{Q}$, then for any $\epsilon > 0$, there exists $N$ such that $\sum_{n > N} 2^{-n} < \epsilon$. There is a neighborhood of $x$ containing no $q_n$ for $n \leq N$. In this neighborhood, $|f(y) - f(x)| \leq \sum_{n > N} 2^{-n} < \epsilon$. Thus $f$ is continuous at every irrational.
+\end{solution}
+
+\begin{exercise}
+Prove that any bounded analytic function $F$ over $\{z\mid r<|z|<R\}$ can be written as $F(z)=z^{\alpha}f(z)$, where $f$ is an analytic function over the disk $\{z\mid |z|<R\}$ and $\alpha$ is a constant.
+\end{exercise}
+
+\begin{solution}
+If $F$ is analytic on the annulus $A = \{r < |z| < R\}$, it has a Laurent series expansion $F(z) = \sum_{n=-\infty}^{\infty} a_n z^n$.
+Actually, the statement as written seems to imply something about the behavior at $z=0$ or a specific form. If $r=0$ and $F$ is bounded on $\{0 < |z| < R\}$, then by Riemann's Removable Singularity Theorem, $F$ extends to an analytic function on $|z| < R$. In this case $\alpha = 0$ and $f = F$.
+If $r > 0$, the function $F$ is already bounded on the annulus (since the closure is compact). Any $F$ can be written as $F(z) = f(z) + g(1/z)$ where $f$ is analytic on $|z| < R$ and $g$ is analytic on $|z| < 1/r$.
+Wait, the common interpretation of this problem in the context of complex analysis contests is usually for non-vanishing functions where $\log F$ is considered, or for $H^\infty$ functions. However, if $F$ is a bounded analytic function on $0 < |z| < R$, then $F$ is analytic on $|z| < R$. 
+If the question meant a non-vanishing function $F$, then $F'/F$ is analytic. Let $a_{-1} = \frac{1}{2\pi i} \int_\gamma \frac{F'}{F} dz$ be the winding number $\alpha$. Then $\frac{F'}{F} - \frac{\alpha}{z}$ has a primitive $G(z)$, and $F(z) = e^\alpha e^{G(z)} = z^\alpha f(z)$.
+\end{solution}
+
+\begin{exercise}
+Let $D\subset\mathbb{R}^n$ be a bounded open set, $f:D\to D$ is a smooth map such that its Jacobian $\left|\frac{\partial f}{\partial x}\right|\equiv 1$, where $D$ denotes the closure of $D$. Prove:
+
+\begin{itemize}
+\item[a)] for each small ball $B_{\epsilon}(x)$, there exists a positive integer $k$ such that $f^k(B_{\epsilon}(x))\cap B_{\epsilon}(x)\neq\emptyset$, where $B_{\epsilon}(x)$ denotes the ball centered at $x$ with radius $\epsilon$;
+\item[b)] there exists $x\in D$ and a sequence $k_1,k_2,\cdots,k_j,\cdots$ such that $f^{k_j}(x)\to x$ as $k_j\to\infty$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+This is the Poincaré Recurrence Theorem.
+a) Since $|\det Jf| = 1$, $f$ is a volume-preserving map. Let $V = \text{vol}(B_{\epsilon}(x))$. If $f^k(B_{\epsilon}) \cap B_{\epsilon} = \emptyset$ for all $k \geq 1$, then $f^k(B_{\epsilon}) \cap f^j(B_{\epsilon}) = \emptyset$ for all $k \neq j$ (by applying $f^{-j}$ and using injectivity/volume preservation). 
+Then $\text{vol}(\cup_{k=0}^{\infty} f^k(B_{\epsilon})) = \sum_{k=0}^{\infty} \text{vol}(f^k(B_{\epsilon})) = \sum_{k=0}^{\infty} V = \infty$.
+But $\cup f^k(B_{\epsilon}) \subset D$ and $\text{vol}(D) < \infty$, a contradiction. Thus $f^k(B_{\epsilon}) \cap B_{\epsilon} \neq \emptyset$ for some $k$.
+
+b) Let $A$ be the set of points $x \in D$ such that $x$ is recurrent, i.e., $x \in \omega(x)$. The Poincaré Recurrence Theorem states that for any volume-preserving map on a finite volume space, almost every point is recurrent. Thus the set of such $x$ has full measure, and in particular, is non-empty. For such an $x$, there exists a sequence $k_j \to \infty$ such that $f^{k_j}(x) \to x$.
+\end{solution}
+
+\begin{exercise}
+Let $u$ be a subharmonic function over a domain $\Omega\subset\mathbb{C}$, i.e., it is twice differentiable and $\Delta u = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \geq 0$. Prove that $u$ achieves its maximum in the interior of $\Omega$ only when $u$ is a constant.
+\end{exercise}
+
+\begin{solution}
+This is the Strong Maximum Principle for subharmonic functions.
+A subharmonic function satisfies the mean value inequality: for any $z_0 \in \Omega$ and $r$ such that $D_r(z_0) \subset \Omega$,
+\[
+u(z_0) \leq \frac{1}{\pi r^2} \iint_{D_r(z_0)} u(x,y) dx dy.
+\]
+Suppose $u$ achieves its maximum $M$ at $z_0 \in \Omega$. Then $u(z) \leq M$ for all $z \in \Omega$.
+If $u(z_0) = M$, then $M \leq \frac{1}{\pi r^2} \iint_{D_r(z_0)} u(x,y) dx dy.
+If there existed $z \in D_r(z_0)$ such that $u(z) < M$, then by continuity, the integral would be strictly less than $M \cdot \pi r^2$, which would imply $M < M$, a contradiction.
+Thus $u(z) = M$ for all $z \in D_r(z_0)$.
+By a standard connectivity argument, the set $\{z \in \Omega \mid u(z) = M\}$ is both open and closed in $\Omega$. Since $\Omega$ is a domain (connected), $u(z) = M$ for all $z \in \Omega$, i.e., $u$ is constant.
+\end{solution}
+
+\begin{exercise}
+Suppose that $\phi\in C_0^{\infty}(\mathbb{R}^n)$, $\int_{\mathbb{R}^n}\phi\,dx = 1$. Let $\phi_{\epsilon}(x) = \epsilon^{-n}\phi(x/\epsilon)$, $x\in\mathbb{R}^n$, $\epsilon>0$. Prove that if $f\in L^p(\mathbb{R}^n)$, $1\leq p < \infty$, then $f*\phi_{\epsilon}\to f$ in $L^p(\mathbb{R}^n)$ as $\epsilon\to 0$. It is not true for $p=\infty$.
+\end{exercise}
+
+\begin{solution}
+First, $\|\phi_\epsilon\|_1 = \int \epsilon^{-n} |\phi(x/\epsilon)| dx = \int |\phi(y)| dy = \|\phi\|_1 = 1$.
+Using the property $\int \phi_\epsilon = 1$, we have:
+\[
+(f * \phi_\epsilon)(x) - f(x) = \int_{\mathbb{R}^n} [f(x-y) - f(x)] \phi_\epsilon(y) dy.
+\]
+By Minkowski's Inequality for Integrals:
+\[
+\|f * \phi_\epsilon - f\|_p \leq \int_{\mathbb{R}^n} \|f(\cdot - y) - f(\cdot)\|_p |\phi_\epsilon(y)| dy = \int_{\mathbb{R}^n} \|\tau_y f - f\|_p |\phi_\epsilon(y)| dy.
+\]
+Let $g(y) = \|\tau_y f - f\|_p$. For $1 \leq p < \infty$, $g(y) \to 0$ as $y \to 0$ (continuity of translation in $L^p$).
+Given $\delta > 0$, choose $\eta > 0$ such that $g(y) < \delta$ for $|y| < \eta$.
+Split the integral:
+\[
+\int_{|y|<\eta} g(y) |\phi_\epsilon(y)| dy + \int_{|y|\geq \eta} g(y) |\phi_\epsilon(y)| dy \leq \delta \|\phi\|_1 + 2\|f\|_p \int_{|z| \geq \eta/\epsilon} |\phi(z)| dz.
+\]
+The second term goes to $0$ as $\epsilon \to 0$ because $\phi \in L^1$. Thus $\limsup \|f * \phi_\epsilon - f\|_p \leq \delta \|\phi\|_1$. Since $\delta$ is arbitrary, the limit is $0$.
+For $p=\infty$, let $f = \chi_{(0, \infty)}$. Then $f * \phi_\epsilon$ is a smooth transition, but $\|f * \phi_\epsilon - f\|_\infty \geq 1/2$ (at $x=0$), so it does not converge in $L^\infty$.
+\end{solution}

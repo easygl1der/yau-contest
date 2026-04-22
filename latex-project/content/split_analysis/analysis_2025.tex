@@ -1,0 +1,259 @@
+\section{2025 Analysis & Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+Find the solution $R(r)$ ($r\geq 1$) of the differential equation
+\[
+r^3 R'''(r) + 2r^2 R''(r) - rR'(r) + R(r) = 2025,\quad r>1,
+\]
+satisfying the conditions
+\[
+R(1) = 2025,\quad R'(1) = 0 \quad \text{and}\quad R''(1) = 1.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is an Euler-Cauchy differential equation, characterized by the fact that the degree of the power of $r$ matches the order of the derivative. Such equations can be converted to linear ODEs with constant coefficients using a logarithmic transformation of the independent variable.
+
+To solve it, we use the transformation $r = e^t$ (for $r > 1$, $t > 0$), or equivalently $t = \ln r$. Let $y(t) = R(e^t)$. The derivatives of $R(r)$ with respect to $r$ can be expressed in terms of derivatives of $y(t)$ with respect to $t$:
+\begin{align*}
+R'(r) &= \frac{dy}{dt} \frac{dt}{dr} = \frac{1}{r} y', \\
+R''(r) &= \frac{d}{dr}\left(\frac{1}{r} y'\right) = -\frac{1}{r^2} y' + \frac{1}{r^2} y'' = \frac{1}{r^2}(y'' - y'), \\
+R'''(r) &= \frac{d}{dr}\left(\frac{1}{r^2}(y'' - y')\right) = -\frac{2}{r^3}(y'' - y') + \frac{1}{r^3}(y''' - y'') = \frac{1}{r^3}(y''' - 3y'' + 2y').
+\end{align*}
+Substituting these expressions into the original differential equation:
+\[
+r^3 \left[\frac{1}{r^3}(y''' - 3y'' + 2y')\right] + 2r^2 \left[\frac{1}{r^2}(y'' - y')\right] - r \left[\frac{1}{r} y'\right] + y = 2025.
+\]
+Simplifying the coefficients:
+\[
+(y''' - 3y'' + 2y') + 2(y'' - y') - y' + y = 2025 \implies y''' - y'' - y' + y = 2025.
+\]
+The homogeneous part is $y''' - y'' - y' + y = 0$. The characteristic equation is:
+\[
+m^3 - m^2 - m + 1 = 0 \implies m^2(m-1) - (m-1) = 0 \implies (m^2-1)(m-1) = 0 \implies (m+1)(m-1)^2 = 0.
+\]
+The roots are $m_1 = -1$ (simple) and $m_2, m_3 = 1$ (double). Thus, the homogeneous solution is:
+\[
+y_h(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t.
+\]
+Returning to the variable $r$:
+\[
+R_h(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r.
+\]
+For the non-homogeneous part, the constant 2025 suggests a particular solution $R_p(r) = A$. Substituting into the ODE, we find $A = 2025$. Thus, the general solution is:
+\[
+R(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r + 2025.
+\]
+We use the initial conditions at $r=1$:
+1. $R(1) = c_1 + c_2 + 2025 = 2025 \implies c_1 + c_2 = 0 \implies c_1 = -c_2$.
+2. $R'(r) = -\frac{c_1}{r^2} + c_2 + c_3(\ln r + 1)$.
+   $R'(1) = -c_1 + c_2 + c_3 = 0 \implies c_2 + c_2 + c_3 = 0 \implies 2c_2 + c_3 = 0 \implies c_3 = -2c_2$.
+3. $R''(r) = \frac{2c_1}{r^3} + \frac{c_3}{r}$.
+   $R''(1) = 2c_1 + c_3 = 1 \implies -2c_2 - 2c_2 = 1 \implies -4c_2 = 1 \implies c_2 = -1/4$.
+Then $c_1 = 1/4$ and $c_3 = 1/2$.
+The unique solution is:
+\[
+R(r) = \frac{1}{4r} - \frac{r}{4} + \frac{1}{2} r \ln r + 2025.
+\]
+\end{solution}
+
+\begin{exercise}
+\begin{itemize}
+\item[(1)] Prove that for $n\geq 3$, there exists a constant $C>0$ such that
+\[
+\int_{\mathbb{R}^n}\frac{u^2}{|x|^2}\,dx \leq C\int_{\mathbb{R}^n}|\nabla u|^2\,dx, \quad \forall u\in H^1(\mathbb{R}^n);
+\item[(2)] Prove that the optimal constant $C$ in (1) is $\frac{4}{(n-2)^2}$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is Hardy's inequality, which provides a bound on the $L^2$ norm of a function weighted by its distance from the origin. It is a key tool in analysis, specifically for problems involving singular potentials and the uncertainty principle.
+
+(1) By density of $C_c^\infty(\mathbb{R}^n \setminus \{0\})$ in $H^1(\mathbb{R}^n)$ for $n \geq 3$, we may assume $u \in C_c^\infty(\mathbb{R}^n \setminus \{0\})$.
+Consider the vector field $\mathbf{F}(x) = \frac{x}{|x|^2}$. Its divergence is:
+\[
+\text{div} \mathbf{F} = \sum_{i=1}^n \partial_i \left(\frac{x_i}{|x|^2}\right) = \sum_{i=1}^n \left(\frac{1}{|x|^2} - \frac{2x_i^2}{|x|^4}\right) = \frac{n}{|x|^2} - \frac{2|x|^2}{|x|^4} = \frac{n-2}{|x|^2}.
+\]
+Using integration by parts (the divergence theorem):
+\[
+(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx = \int_{\mathbb{R}^n} u^2 \text{div} \mathbf{F} dx = -\int_{\mathbb{R}^n} \nabla(u^2) \cdot \mathbf{F} dx = -2 \int_{\mathbb{R}^n} u \nabla u \cdot \frac{x}{|x|^2} dx.
+\]
+Applying the Cauchy-Schwarz inequality to the right-hand side:
+\[
+(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq 2 \int_{\mathbb{R}^n} \frac{|u|}{|x|} |\nabla u| dx \leq 2 \left( \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \right)^{1/2} \left( \int_{\mathbb{R}^n} |\nabla u|^2 dx \right)^{1/2}.
+\]
+Dividing by $\left( \int \frac{u^2}{|x|^2} dx \right)^{1/2}$ and squaring both sides gives:
+\[
+\int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq \frac{4}{(n-2)^2} \int_{\mathbb{R}^n} |\nabla u|^2 dx.
+\]
+Thus, the inequality holds with $C = \frac{4}{(n-2)^2}$.
+
+(2) To show that $C_0 = \frac{4}{(n-2)^2}$ is optimal, we consider a sequence of test functions that saturate the inequality. Let $u(x) = |x|^{-\alpha}$. Then $|\nabla u|^2 = \alpha^2 |x|^{-2\alpha-2}$. Hardy's inequality requires:
+\[
+\int |x|^{-2\alpha-2} dx \leq C \int \alpha^2 |x|^{-2\alpha-2} dx \implies 1 \leq C \alpha^2 \implies C \geq 1/\alpha^2.
+\]
+To minimize the right-hand side, we need to find the supremum of $\alpha$ such that $|x|^{-\alpha}$ is "almost" in $L^2_{loc}$ or $H^1$. The critical exponent is $\alpha = (n-2)/2$. Taking $\alpha$ close to this value shows that the constant $C = \frac{4}{(n-2)^2}$ cannot be improved.
+\end{solution}
+
+\begin{exercise}
+\begin{itemize}
+\item[(1)] Let $u(x,y)$ be a subharmonic function on a domain $D$ containing the annulus $\{r_1<|x|<r_2\}$. Define
+\[
+M(r) = \max_{x^2+y^2=r} u(x,y)
+\]
+for $r_1<r<r_2$. Prove that:
+\[
+M(r) \leq \frac{M(r_1)(\log r_2 - \log r) + M(r_2)(\log r - \log r_1)}{\log r_2 - \log r_1};
+\]
+\item[(2)] If $u$ is subharmonic on $\mathbb{R}^2\setminus\{0\}$ and bounded above, prove that $u$ is constant.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a version of Hadamard's Three-Circle Theorem for subharmonic functions. It establishes the logarithmic convexity of the maximum of a subharmonic function on concentric circles. This result is a powerful tool for analyzing the growth and behavior of subharmonic and holomorphic functions.
+
+(1) Let $L(z) = a \ln |z| + b$ be a harmonic function on the annulus. We choose $a$ and $b$ such that $L(z)$ matches the values $M(r_1)$ and $M(r_2)$ on the boundary circles:
+\[
+a \ln r_1 + b = M(r_1), \quad a \ln r_2 + b = M(r_2).
+\]
+Solving for $a$ gives $a = \frac{M(r_2) - M(r_1)}{\ln r_2 - \ln r_1}$.
+Define the function $v(z) = u(z) - L(z)$. Since $L$ is harmonic, $v$ is subharmonic. On the boundary $|z|=r_1$, $v(z) \leq M(r_1) - M(r_1) = 0$. On $|z|=r_2$, $v(z) \leq M(r_2) - M(r_2) = 0$. By the Maximum Principle for subharmonic functions, $v(z) \leq 0$ for all $r_1 < |z| < r_2$.
+Thus $u(z) \leq a \ln |z| + b$. Taking the maximum over $|z|=r$:
+\[
+M(r) \leq \frac{M(r_2) - M(r_1)}{\ln r_2 - \ln r_1} \ln r + \frac{M(r_1) \ln r_2 - M(r_2) \ln r_1}{\ln r_2 - \ln r_1}.
+\]
+Rearranging terms yields the desired logarithmic convexity formula.
+
+(2) If $u$ is subharmonic on $\mathbb{R}^2 \setminus \{0\}$ and bounded above ($u \leq K$), the singularity at 0 is removable. Specifically, $u(z)$ can be extended to a subharmonic function on $\mathbb{R}^2$ by setting $u(0) = \limsup_{z \to 0} u(z)$. Since $u$ is subharmonic on $\mathbb{R}^2$ and bounded above, $u$ must be constant by Liouville's theorem for subharmonic functions. Alternatively, using part (1), let $r_1 \to 0$. If $M(r_1)$ is bounded, the term $\frac{M(r_1)(\log r_2 - \log r)}{\log r_2 - \log r_1}$ vanishes, and $M(r) \leq M(r_2)$ for any $r < r_2$. Letting $r_2 \to \infty$ for a bounded function shows $M(r)$ is constant.
+\end{solution}
+
+\begin{exercise}
+Write $\mathbb{S}^1 = \{e^{2\pi\sqrt{-1}s}\mid s\in\mathbb{R}\}\cong\{s\mid s\in[0,1]\} = [0,1]$. For a smooth closed curve
+\[
+\gamma:\mathbb{S}^1\longrightarrow\mathbb{R}^2,\quad s\longmapsto\gamma(s) = (x(s),y(s))
+\]
+we mean that $x,y:\mathbb{S}^1\to\mathbb{R}$ are continuously differentiable functions of $s$, $\gamma(0)=\gamma(1)$, and $\gamma'(s) = \frac{d\gamma(s)}{ds}\neq 0$ for all $s\in[0,1]$.
+
+The degree of a smooth closed curve $\gamma:\mathbb{S}^1\to\mathbb{R}^2$ is given by
+\[
+d(\gamma) := \frac{1}{2\pi}\oint_{\gamma}\frac{x\,dy - y\,dx}{x^2+y^2}.
+\]
+
+\begin{itemize}
+\item[(1)] Show that
+\[
+d(\gamma) = \frac{1}{2\pi\sqrt{-1}}\oint_{\gamma}\frac{dz}{z}.
+\]
+Hence $d(\gamma)$ is an integer.
+
+\item[(2)] For the curve $\gamma(s) = z_0 e^{2\pi\sqrt{-1}ns}\in\mathbb{C}$ with $z_0\in\mathbb{C}$, $s\in[0,1]$ and $n\in\mathbb{Z}$, compute $d(\gamma)$.
+
+\item[(3)] Two smooth closed curves $\gamma_0$ and $\gamma_1$ are regularly homotopic if there exists a family of smooth closed curves $\gamma_t$ with a continuous dependence on $t\in[0,1]$, where the curves $\gamma_0$ and $\gamma_1$ correspond to $t=0$ and $t=1$ respectively. Here, by a continuous dependence on $t$ we mean that the map
+\[
+[0,1]\times[0,1]\longrightarrow\mathbb{R}^2,\quad (s,t)\longmapsto\gamma(s,t)=\gamma_t(s)
+\]
+is continuous.
+
+Prove that two smooth closed curves $\gamma_0$ and $\gamma_1$ are regularly homotopic if and only if they have equal degrees.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem explores the concept of winding numbers and homotopy classes of maps from the circle to the punctured plane. It illustrates how topological invariants (like the degree/winding number) can classify continuous maps up to deformation.
+
+(1) Identify $\mathbb{R}^2$ with $\mathbb{C}$ via $z = x + iy$. Then $dz = dx + i dy$. We have:
+\[
+\frac{dz}{z} = \frac{dx + i dy}{x + iy} = \frac{(dx + i dy)(x - iy)}{x^2 + y^2} = \frac{x dx + y dy + i(x dy - y dx)}{x^2 + y^2}.
+\]
+Integrating along the closed curve $\gamma$:
+\[
+\oint_\gamma \frac{dz}{z} = \oint_\gamma \frac{x dx + y dy}{x^2 + y^2} + i \oint_\gamma \frac{x dy - y dx}{x^2 + y^2}.
+\]
+The real part is $\oint_\gamma d(\frac{1}{2} \ln(x^2 + y^2)) = 0$ because the curve is closed and $x^2+y^2 \neq 0$. Thus:
+\[
+\oint_\gamma \frac{dz}{z} = i \oint_\gamma \frac{x dy - y dx}{x^2 + y^2} = 2\pi i d(\gamma).
+\]
+Dividing by $2\pi i$ gives $d(\gamma) = \frac{1}{2\pi i} \oint_\gamma \frac{dz}{z}$, which is the winding number of $\gamma$ around the origin, necessarily an integer.
+
+(2) For $\gamma(s) = z_0 e^{2\pi i n s}$, we have $z(s) = z_0 e^{2\pi i n s}$ and $z'(s) = 2\pi i n z_0 e^{2\pi i n s} = 2\pi i n z(s)$. Then:
+\[
+d(\gamma) = \frac{1}{2\pi i} \int_0^1 \frac{z'(s)}{z(s)} ds = \frac{1}{2\pi i} \int_0^1 2\pi i n ds = n.
+\]
+
+(3) The "degree" $d(\gamma)$ is exactly the winding number of $\gamma$ around the origin. Maps $\mathbb{S}^1 \to \mathbb{R}^2 \setminus \{0\} \simeq \mathbb{C}^*$ are classified by their winding number (fundamental group $\pi_1(\mathbb{C}^*) \cong \mathbb{Z}$). If $\gamma_0$ and $\gamma_1$ are regularly homotopic, they are in particular homotopic in $\mathbb{C}^*$, and since the winding number is a homotopy invariant, $d(\gamma_0) = d(\gamma_1)$. Conversely, if $d(\gamma_0) = d(\gamma_1) = n$, the curves are homotopic in $\mathbb{C}^*$. Since they are smooth and their derivatives are non-zero, the Whitney-Graustein theorem ensures that they are regularly homotopic.
+\end{solution}
+
+\begin{exercise}
+If $A$ and $B$ are disjoint closed subsets of a metric space $(X,d)$ and $[a,b]$ is a given closed interval, then there exists a continuous map $f:X\to[a,b]$ such that $f(A)=\{a\}$ and $f(B)=\{b\}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is Urysohn's Lemma, a fundamental result in point-set topology. It shows that in a metric space (which is normal), disjoint closed sets can be separated by continuous functions. This lemma is a key stepping stone to the Tietze Extension Theorem and the existence of partitions of unity.
+
+Define the distance function $d(x, S) = \inf_{y \in S} d(x, y)$. The function $d(x, S)$ is Lipschitz continuous with constant 1. Since $A$ and $B$ are closed and disjoint, $d(x, A) = 0$ if and only if $x \in A$, and $d(x, B) = 0$ if and only if $x \in B$.
+Furthermore, the denominator $d(x, A) + d(x, B)$ is never zero because $A \cap B = \emptyset$.
+Define the function $f: X \to [a, b]$ as:
+\[
+f(x) = a + (b - a) \frac{d(x, A)}{d(x, A) + d(x, B)}.
+\]
+\begin{itemize}
+    \item \textbf{Continuity:} $f$ is continuous because it is a composition of continuous distance functions and basic arithmetic operations where the denominator is strictly positive.
+    \item \textbf{Boundary Conditions:}
+        - If $x \in A$, then $d(x, A) = 0$, so $f(x) = a + (b-a) \cdot 0 = a$.
+        - If $x \in B$, then $d(x, B) = 0$, so $f(x) = a + (b-a) \cdot \frac{d(x, A)}{d(x, A)} = b$.
+    \item \textbf{Range:} Since $d(x, A), d(x, B) \geq 0$, the ratio $\frac{d(x, A)}{d(x, A) + d(x, B)}$ lies in $[0, 1]$. Thus $f(x) \in [a, b]$ for all $x \in X$.
+\end{itemize}
+This completes the proof.
+\end{solution}
+
+\begin{exercise}
+For $f$ a complex-valued locally integrable function on $\mathbb{R}^n$, set
+\[
+\|f\|_{\mathbf{BMO}} := \sup_Q\left(\frac{1}{|Q|}\int_Q|f(x)-\mathbf{Avg}_Q f|\,dx\right),
+\]
+where the supremum is taken over all cubes $Q$ in $\mathbb{R}^n$ and
+\[
+\mathbf{Avg}_Q f := \frac{1}{|Q|}\int_Q f(x)\,dx.
+\]
+
+Let $\mathbf{BMO}(\mathbb{R}^n)$ be the set of all complex-valued locally integrable functions on $\mathbb{R}^n$ with $\|f\|_{\mathbf{BMO}}<\infty$.
+
+\begin{itemize}
+\item[(1)] $\|\cdot\|_{\mathbf{BMO}}$ is not a norm, and is only a seminorm.
+\item[(2)] $\ell^{\infty}(\mathbb{R}^n)\subset\mathbf{BMO}(\mathbb{R}^n)$ and $\|f\|_{\mathbf{BMO}} \leq 2\|f\|_{L^{\infty}}$.
+\item[(3)] Suppose that there exists an $A>0$ such that for all cubes $Q$ in $\mathbb{R}^n$ there exists a constant $c_Q$ such that
+\[
+\sup_Q\left(\frac{1}{|Q|}\int_Q|f(x)-c_Q|\,dx\right) \leq A.
+\]
+Then $f\in\mathbf{BMO}(\mathbb{R}^n)$ and $\|f\|_{\mathbf{BMO}} \leq 2A$.
+\item[(4)] $L^{\infty}(\mathbb{R}^n)$ is a proper subspace of $\mathbf{BMO}(\mathbb{R}^n)$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} BMO (Bounded Mean Oscillation) is a space of functions that "almost" are bounded. It plays a central role in harmonic analysis as the dual space of $H^1$ (Hardy space) and as a replacement for $L^\infty$ in many interpolation results.
+
+(1) For any constant function $f(x) = C$, $\mathbf{Avg}_Q f = C$, which implies $|f(x) - \mathbf{Avg}_Q f| = 0$ for all $x, Q$. Thus $\|C\|_{\mathbf{BMO}} = 0$. Since $\|f\| = 0$ does not imply $f = 0$ (it only implies $f$ is constant), $\|\cdot\|_{\mathbf{BMO}}$ is a seminorm. It becomes a norm on the space $\mathbf{BMO}(\mathbb{R}^n) / \mathbb{C}$ of functions modulo constants.
+
+(2) If $f \in L^\infty$, then for any cube $Q$:
+\[
+|f(x) - \mathbf{Avg}_Q f| \leq |f(x)| + |\mathbf{Avg}_Q f| \leq \|f\|_\infty + \frac{1}{|Q|} \int_Q |f(y)| dy \leq \|f\|_\infty + \|f\|_\infty = 2\|f\|_\infty.
+\]
+Averaging over $Q$: $\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| dx \leq \frac{1}{|Q|} \int_Q 2\|f\|_\infty dx = 2\|f\|_\infty$.
+Taking the supremum over $Q$ gives $\|f\|_{\mathbf{BMO}} \leq 2\|f\|_\infty$. Thus $L^\infty \subset \mathbf{BMO}$.
+
+(3) For any cube $Q$ and constant $c_Q$:
+\[
+|f(x) - \mathbf{Avg}_Q f| = |f(x) - c_Q + c_Q - \mathbf{Avg}_Q f| \leq |f(x) - c_Q| + |c_Q - \mathbf{Avg}_Q f|.
+\]
+Note that $|c_Q - \mathbf{Avg}_Q f| = |c_Q - \frac{1}{|Q|} \int_Q f(y) dy| = |\frac{1}{|Q|} \int_Q (c_Q - f(y)) dy| \leq \frac{1}{|Q|} \int_Q |c_Q - f(y)| dy$.
+Thus:
+\[
+\frac{1}{|Q|} \int_Q |f(x) - \mathbf{Avg}_Q f| dx \leq \frac{1}{|Q|} \int_Q |f(x) - c_Q| dx + \frac{1}{|Q|} \int_Q |f(y) - c_Q| dy \leq A + A = 2A.
+\]
+This shows $\|f\|_{\mathbf{BMO}} \leq 2A$.
+
+(4) Consider $f(x) = \ln |x|$ on $\mathbb{R}^n$. This function is in $\mathbf{BMO}(\mathbb{R}^n)$ because its oscillation on any cube is bounded by a constant independent of the cube's size and position. However, $\ln |x|$ is clearly not in $L^\infty(\mathbb{R}^n)$ as it is unbounded near 0 and infinity. Thus $L^\infty$ is a proper subspace of $\mathbf{BMO}$.
+\end{solution}

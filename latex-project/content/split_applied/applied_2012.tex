@@ -1,0 +1,169 @@
+\section{2012 Applied \& Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+In the numerical integration formula
+\[
+\int_{-1}^{1}f(x)\,dx\approx af(-1)+bf(c),
+\]
+if the constants $a$, $b$, $c$ can be chosen arbitrarily, what is the highest degree $k$ such that the formula is exact for all polynomials of degree up to $k$? Find the constants $a$, $b$, $c$ for which the formula is exact for all polynomials of degree up to this $k$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This is a variation of Gaussian quadrature where one node is fixed (at $-1$). We have 3 degrees of freedom ($a, b, c$), so we expect to be able to satisfy 3 equations, corresponding to polynomials $1, x, x^2$, which would mean $k=2$.
+
+\textbf{Step-by-step:}
+To be exact for degree $k$, the formula must work for $f(x) = x^j$ for $j=0, \dots, k$.
+\begin{enumerate}
+    \item $j=0$: $\int_{-1}^1 1 \, dx = 2$. Formula: $a(1) + b(1) = 2 \implies a+b=2$.
+    \item $j=1$: $\int_{-1}^1 x \, dx = 0$. Formula: $a(-1) + b(c) = 0 \implies bc = a$.
+    \item $j=2$: $\int_{-1}^1 x^2 \, dx = \frac{2}{3}$. Formula: $a(-1)^2 + b(c^2) = \frac{2}{3} \implies a + bc^2 = \frac{2}{3}$.
+\end{enumerate}
+Substitute $a = bc$ into (1): $bc + b = 2 \implies b(1+c) = 2$.
+Substitute $a = bc$ into (3): $bc + bc^2 = \frac{2}{3} \implies bc(1+c) = \frac{2}{3}$.
+Using $b(1+c)=2$ in the second equation gives $2c = \frac{2}{3} \implies c = \frac{1}{3}$.
+Then $b(1 + 1/3) = 2 \implies b(4/3) = 2 \implies b = \frac{3}{2}$.
+Then $a = bc = \frac{3}{2} \cdot \frac{1}{3} = \frac{1}{2}$.
+
+Check for $j=3$: $\int_{-1}^1 x^3 \, dx = 0$.
+Formula: $\frac{1}{2}(-1)^3 + \frac{3}{2}(1/3)^3 = -\frac{1}{2} + \frac{3}{2} \cdot \frac{1}{27} = -\frac{1}{2} + \frac{1}{18} \neq 0$.
+Thus $k=2$. The constants are $a = 1/2, b = 3/2, c = 1/3$.
+\end{solution}
+
+\begin{exercise}
+Consider the moving least square approximation of $f(x)$ near $\bar{x}$ given $K$ points $x_k$:
+\[
+\min_{P_{\bar{x}}\in\Pi_{m}}\sum_{k=1}^{K}|P_{\bar{x}}(x_{k})-f_{k}|^{2}
+\]
+where $P_{\bar{x}}(x)=\sum_{j=0}^m c_j (x-\bar{x})^j$.
+
+\begin{enumerate}
+\item[(a)] Prove there is a unique solution.
+\item[(b)] Prove $|c_{i}-\frac{1}{i!}f^{(i)}(\bar{x})|=O(h^{m+1-i})$.
+\item[(c)] If points are symmetric, show $O(h^{m+2-i})$ for $i \equiv m \pmod{2}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} MLS approximates a function locally by a polynomial. Part (a) is standard linear least squares. Part (b) relates the coefficients to Taylor coefficients; the error is dominated by the first neglected term in the Taylor expansion ($x^{m+1}$). Part (c) uses symmetry: for symmetric nodes, the error from the $x^{m+1}$ term vanishes for certain coefficients due to cancellation.
+
+\begin{enumerate}
+\item[(a)] Let $V$ be the $K \times (m+1)$ matrix with $V_{kj} = (x_k - \bar{x})^j$. The problem is $\min \|V\mathbf{c} - \mathbf{f}\|^2$. $V$ is a Vandermonde-like matrix. Since $x_k$ are distinct and $K > m$, $V$ has full column rank $m+1$. Thus $V^T V$ is invertible, ensuring a unique solution $\mathbf{c} = (V^T V)^{-1} V^T \mathbf{f}$.
+
+\item[(b)] By Taylor: $f(x_k) = \sum_{j=0}^m \frac{f^{(j)}(\bar{x})}{j!}(x_k - \bar{x})^j + \frac{f^{(m+1)}(\xi_k)}{(m+1)!}(x_k - \bar{x})^{m+1}$.
+In vector form: $\mathbf{f} = V \mathbf{c}^* + \mathbf{r}$, where $c^*_j = f^{(j)}(\bar{x})/j!$ and $r_k = O(h^{m+1})$.
+The solution is $\mathbf{c} = \mathbf{c}^* + (V^T V)^{-1} V^T \mathbf{r}$.
+Let $D = \text{diag}(1, h, \dots, h^m)$. Then $V = \tilde{V} D$ where entries of $\tilde{V}$ are $O(1)$.
+$\mathbf{c} - \mathbf{c}^* = D^{-1} (\tilde{V}^T \tilde{V})^{-1} \tilde{V}^T \mathbf{r}$.
+Since $\mathbf{r} = O(h^{m+1})$, and $(\tilde{V}^T \tilde{V})^{-1} \tilde{V}^T$ is $O(1)$, we have $c_i - c_i^* = h^{-i} O(h^{m+1}) = O(h^{m+1-i})$.
+
+\item[(c)] For symmetric points, $\sum (x_k - \bar{x})^p = 0$ for odd $p$. In the normal equations, the coupling between even and odd powers vanishes if weights are also symmetric. The error from the $h^{m+1}$ term involves a power $(x-\bar{x})^{m+1}$. If $m+1$ has opposite parity to $i$, the contribution to the $i$-th equation sums to zero. This leads to the $O(h^{m+2-i})$ accuracy.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Analyze the FTCS scheme for $u_t + u_x = 0$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} The Forward-Time Central-Space (FTCS) scheme is notorious for being unconditionally unstable for purely advective problems. It creates artificial negative diffusion (anti-diffusion) that amplifies any perturbation.
+
+\begin{enumerate}
+\item[(i)] \textbf{Von Neumann Analysis:}
+Scheme: $u_j^{n+1} = u_j^n - \frac{\lambda}{2}(u_{j+1}^n - u_{j-1}^n)$.
+Amplification factor: $G(\theta) = 1 - \frac{\lambda}{2}(e^{i\theta} - e^{-i\theta}) = 1 - i\lambda \sin\theta$.
+Magnitude: $|G|^2 = 1 + \lambda^2 \sin^2\theta$.
+Since $|G| > 1$ for all $\lambda > 0$ (except at $\theta = 0, \pi$), the scheme is \textbf{unconditionally unstable}.
+
+\item[(ii)] \textbf{Condition:}
+The scheme is never stable for any constant $\lambda = \Delta t/\Delta x$. It requires $\Delta t = O(\Delta x^2)$ to be stable in a very restricted sense, but this makes it essentially a diffusion-type scaling which is physically incorrect for wave equations.
+
+\item[(iii)] \textbf{Modifications:}
+\begin{itemize}
+    \item \textbf{Lax-Friedrichs:} Replace $u_j^n$ with average $\frac{1}{2}(u_{j+1}^n + u_{j-1}^n)$. This adds $O(\Delta x^2/\Delta t)$ diffusion.
+    \item \textbf{Upwind:} Use one-sided difference. Adds $O(\Delta x)$ diffusion.
+    \item \textbf{Lax-Wendroff:} Add $u_{xx}$ term explicitly. Adds $O(\Delta x^2)$ diffusion, making it 2nd order.
+\end{itemize}
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Singular value and rank-$k$ approximation properties.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} These results form the basis of Principal Component Analysis (PCA) and the Eckart-Young-Mirsky theorem. The singular values are the "lengths" of the principal axes of the ellipsoid formed by the image of the unit ball.
+
+\begin{enumerate}
+\item[(1)] \textbf{SVD Inequality:}
+The inequality $\sum (\sigma_i - \tau_i)^2 \leq \|A-B\|_F^2$ is a generalization of the Hoffman-Wielandt inequality for eigenvalues. It states that the singular values are stable under perturbations.
+\item[(2)] \textbf{Best Rank-$k$ Approximation:}
+The problem is $\min_{\text{rank}(B)=k} \|A-B\|_F^2$. The solution $A_k$ is obtained by keeping the $k$ largest singular values and setting the rest to zero. The error is exactly the sum of squares of the discarded singular values.
+\item[(3)] \textbf{PCA Representation:}
+Given $\mathbf{x}_i = \mathbf{c} + W\mathbf{r}_i + \mathbf{e}_i$.
+To minimize $\|E\|_F^2$:
+- $\mathbf{c}$ must be the mean $\bar{\mathbf{x}} = \frac{1}{n} \sum \mathbf{x}_i$.
+- $W$ is the matrix of the top $d$ eigenvectors of the covariance matrix.
+- $\mathbf{r}_i = W^T(\mathbf{x}_i - \bar{\mathbf{x}})$.
+\end{enumerate}
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+RSA integer $N=pq$ with twin primes $p, q$. Suggest a factorization.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} Twin primes are primes that differ by 2 ($q = p+2$). If $N = p(p+2) = p^2 + 2p$, then $N+1 = p^2 + 2p + 1 = (p+1)^2$.
+\textbf{Algorithm:}
+1. Calculate $M = \sqrt{N+1}$.
+2. If $M$ is an integer, the factors are $p = M-1$ and $q = M+1$.
+Since $N$ is roughly $2^{1000}$, $\sqrt{N}$ is $2^{500}$. A simple square root is extremely fast compared to general factorization. This shows that primes must be chosen to be far apart.
+\end{solution}
+
+\begin{exercise}
+FEM for 1D elliptic equation $-\frac{d^2u}{dx^2} = f$ and superconvergence.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} Piecewise linear FEM for 1D Poisson is special because the Green's function at nodes is actually in the finite element space.
+
+\begin{enumerate}
+\item[(i)] \textbf{Scheme:} Discrete system $A \mathbf{u} = \mathbf{f}$ where $A$ is tridiagonal $[-1, 2, -1]/h$.
+\item[(ii)] \textbf{Order:} $O(h^2)$ in $L^2$, $O(h)$ in $H^1$.
+\item[(iii)] \textbf{Superconvergence:}
+At node $x_j$, $u(x_j) = \int f(\xi) G(x_j, \xi) d\xi$, where $G$ is the Green's function.
+The Green's function for the 1D Laplacian is piecewise linear. For a node $x_j$, $G(x_j, \cdot)$ is a "hat" function (though not necessarily symmetric) that is linear on each element.
+Thus $G(x_j, \cdot) \in V_h$.
+By Galerkin Orthogonality: $a(u-u_h, v_h) = 0$ for all $v_h \in V_h$.
+Setting $v_h = G(x_j, \cdot)$, we get $a(u-u_h, G(x_j, \cdot)) = 0$.
+But $a(u-u_h, G(x_j, \cdot)) = (u-u_h)(x_j)$ by the defining property of the Green's function.
+Thus $u(x_j) = u_h(x_j)$. The FEM solution is \textbf{exact} at the nodes!
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Similarity solution for circular drop $h_t = \Delta (h^2)$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This is a nonlinear diffusion problem (Porous Medium Equation). Unlike the linear heat equation which has infinite speed of propagation, this has a finite front $r_*(t)$ because the "diffusivity" $D(h) = 2h$ goes to zero as $h \to 0$.
+
+\textbf{Similarity Ansatz:}
+Let $h(r,t) = t^\alpha \Phi(\eta)$ with $\eta = r t^\beta$.
+1. \textbf{Conservation of mass:} $\int h r dr \sim t^\alpha (t^{-\beta})^2 \sim t^{\alpha-2\beta} = \text{const} \implies \alpha = 2\beta$.
+2. \textbf{PDE Invariance:} $t^{\alpha-1} \sim t^{2\alpha-2\beta} \implies \alpha-1 = 2\alpha-2\beta \implies \alpha = 2\beta-1$.
+Solving: $2\beta = 2\beta-1$? Wait, $\alpha = -2\beta$ from mass? No, $\int h r dr = t^\alpha \int \Phi(rt^\beta) r dr$. Let $\xi = rt^\beta, d\xi = t^\beta dr$.
+Integral is $t^\alpha \int \Phi(\xi) \xi t^{-\beta} t^{-\beta} d\xi = t^{\alpha-2\beta}$.
+So $\alpha = 2\beta$.
+From PDE: $t^{\alpha-1} = t^{2\alpha+2\beta} \implies \alpha-1 = 2\alpha+2\beta$.
+Substitute $\alpha=2\beta$: $2\beta-1 = 4\beta+2\beta = 6\beta \implies 4\beta = -1 \implies \beta = -1/4$.
+Then $\alpha = -1/2$.
+Similarity variable: $\eta = r t^{-1/4}$.
+PDE for $\Phi$: $-\frac{1}{2}\Phi - \frac{1}{4}\eta \Phi' = \frac{1}{\eta} (\eta (\Phi^2)')'$.
+Integrating once: $-\frac{1}{4} \eta^2 \Phi = \eta (\Phi^2)' = 2\eta \Phi \Phi'$.
+$\Phi' = -\eta/8 \implies \Phi(\eta) = \frac{1}{16}(\eta_*^2 - \eta^2)$.
+Matching mass determines $\eta_*$.
+\end{solution}

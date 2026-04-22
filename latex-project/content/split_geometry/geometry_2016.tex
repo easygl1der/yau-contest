@@ -1,0 +1,197 @@
+\section{2016 Geometry & Topology}
+
+\subsection{Individual Exam}
+
+\begin{exercise}
+Let $M$ be a compact odd-dimensional manifold with boundary $\partial M$. Show that the Euler characteristics of $M$ and $\partial M$ are related by:
+\[ \chi(M) = \frac{1}{2}\,\chi(\partial M). \]
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is a consequence of Poincaré-Lefschetz duality. For an even-dimensional manifold without boundary, the Euler characteristic can be anything, but for an odd-dimensional one, it's always zero. Adding a boundary "splits" the Euler characteristic of the boundary between the manifold and its relative homology.
+
+\textbf{Proof:}
+By Poincaré-Lefschetz duality, the Betti numbers satisfy $b_k(M, \partial M) = b_{n-k}(M)$ where $n = \dim M$.
+The Euler characteristic of the pair $(M, \partial M)$ is:
+\[ \chi(M, \partial M) = \sum_{k=0}^n (-1)^k b_k(M, \partial M) = \sum_{k=0}^n (-1)^k b_{n-k}(M) = (-1)^n \sum_{j=0}^n (-1)^{n-j} b_j(M) = (-1)^n \chi(M) \]
+Since $n$ is odd, $(-1)^n = -1$, so $\chi(M, \partial M) = -\chi(M)$.
+From the long exact sequence of the pair $(M, \partial M)$, we have the relation:
+\[ \chi(M) = \chi(\partial M) + \chi(M, \partial M) \]
+Substituting $\chi(M, \partial M) = -\chi(M)$ gives:
+\[ \chi(M) = \chi(\partial M) - \chi(M) \implies 2\chi(M) = \chi(\partial M) \implies \chi(M) = \frac{1}{2} \chi(\partial M). \]
+\end{solution}
+
+\begin{exercise}
+Compute the de Rham cohomology of a punctured two-dimensional torus $T^{2} - \{p\}$, where $p \in T^{2}$. If $T^{2} = \mathbb{R}^{2} / \mathbb{Z}^{2}$ with coordinates $(x, y) \in \mathbb{R}^{2}$, then is the volume form $\omega = dx \wedge dy$ exact?
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} A torus with a point removed can be "widened" until it collapses onto its 1-skeleton, which is a wedge of two circles. Thus, its cohomology should look like that of $S^1 \vee S^1$.
+
+\textbf{Proof:}
+The punctured torus $X = T^2 \setminus \{p\}$ is homotopy equivalent to the wedge of two circles $S^1 \vee S^1$.
+1. $H^0(X) \cong \mathbb{R}$ because $X$ is path-connected.
+2. $H^1(X) \cong H^1(S^1 \vee S^1) \cong H^1(S^1) \oplus H^1(S^1) \cong \mathbb{R}^2$.
+3. $H^k(X) = 0$ for $k \ge 2$. In particular, $H^2(X) = 0$.
+
+Regarding the volume form $\omega = dx \wedge dy$:
+On the full torus $T^2$, $\omega$ is not exact because $\int_{T^2} \omega = \text{Area}(T^2) \neq 0$.
+However, on the punctured torus $T^2 \setminus \{p\}$, the second cohomology group is $H^2(X) = 0$. In de Rham cohomology, this means every closed 2-form is exact. Since $\omega$ is a 2-form and $d\omega = 0$ (trivially in dim 2), $\omega$ must be exact on $T^2 \setminus \{p\}$.
+Explicitly, if we remove $p=(0,0)$, we can define a 1-form $\eta$ such that $d\eta = dx \wedge dy$, although $\eta$ will have a singularity at $p$ or won't be globally defined on the whole $T^2$.
+\end{solution}
+
+\begin{exercise}
+Let $M^{n} \subset \mathbb{R}^{n+1}$ be a closed oriented hypersurface. The $r$-th mean curvature of $M^{n}$ is defined by
+\[ H_{r} := \frac{1}{\binom{n}{r}} \sum_{i_{1} < i_{2} < \cdots < i_{r}} \lambda_{i_{1}}\lambda_{i_{2}}\cdots\lambda_{i_{r}}, \qquad (1 \leq r \leq n) \]
+where $\lambda_{i}$ ($i = 1, \ldots, n$) are principal curvatures of $M^{n}$. Prove that if all of $\lambda_{i}$ are positive and $H_{r} = \text{constant}$ for a certain $r$, then $M^{n}$ is a hypersphere in $\mathbb{R}^{n+1}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is a rigidity result for hypersurfaces. A sphere is the only surface where all principal curvatures are the same and constant. If any symmetric average of these curvatures (like $H_r$) is constant for a convex ($k_i > 0$) surface, the rigidity of the geometry forces the surface to be a sphere.
+
+\textbf{Proof Sketch:} We use the Minkowski formulas for hypersurfaces in $\mathbb{R}^{n+1}$:
+\[ \int_M (H_{r-1} + \langle X, N \rangle H_r) dA = 0 \]
+where $X$ is the position vector and $N$ is the normal.
+For constant $H_r$, we can use the Newton inequalities for symmetric polynomials: $H_r^{1/r} \le H_{r-1}^{1/(r-1)}$.
+Combining these with the Minkowski formulas leads to a gap theorem. Specifically, the integral $\int_M (H_r H_{r-2} - H_{r-1}^2) \dots$ and similar expressions vanish only when $H_r^{1/r}$ is constant and the surface is umbilical. Since $M$ is compact and $\lambda_i > 0$, it must be a sphere.
+\end{solution}
+
+\begin{exercise}
+State and prove the cut-off function lemma on a differentiable manifold.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} A cut-off function is a smooth "mask" that is 1 in a region of interest and 0 outside. It allows us to perform local constructions and "glue" them together globally without losing smoothness.
+
+\textbf{Lemma:} Given a compact set $K$ and an open set $U$ such that $K \subset U \subset M$, there exists a smooth function $\rho: M \to [0, 1]$ such that $\rho|_K = 1$ and $\text{supp}(\rho) \subset U$.
+
+\textbf{Proof Sketch:}
+1. Construct a smooth function $f(t)$ on $\mathbb{R}$ that is 0 for $t \le 0$ and $e^{-1/t}$ for $t > 0$.
+2. Use $f$ to build a "bump" function $g(x)$ on $\mathbb{R}^n$ with support in a ball.
+3. For any $p \in K$, choose a chart and a small ball $B_p \subset U$. Use $g$ to create $\rho_p$ with $\rho_p(p) > 0$.
+4. By compactness of $K$, a finite number of such $\rho_p$ cover $K$. Let $\psi = \sum \rho_i$. $\psi > 0$ on $K$ and $\text{supp}(\psi) \subset U$.
+5. Let $m = \min_{x \in K} \psi(x) > 0$. Let $h: \mathbb{R} \to [0, 1]$ be a smooth function such that $h(t) = 1$ for $t \ge m$ and $h(t) = 0$ for $t \le m/2$.
+6. The function $\rho = h \circ \psi$ is the desired cut-off function.
+\end{solution}
+
+\begin{exercise}
+Let $M$ be a compact Riemannian manifold without boundary. Show that if $M$ has positive Ricci curvature, then $H^{1}(M, \mathbb{R}) = 0$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is Bochner's Theorem. Positive Ricci curvature "bends" the space so much that no non-trivial harmonic 1-form (which would represent a "flat" direction or a hole you can wrap around) can exist.
+
+\textbf{Proof:} By Hodge theory, every cohomology class in $H^1(M, \mathbb{R})$ is represented by a unique harmonic 1-form $\omega$ ($\Delta \omega = 0$).
+The Bochner-Weitzenböck formula for a 1-form $\omega$ is:
+\[ \Delta \omega = \nabla^* \nabla \omega + \text{Ric}(\omega^\sharp, \cdot) \]
+Integrating the inner product with $\omega$ over $M$:
+\[ 0 = \int_M \langle \Delta \omega, \omega \rangle dV = \int_M (|\nabla \omega|^2 + \text{Ric}(\omega^\sharp, \omega^\sharp)) dV \]
+If $\text{Ric} > 0$, then $\text{Ric}(\omega^\sharp, \omega^\sharp) \ge \kappa |\omega|^2$ for some $\kappa > 0$.
+For the integral to be zero, we must have $|\nabla \omega| = 0$ and $\omega = 0$.
+Thus, the only harmonic 1-form is the zero form, so $H^1(M, \mathbb{R}) = 0$.
+\end{solution}
+
+\begin{exercise}
+Let $M$ be an orientable, closed and embedded minimal hypersurface in $S^{n+1}$. Denote by $\lambda_{1}$ the first eigenvalue for the Laplace-Beltrami operator on $M$. Prove that $\lambda_{1} \geq n/2$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} For a minimal hypersurface in a sphere, the coordinates of the embedding are eigenfunctions with eigenvalue $n$. This theorem by Choi and Wang shows that for any such hypersurface, the spectrum of the Laplacian cannot start too low; the geometry of being "minimal" and "closed" in a sphere forces a certain amount of "vibration."
+
+\textbf{Proof Sketch:} This is a result by Choi and Wang (1983). For a minimal hypersurface $M^n \subset S^{n+1}$, one uses the fact that the functions $x_i$ (restriction of $\mathbb{R}^{n+2}$ coordinates) satisfy $\Delta_M x_i = n x_i$. This shows $\lambda = n$ is in the spectrum. The challenge is showing that no eigenvalue can be smaller than $n/2$. This involves a careful analysis of the second variation of area and the relationship between the index of the minimal surface and its first eigenvalue.
+\end{solution}
+
+\subsection{Team Exam}
+
+\begin{exercise}
+Show that $\mathbb{C}P^{2n}$ does not cover any manifold except itself.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} A covering map $E \to B$ of degree $k$ forces the Euler characteristic of the top space to be $k$ times that of the base. For $\mathbb{CP}^{2n}$, the Euler characteristic is odd, which leaves no room for anything but a 1-to-1 "cover."
+
+\textbf{Proof:} Suppose $p: \mathbb{CP}^{2n} \to M$ is a $k$-sheeted covering map.
+Then $\chi(\mathbb{CP}^{2n}) = k \chi(M)$.
+The Euler characteristic of $\mathbb{CP}^{2n}$ is $2n+1$.
+Since $2n+1$ is an odd integer, the only positive integer $k$ that can divide it to yield another integer $\chi(M)$ is an odd integer.
+However, if $k > 1$, $M$ would have to be a manifold with $\chi(M) = (2n+1)/k$.
+For $n > 0$, $\mathbb{CP}^{2n}$ is simply connected ($\pi_1 = 0$). Any covering of a manifold $M$ by a simply connected space must be the universal cover, and $k = |\pi_1(M)|$.
+But if $\mathbb{CP}^{2n}$ covers $M$, $M$ must also be orientable (since $\mathbb{CP}^{2n}$ is).
+Crucially, for any $k$-sheeted cover, if $k \ge 2$, there must be a fixed-point free action of a group of order $k$.
+For $\mathbb{CP}^{2n}$, any orientation-preserving homeomorphism has a fixed point because the Lefschetz fixed-point theorem states that if the Lefschetz number $\Lambda(f) = \sum (-1)^i \text{tr}(f^* | H^i) \neq 0$, then $f$ has a fixed point.
+For $\mathbb{CP}^{2n}$, $H^{2j} \cong \mathbb{Z}$ and $H^{2j+1} = 0$. $f^*$ must be $x \mapsto \pm x$ on $H^2$. Then on $H^{2j}$, $x^j \mapsto (\pm 1)^j x^j$.
+For $2n$, we have $1, \epsilon, \epsilon^2, \dots, \epsilon^{2n}$ in the trace. The sum $1 + \epsilon + \dots + \epsilon^{2n}$ is always non-zero for $\epsilon = \pm 1$ and even $2n$.
+Thus, any such map has a fixed point, so no free action exists. Hence $k=1$.
+\end{solution}
+
+\begin{exercise}
+Let $X$ be a topological space and $p \in X$. The reduced suspension $\Sigma X$ of $X$ is the space obtained from $X \times [0, 1]$ by contracting $(X \times \{0, 1\}) \cup (\{p\} \times [0, 1])$ to a point. Describe the relation between the homology groups of $X$ and $\Sigma X$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Reduced suspension is similar to ordinary suspension but "pinched" along a line to keep it pointed. Homologically, they are the same for "good" spaces.
+
+\textbf{Result:} $\tilde{H}_k(\Sigma X) \cong \tilde{H}_{k-1}(X)$.
+This holds because the reduced suspension $\Sigma X$ is homotopy equivalent to the ordinary suspension $S(X)$ if $(X, p)$ is a NDR pair.
+\end{solution}
+
+\begin{exercise}
+State and prove the Frobenius Theorem on a differentiable manifold.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Frobenius Theorem answers the question: "When can we find a family of surfaces that are tangent to a given set of directions at every point?" The answer is "When the directions don't twist in a way that prevents them from forming a consistent sheet" (Involutivity).
+
+\textbf{Theorem:} A distribution $\mathcal{D} \subset TM$ is integrable if and only if it is involutive (i.e., for any two vector fields $X, Y \in \mathcal{D}$, their bracket $[X, Y] \in \mathcal{D}$).
+
+\textbf{Proof Sketch:} One direction (integrable $\implies$ involutive) is easy: if $\mathcal{D}$ is tangent to submanifolds, then for $X, Y$ tangent to the submanifolds, $[X, Y]$ is also tangent.
+The converse (involutive $\implies$ integrable) uses induction on the dimension of the distribution. For rank 1, it's just the existence of integral curves. For higher rank, one uses the Flow Box theorem to straighten one vector field and then shows the involutivity allows straightening the others on the resulting slices.
+\end{solution}
+
+\begin{exercise}
+Show that all geodesics on the sphere $S^{n}$ are precisely the great circles.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Geodesics are "straight lines" on a surface. On a sphere, if you walk "straight" without turning left or right, you will inevitably go around the center of the sphere in a circle of maximum possible radius.
+
+\textbf{Proof:} A curve $\gamma(s)$ on a surface in $\mathbb{R}^{n+1}$ is a geodesic if its acceleration $\gamma''(s)$ is purely normal to the surface.
+For $S^n \subset \mathbb{R}^{n+1}$, the normal at $p$ is the vector $p$ itself.
+Thus, the geodesic equation is $\gamma''(s) = \lambda(s) \gamma(s)$.
+This is a second-order linear ODE in $\mathbb{R}^{n+1}$. The solution must lie in the plane spanned by $\gamma(0)$ and $\gamma'(0)$.
+The intersection of $S^n$ with a 2-plane through the origin is a great circle.
+Since the great circle is a solution to the geodesic equation and solutions are unique given initial position and velocity, all geodesics must be great circles.
+\end{solution}
+
+\begin{exercise}
+Let $M$ be an $n$-dimensional Riemannian manifold. Denote by $R$ and $K_{M}$ the curvature tensor and sectional curvature of $M$. If $a \leq K_{M} \leq b$ at a point $x \in M$, then, at this point,
+\[ R(e_{1}, e_{2}, e_{3}, e_{4}) \leq \frac{2}{3}\,(b - a) \]
+for all orthonormal four-frames $\{e_{1}, e_{2}, e_{3}, e_{4}\} \subset T_{x}M$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is a standard estimate in Riemannian geometry. It shows that if the sectional curvatures (which only involve 2-planes) are bounded, then any "off-diagonal" component of the full Riemann tensor (which involves four directions) is also bounded by the "spread" of the sectional curvatures.
+
+\textbf{Proof Sketch:} This follows from the polarization identity for the Riemann tensor:
+$R(X, Y, Z, W)$ can be expressed as a linear combination of terms of the form $R(U, V, V, U)$.
+Specifically, $24 R(X, Y, Z, W) = \sum \epsilon_i R(U_i, V_i, V_i, U_i)$.
+Applying the bounds $a \le K \le b$ to each term in such an expansion and using the algebraic symmetries (Bianchi identity) leads to the $2/3(b-a)$ bound.
+\end{solution}
+
+\begin{exercise}
+Let $M$ be a closed minimal hypersurface with constant scalar curvature in $S^{n+1}$. Denote by $S$ the squared length of the second fundamental form of $M$. Show that $S = 0$, or $S \geq n$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is related to the Simons' Gap Theorem. For minimal hypersurfaces in a sphere, there is a "gap" in the possible values of the curvature. They can be perfectly flat ($S=0$, a great sphere), or they must be at least as "curved" as the Clifford torus ($S=n$). They cannot be "almost flat."
+
+\textbf{Proof Sketch:} For a minimal hypersurface in $S^{n+1}$, the Simons' identity for the Laplacian of $S$ is:
+\[ \frac{1}{2} \Delta S = |\nabla h|^2 + S(n - S) \]
+where $h$ is the second fundamental form.
+Integrating over the closed manifold $M$:
+\[ 0 = \int_M |\nabla h|^2 dV + \int_M S(n - S) dV \]
+If $S < n$ everywhere, then $S(n-S) \ge 0$, and the integral can only be zero if $S(n-S) = 0$ and $\nabla h = 0$.
+Thus, either $S = 0$ everywhere, or $S$ must reach or exceed $n$ at some point.
+Given that the scalar curvature is constant and $M$ is minimal in a sphere, the relationship $R = n(n-1) - S$ implies $S$ must also be constant.
+Therefore, if $S$ is constant, either $S = 0$ or $S \ge n$.
+\end{solution}

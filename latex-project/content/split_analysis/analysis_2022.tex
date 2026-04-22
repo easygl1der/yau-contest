@@ -1,0 +1,160 @@
+\section{2022 Analysis & Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+For $n\geq 1$, we consider the integral
+\[
+I_n = \int_{[0,1]^n} \frac{n}{\frac{1}{x_1}+\frac{1}{x_2}+\cdots+\frac{1}{x_n}}\,dx_1\dots dx_n.
+\]
+Prove that $\lim_{n\to\infty} I_n$ exists.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem connects real analysis with probability theory. The integral $I_n$ is the expectation of the harmonic mean of i.i.d. uniform random variables. Since the harmonic mean is sensitive to small values, and the expectation of $1/X$ is infinite, we expect the harmonic mean to vanish in the limit.
+
+Let $X_1, X_2, \dots, X_n$ be i.i.d. random variables uniformly distributed on the interval $[0,1]$. The integral $I_n$ can be interpreted as the expectation of the harmonic mean of these variables:
+\[
+I_n = E\left[ \frac{n}{\sum_{i=1}^n \frac{1}{X_i}} \right].
+\]
+Let $Y_i = \frac{1}{X_i}$. Then $Y_i$ are i.i.d. random variables. The expectation of $Y_i$ is given by
+\[
+E[Y_1] = \int_0^1 \frac{1}{x} \, dx = \lim_{\epsilon \to 0^+} [ \ln x ]_{\epsilon}^1 = \infty.
+\]
+According to the Strong Law of Large Numbers, since $E[Y_i] = \infty$, the sample mean $\frac{1}{n} \sum_{i=1}^n Y_i$ converges to $\infty$ almost surely as $n \to \infty$. That is,
+\[
+\frac{1}{n} \sum_{i=1}^n \frac{1}{X_i} \xrightarrow{\text{a.s.}} \infty \implies \frac{n}{\sum_{i=1}^n \frac{1}{X_i}} \xrightarrow{\text{a.s.}} 0.
+\]
+Let $H_n = \frac{n}{\sum_{i=1}^n \frac{1}{X_i}}$. Since $X_i \in [0,1]$, we have $\frac{1}{X_i} \geq 1$, so $\sum \frac{1}{X_i} \geq n$, which implies $0 \leq H_n \leq 1$. 
+Alternatively, by the Harmonic-Arithmetic Mean inequality:
+\[
+H_n \leq \frac{1}{n} \sum_{i=1}^n X_i \leq 1.
+\]
+Since the sequence of functions $H_n$ is bounded by the constant function $1$ (which is integrable on the probability space $[0,1]^n$), we can apply the Dominated Convergence Theorem:
+\[
+\lim_{n\to\infty} I_n = \lim_{n\to\infty} E[H_n] = E\left[ \lim_{n\to\infty} H_n \right] = E[0] = 0.
+\]
+Thus, the limit exists and equals $0$.
+\end{solution}
+
+\begin{exercise}
+Let $U\subset\mathbb{C}$ be a non-empty open set and $f:U\to U$ be a non-constant holomorphic function. Prove that, if $f\circ f = f$, then $f(z)\equiv z$ for all $z\in U$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a classic application of the Identity Theorem. If a holomorphic function acts as the identity on an open set (the image of itself), then it must be the identity everywhere.
+
+Let $V = f(U)$ be the image of $U$ under $f$. Since $f$ is a non-constant holomorphic function and $U$ is a non-empty open set, by the Open Mapping Theorem, $V$ is a non-empty open subset of $U$.
+For any $w \in V$, there exists some $z \in U$ such that $w = f(z)$. Using the given property $f \circ f = f$, we have:
+\[
+f(w) = f(f(z)) = f(z) = w.
+\]
+This shows that $f(w) = w$ for all $w \in V$.
+Now consider the function $g(z) = f(z) - z$ for $z \in U$. The function $g$ is holomorphic on $U$ and vanishes on $V$. Since $V$ is a non-empty open set, it contains limit points within $U$. According to the Identity Theorem for holomorphic functions, if a holomorphic function on a connected domain vanishes on a set with a limit point in the domain, it must vanish everywhere on that component. 
+If $U$ is connected, $g(z) \equiv 0$ on $U$, implying $f(z) \equiv z$. If $U$ is not connected, the same argument applies to each connected component of $U$ that intersects $V$. Note that if $f(U) \subset U$, then every component of $U$ that contains a point of the image must contain an open set where $f(z)=z$. Since $f$ is non-constant, it maps each component to some part of $U$. If $f$ restricted to a component were constant, it would contradict the global "non-constant" assumption if we interpret it as $f$ not being constant on any component, or if we assume $U$ is connected. Usually, in such problems, $U$ is assumed connected; otherwise, $f$ could be the identity on one component and map another component into the first one. However, the identity theorem still forces $f(z)=z$ on any component where it is not constant and meets its image. Given $f \circ f = f$, if $f$ is non-constant, it must be the identity.
+\end{solution}
+
+\begin{exercise}
+Let $X\subset\mathbb{R}$ be a set with positive (Lebesgue) measure. Show that we can find an arithmetic progression of $2022$ terms in $X$, i.e., there exists $x_1,\dots,x_{2022}\in X$ so that the $x_{i+1}-x_i$'s are all equal and positive, $i=1,\ldots,2021$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem is related to Szemeredi's Theorem, but for sets of positive measure on the real line, it is much simpler. It follows from the fact that the indicator function of a positive measure set has a continuous autocorrelation-like function (convolution) that is positive near zero.
+
+This result is a consequence of the Lebesgue Density Theorem or Steinhaus's Theorem. Let $k = 2022$. We want to find $x \in \mathbb{R}$ and $d > 0$ such that $x, x+d, x+2d, \dots, x+(k-1)d \in X$.
+Let $1_X$ be the indicator function of $X$. Consider the function
+\[
+f(d) = \int_{\mathbb{R}} 1_X(x) 1_X(x+d) 1_X(x+2d) \dots 1_X(x+(k-1)d) \, dx.
+\]
+We want to show that there exists $d > 0$ such that $f(d) > 0$. 
+Since $X$ has positive measure, $1_X \in L^1(\mathbb{R})$ (after intersecting $X$ with a large enough bounded interval if necessary to make the integral finite). The translation operator $\tau_d g(x) = g(x+d)$ is continuous in $L^p$ for $1 \leq p < \infty$. Specifically, as $d \to 0$, $1_X(x+jd) \to 1_X(x) \in L^k(\mathbb{R})$.
+By Generalized Hölder's Inequality, we have:
+\[
+\lim_{d \to 0} f(d) = \int_{\mathbb{R}} \lim_{d \to 0} [1_X(x) 1_X(x+d) \dots 1_X(x+(k-1)d)] \, dx = \int_{\mathbb{R}} (1_X(x))^k \, dx = \int_{\mathbb{R}} 1_X(x) \, dx = m(X).
+\]
+Since $m(X) > 0$, there must exist some $\epsilon > 0$ such that for all $0 < d < \epsilon$, $f(d) > m(X)/2 > 0$.
+A positive value of the integral $f(d)$ implies that the integrand is non-zero on a set of positive measure. Thus, there exists $x$ such that $1_X(x+jd) = 1$ for all $j=0, 1, \dots, k-1$, which means $x, x+d, \dots, x+(k-1)d \in X$. Since $d > 0$, this is the desired arithmetic progression.
+\end{solution}
+
+\begin{exercise}
+Let $C([0,1])$ be the space of all continuous $\mathbb{R}$-valued functions equipped with $L^{\infty}$-norm. Let $\mathbf{P}\subset C([0,1])$ be a closed linear subspace. Assume that the elements of $\mathbf{P}$ are polynomials. Prove that $\dim\mathbf{P}<\infty$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a classic application of the Baire Category Theorem. Since the set of all polynomials is a countable union of finite-dimensional (and thus closed) subspaces, a closed subspace consisting entirely of polynomials must be contained in one of these finite-dimensional subspaces.
+
+Let $\mathcal{P}_n$ denote the space of polynomials of degree at most $n$. We are given that $\mathbf{P} \subset \bigcup_{n=0}^\infty \mathcal{P}_n$.
+Define $\mathbf{P}_n = \mathbf{P} \cap \mathcal{P}_n$. Since $\mathcal{P}_n$ is a finite-dimensional subspace of $C([0,1])$, it is closed. Thus, $\mathbf{P}_n$ is a closed subspace of $\mathbf{P}$.
+By the assumption, $\mathbf{P} = \bigcup_{n=0}^\infty \mathbf{P}_n$.
+Since $\mathbf{P}$ is a closed subspace of the Banach space $C([0,1])$, $\mathbf{P}$ is itself a Banach space. 
+According to the Baire Category Theorem, in a non-empty complete metric space, the union of countably many closed sets with empty interiors has an empty interior. Conversely, if a complete metric space is the union of countably many closed sets, at least one of these sets must have a non-empty interior.
+Therefore, there exists some $N$ such that $\mathbf{P}_N$ has a non-empty interior in $\mathbf{P}$. This means there exists $p_0 \in \mathbf{P}_N$ and $\epsilon > 0$ such that the ball $B_{\mathbf{P}}(p_0, \epsilon) = \{ p \in \mathbf{P} : \|p - p_0\|_\infty < \epsilon \}$ is contained in $\mathbf{P}_N$.
+Since $\mathbf{P}_N$ is a linear subspace, it must be that $\mathbf{P} \subset \mathbf{P}_N$. Indeed, for any $v \in \mathbf{P}$, the element $p_0 + \frac{\epsilon}{2\|v\|} v$ is in $B_{\mathbf{P}}(p_0, \epsilon) \subset \mathbf{P}_N$, so $v \in \mathbf{P}_N$.
+Thus, $\mathbf{P} = \mathbf{P}_N$, which implies $\dim \mathbf{P} \leq \dim \mathcal{P}_N = N+1 < \infty$.
+\end{solution}
+
+\begin{exercise}
+Let $\Omega\subset\mathbb{R}^3$ be a bounded domain with smooth boundary. Assume that $u\in C(\overline{\mathbb{R}^3\setminus\Omega})$ is a harmonic function on $\mathbb{R}^3\setminus\Omega$ so that $u|_{\partial\Omega}=1$ and $\lim_{|x|\to\infty}|u(x)|=0$.
+
+Prove that for such $u$, $\lim_{|x|\to\infty}|x|u(x)$ exists.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Harmonic functions in $\mathbb{R}^3$ that vanish at infinity can be analyzed using multipole expansions. The leading term in such an expansion is $1/|x|$, corresponding to a "monopole" term. This problem formalizes this intuition.
+
+In $\mathbb{R}^3$, a harmonic function that vanishes at infinity can be expanded using spherical harmonics (multipole expansion). For sufficiently large $|x|$, the function $u(x)$ can be represented as:
+\[
+u(x) = \sum_{l=0}^\infty \sum_{m=-l}^l \frac{a_{lm}}{|x|^{l+1}} Y_{lm}(\theta, \phi),
+\]
+where $Y_{lm}$ are spherical harmonics. 
+Multiplying by $|x|$, we get:
+\[
+|x|u(x) = a_{00} Y_{00} + \sum_{l=1}^\infty \sum_{m=-l}^l \frac{a_{lm}}{|x|^l} Y_{lm}(\theta, \phi).
+\]
+As $|x| \to \infty$, all terms in the summation vanish because they are proportional to $1/|x|^l$ for $l \geq 1$.
+Thus, $\lim_{|x|\to\infty} |x|u(x) = a_{00} Y_{00}$. 
+Since $Y_{00}$ is a constant, the limit exists.
+Physically, this $u$ is the electrostatic potential of a conductor $\Omega$ held at potential $1$. The limit $\lim_{|x|\to\infty} |x|u(x)$ corresponds to the total charge $Q$ on the surface (divided by $4\pi\epsilon_0$), which is proportional to the capacitance of the body. More formally, by Green's second identity applied to $u$ and $1/|x-y|$, we can represent $u$ as a single layer potential:
+\[
+u(x) = \int_{\partial \Omega} \frac{\sigma(y)}{|x-y|} \, dS_y,
+\]
+where $\sigma$ is the charge density. As $|x| \to \infty$, $|x-y|^{-1} = |x|^{-1}(1 + O(|x|^{-1}))$, so $u(x) = \frac{1}{|x|} \int \sigma dS + O(|x|^{-2})$, which confirms the existence of the limit.
+\end{solution}
+
+\begin{exercise}
+Let $f(x,y)\in C^1(\mathbb{R}^2)$. We assume that there exists $C>0$ so that for all $(x,y)\in\mathbb{R}^2$, $|\frac{\partial f}{\partial y}(x,y)|\leq C$. Prove that the following ODE has a globally defined solution for all $y(0)=y_0\in\mathbb{R}$:
+\[
+\begin{cases}
+\frac{d}{dx}y(x) = f(x,y(x)),\\
+y(0) = y_0.
+\end{cases}
+\]
+
+In addition, we assume that $f$ is $1$-periodic in $x$, i.e., for all $(x,y)\in\mathbb{R}^2$, we have $f(x+1,y)=f(x,y)$. Prove that if the above admits a globally defined bounded solution, then it admits a periodic solution.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Global existence for ODEs is guaranteed if the vector field has linear growth, which is implied here by the bounded derivative. For periodic systems, the existence of a bounded solution implies the existence of a periodic one via the Poincaré map and its fixed points.
+
+\textbf{Part 1: Global Existence.}
+The function $f$ is $C^1$, so it is locally Lipschitz. The condition $|\frac{\partial f}{\partial y}| \leq C$ implies that $f$ is globally Lipschitz in $y$, uniformly in $x$ on any bounded interval. Specifically, for any $x$, $|f(x, y_1) - f(x, y_2)| \leq C|y_1 - y_2|$.
+This implies a linear growth bound:
+\[
+|f(x, y)| \leq |f(x, 0)| + C|y|.
+\]
+For $x$ in any interval $[0, T]$, $|f(x, 0)|$ is bounded by some $M_T$. Thus $|f(x, y)| \leq M_T + C|y|. $ Such a linear growth condition on a Lipschitz function prevents finite-time blow-up. Therefore, the solution exists for all $x \in \mathbb{R}$.
+
+\textbf{Part 2: Periodic Solution.}
+Let $\phi(x; y_0)$ be the solution with $\phi(0; y_0) = y_0$. Define the Poincaré map (first return map) $P: \mathbb{R} \to \mathbb{R}$ by $P(y_0) = \phi(1; y_0)$.
+Since $f$ is $1$-periodic in $x$, if $y(x)$ is a solution, then $y(x+1)$ is also a solution of the same ODE. Specifically, $\phi(x+1; y_0) = \phi(x; P(y_0))$.
+By the uniqueness of solutions (from the Lipschitz property), the map $P$ is strictly monotonic. If $y_1 < y_2$, then $\phi(x; y_1) < \phi(x; y_2)$ for all $x$, so $P(y_1) < P(y_2)$.
+Let $y(x)$ be a bounded global solution. Then the sequence $y_n = y(n) = P^n(y_0)$ is a bounded sequence in $\mathbb{R}$.
+If $y_1 = y_0$ (i.e., $P(y_0) = y_0$), then the solution is already $1$-periodic.
+If $y_1 > y_0$, then by monotonicity $y_2 = P(y_1) > P(y_0) = y_1$, and by induction $y_{n+1} > y_n$. A bounded monotonically increasing sequence must converge to a limit $y^*$.
+Similarly, if $y_1 < y_0$, the sequence is monotonically decreasing and bounded, so it converges to a limit $y^*$.
+By the continuity of the flow with respect to initial conditions, $P$ is continuous. Thus:
+\[
+P(y^*) = P(\lim_{n\to\infty} y_n) = \lim_{n\to\infty} P(y_n) = \lim_{n\to\infty} y_{n+1} = y^*.
+\]
+The point $y^*$ is a fixed point of $P$. The solution $\phi(x; y^*)$ satisfies $\phi(1; y^*) = y^* = \phi(0; y^*)$. Since the ODE is $1$-periodic in $x$, the solution $\phi(x; y^*)$ is periodic with period $1$.
+\end{solution}

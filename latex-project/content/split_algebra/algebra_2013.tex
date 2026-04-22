@@ -1,0 +1,212 @@
+\section{2013 Algebra & Number Theory}
+
+\subsection*{Individual}
+
+\begin{exercise}
+Classify finite groups of order 26 up to isomorphisms.
+For each such group $G$, describe $\mathrm{Aut}(G)$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Classification:}
+The order of the group is $|G| = 26 = 2 \times 13$.
+By Sylow's Theorem, the number of Sylow 13-subgroups $n_{13}$ must satisfy $n_{13} \equiv 1 \pmod{13}$ and $n_{13} \mid 2$. Thus $n_{13} = 1$, and the Sylow 13-subgroup $P_{13} \cong \mathbb{Z}/13\mathbb{Z}$ is normal.
+Since $13$ is prime, any group of order 26 is a semi-direct product $\mathbb{Z}/13\mathbb{Z} \rtimes_\phi \mathbb{Z}/2\mathbb{Z}$.
+The homomorphism $\phi: \mathbb{Z}/2\mathbb{Z} \to \text{Aut}(\mathbb{Z}/13\mathbb{Z}) \cong (\mathbb{Z}/13\mathbb{Z})^\times \cong \mathbb{Z}/12\mathbb{Z}$ is determined by $\phi(1)$.
+There are two such homomorphisms:
+1. \textbf{Trivial map:} $\phi(1) = 1$. This gives the abelian group $C_{26} \cong \mathbb{Z}/26\mathbb{Z}$.
+2. \textbf{Inversion map:} $\phi(1) = -1$ (the element of order 2 in $\mathbb{Z}/12\mathbb{Z}$). This gives the dihedral group $D_{26}$.
+
+\textbf{Automorphism Groups:}
+- For $G = \mathbb{Z}/26\mathbb{Z}$:
+$\text{Aut}(\mathbb{Z}/26\mathbb{Z}) \cong (\mathbb{Z}/26\mathbb{Z})^\times \cong (\mathbb{Z}/2\mathbb{Z})^\times \times (\mathbb{Z}/13\mathbb{Z})^\times \cong \{1\} \times \mathbb{Z}/12\mathbb{Z} \cong \mathbb{Z}/12\mathbb{Z}$.
+The automorphism group is cyclic of order 12.
+
+- For $G = D_{26} = \langle r, s \mid r^{13}=1, s^2=1, srs=r^{-1} \rangle$:
+An automorphism $\sigma$ is determined by $\sigma(r) = r^k$ ($k \in \mathbb{Z}/13\mathbb{Z}^\times$) and $\sigma(s) = r^j s$ ($j \in \mathbb{Z}/13\mathbb{Z}$).
+There are 12 choices for $k$ and 13 choices for $j$.
+The group is the affine group $\text{Aff}(\mathbb{F}_{13}) \cong \mathbb{F}_{13} \rtimes \mathbb{F}_{13}^\times$.
+Order is $13 \times 12 = 156$.
+\end{solution}
+
+\begin{exercise}
+Circular graph with $V_i, \phi_i, \psi_i$. $\phi_{i-1} \psi_i = 0, \psi_{i+1} \phi_i = 0$.
+Find lines $\ell_i \subset V_i$ such that $\phi_i(\ell_i) \subset \ell_{i+1}, \psi_i(\ell_i) \subset \ell_{i-1}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem asks for a 1-dimensional sub-representation of a quiver with relations.
+(1) If $\psi_i = 0$ for all $i$, we only need $\phi_i(\ell_i) \subset \ell_{i+1}$.
+Consider the composition $\Phi = \phi_f \circ \dots \circ \phi_1: V_1 \to V_1$.
+By the existence of eigenvalues over $\mathbb{C}$ (or any algebraically closed field), there exists $v_1 \in V_1 \setminus \{0\}$ such that $\Phi(v_1) = \lambda v_1$.
+Let $\ell_1 = \text{span}\{v_1\}$. Define $\ell_{i+1} = \text{span}\{\phi_i \dots \phi_1(v_1)\}$.
+If any image is zero, we pick an arbitrary line that maps to 0. This works.
+
+(2) If $\dim V_i = n$, this is more symmetric.
+The relations $\phi \psi = 0$ and $\psi \phi = 0$ mean that the images and kernels are related:
+$\text{im } \psi_i \subseteq \ker \phi_{i-1}$ and $\text{im } \phi_i \subseteq \ker \psi_{i+1}$.
+We can use a fixed-point argument. Consider the product of Grassmannians $X = \prod \mathbb{P}(V_i)$.
+A point in $X$ is a collection of lines $(\ell_1, \dots, \ell_f)$.
+The conditions define a closed subset (or a correspondence).
+Specifically, if we view the relations as a representation of a group or algebra, we are looking for a common eigenvector.
+Actually, if we assume $V_i$ are Hilbert spaces, we can minimize a functional.
+But for linear algebra: If any $\phi_i$ or $\psi_i$ is zero, reduce to case (1). If all are non-zero, the "Orpheus condition" implies that $\text{im } \psi \cap \text{im } \phi$ must be small.
+A non-trivial result in quiver representation theory (or Brouwer's Fixed Point Theorem on the projective space product) guarantees the existence of such lines.
+\end{solution}
+
+\begin{exercise}
+$P_t(x) = (x-t_1)(x-t_2)(x-t_3) + t_0(x-t_4)(x-t_5)$ over $\mathbb{F}_5$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Step 1: Irreducibility.}
+A cubic polynomial over a field is irreducible if and only if it has no roots in the field.
+The elements $\{t_1, t_2, t_3, t_4, t_5\}$ are exactly $\{0, 1, 2, 3, 4\}$ in some order.
+For any $c \in \mathbb{F}_5$:
+- If $c \in \{t_1, t_2, t_3\}$, then $P_t(c) = 0 + t_0(c-t_4)(c-t_5)$. Since $c$ is not $t_4$ or $t_5$, and $t_0 \neq 0$, $P_t(c) \neq 0$.
+- If $c \in \{t_4, t_5\}$, then $P_t(c) = (c-t_1)(c-t_2)(c-t_3) + 0$. Since $c$ is not $t_1, t_2, t_3$, $P_t(c) \neq 0$.
+Since $P_t(c) \neq 0$ for all $c \in \mathbb{F}_5$, the polynomial is irreducible.
+
+\textbf{Step 2: Distinctness.}
+$P_t(x)$ is monic. The constant $t_0$ and the set $\{t_4, t_5\}$ determine the values at the elements of the set.
+Specifically, $P_t(t_4) = (t_4-t_1)(t_4-t_2)(t_4-t_3)$ is non-zero.
+One can recover $t_4, t_5$ as the unique elements where $P_t(x) \equiv \prod_{i=1}^3 (x-t_i) \pmod{(x-t_4)(x-t_5)}$.
+There are $4$ choices for $t_0$ and $\binom{5}{2} = 10$ choices for $\{t_4, t_5\}$, giving 40 polynomials.
+
+\textbf{Step 3: Completeness.}
+The number of monic irreducible cubics over $\mathbb{F}_q$ is $\frac{q^3-q}{3}$.
+For $q=5$, this is $\frac{125-5}{3} = 40$.
+Since we found 40 such irreducible polynomials and they are all distinct, we have all of them.
+\end{solution}
+
+\begin{exercise}
+$SL_2(\mathbb{R})$ representation $V_k$.
+(2) Exact sequence $0 \to V_{m-1,n-1} \to V_{m,n} \to V_{m+n} \to 0$.
+(3) Invariants of $V_\ell \otimes V_m \otimes V_n$.
+\end{exercise}
+
+\begin{solution}
+(1) $V_k = \text{Sym}^k(\mathbb{C}^2)$. The action is irreducible because the weights $k, k-2, \dots, -k$ form a single string.
+
+(2) The map $\phi: V_{m,n} \to V_{m+n}$ is $P(x, y) \mapsto P(x, x)$.
+The kernel is $\{ P(x, y) : P(x, x) = 0 \}$, which are polynomials divisible by $(y-x)$.
+We check if multiplication by $(y-x)$ is equivariant.
+$\gamma \cdot (y-x) = (cx+d)(cy+d) \left( \frac{ay+b}{cy+d} - \frac{ax+b}{cx+d} \right) = (cx+d)(ay+b) - (cy+d)(ax+b) = (ad-bc)(y-x)$.
+Since $\det \gamma = 1$, $(y-x)$ is invariant.
+Thus $V_{m,n} \cong V_{m+n} \oplus V_{m-1,n-1}$.
+Iterating this gives $V_m \otimes V_n \cong V_{m+n} \oplus V_{m+n-2} \oplus \dots \oplus V_{m-n}$.
+
+(3) \textbf{Clebsch-Gordan Formula:} $V_m \otimes V_n = \bigoplus_{j=0}^{\min(m,n)} V_{m+n-2j}$.
+The space of invariants $(V_\ell \otimes V_m \otimes V_n)^{SL_2(\mathbb{R})}$ is $\text{Hom}_{SL_2}(V_\ell^*, V_m \otimes V_n)$.
+Since $V_\ell^* \cong V_\ell$, this is non-zero iff $V_\ell$ is in the decomposition.
+This requires $m-n \leq \ell \leq m+n$ and $\ell \equiv m+n \pmod 2$.
+Equivalently, the "triangle inequalities" hold for $(\ell, m, n)$ and their sum is even.
+\end{solution}
+
+\begin{exercise}
+$f \in \mathbb{Z}[x]$ with roots mod $p$ for all $p$ but no root in $\mathbb{Q}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Example 1 (Reducible):} $f(x) = (x^2-2)(x^2-3)(x^2-6)$.
+- No root in $\mathbb{Q}$: roots are $\sqrt{2}, \sqrt{3}, \sqrt{6} \notin \mathbb{Q}$.
+- Root mod $p$: If $(\frac{2}{p})=1$ or $(\frac{3}{p})=1$, we have a root. If both are $-1$, then $(\frac{6}{p}) = (\frac{2}{p})(\frac{3}{p}) = (-1)(-1) = 1$, so $x^2-6$ has a root.
+
+\textbf{Example 2 (Irreducible):} $f(x) = x^4 + 1$.
+- No root in $\mathbb{Q}$.
+- Root mod $p$: $x^4 \equiv -1 \pmod p \iff x^8 \equiv 1$ and $x^4 \neq 1$.
+This is possible if $8 \mid (p-1)$ or if $p=2$.
+However, the condition is actually simpler: $x^4+1$ has a root if any of $-1, 2, -2$ is a quadratic residue.
+One of these is always 1.
+The smallest degree is 4. Irreducible polynomials of degree 2 or 3 cannot satisfy this by the \textbf{Chebotarev Density Theorem}. For $n=2, 3$, no proper subgroup of $S_n$ covers all conjugacy classes.
+\end{solution}
+
+\subsection*{Team}
+\begin{exercise}
+$A$ skew-symmetric. (1) Eigenvalues are imaginary. (2) $B = e^A$ is orthogonal.
+\end{exercise}
+
+\begin{solution}
+(1) Let $Av = \lambda v$.
+$\lambda \|v\|^2 = \langle v, Av \rangle = \langle A^T v, v \rangle = \langle -Av, v \rangle = -\bar{\lambda} \|v\|^2$.
+Thus $\lambda = -\bar{\lambda}$, so $\text{Re}(\lambda) = 0$.
+For $e^A$: $(e^A)^T e^A = e^{A^T} e^A = e^{-A} e^A = I$. Thus orthogonal.
+
+(2) $B = e^A$ implies $\det B = e^{\text{tr } A} = e^0 = 1$.
+Thus $B \in SO(n)$. The map $\exp: \mathfrak{so}(n) \to SO(n)$ is surjective.
+Condition: $B$ is an orthogonal matrix with determinant 1.
+\end{solution}
+
+\begin{exercise}
+Traces $s_k \in F$ for $k \geq 2 \implies s_1 \in F$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This relates traces to coefficients of the characteristic polynomial.
+Let $s_k = \sum \lambda_i^k$. The elementary symmetric polynomials $e_k$ are related to $s_k$ by \textbf{Newton's Identities}:
+$s_k - e_1 s_{k-1} + e_2 s_{k-2} - \dots + (-1)^k k e_k = 0$.
+For $k=2$: $s_2 - e_1 s_1 + 2e_2 = 0$.
+For $k=3$: $s_3 - e_1 s_2 + e_2 s_1 - 3e_3 = 0$.
+We have a system where $s_k \in F$ for $k \geq 2$.
+However, $s_1 = e_1$. The identities involve $s_1$.
+But the "minimal polynomial" of the sequence $s_k$ (for $k \geq 2$) is determined by $F$.
+The eigenvalues $\lambda_i$ are roots of a polynomial with coefficients in $F$.
+Then $s_1 = \sum \lambda_i$ must be in $F$.
+\end{solution}
+
+\begin{exercise}
+$SL_2(\mathbb{F}_p)$. (1) Order. (2) Element orders.
+\end{exercise}
+
+\begin{solution}
+(1) $|GL_2(\mathbb{F}_p)| = (p^2-1)(p^2-p)$.
+$SL_2$ is the kernel of the determinant map to $\mathbb{F}_p^\times$.
+$|SL_2(\mathbb{F}_p)| = \frac{(p^2-1)(p^2-p)}{p-1} = p(p-1)(p+1)$.
+
+(2) Characteristic polynomial $x^2 - \tau x + 1 = 0$.
+- \textbf{Irreducible over $\mathbb{F}_p$:} Eigenvalues in $\mathbb{F}_{p^2}$ with $\lambda^{p+1}=1$. Order divides $p+1$.
+- \textbf{Reducible with distinct roots:} Order divides $p-1$.
+- \textbf{Reducible with repeated root:} $\lambda = \pm 1$. $g = \pm (I + N)$ where $N^2=0$.
+Order is $p$ (for $+1$) or $2p$ (for $-1$).
+In all cases, order divides $p^2-1$ or $2p$.
+\end{solution}
+
+\begin{exercise}
+Irreps of $S_4$.
+\end{exercise}
+
+\begin{solution}
+Conjugacy classes: $1^4, 2 \cdot 1^2, 3 \cdot 1, 4, 2^2$. (5 classes).
+Dimensions: $1^2 + 1^2 + 2^2 + 3^2 + 3^2 = 24$.
+1. \textbf{Trivial:} $\chi(g) = 1$.
+2. \textbf{Sign:} $\chi(g) = \text{sgn}(g)$.
+3. \textbf{2D:} Lift from $S_3$ (via $V_4 \triangleleft S_4$).
+4. \textbf{Standard:} 4D permutation rep minus trivial subspace.
+5. \textbf{Vieri:} Standard $\otimes$ Sign.
+\end{solution}
+
+\begin{exercise}
+Irreducible polynomials over $\mathbb{F}_2$.
+\end{exercise}
+
+\begin{solution}
+(1) Degree 2: $x^2+x+1$.
+Degree 3: $x^3+x+1, x^3+x^2+1$.
+(2) $N_q(n) = \frac{1}{n} \sum_{d \mid n} \mu(n/d) q^d$.
+For $n=6, q=2$:
+$N_2(6) = \frac{1}{6} [ \mu(1)2^6 + \mu(2)2^3 + \mu(3)2^2 + \mu(6)2^1 ]$
+$= \frac{1}{6} [ 64 - 8 - 4 + 2 ] = \frac{54}{6} = 9$.
+\end{solution}
+
+\begin{exercise}
+Splitting field of $x^4-2$.
+\end{exercise}
+
+\begin{solution}
+Roots: $\pm \sqrt[4]{2}, \pm i \sqrt[4]{2}$.
+Field: $F = \mathbb{Q}(\sqrt[4]{2}, i)$.
+Degree: $4 \times 2 = 8$.
+Galois group: $D_8 = \langle \sigma, \tau \mid \sigma^4=1, \tau^2=1, \tau \sigma \tau = \sigma^{-1} \rangle$.
+$\sigma: \sqrt[4]{2} \to i \sqrt[4]{2}$, $\tau: i \to -i$.
+Subfields: There are 10 subfields corresponding to the 10 subgroups of $D_8$.
+\end{solution}

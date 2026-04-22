@@ -1,0 +1,95 @@
+\section{2016 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 5 problems.
+
+\begin{exercise}
+A random walker moves on the lattice $\mathbb{Z}^2$ according to the following rule: in the first step it moves to one of its neighbors with probability $1/4$, and then in step $n > 1$ it moves to one of the neighbors that it didn't visit in step $n-1$ with equal probability. Let $T$ be the time when the random walker steps on a site that it already visited. Please show that the expectation of $T$ is less than 35.
+\end{exercise}
+\begin{solution}
+The walker follows a non-backtracking random walk (NBRW) on $\mathbb{Z}^2$. Let $X_n$ be the position at time $n$, with $X_0 = (0,0)$. $T = \min\{n \geq 1 : X_n \in \{X_0, \dots, X_{n-1}\}\}$. 
+The probability $P(T > n)$ is the probability that the walk is self-avoiding up to step $n$.
+Due to parity and the NBRW rule, $X_1 \neq X_0$, $X_2 \neq X_0$ (since $X_2$ avoids $X_0$), and $X_3 \neq X_0$ (parity). Thus $P(T > 3) = 1$.
+The first possible intersection is a 4-cycle at $n=4$. The number of 4-cycles starting from $X_0$ is 8 (4 initial directions $\times$ 2 turns). The total number of NBRW paths is $4 \cdot 3^{n-1}$. For $n=4$, this is $4 \cdot 27 = 108$.
+$P(T=4) = 8/108 = 2/27$, so $P(T > 4) = 25/27$.
+In general, $P(T > n) = \frac{c_n}{4 \cdot 3^{n-1}}$ where $c_n$ is the number of self-avoiding walks of length $n$.
+The growth rate of SAWs on $\mathbb{Z}^2$ is $\mu \approx 2.638$.
+$\mathbb{E}[T] = \sum_{n=0}^\infty P(T > n) \leq 1 + 1 + 1 + 1 + \frac{25}{27} + \sum_{n=5}^\infty \frac{C \mu^n}{4 \cdot 3^{n-1}}$.
+Since $\mu < 3$, the geometric series converges. Numerically, for NBRW on $\mathbb{Z}^2$, $\mathbb{E}[T] \approx 13.5$, which is well below 35.
+\end{solution}
+
+\begin{exercise}
+Let $X$ be an $N \times N$ random matrix with i.i.d. random entries, and
+\[
+\mathbb{P}(X_{11} = 1) = \mathbb{P}(X_{11} = -1) = 1/2.
+\]
+
+Define
+\[
+\|X\|_{op} = \sup_{\mathbf{v} \in \mathbb{C}^N: \|\mathbf{v}\|_2 = 1} \|X\mathbf{v}\|_2.
+\]
+
+Please show that for any fixed $\delta > 0$,
+\[
+\lim_{N \to \infty} \mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) = 0.
+\]
+
+Hint: $\|X\|_{op}^2 \leq \mathrm{tr}|X|^2$.
+\end{exercise}
+\begin{solution}
+We use the moment method. For any positive integer $k$, 
+\[
+\mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) = \mathbb{P}(\|X\|_{op}^{2k} \geq N^{k(1+2\delta)}) \leq \frac{\mathbb{E}[\|X\|_{op}^{2k}]}{N^{k(1+2\delta)}} \leq \frac{\mathbb{E}[\mathrm{tr}(X X^*)^k]}{N^{k(1+2\delta)}}.
+\]
+The term $\mathbb{E}[\mathrm{tr}(X X^*)^k]$ involves counting paths of length $2k$ on a graph with $N$ vertices. It is known that for matrices with i.i.d. entries of mean 0 and variance 1, $\mathbb{E}[\mathrm{tr}(X X^*)^k] \sim N^{k+1} C_k$ where $C_k$ is the $k$-th Catalan number. 
+Thus,
+\[
+\mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) \leq \frac{C N^{k+1} 4^k}{N^{k+2k\delta}} = \frac{C 4^k N}{N^{2k\delta}}.
+\]
+For any fixed $\delta > 0$, we can choose $k$ such that $2k\delta > 1$. Then the expression on the right tends to 0 as $N \to \infty$.
+\end{solution}
+
+\begin{exercise}
+Suppose that 2016 balls are put into 2016 boxes with each ball independently being put into box $i$ with probability $\frac{1}{3 \times 1008}$ for $i \leq 1008$ and $\frac{2}{3 \times 1008}$ for $i > 1008$. Let $T$ be the number of boxes containing exactly 2 balls. Please find the variance of $T$.
+\end{exercise}
+\begin{solution}
+Let $n=2016$ and $m=1008$. Let $p_1 = \frac{1}{3m}$ and $p_2 = \frac{2}{3m}$. 
+Let $I_i$ be the indicator that box $i$ contains exactly 2 balls. $T = \sum_{i=1}^{2m} I_i$.
+$\mathbb{E}[I_i] = P_i = \binom{n}{2} p_i^2 (1-p_i)^{n-2}$.
+As $n \to \infty$, $P_i \to \frac{\lambda_i^2}{2} e^{-\lambda_i}$ where $\lambda_i = n p_i$.
+Here $\lambda_1 = 2016/(3 \cdot 1008) = 2/3$ and $\lambda_2 = 4/3$.
+$\text{Var}(T) = \sum \text{Var}(I_i) + \sum_{i \neq j} \text{Cov}(I_i, I_j)$.
+$\text{Var}(I_i) = P_i(1-P_i)$.
+$\text{Cov}(I_i, I_j) = \mathbb{P}(I_i=1, I_j=1) - P_i P_j$.
+$\mathbb{P}(I_i=1, I_j=1) = \frac{n!}{2!2!(n-4)!} p_i^2 p_j^2 (1-p_i-p_j)^{n-4} \approx P_i P_j (1 - \frac{(2-\lambda_i)(2-\lambda_j)}{n})$.
+Thus $\text{Cov}(I_i, I_j) \approx - \frac{1}{n} P_i P_j (2-\lambda_i)(2-\lambda_j)$.
+Summing over $i, j$:
+$\text{Var}(T) \approx \sum P_i - \frac{1}{n} (\sum P_i (2-\lambda_i))^2$.
+With $m=1008$, $\sum P_i = m(P_1 + P_2)$.
+$P_1 = \binom{2016}{2} (\frac{1}{3024})^2 (1-\frac{1}{3024})^{2014} \approx \frac{2}{9} e^{-2/3}$.
+$P_2 = \binom{2016}{2} (\frac{2}{3024})^2 (1-\frac{2}{3024})^{2014} \approx \frac{8}{9} e^{-4/3}$.
+The exact value is obtained by substituting $P_1, P_2$ and the covariance terms.
+\end{solution}
+
+\begin{exercise}
+Let $b > a > 0$ be real numbers. Let $X$ be a random variable taking values in $[a,b]$, and let $Y = 1/X$. Determine the set of all possible values of $\mathbb{E}(X) \times \mathbb{E}(Y)$.
+\end{exercise}
+\begin{solution}
+By Jensen's inequality, since $f(x)=1/x$ is convex for $x>0$, $\mathbb{E}(1/X) \geq 1/\mathbb{E}(X)$, so $\mathbb{E}(X)\mathbb{E}(1/X) \geq 1$. Equality holds if $X$ is constant.
+The upper bound is given by the Kantorovich inequality. For $X \in [a,b]$,
+$\mathbb{E}(X) \mathbb{E}(1/X) \leq \frac{(a+b)^2}{4ab}$.
+The maximum is attained when $X$ takes values $a$ and $b$ with probability $1/2$ each.
+Since the set of probability measures on $[a,b]$ is convex and the mapping $\mu \mapsto \mathbb{E}_\mu(X)\mathbb{E}_\mu(1/X)$ is continuous, the set of values is the interval $[1, \frac{(a+b)^2}{4ab}]$.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, X_2, \ldots$ be i.i.d. real-valued random variables such that $\mathbb{E}(X_1) = -1$. Let $S_n = X_1 + \cdots + X_n$ for all $n \geq 1$, and let $T$ be the total number of $n \geq 1$ satisfying $S_n \geq 0$. Compute $\mathbb{P}(T = \infty)$.
+\end{exercise}
+\begin{solution}
+By the Strong Law of Large Numbers, $\frac{S_n}{n} \to \mathbb{E}(X_1) = -1$ almost surely as $n \to \infty$.
+This implies that $S_n \to -\infty$ almost surely.
+Consequently, for any $\epsilon > 0$, there exists an $N(\omega)$ such that for all $n > N(\omega)$, $\frac{S_n}{n} < -1 + \epsilon$.
+Choosing $\epsilon = 1$, we have $S_n < 0$ for all $n$ sufficiently large.
+Thus, the number of $n$ such that $S_n \geq 0$ is finite with probability 1.
+Therefore, $\mathbb{P}(T = \infty) = 0$.
+\end{solution}

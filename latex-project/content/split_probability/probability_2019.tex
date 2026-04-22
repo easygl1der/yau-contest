@@ -1,0 +1,185 @@
+\section{2019 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 4 problems.
+
+\begin{exercise}
+Suppose $(X_n)_{n \geq 1}$ is a sequence of positive random variables. There exists a constant $C > 0$ such that,
+\[
+\mathbb{E}[X_n] \leq C, \quad \mathbb{E}[\max\{0, -\log X_n\}] \leq C, \quad \forall n.
+\]
+
+Show that
+\[
+\limsup_{n \to \infty} X_n^{1/n} = 1.
+\]
+\end{exercise}
+
+\begin{solution}
+First, we show that $\limsup_{n \to \infty} X_n^{1/n} \leq 1$ almost surely. For any $\epsilon > 0$, by Markov's inequality:
+\[ \mathbb{P}(X_n > (1+\epsilon)^n) \leq \frac{\mathbb{E}[X_n]}{(1+\epsilon)^n} \leq \frac{C}{(1+\epsilon)^n}. \]
+Since $\sum_{n=1}^\infty \frac{C}{(1+\epsilon)^n} < \infty$, the Borel-Cantelli Lemma implies that $\mathbb{P}(X_n > (1+\epsilon)^n \text{ i.o.}) = 0$. Thus, $\limsup_{n \to \infty} X_n^{1/n} \leq 1+\epsilon$ a.s. for all $\epsilon > 0$, which gives $\limsup_{n \to \infty} X_n^{1/n} \leq 1$ a.s.
+
+Next, we show that $\limsup_{n \to \infty} X_n^{1/n} \geq 1$ almost surely. Let $Z_n = \frac{1}{n} \log X_n$. We have $Z_n = \frac{1}{n} (\log^+ X_n - \log^- X_n)$.
+By Jensen's inequality, $\mathbb{E}[\log^+ X_n] \leq \log \mathbb{E}[X_n \vee 1] \leq \log(C+1)$. Thus $\mathbb{E}[Z_n^+] \leq \frac{\log(C+1)}{n} \to 0$.
+By the second assumption, $\mathbb{E}[\log^- X_n] \leq C$, so $\mathbb{E}[Z_n^-] \leq C/n \to 0$.
+Thus $\mathbb{E}[|Z_n|] \to 0$, which implies $Z_n \to 0$ in probability.
+Therefore, $X_n^{1/n} = e^{Z_n} \to 1$ in probability. This implies there exists a subsequence $n_k$ such that $X_{n_k}^{1/n_k} \to 1$ almost surely. Hence, $\limsup_{n \to \infty} X_n^{1/n} \geq \lim_{k \to \infty} X_{n_k}^{1/n_k} = 1$ a.s.
+Combining both bounds, we have $\limsup_{n \to \infty} X_n^{1/n} = 1$ a.s.
+\end{solution}
+
+\begin{exercise}
+Suppose $\gamma$ is a probability measure on $\{0,1,2\}$ such that $\gamma(0) > \gamma(2) > 0$. Let $(\xi_n)_{n \geq 1}$ be a sequence of i.i.d. random variables with common law $\gamma$. Define the sequence
+\[
+Y_0 = 0, \quad Y_{n+1} = \max\{0, Y_n + \xi_{n+1} - 1\}, \quad \forall n \geq 0.
+\]
+
+Show that $(Y_n)_{n \geq 0}$ is an irreducible Markov chain on the state space $\mathbb{N} = \{0,1,2,\ldots\}$ and it is positive recurrent.
+\end{exercise}
+
+\begin{solution}
+The process $(Y_n)_{n \geq 0}$ is a random walk on $\mathbb{N}$ with a reflecting barrier at 0. The transitions are given by $Y_{n+1} = \max\{0, Y_n + X_{n+1}\}$, where $X_{n+1} = \xi_{n+1} - 1$. The increments $X_n$ take values in $\{-1, 0, 1\}$ with probabilities $p_{-1} = \gamma(0)$, $p_0 = \gamma(1)$, and $p_1 = \gamma(2)$.
+\begin{enumerate}
+    \item \textbf{Irreducibility}: Since $\gamma(0) > 0$ and $\gamma(2) > 0$, the chain can move from $k$ to $k-1$ and $k$ to $k+1$ for $k \geq 1$. Also, it can move from 0 to 1 and from 1 to 0. Thus, all states communicate, and the chain is irreducible on $\mathbb{N}$.
+    \item \textbf{Positive Recurrence}: We check the drift of the chain. For $Y_n > 0$, the expected change is $\mathbb{E}[Y_{n+1} - Y_n | Y_n] = \mathbb{E}[X] = -1 \cdot \gamma(0) + 0 \cdot \gamma(1) + 1 \cdot \gamma(2) = \gamma(2) - \gamma(0)$.
+    By assumption, $\gamma(0) > \gamma(2)$, so the drift $\mathbb{E}[X]$ is strictly negative.
+    By Foster's Theorem, an irreducible Markov chain on $\mathbb{N}$ with a drift $\mathbb{E}[Y_{n+1} - Y_n | Y_n = y] \leq -\epsilon$ for all $y > M$ and $\mathbb{E}[Y_{n+1} | Y_n = y] < \infty$ for all $y$ is positive recurrent. Since the drift is constant and negative for all $y > 0$, the chain is positive recurrent.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Suppose $(\epsilon_n)_{n \geq 1}$ is a sequence of i.i.d. random variables and the common law is Bernoulli:
+\[
+\mathbb{P}[\epsilon_1 = 1] = \mathbb{P}[\epsilon_1 = -1] = 1/2.
+\]
+
+Consider the random series $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$. Show that the random series attains zero infinitely many times on $x \in [0,1)$ almost surely.
+\end{exercise}
+
+\begin{solution}
+Let $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$. As $x \to 1^-$, the behavior of $f(x)$ is dominated by the behavior of the partial sums $S_k = \sum_{n=1}^k \epsilon_n$. Specifically, as $x \to 1^-$, $f(x)$ behaves similarly to a Brownian motion on a logarithmic scale. 
+A result by Salem and Zygmund on random power series states that if $\sum a_n^2 = \infty$, the series $\sum \epsilon_n a_n x^n$ oscillates. For $a_n=1$, the law of the iterated logarithm for power series implies that:
+\[ \limsup_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = 1 \text{ and } \liminf_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = -1 \]
+almost surely. Since $f(x)$ is a continuous function on $[0, 1)$ and it oscillates between $+\infty$ and $-\infty$ as $x \to 1^-$, the Intermediate Value Theorem guarantees that $f(x)$ must cross zero infinitely many times as $x$ approaches 1.
+\end{solution}
+
+\begin{exercise}
+Consider a randomized experiment with $2N$ units, half to be randomly assigned an active treatment, and the other half to be assigned the control treatment; the objective is to measure the effect of the active versus control treatments on an outcome, called $Y$.
+
+The estimand is the average value of $Y$ if all $2N$ units received active minus the average value of $Y$ if all $2N$ units received control. Assume that these $2 \times 2N$ numbers are fixed quantities (SUTVA assumption).
+
+Derive the following results:
+
+a) Find the expectation of the estimator, the difference in the observed sample means (between those assigned treatment and those assigned control), in terms of the estimand.
+
+b) The variance of the estimator described in part a).
+
+c) Find an unbiased estimator of the variance in part b), assuming additive treatment effects.
+
+d) Find the bias of the estimator in part c) when the treatment effects are non-additive.
+
+e) Generalize the results in parts a), b), c) and d) to the situation where $2N$ is replaced by $N_t + N_c$, with $N_t$ units getting active treatment and $N_c$ units getting control.
+
+f) Argue that the estimator in part c), when the sample sizes are large, will look Gaussian, and conduct a small simulation.
+
+g) Modify the first four parts to consider a different randomized experiment with a covariate $X$.
+
+h) Finally, consider the randomized experiment in part g) when $N_t$ and $N_c$ are not equal.
+\end{exercise}
+
+\begin{solution}
+This problem uses the Neyman-Rubin Causal Model. Let $Y_i(1)$ and $Y_i(0)$ be potential outcomes. The estimand is $\tau = \frac{1}{2N} \sum_{i=1}^{2N} (Y_i(1) - Y_i(0)) = \bar{Y}(1) - \bar{Y}(0)$.
+\begin{itemize}
+    \item[a)] Let $Z_i \in \{0,1\}$ be the treatment assignment. $\sum Z_i = N$. The estimator is $\hat{\tau} = \bar{y}_t - \bar{y}_c$. Since $\mathbb{E}[Z_i] = 1/2$, $\mathbb{E}[\hat{\tau}] = \tau$. It is unbiased.
+    \item[b)] The variance is $Var(\hat{\tau}) = \frac{S_1^2}{N} + \frac{S_0^2}{N} - \frac{S_\tau^2}{2N}$, where $S_1^2, S_0^2$ are population variances of $Y(1), Y(0)$ and $S_\tau^2$ is the variance of individual treatment effects $\tau_i = Y_i(1) - Y_i(0)$.
+    \item[c)] Under additivity, $S_\tau^2 = 0$. An unbiased estimator is $\widehat{Var} = \frac{s_t^2}{N} + \frac{s_c^2}{N}$, where $s_t^2, s_c^2$ are sample variances.
+    \item[d)] If non-additive, the bias is $\mathbb{E}[\widehat{Var}] - Var(\hat{\tau}) = \frac{S_\tau^2}{2N} \geq 0$. The estimator is conservative.
+    \item[e)] Generalization: $Var(\hat{\tau}) = \frac{S_1^2}{N_t} + \frac{S_0^2}{N_c} - \frac{S_\tau^2}{N_t+N_c}$. Unbiased variance estimator under additivity is $\frac{s_t^2}{N_t} + \frac{s_c^2}{N_c}$.
+    \item[f)] By the Finite Population CLT, $\hat{\tau}$ is asymptotically Gaussian. Simulation involves sampling $N$ units from $2N$ and computing $\hat{\tau}$ repeatedly.
+    \item[g)] With covariate $X$, one can use block randomization or ANCOVA. The adjusted estimator $\hat{\tau}_{adj} = (\bar{y}_t - \bar{y}_c) - \hat{\beta}(\bar{x}_t - \bar{x}_c)$ reduces variance by accounting for $X$.
+    \item[h)] The formulas for $N_t \neq N_c$ follow similar logic to part (e) with covariate adjustment terms.
+\end{itemize}
+\end{solution}
+
+\subsection{Team}
+Please solve the following 4 problems.
+
+\begin{exercise}
+Suppose $(X_n)_{n \geq 1}$ is a sequence of i.i.d. random variables and the common law is exponential with parameter one. Show that
+\[
+\mathbb{P}\left[\lim_{n \to \infty} \sup_{\log n} \frac{X_n}{1} = 1\right] = 1.
+\]
+\end{exercise}
+
+\begin{solution}
+We interpret the problem as showing $\frac{M_n}{\log n} \to 1$ almost surely, where $M_n = \max_{1 \leq i \leq n} X_i$.
+For $X_i \sim \text{Exp}(1)$, $\mathbb{P}(X_i > x) = e^{-x}$.
+\begin{enumerate}
+    \item Upper bound: For any $\epsilon > 0$, $\mathbb{P}(X_n > (1+\epsilon)\log n) = e^{-(1+\epsilon)\log n} = n^{-(1+\epsilon)}$. Since $\sum n^{-(1+\epsilon)} < \infty$, by Borel-Cantelli, $X_n \leq (1+\epsilon)\log n$ for all sufficiently large $n$. Thus $\limsup \frac{M_n}{\log n} \leq 1$ a.s.
+    \item Lower bound: $\mathbb{P}(M_n \leq (1-\epsilon)\log n) = (1 - e^{-(1-\epsilon)\log n})^n = (1 - n^{-(1-\epsilon)})^n \leq \exp(-n \cdot n^{-(1-\epsilon)}) = \exp(-n^\epsilon)$.
+    Since $\sum \exp(-n^\epsilon) < \infty$, by Borel-Cantelli, $M_n > (1-\epsilon)\log n$ for all sufficiently large $n$. Thus $\liminf \frac{M_n}{\log n} \geq 1$ a.s.
+\end{enumerate}
+Therefore, $\lim_{n \to \infty} \frac{M_n}{\log n} = 1$ almost surely.
+\end{solution}
+
+\begin{exercise}
+Let $(X_n)_{n \geq 1}$ be i.i.d. real random variables and set $S_n = \sum_{i=1}^n X_i$ for $n \geq 1$. Suppose that for some constant $c \in \mathbb{R}$ we have $S_n/n \to c$ as $n \to \infty$ almost surely. Show that $X_1$ has a finite first moment and $\mathbb{E}[X_1] = c$.
+\end{exercise}
+
+\begin{solution}
+Assume $S_n/n \to c$ a.s. Then we have:
+\[ \frac{X_n}{n} = \frac{S_n - S_{n-1}}{n} = \frac{S_n}{n} - \frac{n-1}{n} \frac{S_{n-1}}{n-1} \to c - 1 \cdot c = 0 \text{ a.s.} \]
+By the Borel-Cantelli Lemma, for i.i.d. variables, $X_n/n \to 0$ a.s. implies $\sum_{n=1}^\infty \mathbb{P}(|X_n| > n) < \infty$.
+Since $\mathbb{P}(|X_n| > n) = \mathbb{P}(|X_1| > n)$, we have $\sum_{n=1}^\infty \mathbb{P}(|X_1| > n) < \infty$.
+This is a necessary and sufficient condition for $\mathbb{E}[|X_1|] < \infty$.
+Now that $X_1$ has a finite first moment, by the Strong Law of Large Numbers, $S_n/n \to \mathbb{E}[X_1]$ a.s.
+Since we are given $S_n/n \to c$ a.s., it must be that $\mathbb{E}[X_1] = c$.
+\end{solution}
+
+\begin{exercise}
+Consider uniform permutation of $\{1,2,\ldots,n\}$ and denote by $X_n$ the number of cycles in the permutation. Find a sequence of reals $(a_n)_{n \geq 1}$ such that
+\[
+\lim_{n \to \infty} \frac{\mathbb{E}[X_n]}{a_n} = 1,
+\]
+and justify your answer.
+\end{exercise}
+
+\begin{solution}
+Let $X_n$ be the number of cycles. We can represent $X_n = \sum_{k=1}^n I_k$, where $I_k$ is the indicator that the $k$-th element starts a new cycle in a standard construction (e.g., the Feller coupling). For a uniform permutation, the probability that the $k$-th element chosen starts a new cycle is $1/k$. These indicators $I_k$ are independent.
+Thus, the expected number of cycles is:
+\[ \mathbb{E}[X_n] = \sum_{k=1}^n \mathbb{E}[I_k] = \sum_{k=1}^n \frac{1}{k} = H_n, \]
+ where $H_n$ is the $n$-th harmonic number. Using the asymptotic expansion of harmonic numbers, $H_n = \log n + \gamma + O(1/n)$, where $\gamma$ is the Euler-Mascheroni constant.
+By choosing $a_n = \log n$, we have:
+\[ \lim_{n \to \infty} \frac{\mathbb{E}[X_n]}{\log n} = \lim_{n \to \infty} \frac{\log n + \gamma + O(1/n)}{\log n} = 1. \]
+Thus, $a_n = \log n$ is the required sequence.
+\end{solution}
+
+\begin{exercise}
+The Erd\H{o}s-R\'enyi random graph $G(n,p)$ with parameters $n \geq 1$ and $p \in [0,1]$ is the random graph whose vertex set is $V = \{1,2,\dots,n\}$ and where for each pair $i \neq j \in V$ the edge $ij$ is present with probability $p$ independently of all the other pairs.
+
+(a) For $\epsilon > 0$, if $p_n \geq (1+\epsilon)\frac{\log n}{n}$, then
+\[
+\mathbb{P}[G(n,p_n) \text{ has an isolated vertex}] \to 0, \quad \text{as } n \to \infty.
+\]
+
+(b) For $\epsilon > 0$, if $p_n \leq (1-\epsilon)\frac{\log n}{n}$, then
+\[
+\mathbb{P}[G(n,p_n) \text{ has an isolated vertex}] \to 1, \quad \text{as } n \to \infty.
+\]
+\end{exercise}
+
+\begin{solution}
+Let $Y$ be the number of isolated vertices. $\mathbb{E}[Y] = n(1-p)^{n-1}$.
+\begin{enumerate}
+    \item[(a)] For $p_n \geq (1+\epsilon)\frac{\log n}{n}$:
+    $\mathbb{E}[Y] = n(1-p)^{n-1} \leq n e^{-p(n-1)} = n e^{-p n} e^p \approx n e^{-(1+\epsilon)\log n} = n^{-\epsilon} \to 0$.
+    By Markov's inequality, $\mathbb{P}(Y \geq 1) \leq \mathbb{E}[Y] \to 0$.
+    \item[(b)] For $p_n \leq (1-\epsilon)\frac{\log n}{n}$:
+    $\mathbb{E}[Y] \approx n e^{-(1-\epsilon)\log n} = n^\epsilon \to \infty$.
+    We use the second moment method: $\mathbb{P}(Y > 0) \geq \frac{(\mathbb{E}[Y])^2}{\mathbb{E}[Y^2]}$.
+    $\mathbb{E}[Y^2] = \mathbb{E}[Y] + n(n-1)\mathbb{P}(I_1=1, I_2=1)$, where $I_1, I_2$ are indicators for vertices 1 and 2 being isolated.
+    $\mathbb{P}(I_1=1, I_2=1) = (1-p)^{2(n-2)+1}$.
+    The ratio $\frac{\mathbb{E}[Y^2]}{(\mathbb{E}[Y])^2} = \frac{1}{\mathbb{E}[Y]} + \frac{n(n-1)(1-p)^{2n-3}}{n^2(1-p)^{2n-2}} = \frac{1}{\mathbb{E}[Y]} + \frac{n-1}{n} \frac{1}{1-p} \to 1$ as $n \to \infty$.
+    Thus $\mathbb{P}(Y > 0) \to 1$.
+\end{enumerate}
+\end{solution}

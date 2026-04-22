@@ -1,0 +1,119 @@
+\section{2017 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 5 problems.
+
+\begin{exercise}
+A submarine is lost in some ocean. There are two (and only two) possible regions: A and B. Experts estimate the probability of being lost in A is 70\%. On the other hand, for each search, the probability of finding this submarine is 40\% if it is lost in A. This number is 80\% for region B. Now we have independently searched region A 4 times and region B once, but still have not found the submarine yet. Now based on this information, which region should we search next? And why?
+\end{exercise}
+
+\begin{solution}
+Let $L_A$ and $L_B$ be the events that the submarine is lost in region A and region B, respectively. We are given $P(L_A) = 0.7$ and $P(L_B) = 0.3$.
+Let $F_A$ denote the event of finding the submarine in a single search of region A, given it is in A, and $F_B$ denote the event of finding it in region B, given it is in B. We have $P(F_A|L_A) = 0.4$ and $P(F_B|L_B) = 0.8$.
+Let $E$ be the event that 4 independent searches in region A and 1 search in region B all failed to find the submarine. Assuming that searching region A when the submarine is in region B (and vice versa) has zero probability of finding it, we have:
+\[ P(E|L_A) = (1 - P(F_A|L_A))^4 \cdot 1^1 = (0.6)^4 = 0.1296 \]
+\[ P(E|L_B) = 1^4 \cdot (1 - P(F_B|L_B))^1 = 0.2 \]
+By Bayes' Theorem, the posterior probability that the submarine is in region A is:
+\[ P(L_A|E) = \frac{P(E|L_A)P(L_A)}{P(E|L_A)P(L_A) + P(E|L_B)P(L_B)} = \frac{0.1296 \times 0.7}{0.1296 \times 0.7 + 0.2 \times 0.3} = \frac{0.09072}{0.15072} \approx 0.6019 \]
+Similarly, $P(L_B|E) = 1 - P(L_A|E) \approx 0.3981$.
+To decide where to search next, we compare the probabilities of finding the submarine in each region in the next search:
+- Probability of finding in A: $P(F_A \text{ in next search} | E) = P(L_A|E)P(F_A|L_A) \approx 0.6019 \times 0.4 = 0.24076$.
+- Probability of finding in B: $P(F_B \text{ in next search} | E) = P(L_B|E)P(F_B|L_B) \approx 0.3981 \times 0.8 = 0.31848$.
+Since $0.31848 > 0.24076$, we should search \textbf{region B} next.
+\end{solution}
+
+\begin{exercise}
+A teacher and 12 students sit around a circle. In the beginning the teacher holds a gift, he will randomly pass it to the left person or right person next to him, so as the other students each time. The rule is that the gift will be eventually given to some student (not teacher) if he/she is the last student who ever touches the gift.
+
+Which student(s) have the highest probability to get this gift (i.e., win)?
+\end{exercise}
+
+\begin{solution}
+This problem can be modeled as a simple symmetric random walk on a cycle of $N=13$ vertices, labeled $\{0, 1, \dots, 12\}$, where $0$ is the teacher and $\{1, \dots, 12\}$ are the students. The winner is the vertex $k \in \{1, \dots, 12\}$ that is the last to be visited among the set $\{1, \dots, 12\}$ by a random walk starting at $0$.
+
+A well-known result for symmetric random walks on a cycle is that for any starting vertex $v$, all other $N-1$ vertices are equally likely to be the last one visited. 
+Specifically, let $T$ be the first time the walk has visited all vertices in the cycle. The vertex visited at time $T$ (the "last" vertex) is uniformly distributed over all vertices except the starting vertex.
+To see this, let the vertices be $\{0, 1, \dots, n\}$. For a vertex $k \in \{1, \dots, n\}$ to be the last one visited, the walk must reach either $k-1$ or $k+1$ (modulo $n+1$) first. Suppose it hits $k-1$ first. For $k$ to be the last visited, the walk starting from $k-1$ must then reach $k+1$ by traveling the "long way" (through all other vertices) before hitting $k$. On a path, the probability of hitting one endpoint before the other starting from an adjacent node is $1/n$. 
+
+Thus, each student has a probability of exactly $1/12$ to win. All students have the same \textbf{equal highest probability}.
+\end{solution}
+
+\begin{exercise}
+In a party, $N$ people attend, each of them brings $k$ gifts. When they leave, each of them randomly picks $k$ gifts. Let $X$ be the total number of gifts which are taken back by their owners. Let's fix $k$, please find the limiting distribution of $X$ when $N \to \infty$.
+\end{exercise}
+
+\begin{solution}
+Let $M = Nk$ be the total number of gifts. Each person $i \in \{1, \dots, N\}$ has a set of $k$ distinct gifts. After the exchange, person $i$ receives a subset of $k$ gifts chosen uniformly at random from the $M$ available gifts.
+Let $I_{ij}$ be the indicator variable that the $j$-th gift of person $i$ is returned to person $i$, for $j \in \{1, \dots, k\}$. The total number of returned gifts is $X = \sum_{i=1}^N \sum_{j=1}^k I_{ij}$.
+The probability that a specific gift is picked by its owner is:
+\[ P(I_{ij} = 1) = \frac{\binom{M-1}{k-1}}{\binom{M}{k}} = \frac{k}{M} = \frac{k}{Nk} = \frac{1}{N} \]
+The expected value is $E[X] = Nk \times \frac{1}{N} = k$.
+As $N \to \infty$, the indicators $I_{ij}$ become "nearly" independent with small success probability $1/N$. More formally, using the method of factorial moments or the Chen-Stein method, we can show that $X$ converges in distribution to a Poisson random variable.
+For any fixed $r$, the $r$-th factorial moment $E[(X)_r] = E[X(X-1)\dots(X-r+1)]$ converges to $k^r$.
+Thus, the limiting distribution of $X$ is \textbf{Poisson with parameter $k$}, i.e., $X \xrightarrow{d} \text{Poisson}(k)$.
+\end{solution}
+
+\begin{exercise}
+Suppose that a random vector $\mathbf{x} = (x_1, ..., x_n)' \in \mathbb{R}^n$ ($n \geq 2$) is distributed as a multivariate normal distribution $N(\mathbf{0}, \boldsymbol{\Sigma})$ with the following joint probability density function
+\[
+f(\mathbf{x}) = \frac{1}{(2\pi)^{n/2}\det(\boldsymbol{\Sigma})^{1/2}} \exp\left\{-\frac{1}{2}\mathbf{x}'\boldsymbol{\Sigma}^{-1}\mathbf{x}\right\}, \mathbf{x} \in \mathbb{R}^n,
+\]
+where $\Sigma$ is an $n \times n$ positive definite matrix. Let the $(i,j)$ element of $\Omega = \Sigma^{-1}$ be $\omega_{ij}$ ($1 \leq i, j \leq n$). For $1 \leq i \neq j \leq n$, show that if $\omega_{ij} = 0$, then $x_i$ and $x_j$ are conditionally independent when the other elements of $\mathbf{x}$ are given.
+
+%
+\end{exercise}
+
+\begin{solution}
+Let $\mathbf{x}_{-(i,j)}$ denote the vector $\mathbf{x}$ excluding the elements $x_i$ and $x_j$. The conditional density of $(x_i, x_j)$ given $\mathbf{x}_{-(i,j)}$ is proportional to the joint density:
+\[ f(x_i, x_j | \mathbf{x}_{-(i,j)}) \propto f(\mathbf{x}) \propto \exp\left( -\frac{1}{2} \mathbf{x}' \Omega \mathbf{x} \right) \]
+We expand the quadratic form $\mathbf{x}' \Omega \mathbf{x}$:
+\[ \mathbf{x}' \Omega \mathbf{x} = \sum_{a=1}^n \sum_{b=1}^n \omega_{ab} x_a x_b = \omega_{ii} x_i^2 + \omega_{jj} x_j^2 + 2\omega_{ij} x_i x_j + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k + C \]
+where $C$ depends only on $\mathbf{x}_{-(i,j)}$.
+If $\omega_{ij} = 0$, the cross-term $2\omega_{ij} x_i x_j$ vanishes. The expression becomes:
+\[ \mathbf{x}' \Omega \mathbf{x} = \left( \omega_{ii} x_i^2 + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k \right) + \left( \omega_{jj} x_j^2 + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k \right) + C \]
+Consequently, the conditional density factors into two functions:
+\[ f(x_i, x_j | \mathbf{x}_{-(i,j)}) \propto \exp\left( -\frac{1}{2} g(x_i, \mathbf{x}_{-(i,j)}) \right) \exp\left( -\frac{1}{2} h(x_j, \mathbf{x}_{-(i,j)}) \right) \]
+The factorization of the conditional joint density implies that $x_i$ and $x_j$ are conditionally independent given $\mathbf{x}_{-(i,j)}$.
+\end{solution}
+
+\begin{exercise}
+Let $\mathbf{x}, \mathbf{y}$ be two independent random vectors in $\mathbb{R}^n$ ($n \geq 3$). Assume that $P(\mathbf{y} = \mathbf{0}) = 0$ and $\mathbf{x}$ has a standard multivariate normal distribution, i.e., $\mathbf{x} \sim N(0, I_n)$.
+
+(a) For any nonzero constant vector $\mathbf{a} \in \mathbb{R}^n$ satisfying $\|\mathbf{a}\| = (\mathbf{a}'\mathbf{a})^{1/2} = 1$, prove that
+\[
+\sqrt{n-1}\frac{\mathbf{a}'\mathbf{x}}{\sqrt{\|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2}} \sim t_{n-1},
+\]
+where $t_{n-1}$ stands for a $t$ distribution with $n-1$ degrees of freedom.
+
+(b) The sample correlation coefficient between $\mathbf{x} = (x_1, ..., x_n)'$ and $\mathbf{y} = (y_1, ..., y_n)'$ is defined as
+\[
+r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}}.
+\]
+Show that $\sqrt{n-2}\frac{r}{\sqrt{1-r^2}} \sim t_{n-2}$.
+
+%
+
+%
+\end{exercise}
+
+\begin{solution}
+(a) Let $Z_1 = \mathbf{a}'\mathbf{x}$. Since $\mathbf{x} \sim N(0, I_n)$ and $\|\mathbf{a}\|=1$, $Z_1 \sim N(0, 1)$.
+Construct an orthogonal matrix $\mathbf{P}$ such that its first row is $\mathbf{a}'$. Let $\mathbf{z} = \mathbf{Px}$. Then $\mathbf{z} \sim N(0, \mathbf{P}I_n\mathbf{P}') = N(0, I_n)$.
+The components of $\mathbf{z}$ are $z_1 = \mathbf{a}'\mathbf{x}$ and $z_2, \dots, z_n$, which are i.i.d. $N(0, 1)$.
+Since $\mathbf{P}$ is orthogonal, $\|\mathbf{x}\|^2 = \|\mathbf{z}\|^2 = \sum_{i=1}^n z_i^2$. Thus:
+\[ \|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2 = \|\mathbf{z}\|^2 - z_1^2 = \sum_{i=2}^n z_i^2 \]
+This sum of squares of $n-1$ i.i.d. $N(0,1)$ variables follows a $\chi^2_{n-1}$ distribution. Furthermore, $z_1$ is independent of $(z_2, \dots, z_n)$, so it is independent of $\sum_{i=2}^n z_i^2$.
+By definition of the $t$-distribution, $T = \frac{Z_1}{\sqrt{\chi^2_{n-1}/(n-1)}} = \sqrt{n-1} \frac{z_1}{\sqrt{\sum_{i=2}^n z_i^2}}$ follows a $t_{n-1}$ distribution.
+
+(b) Let $\mathbf{J} = \mathbf{I}_n - \frac{1}{n}\mathbf{11}'$ be the centering matrix. The centered vectors are $\tilde{\mathbf{x}} = \mathbf{Jx}$ and $\tilde{\mathbf{y}} = \mathbf{Jy}$. The sample correlation is:
+\[ r = \frac{\tilde{\mathbf{x}}' \tilde{\mathbf{y}}}{\|\tilde{\mathbf{x}}\| \|\tilde{\mathbf{y}}\|} \]
+Since $\mathbf{x}$ and $\mathbf{y}$ are independent, we can condition on $\mathbf{y}$. For a fixed $\mathbf{y}$, let $\mathbf{u} = \tilde{\mathbf{y}}/\|\tilde{\mathbf{y}}\|$. Note that $\mathbf{u}'\mathbf{1} = 0$ and $\|\mathbf{u}\|=1$.
+The vector $\tilde{\mathbf{x}}$ is the projection of $\mathbf{x}$ onto the $(n-1)$-dimensional subspace $H = \{ \mathbf{v} : \mathbf{v}'\mathbf{1} = 0 \}$. Since the distribution of $\mathbf{x}$ is spherically symmetric, the distribution of $\tilde{\mathbf{x}}$ within $H$ is also spherically symmetric.
+Let $\mathbf{Q}$ be an $n \times (n-1)$ matrix whose columns form an orthonormal basis for $H$. We can write $\tilde{\mathbf{x}} = \mathbf{Q}\mathbf{w}$ where $\mathbf{w} \sim N(0, I_{n-1})$. Then $r = \frac{\mathbf{w}'\mathbf{Q}'\mathbf{u}}{\|\mathbf{w}\|}$.
+Let $\mathbf{a} = \mathbf{Q}'\mathbf{u}$. Since $\mathbf{u} \in H$, $\|\mathbf{a}\| = \|\mathbf{u}\| = 1$. Then $r = \frac{\mathbf{a}'\mathbf{w}}{\|\mathbf{w}\|}$ where $\mathbf{w} \sim N(0, I_{n-1})$.
+Let $W_1 = \mathbf{a}'\mathbf{w}$. From part (a) with $n$ replaced by $n-1$:
+\[ \sqrt{n-2} \frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}} \sim t_{n-2} \]
+Noting that $\frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}} = \frac{W_1/\|\mathbf{w}\|}{\sqrt{1 - (W_1/\|\mathbf{w}\|)^2}} = \frac{r}{\sqrt{1-r^2}}$, we conclude:
+\[ \sqrt{n-2} \frac{r}{\sqrt{1-r^2}} \sim t_{n-2} \]
+Since this holds for any $\mathbf{y}$, it holds unconditionally.
+\end{solution}

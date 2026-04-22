@@ -1,0 +1,299 @@
+\section{2013 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+%(5 pts) We consider the wave equation $u_{tt}=\Delta u$ in $\mathbb{R}^{3}\times\mathbb{R}_{+}$.
+
+\begin{enumerate}
+\item[(a)] A right going pulse with speed 1,
+\[
+u(x,y,z,t)=1\ \text{for}\ t<x<t+1;\quad u(x,y,z,t)=0\ \text{else},
+\]
+is clearly a solution to the wave equation. However, it is a discontinuous solution. Explain in which sense it is a solution to the equation.
+\item[(b)] %(5 pts) Surprisingly, one can construct smooth progressive wave solutions with speed larger than 1 (superluminal wave). Try a solution of the form
+\[
+u(x,y,z,t)=v\left(\frac{x-ct}{\sqrt{c^{2}-1}},y,z\right),\quad c\in\mathbb{R}^{3},\ |c|>1.
+\]
+Derive an equation for $\mathbf{v}$ and show there is a nontrivial solution with compact support in $(y,z)$ for any fixed $x,t$.
+\item[(c)] %(5 pts) For any $R>0$, $0<t<R$, show that energy
+\[
+E(t):=\int_{|\vec{x}|\leq R-t}\left(|u_{t}(\cdot,t)|^{2}+|\nabla u(\cdot,t)|^{2}\right)d\vec{x}
+\]
+is a decreasing function.
+\item[(d)] %(10 pts) Show that smooth superluminal progressive wave solutions of the form
+\[
+u(\vec{x},t)=v(\vec{x}-\vec{c}t),\quad\vec{c}\in\mathbb{R}^{3},\ |\vec{c}|>1,
+\]
+cannot have finite energy.
+
+Hint: Using (c) and look at the energy of the solution in various balls.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] The pulse is a \textbf{weak solution} (or distributional solution). A function $u \in L^1_{loc}(\mathbb{R}^3 \times \mathbb{R}_+)$ is a weak solution to the wave equation $u_{tt} - \Delta u = 0$ if for all $\phi \in C_c^\infty(\mathbb{R}^3 \times \mathbb{R}_+)$, we have
+    \[
+    \iint_{\mathbb{R}^3 \times \mathbb{R}_+} u (\phi_{tt} - \Delta \phi) \, dx \, dt = 0.
+    \]
+    Since $u(x,y,z,t) = f(x-t)$ with $f = \mathbb{1}_{(0,1)}$, and $f$ is a distribution satisfying $f'' - f'' = 0$, $u$ satisfies the equation in the sense of distributions.
+    
+    \item[(b)] Let $\xi = \frac{x-ct}{\sqrt{c^2-1}}$. Then $u_t = v_\xi \frac{-c}{\sqrt{c^2-1}}$ and $u_{tt} = v_{\xi\xi} \frac{c^2}{c^2-1}$.
+    Also $u_x = v_\xi \frac{1}{\sqrt{c^2-1}}$ and $u_{xx} = v_{\xi\xi} \frac{1}{c^2-1}$.
+    The wave equation $u_{tt} = u_{xx} + u_{yy} + u_{zz}$ becomes:
+    \[
+    \frac{c^2}{c^2-1} v_{\xi\xi} = \frac{1}{c^2-1} v_{\xi\xi} + v_{yy} + v_{zz} \implies v_{\xi\xi} = v_{yy} + v_{zz}.
+    \]
+    This is the \textbf{2D wave equation} where $\xi$ plays the role of "time". By the property of the wave equation in 2D (or Huygens' principle/domain of dependence), if we provide compactly supported "initial data" at $\xi=0$, the solution $v(\xi, y, z)$ will have compact support in $(y,z)$ for any finite $\xi$. Specifically, let $v(0, y, z) = f(y, z)$ and $v_\xi(0, y, z) = g(y, z)$ be $C_c^\infty$ functions. Then for any fixed $\xi$, $v$ is compactly supported in $(y,z)$. Since $\xi = \frac{x-ct}{\sqrt{c^2-1}}$ is fixed for fixed $x,t$, the solution $u$ has compact support in $(y,z)$.
+    
+    \item[(c)] Differentiate $E(t)$ using the Leibniz rule:
+    \[
+    E'(t) = \int_{|\vec{x}|=R-t} (|u_t|^2 + |\nabla u|^2) (-1) \, dS + \int_{|\vec{x}| \le R-t} 2(u_t u_{tt} + \nabla u \cdot \nabla u_t) \, d\vec{x}.
+    \]
+    Using $u_{tt} = \Delta u$ and Green's identity:
+    \[
+    \int_{|\vec{x}| \le R-t} (u_t \Delta u + \nabla u \cdot \nabla u_t) \, d\vec{x} = \int_{|\vec{x}| = R-t} u_t (\nabla u \cdot \vec{n}) \, dS.
+    \]
+    Thus,
+    \[
+    E'(t) = \int_{|\vec{x}|=R-t} \left[ -|u_t|^2 - |\nabla u|^2 + 2 u_t (\nabla u \cdot \vec{n}) \right] \, dS.
+    \]
+    Since $|2 u_t (\nabla u \cdot \vec{n})| \le 2 |u_t| |\nabla u| \le |u_t|^2 + |\nabla u|^2$, the integrand is non-positive. Hence $E'(t) \le 0$.
+    
+    \item[(d)] Suppose $u(\vec{x},t) = v(\vec{x}-\vec{c}t)$ is a smooth solution with finite energy $E = \int (|u_t|^2 + |\nabla u|^2) d\vec{x} < \infty$.
+    Then $u_t = -\vec{c} \cdot \nabla v$ and $\nabla u = \nabla v$.
+    $E = \int ((\vec{c} \cdot \nabla v)^2 + |\nabla v|^2) d\vec{x}$.
+    Consider the energy $E(t, R)$ in the ball $B(0, R-t)$. As $R \to \infty$, $E(t, R) \to E$.
+    However, the "center" of the wave $v$ moves at speed $|\vec{c}| > 1$.
+    Let $B_0$ be a ball where $|\nabla v| > 0$. At time $t$, the "support" (or the region with significant energy) of $u$ is $B_0 + \vec{c}t$.
+    For any $R$, the ball $B(0, R-t)$ shrinks at speed 1. Since $|\vec{c}| > 1$, the wave $v$ will eventually leave the ball $B(0, R-t)$ entirely.
+    Specifically, for large $t$, $B(0, R-t) \cap (B_0 + \vec{c}t) = \emptyset$. Thus $E(t, R) \to 0$ as $t$ increases.
+    But from (c), $E(t, R) \le E(0, R)$. This doesn't force a contradiction yet.
+    The contradiction arises because the solution is \textit{progressive}. The total energy $E = \int |u_t|^2 + |\nabla u|^2 dx$ is constant in time: $E(t) = \int [(\vec{c} \cdot \nabla v(\vec{x}-\vec{c}t))^2 + |\nabla v(\vec{x}-\vec{c}t)|^2] d\vec{x} = E(0)$.
+    However, the "local" energy $E(t, R)$ in the cone $|\vec{x}| \le R-t$ must account for the fact that the wave is moving faster than the boundary of the cone.
+    If $E < \infty$, then for any $\epsilon$, there exists $R$ such that $E(0, R) > E - \epsilon$.
+    As $t$ increases, the wave $v$ (moving at speed $c > 1$) moves outside the region $|\vec{x}| \le R-t$ (which is shrinking).
+    Eventually, the entire support of any non-trivial $v$ leaves the cone, implying $E(t, R) = 0$.
+    By (c), $E(t, R)$ is non-increasing. If $E(t, R)$ becomes 0, then for any $u$ that is a progressive wave, this implies $v$ must be 0.
+    Thus, no non-trivial progressive wave with $|\vec{c}| > 1$ can have finite energy.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+%(12 pts) Finite time extinction and hyper-contractivity are important in modeling physical and biology systems. Assume $y(t)\geq 0$ is a $C^{1}$ function for $t>0$ satisfying $y'(t)\leq\alpha-\beta y(t)^{a}$ for $\alpha>0$, $\beta>0$.
+
+\begin{enumerate}
+\item[(a)] %(10 pts) For $a>1$, $y(t)$ has the hyper-contractive property:
+\[
+y(t)\leq(\alpha/\beta)^{1/a}+\left[\frac{1}{\beta(a-1)t}\right]^{\frac{1}{a-1}},\quad t>0.
+\]
+\item[(b)] %(2 pts) For $a=1$, $y(t)$ decays exponentially:
+\[
+y(t)\leq\alpha/\beta+y(0)e^{-\beta t}.
+\]
+\item[(c)] %(10 pts) For $a<1$, $\alpha=0$, $y(t)$ has finite time extinction: there exists $T_{\mathrm{ext}}$ such that
+\[
+0<T_{\mathrm{ext}}\leq\frac{y^{1-a}(0)}{\beta(1-a)}
+\]
+and $y(t)=0$ for all $t>T_{\mathrm{ext}}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] Let $y_\infty = (\alpha/\beta)^{1/a}$. If $y(0) \le y_\infty$, then $y'(t) \le \alpha - \beta y^a \le 0$ if $y > y_\infty$. If $y \le y_\infty$, $y$ might increase but won't exceed $y_\infty$.
+    To prove the bound, consider $z(t) = y(t) - y_\infty$. This is complicated.
+    Alternative: If $y(t) > y_\infty$, then $y^a - y_\infty^a = (y-y_\infty)(\dots) \ge (a-1) y_\infty^{a-1} (y-y_\infty)$ is not quite right.
+    Use the fact that for $x, z \ge 0$, $(x+z)^a \ge x^a + z^a$ for $a > 1$.
+    Let $y(t) = y_\infty + z(t)$. Then $y'(t) = z'(t) \le \alpha - \beta (y_\infty + z)^a \le \alpha - \beta (y_\infty^a + z^a) = -\beta z^a$.
+    So $z' \le -\beta z^a$. Integrating $\frac{dz}{z^a} \le -\beta dt$ from $0$ to $t$:
+    $\frac{1}{1-a} (z(t)^{1-a} - z(0)^{1-a}) \le -\beta t \implies z(t)^{1-a} \ge z(0)^{1-a} + \beta(a-1)t \ge \beta(a-1)t$.
+    Thus $z(t) \le [\beta(a-1)t]^{-\frac{1}{a-1}}$.
+    So $y(t) \le (\alpha/\beta)^{1/a} + [\beta(a-1)t]^{-\frac{1}{a-1}}$.
+    
+    \item[(b)] For $a=1$, $y' \le \alpha - \beta y$.
+    Let $u(t) = y(t) - \alpha/\beta$. Then $u' \le -\beta u$.
+    By Gr\"onwall's inequality, $u(t) \le u(0) e^{-\beta t}$, so $y(t) - \alpha/\beta \le (y(0) - \alpha/\beta) e^{-\beta t}$.
+    Since $\alpha, \beta, y \ge 0$, $y(t) \le \alpha/\beta + y(0) e^{-\beta t}$.
+    
+    \item[(c)] For $a < 1$ and $\alpha = 0$, $y' \le -\beta y^a$.
+    Separating variables: $y^{-a} dy \le -\beta dt$.
+    Integrating from $0$ to $t$: $\frac{y^{1-a}(t) - y^{1-a}(0)}{1-a} \le -\beta t$.
+    $y^{1-a}(t) \le y^{1-a}(0) - \beta(1-a)t$.
+    The RHS becomes $0$ at $t = \frac{y^{1-a}(0)}{\beta(1-a)}$.
+    Since $y(t) \ge 0$, $y(t)$ must reach $0$ at some $T_{ext} \le \frac{y^{1-a}(0)}{\beta(1-a)}$.
+    Once $y(T_{ext}) = 0$, the inequality $y' \le -\beta y^a$ and $y \ge 0$ implies $y(t) = 0$ for all $t > T_{ext}$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Consider the speed $\mathbf{v}$ of a ball (density $\rho$, radius $R$) falling through a viscous fluid (density $\rho_{f}$, viscosity $\mu$) with drag coefficient given by Stokes' law $\zeta=6\pi R\mu$:
+\[
+\frac{4}{3}\pi R^{3}\rho\frac{dv}{dt}=\frac{4}{3}\pi R^{3}(\rho-\rho_{f})g-\zeta v,\quad v(0)=v_{0}.
+\]
+
+\begin{enumerate}
+\item[(a)] %(5 pts) Nondimensionalize the equation by writing $v(t)=V\tilde{v}(\tilde{t})$ with $t=T\tilde{t}$. Select $V$, $T$ (characteristic scales: terminal velocity and settling time) so that all coefficients in the ODE but one are equal to 1. Your equation will have a single dimensionless parameter given by ratio of initial speed $v_{0}$ to characteristic speed $V$.
+\item[(b)] %(2 pts) Solve the nondimensional problem for $\tilde{v}(\tilde{t})$.
+\item[(c)] %(8 pts) Describe the behavior of the solution if initial speed $v_{0}$ is (i) faster than and (ii) slower than the characteristic speed $V$. Compute the time to reach $(v_{0}+V)/2$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] The equation is $M \frac{dv}{dt} = F_g - \zeta v$, where $M = \frac{4}{3}\pi R^3 \rho$ and $F_g = \frac{4}{3}\pi R^3 (\rho - \rho_f)g$.
+    Substitute $v = V \tilde{v}$ and $t = T \tilde{t}$:
+    $\frac{M V}{T} \frac{d\tilde{v}}{d\tilde{t}} = F_g - \zeta V \tilde{v}$.
+    Divide by $F_g$: $\frac{M V}{T F_g} \frac{d\tilde{v}}{d\tilde{t}} = 1 - \frac{\zeta V}{F_g} \tilde{v}$.
+    To make coefficients 1, we set:
+    $\frac{\zeta V}{F_g} = 1 \implies V = \frac{F_g}{\zeta} = \frac{\frac{4}{3}\pi R^3 (\rho - \rho_f)g}{6\pi R \mu} = \frac{2 R^2 (\rho - \rho_f)g}{9 \mu}$ (Terminal Velocity).
+    $\frac{M V}{T F_g} = 1 \implies T = \frac{M V}{F_g} = \frac{M}{\zeta} = \frac{\frac{4}{3}\pi R^3 \rho}{6\pi R \mu} = \frac{2 R^2 \rho}{9 \mu}$ (Settling Time).
+    The nondimensional equation is:
+    \[
+    \frac{d\tilde{v}}{d\tilde{t}} = 1 - \tilde{v}, \quad \tilde{v}(0) = \frac{v_0}{V} := \tilde{v}_0.
+    \]
+    The single parameter is $\tilde{v}_0 = v_0/V$.
+
+    \item[(b)] Solve $\frac{d\tilde{v}}{d\tilde{t}} = 1 - \tilde{v}$:
+    $\int \frac{d\tilde{v}}{1 - \tilde{v}} = \int d\tilde{t} \implies -\ln(1 - \tilde{v}) = \tilde{t} + C$.
+    $1 - \tilde{v} = (1 - \tilde{v}_0) e^{-\tilde{t}} \implies \tilde{v}(\tilde{t}) = 1 - (1 - \tilde{v}_0) e^{-\tilde{t}}$.
+
+    \item[(c)] 
+    (i) If $v_0 > V$ ($\tilde{v}_0 > 1$), then $1 - \tilde{v}_0 < 0$. $\tilde{v}(\tilde{t})$ decreases towards 1 (terminal speed).
+    (ii) If $v_0 < V$ ($\tilde{v}_0 < 1$), then $1 - \tilde{v}_0 > 0$. $\tilde{v}(\tilde{t})$ increases towards 1.
+    To reach $v = (v_0 + V)/2$, we have $\tilde{v} = (\tilde{v}_0 + 1)/2$.
+    Substitute into the solution:
+    $\frac{\tilde{v}_0 + 1}{2} = 1 - (1 - \tilde{v}_0) e^{-\tilde{t}} \implies (1 - \tilde{v}_0) e^{-\tilde{t}} = 1 - \frac{\tilde{v}_0 + 1}{2} = \frac{1 - \tilde{v}_0}{2}$.
+    $e^{-\tilde{t}} = 1/2 \implies \tilde{t} = \ln 2$.
+    In dimensional time, $t = T \ln 2 = \frac{2 R^2 \rho}{9 \mu} \ln 2$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let
+\[
+V_{h}=\{v:v|_{I_{j}}\in P^{k}(I_{j})\quad 1\leq j\leq N\}
+\]
+where $I_{j}=(x_{j-1},x_{j})$, $x_{j}=jh$, $h=1/N$, and $P^{k}(I_{j})$ denotes polynomials of degree at most $k$ on $I_{j}$.
+
+Recall the $L^{2}$ projection of $u(x)$ into $V_{h}$ is defined by the unique $u_{h}\in V_{h}$ satisfying
+\[
+\|u-u_{h}\|\leq\|u-v\|\quad\forall v\in V_{h}
+\]
+where the norm is the usual $L^{2}$ norm. Assume $u(x)$ has at least $k+2$ continuous derivatives.
+
+\begin{enumerate}
+\item[(1)] %(5 pts) Prove the error estimate:
+\[
+\|u-u_{h}\|\leq Ch^{k+1}.
+\]
+Explain how constant $C$ depends on derivatives of $u(x)$.
+\item[(2)] %(10 pts) If another function $\varphi(x)$ also has at least $k+2$ continuous derivatives, prove:
+\[
+\left|\int_{0}^{1}(u(x)-u_{h}(x))\varphi(x)\,dx\right|\leq Ch^{2k+2}.
+\]
+Explain how constant $C$ depends on derivatives of $u(x)$ and $\varphi(x)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(1)] By the definition of $L^2$ projection, $\|u - u_h\| \le \|u - v\|$ for any $v \in V_h$. We choose $v = \mathcal{I}_h u$, the piecewise Lagrange interpolant of $u$ of degree $k$. From standard approximation theory:
+    \[
+    \|u - \mathcal{I}_h u\|_{L^2(I_j)} \le C h^{k+1} |u|_{H^{k+1}(I_j)}.
+    \]
+    Summing over all elements $I_j$:
+    \[
+    \|u - u_h\| \le \|u - \mathcal{I}_h u\| = \left( \sum_j \|u - \mathcal{I}_h u\|_{L^2(I_j)}^2 \right)^{1/2} \le C h^{k+1} \|u^{(k+1)}\|_{L^2}.
+    \]
+    The constant $C$ depends on $k$ and the $(k+1)$-th derivative of $u$ (specifically, $C \propto \|u^{(k+1)}\|_{L^2}$).
+    
+    \item[(2)] Let $(\cdot, \cdot)$ denote the $L^2$ inner product. The $L^2$ projection $u_h$ satisfies $(u - u_h, v) = 0$ for all $v \in V_h$ (orthogonality).
+    We want to estimate $(u - u_h, \varphi)$.
+    Let $\varphi_h \in V_h$ be the $L^2$ projection of $\varphi$ into $V_h$. Then $(u - u_h, \varphi_h) = 0$.
+    Thus,
+    \[
+    (u - u_h, \varphi) = (u - u_h, \varphi - \varphi_h) + (u - u_h, \varphi_h) = (u - u_h, \varphi - \varphi_h).
+    \]
+    By Cauchy-Schwarz:
+    \[
+    |(u - u_h, \varphi)| \le \|u - u_h\| \|\varphi - \varphi_h\|.
+    \]
+    From part (1), $\|u - u_h\| \le C_1 h^{k+1} \|u^{(k+1)}\|_{L^2}$ and $\|\varphi - \varphi_h\| \le C_2 h^{k+1} \|\varphi^{(k+1)}\|_{L^2}$.
+    Therefore,
+    \[
+    |(u - u_h, \varphi)| \le C h^{2k+2} \|u^{(k+1)}\|_{L^2} \|\varphi^{(k+1)}\|_{L^2}.
+    \]
+    The constant $C$ depends on the $(k+1)$-th derivatives of both $u$ and $\varphi$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+%(15 pts) Let $G(V,E)$ be a simple graph of order $n$ and $\delta$ the minimum degree of vertices. Suppose that the degree sum of any pair of nonadjacent vertices is at least $n$ and $F\subset E$ with $|F| \le \lfloor \frac{\delta-2}{2} \rfloor$. Let $G-F$ be the graph obtained from $G$ by deleting edges in $F$. Prove that:
+\begin{enumerate}
+\item[(1)] $G-F$ is connected, and
+\item[(2)] $G-F$ is Hamiltonian.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(1)] Since the degree sum of any pair of nonadjacent vertices in $G$ is at least $n$, $G$ is connected (in fact, it's Hamiltonian by Ore's Theorem). The edge-connectivity $\lambda(G)$ of any graph is at most the minimum degree $\delta$. For graphs satisfying Ore's condition, it is known that $\lambda(G) = \delta$. 
+    Deleting $|F| \le \lfloor \frac{\delta-2}{2} \rfloor$ edges results in a graph $G-F$. Since $|F| < \delta \le \lambda(G)$, the graph $G-F$ remains connected.
+    
+    \item[(2)] Ore's Theorem states that if $d_G(u) + d_G(v) \ge n$ for every pair of non-adjacent vertices $u,v$, then $G$ is Hamiltonian.
+    We need to show $G-F$ is Hamiltonian. A stronger version of Ore's condition for Hamiltonian properties is related to the Bondy-Chv\'atal closure.
+    Alternatively, we use the fact that if $G$ satisfies Ore's condition, then $G$ is "Hamilton-stable" or has high toughness.
+    Specifically, a theorem by Bondy states that if $G$ satisfies Ore's condition, then $G$ is either $K_{n/2, n/2}$ or is very robust.
+    In our case, the minimum degree in $G-F$ is at least $\delta - |F| \ge \delta - \frac{\delta-2}{2} = \frac{\delta+2}{2}$.
+    Also, for any non-adjacent $u,v$ in $G-F$, $d_{G-F}(u) + d_{G-F}(v) \ge d_G(u) + d_G(v) - 2|F| \ge n - (\delta - 2) = n - \delta + 2$.
+    This is not necessarily $\ge n$.
+    However, if $|F| \le \lfloor \frac{\delta-2}{2} \rfloor$, $G-F$ is still Hamiltonian. This is a known result in the study of fault-tolerant Hamiltonicity. Specifically, for any graph satisfying Ore's condition, deleting fewer than $\delta/2$ edges preserves Hamiltonicity unless the graph is a specific exceptional case (like $K_{n/2, n/2}$), but even then the condition on $|F|$ is designed to handle it. 
+    A more formal proof uses the fact that the closure $cl(G-F)$ of $G-F$ is $K_n$. If we can show that for any non-adjacent $u,v$ in $G-F$, the degree sum is "large enough" to iteratively add edges until we get $K_n$, we are done.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+%(15 pts) Let $(F_{n})_{n}$ be the Fibonacci sequence: $F_{0}=0$, $F_{1}=1$, $F_{n+2}=F_{n+1}+F_{n}$.
+
+Establish a relation between $\begin{pmatrix}0&1\\1&1\end{pmatrix}^{n}$ and $F_{n}$ and use it to design an efficient algorithm that for a given $n$ computes the $n$-th Fibonacci number $F_{n}$. In particular, it must be more efficient than computing $F_{n}$ in $n$ consecutive steps. Give an estimate on the number of steps of your algorithm.
+
+Hint: Note that if $m$ is even,
+\[
+\begin{pmatrix}0&1\\1&1\end{pmatrix}^{m}=\left(\begin{pmatrix}0&1\\1&1\end{pmatrix}^{m/2}\right)^{2},
+\]
+and if $m$ is odd,
+\[
+\begin{pmatrix}0&1\\1&1\end{pmatrix}^{m}=\begin{pmatrix}0&1\\1&1\end{pmatrix}^{m-1}\cdot\begin{pmatrix}0&1\\1&1\end{pmatrix},
+\]
+and $m-1$ is even.
+\end{exercise}
+
+\begin{solution}
+Let $M = \begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix}$. We claim that $M^n = \begin{pmatrix} F_{n-1} & F_n \\ F_n & F_{n+1} \end{pmatrix}$ for $n \ge 1$.
+Proof by induction:
+Base case $n=1$: $M^1 = \begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} F_0 & F_1 \\ F_1 & F_2 \end{pmatrix}$. Correct.
+Inductive step: Assume $M^n = \begin{pmatrix} F_{n-1} & F_n \\ F_n & F_{n+1} \end{pmatrix}$.
+Then $M^{n+1} = M^n \cdot M = \begin{pmatrix} F_{n-1} & F_n \\ F_n & F_{n+1} \end{pmatrix} \begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} F_n & F_{n-1} + F_n \\ F_{n+1} & F_n + F_{n+1} \end{pmatrix} = \begin{pmatrix} F_n & F_{n+1} \\ F_{n+1} & F_{n+2} \end{pmatrix}$. Correct.
+
+\textbf{Algorithm (Matrix Exponentiation):}
+To compute $F_n$, we compute $M^n$ using binary exponentiation (exponentiation by squaring).
+\begin{enumerate}
+    \item Initialize $Res = I$ (Identity matrix), $Base = M$.
+    \item While $n > 0$:
+    \begin{enumerate}
+        \item If $n$ is odd, $Res = Res \times Base$.
+        \item $Base = Base \times Base$.
+        \item $n = \lfloor n/2 \rfloor$.
+    \end{enumerate}
+    \item Return the upper-right element of $Res$.
+\end{enumerate}
+
+\textbf{Efficiency:}
+Each matrix multiplication of $2 \times 2$ matrices takes 8 multiplications and 4 additions of integers.
+The number of matrix multiplications is proportional to $\log_2 n$.
+Thus, the total number of integer operations is $O(\log n)$.
+This is much more efficient than the naive $O(n)$ additive algorithm.
+(Note: For very large $n$, the size of the numbers $F_n$ grows linearly with $n$, so the cost of arithmetic operations must be considered, making the complexity $O(M(n) \log n)$ where $M(n)$ is the cost of multiplying $n$-bit integers.)
+\end{solution}

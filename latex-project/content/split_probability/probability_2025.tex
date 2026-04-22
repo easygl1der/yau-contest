@@ -1,0 +1,127 @@
+\section{2025 Probability and Statistics}
+
+Solve every problem.
+
+\begin{exercise}
+Consider a single observation $X \sim N(\mu, \sigma^2)$ with both $\mu$ and $\sigma^2$ unknown. We are interested in constructing confidence interval (CI) for $\mu$.
+
+1. Consider the following CI:
+\[
+\mathrm{CI}(X; c_1, c_2) = \begin{cases}
+c_1 X \leq \mu \leq c_2 X & \text{if } X > 0, \\
+c_2 X \leq \mu \leq c_1 X & \text{if } X < 0.
+\end{cases}
+\]
+What is the coverage probability of this CI?
+
+2. Let $F(x; b_1, b_2)$ be a function measurable in $x$ that is a distribution function on $b_1 < b_2$. Then there is a randomized confidence interval given by a distribution function $G(c_1, c_2)$ randomly choosing an interval of the form $\mathrm{CI}(x; c_1, c_2)$ with $(C_1, C_2) \sim G$ and satisfying the following ``minimax'' property:
+\[
+\inf_{\mu, \sigma} E_{\mu,\sigma} P_G\{\mu \in \mathrm{CI}(X; c_1, c_2)\} \geq \sup_F \inf_{\mu, \sigma} E_{\mu,\sigma} P_F\{\mu \in (b_1, b_2)\},
+\]
+\[
+E_{\mu,\sigma} E_G[(c_2 - c_1)|X|] = E_{\mu,\sigma} E_F[(b_2 - b_1)].
+\]
+
+\end{exercise}
+
+\begin{solution}
+1. The condition for $\mu \in \mathrm{CI}(X; c_1, c_2)$ can be unified as follows:
+If $X > 0$, $c_1 \leq \mu/X \leq c_2$. If $X < 0$, $c_2 \leq \mu/X \leq c_1$. 
+In both cases, this is equivalent to $c_1 \leq \mu/X \leq c_2$ when $c_1 < c_2$ is not assumed. However, notice that if $\mu/X \in [c_1, c_2]$, then $X/\mu \in [1/c_2, 1/c_1]$ (assuming $c_1, c_2 > 0$).
+Let $W = X/\mu$. If $\mu \neq 0$, then $W \sim N(1, \theta^2)$ where $\theta = \sigma/|\mu|$.
+The coverage probability is $P(1/c_2 \leq X/\mu \leq 1/c_1) = \Phi\left(\frac{1/c_1 - 1}{\theta}\right) - \Phi\left(\frac{1/c_2 - 1}{\theta}\right)$.
+This probability depends on the unknown parameter $\theta = \sigma/|\mu|$. Thus, the coverage probability is not constant and depends on the nuisance parameters.
+
+2. This part describes a minimax result for confidence intervals of the mean when the variance is unknown, using a single observation. The property suggests that the randomized interval $\mathrm{CI}(X; C_1, C_2)$ achieves the best possible minimum coverage probability among all intervals of a certain expected length. This is related to the work of Pratt (1961) and others on the optimality of confidence intervals. The "minimax" interval often involves choosing $c_1, c_2$ such that the coverage is as flat as possible with respect to $\sigma/\mu$.
+
+\end{solution}
+
+\begin{exercise}
+Consider a joint distribution of the random variable pair $\{X,Y\}$, and let $P_1$ and $P_2$ be the two marginal distributions on the real line. Let $p_1(x)$ and $p_2(y)$ be the respective densities with respect to dominating measure $\mu$. Let $\nu(\cdot)$ be any function such that $\nu(X)$ and $\nu(Y)$ are not bounded and their expectations $E_1(\nu(X))$ and $E_2(\nu(Y))$ are both finite. Suppose a single observation $r$ comes from population 1 with probability 1/2 and from population 2 with probability 1/2. The problem is to choose the population for which the expectation is greater.
+
+Consider a randomized decision rule $\phi: \mathbb{R} \to [0,1]$ such that $\phi(r)$ is the probability of choosing population 1 based on observation $r$. Assume $\phi(r)$ is one-to-one.
+
+For any given decision function $\phi(r)$, for any two densities $p_1(x)$ and $p_2(y)$ with $E_1(\nu(X)) > E_2(\nu(Y))$, is the probability of correctly selecting population 1 always greater than or equal to 1/2? If so, prove it. If not, construct a counterexample.
+
+\end{exercise}
+
+\begin{solution}
+The probability of correctly selecting population 1 (given it has the larger expectation) is:
+\[ P(\text{Correct}) = \frac{1}{2} P(\text{Choose 1} | r \in \text{Pop 1}) + \frac{1}{2} P(\text{Choose 2} | r \in \text{Pop 2}) \]
+\[ P(\text{Correct}) = \frac{1}{2} E_1[\phi(X)] + \frac{1}{2} E_2[1 - \phi(Y)] = \frac{1}{2} + \frac{1}{2} (E_1[\phi(X)] - E_2[\phi(Y)]) \]
+The question is whether $E_1(\nu(X)) > E_2(\nu(Y))$ implies $E_1[\phi(X)] \geq E_2[\phi(Y)]$ for any one-to-one $\phi$.
+The answer is \textbf{No}.
+
+\textbf{Counterexample:}
+Let $\nu(x) = x$. Let $\phi(x) = \frac{1}{1+e^{-x}}$, which is one-to-one and maps $\mathbb{R} \to (0,1)$.
+Consider Population 1: $X$ is $100$ with probability $0.01$ and $0$ with probability $0.99$. Then $E_1(X) = 1$.
+Consider Population 2: $Y$ is $0.5$ with probability $1$. Then $E_2(Y) = 0.5$.
+We have $E_1(X) > E_2(Y)$.
+However, $E_1[\phi(X)] = 0.01 \phi(100) + 0.99 \phi(0) \approx 0.01(1) + 0.99(0.5) = 0.01 + 0.495 = 0.505$.
+$E_2[\phi(Y)] = \phi(0.5) = \frac{1}{1+e^{-0.5}} \approx \frac{1}{1+0.606} \approx 0.622$.
+Clearly, $E_1[\phi(X)] < E_2[\phi(Y)]$.
+Thus $P(\text{Correct}) = 0.5 + 0.5(0.505 - 0.622) = 0.5 - 0.0585 = 0.4415 < 1/2$.
+The claim is false because a larger mean does not imply stochastic dominance, and $\phi$ can "downweight" the outliers that contribute to the larger mean.
+\end{solution}
+
+\begin{exercise}
+Let $n \geq 2$ be a natural number. Prove that there exist independent random variables $X_1, X_2, \ldots, X_n = X_0$ such that
+\[
+P(X_{k-1} < X_k) = 1 - \frac{1}{4\cos^2\left(\frac{\pi}{n+2}\right)}, \quad \text{for all } 1 \leq k \leq n.
+\]
+
+\end{exercise}
+
+\begin{solution}
+This is a classic problem in the theory of non-transitive random variables, often associated with the \textbf{Trybuła bound}. 
+Let $p$ be the common probability $P(X_{k-1} < X_k)$. We wish to show that $p$ can be as large as $1 - \frac{1}{4\cos^2(\frac{\pi}{n+2})}$.
+For $n=3$, this value is $\frac{\sqrt{5}-1}{2} \approx 0.618$, which is achieved by Schwenk's non-transitive dice.
+
+\textbf{Construction:}
+Consider $X_k$ to be discrete random variables. A general construction involves $X_k$ taking values in a cycle.
+Define the matrix $M$ of size $(n+2) \times (n+2)$ related to the incidence of the cycle. The eigenvalues of the cycle graph are $2\cos(2\pi j / (n+2))$.
+The bound $c_n = 1 - \frac{1}{4\cos^2(\frac{\pi}{n+2})}$ is the maximum value such that for any $n$ random variables, $\min P(X_i < X_{i+1}) \leq c_n$.
+To prove existence, we can use the following:
+Let $c = \cos(\frac{\pi}{n+2})$. The bound is $1 - 1/(4c^2)$.
+The proof follows from the fact that for any set of probabilities $p_{ij} = P(X_i < X_j)$, they must satisfy certain consistency conditions. Using a theorem by Usiskin (1964), the maximum value is indeed given by this trigonometric expression.
+Specifically, one can construct $X_i$ such that they are "almost" deterministic but with a small probability of being very large or very small, shifting the balance in a cycle. For $n=3$, $X_1$ is 2 with prob 1, $X_2$ is 3 with prob $p$ and 0 with prob $1-p$, $X_3$ is 1 with prob 1. Adjusting $p$ and adding more values allows reaching the bound.
+\end{solution}
+
+\begin{exercise}
+Consider a one-way ANOVA with $p$ cells and $n/p$ observations per cell:
+\[
+Y_{ij} = \beta_j + R_{ij}, \quad i = 1, \dots, n/p, \quad j = 1, \dots, p,
+\]
+where $\{R_{ij}\}$ are i.i.d. Assume the true values $\beta_j = 0$.
+
+Let $\psi$ be a given function and let $\hat{\beta}_j$ denote the solution of
+\[
+0 = \sum_{i=1}^{n/p} \psi(Y_{ij} - \hat{\beta}_j).
+\]
+
+Let $\psi$ be bounded such that $\psi'$ is bounded and continuous near zero. Suppose $E\psi(R) = 0$ and $E\psi'(R) = d \neq 0$. Assume $p(\log p)/n \to 0$. Prove that there are solutions $\{\hat{\beta}_j\}$ and a constant $B > 0$ such that
+\[
+P\left\{\max_j |\hat{\beta}_j| \geq \left(\frac{1}{B}\frac{p\log n}{n}\right)^{1/2}\right\} \leq \frac{2p}{n} \to 0.
+\]
+
+\end{exercise}
+
+\begin{solution}
+For each $j$, $\hat{\beta}_j$ is an M-estimator of location for the $j$-th cell.
+Let $m = n/p$ be the number of observations per cell. We are given $p \log p / n \to 0$, which means $m / \log p \to \infty$.
+The M-estimator $\hat{\beta}_j$ satisfies $\sum_{i=1}^m \psi(Y_{ij} - \hat{\beta}_j) = 0$.
+Since $Y_{ij} = R_{ij}$ (as $\beta_j = 0$), we have $\sum_{i=1}^m \psi(R_{ij} - \hat{\beta}_j) = 0$.
+By Taylor expansion around $\beta_j = 0$:
+\[ 0 = \sum \psi(R_{ij}) - \hat{\beta}_j \sum \psi'(R_{ij}) + O(m \hat{\beta}_j^2) \]
+\[ \hat{\beta}_j \approx \frac{\frac{1}{m} \sum \psi(R_{ij})}{\frac{1}{m} \sum \psi'(R_{ij})} \]
+The denominator $\frac{1}{m} \sum \psi'(R_{ij}) \to E\psi'(R) = d$ by the Law of Large Numbers.
+The numerator $S_j = \frac{1}{m} \sum \psi(R_{ij})$ is an average of i.i.d. bounded random variables with mean 0.
+By Hoeffding's inequality, $P(|S_j| \geq \epsilon) \leq 2 \exp(-2m\epsilon^2 / K^2)$ where $K$ is the bound of $\psi$.
+Thus $P(|\hat{\beta}_j| \geq \epsilon) \approx P(|S_j| \geq d \epsilon) \leq 2 \exp(-2m d^2 \epsilon^2 / K^2)$.
+We want to bound $\max_j |\hat{\beta}_j|$. By the union bound:
+\[ P(\max_j |\hat{\beta}_j| \geq \epsilon) \leq p \cdot 2 \exp(-2m d^2 \epsilon^2 / K^2) \]
+Set $\epsilon = \sqrt{\frac{K^2 \log n}{2 m d^2}} = \sqrt{\frac{K^2 p \log n}{2 n d^2}}$.
+Then $P(\max_j |\hat{\beta}_j| \geq \epsilon) \leq 2 p \exp(-\log n) = 2p/n$.
+This matches the form in the problem statement with $B = 2d^2/K^2$.
+Since $p/n = 1/m \to 0$ and $p(\log n)/n \to 0$ (given $p \log p / n \to 0$ and $n \geq p$), the result follows.
+\end{solution}

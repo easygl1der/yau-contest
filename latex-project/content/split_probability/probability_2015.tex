@@ -1,0 +1,267 @@
+\section{2015 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 5 problems.
+
+\begin{exercise}
+(a) Let $X$ and $Y$ be two random variables with zero means, variance 1, and correlation $\rho$. Prove that
+\[
+\mathbb{E}[\max\{X^2, Y^2\}] \leq 1 + \sqrt{1-\rho^2}.
+\]
+
+(b) Let $X$ and $Y$ have a bivariate normal distribution with zero means, variances $\sigma^2$ and $\tau^2$, respectively, and correlation $\rho$. Find the conditional expectation $\mathbb{E}(X | Y)$.
+\end{exercise}
+
+\begin{solution}
+(a) We use the identity $\max\{a, b\} = \frac{a+b+|a-b|}{2}$. Thus,
+\[
+\mathbb{E}[\max\{X^2, Y^2\}] = \frac{\mathbb{E}[X^2] + \mathbb{E}[Y^2] + \mathbb{E}[|X^2 - Y^2|]}{2} = 1 + \frac{1}{2}\mathbb{E}[|X^2 - Y^2|].
+\]
+Since $X^2 - Y^2 = (X-Y)(X+Y)$, by the Cauchy-Schwarz inequality, we have
+\[
+\mathbb{E}[|X^2 - Y^2|] \leq \sqrt{\mathbb{E}[(X-Y)^2] \mathbb{E}[(X+Y)^2]}.
+\]
+Given that $\mathbb{E}[X] = \mathbb{E}[Y] = 0$, $\text{Var}(X) = \text{Var}(Y) = 1$, and $\text{Corr}(X, Y) = \rho$, we find
+\[
+\mathbb{E}[(X-Y)^2] = \text{Var}(X-Y) = \text{Var}(X) + \text{Var}(Y) - 2\text{Cov}(X, Y) = 1 + 1 - 2\rho = 2(1-\rho),
+\]
+\[
+\mathbb{E}[(X+Y)^2] = \text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\text{Cov}(X, Y) = 1 + 1 + 2\rho = 2(1+\rho).
+\]
+Therefore,
+\[
+\mathbb{E}[|X^2 - Y^2|] \leq \sqrt{2(1-\rho) \cdot 2(1+\rho)} = 2\sqrt{1-\rho^2}.
+\]
+Plugging this back into the expression for the expectation:
+\[
+\mathbb{E}[\max\{X^2, Y^2\}] \leq 1 + \frac{1}{2} \cdot 2\sqrt{1-\rho^2} = 1 + \sqrt{1-\rho^2}.
+\]
+
+(b) For a bivariate normal distribution $(X, Y) \sim N\left(\begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} \sigma^2 & \rho\sigma\tau \\ \rho\sigma\tau & \tau^2 \end{pmatrix}\right)$, the conditional distribution of $X$ given $Y=y$ is normal with mean
+\[
+\mathbb{E}[X|Y=y] = \mu_X + \frac{\text{Cov}(X, Y)}{\text{Var}(Y)}(y - \mu_Y).
+\]
+Substituting the given parameters:
+\[
+\mathbb{E}[X|Y] = 0 + \frac{\rho\sigma\tau}{\tau^2}(Y - 0) = \rho \frac{\sigma}{\tau} Y.
+\]
+\end{solution}
+
+\begin{exercise}
+We flip a fair coin until heads turns out twice consecutively. What is the expected number of flips?
+\end{exercise}
+
+\begin{solution}
+Let $E$ be the expected number of additional flips needed to see two consecutive heads, starting from the beginning.
+Let $E_0$ be the expected number of additional flips when we need two more heads.
+Let $E_1$ be the expected number of additional flips when we have just flipped one head and need one more.
+In the initial state (state 0), we flip the coin:
+- With probability $1/2$, we get tails (T) and stay in state 0.
+- With probability $1/2$, we get heads (H) and move to state 1.
+Thus, $E_0 = 1 + \frac{1}{2}E_0 + \frac{1}{2}E_1 \implies \frac{1}{2}E_0 = 1 + \frac{1}{2}E_1 \implies E_0 = 2 + E_1$.
+In state 1:
+- With probability $1/2$, we get tails (T) and go back to state 0.
+- With probability $1/2$, we get heads (H) and are done (0 more flips needed).
+Thus, $E_1 = 1 + \frac{1}{2}E_0 + \frac{1}{2}(0) = 1 + \frac{1}{2}E_0$.
+Substituting $E_1$ into the equation for $E_0$:
+\[
+E_0 = 2 + (1 + \frac{1}{2}E_0) = 3 + \frac{1}{2}E_0.
+\]
+Solving for $E_0$:
+\[
+\frac{1}{2}E_0 = 3 \implies E_0 = 6.
+\]
+The expected number of flips is 6.
+\end{solution}
+
+\begin{exercise}
+Let $(X_n, n \geq 1)$ be a sequence of independent Gaussian variables, with respective mean $\mu_n$, and variance $\sigma_n^2$.
+
+(a) Prove that if $\sum_n X_n^2$ converges in $L^1$, then $\sum_n X_n^2$ converges in $L^p$, for every $p \in [1, \infty)$.
+
+(b) Assume that $\mu_n = 0$, for every $n$. Prove that if $\sum_n \sigma_n^2 = \infty$, then
+\[
+\mathbb{P}\left(\sum_n X_n^2 = \infty\right) = 1.
+\]
+\end{exercise}
+
+\begin{solution}
+(a) Let $S_N = \sum_{n=1}^N X_n^2$. Since $X_n^2 \geq 0$, $S_N$ is non-decreasing. $L^1$ convergence implies that $\mathbb{E}[\sum_n X_n^2] = \sum_n \mathbb{E}[X_n^2] = \sum_n (\mu_n^2 + \sigma_n^2) < \infty$.
+Let $S = \sum_n X_n^2$. For independent Gaussian $X_n$, $X_n^2$ has a non-central chi-squared distribution. The moment generating function of $X_n^2$ is $\mathbb{E}[e^{t X_n^2}] = \frac{1}{\sqrt{1-2t\sigma_n^2}} \exp\left(\frac{t\mu_n^2}{1-2t\sigma_n^2}\right)$ for $t < \frac{1}{2\sigma_n^2}$.
+Since $\sigma_n^2 \to 0$, for any $t > 0$, there exists $N_t$ such that $2t\sigma_n^2 < 1$ for all $n > N_t$. The MGF of $S$ is $\prod_n \mathbb{E}[e^{t X_n^2}]$. For small $t$, the logarithm of the MGF is $\sum_n \left[ -\frac{1}{2} \ln(1-2t\sigma_n^2) + \frac{t\mu_n^2}{1-2t\sigma_n^2} \right]$.
+Using $\ln(1-x) \approx -x$, the terms are approximately $t\sigma_n^2 + t\mu_n^2 = t(\sigma_n^2 + \mu_n^2)$. Since $\sum (\sigma_n^2 + \mu_n^2) < \infty$, the sum of logarithms converges for small $t > 0$. Thus, $S$ has a finite MGF in a neighborhood of 0, which implies all moments $\mathbb{E}[S^p]$ are finite for $p \in [1, \infty)$. Monotone convergence then ensures $L^p$ convergence.
+
+(b) If $\mu_n = 0$, then $X_n \sim N(0, \sigma_n^2)$, so $X_n^2 = \sigma_n^2 Z_n^2$ where $Z_n^2 \sim \chi_1^2$.
+The sum $S = \sum_n X_n^2$ consists of independent non-negative random variables. By Kolmogorov's Three-Series Theorem (or a simpler version for non-negative variables), $\sum Y_n$ diverges almost surely if $\sum \mathbb{E}[Y_n \wedge c] = \infty$ for some $c > 0$.
+Here $\mathbb{E}[X_n^2 \wedge 1] = \sigma_n^2 \mathbb{E}[Z_n^2 \wedge \frac{1}{\sigma_n^2}]$. As $n \to \infty$, if $\sigma_n^2 \to 0$, $\mathbb{E}[Z_n^2 \wedge \frac{1}{\sigma_n^2}] \to \mathbb{E}[Z_n^2] = 1$. Thus $\mathbb{E}[X_n^2 \wedge 1] \sim \sigma_n^2$. Since $\sum \sigma_n^2 = \infty$, the sum of expectations of truncated variables diverges, so $\sum X_n^2 = \infty$ almost surely. If $\sigma_n^2 \not\to 0$, divergence is even more trivial.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, \ldots, X_n$ be a random sample of size $n$ from the exponential distribution with pdf $f(x; \theta) = \theta^{-1}\exp(-x/\theta)$ for $x, \theta > 0$, zero elsewhere. Let $Y_1 = \min\{X_1, \dots, X_n\}$. Consider an estimator $nY_1$.
+
+(a) Show this estimate is unbiased.
+
+(b) Prove or disprove: This estimate is a consistent estimator.
+
+(c) Prove or disprove: This estimate is an efficient estimator.
+\end{exercise}
+
+\begin{solution}
+(a) The distribution of the minimum $Y_1$ of $n$ i.i.d. $\text{Exp}(\theta)$ variables is $\text{Exp}(\theta/n)$. The expectation is $\mathbb{E}[Y_1] = \theta/n$.
+Therefore, $\mathbb{E}[nY_1] = n \mathbb{E}[Y_1] = n(\theta/n) = \theta$. The estimator is unbiased.
+
+(b) Disprove. For a consistent estimator $\hat{\theta}_n$, we require $\hat{\theta}_n \xrightarrow{P} \theta$ as $n \to \infty$.
+However, the distribution of $nY_1$ is $\text{Exp}(\theta)$ for all $n$. It does not depend on $n$ and does not degenerate to the constant $\theta$. Thus, $nY_1$ does not converge in probability to $\theta$.
+
+(c) Disprove. An efficient estimator achieves the Cram\'er-Rao Lower Bound (CRLB).
+The Fisher information for a sample of size $n$ from $\text{Exp}(\theta)$ is $I_n(\theta) = n/\theta^2$. The CRLB is $1/I_n(\theta) = \theta^2/n$.
+The variance of our estimator is $\text{Var}(nY_1) = n^2 \text{Var}(Y_1) = n^2 (\theta/n)^2 = \theta^2$.
+For $n > 1$, $\theta^2 > \theta^2/n$, so the estimator is not efficient.
+\end{solution}
+
+\begin{exercise}
+Let the independent normal random variables $Y_1, \dots, Y_n$ have, respectively, the probability density functions $N(\mu, \gamma^2 x_i^2)$, $i = 1, \ldots, n$, where the given $x_1, \ldots, x_n$ are not all equal and no one of which is zero.
+
+(a) Construct a confidence interval for $\gamma$ with significance level $1-\alpha$.
+
+(b) Discuss the test of the hypothesis $H_0: \gamma = 1$, $\mu$ unspecified, against all alternatives $H_1: \gamma \neq 1$, $\mu$ unspecified.
+\end{exercise}
+
+\begin{solution}
+(a) Let $Z_i = Y_i/x_i$. Then $Z_i \sim N(\mu/x_i, \gamma^2)$. This is a linear model $Z_i = \mu w_i + \epsilon_i$ with $w_i = 1/x_i$ and $\epsilon_i \sim N(0, \gamma^2)$.
+The least squares estimator for $\mu$ is $\hat{\mu} = \frac{\sum Z_i w_i}{\sum w_i^2} = \frac{\sum Y_i/x_i^2}{\sum 1/x_i^2}$.
+The residual sum of squares is $RSS = \sum (Z_i - \hat{\mu} w_i)^2 = \sum \frac{(Y_i - \hat{\mu})^2}{x_i^2}$.
+It is a standard result that $Q = \frac{RSS}{\gamma^2} \sim \chi_{n-1}^2$.
+A $1-\alpha$ confidence interval for $\gamma^2$ is $\left[ \frac{RSS}{\chi_{n-1, \alpha/2}^2}, \frac{RSS}{\chi_{n-1, 1-\alpha/2}^2} \right]$.
+Taking the square root gives the interval for $\gamma$:
+\[
+\left[ \sqrt{\frac{\sum (Y_i - \hat{\mu})^2/x_i^2}{\chi_{n-1, \alpha/2}^2}}, \sqrt{\frac{\sum (Y_i - \hat{\mu})^2/x_i^2}{\chi_{n-1, 1-\alpha/2}^2}} \right].
+\]
+
+(b) To test $H_0: \gamma=1$ against $H_1: \gamma \neq 1$, we use the test statistic $Q_0 = \sum \frac{(Y_i - \hat{\mu})^2}{x_i^2}$.
+Under $H_0$, $Q_0 \sim \chi_{n-1}^2$.
+At significance level $\alpha$, we reject $H_0$ if $Q_0 > \chi_{n-1, \alpha/2}^2$ or $Q_0 < \chi_{n-1, 1-\alpha/2}^2$.
+This is a two-tailed test based on the chi-squared distribution.
+\end{solution}
+
+\subsection{Team}
+Please solve the following 5 problems.
+
+\begin{exercise}
+One hundred passengers board a plane with exactly 100 seats. The first passenger takes a seat at random. The second passenger takes his own seat if it is available, otherwise he takes at random a seat among the available ones. The third passenger takes his own seat if it is available, otherwise he takes at random a seat among the available ones. This process continues until all the 100 passengers have boarded the plane. What is the probability that the last passenger takes his own seat?
+\end{exercise}
+
+\begin{solution}
+Consider the moment when a passenger is forced to choose a seat at random (either the first passenger or a subsequent one whose seat was taken). They will either choose seat 1, seat 100, or some other seat $k$.
+If they choose seat 1, then passenger 100 will eventually find seat 100 free.
+If they choose seat 100, then passenger 100 will definitely not get his own seat.
+If they choose some seat $k$ ($1 < k < 100$), then passengers $2, \dots, k-1$ will all find their own seats. Passenger $k$ will then be the one to choose a seat at random.
+Crucially, at any such choice, seat 1 and seat 100 are equally likely to be picked. The first of these two seats to be picked determines the fate of passenger 100. If seat 1 is picked first, passenger 100 gets his seat. If seat 100 is picked first, he doesn't.
+By symmetry, the probability is $1/2$.
+\end{solution}
+
+\begin{exercise}
+Assume a sequence of random variables $X_n$ converges in distribution to a random variable $X$. Let $\{N_t, t \geq 0\}$ be a set of positive integer-valued random variables, which is independent of $(X_n)$ and converges in probability to $\infty$ as $t \to \infty$. Prove that $X_{N_t}$ converges in distribution to $X$ as $t \to \infty$.
+\end{exercise}
+
+\begin{solution}
+Let $F_n$ be the CDF of $X_n$ and $F$ be the CDF of $X$. We want to show $P(X_{N_t} \leq x) \to F(x)$ at all continuity points $x$ of $F$.
+By independence, $P(X_{N_t} \leq x) = \sum_{n=1}^\infty P(X_n \leq x) P(N_t = n) = \mathbb{E}[F_{N_t}(x)]$.
+Since $X_n \xrightarrow{d} X$, $F_n(x) \to F(x)$ for continuity points $x$.
+For any $\epsilon > 0$, there exists $M$ such that $|F_n(x) - F(x)| < \epsilon$ for all $n > M$.
+Then
+\[
+|\mathbb{E}[F_{N_t}(x)] - F(x)| \leq \mathbb{E}[|F_{N_t}(x) - F(x)|]
+\]
+\[
+= \sum_{n \leq M} |F_n(x) - F(x)| P(N_t = n) + \sum_{n > M} |F_n(x) - F(x)| P(N_t = n)
+\]
+\[
+\leq 1 \cdot P(N_t \leq M) + \epsilon \cdot P(N_t > M).
+\]
+As $t \to \infty$, $P(N_t \leq M) \to 0$ because $N_t \xrightarrow{P} \infty$.
+Thus $\limsup_{t \to \infty} |\mathbb{E}[F_{N_t}(x)] - F(x)| \leq \epsilon$. Since $\epsilon$ is arbitrary, the result follows.
+\end{solution}
+
+\begin{exercise}
+Suppose $T_1, T_2, \dots, T_n$ is a sequence of i.i.d. random variables with the exponential distribution of the density function
+\[
+p(x) = \begin{cases} e^{-x}, & x \geq 0; \\ 0, & x < 0. \end{cases}
+\]
+Let $S_n = T_1 + T_2 + \cdots + T_n$. Find the distribution of the random vector
+\[
+V_n = \left(\frac{T_1}{S_n}, \frac{T_2}{S_n}, \dots, \frac{T_n}{S_n}\right).
+\]
+\end{exercise}
+
+\begin{solution}
+The joint density of $(T_1, \dots, T_n)$ is $f(t_1, \dots, t_n) = e^{-\sum t_i}$ for $t_i \geq 0$.
+Consider the transformation $Y_i = T_i/S_n$ for $i=1, \dots, n-1$ and $Y_n = S_n$.
+The inverse transformation is $T_i = Y_i Y_n$ for $i < n$ and $T_n = Y_n(1 - \sum_{i=1}^{n-1} Y_i)$.
+The Jacobian matrix $J$ has elements $\frac{\partial T_i}{\partial Y_j}$.
+One can compute $|\det J| = Y_n^{n-1}$.
+The joint density of $(Y_1, \dots, Y_n)$ is
+\[
+g(y_1, \dots, y_n) = e^{-y_n} y_n^{n-1}, \quad y_n > 0, y_i > 0, \sum_{i=1}^{n-1} y_i < 1.
+\]
+The marginal density of $(Y_1, \dots, Y_{n-1})$ is
+\[
+h(y_1, \dots, y_{n-1}) = \int_0^\infty y_n^{n-1} e^{-y_n} dy_n = \Gamma(n) = (n-1)!.
+\]
+This is a constant value on the simplex $\Delta_{n-1} = \{ (y_1, \dots, y_{n-1}) : y_i > 0, \sum y_i < 1 \}$.
+Thus, $V_n$ follows the Dirichlet distribution $\text{Dir}(1, 1, \dots, 1)$, which is the uniform distribution on the $(n-1)$-dimensional unit simplex.
+\end{solution}
+
+\begin{exercise}
+Suppose that $X$ and $Z$ are jointly normal with mean zero and standard deviation 1. For a strictly monotonic function $f(\cdot)$, $\mathrm{cov}(X, Z) = 0$ if and only if $\mathrm{cov}(X, f(Z)) = 0$, provided the latter covariance exists.
+
+Hint: $Z$ can be expressed as $Z = \rho X + \varepsilon$ where $X$ and $\varepsilon$ are independent and $\varepsilon \sim N(0, \sqrt{1-\rho^2})$.
+\end{exercise}
+
+\begin{solution}
+If $\text{Cov}(X, Z) = 0$, then for jointly normal variables, $X$ and $Z$ are independent. Thus $X$ and $f(Z)$ are independent, and $\text{Cov}(X, f(Z)) = 0$.
+Conversely, assume $\text{Cov}(X, f(Z)) = 0$. Let $Z = \rho X + \sqrt{1-\rho^2} W$ where $W \sim N(0,1)$ is independent of $X$.
+$\text{Cov}(X, f(Z)) = \mathbb{E}[X f(\rho X + \sqrt{1-\rho^2} W)] = 0$.
+Let $g(u) = \mathbb{E}_W[f(u + \sqrt{1-\rho^2} W)]$. Then $\mathbb{E}[X g(\rho X)] = 0$.
+If $f$ is strictly increasing, then $g$ is strictly increasing (the expectation of an increasing function of a shifted Gaussian is increasing in the shift).
+Since $\mathbb{E}[X] = 0$, $\text{Cov}(X, g(\rho X)) = \mathbb{E}[X g(\rho X)] - \mathbb{E}[X]\mathbb{E}[g(\rho X)] = \mathbb{E}[X g(\rho X)] = 0$.
+For any random variable $X$ and strictly increasing function $h$, $\text{Cov}(X, h(X)) \geq 0$, and the covariance is zero if and only if $X$ is constant or $h$ is constant.
+Here $g(\rho X)$ is strictly increasing in $X$ if $\rho > 0$ and strictly decreasing if $\rho < 0$.
+If $\rho > 0$, $\text{Cov}(X, g(\rho X)) > 0$. If $\rho < 0$, $\text{Cov}(X, g(\rho X)) < 0$.
+The only way the covariance can be zero is if $\rho = 0$.
+Thus $\text{Cov}(X, Z) = \rho = 0$. The case for strictly decreasing $f$ follows by considering $-f$.
+\end{solution}
+
+\begin{exercise}
+Consider the following penalized least-squares problem (Lasso):
+\[
+\frac{1}{2}\|\mathbf{Y} - \mathbf{X}\boldsymbol{\beta}\|^2 + \lambda\|\boldsymbol{\beta}\|_1.
+\]
+
+Let $\widehat{\beta}$ be a minimizer and $\Delta = \widehat{\beta} - \beta^*$ for any given $\beta^*$. If $\lambda > 2\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty$ show that:
+
+1. $\|\mathbf{Y} - \mathbf{X}^T\widehat{\beta}\|^2 - \|\mathbf{Y} - \mathbf{X}^T\beta^*\|^2 > -\lambda\|\Delta\|_1$.
+
+2. $\|\Delta_{S^c}\|_1 \leq 3\|\Delta_S\|_1$, where $S = \{j: \beta_j^* \neq 0\}$ is the support of the vector $\beta^*$, $S^c$ is its complement set, $\Delta_S$ is the subvector of $\Delta$ restricted on the set $S$, and $\|\Delta_S\|_1$ is its $L_1$-norm.
+\end{exercise}
+
+\begin{solution}
+1. Let $f(\beta) = \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\beta\|^2$. By convexity, $f(\widehat{\beta}) \geq f(\beta^*) + \langle \nabla f(\beta^*), \widehat{\beta} - \beta^* \rangle$.
+$\nabla f(\beta^*) = -\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)$.
+Thus, $f(\widehat{\beta}) - f(\beta^*) \geq -\langle \mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle$.
+By H\"older's inequality, $|\langle \mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle| \leq \|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty \|\Delta\|_1$.
+Given $\lambda > 2\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty$, we have $\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty < \lambda/2$.
+Therefore, $f(\widehat{\beta}) - f(\beta^*) > -\frac{\lambda}{2} \|\Delta\|_1 > -\lambda \|\Delta\|_1$.
+Multiplying by 2 gives the result for $\|\mathbf{Y} - \mathbf{X}\beta\|^2$.
+
+2. From the definition of $\widehat{\beta}$:
+$f(\widehat{\beta}) + \lambda\|\widehat{\beta}\|_1 \leq f(\beta^*) + \lambda\|\beta^*\|_1$.
+$f(\widehat{\beta}) - f(\beta^*) \leq \lambda(\|\beta^*\|_1 - \|\widehat{\beta}\|_1)$.
+Using the lower bound from part 1:
+$-\frac{\lambda}{2}\|\Delta\|_1 < \lambda(\|\beta^*\|_1 - \|\widehat{\beta}\|_1) \implies - \frac{1}{2}(\|\Delta_S\|_1 + \|\Delta_{S^c}\|_1) < \|\beta^*_S\|_1 - \|\widehat{\beta}_S\|_1 - \|\widehat{\beta}_{S^c}\|_1$.
+Since $\beta^*_{S^c} = 0$, $\|\widehat{\beta}_{S^c}\|_1 = \|\Delta_{S^c}\|_1$. Also $\|\beta^*_S\|_1 - \|\widehat{\beta}_S\|_1 \leq \|\beta^*_S - \widehat{\beta}_S\|_1 = \|\Delta_S\|_1$.
+$- \frac{1}{2}\|\Delta_S\|_1 - \frac{1}{2}\|\Delta_{S^c}\|_1 < \|\Delta_S\|_1 - \|\Delta_{S^c}\|_1$.
+Rearranging terms:
+$\frac{1}{2}\|\Delta_{S^c}\|_1 < \frac{3}{2}\|\Delta_S\|_1 \implies \|\Delta_{S^c}\|_1 < 3\|\Delta_S\|_1$.
+(Note: The non-strict inequality $\|\Delta_{S^c}\|_1 \leq 3\|\Delta_S\|_1$ is thus also proven).
+\end{solution}

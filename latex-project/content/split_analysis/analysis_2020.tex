@@ -1,0 +1,250 @@
+\section{2020 Analysis & Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+Let $\chi$ be a real valued smooth function with compact support on $\mathbb{R}$. We assume that
+\[
+\int_{\mathbb{R}^1}\chi(x)\,dx = 1.
+\]
+
+For all $\varepsilon>0$, we define
+\[
+\chi_{\varepsilon}(x) = \frac{1}{\varepsilon}\chi\left(\frac{x}{\varepsilon}\right).
+\]
+
+Prove that for any given $f\in L^1(\mathbb{R})$, for almost every $x\in\mathbb{R}$, we have
+\[
+\lim_{\varepsilon\to 0}(\chi_{\varepsilon}*f)(x) = f(x).
+\]
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a standard result concerning the approximation of the identity. The core idea is that as $\varepsilon \to 0$, the mass of $\chi_\varepsilon$ concentrates at the origin, effectively "picking out" the value $f(x)$ through the convolution. The result holds for almost every $x$, specifically at the Lebesgue points of $f$, where the function behaves nicely in an average sense.
+
+We write the convolution as:
+\[
+(\chi_\varepsilon * f)(x) = \int_{\mathbb{R}} \chi_\varepsilon(y) f(x-y) \, dy = \int_{\mathbb{R}} \chi(z) f(x-\varepsilon z) \, dz.
+\]
+Using the fact that $\int \chi(z) \, dz = 1$, we have:
+\[
+|(\chi_\varepsilon * f)(x) - f(x)| = \left| \int_{\mathbb{R}} \chi(z) (f(x-\varepsilon z) - f(x)) \, dz \right| \leq \int_{\mathbb{R}} |\chi(z)| |f(x-\varepsilon z) - f(x)| \, dz.
+\]
+Since $\chi$ has compact support, let $\text{supp}(\chi) \subseteq [-M, M]$. Then the integral is over $|z| \leq M$. Let $A = \sup |\chi|$. Then:
+\[
+|(\chi_\varepsilon * f)(x) - f(x)| \leq A \int_{-M}^M |f(x-\varepsilon z) - f(x)| \, dz.
+\]
+Let $h = \varepsilon z$. As $z$ ranges in $[-M, M]$, $h$ ranges in $[-\varepsilon M, \varepsilon M]$. Performing the change of variables $z = h/\varepsilon$:
+\[
+|(\chi_\varepsilon * f)(x) - f(x)| \leq \frac{A}{\varepsilon} \int_{-\varepsilon M}^{\varepsilon M} |f(x-h) - f(x)| \, dh = 2MA \cdot \frac{1}{2\varepsilon M} \int_{-\varepsilon M}^{\varepsilon M} |f(x-h) - f(x)| \, dh.
+\]
+By the Lebesgue Differentiation Theorem, for almost every $x \in \mathbb{R}$ (specifically, at every Lebesgue point of $f$), we have:
+\[
+\lim_{r \to 0} \frac{1}{2r} \int_{-r}^r |f(x-h) - f(x)| \, dh = 0.
+\]
+Taking $r = \varepsilon M$, we see that as $\varepsilon \to 0$, $r \to 0$. Thus:
+\[
+\lim_{\varepsilon \to 0} |(\chi_\varepsilon * f)(x) - f(x)| = 0
+\]
+for almost every $x \in \mathbb{R}$.
+\end{solution}
+
+\begin{exercise}
+In last year's Yau College Student Mathematics Contests, four students Tintin, Haddock, Dupont and Dupond made it to the last round of the oral exam in analysis. Professor Yau asked them to compute the Fourier coefficients of the $2\pi$-periodic function $F$ (defined on $\mathbb{R}$):
+\[
+F:(0,2\pi)\to\mathbb{R},\quad x\mapsto F(x) = \arctan\left(\frac{x}{2\pi}e^{\sin(x)} + x^{2019}(x-2\pi) + 2019\sin(x)\right).
+\]
+
+Here were their solutions: for $k\neq 0$,
+\[
+\operatorname{Tintin}: \widehat{F}(k) = \frac{\cos(k\pi)}{|k|^{1/2}} + \frac{a}{|k|} + \frac{b}{|k|^3},
+\]
+\[
+\operatorname{Haddock}: \widehat{F}(k) = \frac{c}{k^2} + \frac{d}{k^4} + \frac{e}{k^6},
+\]
+\[
+\operatorname{Dupont}: \widehat{F}(k) = \frac{1}{k} + \frac{1}{k^2} + \frac{f}{k^3} + \frac{g}{k^5},
+\]
+\[
+\operatorname{Dupond}: \widehat{F}(k) = \frac{2019\sqrt{-1}}{k} + \frac{h_k}{k},
+\]
+where $a,b,c,d,e,f,g,h_k$ ($k\in\mathbb{Z}$) were constants and $\sum_{k\in\mathbb{Z}}|h_k|^2<\infty$.
+
+Whose solutions were correct?
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} The decay rate of Fourier coefficients $\widehat{F}(k)$ is directly linked to the smoothness of the periodic function $F$. A function with a jump discontinuity typically has coefficients that decay like $1/k$. We can use integration by parts to extract the leading order term of the Fourier coefficients based on these discontinuities.
+
+To determine the correct form of the Fourier coefficients $\widehat{F}(k)$, we analyze the regularity of $F$ as a $2\pi$-periodic function.
+The function is given by $F(x) = \arctan(u(x))$ where $u(x) = \frac{x}{2\pi} e^{\sin x} + x^{2019}(x-2\pi) + 2019 \sin x$.
+We check the values at the boundaries of the interval $(0, 2\pi)$:
+\begin{itemize}
+    \item $u(0^+) = \frac{0}{2\pi} e^0 + 0 + 2019 \cdot 0 = 0 \implies F(0^+) = \arctan(0) = 0$.
+    \item $u(2\pi^-) = \frac{2\pi}{2\pi} e^{\sin 2\pi} + (2\pi)^{2019}(0) + 2019 \sin 2\pi = 1 \cdot e^0 = 1 \implies F(2\pi^-) = \arctan(1) = \pi/4$.
+\end{itemize}
+Since $F(0^+) \neq F(2\pi^-)$, $F$ has a jump discontinuity at $x = 2\pi n$. For a $2\pi$-periodic function with a jump discontinuity, the Fourier coefficients $\widehat{F}(k)$ satisfy:
+\[
+\widehat{F}(k) = \frac{1}{2\pi} \int_0^{2\pi} F(x) e^{-ikx} dx = \frac{F(0^+) - F(2\pi^-)}{2\pi i k} + O(k^{-2}) = \frac{-\pi/4}{2\pi i k} + O(k^{-2}) = \frac{i}{8k} + O(k^{-2}).
+\]
+Now we evaluate the students' solutions:
+\begin{itemize}
+    \item \textbf{Tintin}: The term $1/|k|^{1/2}$ implies $F \notin L^2(\mathbb{T})$, but $F$ is bounded, so it is in $L^2$. This is incorrect.
+    \item \textbf{Haddock}: The term $1/k^2$ implies $F$ is continuous, which it is not. This is incorrect.
+    \item \textbf{Dupont}: The leading term is $1/k$. This matches the jump discontinuity rate, but the coefficient $1$ does not match $i/8$. Also, if $F$ is real, $\widehat{F}(k)$ must satisfy $\widehat{F}(-k) = \overline{\widehat{F}(k)}$. Dupont's form $\frac{1}{k} + \frac{1}{k^2}$ implies $\widehat{F}(-k) = -\frac{1}{k} + \frac{1}{k^2}$, while $\overline{\widehat{F}(k)} = \frac{1}{k} + \frac{1}{k^2}$, leading to a contradiction.
+    \item \textbf{Dupond}: The term $\frac{2019i}{k} + \frac{h_k}{k}$ with $h_k \in \ell^2$ implies $k \widehat{F}(k) \to 2019i$ (in some sense) or at least that the jump is related to $2019i$. However, the actual jump constant is $i/8$.
+\end{itemize}
+In conclusion, none of the students provided a correct solution for the specific function $F$. However, if the question intended to ask for the correct \textit{asymptotic form} for a function that is $C^\infty$ on $[0, 2\pi]$ but has a jump at the endpoints, Dupont's form $\sum a_j k^{-j}$ is the typical asymptotic expansion, while Dupond's form is the general result for $H^1$ functions. Given the specific constants like $2019i$ or $1$, all are mathematically incorrect for the given $F$.
+\end{solution}
+
+\begin{exercise}
+Let $B_1$ be the unit ball centered at the origin in $\mathbb{R}^4$ and $u\in W^{1,2}(B_1)\cap C^{\infty}(\mathbb{R}^4)$ be a nonnegative real valued function so that
+\[
+-\triangle u \leq u^2,
+\]
+where $\triangle = \sum_{i=1}^4\frac{\partial^2}{\partial x_i^2}$. Prove that there exists a constant $\varepsilon>0$, so that if $\|u\|_{L^2(B_1)}\leq\varepsilon$, we have
+\[
+\|\nabla u\|_{L^2(B_{1/2})} \leq 10000\|u\|_{L^2(B_1)},
+\]
+where $B_{1/2}$ is the ball of radius $\frac{1}{2}$ centered at the origin.
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem asks for a Caccioppoli-type inequality, which bounds the gradient of a solution by its $L^2$ norm. Such inequalities are fundamental in the regularity theory of PDEs. The condition $\|u\|_{L^2} \leq \varepsilon$ is used to "absorb" the nonlinear source term $u^2$ into the principal part of the operator using Sobolev embeddings.
+
+Let $\phi \in C_0^\infty(B_1)$ be a cutoff function such that $0 \leq \phi \leq 1$, $\phi = 1$ on $B_{1/2}$, and $|\nabla \phi| \leq 4$.
+Testing the inequality $-\Delta u \leq u^2$ with $\phi^2 u$ (which is non-negative since $u \geq 0$):
+\[
+\int_{B_1} (-\Delta u) \phi^2 u \, dx \leq \int_{B_1} u^2 \phi^2 u \, dx = \int_{B_1} \phi^2 u^3 \, dx.
+\]
+Integrating by parts on the left side:
+\[
+\int_{B_1} \nabla u \cdot \nabla(\phi^2 u) \, dx = \int_{B_1} \phi^2 |\nabla u|^2 \, dx + 2 \int_{B_1} \phi u \nabla u \cdot \nabla \phi \, dx.
+\]
+By Young's inequality, $2 |\phi u \nabla u \cdot \nabla \phi| \leq \frac{1}{2} \phi^2 |\nabla u|^2 + 2 u^2 |\nabla \phi|^2$. Thus:
+\[
+\int_{B_1} \phi^2 |\nabla u|^2 \, dx \leq 2 \int_{B_1} u^2 |\nabla \phi|^2 \, dx + \frac{1}{2} \int_{B_1} \phi^2 |\nabla u|^2 \, dx + \int_{B_1} \phi^2 u^3 \, dx,
+\]
+which simplifies to:
+\[
+\frac{1}{2} \int_{B_1} \phi^2 |\nabla u|^2 \, dx \leq 2 \int_{B_1} u^2 |\nabla \phi|^2 \, dx + \int_{B_1} \phi^2 u^3 \, dx.
+\]
+In $\mathbb{R}^4$, the Sobolev embedding $W^{1,2} \hookrightarrow L^4$ holds: $\|\psi\|_{L^4} \leq C_S \|\nabla \psi\|_{L^2}$ for $\psi \in C_0^\infty$. Applying this to $\psi = \phi u$:
+\[
+\int_{B_1} \phi^2 u^3 \, dx \leq \left( \int_{B_1} (\phi u)^4 \, dx \right)^{1/2} \left( \int_{B_1} u^2 \, dx \right)^{1/2} = \|\phi u\|_{L^4}^2 \|u\|_{L^2} \leq C_S^2 \|\nabla(\phi u)\|_{L^2}^2 \|u\|_{L^2}.
+\]
+Note that $\|\nabla(\phi u)\|_{L^2}^2 \leq 2 \int \phi^2 |\nabla u|^2 + 2 \int u^2 |\nabla \phi|^2$. Substituting back:
+\[
+\frac{1}{2} \int \phi^2 |\nabla u|^2 \leq 2 \int u^2 |\nabla \phi|^2 + C_S^2 \|u\|_{L^2} \left( 2 \int \phi^2 |\nabla u|^2 + 2 \int u^2 |\nabla \phi|^2 \right).
+\]
+Rearranging terms:
+\[
+\left( \frac{1}{2} - 2 C_S^2 \|u\|_{L^2} \right) \int \phi^2 |\nabla u|^2 \leq \left( 2 + 2 C_S^2 \|u\|_{L^2} \right) \int u^2 |\nabla \phi|^2.
+\]
+If $\|u\|_{L^2} \leq \varepsilon$ where $\varepsilon$ is small enough (e.g., $2 C_S^2 \varepsilon < 1/4$), the coefficient on the left is at least $1/4$. Then:
+\[
+\int_{B_{1/2}} |\nabla u|^2 \leq \int \phi^2 |\nabla u|^2 \leq \frac{2 + 2 C_S^2 \varepsilon}{1/4} \int u^2 |\nabla \phi|^2 \leq 16(2 + 1/4) \int_{B_1} 16 u^2 \, dx = 36 \cdot 16 \|u\|_{L^2}^2 = 576 \|u\|_{L^2}^2.
+\]
+Thus $\|\nabla u\|_{L^2(B_{1/2})} \leq 24 \|u\|_{L^2(B_1)}$, which is well within the $10000$ bound.
+\end{solution}
+
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=0.7\textwidth]{../images/analysis/3da3b3f997e18f24d707369e51b6a777cebf66a347958437b0414fc6788e7463.jpg}}
+
+\medskip
+{\small Figure: Commutative diagram for holomorphic map lifting.}
+\label{fig:holomorphic}
+\end{figure}
+
+\begin{exercise}
+Let $f$ and $g$ be two holomorphic functions defined on the entire complex plane $\mathbb{C}$ so that for all $z\in\mathbb{C}$, we have
+\[
+f(z)^{2020} + g(z)^{2020} = 1.
+\]
+Prove that $f$ and $g$ are constants, see Figure \ref{fig:holomorphic}.
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem is a beautiful application of the Uniformization Theorem and the theory of hyperbolic Riemann surfaces. The equation defines a complex curve of high genus, which admits a hyperbolic metric. By Picard's theorem, any entire map into such a surface must be constant.
+
+Consider the Fermat curve $X^n + Y^n = 1$ in $\mathbb{C}^2$. For $n = 2020$, this defines a Riemann surface $M$. The genus of the compactified Fermat curve $x^n + y^n = z^n$ is given by $g = \frac{(n-1)(n-2)}{2}$. For $n=2020$, $g > 1$.
+
+By Picard's Great Theorem, any holomorphic map from $\mathbb{C}$ to a Riemann surface of genus $g > 1$ must be constant. Since $(f(z), g(z))$ defines a holomorphic map from $\mathbb{C}$ to $M$, and $M$ is a hyperbolic Riemann surface (as $g > 1$), the image must be a single point. Therefore, $f$ and $g$ are constant functions.
+
+Alternatively, for $n \geq 3$, there are no non-constant meromorphic functions satisfying $f^n + g^n = 1$. This is a classical result in the theory of transcendental numbers and complex analysis (related to the work of Wiman). Since entire functions are a subset of meromorphic functions, $f$ and $g$ must be constant.
+\end{solution}
+
+\begin{exercise}
+We consider the following ordinary differential equation:
+\[
+\begin{cases}
+x''(t) + x(t) + x(t)^3 = 0,\
+(x(0),x'(0)) = (x_0,0),
+\end{cases}
+\]
+where $x(t)$ takes values in $\mathbb{R}$. Prove that for all $x_0\in\mathbb{R}$, the solution of the above system is periodic.
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a conservative system with one degree of freedom. Such systems can be analyzed using the phase plane. Periodic orbits correspond to closed loops in the phase plane, which are level sets of the energy functional. The strictly convex nature of the potential energy ensures that all level sets are closed loops.
+
+The equation $x'' + x + x^3 = 0$ is a second-order autonomous ODE of the form $x'' + V'(x) = 0$, where $V(x) = \frac{1}{2}x^2 + \frac{1}{4}x^4$. This system is Hamiltonian with energy:
+\[
+E(x, x') = \frac{1}{2}(x')^2 + V(x) = \frac{1}{2}(x')^2 + \frac{1}{2}x^2 + \frac{1}{4}x^4.
+\]
+Differentiating with respect to $t$ gives $\frac{dE}{dt} = x'(x'' + x + x^3) = 0$, so $E$ is constant along trajectories.
+For the initial condition $(x_0, 0)$, the energy is $E_0 = \frac{1}{2}x_0^2 + \frac{1}{4}x_0^4$. The trajectory in the phase plane $(x, x')$ lies on the level set:
+\[
+\frac{1}{2}(x')^2 + \frac{1}{2}x^2 + \frac{1}{4}x^4 = E_0.
+\]
+The potential $V(x) = \frac{1}{2}x^2 + \frac{1}{4}x^4$ is strictly convex, has a unique global minimum at $x=0$ with $V(0)=0$, and $V(x) \to \infty$ as $|x| \to \infty$. Consequently, for any $E_0 > 0$, the level set $E(x, x') = E_0$ is a compact, connected curve (an oval) in the phase plane that encloses the origin.
+By the theory of planar Hamiltonian systems, any trajectory on such a compact level set that does not contain a critical point is a periodic orbit. The only critical point is $(0,0)$, which corresponds to $x_0 = 0$ (the trivial constant solution, which is periodic). For any $x_0 \neq 0$, the trajectory is a closed loop, hence the solution $x(t)$ is periodic.
+\end{solution}
+
+\begin{exercise}
+Let $\alpha\in\mathbb{R}$ and $a_k\in\mathbb{C}$ with $|a_k|<1$, where $k=1,2,\ldots,n$. We consider the following holomorphic map
+\[
+f:\mathbb{C}\setminus\{(\overline{a_1})^{-1},\dots,(\overline{a_n})^{-1}\}\to\mathbb{C},\quad z\mapsto f(z) = e^{2\sqrt{-1}\pi\alpha}z\cdot\frac{z-a_1}{1-\overline{a_1}z}\cdots\frac{z-a_n}{1-\overline{a_n}z}.
+\]
+
+Let $\mathbb{S}^1$ be the unit circle in $\mathbb{C}$, i.e., $\mathbb{S}^1 = \{z\in\mathbb{C}\mid |z|=1\}$.
+
+Prove that $f$ maps $\mathbb{S}^1$ to itself and $f$ preserves the surface measure of $\mathbb{S}^1$.
+
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Blaschke products are the primary examples of holomorphic automorphisms of the unit disk. This problem explores the measure-preserving property of such maps on the boundary. The fact that $f(0)=0$ is key, as it relates the integral over the boundary to the value at the center via the mean value property.
+
+First, we show that $f$ maps $\mathbb{S}^1$ to $\mathbb{S}^1$. Let $B_a(z) = \frac{z-a}{1-\bar{a}z}$. For $|z|=1$, we have:
+\[
+|1-\bar{a}z| = |z(\bar{z}-\bar{a})| = |z||\overline{z-a}| = 1 \cdot |z-a|.
+\]
+Thus $|B_a(z)| = 1$ for all $z \in \mathbb{S}^1$. The function $f(z)$ is a product of such terms and $e^{2\pi i \alpha}z$:
+\[
+|f(z)| = |e^{2\pi i \alpha}| |z| \prod_{k=1}^n |B_{a_k}(z)| = 1 \cdot 1 \cdot \prod 1 = 1.
+\]
+So $f(\mathbb{S}^1) \subseteq \mathbb{S}^1$.
+
+Next, we show that $f$ preserves the surface measure $d\sigma$ (the Haar measure) on $\mathbb{S}^1$. A map $f: \mathbb{S}^1 \to \mathbb{S}^1$ preserves the measure if for all $m \in \mathbb{Z}$:
+\[
+\int_{\mathbb{S}^1} f(z)^m \, d\sigma(z) = \int_{\mathbb{S}^1} z^m \, d\sigma(z) = \delta_{m,0}.
+\]
+Since $f$ is a finite Blaschke product with $f(0) = 0$ (due to the factor $z$), $f$ is an inner function.
+For $m > 0$, $f(z)^m$ is holomorphic in the unit disk and $f(0)^m = 0$. By the mean value property:
+\[
+\int_{\mathbb{S}^1} f(z)^m \, d\sigma = f(0)^m = 0.
+\]
+For $m < 0$, let $k = -m > 0$. Then $f(z)^m = \overline{f(z)^k}$ on $\mathbb{S}^1$. Thus:
+\[
+\int_{\mathbb{S}^1} f(z)^m \, d\sigma = \overline{\int_{\mathbb{S}^1} f(z)^k \, d\sigma} = \overline{0} = 0.
+\]
+For $m = 0$, the integral is $\int 1 \, d\sigma = 1$.
+Since all moments of the measure $f_* d\sigma$ match the moments of $d\sigma$, the measures must be equal. Therefore, $f$ preserves the surface measure.
+\end{solution}

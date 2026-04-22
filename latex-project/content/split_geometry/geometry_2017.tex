@@ -1,0 +1,133 @@
+\section{2017 Geometry & Topology}
+
+\subsection{Individual Exam}
+
+\begin{exercise}
+Let $M$ be a smooth, compact, oriented $n$-dimensional manifold. Suppose that the Euler characteristic of $M$ is zero. Show that $M$ admits a nowhere vanishing vector field.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is the converse of the "Hairy Ball Theorem." The Poincaré-Hopf theorem states that any vector field must have zeros whose indices sum up to $\chi(M)$. If $\chi(M)=0$, the "topological debt" is zero, meaning we can potentially cancel all singularities by moving them together and letting them annihilate each other.
+
+\textbf{Proof:}
+According to the Poincaré-Hopf Index Theorem, for any vector field $X$ with isolated zeros $p_i$:
+\[ \sum \mathrm{ind}_{p_i}(X) = \chi(M) \]
+If $\chi(M) = 0$, the sum of indices is zero. In any connected manifold of dimension $n \ge 2$, we can perform a "singularity cancellation" procedure. By deforming the vector field locally, pairs of zeros with indices $+1$ and $-1$ can be brought together along a path and removed. Since the total sum is zero, all zeros can be eliminated. For $n=1$, the only compact oriented manifold is the circle $S^1$, which clearly admits a constant non-vanishing field.
+Alternatively, in obstruction theory, the primary obstruction to the existence of a non-vanishing vector field is the Euler class $e(TM)$. Since $\langle e(TM), [M] \rangle = \chi(M) = 0$, the obstruction vanishes, allowing for a global non-vanishing section of the tangent bundle.
+\end{solution}
+
+\begin{exercise}
+Let $S^{2} \xrightarrow{q_{1}} S^{2} \vee S^{2} \xrightarrow{q_{2}} S^{2}$ be the maps that crush out one of the two summands. Let $f : S^{2} \to S^{2} \vee S^{2}$ be a map such that $q_{i} \circ f : S^{2} \to S^{2}$ is a map of degree $d_{i}$. Compute the integral homology groups of $(S^{2} \vee S^{2}) \cup_{f} D^{3}$. Here $D^{3}$ is the unit solid ball with boundary $S^{2}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} We are starting with two spheres joined at a point and "plugging" a 3D hole by gluing a ball's surface to them. The map $f$ tells us how the "skin" of the ball wraps around the two spheres. The degree $d_i$ measures how many times the ball's boundary covers each sphere.
+
+\textbf{Proof:} Use cellular homology. The space $X$ has one 0-cell, two 2-cells ($e_1, e_2$), and one 3-cell ($e_3$).
+The boundary map $\partial_3: C_3 \to C_2$ is given by $\partial_3(e_3) = d_1 e_1 + d_2 e_2$.
+The homology $H_2(X) = \text{ker}(\partial_2) / \text{im}(\partial_3) = \mathbb{Z}^2 / \langle (d_1, d_2) \rangle$.
+If $(d_1, d_2) \neq (0,0)$, let $g = \gcd(d_1, d_2)$. Then $H_2(X) \cong \mathbb{Z} \oplus \mathbb{Z}_g$.
+If $(d_1, d_2) = (0,0)$, $H_2(X) \cong \mathbb{Z}^2$ and $H_3(X) \cong \mathbb{Z}$.
+Otherwise $H_3(X) = 0$. $H_1(X) = 0$ as there are no 1-cells.
+\end{solution}
+
+\begin{exercise}
+Let $X$ and $Y$ be smooth vector fields on a smooth manifold. Prove that the Lie derivative satisfies the identity
+\[ L_{X}Y = [X, Y]. \]
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} The Lie derivative $L_X Y$ measures how the field $Y$ changes as it is pushed along the flow of $X$. The Lie bracket $[X, Y]$ measures the non-commutativity of the flows. This identity shows that these two seemingly different concepts—directional derivative of a field and commutator of flows—are exactly the same.
+
+\textbf{Proof:} Let $\phi_t$ be the flow of $X$. For any function $f$:
+\[ (L_X Y) f = \lim_{t \to 0} \frac{(\phi_{-t}^* Y) f - Y f}{t} = \lim_{t \to 0} \frac{Y(f \circ \phi_{-t}) \circ \phi_t - Y f}{t} \]
+Using the expansion $f \circ \phi_{-t} = f - t X f + O(t^2)$:
+\[ (L_X Y) f = \lim_{t \to 0} \frac{Y(f - t X f) \circ \phi_t - Y f}{t} = \lim_{t \to 0} \frac{(Y f - t Y X f) \circ \phi_t - Y f}{t} \]
+Since $(Yf) \circ \phi_t = Yf + t XYf$, we get:
+\[ (L_X Y) f = \frac{Yf + t XYf - t YXf - Yf}{t} = (XY - YX) f = [X, Y] f. \]
+\end{solution}
+
+\begin{exercise}
+State and prove the Liouville formula for the geodesic curvature $\kappa_{g}$ along a regular curve on a smooth surface in $\mathbb{R}^{3}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Geodesic curvature measures how much a curve "turns" within the surface. Liouville's formula splits this turn into two parts: how the curve's angle changes relative to the coordinates ($d\theta/ds$), and how the coordinates themselves are "twisting" due to the surface's metric.
+
+\textbf{Statement:} For orthogonal coordinates $I = E du^2 + G dv^2$, if $\theta$ is the angle with the $u$-line:
+\[ \kappa_g = \frac{d\theta}{ds} + \frac{1}{2\sqrt{EG}} \left( G_u \frac{dv}{ds} - E_v \frac{du}{ds} \right). \]
+
+\textbf{Proof Sketch:} Let $\mathbf{e}_1, \mathbf{e}_2$ be an orthonormal frame. The tangent is $\mathbf{t} = \cos \theta \mathbf{e}_1 + \sin \theta \mathbf{e}_2$. The geodesic curvature is $\kappa_g = \langle \nabla_\mathbf{t} \mathbf{t}, \mathbf{n}_g \rangle$.
+Calculating the covariant derivative: $\nabla_\mathbf{t} \mathbf{t} = \theta' \mathbf{n}_g + \cos \theta \nabla_\mathbf{t} \mathbf{e}_1 + \sin \theta \nabla_\mathbf{t} \mathbf{e}_2$.
+Using connection forms $\omega_{12}(\mathbf{t})$, we find $\kappa_g = \theta' + \omega_{12}(\mathbf{t})$.
+Substituting the expression for $\omega_{12}$ in orthogonal coordinates yields the formula.
+\end{solution}
+
+\begin{exercise}
+On a Riemannian manifold, let $F$ be the set of smooth functions $f$ on $M$ with $|\mathrm{grad}\,f| \leq 1$. For any $x, y$ in the manifold, show that
+\[ d(x, y) = \sup\{|f(x) - f(y)| : f \in F\}. \]
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is the "dual" definition of distance. Usually, we define distance as the minimum length of a path. Here, we define it as the maximum "height difference" you can achieve with a function that doesn't change too fast (slope $\le 1$). If you can't climb more than 1 meter per meter of horizontal travel, the furthest you can get is your distance away.
+
+\textbf{Proof:}
+1. \textbf{$\le$:} For any $f \in F$ and path $\gamma$: $|f(y)-f(x)| = |\int \langle \nabla f, \gamma' \rangle| \le \int |\nabla f| |\gamma'| \le \text{Length}(\gamma)$. Thus $|f(y)-f(x)| \le d(x, y)$.
+2. \textbf{$\ge$:} Consider $f_0(z) = d(x, z)$. This function is 1-Lipschitz by triangle inequality, so $|\nabla f_0| \le 1$ almost everywhere. Smooth approximations $f_\epsilon$ satisfy $|\nabla f_\epsilon| \le 1$ and $|f_\epsilon(y)-f_\epsilon(x)| \to d(x, y)$.
+\end{solution}
+
+\begin{exercise}
+Let $M$ be an $n$-dimensional oriented closed minimal submanifold in an $(n + p)$-dimensional unit sphere $S^{n+p}$. Denote by $K_{M}$ the sectional curvature of $M$. Prove that if $K_{M} > \frac{p-1}{2p-1}$, then $M$ is the great sphere $S^{n}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is a curvature "pinching" theorem. It says that if a minimal submanifold is "too flat" (but still positively curved) compared to the sphere it lives in, it must actually be a perfectly flat great sphere. There's no room for "small" minimal wrinkles if the curvature is high.
+
+\textbf{Proof Sketch:} One uses the Simons' identity for the second fundamental form $|h|^2$. The curvature bound $K_M > \frac{p-1}{2p-1}$ ensures that the "curving" term in the Laplacian formula for $\Delta |h|^2$ dominates. Integrating over the closed manifold forces $|h|=0$, meaning the submanifold is totally geodesic.
+\end{solution}
+
+\subsection{Team Exam}
+
+\begin{exercise}
+Consider the space $X = M_{1} \cup M_{2}$, where $M_{1} \text{ and } M_{2}$ are Möbius bands and $M_{1} \cap M_{2} = \partial M_{1} = \partial M_{2}$. Determine the fundamental group of $X$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Gluing two Möbius bands along their boundaries produces a Klein bottle. A Möbius band "wraps" around its center circle once, but its boundary wraps around twice.
+
+\textbf{Proof:} Each $\pi_1(M_i) \cong \langle a_i \rangle$. The boundary generator $c$ maps to $2 a_i$ in each.
+By Seifert-van Kampen: $\pi_1(X) = \langle a_1, a_2 \mid a_1^2 = a_2^2 \rangle$. This is the standard group for the Klein bottle.
+\end{solution}
+
+\begin{exercise}
+For $n \in \mathbb{Z}$, let $f_{n}$ be a degree $n$ map on $S^{3}$. Compute the integral homology groups of $T_{f_{n}}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} A mapping torus is a "cylinder" $S^3 \times [0, 1]$ with the ends glued after a "twist" by $f_n$. The homology depends on how $f_n$ permutes the cycles of $S^3$.
+
+\textbf{Result:} Using the Wang sequence: $H_0 \cong \mathbb{Z}, H_1 \cong \mathbb{Z}$. $H_2 = 0$. $H_3 \cong \mathbb{Z}_{|n-1|}$. If $n=1$, $H_3 \cong \mathbb{Z}, H_4 \cong \mathbb{Z}$. If $n \neq 1$, $H_4 = 0$.
+\end{solution}
+
+\begin{exercise}
+Show that geodesic torsion along a curve $C$ on a surface $S$ is given by the specified determinant formula involving the first and second fundamental forms.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Geodesic torsion measures how the surface normal "tilts" sideways as you move along a curve. The determinant formula combines the shape of the surface (II) and the direction of the curve ($du, dv$) in a way that extracts this "twist."
+
+\textbf{Proof Sketch:} One calculates $\tau_g = \langle d\mathbf{N}/ds, \mathbf{n}_g \rangle$. By substituting the Weingarten equations and the components of the normals, the algebraic expansion matches the provided determinant.
+\end{solution}
+
+\begin{exercise}
+On a Riemannian manifold, if $f$ is a smooth function such that $|\mathrm{grad}\,f| = 1$, then the integral curves of $\mathrm{grad}\,f$ are geodesics.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} If you always walk "straight uphill" at a constant speed, and the slope is uniform, you won't feel any "side-force" that would make you turn. Your path will be a geodesic.
+
+\textbf{Proof:} Let $X = \nabla f$. We want to show $\nabla_X X = 0$.
+For any $Y$, $\langle \nabla_Y X, X \rangle = \frac{1}{2} Y \langle X, X \rangle = \frac{1}{2} Y(1) = 0$.
+Since $X$ is a gradient, $\text{Hess}(f)$ is symmetric, so $\langle \nabla_X X, Y \rangle = \text{Hess}(f)(X, Y) = \text{Hess}(f)(Y, X) = \langle \nabla_Y X, X \rangle = 0$.
+Since this holds for all $Y$, $\nabla_X X = 0$.
+\end{solution}

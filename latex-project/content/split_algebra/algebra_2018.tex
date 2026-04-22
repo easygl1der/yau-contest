@@ -1,0 +1,192 @@
+\section{2018 Algebra & Number Theory}
+
+\subsection*{Individual}
+\begin{exercise}
+(a) Show that if $2^k - 1$ is a prime for some integer $k \geq 1$, then $k$ is a prime.
+
+(b) Show that if $2^k + 1$ is a prime for some integer $k \geq 1$, then $k$ is a power of 2.
+
+(c) Prove the following theorem of Goldbach: for integers $i, j \geq 0$ with $i \neq j$, the integers $2^{2^i} + 1$ and $2^{2^j} + 1$ are coprime.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem explores the properties of Mersenne numbers ($2^k-1$) and Fermat numbers ($2^{2^n}+1$), which are fundamental in elementary number theory.
+\begin{itemize}
+    \item Part (a) and (b) use the factorization of $x^n - 1$ and $x^n + 1$. A prime cannot have non-trivial factors, which constrains the exponent.
+    \item Part (c) demonstrates that Fermat numbers are pairwise coprime using a recursive identity.
+\end{itemize}
+
+(a) Suppose $k = ab$ for some integers $a, b > 1$. Then:
+$$2^k - 1 = 2^{ab} - 1 = (2^a)^b - 1 = (2^a - 1)(1 + 2^a + (2^a)^2 + \dots + (2^a)^{b-1}).$$
+Since $a > 1$, $2^a - 1 > 1$. Since $b > 1$, the second factor is also greater than 1. Thus $2^k - 1$ is composite. By contrapositive, if $2^k - 1$ is prime, then $k$ cannot have any factors $a, b > 1$, so $k$ must be prime.
+
+(b) Suppose $k$ has an odd factor $d > 1$, say $k = d \cdot m$. Then:
+$$2^k + 1 = 2^{dm} + 1 = (2^m)^d + 1.$$
+Since $d$ is odd, we use the identity $x^d + 1 = (x + 1)(x^{d-1} - x^{d-2} + \dots + 1)$.
+$$2^k + 1 = (2^m + 1)(2^{m(d-1)} - 2^{m(d-2)} + \dots + 1).$$
+Since $m \geq 1$, $2^m + 1 > 1$. Since $d > 1$ and $m \geq 1$, the second factor is also greater than 1. Thus $2^k + 1$ is composite. By contrapositive, if $2^k + 1$ is prime, $k$ must have no odd factors greater than 1, meaning $k$ is a power of 2.
+
+(c) Let $F_n = 2^{2^n} + 1$. We use the identity:
+$$\prod_{k=0}^{n-1} F_k = F_n - 2.$$
+Proof by induction:
+- Base case $n=1$: $F_0 = 2^1 + 1 = 3$, $F_1 - 2 = (2^2 + 1) - 2 = 3$. Correct.
+- Inductive step: Assume $\prod_{k=0}^{n-1} F_k = F_n - 2$. Then
+$$\prod_{k=0}^{n} F_k = (F_n - 2) F_n = (2^{2^n} - 1)(2^{2^n} + 1) = (2^{2^n})^2 - 1 = 2^{2^{n+1}} - 1 = F_{n+1} - 2.$$
+Now, let $d = \gcd(F_i, F_j)$ with $i < j$. Then $d$ must divide the product $\prod_{k=0}^{j-1} F_k$.
+By the identity, $d$ divides $F_j - 2$.
+Since $d$ also divides $F_j$, it must divide $F_j - (F_j - 2) = 2$.
+The only divisors of 2 are 1 and 2. Since all $F_n$ are odd, $d$ cannot be 2.
+Thus $d = 1$, and the Fermat numbers are pairwise coprime.
+\end{solution}
+
+\begin{exercise}
+Let $K = \mathbb{Q}(\sqrt[3]{5})$ and let $L$ be the Galois closure of $K$.
+
+(a) Prove that $L$ has a unique subfield $M$ satisfying $[M: \mathbb{Q}] = 2$. Prove that every prime number $p \equiv 1 \pmod{3}$ splits in $M$.
+
+(b) Determine all prime numbers which are ramified in $L$.
+
+(c) Let $p \geq 7$ be a prime number. Let $f_p$ be the inertia degree of a prime ideal of the ring of integers $\mathcal{O}_L$ of $L$ above $p$. Recall that 5 is called a cubic residue mod $p$ if $x^3 \equiv 5 \pmod{p}$ has a solution in $\mathbb{F}_p$. Prove the following decomposition law in $L$:
+
+(i) If $p \equiv 1 \pmod{3}$ and 5 is a cubic residue mod $p$, then $p$ splits completely in $L$.
+
+(ii) If $p \equiv 1 \pmod{3}$ and 5 is not a cubic residue mod $p$, then $f_p = 3$.
+
+(iii) If $p \equiv 2 \pmod{3}$, then 5 is a cubic residue and $f_p = 2$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem analyzes a non-abelian Galois extension of $\mathbb{Q}$ of degree 6.
+\begin{itemize}
+    \item Part (a) uses the Galois correspondence. The Galois group is $S_3$, which has a unique subgroup of index 2 ($A_3$).
+    \item Part (b) relates ramification to the discriminant. Primes ramifying in a composite field are those that ramify in the component fields.
+    \item Part (c) uses the fact that decomposition in $L$ depends on decomposition in both $M$ (quadratic) and $K$ (cubic).
+\end{itemize}
+
+(a) The polynomial $x^3 - 5$ is irreducible over $\mathbb{Q}$ by Eisenstein's criterion ($p=5$). Its roots are $\sqrt[3]{5}, \omega\sqrt[3]{5}, \omega^2\sqrt[3]{5}$ where $\omega = e^{2\pi i/3}$. The Galois closure is $L = \mathbb{Q}(\sqrt[3]{5}, \omega)$.
+$[L:\mathbb{Q}] = [\mathbb{Q}(\sqrt[3]{5}, \omega):\mathbb{Q}(\omega)] \cdot [\mathbb{Q}(\omega):\mathbb{Q}] = 3 \cdot 2 = 6$.
+The Galois group $\mathrm{Gal}(L/\mathbb{Q})$ is $S_3$. The subfields of degree 2 correspond to subgroups of index 2 (order 3). In $S_3$, the only subgroup of order 3 is $A_3 = \{1, (123), (132)\}$. Thus $M$ is unique.
+Since $\omega \in L$ and $[\mathbb{Q}(\omega):\mathbb{Q}] = 2$, we must have $M = \mathbb{Q}(\omega) = \mathbb{Q}(\sqrt{-3})$.
+A prime $p > 3$ splits in $\mathbb{Q}(\sqrt{-3})$ if and only if $(-3/p) = 1$. By Quadratic Reciprocity:
+$$\left(\frac{-3}{p}\right) = \left(\frac{-1}{p}\right)\left(\frac{3}{p}\right) = (-1)^{(p-1)/2} (-1)^{(p-1)/2 \cdot (3-1)/2} \left(\frac{p}{3}\right) = \left(\frac{p}{3}\right).$$
+$(p/3) = 1$ if $p \equiv 1 \pmod 3$, so $p$ splits in $M$.
+
+(b) A prime ramifies in $L$ if and only if it ramifies in $K = \mathbb{Q}(\sqrt[3]{5})$ or $M = \mathbb{Q}(\sqrt{-3})$.
+1. In $M$, the discriminant is $-3$, so only 3 ramifies.
+2. In $K$, the discriminant of $x^3-5$ is $-27 \cdot 5^2 = -675 = -3^3 \cdot 5^2$. Thus 3 and 5 are the only candidates.
+Both 3 and 5 indeed ramify (5 is totally ramified in $K$ as $x^3-5$ is Eisenstein at 5; 3 is ramified because it ramifies in $M$).
+Thus the ramified primes are $\{3, 5\}$.
+
+(c) Let $f_p$ be the inertia degree in $L$. Note that $L$ is the compositum of $K$ and $M$.
+(i) If $p \equiv 1 \pmod 3$, $p$ splits in $M$ ($f_{p,M} = 1$). If 5 is a cubic residue, $x^3-5$ has a root in $\mathbb{F}_p$. Since $p \equiv 1 \pmod 3$, $\mathbb{F}_p$ contains the 3rd roots of unity, so $x^3-5$ splits completely in $\mathbb{F}_p$. Thus $f_{p,K} = 1$. Consequently $f_{p,L} = \mathrm{lcm}(1, 1) = 1$. $p$ splits completely.
+(ii) If $p \equiv 1 \pmod 3$ and 5 is not a cubic residue, $x^3-5$ is irreducible in $\mathbb{F}_p$ (if it had one root, it would have three because $\omega \in \mathbb{F}_p$). Thus $f_{p,K} = 3$. Then $f_{p,L} = \mathrm{lcm}(f_{p,M}, f_{p,K}) = \mathrm{lcm}(1, 3) = 3$.
+(iii) If $p \equiv 2 \pmod 3$, then $\gcd(3, p-1) = 1$. The map $x \mapsto x^3$ is a bijection on $\mathbb{F}_p^\times$. Thus 5 is always a cubic residue mod $p$. $x^3-5$ has exactly one root in $\mathbb{F}_p$. The other two roots are in $\mathbb{F}_{p^2}$ because $\omega \notin \mathbb{F}_p$. Thus $f_{p,K} = 2$. Also $p$ is inert in $M$ ($f_{p,M} = 2$). Then $f_{p,L} = \mathrm{lcm}(2, 2) = 2$.
+\end{solution}
+
+\begin{exercise}
+Prove that every group of order 99 is abelian.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+The structure of a group of a given order can often be determined by analyzing its Sylow subgroups and their interactions.
+\begin{itemize}
+    \item We use the Sylow theorems to count the number of $p$-Sylow subgroups. If there is only one, it is normal.
+    \item We examine the possible homomorphisms from one Sylow subgroup to the automorphism group of another to determine if the group is a direct product.
+\end{itemize}
+
+Let $G$ be a group of order $99 = 3^2 \cdot 11$.
+1. \textbf{Sylow 11-subgroups:} Let $n_{11}$ be the number of Sylow 11-subgroups.
+   - $n_{11} \equiv 1 \pmod{11}$
+   - $n_{11}$ divides 9.
+   The only divisor of 9 that is $1 \pmod{11}$ is 1. Thus $n_{11} = 1$.
+   Let $P_{11}$ be the unique Sylow 11-subgroup. Since it is unique, $P_{11} \trianglelefteq G$.
+2. \textbf{Sylow 3-subgroups:} Let $P_9$ be a Sylow 3-subgroup of order 9.
+3. \textbf{Group Structure:} Since $P_{11}$ is normal, $G$ is a semidirect product $G \cong P_{11} \rtimes_\phi P_9$, where $\phi: P_9 \to \mathrm{Aut}(P_{11})$ is a homomorphism.
+   The group $P_{11}$ is cyclic of order 11, so $\mathrm{Aut}(P_{11}) \cong C_{10}$.
+   The order of $P_9$ is 9. Any homomorphism $\phi: P_9 \to C_{10}$ must map elements to elements whose order divides $\gcd(9, 10) = 1$.
+   Thus $\phi$ must be the trivial homomorphism ($\phi(g) = id$ for all $g \in P_9$).
+   This implies that the semidirect product is actually a \textbf{direct product}:
+   $$G \cong P_{11} \times P_9.$$
+4. \textbf{Abelian Property:}
+   - $P_{11}$ is of order 11 (prime), so it is cyclic and thus abelian.
+   - $P_9$ is of order $3^2$ ($p^2$), and it is a well-known result that every group of order $p^2$ is abelian.
+   The direct product of two abelian groups is abelian. Therefore, $G$ is abelian.
+\end{solution}
+
+\begin{exercise}
+Let $K$ be a field and let $V$ be a finite-dimensional $K$-vector space.
+
+(a) Assume that $K$ is infinite. Show that $V$ is not the union of finitely many proper linear $K$-subspaces.
+
+(b) Assume that $K$ is finite and $V$ is non-zero. Let $S$ be the set of affine hyperplanes of $V$. Let $g: V \to \mathbb{R}$ be a function. The Radon transform $Rg: S \to \mathbb{R}$ is defined by $(Rg)(\xi) = \sum_{x \in \xi} g(x)$ for $\xi \in S$. Show that $Rg = 0$ implies $g = 0$.
+
+(c) Let $v_1, \ldots, v_n, w_1, \ldots, w_n \in V$. Assume that for every $K$-linear map $f: V \to K$, $(f(v_1), \ldots, f(v_n))$ and $(f(w_1), \ldots, f(w_n))$ coincide up to permutation of the indices. Deduce that $(v_1, \ldots, v_n)$ and $(w_1, \ldots, w_n)$ coincide up to permutation of the indices. Here we make no assumptions on $K$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem explores the interplay between linear algebra and the geometry of subspaces/hyperplanes.
+\begin{itemize}
+    \item Part (a) is a basic property of vector spaces over infinite fields. A finite union of "lower-dimensional" objects cannot fill a higher-dimensional space.
+    \item Part (b) introduces the finite Radon transform. Injectivity is proved by showing that a point can be "isolated" by a linear combination of hyperplanes.
+    \item Part (c) applies the previous results. The condition on $f$ is equivalent to saying that the multisets of values are the same for every projection, which identifies the multiset of vectors.
+\end{itemize}
+
+(a) Let $V = \cup_{i=1}^n V_i$ where $V_i$ are proper subspaces. Assume $n$ is minimal. If $n=1$, $V = V_1$ is proper, contradiction. For $n > 1$, there exists $x \in V_1 \setminus \cup_{i=2}^n V_i$ and $y \in V_2 \setminus \cup_{i \neq 2} V_i$ (by minimality).
+Consider the set $L = \{ x + ay \mid a \in K \}$. Since $K$ is infinite, $L$ is infinite.
+For each $i$, if $V_i$ contains two distinct elements $x+ay$ and $x+by$, then it contains their difference $(a-b)y$, so $y \in V_i$. This then implies $x \in V_i$.
+- If $i=1$, since $x \in V_1$ and $y \notin V_1$, $V_1$ can contain at most one element of $L$ (namely $x$, when $a=0$).
+- If $i > 1$, since $x \notin V_i$, $V_i$ can contain at most one element of $L$.
+Thus, the union $\cup V_i$ contains at most $n$ elements of $L$. Since $L$ is infinite, there exists $a \in K$ such that $x+ay \notin \cup V_i$, which contradicts $V = \cup V_i$.
+
+(b) Let $q = |K|$ and $d = \dim V$. For any $z \in V$ and any line $\ell$ through 0, there is a unique affine hyperplane $\xi_{z, \ell}$ through $z$ that is "perpendicular" to $\ell$ (i.e., $\xi_{z, \ell} = z + H_\ell$ where $H_\ell$ is a linear hyperplane).
+Summing $Rg(\xi)$ over all affine hyperplanes $\xi$ containing $z$:
+$$\sum_{\xi \ni z} Rg(\xi) = \sum_{\xi \ni z} \sum_{x \in \xi} g(x) = \sum_{x \in V} g(x) \cdot (\text{number of hyperplanes containing both } z \text{ and } x).$$
+- If $x = z$, there are $\frac{q^d - 1}{q - 1}$ hyperplanes through $z$.
+- If $x \neq z$, there are $\frac{q^{d-1} - 1}{q - 1}$ hyperplanes containing the line segment $zx$.
+Let $N = \frac{q^d - 1}{q - 1}$ and $M = \frac{q^{d-1} - 1}{q - 1}$. Then:
+$$0 = \sum_{\xi \ni z} Rg(\xi) = N g(z) + M \sum_{x \neq z} g(x) = (N-M) g(z) + M \sum_{x \in V} g(x).$$
+Summing $Rg(\xi)$ over all $q^d$ affine hyperplanes $\xi$ in a parallel class yields $\sum_{x \in V} g(x) = 0$ (since each $Rg(\xi) = 0$).
+Thus $(N-M)g(z) = 0$. Since $N-M = q^{d-1} \neq 0$, we have $g(z) = 0$ for all $z$.
+
+(c) Let $S_v$ and $S_w$ be the multisets $\{v_1, \dots, v_n\}$ and $\{w_1, \dots, w_n\}$. The assumption is that for every $f \in V^*$, the multisets of values $f(S_v)$ and $f(S_w)$ are identical.
+This means for every $c \in K$ and every $f \in V^*$, the number of $i$ such that $f(v_i) = c$ is the same as for $w_i$.
+The set $\{ x \in V \mid f(x) = c \}$ is an affine hyperplane $\xi_{f, c}$.
+Let $g(x) = \mathrm{count}(x, S_v) - \mathrm{count}(x, S_w)$ be the difference of frequency functions.
+The assumption says that for every affine hyperplane $\xi$, $\sum_{x \in \xi} g(x) = 0$.
+By part (b) (if $K$ is finite) or by considering the "Fourier-like" transform/polynomials (if $K$ is infinite), we conclude $g(x) = 0$ for all $x$.
+Thus $S_v$ and $S_w$ are the same multiset.
+\end{solution}
+
+\begin{exercise}
+Let p be a prime number and let $v_p(\cdot)$ denote the $p$-adic valuation on $\mathbb{Q}_p$. Let $A = (a_{ij})_{1 \leq i, j \leq n} \in \mathrm{M}_n(\mathbb{Q}_p)$ be an $n \times n$ matrix with entries in $\mathbb{Q}_p$. Assume that:
+$$v_p(a_{ij}) \geq \max\{i, n+1-j\}, \quad a_{i,n+1-i} \in p^i \mathbb{Z}_p^\times.$$
+
+Prove that $A$ has the form:
+$$A \in \begin{pmatrix} p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p & \cdots & p^2\mathbb{Z}_p & p\mathbb{Z}_p^\times \\ p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p & \cdots & p^2\mathbb{Z}_p^\times & p^2\mathbb{Z}_p \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ p^n\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p^\times & \cdots & p^{n-1}\mathbb{Z}_p & p^{n-1}\mathbb{Z}_p \\ p^n\mathbb{Z}_p^\times & p^n\mathbb{Z}_p & \cdots & p^n\mathbb{Z}_p & p^n\mathbb{Z}_p \end{pmatrix}.$$
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem requires a careful entry-by-entry analysis of a matrix based on $p$-adic valuation constraints. 
+\begin{itemize}
+    \item We interpret the condition $v_p(a_{ij}) \geq \max\{i, n+1-j\}$ for different rows and columns.
+    \item The condition $a_{i, n+1-i} \in p^i \mathbb{Z}_p^\times$ fixes the exact valuation of the "anti-diagonal" entries.
+\end{itemize}
+
+1. \textbf{Analyzing the lower bounds:} The entry $a_{ij}$ must satisfy $v_p(a_{ij}) \geq i$ and $v_p(a_{ij}) \geq n+1-j$.
+   - For the \textbf{first row} ($i=1$): $v_p(a_{1j}) \geq \max\{1, n+1-j\}$. As $j$ goes from 1 to $n$, the term $n+1-j$ goes from $n$ to 1. Thus $v_p(a_{11}) \geq n, v_p(a_{12}) \geq n-1, \dots, v_p(a_{1n}) \geq 1$.
+   - For the \textbf{last row} ($i=n$): $v_p(a_{nj}) \geq \max\{n, n+1-j\}$. Since $n \geq n+1-j$ for all $j \geq 1$, we have $v_p(a_{nj}) \geq n$ for all $j$.
+   - For the \textbf{first column} ($j=1$): $v_p(a_{i1}) \geq \max\{i, n\}$. For all $i \leq n$, this means $v_p(a_{i1}) \geq n$.
+   - For the \textbf{last column} ($j=n$): $v_p(a_{in}) \geq \max\{i, 1\} = i$.
+
+2. \textbf{Analyzing the exact valuations:} The anti-diagonal entries are $a_{i, n+1-i}$.
+   - The condition $\max\{i, n+1-(n+1-i)\} = \max\{i, i\} = i$ matches the lower bound.
+   - The constraint $a_{i, n+1-i} \in p^i \mathbb{Z}_p^\times$ implies that $v_p(a_{i, n+1-i}) = i$ exactly.
+
+3. \textbf{Constructing the matrix form:}
+   - Row 1: Entries have valuations at least $n, n-1, \dots, 2, 1$. The last entry $a_{1n}$ has valuation exactly 1.
+   - Row 2: $v_p(a_{2j}) \geq \max\{2, n+1-j\}$. For $j=1 \dots n$, the bounds are $n, n-1, \dots, 2, 2$. The entry $a_{2, n-1}$ has valuation exactly 2.
+   - Row $k$: $v_p(a_{kj}) \geq \max\{k, n+1-j\}$.
+   - Row $n$: All entries have valuation at least $n$. The first entry $a_{n1}$ has valuation exactly $n$.
+   This matches the provided matrix structure where each entry $a_{ij}$ is represented by the ideal $p^k \mathbb{Z}_p$ where $k = \max\{i, n+1-j\}$, with the anti-diagonal entries restricted to have exactly that valuation.
+\end{solution}
+

@@ -1,0 +1,173 @@
+\section{2023 Probability and Statistics}
+
+Solve every problem.
+
+\subsection{Part I: Probability}
+
+\begin{exercise}
+Suppose that a sequence $\{X_n\}$ of real-valued random variables converges to $X$ in distribution and there are positive constants $r$ and $C$ such that $\mathbb{E}|X_n|^r \leq C$ for all $n$. Show that
+\[
+\lim_{n \to \infty} \mathbb{E}|X_n|^s = \mathbb{E}|X|^s
+\]
+for all $0 < s < r$.
+\end{exercise}
+
+\begin{solution}
+Since $X_n \xrightarrow{d} X$ and the function $f(x) = |x|^s$ is continuous, by the continuous mapping theorem, $|X_n|^s \xrightarrow{d} |X|^s$. To show that the expectations converge, it suffices to show that the sequence $\{|X_n|^s\}$ is uniformly integrable for $0 < s < r$.
+
+Given $\mathbb{E}|X_n|^r \leq C$, let $p = r/s > 1$. Then
+\[
+\mathbb{E}[(|X_n|^s)^p] = \mathbb{E}|X_n|^r \leq C.
+\]
+Since the $p$-th moment of $|X_n|^s$ is uniformly bounded for some $p > 1$, the sequence $\{|X_n|^s\}$ is uniformly integrable.
+
+By Fatou's Lemma (applied to the convergence in distribution), we have:
+\[
+\mathbb{E}|X|^s \leq \liminf_{n \to \infty} \mathbb{E}|X_n|^s \leq C.
+\]
+Thus $\mathbb{E}|X|^s < \infty$. Finally, for a uniformly integrable sequence of random variables converging in distribution, the expectations also converge. Therefore,
+\[
+\lim_{n \to \infty} \mathbb{E}|X_n|^s = \mathbb{E}|X|^s.
+\]
+\end{solution}
+
+\begin{exercise}
+Let $p(x,y)$ be the (one-step) transition function of a Markov chain on a discrete state space $S$ and $p_n(x,y)$ be the $n$-step transition function. Show that for any positive integers $L$ and $N$ and any states $x$ and $y$,
+\[
+\sum_{n=L}^{N+L} p_n(x,y) \leq \sum_{n=0}^N p_n(y,y).
+\]
+\end{exercise}
+
+\begin{solution}
+Let $X_k$ be the Markov chain. The left-hand side is the expected number of visits to $y$ between times $L$ and $N+L$, starting from $x$:
+\[
+\sum_{n=L}^{N+L} p_n(x,y) = \mathbb{E}_x \left[ \sum_{n=L}^{N+L} \mathbb{I}(X_n = y) \right].
+\]
+Let $\tau_y = \inf\{n \geq L : X_n = y\}$ be the first time at or after $L$ that the chain visits state $y$. We can decompose the expectation based on whether the chain ever visits $y$ in the interval $[L, N+L]$:
+\[
+\mathbb{E}_x \left[ \sum_{n=L}^{N+L} \mathbb{I}(X_n = y) \right] = \mathbb{E}_x \left[ \mathbb{I}(\tau_y \leq N+L) \mathbb{E}_x \left[ \sum_{n=\tau_y}^{N+L} \mathbb{I}(X_n = y) \mid \mathcal{F}_{\tau_y} \right] \right].
+\]
+By the strong Markov property at time $\tau_y$, on the event $\{\tau_y \leq N+L\}$, the future of the chain starting from $X_{\tau_y} = y$ is a Markov chain with the same transition probabilities. Thus,
+\[
+\mathbb{E}_x \left[ \sum_{n=\tau_y}^{N+L} \mathbb{I}(X_n = y) \mid \mathcal{F}_{\tau_y} \right] = \mathbb{E}_y \left[ \sum_{k=0}^{N+L-\tau_y} \mathbb{I}(X_k = y) \right].
+\]
+Since $\tau_y \geq L$, we have $N+L-\tau_y \leq N$. Therefore,
+\[
+\mathbb{E}_y \left[ \sum_{k=0}^{N+L-\tau_y} \mathbb{I}(X_k = y) \right] \leq \mathbb{E}_y \left[ \sum_{k=0}^{N} \mathbb{I}(X_k = y) \right] = \sum_{n=0}^N p_n(y,y).
+\]
+Substituting this back into the first equation:
+\[
+\sum_{n=L}^{N+L} p_n(x,y) \leq \mathbb{P}_x(\tau_y \leq N+L) \left( \sum_{n=0}^N p_n(y,y) \right) \leq \sum_{n=0}^N p_n(y,y).
+\]
+\end{solution}
+
+\begin{exercise}
+Let $\{X_n\}$ be an i.i.d. sequence with the symmetric Bernoulli distribution:
+\[
+\mathbb{P}\{X = 1\} = \mathbb{P}\{X = -1\} = \frac{1}{2}.
+\]
+Let $S_n = \sum_{i=1}^n X_i$ be the partial sum. Show that for all $\alpha > \frac{1}{2}$,
+\[
+\mathbb{P}\left\{\lim_{n \to \infty} \frac{S_n}{n^\alpha} = 0\right\} = 1.
+\]
+\end{exercise}
+
+\begin{solution}
+We use Hoeffding's inequality and the Borel-Cantelli Lemma. For any $\epsilon > 0$ and fixed $n$, Hoeffding's inequality gives:
+\[
+\mathbb{P}(|S_n| > \epsilon n^\alpha) \leq 2 \exp\left( - \frac{2 (\epsilon n^\alpha)^2}{\sum_{i=1}^n (1 - (-1))^2} \right) = 2 \exp\left( - \frac{2 \epsilon^2 n^{2\alpha}}{4n} \right) = 2 \exp\left( - \frac{\epsilon^2}{2} n^{2\alpha-1} \right).
+\]
+For $\alpha > \frac{1}{2}$, the exponent is $2\alpha - 1 > 0$. Thus the series $\sum_{n=1}^\infty \mathbb{P}(|S_n| > \epsilon n^\alpha)$ converges:
+\[
+\sum_{n=1}^\infty 2 \exp\left( - \frac{\epsilon^2}{2} n^{2\alpha-1} \right) < \infty.
+\]
+By the first Borel-Cantelli Lemma, $\mathbb{P}(|S_n| > \epsilon n^\alpha \text{ infinitely often}) = 0$. Since this holds for any $\epsilon > 0$, we conclude that $S_n / n^\alpha \to 0$ almost surely.
+
+Alternatively, this follows from the Law of the Iterated Logarithm, which states that
+\[
+\limsup_{n \to \infty} \frac{S_n}{\sqrt{2n \log \log n}} = 1 \text{ a.s.}
+\]
+Since $\sqrt{n \log \log n} = o(n^\alpha)$ for any $\alpha > 1/2$, it follows that $S_n / n^\alpha \to 0$ almost surely.
+\end{solution}
+
+\begin{exercise}
+Let $X^n = \{X_{ij}\}$ be an $n \times n$ random matrix whose entries are i.i.d. with symmetric Bernoulli distribution:
+\[
+\mathbb{P}\{X = 0\} = \mathbb{P}\{X = 1\} = \frac{1}{2}.
+\]
+Let $p_n = \mathbb{P}\{\det X^n \text{ is odd}\}$. Show that $\lim_{n \to \infty} p_n > 0$.
+\end{exercise}
+
+\begin{solution}
+The determinant of an integer matrix $X^n$ is odd if and only if its reduction modulo 2 is non-singular. Thus, $p_n$ is the probability that a random $n \times n$ matrix over the finite field $\mathbb{F}_2$ is invertible, where each entry is 0 or 1 with probability $1/2$.
+
+An $n \times n$ matrix over $\mathbb{F}_2$ is invertible if and only if its rows are linearly independent.
+\begin{enumerate}
+    \item The first row can be any non-zero vector. There are $2^n - 1$ such choices out of $2^n$ total vectors.
+    \item The second row must be any vector not in the span of the first row. There are $2^n - 2^1$ such choices.
+    \item In general, the $k$-th row must be any vector not in the span of the previous $k-1$ linearly independent rows. There are $2^n - 2^{k-1}$ such choices.
+\end{enumerate}
+The probability $p_n$ is therefore:
+\[
+p_n = \prod_{k=1}^n \frac{2^n - 2^{k-1}}{2^n} = \prod_{k=1}^n (1 - 2^{-(n-k+1)}) = \prod_{j=1}^n (1 - 2^{-j}).
+\]
+As $n \to \infty$, $p_n$ converges to the infinite product:
+\[
+\lim_{n \to \infty} p_n = \prod_{j=1}^\infty (1 - 2^{-j}).
+\]
+This product converges to a non-zero value because the series $\sum_{j=1}^\infty 2^{-j}$ converges. Numerically, $\lim_{n \to \infty} p_n \approx 0.288788 > 0$.
+\end{solution}
+
+\subsection{Part II: Statistics}
+
+\begin{exercise}
+You have been asked to help design a randomized trial of a new drug, drug A, to be used in place of drug B, for a particular medical condition. The budget is fixed to have 1000 patients treated with A and 1000 treated with drug B. Describe a class of methods that achieves this goal where each patient has a positive probability of receiving drug A and a positive probability of receiving drug B. Provide enough detail that you are describing an explicit algorithm.
+\end{exercise}
+
+\begin{solution}
+A standard class of methods for this problem is the \textbf{Random Allocation Rule}. This method ensures exactly equal group sizes (1000 A and 1000 B) while maintaining randomness.
+
+\textbf{Explicit Algorithm (Random Allocation Rule):}
+\begin{enumerate}
+    \item Create a list (or vector) $V$ of length $N = 2000$.
+    \item Fill the first 1000 entries of $V$ with the label 'A' and the remaining 1000 entries with the label 'B'.
+    \item Generate a random permutation $\sigma$ of the integers $\{1, 2, \dots, 2000\}$ using an algorithm like the Fisher-Yates shuffle.
+    \item Assign the $i$-th patient who enters the trial to the treatment specified by $V_{\sigma(i)}$.
+\end{enumerate}
+
+\textbf{Verification of Requirements:}
+\begin{itemize}
+    \item \textbf{Fixed Budget:} The algorithm guarantees exactly 1000 patients receive A and 1000 receive B.
+    \item \textbf{Positive Probability:} For any patient $i \in \{1, \dots, 2000\}$, the probability of receiving drug A is exactly $1000/2000 = 0.5$, which is positive. Similarly for drug B. Even if patients are assigned sequentially, the conditional probability of receiving A (given previous assignments) remains positive as long as there are 'A's remaining in the pool. To ensure \textit{every} patient has a positive probability of A and B \textit{unconditionally}, we simply note that $\mathbb{P}(Z_i = A) = 0.5$ for all $i$.
+\end{itemize}
+
+Other methods in this class include \textbf{Permuted Block Randomization} (where patients are randomized in smaller blocks, e.g., blocks of size 4 containing 2 As and 2 Bs) which helps maintain balance throughout the trial.
+\end{solution}
+
+\begin{exercise}
+You are given the results of a randomized experiment of two drugs, A and B. The experiment was not conducted in the usual way, but rather by allocating patients by a machine-learning algorithm under which each patient has a positive probability of receiving A and of receiving B; moreover the algorithm is completely specified and is built to create better than random balance on the covariates.
+
+(a) Can unbiased estimates of the causal effect of drug A versus B be found, and if so, show why?
+
+(b) Can exact small sample, non-parametric inferences for the causal effect in part (a) be derived, based solely on the randomization distribution of some statistic?
+\end{exercise}
+
+\begin{solution}
+(a) \textbf{Yes.} Unbiased estimates can be found. Because the allocation algorithm is "completely specified" and the probability of receiving drug A (the propensity score, $\pi_i = \mathbb{P}(Z_i = A \mid X_i)$) is positive for all patients (and strictly less than 1), we can use \textbf{Inverse Probability Weighting (IPW)} or the \textbf{Horvitz-Thompson estimator}.
+
+Let $Y_i$ be the observed outcome and $Z_i \in \{0, 1\}$ be the treatment indicator (1 for A, 0 for B). The propensity scores $\pi_i$ are known from the ML algorithm. The estimator
+\[
+\hat{\tau} = \frac{1}{N} \sum_{i=1}^N \left( \frac{Z_i Y_i}{\pi_i} - \frac{(1 - Z_i) Y_i}{1 - \pi_i} \right)
+\]
+is an unbiased estimator of the population average treatment effect (ATE). This is because:
+\[
+\mathbb{E}\left[ \frac{Z_i Y_i}{\pi_i} \right] = \mathbb{E}\left[ \mathbb{E} \left[ \frac{Z_i Y_i(1)}{\pi_i} \mid X_i \right] \right] = \mathbb{E}\left[ \frac{\pi_i Y_i(1)}{\pi_i} \right] = \mathbb{E}[Y_i(1)].
+\]
+Similarly, $\mathbb{E}[(1-Z_i)Y_i/(1-\pi_i)] = \mathbb{E}[Y_i(0)]$. Thus $\mathbb{E}[\hat{\tau}] = \mathbb{E}[Y_i(1) - Y_i(0)]$.
+
+(b) \textbf{Yes.} Exact small sample inferences (such as $p$-values) can be derived using the \textbf{Randomization Test} (Fisher's Exact Test framework).
+
+Since the allocation mechanism (the ML algorithm) is completely specified, we know the exact distribution of the treatment assignment vector $\mathbf{Z} = (Z_1, \dots, Z_N)$. Under the sharp null hypothesis $H_0: Y_i(A) = Y_i(B)$ for all $i$, the potential outcomes are fixed and independent of the treatment assignment.
+
+We can choose a test statistic $T(\mathbf{Z}, \mathbf{Y})$. The "exact" distribution of $T$ under $H_0$ is obtained by calculating $T(\mathbf{z}, \mathbf{y})$ for all possible realizations $\mathbf{z}$ of the treatment vector, weighted by their known probabilities $\mathbb{P}(\mathbf{Z} = \mathbf{z})$ from the ML algorithm. In practice, if the number of realizations is too large, we can sample from the known distribution of the ML algorithm to obtain a Monte Carlo approximation of the exact randomization distribution. Because we rely only on the randomization distribution specified by the algorithm, the resulting inference is non-parametric and valid in small samples.
+\end{solution}

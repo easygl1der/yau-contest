@@ -1,0 +1,213 @@
+\section{2018 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+We consider convection-diffusion equation:
+\[
+u_{t}+au_{x}=bu_{xx},\quad 0\leq x<1
+\]
+with initial condition $u(x,0)=f(x)$ and periodic boundary condition, where $a$ and $b>0$ are constants.
+
+The first order IMEX time discretization and second order central spatial discretization give:
+\[
+\frac{u_{j}^{n+1}-u_{j}^{n}}{\Delta t}+a\frac{u_{j+1}^{n}-u_{j-1}^{n}}{2\Delta x}=b\frac{u_{j+1}^{n+1}-2u_{j}^{n+1}+u_{j-1}^{n+1}}{\Delta x^{2}}.
+\]
+
+Prove the scheme is $L^{2}$ stable under very mild time step restriction $\Delta t\leq c$ with constant $c$ independent of $\Delta x$. Can you determine dependency of $c$ on $a$ and $b$?
+\end{exercise}
+
+\begin{solution}
+We use Fourier analysis (von Neumann stability analysis). Let $u_j^n = \hat{u}^n e^{i k j \Delta x}$, where $k$ is the wavenumber. Substituting this into the discretization scheme, we have:
+\[
+\frac{\hat{u}^{n+1}-\hat{u}^n}{\Delta t} + a \hat{u}^n \frac{e^{ik\Delta x} - e^{-ik\Delta x}}{2\Delta x} = b \hat{u}^{n+1} \frac{e^{ik\Delta x} - 2 + e^{-ik\Delta x}}{\Delta x^2}.
+\]
+Let $\theta = k\Delta x \in [0, 2\pi]$. Using the identities $e^{i\theta} - e^{-i\theta} = 2i\sin\theta$ and $e^{i\theta} - 2 + e^{-i\theta} = 2(\cos\theta - 1) = -4\sin^2(\theta/2)$, we obtain:
+\[
+\frac{\hat{u}^{n+1}-\hat{u}^n}{\Delta t} + i a \hat{u}^n \frac{\sin\theta}{\Delta x} = - \frac{4b\hat{u}^{n+1}}{\Delta x^2} \sin^2(\theta/2).
+\]
+Rearranging terms to solve for the amplification factor $G(\theta) = \hat{u}^{n+1}/\hat{u}^n$:
+\[
+\hat{u}^{n+1} \left( 1 + \frac{4b\Delta t}{\Delta x^2} \sin^2(\theta/2) \right) = \hat{u}^n \left( 1 - i \frac{a\Delta t}{\Delta x} \sin\theta \right).
+\]
+\[
+G(\theta) = \frac{1 - i \frac{a\Delta t}{\Delta x} \sin\theta}{1 + \frac{4b\Delta t}{\Delta x^2} \sin^2(\theta/2)}.
+\]
+The scheme is $L^2$ stable if $|G(\theta)| \leq 1 + O(\Delta t)$ for all $\theta$. For absolute stability, we require $|G(\theta)|^2 \leq 1$:
+\[
+|G(\theta)|^2 = \frac{1 + \frac{a^2 \Delta t^2}{\Delta x^2} \sin^2\theta}{\left( 1 + \frac{4b\Delta t}{\Delta x^2} \sin^2(\theta/2) \right)^2} \leq 1.
+\]
+Using $\sin\theta = 2\sin(\theta/2)\cos(\theta/2)$, we have $\sin^2\theta = 4\sin^2(\theta/2)\cos^2(\theta/2)$. The inequality becomes:
+\[
+1 + \frac{4a^2 \Delta t^2}{\Delta x^2} \sin^2(\theta/2)\cos^2(\theta/2) \leq 1 + \frac{8b\Delta t}{\Delta x^2} \sin^2(\theta/2) + \frac{16b^2 \Delta t^2}{\Delta x^4} \sin^4(\theta/2).
+\]
+Subtracting 1 and dividing by $\frac{4\Delta t}{\Delta x^2} \sin^2(\theta/2)$ (assuming $\sin(\theta/2) \neq 0$):
+\[
+a^2 \Delta t \cos^2(\theta/2) \leq 2b + \frac{4b^2 \Delta t}{\Delta x^2} \sin^2(\theta/2).
+\]
+Since the term $\frac{4b^2 \Delta t}{\Delta x^2} \sin^2(\theta/2)$ is non-negative, a sufficient condition for the inequality to hold for all $\theta$ is:
+\[
+a^2 \Delta t \leq 2b \implies \Delta t \leq \frac{2b}{a^2}.
+\]
+Thus, the constant $c = 2b/a^2$ is independent of $\Delta x$.
+\end{solution}
+
+\begin{exercise}
+[Velocity-Verlet method]
+
+\begin{enumerate}
+\item[(a)] Recast the Newtonian formula $q''(t)=-\nabla V(q)$ into a Hamiltonian system and show the corresponding map on phase space is symplectic.
+\item[(b)] Show that the velocity-Verlet method:
+\[
+p_{n+1/2}=p_{n}-\frac{\Delta t}{2}\nabla V(q_{n});
+\]
+\[
+q_{n+1}=q_{n}+\Delta tp_{n+1/2};
+\]
+\[
+p_{n+1}=p_{n+1/2}-\frac{\Delta t}{2}\nabla V(q_{n+1})
+\]
+is symplectic and is second order accurate.
+\end{enumerate}
+
+Hint: Let $\mathbf{u}(t)=(p(t),q(t))$ be solution of Hamiltonian system with initial data $\mathbf{u}_{0}=(p_{0},q_{0})$. Flow map $\varphi_{t}:\mathbb{R}^{d}\times\mathbb{R}^{d}\to\mathbb{R}^{d}\times\mathbb{R}^{d}$, $\varphi_{t}(\mathbf{u}_{0})=\mathbf{u}(t)$. Flow is symplectic if Jacobian $\Phi_{t}(\mathbf{u}_{0})=\partial\mathbf{u}(t)/\partial\mathbf{u}_{0}$ satisfies $\Phi_{t}(\mathbf{u}_{0})^{T}J\Phi_{t}(\mathbf{u}_{0})=J$ where $J=\begin{pmatrix}0&I\\-I&0\end{pmatrix}$.
+\end{exercise}
+
+\begin{solution}
+(a) Let $p(t) = q'(t)$. Then $p'(t) = q''(t) = -\nabla V(q)$. The Hamiltonian is $H(p, q) = \frac{1}{2} |p|^2 + V(q)$. The Hamilton's equations are:
+\[
+\dot{q} = \frac{\partial H}{\partial p} = p, \quad \dot{p} = -\frac{\partial H}{\partial q} = -\nabla V(q).
+\]
+This system can be written as $\dot{\mathbf{u}} = J \nabla H(\mathbf{u})$, where $\mathbf{u} = (q, p)^T$. The flow $\varphi_t$ of a Hamiltonian system is symplectic by Liouville's theorem. Specifically, the Jacobian $\Phi_t$ satisfies $\dot{\Phi}_t = J \nabla^2 H \Phi_t$. One can verify that $\frac{d}{dt} (\Phi_t^T J \Phi_t) = 0$, and since $\Phi_0 = I$, $\Phi_t^T J \Phi_t = J$.
+
+(b) Symplecticity: The velocity-Verlet method is a composition of three maps $\Psi_{\Delta t} = \Psi^{(3)}_{\Delta t/2} \circ \Psi^{(2)}_{\Delta t} \circ \Psi^{(1)}_{\Delta t/2}$:
+\begin{enumerate}
+    \item $\Psi^{(1)}_{h}: (q, p) \mapsto (q, p - h\nabla V(q))$ (Momentum kick)
+    \item $\Psi^{(2)}_{h}: (q, p) \mapsto (q + hp, p)$ (Drift)
+    \item $\Psi^{(3)}_{h}: (q, p) \mapsto (q, p - h\nabla V(q))$ (Momentum kick)
+\end{enumerate}
+The Jacobian of $\Psi^{(1)}_h$ is $M_1 = \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix}$. We check $M_1^T J M_1 = J$:
+\[
+\begin{pmatrix} I & -h\nabla^2 V \\ 0 & I \end{pmatrix} \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix} \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix} = \begin{pmatrix} h\nabla^2 V & I \\ -I & 0 \end{pmatrix} \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix} = \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix}.
+\]
+Similarly, the Jacobian of $\Psi^{(2)}_h$ is $M_2 = \begin{pmatrix} I & hI \\ 0 & I \end{pmatrix}$, which is also symplectic. Since the composition of symplectic maps is symplectic, velocity-Verlet is symplectic.
+
+Accuracy: The method is a Strang splitting of the Hamiltonian flow. For $\dot{\mathbf{u}} = (A+B)\mathbf{u}$, the scheme is $e^{hB/2} e^{hA} e^{hB/2} = e^{h(A+B) + O(h^3)}$, which is second-order accurate. Alternatively, Taylor expansion of $q_{n+1}$ and $p_{n+1}$ around $t_n$ matches the exact solution up to $O(\Delta t^2)$.
+\end{solution}
+
+\begin{exercise}
+We begin with definitions:
+\begin{enumerate}
+\item[(1)] A graph $G$ is pair $G=(V,E)$ where $V$ is finite set (vertices) and $E\subseteq P_{2}(V)$ (edges). Simple graph has no loops or multiple edges. Order is $|V|$.
+\item[(2)] Vertices $x$ and $y$ are adjacent if $xy\in E$. Neighborhood $N_{G}(x)$ is set of adjacent vertices. Degree $d_{G}(x)=|N_{G}(x)|$.
+\item[(3)] Path is distinct vertices $v_{i_{1}}v_{i_{2}}\cdots v_{i_{k}}$ with $v_{i_{j}}v_{i_{j+1}}\in E$. Hamiltonian path contains all vertices. Cycle is closed path. Hamiltonian cycle contains all vertices. Graph is Hamiltonian if it has Hamiltonian cycle.
+\item[(4)] Graph $G$ is Hamilton-connected if for every pair of vertices there is a Hamiltonian path between them.
+\end{enumerate}
+
+Let $G$ be a simple graph of order $n$. Suppose degree sum of any pair of nonadjacent vertices is at least $n+1$. Show $G$ is Hamilton-connected.
+\end{exercise}
+
+\begin{solution}
+To show $G$ is Hamilton-connected, we need to show that for any two distinct vertices $u, v \in V$, there exists a Hamiltonian path between them.
+Consider a new graph $G'$ obtained from $G$ by adding a new vertex $w$ and edges $wu$ and $wv$. The order of $G'$ is $n+1$.
+If $G'$ has a Hamiltonian cycle, then the cycle must contain the edges $wu$ and $wv$ (since $d_{G'}(w)=2$). Removing $w$ and the edges $wu, wv$ from this cycle leaves a Hamiltonian path in $G$ between $u$ and $v$.
+We use Ore's Theorem, which states that if $d(x) + d(y) \geq |V|$ for every pair of non-adjacent vertices $x, y$ in a graph, then the graph is Hamiltonian.
+In $G'$, the vertices are $V \cup \{w\}$. For non-adjacent $x, y \in V$:
+$d_{G'}(x) + d_{G'}(y) \geq d_G(x) + d_G(y) \geq n+1 = |V'|$.
+For non-adjacent $x \in V$ and $w$:
+The only vertices $w$ is adjacent to are $u$ and $v$. If $x \notin \{u, v\}$, then $d_{G'}(x) + d_{G'}(w) = d_{G'}(x) + 2$.
+However, the condition $d_G(x) + d_G(y) \geq n+1$ implies that $G$ is very dense. Specifically, $d_G(x) \geq (n+1)/2$ on average.
+Actually, the standard condition for Hamilton-connectedness (an extension of Ore's Theorem by Ore himself) is that if $d(u) + d(v) \geq n+1$ for all non-adjacent $u, v$, then $G$ is Hamilton-connected.
+The proof typically proceeds by contradiction: assume $G$ satisfies the condition but is not Hamilton-connected. Let $u, v$ be a pair without a Hamiltonian path. We can add edges to $G$ until it is maximal without a $u-v$ Hamiltonian path. In such a graph, one can show using a counting argument (similar to Ore's theorem) that $d(u) + d(v) \leq n$, contradicting the hypothesis.
+Specifically, let $P = (u=v_1, v_2, \dots, v_n=v)$ be a Hamiltonian path. If $v_1 v_{i+1} \in E$ and $v_i v_n \in E$, then $(v_1, v_{i+1}, \dots, v_n, v_i, \dots, v_1)$ contains a cycle, but here we want a path. The condition $d(u)+d(v) \geq n+1$ ensures the existence of a path.
+\end{solution}
+
+\begin{exercise}
+Define Hermite polynomials:
+\[
+H_{n}(x)=(-1)^{n}\exp(x^{2}/2)\frac{d^{n}}{dx^{n}}[\exp(-x^{2}/2)],\quad x\in(-\infty,+\infty),\ n=0,1,2,\dots
+\]
+
+\begin{enumerate}
+\item[(a)] Prove weighted orthogonality:
+\[
+\langle H_{n},H_{m}\rangle_{\rho}:=\int_{-\infty}^{+\infty}\rho(x)H_{n}(x)H_{m}(x)\,dx=n!\sqrt{2\pi}\delta_{nm},
+\]
+where $\rho(x)=\exp(-x^{2}/2)$.
+\item[(b)] Prove recurrence formula:
+\[
+H_{n+1}(x)=xH_{n}(x)-nH_{n-1}(x),\quad n\geq 1,
+\]
+and show $H_{n}(x)$ and $H_{n-1}(x)$ share no common roots for all $n\geq 1$.
+\item[(c)] Use recurrence and induction to prove:
+\[
+\frac{d}{dx}H_{n}(x)=nH_{n-1}(x),\quad n\geq 1,
+\]
+and prove $H_{n}$ is eigenfunction of:
+\[
+xu'(x)-u''(x)=\lambda u.
+\]
+Find eigenvalue $\lambda_{n}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) Let $f(x) = e^{-x^2/2}$. Then $H_n(x) = (-1)^n e^{x^2/2} f^{(n)}(x)$.
+For $n > m$, we have:
+\[
+\int_{-\infty}^{\infty} e^{-x^2/2} H_n(x) H_m(x) dx = \int_{-\infty}^{\infty} (-1)^n f^{(n)}(x) H_m(x) dx.
+\]
+Integrating by parts $n$ times, and noting that $f^{(k)}(x) H_m^{(j)}(x) \to 0$ as $x \to \pm \infty$:
+\[
+= \int_{-\infty}^{\infty} f(x) H_m^{(n)}(x) dx.
+\]
+Since $H_m$ is a polynomial of degree $m$, $H_m^{(n)}(x) = 0$ for $n > m$. Thus the integral is 0.
+For $n=m$, $H_n(x) = x^n + \dots$, so $H_n^{(n)}(x) = n!$.
+\[
+\langle H_n, H_n \rangle_\rho = \int_{-\infty}^{\infty} e^{-x^2/2} n! dx = n! \sqrt{2\pi}.
+\]
+
+(b) From the definition, $H_{n+1}(x) = (-1)^{n+1} e^{x^2/2} \frac{d}{dx} (f^{(n)}(x))$.
+Since $f'(x) = -x f(x)$, we have $f^{(n+1)} = \frac{d^n}{dx^n} (-xf) = -x f^{(n)} - n f^{(n-1)}$.
+Multiplying by $(-1)^{n+1} e^{x^2/2}$:
+$H_{n+1} = (-1)^{n+1} e^{x^2/2} (-x f^{(n)} - n f^{(n-1)}) = x H_n - n H_{n-1}$.
+If $H_n(x_0) = 0$ and $H_{n-1}(x_0) = 0$, then $H_{n+1}(x_0) = 0$. By induction, $H_k(x_0) = 0$ for all $k \geq n-1$. But $H_0(x) = 1$, which has no roots. Contradiction.
+
+(c) Differentiating $H_n = (-1)^n e^{x^2/2} f^{(n)}$:
+$H_n' = x H_n + (-1)^n e^{x^2/2} f^{(n+1)} = x H_n - H_{n+1}$.
+From (b), $H_{n+1} = x H_n - n H_{n-1}$, so $H_n' = x H_n - (x H_n - n H_{n-1}) = n H_{n-1}$.
+Differentiating again: $H_n'' = n H_{n-1}' = n(n-1) H_{n-2}$.
+Substitute into the differential equation: $x(n H_{n-1}) - n(n-1) H_{n-2}$.
+From the recurrence $x H_{n-1} = H_n + (n-1) H_{n-2}$, so:
+$x H_n' - H_n'' = n(H_n + (n-1)H_{n-2}) - n(n-1) H_{n-2} = n H_n$.
+Thus $H_n$ is an eigenfunction with eigenvalue $\lambda_n = n$.
+\end{solution}
+
+\begin{exercise}
+Let $\sigma_{i}(A)$ be $i$-th singular value of $A\in\mathbb{R}^{n\times n}$. Define nuclear norm:
+\[
+\|A\|_{*}\equiv\sum_{i=1}^{n}\sigma_{i}(A).
+\]
+
+\begin{enumerate}
+\item[(1)] Show $\|A\|_{*}=\mathrm{tr}(\sqrt{A^{T}A})$.
+\item[(2)] Show $\|A\|_{*}=\max_{X^{T}X=I}\mathrm{tr}(AX)$.
+\item[(3)] Show $\|A+B\|_{*}\leq\|A\|_{*}+\|B\|_{*}$.
+\item[(4)] Explain informally why minimizing $\|A-A_{0}\|_{F}^{2}+\|A\|_{*}$ might yield a low-rank approximation of $A_{0}$.
+\end{enumerate}
+
+Notation: $\mathrm{tr}(A)$ is sum of diagonal elements. Square root of symmetric positive semidefinite $M$ is $\sqrt{M}\equiv UD^{1/2}U^{T}$ where $D^{1/2}$ contains square roots of eigenvalues and $U$ contains eigenvectors of $M=UDU^{T}$.
+\end{exercise}
+
+\begin{solution}
+(1) The eigenvalues of $A^T A$ are $\sigma_i^2$. The square root $\sqrt{A^T A}$ has eigenvalues $\sigma_i$. The trace of a matrix is the sum of its eigenvalues, so $\mathrm{tr}(\sqrt{A^T A}) = \sum \sigma_i = \|A\|_*$.
+
+(2) Let $A = U \Sigma V^T$ be the SVD of $A$. Then $\mathrm{tr}(AX) = \mathrm{tr}(U \Sigma V^T X) = \mathrm{tr}(\Sigma V^T X U)$. Let $Z = V^T X U$. Since $U, V, X$ are orthogonal (or $X$ is a subunitary), $Z$ is also a subunitary ($Z^T Z = U^T X^T V V^T X U = U^T X^T X U = I$).
+$\mathrm{tr}(\Sigma Z) = \sum \sigma_i z_{ii}$. Since $Z$ is orthogonal, $|z_{ii}| \leq 1$. The maximum is attained when $z_{ii} = 1$, which occurs when $Z = I$, i.e., $X = V U^T$. In this case, $\mathrm{tr}(\Sigma I) = \sum \sigma_i = \|A\|_*$.
+
+(3) Using the dual representation from (2):
+$\|A+B\|_* = \max_{X^T X = I} \mathrm{tr}((A+B)X) = \max_{X^T X = I} (\mathrm{tr}(AX) + \mathrm{tr}(BX))$
+$\leq \max_{X^T X = I} \mathrm{tr}(AX) + \max_{Y^T Y = I} \mathrm{tr}(BY) = \|A\|_* + \|B\|_*$.
+
+(4) The nuclear norm $\|A\|_*$ is the convex envelope of the rank function $\mathrm{rank}(A)$ on the unit ball of the spectral norm. Minimizing the nuclear norm promotes sparsity in the singular values, just as the $L^1$ norm promotes sparsity in the entries of a vector. When we minimize $\|A-A_0\|_F^2 + \lambda \|A\|_*$, the solution is obtained by Singular Value Thresholding (SVT): if $A_0 = U \Sigma V^T$, then $A = U \mathcal{S}_\lambda(\Sigma) V^T$ where $\mathcal{S}_\lambda$ shifts singular values towards zero. Small singular values are set to zero, effectively reducing the rank of $A$.
+\end{solution}

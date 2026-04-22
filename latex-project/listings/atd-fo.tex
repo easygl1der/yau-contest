@@ -1,0 +1,75 @@
+\begin{minted}
+  [
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  linenos
+  ]
+  {ocaml}
+
+(* -------------------------------------------------------------------- *)
+(** Identifiers *)
+
+type name = string
+
+(* -------------------------------------------------------------------- *)
+(** Types *)
+
+type type_ = [
+  | TVar of name
+]
+
+type arity = type_ list
+type sig_  = (arity * type_)
+
+(* -------------------------------------------------------------------- *)
+(** Expressions *)
+
+type expr = [
+  | EVar of name
+  | EFun of (name * expr list)
+]
+
+(* -------------------------------------------------------------------- *)
+(** Formulas *)
+
+type logcon = [ And | Or | Imp | Equiv | Not ]
+type bkind  = [ Forall | Exist ]
+
+type form = [
+  | FTrue
+  | FFalse
+  | FPred of (name * expr list)
+  | FConn of (logcon * form list)
+  | FBind of (bkind * name * type_ * form)
+]
+
+(* -------------------------------------------------------------------- *)
+(** Terms = Formulas + Expressions *)
+
+type term = [F of form | E of expr]
+
+(* -------------------------------------------------------------------- *)
+(** Environments *)
+
+(* Body of a variable declaration, holding its type and eventually an expression
+    in the case of a local definition *)
+type bvar = (type_ * expr option)
+
+type varenv = (name * bvar) list
+
+type env = {
+  env_sort      : name                       list; (* Sorts, i.e. atomic types *)
+  env_prp       : (name * arity            ) list; (* Predicate symbols *)
+  env_fun       : (name * sig_             ) list; (* Function symbols *)
+  env_sort_name : (name * name             ) list;
+  env_prp_name  : (name * name             ) list;
+  env_fun_name  : (name * name             ) list;
+  env_var       : varenv;                          (* Variable declarations *)
+}
+
+(* Local environment, only maps abstract variables to their type *)
+type lenv = (name * type_) list 
+
+\end{minted}

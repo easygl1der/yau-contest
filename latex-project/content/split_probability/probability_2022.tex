@@ -1,0 +1,146 @@
+\section{2022 Probability and Statistics}
+
+Solve every problem.
+
+\begin{exercise}
+There are $r$ players, with player $i$ initially having $n_i$ units, $n_i > 0$, $i = 1, \ldots, r$. At each stage, two of the players are chosen to play a game, with the winner receiving 1 unit from the loser. Any player whose fortune drops to 0 is eliminated. This continues until a single player has all $n = \sum_{i=1}^r n_i$ units.
+
+For any set of players $S \subseteq \{1,\dots,r\}$, let $X(S)$ denote the number of games involving only members of $S$. Does $E(X(S))$ depend on the player selection mechanism? If not, calculate the expectation. If yes, give two mechanisms leading to different expectations.
+\end{exercise}
+
+\begin{solution}
+The expected number of games $E(X(S))$ does not depend on the player selection mechanism, provided that the selection mechanism does not depend on the history of outcomes in a way that biases the fairness of individual games.
+
+Let $N_{i,t}$ be the fortune of player $i$ after $t$ games. Let $\Phi_S(t) = \sum_{i,j \in S, i<j} N_{i,t} N_{j,t}$. We consider the change in $\Phi_S$ after the $(t+1)$-th game.
+Let players $a$ and $b$ be chosen for the $(t+1)$-th game.
+1. If $a, b \in S$: With probability $1/2$, $N_{a,t+1} = N_{a,t}+1, N_{b,t+1} = N_{b,t}-1$. The change in $\Phi_S$ is
+\[ (N_{a,t}+1)(N_{b,t}-1) - N_{a,t} N_{b,t} + \sum_{k \in S \setminus \{a,b\}} (N_{k,t}(N_{a,t}+1) + N_{k,t}(N_{b,t}-1) - N_{k,t} N_{a,t} - N_{k,t} N_{b,t}) = N_{b,t} - N_{a,t} - 1. \]
+With probability $1/2$, the change is $N_{a,t} - N_{b,t} - 1$. The expected change is $-1$.
+2. If $a \in S$ and $b \notin S$: With probability $1/2$, $N_{a,t+1} = N_{a,t} \pm 1$. The change in $\Phi_S$ is
+\[ \sum_{k \in S \setminus \{a\}} (N_{k,t}(N_{a,t} \pm 1) - N_{k,t} N_{a,t}) = \pm \sum_{k \in S \setminus \{a\}} N_{k,t}. \]
+The expected change is $0$.
+3. If $a, b \notin S$: The fortunes of players in $S$ do not change, so the expected change in $\Phi_S$ is $0$.
+
+Let $I_t(S)$ be the indicator that the $t$-th game involves only members of $S$. Then $E[\Phi_S(t+1) - \Phi_S(t) | \mathcal{F}_t] = -I_{t+1}(S)$.
+By the optional stopping theorem, $E[\Phi_S(T)] - E[\Phi_S(0)] = -E[\sum_{t=1}^T I_t(S)] = -E(X(S))$, where $T$ is the time the game ends.
+At time $T$, only one player remains with $n$ units. If that player is in $S$, then $\Phi_S(T) = 0$ (since all other players in $S$ have 0 units). If the winner is not in $S$, all players in $S$ have 0 units, so $\Phi_S(T) = 0$.
+Thus, $0 - \Phi_S(0) = -E(X(S))$, which gives
+\[ E(X(S)) = \Phi_S(0) = \sum_{i,j \in S, i<j} n_i n_j. \]
+This value depends only on the initial fortunes and is independent of the player selection mechanism.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, X_2, \ldots$ be independent Bernoulli random variables satisfying $P(X_i = 1) = p$ and $P(X_i = -1) = q = 1-p$ for some $p \in (0,1)$. Let $S_n = X_1 + \ldots + X_n$ and $M = \sup_{n \geq 1}(S_n/n)$.
+
+(a) Calculate $P(M = 0)$.
+
+(b) Show that $P(p - q < M \leq 1) = 1$. For any rational number $x \in (p-q, 1]$, is $P(M = x) > 0$? If so, prove it.
+\end{exercise}
+
+\begin{solution}
+(a) Note that $M \geq S_1/1 = X_1$. If $X_1 = 1$, then $M \geq 1 > 0$. Thus $M=0$ implies $X_1 = -1$.
+$M=0$ means $S_n \leq 0$ for all $n \geq 1$ and $S_n = 0$ for some $n \geq 1$.
+Let $f$ be the probability that a simple random walk starting at 0 never hits 1. We know that the probability of ever hitting 1 is $\rho = \min(1, p/q)$.
+If $p \geq q$ (i.e., $p \geq 1/2$), $\rho = 1$, so the walk hits 1 almost surely, implying $P(M > 0) = 1$, so $P(M=0) = 0$.
+If $p < q$, $P(M \leq 0) = P(\text{never hit 1}) = 1 - p/q$.
+$M=0$ specifically means the walk hits 0 at some $n \geq 1$ but never hits 1.
+$P(M \leq 0) = P(M=0) + P(M < 0)$.
+$P(M < 0) = P(X_1 = -1, \text{never hit 0 for } n \geq 1) = q P(\text{never hit 1 starting at 0}) = q(1-p/q) = q-p$.
+Thus, $P(M=0) = (1-p/q) - (q-p) = \frac{q-p}{q} - (q-p) = (q-p)(\frac{1}{q}-1) = \frac{p(q-p)}{q}$.
+Summary: $P(M=0) = \frac{p(q-p)}{q}$ if $p < 1/2$, and $0$ if $p \geq 1/2$.
+
+(b) By the Strong Law of Large Numbers, $\lim_{n \to \infty} S_n/n = E(X_1) = p - q$ a.s. Thus $M = \sup S_n/n \geq p-q$ a.s. Since $X_i \leq 1$, $S_n/n \leq 1$, so $M \leq 1$.
+Wait, if $p-q > 0$, can $M = p-q$? Since $S_n/n \to p-q$ from "above" or "below", and the sequence is discrete, if $M = p-q$, it must be that $S_n/n \leq p-q$ for all $n$.
+However, the fluctuations of the random walk ensure that $P(M > p-q) = 1$ if $p > q$.
+For any rational $x = k/m \in (p-q, 1]$, $P(M=x) > 0$ because there is a finite path such that $S_m = k$ and $S_n/n < k/m$ for all $n < m$, and we can choose the tail of the walk such that $S_n/n$ stays below $k/m$ for all $n > m$ (which has positive probability since $S_n/n \to p-q < k/m$).
+\end{solution}
+
+\begin{exercise}
+Let $X$ have a uniform distribution on $[0,1]$ and let $N_{m,k}$ be the digit in the $m$-th place to the right of the decimal point in $X^k$.
+
+(a) Find $\lim_{m \to \infty} P(N_{m,m} = i)$ for $i = 0, 1, 2, \ldots, 9$.
+
+(b) Let $k(m)$ be a function of $m$, taking values greater than 1. Find a necessary and sufficient condition on $k(m)$ such that $\lim_{m \to \infty} P(N_{m,k(m)} = i) = 1/10$ for $i = 0, 1, 2, \ldots, 9$.
+\end{exercise}
+
+\begin{solution}
+(a) $N_{m,m} = \lfloor 10^m X^m \rfloor \pmod{10}$. Let $Y_m = 10^m X^m$.
+$P(N_{m,m}=i) = \int_0^1 I(\lfloor 10^m x^m \rfloor \equiv i \pmod{10}) dx$.
+Let $v = 10x$, then $dx = \frac{1}{10} dv$ and $10^m x^m = v^m$.
+$P(N_{m,m}=i) = \frac{1}{10} \int_0^{10} I(\lfloor v^m \rfloor \equiv i \pmod{10}) dv$.
+For $v \in [0, 1)$, $v^m \to 0$ as $m \to \infty$. Thus $\lfloor v^m \rfloor = 0$. This contributes to $i=0$ with weight $1/10$.
+For $v \in (1, 10)$, $v^m$ increases from 1 to $10^m$. The intervals where $\lfloor v^m \rfloor = k$ are $[k^{1/m}, (k+1)^{1/m})$. The width is $\approx \frac{1}{m} k^{1/m-1}$.
+The total length for a fixed $i \in \{0, \dots, 9\}$ is $\sum_{j} [(10j+i+1)^{1/m} - (10j+i)^{1/m}]$.
+This Riemann sum converges to $\int_1^{10^m} \frac{1}{10} \frac{1}{m} y^{1/m-1} dy = \frac{1}{10} [y^{1/m}]_1^{10^m} = \frac{1}{10}(10-1) = 0.9$.
+Thus, for $i \neq 0$, the limit is $0.9/10 = 0.09$.
+For $i = 0$, the limit is $0.1 + 0.09 = 0.19$.
+So $P(N_{m,m}=0) \to 0.19$ and $P(N_{m,m}=i) \to 0.09$ for $i=1, \dots, 9$.
+
+(b) We need the "bias" towards 0 from the $X^k < 10^{-m}$ region to vanish, and the distribution in the "active" region to become uniform.
+The probability $P(X^k < 10^{-m}) = 10^{-m/k}$ must go to 0, which requires $m/k(m) \to \infty$.
+Also, to achieve uniformity, $k(m)$ must be large enough so that $10^m X^k$ covers many cycles of digits.
+If $k(m) \to \infty$ and $k(m) = o(m)$, the distribution of the $m$-th digit of $X^k$ becomes uniform.
+If $k(m)$ is fixed, the distribution is not uniform.
+If $k(m)/m \to c > 0$, the limit is similar to part (a).
+The condition is $k(m) \to \infty$ and $k(m)/m \to 0$.
+\end{solution}
+
+\begin{exercise}
+Assume we have $n$ observations: $(Y_i, \mathbf{x}_i), i = 1, \ldots, n$, where $Y_i$ is the response and $\mathbf{x}_i = (x_{i1}, \cdots, x_{ip})^\top$ is a vector of $p$ fixed covariates. Denote $\beta = (\beta_1, \cdots, \beta_p)$ as unknown regression coefficients. Let $\theta_i = \sum_{j=1}^p x_{ij}\beta_j$, $\mu_i = E(Y_i)$, and $\sigma_i^2 = \mathrm{Var}(Y_i)$. Assume the density of $Y_i$ belongs to the exponential family:
+\[
+f(y_i; \theta_i) = \exp\{\theta_i y_i - b(\theta_i)\},
+\]
+where $b'(\theta_i) = \mu_i$, $b''(\theta_i) = \sigma_i^2$.
+
+For any model $\alpha$, let $\hat{\beta}_\alpha$ be the MLE. Show that
+\[
+\max_{\alpha \in A} \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/3}),
+\]
+where $A = \{\alpha: \alpha_0 \subset \alpha\}$.
+\end{exercise}
+
+\begin{solution}
+The log-likelihood for the GLM is $L(\beta) = \sum_{i=1}^n [Y_i (x_i^\top \beta) - b(x_i^\top \beta)]$.
+The score function is $U(\beta) = \nabla L(\beta) = \sum_{i=1}^n (Y_i - b'(x_i^\top \beta)) x_i = \sum_{i=1}^n (Y_i - \mu_i) x_i$.
+The Fisher information matrix is $I(\beta) = -E[\nabla^2 L(\beta)] = \sum_{i=1}^n b''(x_i^\top \beta) x_i x_i^\top = \sum_{i=1}^n \sigma_i^2 x_i x_i^\top$.
+Under standard regularity conditions (e.g., $I(\beta)/n \to \Sigma$ positive definite), the MLE $\hat{\beta}$ satisfies
+\[ \sqrt{n}(\hat{\beta} - \beta) \xrightarrow{d} N(0, \Sigma^{-1}). \]
+Thus $\|\hat{\beta} - \beta\| = O_p(n^{-1/2})$.
+For any model $\alpha \in A$, where $\alpha_0 \subset \alpha$, the model is correctly specified (but potentially over-parameterized). The MLE $\hat{\beta}_\alpha$ for the coefficients in $\alpha$ still satisfies $\|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2})$.
+Since $p$ is fixed, the set of models $A$ is finite. The maximum of a finite number of $O_p(n^{-1/2})$ variables is still $O_p(n^{-1/2})$.
+Since $n^{-1/2} < n^{-1/3}$ for large $n$, we have $O_p(n^{-1/2}) \subset O_p(n^{-1/3})$. Thus,
+\[ \max_{\alpha \in A} \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2}) = O_p(n^{-1/3}). \]
+\end{solution}
+
+\begin{exercise}
+Consider a random sample of size $n$, and write the data as an $r \times c$ matrix $\{X_{ij}: i = 1, \ldots, r; j = 1, \ldots, c\}$ with $n = rc$. To specify notation, $\{X_{ij}\}$ are i.i.d. with c.d.f. $F(x)$ and continuous density $f(x)$. Let $\beta$ denote the median, i.e., $F(\beta) = 0.5$. Define an estimator by
+\[
+\hat{\beta}_n = \min_j \left\{\max_i \{X_{ij}\}\right\}.
+\]
+
+(a) What is the condition on $r_n$ when $n \to \infty$ for median-unbiasedness?
+
+(b) We further assume $F$ is differentiable near $\beta$ with $f(\beta) > 0$. For $r_n$ in (a), show that $r_n(\hat{\beta}_n - \beta)$ converges in distribution, and find the limiting distribution.
+\end{exercise}
+
+\begin{solution}
+(a) Let $Z_j = \max_{1 \leq i \leq r} X_{ij}$. The CDF of $Z_j$ is $G(x) = P(X_{11} \leq x)^r = F(x)^r$.
+The estimator is $\hat{\beta}_n = \min_{1 \leq j \leq c} Z_j$. Its survival function is
+\[ P(\hat{\beta}_n > x) = P(Z_1 > x, \dots, Z_c > x) = [1 - G(x)]^c = [1 - F(x)^r]^c. \]
+Median-unbiasedness means $P(\hat{\beta}_n \leq \beta) = 0.5$, which implies $P(\hat{\beta}_n > \beta) = 0.5$.
+Since $F(\beta) = 0.5$, we require $[1 - (0.5)^r]^c = 0.5$, or $[1 - 2^{-r}]^c = 1/2$.
+Taking logs: $c \ln(1 - 2^{-r}) = -\ln 2$.
+As $n \to \infty$, $r \to \infty$, we use $\ln(1-x) \approx -x$: $c 2^{-r} \approx \ln 2$, so $c \approx 2^r \ln 2$.
+Since $n = rc$, we have $n \approx r 2^r \ln 2$, which implies $r_n \approx \log_2 n$.
+
+(b) Let $r_n$ satisfy $(1 - 2^{-r_n})^{c_n} \to 1/2$. We examine $P(r_n(\hat{\beta}_n - \beta) \leq x)$.
+\[ P(r_n(\hat{\beta}_n - \beta) > x) = P(\hat{\beta}_n > \beta + x/r_n) = [1 - F(\beta + x/r_n)^{r_n}]^{c_n}. \]
+Using Taylor expansion: $F(\beta + x/r_n) \approx F(\beta) + f(\beta) \frac{x}{r_n} = \frac{1}{2} + \frac{f(\beta)x}{r_n} = \frac{1}{2}(1 + \frac{2f(\beta)x}{r_n})$.
+Then $F(\beta + x/r_n)^{r_n} \approx 2^{-r_n} (1 + \frac{2f(\beta)x}{r_n})^{r_n} \to 2^{-r_n} e^{2f(\beta)x}$.
+Substituting this into the survival function:
+\[ [1 - 2^{-r_n} e^{2f(\beta)x}]^{c_n} \approx \exp(-c_n 2^{-r_n} e^{2f(\beta)x}). \]
+Since $c_n 2^{-r_n} \to \ln 2$, the limit is $\exp(-\ln 2 \cdot e^{2f(\beta)x}) = (1/2)^{e^{2f(\beta)x}}$.
+The limiting distribution function is $H(x) = 1 - (1/2)^{e^{2f(\beta)x}}$.
+This is a Gumbel-type distribution (log-Weibull).
+\end{solution}
+

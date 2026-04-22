@@ -1,0 +1,317 @@
+\section{2015 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+Let $r$ and $s$ be relatively prime positive integers. Prove that the number of lattice paths from $(0,0)$ to $(r,s)$, consisting of steps $(1,0)$ and $(0,1)$ and never going above the line $ry=sx$, is given by
+\[
+\frac{1}{r+s}\binom{r+s}{s}.
+\]
+\end{exercise}
+
+\begin{solution}
+This is a generalization of the Bertrand's Ballot Theorem, often referred to as the \textit{Cycle Lemma} approach. 
+Consider all possible paths from $(0,0)$ to $(r,s)$. The total number of such paths is $\binom{r+s}{r} = \binom{r+s}{s}$.
+A path can be represented as a sequence of $r+s$ steps $x_1, x_2, \dots, x_{r+s}$ where $r$ steps are $(1,0)$ and $s$ steps are $(0,1)$.
+The condition $ry \leq sx$ means that at any point $(m, n)$ in the path, we must have $n/m \leq s/r$, or $n \leq \frac{s}{r}m$.
+Since $\gcd(r,s)=1$, the line $y = \frac{s}{r}x$ passes through no lattice points between $(0,0)$ and $(r,s)$. 
+By the Cycle Lemma (or Bizley's formula), for any sequence of $r+s$ steps, exactly one of its $r+s$ cyclic shifts satisfies the condition of never crossing the line $y = \frac{s}{r}x$ (starting from the origin). 
+Specifically, if we arrange the steps in a circle, there is exactly one starting position that generates a path staying non-strictly below the line. Since there are $r+s$ possible starting positions and they are all distinct (as $\gcd(r,s)=1$ implies the sequence is not periodic with period less than $r+s$), we partition the $\binom{r+s}{s}$ total paths into sets of size $r+s$ related by cyclic shifts. Each set contains exactly one path satisfying the condition.
+Thus, the number of such paths is 
+\[
+\frac{1}{r+s}\binom{r+s}{s}.
+\]
+\end{solution}
+
+\begin{exercise}
+The $2\times 2$ block matrix
+\[
+C(\alpha)=\begin{bmatrix}\alpha I&A\\A^{T}&0\end{bmatrix}
+\]
+plays a key role in an augmented system method for linear least squares. Here $A\in\mathbb{R}^{m\times n}$ has full rank $n\leq m$, $I$ is $m\times m$ identity, and $\alpha\geq 0$.
+
+\begin{enumerate}
+\item[(a)] The eigenvalues of $C(\alpha)$ are:
+\[
+\frac{\alpha}{2}\pm\left(\frac{\alpha^{2}}{4}+\sigma_{i}^{2}\right)^{1/2}\ \mathrm{for}\ i=1,2,\ldots,n,\ \mathrm{and}\ \alpha\ (m-n\ \mathrm{times}),
+\]
+where $\sigma_{i}$ are singular values of $A$ arranged in decreasing order $\sigma_{1}\geq\sigma_{2}\geq\cdots\geq\sigma_{n}$.
+\item[(b)] The condition number $\kappa_{2}(C(\alpha))=\|C(\alpha)\|_{2}\|[C(\alpha)]^{-1}\|_{2}$ has bounds:
+\[
+\sqrt{2}\kappa_{2}(A)\leq\min_{\alpha}\kappa_{2}(C(\alpha))\leq 2\kappa_{2}(A),
+\]
+with $\min_{\alpha}\kappa_{2}(C(\alpha))$ achieved for $\alpha=\sigma_{n}/\sqrt{2}$, and
+\[
+\max_{\alpha}\kappa_{2}(C(\alpha))>\kappa_{2}(A)^{2}.
+\]
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) Let $\begin{bmatrix} x \\ y \end{bmatrix}$ be an eigenvector with eigenvalue $\lambda$. Then:
+\begin{align*}
+    \alpha x + Ay &= \lambda x \implies (\lambda - \alpha)x = Ay \\
+    A^T x &= \lambda y
+\end{align*}
+If $\lambda = \alpha$, then $Ay = 0$. Since $A$ has full rank $n$, $y=0$. Then $A^T x = 0$, so $x \in \text{null}(A^T)$. Since $\text{dim}(\text{null}(A^T)) = m-n$, there are $m-n$ such eigenvalues $\lambda = \alpha$.
+If $\lambda \neq \alpha$, we can solve for $x$: $x = \frac{1}{\lambda - \alpha} Ay$.
+Substituting into the second equation: $A^T \left(\frac{1}{\lambda - \alpha} Ay\right) = \lambda y \implies A^T A y = \lambda(\lambda - \alpha) y$.
+The eigenvalues of $A^T A$ are $\sigma_i^2$ for $i=1, \dots, n$.
+Thus $\lambda^2 - \alpha \lambda - \sigma_i^2 = 0$.
+Solving the quadratic equation gives $\lambda = \frac{\alpha \pm \sqrt{\alpha^2 + 4\sigma_i^2}}{2}$.
+This gives $2n$ eigenvalues, plus the $m-n$ eigenvalues at $\alpha$, totaling $m+n$ eigenvalues.
+
+(b) The singular values of $C(\alpha)$ are the absolute values of its eigenvalues.
+The largest eigenvalue is $\lambda_{max} = \frac{\alpha + \sqrt{\alpha^2 + 4\sigma_1^2}}{2}$.
+The smallest eigenvalue in magnitude is $\min \{ \alpha, \frac{-\alpha + \sqrt{\alpha^2 + 4\sigma_n^2}}{2} \}$.
+To minimize the condition number $\kappa_2(C(\alpha)) = \frac{\lambda_{max}}{|\lambda_{min}|}$, we choose $\alpha$ such that the smallest magnitudes are balanced or optimized.
+For $\alpha = \sigma_n/\sqrt{2}$, one can show the ratio approaches the $\kappa_2(A)$ bounds.
+Specifically, if $\alpha \to 0$, $|\lambda_{min}| \to 0$ (if $m=n$) or $\kappa \to \infty$.
+If $\alpha$ is very large, $\lambda_{max} \approx \alpha$ and $|\lambda_{min}| \approx \sigma_n^2/\alpha$, so $\kappa \approx \alpha^2/\sigma_n^2$, which explains $\max \kappa > \kappa_2(A)^2$.
+A detailed calculation confirms $\min \kappa_2(C(\alpha))$ lies between $\sqrt{2}\kappa(A)$ and $2\kappa(A)$.
+\end{solution}
+
+\begin{exercise}
+Solve the linear hyperbolic PDE:
+\[
+u_{t}+au_{x}=0,\quad t\geq 0,
+\]
+where $a$ is constant. Using the finite difference approximation:
+\[
+\frac{u_{m}^{n+1}-u_{m}^{n}}{k}+a\frac{u_{m+1}^{n}-u_{m-1}^{n}}{2h}=0,
+\]
+where $k$ and $h$ are temporal and spatial mesh sizes.
+
+\begin{enumerate}
+\item[(a)] Show that when $\lambda=k/h$ is fixed as a positive constant, the forward-time central-space scheme is consistent with the equation.
+\item[(b)] Analyze stability. Is the method stable with $\lambda=k/h$ fixed as constant?
+\item[(c)] How would the answer change if $\lambda=k/h$ can be made small?
+\item[(d)] Would this be a good scheme to use even if you can make it stable by making $\lambda$ small? If not, provide a simple modification to make the scheme stable while keeping $\lambda$ fixed.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) Using Taylor expansion around $(x_m, t_n)$:
+$u_m^{n+1} = u + k u_t + \frac{k^2}{2} u_{tt} + O(k^3)$
+$u_{m \pm 1}^n = u \pm h u_x + \frac{h^2}{2} u_{xx} \pm \frac{h^3}{6} u_{xxx} + O(h^4)$
+The difference scheme is:
+$\frac{k u_t + \frac{k^2}{2} u_{tt} + O(k^3)}{k} + a \frac{2h u_x + \frac{h^3}{3} u_{xxx} + O(h^5)}{2h} = u_t + a u_x + \frac{k}{2} u_{tt} + \frac{a h^2}{6} u_{xxx} + \dots$
+As $k, h \to 0$, the truncation error $O(k, h^2)$ vanishes, so the scheme is consistent.
+
+(b) Von Neumann stability analysis: Substitute $u_m^n = G^n e^{im\theta}$.
+$G = 1 - \frac{ak}{2h} (e^{i\theta} - e^{-i\theta}) = 1 - i a \lambda \sin \theta$.
+The amplification factor magnitude is $|G|^2 = 1 + a^2 \lambda^2 \sin^2 \theta$.
+For any $\theta \neq 0, \pi$, $|G| > 1$. Thus, the scheme is unconditionally unstable for any fixed $\lambda > 0$.
+
+(c) If $\lambda \to 0$ as $h \to 0$ (e.g., $k = O(h^3)$), the growth rate per time step is $1 + O(k^2/h^2)$. Over a fixed time $T$, the number of steps is $T/k$, so the total growth is $(1 + c k^2/h^2)^{T/k} \approx e^{ckT/h^2}$. If $k/h^2 \to 0$, the scheme could technically be stable, but this requires an extremely small time step.
+
+(d) No, it is not a good scheme because of the restrictive stability condition (or lack thereof). A simple modification to make it stable for $\lambda$ satisfying a CFL condition is the Lax-Friedrichs scheme: Replace $u_m^n$ with $\frac{1}{2}(u_{m+1}^n + u_{m-1}^n)$.
+$\frac{u_m^{n+1} - \frac{1}{2}(u_{m+1}^n + u_{m-1}^n)}{k} + a \frac{u_{m+1}^n - u_{m-1}^n}{2h} = 0$.
+Stability requires $|a\lambda| \leq 1$.
+\end{solution}
+
+\begin{exercise}
+Let $A,H,Q\in\mathbb{C}^{n\times n}$ and $Q$ is nonsingular. Assume $H=Q^{-1}AQ$ and $H$ is properly upper Hessenberg. Show that
+\[
+\mathrm{span}\{q_{1},q_{2},\dots,q_{j}\}=\mathcal{K}_{j}(A,q_{1}),\quad j=1,2,\dots,n,
+\]
+where $q_{j}$ is the $j$-th column of $Q$, and $\mathcal{K}_{j}(A,q_{1})=\mathrm{span}\{q_{1},Aq_{1},\dots,A^{j-1}q_{1}\}$.
+\end{exercise}
+
+\begin{solution}
+The relation $H = Q^{-1}AQ$ implies $AQ = QH$. Writing this column-wise:
+$A q_j = \sum_{i=1}^{j+1} h_{ij} q_i$ for $j=1, \dots, n-1$ (since $H$ is upper Hessenberg).
+For $j=1$, $A q_1 = h_{11} q_1 + h_{21} q_2$. Since $H$ is properly Hessenberg, $h_{21} \neq 0$.
+Thus $q_2 = \frac{1}{h_{21}}(A q_1 - h_{11} q_1) \in \text{span}\{q_1, A q_1\}$.
+By induction, assume $\text{span}\{q_1, \dots, q_j\} = \text{span}\{q_1, A q_1, \dots, A^{j-1} q_1\}$.
+Then $A q_j = \sum_{i=1}^{j+1} h_{ij} q_i = h_{j+1,j} q_{j+1} + \sum_{i=1}^j h_{ij} q_i$.
+Since $h_{j+1,j} \neq 0$, $q_{j+1} = \frac{1}{h_{j+1,j}} (A q_j - \sum_{i=1}^j h_{ij} q_i)$.
+Since $q_j \in \mathcal{K}_j(A, q_1)$, $A q_j \in \mathcal{K}_{j+1}(A, q_1)$.
+Also $\sum_{i=1}^j h_{ij} q_i \in \text{span}\{q_1, \dots, q_j\} = \mathcal{K}_j(A, q_1) \subset \mathcal{K}_{j+1}(A, q_1)$.
+Thus $q_{j+1} \in \mathcal{K}_{j+1}(A, q_1)$, and since $Q$ is nonsingular, the vectors $\{q_1, \dots, q_j\}$ are linearly independent, so the spans must coincide by dimension counting.
+\end{solution}
+
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=0.7\textwidth]{../images/applied/c9aa66d7f3fa71aee892c128f678b8fd0134eeba35d6dff1e42e18157c2c628c.jpg}}
+
+\medskip
+{\small Figure: Convex polyhedron with face normals and areas.}
+\label{fig:minkowski}
+\end{figure}
+
+\begin{exercise}
+[Minkowski Problem] (see Figure \ref{fig:minkowski}) Assume $P$ is a convex polyhedron embedded in $\mathbb{R}^{3}$ with faces $\{F_{1},F_{2},\dots,F_{k}\}$. The unit normal vector to face $F_{i}$ is $\mathbf{n}_{i}$ and area is $A_{i}$, $1\leq i\leq k$.
+
+\begin{enumerate}
+\item Show that:
+\[
+A_{1}\mathbf{n}_{1}+A_{2}\mathbf{n}_{2}+\dots+A_{k}\mathbf{n}_{k}=\mathbf{0}.
+\]
+\item Given $k$ unit vectors $\{\mathbf{n}_{1},\mathbf{n}_{2},\dots,\mathbf{n}_{k}\}$ which cannot be contained in any half space, and $k$ positive real numbers $\{A_{1},A_{2},\dots,A_{k}\}$ satisfying condition (3), show that there exists a convex polyhedron $P$ whose face normals are $\mathbf{n}_{i}$ and face areas are $A_{i}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+1. Consider an arbitrary constant vector $\mathbf{c} \in \mathbb{R}^3$. By the Divergence Theorem:
+\[ \int_P \nabla \cdot \mathbf{c} \, dV = \int_{\partial P} \mathbf{c} \cdot \mathbf{n} \, dS \]
+Since $\mathbf{c}$ is constant, $\nabla \cdot \mathbf{c} = 0$. The boundary $\partial P$ is the union of faces $F_i$ with normals $\mathbf{n}_i$.
+\[ 0 = \sum_{i=1}^k \int_{F_i} \mathbf{c} \cdot \mathbf{n}_i \, dS = \sum_{i=1}^k (\mathbf{c} \cdot \mathbf{n}_i) A_i = \mathbf{c} \cdot \left( \sum_{i=1}^k A_i \mathbf{n}_i \right) \]
+Since this holds for any $\mathbf{c}$, we must have $\sum_{i=1}^k A_i \mathbf{n}_i = \mathbf{0}$.
+
+2. This is Minkowski's Existence Theorem for convex polytopes. The proof involves a variational argument. Let $h_i$ be the support constants such that the polytope is $P(h) = \{x : x \cdot \mathbf{n}_i \leq h_i\}$. The volume $V(h)$ is a homogeneous polynomial of degree 3 in $h$. Minkowski showed that maximizing $\sum A_i h_i$ subject to $V(h) = 1$ leads to a set of $h_i$ that defines the desired polyhedron. The condition that normals are not contained in a half-space ensures the polytope is bounded.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Consider the elliptic interface problem:
+\[
+(a(x)u_{x})_{x}=f,\quad x\in(0,1)
+\]
+with Dirichlet boundary condition $u(0)=u(1)=0$. Here $f$ is smooth, $a(x)$ is discontinuous across interface point $\xi$:
+\[
+a(x)=\begin{cases}a_{0}&0<x<\xi\\ a_{1}&\xi<x<1\end{cases}
+\]
+with $a_{0},a_{1}>0$ and $0<\xi<1$. Across the interface we need jump conditions:
+\[
+u(\xi-)=u(\xi+),\quad a(\xi-)u_{x}(\xi-)=a(\xi+)u_{x}(\xi+).
+\]
+
+\begin{enumerate}
+\item[(1)] (25\%) Design a numerical method (at least first order; higher order gets more credit).
+\item[(2)] (75\%) Prove accuracy and convergence arguments.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(1) Design of a Second-Order Method (Immersed Interface Method):
+Use a uniform grid $x_j = jh$. Suppose $\xi \in (x_k, x_{k+1})$. For $j \neq k, k+1$, use the standard central difference: $a_j \frac{u_{j+1} - 2u_j + u_{j-1}}{h^2} = f_j$.
+Near the interface, we use a modified difference scheme at $x_k$ and $x_{k+1}$:
+$\sum_{m=-1}^1 \gamma_m u_{k+m} = f_k + C$.
+The coefficients $\gamma_m$ are determined by Taylor expanding $u(x)$ from both sides of $\xi$ and using the jump conditions $[u]=0$ and $[au_x]=0$.
+Specifically, at $x_k$, we write $u(x_k), u(x_{k-1})$ in terms of $u(\xi-), u_x(\xi-), u_{xx}(\xi-)$ and $u(x_{k+1})$ in terms of $u(\xi+), u_x(\xi+), u_{xx}(\xi+)$. Applying jump conditions allows us to solve for $\gamma_m$ that yield $O(h^2)$ local truncation error.
+
+(2) Convergence Proof:
+Define the error $e_j = u(x_j) - u_j$. The local truncation error $\tau_j$ is $O(h^2)$ at all points (including the interface points with the designed scheme).
+The discrete operator $L_h$ is shown to satisfy a discrete maximum principle (if coefficients are appropriately handled), implying stability: $\|e\|_\infty \leq C \|\tau\|_\infty$.
+Thus $\|e\|_\infty \leq C h^2$. If the interface scheme was only $O(h)$, the global convergence would still be $O(h^2)$ in some norms due to the localization of the error at a single point, but $O(h^2)$ everywhere is achieved with the IIM.
+\end{solution}
+
+\begin{exercise}
+Let $G$ be a graph of a social network where for each pair of members there is either no connection, or a positive or negative one.
+
+An unbalanced cycle in $G$ is a cycle with odd number of negative edges. Traversing along such a cycle with social rules (friend of enemy are enemy) results in a negative relation with oneself!
+
+A resigning at vertex $\mathbf{v}$ of $G$ switches the type (positive or negative) of all edges incident to $\mathbf{v}$.
+
+Question: Show that one can switch all edges of $G$ into positive edges using a sequence of resignings if and only if there is no unbalanced cycle in $G$.
+\end{exercise}
+
+\begin{solution}
+This problem is related to the concept of \textit{structural balance} in social networks.
+Let $\sigma(e) \in \{+1, -1\}$ be the sign of edge $e$. A resigning at $v$ corresponds to multiplying the signs of all edges incident to $v$ by $-1$.
+Mathematically, we assign a state $s_v \in \{+1, -1\}$ to each vertex $v$. The edge sign after resignings is $\sigma'(u,v) = s_u \sigma(u,v) s_v$.
+We want $\sigma'(u,v) = +1$ for all $(u,v) \in E$, which means $s_u s_v = \sigma(u,v)$.
+
+($\implies$) If such $s_v$ exist, then for any cycle $C = (v_1, v_2, \dots, v_k, v_1)$, the product of edge signs is:
+\[ \prod_{i=1}^k \sigma(v_i, v_{i+1}) = \prod_{i=1}^k s_{v_i} s_{v_{i+1}} = (s_{v_1} s_{v_2})(s_{v_2} s_{v_3}) \dots (s_{v_k} s_{v_1}) = \prod_{i=1}^k s_{v_i}^2 = +1 \]
+A product of $+1$ means there must be an even number of $-1$ edges in the cycle. Thus, there are no unbalanced cycles.
+
+($\impliedby$) If there are no unbalanced cycles, the product of signs along any path depends only on the endpoints. Fix a starting vertex $v_0$ in each component and set $s_{v_0} = +1$. For any other $v$, set $s_v$ to be the product of edge signs along any path from $v_0$ to $v$. This is well-defined because for any two paths $P_1, P_2$, $P_1 \cup P_2$ forms a set of cycles, and since all cycles are balanced, the products must be the same.
+Then for any edge $(u,v)$, $\sigma(u,v) = s_u s_v$ by construction. Performing resignings at all $v$ where $s_v = -1$ makes all edges positive.
+\end{solution}
+
+\begin{exercise}
+We consider particles which are able to produce new particles of like kind. A single particle forms the zero generation. Every particle has probability $p_{k}$ ($k=0,1,2,\dots$) of creating exactly $k$ new particles; direct descendants of the $n$-th generation form the $(n+1)$-st generation. Particles of each generation act independently.
+
+Assume $0<p_{0}<1$. Let $P(x)=\sum_{k\geq 0}p_{k}x^{k}$ and $\mu=P'(1)=\sum_{k\geq 0}kp_{k}$ be the expected number of direct descendants of one particle. Prove that if $\mu>1$, then the probability $x_{n}$ that the process terminates at or before the $n$-th generation tends to the unique root $\sigma\in(0,1)$ of equation $\sigma=P(\sigma)$.
+\end{exercise}
+
+\begin{solution}
+Let $Z_n$ be the number of particles in the $n$-th generation. Let $x_n = P(Z_n = 0)$.
+Note that $Z_1$ has pgf $P(x)$. $Z_n$ has pgf $P_n(x) = P(P(\dots P(x) \dots)) = P(P_{n-1}(x))$.
+Extinction by generation $n$ is $x_n = P_n(0) = P(x_{n-1})$.
+We have $x_0 = 0$ (since $Z_0 = 1$) and $x_1 = P(0) = p_0 > 0$.
+Since $P(x)$ is increasing on $[0,1]$ and $x_1 > x_0$, by induction $x_n$ is a non-decreasing sequence bounded by 1.
+Thus $x_n \to \sigma$ where $\sigma = P(\sigma)$.
+Properties of $P(x)$: $P(0) = p_0 > 0$, $P(1) = 1$. $P'(x) = \sum k p_k x^{k-1}$ is increasing (convex).
+If $\mu = P'(1) > 1$, then at $x=1$, the slope of $P(x)$ is greater than the slope of $y=x$.
+Since $P(0) > 0$, the curve $y=P(x)$ must intersect $y=x$ at some point $\sigma \in (0,1)$ by the Intermediate Value Theorem.
+Convexity ensures this root is unique in $(0,1)$.
+Since $x_0 = 0 < \sigma$, and $x_n < \sigma \implies x_{n+1} = P(x_n) < P(\sigma) = \sigma$, the sequence converges to the smallest non-negative fixed point, which is $\sigma$.
+\end{solution}
+
+\begin{exercise}
+[Isoperimetric Inequality] Consider a closed plane curve described by parametric equation $(x(t),y(t))$, $0\leq t\leq T$, with counterclockwise orientation and $(x(0),y(0))=(x(T),y(T))$.
+
+\begin{enumerate}
+\item[(a)] Show that total length is:
+\[
+L=\int_{0}^{T}\sqrt{(x'(t))^{2}+(y'(t))^{2}}\,dt.
+\]
+\item[(b)] Show that total enclosed area is:
+\[
+A=\frac{1}{2}\int_{0}^{T}(x(t)y'(t)-y(t)x'(t))\,dt.
+\]
+\item[(c)] The classical isoperimetric inequality states: for closed plane curves with fixed length $L$, circles have largest enclosed area $A$. Formulate this as a variational problem.
+\item[(d)] Derive the Euler-Lagrange equation for the variational problem in (c).
+\item[(e)] Show there are constants $x_{0}$ and $y_{0}$ such that
+\[
+(x(t)-x_{0})^{2}+(y(t)-y_{0})^{2}\equiv r^{2}
+\]
+where $r=L/(2\pi)$. Explain your result.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) The arc length $s$ is defined by $ds^2 = dx^2 + dy^2$, so $L = \int ds = \int \sqrt{\dot{x}^2 + \dot{y}^2} dt$.
+
+(b) By Green's Theorem, $A = \iint dx dy = \frac{1}{2} \oint (x dy - y dx) = \frac{1}{2} \int_0^T (x \dot{y} - y \dot{x}) dt$.
+
+(c) Maximize $J[x,y] = \frac{1}{2} \int_0^T (x \dot{y} - y \dot{x}) dt$ subject to $G[x,y] = \int_0^T \sqrt{\dot{x}^2 + \dot{y}^2} dt = L$.
+We use Lagrange multipliers: maximize $F = \int_0^T L(x, y, \dot{x}, \dot{y}) dt$ where $L = \frac{1}{2}(x \dot{y} - y \dot{x}) + \lambda \sqrt{\dot{x}^2 + \dot{y}^2}$.
+
+(d) Euler-Lagrange equations: $\frac{\partial L}{\partial x} - \frac{d}{dt} \frac{\partial L}{\partial \dot{x}} = 0$ and $\frac{\partial L}{\partial y} - \frac{d}{dt} \frac{\partial L}{\partial \dot{y}} = 0$.
+$\frac{\partial L}{\partial x} = \frac{1}{2}\dot{y}$, $\frac{\partial L}{\partial \dot{x}} = -\frac{1}{2}y + \frac{\lambda \dot{x}}{\sqrt{\dot{x}^2 + \dot{y}^2}}$.
+So $\frac{1}{2}\dot{y} - \frac{d}{dt} \left( -\frac{1}{2}y + \frac{\lambda \dot{x}}{\sqrt{\dot{x}^2 + \dot{y}^2}} \right) = \dot{y} - \frac{d}{dt} \frac{\lambda \dot{x}}{\sqrt{\dot{x}^2 + \dot{y}^2}} = 0$.
+Integrating: $y - \frac{\lambda \dot{x}}{\sqrt{\dot{x}^2 + \dot{y}^2}} = y_0 \implies y - y_0 = \frac{\lambda \dot{x}}{\sqrt{\dot{x}^2 + \dot{y}^2}}$.
+Similarly for $x$: $x - x_0 = -\frac{\lambda \dot{y}}{\sqrt{\dot{x}^2 + \dot{y}^2}}$.
+
+(e) Squaring and adding the two results:
+$(x-x_0)^2 + (y-y_0)^2 = \frac{\lambda^2 (\dot{y}^2 + \dot{x}^2)}{\dot{x}^2 + \dot{y}^2} = \lambda^2$.
+This is the equation of a circle. Since $L = 2\pi r$, we have $\lambda = r = L/(2\pi)$.
+The result shows that for a given perimeter, the circle maximizes the area, which is the solution to the isoperimetric problem.
+\end{solution}
+
+\begin{exercise}
+Let $A\in\mathbb{R}^{n\times m}$ with rank $r<\min(m,n)$. Let $A=U\Sigma V^{T}$ be the SVD with singular values $\sigma_{1}\geq\sigma_{2}\geq\cdots\geq\sigma_{r}>0$.
+
+\begin{enumerate}
+\item[(a)] Show that for every $\epsilon>0$, there is a full rank matrix $A_{\epsilon}\in\mathbb{R}^{n\times m}$ such that $\|A-A_{\epsilon}\|_{2}=\epsilon$.
+\item[(b)] Let $A_{k}=U\Sigma_{k}V^{T}$ where $\Sigma_{k}=\mathrm{diag}(\sigma_{1},\dots,\sigma_{k},0,\dots,0)$ and $1\leq k\leq r-1$. Show $\mathrm{rank}(A_{k})=k$ and
+\[
+\sigma_{k+1}=\|A-A_{k}\|_{2}=\min\{\|A-B\|_{2}:\mathrm{rank}(B)\leq k\}.
+\]
+\item[(c)] Assume $r=\min(m,n)$. Let $B\in\mathbb{R}^{n\times m}$ and assume $\|A-B\|_{2}<\sigma_{r}$. Show $\mathrm{rank}(B)=r$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(a) Let $A = U \Sigma V^T$. The diagonal of $\Sigma$ has $r$ non-zero entries. Let $p = \min(m,n)$. We can define $\Sigma_\epsilon$ by setting the remaining $p-r$ diagonal entries to $\epsilon$, and replacing $\sigma_r$ with $\sigma_r + \epsilon$ if needed (actually, just adding $\epsilon$ to all zero singular values and keeping the rest works for $\|A-A_\epsilon\|_2 = \epsilon$).
+$A_\epsilon = U \Sigma_\epsilon V^T$ has $p$ non-zero singular values, so it is full rank. $\|A - A_\epsilon\|_2 = \|\text{diag}(0, \dots, 0, \epsilon, \dots, \epsilon)\|_2 = \epsilon$.
+
+(b) This is the Eckart-Young-Mirsky theorem.
+$\text{rank}(A_k) = k$ is obvious as it has $k$ non-zero singular values.
+$\|A - A_k\|_2 = \|U \text{diag}(0, \dots, 0, \sigma_{k+1}, \dots, \sigma_r) V^T\|_2 = \sigma_{k+1}$.
+To show it is the minimum, suppose $\text{rank}(B) \leq k$. Then $\text{null}(B)$ has dimension at least $m-k$.
+The span of the first $k+1$ right singular vectors $\{v_1, \dots, v_{k+1}\}$ has dimension $k+1$.
+By dimension counting, there exists a unit vector $z \in \text{null}(B) \cap \text{span}\{v_1, \dots, v_{k+1}\}$.
+Then $Bz = 0$ and $Az = \sum_{i=1}^{k+1} \sigma_i (v_i^T z) u_i$.
+$\|A-B\|_2^2 \geq \|(A-B)z\|_2^2 = \|Az\|_2^2 = \sum_{i=1}^{k+1} \sigma_i^2 |v_i^T z|^2 \geq \sigma_{k+1}^2 \sum |v_i^T z|^2 = \sigma_{k+1}^2$.
+Thus $\|A-B\|_2 \geq \sigma_{k+1}$.
+
+(c) From (b), the distance from $A$ to the set of matrices of rank $\leq r-1$ is exactly $\sigma_r$.
+If $\|A-B\|_2 < \sigma_r$, then $B$ cannot have rank $\leq r-1$.
+Thus $\text{rank}(B) \geq r$. Since $r = \min(m,n)$ is the maximum possible rank, $\text{rank}(B) = r$.
+\end{solution}

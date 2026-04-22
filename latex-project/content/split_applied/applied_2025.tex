@@ -1,0 +1,119 @@
+\section{2025 Applied \& Computational Mathematics}
+
+\begin{exercise}
+Consider multipoint iteration:
+\[
+x_{k+1}=x_{k}-\alpha\frac{f(x_{k})}{f'(x_{k}-\beta f(x_{k})/f'(x_{k}))},
+\]
+for solving $f(x)=0$, with parameters $\alpha,\beta$. Determine $\alpha$ and $\beta$ for highest possible order of convergence for finding $\xi$, a simple root of $f(x)=0$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This is a two-step iterative method. The first step $y_k = x_k - \beta f(x_k)/f'(x_k)$ is a Newton-like step. The second step uses the derivative evaluated at this intermediate point $y_k$. By choosing $\alpha$ and $\beta$ carefully, we can improve the order of convergence from 2 (standard Newton) to 3 (like Halley's or Ostrowski's method).
+
+\textbf{Analysis:}
+Let $e_k = x_k - \xi$. Expand $f(x_k)$ and $f'(x_k)$ around $\xi$ (assume $f(\xi)=0$ and $f'(\xi)=1$ without loss of generality):
+$f(x_k) = e_k + c_2 e_k^2 + c_3 e_k^3 + O(e_k^4)$, where $c_n = f^{(n)}(\xi)/(n! f'(\xi))$.
+$f'(x_k) = 1 + 2c_2 e_k + 3c_3 e_k^2 + O(e_k^3)$.
+The intermediate point is $y_k = x_k - \beta \frac{e_k + c_2 e_k^2}{1 + 2c_2 e_k} \approx e_k - \beta (e_k - c_2 e_k^2) = (1-\beta)e_k + \beta c_2 e_k^2$.
+The derivative at the intermediate point:
+$f'(y_k) \approx 1 + 2c_2 y_k + 3c_3 y_k^2 = 1 + 2c_2((1-\beta)e_k + \beta c_2 e_k^2) + 3c_3(1-\beta)^2 e_k^2$.
+The iteration is $x_{k+1} = x_k - \alpha \frac{f(x_k)}{f'(y_k)}$.
+For highest order, we want $e_{k+1} \approx 0$ for as many powers of $e_k$ as possible.
+$e_{k+1} = e_k - \alpha \frac{e_k + c_2 e_k^2 + c_3 e_k^3}{1 + 2c_2(1-\beta)e_k + [2\beta c_2^2 + 3c_3(1-\beta)^2]e_k^2}$.
+Expansion: $e_{k+1} \approx e_k - \alpha e_k (1 + c_2 e_k + c_3 e_k^2)(1 - 2c_2(1-\beta)e_k + [4c_2^2(1-\beta)^2 - 2\beta c_2^2 - 3c_3(1-\beta)^2]e_k^2)$.
+Term $O(e_k)$: $1-\alpha = 0 \implies \alpha = 1$.
+Term $O(e_k^2)$: $c_2 - 2c_2(1-\beta) = 0 \implies 1 - 2 + 2\beta = 0 \implies \beta = 1/2$.
+With $\alpha=1$ and $\beta=1/2$, the order is at least 3. This corresponds to the midpoint method.
+\end{solution}
+
+\begin{exercise}
+Compute spectral radius of $\mathbf{A}^{-1}$ where $\mathbf{A}$ is an $8 \times 8$ tridiagonal matrix with zeros on diagonal and ones on sub/super-diagonals.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} The eigenvalues of a tridiagonal matrix with constant diagonals are related to the zeros of Chebyshev polynomials. The spectral radius of the inverse is the reciprocal of the smallest eigenvalue (in magnitude) of the original matrix.
+
+\textbf{Calculation:}
+The matrix $A$ has $A_{i, i\pm 1} = 1$ and $A_{i,i} = 0$. This is the adjacency matrix of a path graph $P_8$.
+The eigenvalues of such a matrix are $\lambda_k = 2 \cos\left(\frac{k\pi}{n+1}\right)$ for $k=1, \dots, n$.
+Here $n=8$, so $\lambda_k = 2 \cos\left(\frac{k\pi}{9}\right)$.
+The eigenvalues of $A^{-1}$ are $1/\lambda_k$. The spectral radius is $\rho(A^{-1}) = \max |1/\lambda_k| = 1/\min |\lambda_k|$.
+The values of $k/9$ closest to $1/2$ are $4/9$ and $5/9$.
+$|\lambda_4| = |2 \cos(4\pi/9)|$ and $|\lambda_5| = |2 \cos(5\pi/9)| = |2 \sin(\pi/18)|$.
+Thus $\rho(A^{-1}) = \frac{1}{2 \cos(4\pi/9)} = \frac{1}{2 \sin(\pi/18)}$.
+\end{solution}
+
+\begin{exercise}
+Legendre polynomials and associated Legendre functions interpolation.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} Associated Legendre functions $P_k^1(x)$ are derivatives of Legendre polynomials (multiplied by a factor). Since Legendre polynomials are orthogonal, their derivatives also have strong independence properties.
+
+\begin{enumerate}
+\item[(a)] $P_k^1(x) = -\sqrt{1-x^2} P_k'(x)$. Since $\sqrt{1-x^2} \neq 0$ on $(-1, 1)$, the nonsingularity depends on the matrix $P_k'(x_i)$. This is related to the uniqueness of polynomial interpolation using the derivative basis.
+\item[(b)] The least squares system is the normal equations $M\mathbf{a} = \mathbf{b}$ where $M_{kj} = \int_{-1}^1 P_k^1(x) P_j^1(x) dx$. This is non-singular because $P_k^1$ are linearly independent.
+\item[(c)] $P_k(x)$ has parity $(-1)^k$. Then $P_k'(x)$ has parity $(-1)^{k-1}$. The factor $\sqrt{1-x^2}$ is even. Thus $P_k^1$ has parity $(-1)^{k-1}$.
+The integrand $P_k^1(x) P_j^1(x)$ has parity $(-1)^{k-1+j-1} = (-1)^{k+j}$.
+If $k+j$ is odd, the integrand is an odd function, so the integral over $[-1, 1]$ is 0.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Find $\ell$ orthonormal vectors minimizing $J = \sum \|y_j - \text{proj}_\mathcal{V} y_j\|^2$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This is the fundamental theorem of PCA / SVD. We want to find a low-dimensional subspace that captures as much "energy" (variance) as possible from the data.
+
+\textbf{Proof:}
+The sum of squared distances to the subspace is minimized when the subspace is spanned by the first $\ell$ singular vectors of the data matrix $Y = [y_1, \dots, y_n]$.
+Alternatively, consider the covariance-like matrix $C = YY^T = \sum y_j y_j^T$.
+We want to maximize $\sum_j \sum_{i=1}^\ell (\psi_i^T y_j)^2 = \sum_i \psi_i^T (\sum_j y_j y_j^T) \psi_i = \sum_i \psi_i^T C \psi_i$.
+Subject to $\psi_i^T \psi_k = \delta_{ik}$.
+By the Rayleigh-Ritz theorem, this is maximized when $\psi_i$ are the eigenvectors of $C$ corresponding to the $\ell$ largest eigenvalues.
+These $\psi_i$ are the left singular vectors of $Y$.
+\end{solution}
+
+\begin{exercise}
+$\theta$-scheme for $u_t + u = u_{xx}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This equation includes a reaction term $-u$ and a diffusion term $u_{xx}$. The reaction term $u_t = -u$ leads to exponential decay $e^{-t}$. The $\theta$-scheme should preserve this decay.
+
+\begin{enumerate}
+\item[(a)] \textbf{$\ell_\infty$ stability:}
+The scheme is $U_j^{m+1} (1 + \theta \Delta t + 2\theta \lambda) = U_j^m (1 - (1-\theta)\Delta t - 2(1-\theta)\lambda) + \dots$.
+Using the positivity of coefficients (M-matrix property) and summing, we find that the growth factor is bounded by $\frac{1-(1-\theta)\Delta t}{1+\theta \Delta t}$. The condition on $\Delta t$ ensures the coefficients on the RHS are non-negative.
+\item[(b)] \textbf{$\ell_2$ stability:}
+Using Von Neumann analysis, the amplification factor is $G(\eta) = \frac{1 - (1-\theta)\Delta t - 4(1-\theta)\lambda \sin^2(\eta/2)}{1 + \theta \Delta t + 4\theta \lambda \sin^2(\eta/2)}$.
+For $\theta \geq 1/2$, the denominator is always larger in magnitude than the numerator (or equal at limit), so $|G| \leq 1$ always. For $\theta < 1/2$, we need a CFL-like condition to ensure $|G| \geq -1$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Stiff ODE system $\dot{y}_1 = -1000y_1 + 999y_2$, $\dot{y}_2 = -y_2$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This system has two very different timescales: $\lambda_1 = -1000$ (fast decay) and $\lambda_2 = -1$ (slow decay). This is the definition of stiffness. Explicit methods will be limited by the fast scale, while implicit methods can handle both.
+
+\begin{enumerate}
+\item[(a)] \textbf{Exact Solution:}
+Second equation: $y_2(t) = e^{-t}$ (given $y_2(0)=1$).
+First equation: $\dot{y}_1 + 1000y_1 = 999 e^{-t}$.
+Integrating factor $e^{1000t}$: $\frac{d}{dt}(y_1 e^{1000t}) = 999 e^{999t}$.
+$y_1 e^{1000t} = e^{999t} + C$. At $t=0$, $y_1=2$, so $2 = 1 + C \implies C=1$.
+$y_1(t) = e^{-t} + e^{-1000t}$.
+\item[(b)] \textbf{Explicit Euler:}
+The stability region for $y_{n+1} = (1+h\lambda)y_n$ is $|1+h\lambda| \leq 1$.
+For $\lambda = -1000$, we need $|1 - 1000h| \leq 1 \implies 1000h \leq 2 \implies h \leq 0.002$.
+If $h > 0.002$, the term $e^{-1000t}$ will be approximated by $(1-1000h)^n$ which oscillates and diverges.
+\item[(c)] \textbf{Implicit Euler:}
+Stability function is $R(z) = \frac{1}{1-z}$. For any $z = h\lambda$ with $\text{Re}(\lambda) < 0$, $|R(z)| < 1$. Thus unconditionally stable.
+\item[(d)] \textbf{Trapezoidal Rule:}
+$R(z) = \frac{1+z/2}{1-z/2}$. This is A-stable ($|R(z)| \leq 1$ for all $\text{Re}(z) \leq 0$), making it suitable for stiff problems, though it can exhibit oscillations for very large $h$ due to $R(-\infty) = -1$.
+\end{enumerate}
+\end{solution}

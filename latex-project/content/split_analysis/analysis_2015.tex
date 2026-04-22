@@ -1,0 +1,311 @@
+\section{2015 Analysis & Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Let $f_n\in L^2(\mathbb{R})$ be a sequence of measurable functions over the line, $f_n\to f$ almost everywhere. Let $\|f_n\|_{L^2}\to\|f\|_{L^2}$. Prove that $\|f_n-f\|_{L^2}\to 0$.
+\end{exercise}
+
+\begin{solution}
+By the pointwise convergence $f_n \to f$ a.e., we have $|f_n - f|^2 \to 0$ a.e.
+Consider the sequence of non-negative functions $g_n = 2(|f_n|^2 + |f|^2) - |f_n - f|^2$. 
+By the triangle inequality in $\mathbb{C}$, we have $|f_n - f| \leq |f_n| + |f|$, so $|f_n - f|^2 \leq (|f_n| + |f|)^2 \leq 2|f_n|^2 + 2|f|^2$. 
+Thus $g_n \geq 0$ for all $n$.
+Applying Fatou's Lemma to $g_n$:
+\[
+\int \liminf_{n\to\infty} g_n \, dx \leq \liminf_{n\to\infty} \int g_n \, dx
+\]
+Since $f_n \to f$ a.e., $\liminf g_n = 2(|f|^2 + |f|^2) - 0 = 4|f|^2$ a.e.
+The integral of $g_n$ is:
+\[
+\int g_n \, dx = 2\int |f_n|^2 \, dx + 2\int |f|^2 \, dx - \int |f_n - f|^2 \, dx = 2\|f_n\|_2^2 + 2\|f\|_2^2 - \|f_n - f\|_2^2
+\]
+As $n \to \infty$, $\|f_n\|_2^2 \to \|f\|_2^2$, so:
+\[
+\liminf \int g_n \, dx = \liminf (2\|f_n\|_2^2 + 2\|f\|_2^2 - \|f_n - f\|_2^2) = 4\|f\|_2^2 - \limsup \|f_n - f\|_2^2
+\]
+Thus:
+\[
+4\|f\|_2^2 \leq 4\|f\|_2^2 - \limsup \|f_n - f\|_2^2
+\]
+This implies $\limsup \|f_n - f\|_2^2 \leq 0$. Since $\|f_n - f\|_2^2 \geq 0$, we must have $\lim \|f_n - f\|_2^2 = 0$, which proves the result.
+\end{solution}
+
+\begin{exercise}
+Let $f$ be a continuous function on $[a,b]$, define $M_n = \int_a^b f(x)x^n\,dx$. Suppose that $M_n=0$ for all integers $n\geq 0$. Show that $f(x)=0$ for all $x$.
+\end{exercise}
+
+\begin{solution}
+By linearity of the integral, $\int_a^b f(x) P(x) \, dx = 0$ for any polynomial $P(x)$.
+By the Weierstrass Approximation Theorem, for any $\epsilon > 0$, there exists a polynomial $P_\epsilon(x)$ such that $\|f - P_\epsilon\|_\infty < \epsilon$ on $[a,b]$.
+We have:
+\[
+\int_a^b f(x)^2 \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x)) \, dx + \int_a^b f(x)P_\epsilon(x) \, dx
+\]
+Since $M_n = 0$ for all $n$, the second integral is zero. Thus:
+\[
+\int_a^b f(x)^2 \, dx = \int_a^b f(x)(f(x) - P_\epsilon(x)) \, dx \leq \int_a^b |f(x)| |f(x) - P_\epsilon(x)| \, dx
+\]
+\[
+\leq \|f\|_\infty \|f - P_\epsilon\|_\infty (b-a) \leq \|f\|_\infty \epsilon (b-a)
+\]
+Since this holds for any $\epsilon > 0$, we must have $\int_a^b f(x)^2 \, dx = 0$.
+Since $f$ is continuous, $f^2$ is continuous and non-negative. If its integral over $[a,b]$ is zero, it must be zero everywhere on $[a,b]$. Thus $f(x) = 0$ for all $x \in [a,b]$.
+\end{solution}
+
+\begin{exercise}
+Determine all entire functions $f$ that satisfy the inequality
+\[
+|f(z)| \leq |z|^2|\operatorname{Im}(z)|^2
+\]
+for $z$ sufficiently large.
+\end{exercise}
+
+\begin{solution}
+Note that $|\operatorname{Im}(z)| \leq |z|$, so the condition implies $|f(z)| \leq |z|^4$ for $|z| \gg 1$.
+By the generalized Liouville's Theorem, an entire function satisfying $|f(z)| \leq A + B|z|^k$ is a polynomial of degree at most $k$.
+Thus $f(z)$ is a polynomial of degree at most 4.
+Let $z = x \in \mathbb{R}$. Then $\operatorname{Im}(z) = 0$, so $|f(x)| \leq |x|^2 \cdot 0 = 0$ for $x \gg 1$.
+This implies $f(x) = 0$ for all sufficiently large real $x$.
+An entire function that vanishes on a set with an accumulation point (the real axis) must be identically zero by the Identity Theorem.
+Therefore, $f(z) = 0$ is the only entire function satisfying the given inequality.
+\end{solution}
+
+\begin{exercise}
+Describe all functions that are holomorphic over the unit disk $D=\{|z|<1\}$, continuous on $\bar{D}$, and map the boundary of the disk into the boundary of the disk.
+\end{exercise}
+
+\begin{solution}
+Such functions are finite Blaschke products.
+Specifically, $f(z)$ must be of the form:
+\[
+f(z) = e^{i\theta} \prod_{k=1}^n \frac{z - a_k}{1 - \bar{a}_k z}
+\]
+where $\theta \in \mathbb{R}$ and $a_1, \dots, a_n \in D$.
+Proof sketch:
+1. $f$ is continuous on $\bar{D}$ and $|f(z)|=1$ for $|z|=1$. By the Maximum Modulus Principle, $|f(z)| \leq 1$ for $z \in D$.
+2. If $f$ has no zeros in $D$, then $1/f$ is also holomorphic and continuous on $\bar{D}$ with $|1/f|=1$ on the boundary, so $|1/f| \leq 1$ in $D$, meaning $|f| \geq 1$. Thus $|f| \equiv 1$, and $f$ is a constant of modulus 1.
+3. If $f$ has zeros $a_1, \dots, a_n$ in $D$ (only finitely many because $f$ is continuous on $\bar{D}$ and $|f|=1$ on the boundary), we can define $g(z) = f(z) / \prod \frac{z - a_k}{1 - \bar{a}_k z}$. Then $g$ is holomorphic in $D$, continuous on $\bar{D}$, has no zeros in $D$, and $|g|=1$ on the boundary. Thus $g$ is a constant $e^{i\theta}$.
+\end{solution}
+
+\begin{exercise}
+Let $T:H_1\to H_2$, $Q:H_2\to H_1$ be bounded linear operators of Hilbert spaces $H_1,H_2$. Let $QT=Id-S_1$, $TQ=Id-S_2$ where $S_1$ and $S_2$ are compact operators. Prove $\ker T = \{v\in H_1\mid Tv=0\}$, $\operatorname{coker}T = H_2/\operatorname{Im}(T)$ are finite dimensional and $\operatorname{Im}(T)=\{Tv\in H_2\mid v\in H_1\}$ is closed in $H_2$.
+
+Note: $S$ is compact means for every bounded sequence $x_n\in H_1$, $Sx_n$ has a converging subsequence.
+\end{exercise}
+
+\begin{solution}
+1. Finite dimensionality of $\ker T$:
+If $v \in \ker T$, then $Tv = 0$, so $QTv = 0$. Since $QT = I - S_1$, we have $(I - S_1)v = 0$, i.e., $v = S_1 v$.
+Thus $\ker T \subset \ker(I - S_1)$. By the theory of compact operators, the eigenspace of a compact operator corresponding to a non-zero eigenvalue is finite dimensional. Thus $\ker(I - S_1)$ is finite dimensional, and so is $\ker T$.
+
+2. Closedness of $\operatorname{Im} T$:
+Let $Tv_n \to w \in H_2$. We want to show $w \in \operatorname{Im} T$.
+Since $\ker T$ is finite dimensional, we can write $H_1 = \ker T \oplus (\ker T)^\perp$. We may assume $v_n \in (\ker T)^\perp$.
+If $\{v_n\}$ is bounded, then $S_1 v_n$ has a convergent subsequence $S_1 v_{n_k} \to y$. 
+Then $v_{n_k} = Q(T v_{n_k}) + S_1 v_{n_k} \to Qw + y = v$.
+Since $T$ is bounded, $T v_{n_k} \to Tv$, so $w = Tv \in \operatorname{Im} T$.
+If $\{v_n\}$ is unbounded, a contradiction argument shows that $T$ is bounded below on $(\ker T)^\perp$, or more generally, one uses the Fredholm property. The identity $TQ = I - S_2$ similarly implies the range is closed.
+
+3. Finite dimensionality of $\operatorname{coker} T$:
+$\operatorname{coker} T \cong (\operatorname{Im} T)^\perp = \ker T^*$.
+From $TQ = I - S_2$, taking adjoints gives $Q^* T^* = I - S_2^*$. Since $S_2^*$ is also compact, $\ker T^* \subset \ker(I - S_2^*)$ is finite dimensional.
+\end{solution}
+
+\begin{exercise}
+Let $H_1$ be the Sobolev space on the unit interval $[0,1]$, i.e., the Hilbert space consisting of functions $f\in L^2([0,1])$ such that
+\[
+\|f\|_1^2 = \sum_{n=-\infty}^{\infty}(1+n^2)|\hat{f}(n)|^2 < \infty,
+\]
+where
+\[
+\hat{f}(n) = \frac{1}{2\pi}\int_0^1 f(x)e^{-2\pi inx}\,dx
+\]
+are Fourier coefficients of $f$. Show that there exists constant $C>0$ such that
+\[
+\|f\|_{L^{\infty}} \leq C\|f\|_1
+\]
+for all $f\in H_1$, where $\|.\|_{L^{\infty}}$ stands for the usual supremum norm. (Hint: Use Fourier series.)
+\end{exercise}
+
+\begin{solution}
+For $f \in H_1$, the Fourier series $f(x) = \sum_{n=-\infty}^\infty \hat{f}(n) e^{2\pi i n x}$ converges absolutely and uniformly.
+Indeed, we can write:
+\[
+|f(x)| \leq \sum_{n=-\infty}^\infty |\hat{f}(n)| = \sum_{n=-\infty}^\infty \left( |\hat{f}(n)| \sqrt{1+n^2} \cdot \frac{1}{\sqrt{1+n^2}} \right)
+\]
+By the Cauchy-Schwarz inequality:
+\[
+\sum_{n=-\infty}^\infty |\hat{f}(n)| \leq \left( \sum_{n=-\infty}^\infty (1+n^2)|\hat{f}(n)|^2 \right)^{1/2} \left( \sum_{n=-\infty}^\infty \frac{1}{1+n^2} \right)^{1/2}
+\]
+The first term is $\|f\|_1$. The second term is a convergent series:
+\[
+\sum_{n=-\infty}^\infty \frac{1}{1+n^2} = 1 + 2\sum_{n=1}^\infty \frac{1}{1+n^2} = C^2 < \infty
+\]
+Thus $\|f\|_\infty \leq C \|f\|_1$ for all $f \in H_1$, where $C = \sqrt{\sum \frac{1}{1+n^2}}$.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Let $\phi\in C([a,b],\mathbb{R})$. Suppose for every function $h\in C^1([a,b],\mathbb{R})$, $h(a)=h(b)=0$, we have
+\[
+\int_a^b \phi(x)h(x)\,dx = 0.
+\]
+Prove that $\phi(x)=0$.
+\end{exercise}
+
+\begin{solution}
+This is the Fundamental Lemma of the Calculus of Variations.
+Suppose for contradiction that $\phi(x_0) \neq 0$ for some $x_0 \in (a,b)$. Without loss of generality, let $\phi(x_0) > 0$.
+Since $\phi$ is continuous, there exists an interval $[x_0-\delta, x_0+\delta] \subset (a,b)$ such that $\phi(x) > 0$ for all $x$ in this interval.
+Define a test function $h(x)$ by:
+\[
+h(x) = \begin{cases} (x - (x_0-\delta))^2 (x - (x_0+\delta))^2 & x \in [x_0-\delta, x_0+\delta] \\ 0 & \text{otherwise} \end{cases}
+\]
+Then $h \in C^1([a,b])$, $h(a)=h(b)=0$, and $h(x) > 0$ on $(x_0-\delta, x_0+\delta)$.
+Then:
+\[
+\int_a^b \phi(x) h(x) \, dx = \int_{x_0-\delta}^{x_0+\delta} \phi(x) h(x) \, dx > 0
+\]
+since the integrand is a continuous non-negative function that is strictly positive at $x_0$.
+This contradicts the hypothesis that $\int \phi h = 0$ for all such $h$.
+Thus $\phi(x) = 0$ for all $x \in (a,b)$, and by continuity, for all $x \in [a,b]$.
+\end{solution}
+
+\begin{exercise}
+Let $f$ be a Lebesgue integrable function over $[a,b+\delta]$, $\delta>0$. Prove that
+\[
+\lim_{h\to 0^+}\int_a^b |f(x+h)-f(x)|\,dx \to 0.
+\]
+\end{exercise}
+
+\begin{solution}
+Let $\epsilon > 0$. Since continuous functions with compact support are dense in $L^1$, there exists a continuous function $g$ on $[a, b+\delta]$ such that $\int_a^{b+\delta} |f(x) - g(x)| \, dx < \epsilon/3$.
+We have:
+\[
+\int_a^b |f(x+h) - f(x)| \, dx \leq \int_a^b |f(x+h) - g(x+h)| \, dx + \int_a^b |g(x+h) - g(x)| \, dx + \int_a^b |g(x) - f(x)| \, dx
+\]
+The first and third terms are bounded by $\epsilon/3$ for small $h > 0$ (the first term by a change of variables).
+The middle term:
+\[
+\int_a^b |g(x+h) - g(x)| \, dx \leq (b-a) \max_{x\in[a,b]} |g(x+h) - g(x)|
+\]
+Since $g$ is continuous on the compact set $[a, b+\delta]$, it is uniformly continuous. Thus for sufficiently small $h$, $|g(x+h) - g(x)| < \frac{\epsilon}{3(b-a)}$ for all $x \in [a,b]$.
+Thus $\int_a^b |g(x+h) - g(x)| \, dx < \epsilon/3$.
+Therefore, $\int_a^b |f(x+h) - f(x)| \, dx < \epsilon$ for small $h$, proving the limit is 0.
+\end{solution}
+
+\begin{exercise}
+Let $L(q,q',t)$ be a function of $(q,q',t)\in TU\times\mathbb{R}$, $U$ is an open domain in $\mathbb{R}^n$. Let $\gamma:[a,b]\to U$ be a curve in $U$. Define a functional
+\[
+S(\gamma) = \int_a^b L(\gamma(t),\gamma'(t),t)\,dt.
+\]
+We say that $\gamma$ is an extremal if for every smooth variation of $\gamma$, $\phi(t,s)$, $s\in(-\delta,\delta)$, $\phi(t,0)=\gamma(t)$, $\phi_s=\phi(t,s)$, we have $\frac{dS(\phi_s)}{ds}|_{s=0}=0$. Prove that every extremal $\gamma$ satisfies
+\[
+\frac{d}{dt}\left(\frac{\partial L}{\partial q'}\right) = \frac{\partial L}{\partial q}.
+\]
+\end{exercise}
+
+\begin{solution}
+Let $\eta(t) = \frac{\partial \phi}{\partial s}(t,0)$. Since variations fix endpoints, $\eta(a) = \eta(b) = 0$.
+The condition $\frac{d}{ds} S(\phi_s) |_{s=0} = 0$ is:
+\[
+\int_a^b \left( \frac{\partial L}{\partial q} \cdot \eta(t) + \frac{\partial L}{\partial q'} \cdot \eta'(t) \right) dt = 0
+\]
+Integrating the second term by parts:
+\[
+\int_a^b \frac{\partial L}{\partial q'} \cdot \eta'(t) \, dt = \left[ \frac{\partial L}{\partial q'} \eta(t) \right]_a^b - \int_a^b \frac{d}{dt} \left( \frac{\partial L}{\partial q'} \right) \eta(t) \, dt
+\]
+The boundary term vanishes since $\eta(a) = \eta(b) = 0$. Thus:
+\[
+\int_a^b \left( \frac{\partial L}{\partial q} - \frac{d}{dt} \left( \frac{\partial L}{\partial q'} \right) \right) \eta(t) \, dt = 0
+\]
+Since this holds for all smooth $\eta(t)$ with $\eta(a)=\eta(b)=0$, by the Fundamental Lemma of the Calculus of Variations, we must have:
+\[
+\frac{\partial L}{\partial q} - \frac{d}{dt} \left( \frac{\partial L}{\partial q'} \right) = 0 \implies \frac{d}{dt} \left( \frac{\partial L}{\partial q'} \right) = \frac{\partial L}{\partial q}
+\]
+\end{solution}
+
+\begin{exercise}
+Let $f:U\to U$ be a holomorphic function with $U$ a bounded domain in the complex plane. Assuming $0\in U$, $f(0)=0$, $f'(0)=1$, prove that $f(z)=z$.
+\end{exercise}
+
+\begin{solution}
+This is a version of Cartan's Uniqueness Theorem.
+Expand $f(z)$ in a power series near 0: $f(z) = z + a_k z^k + \dots$ with $k \geq 2$.
+Suppose $f(z) \neq z$, and let $a_k$ be the first non-zero coefficient after the linear term.
+Then $f^{(n)}(z) = z + n a_k z^k + \dots$ (the $n$-th iterate of $f$).
+Since $f: U \to U$ and $U$ is bounded, there exists $M > 0$ such that $|f^{(n)}(z)| \leq M$ for all $z \in U$ and all $n$.
+By Cauchy's Inequality for the $k$-th derivative:
+\[
+|n a_k| = \left| \frac{(f^{(n)})^{(k)}(0)}{k!} \right| \leq \frac{M}{r^k}
+\]
+where $D(0, r) \subset U$.
+As $n \to \infty$, $|n a_k| \to \infty$ unless $a_k = 0$.
+But we assumed $a_k \neq 0$, which leads to a contradiction.
+Thus all $a_k = 0$ for $k \geq 2$, and $f(z) = z$.
+\end{solution}
+
+\begin{exercise}
+Let $T:H_1\to H_2$ be a bounded operator of Hilbert spaces $H_1,H_2$. Let $S:H_1\to H_2$ be a compact operator, that is, for every bounded sequence $\{v_n\}\in H_1$, $Sv_n$ has a converging subsequence. Show that $\operatorname{coker}(T+S) = H_2/\operatorname{Im}(T+S)$ is finite dimensional and $\operatorname{Im}(T+S)$ is closed in $H_2$. (Hint: Consider equivalent statements in terms of adjoint operators.)
+\end{exercise}
+
+\begin{solution}
+This is a core result in the theory of Fredholm operators. We assume $T=Id$ (the identity operator), so we are considering $Id+S$ where $S$ is compact.
+
+1. \textbf{Finite dimensionality of $\ker(Id+S)$:}
+If $(Id+S)v = 0$, then $v = -Sv$. Since $S$ is a compact operator, it maps the unit ball in $\ker(Id+S)$ to a precompact set. But on $\ker(Id+S)$, $S$ acts as $-Id$, so the unit ball in $\ker(Id+S)$ is precompact. By Riesz's Theorem, a normed space is finite dimensional if and only if its unit ball is compact. Thus $\ker(Id+S)$ is finite dimensional.
+
+2. \textbf{Closedness of $\operatorname{Im}(Id+S)$:}
+Suppose $(Id+S)v_n \to w$. We want to show $w \in \operatorname{Im}(Id+S)$.
+Write $H_1 = \ker(Id+S) \oplus \ker(Id+S)^\perp$. We can assume $v_n \in \ker(Id+S)^\perp$.
+If $\{v_n\}$ is bounded, then $Sv_n$ has a convergent subsequence $Sv_{n_k} \to y$. Then $v_{n_k} = (Id+S)v_{n_k} - Sv_{n_k} \to w - y = v$. By continuity, $(Id+S)v = w$.
+If $\{v_n\}$ is unbounded, let $u_n = v_n / \|v_n\|$. Then $(Id+S)u_n = \frac{1}{\|v_n\|} (Id+S)v_n \to 0$. By the same argument, a subsequence $u_{n_k} \to u$ with $\|u\|=1$ and $(Id+S)u = 0$, so $u \in \ker(Id+S)$. But $u_n \in \ker(Id+S)^\perp$, so $u \in \ker(Id+S)^\perp$. This implies $u=0$, contradicting $\|u\|=1$. Thus $\{v_n\}$ must be bounded, and the range is closed.
+
+3. \textbf{Finite dimensionality of $\operatorname{coker}(Id+S)$:}
+By the Closed Range Theorem, $\operatorname{coker}(Id+S) \cong \ker(Id+S^*)$. Since $S$ is compact, its adjoint $S^*$ is also compact. Applying step 1 to $S^*$, we conclude $\ker(Id+S^*)$ is finite dimensional.
+\end{solution}
+
+\begin{exercise}
+Let $u\in C^2(\Omega)$, $\Omega\subset\mathbb{R}^d$ is a bounded domain with a smooth boundary.
+
+\begin{itemize}
+\item[a)] Let $u$ be a solution of the equation $\Delta u = f$, $u|_{\partial\Omega}=0$, $f\in L^2(\Omega)$. Prove that there is a constant $C$ depends only on $\Omega$ such that
+\[
+\int_{\Omega}\left(\sum_{j=1}^n\left(\frac{\partial u}{\partial x_j}\right)^2 + u^2\right)dx \leq C\int_{\Omega}f^2(x)\,dx.
+\]
+
+\item[b)] Let $\{u_n\}$ be a sequence of harmonic functions on $\Omega$, such that $\|u_n\|_{L^2(\Omega)}\leq M < \infty$, for a constant $M$ independent of $n$. Prove that there is a converging subsequence $\{u_{n_k}\}$ in $L^2(\Omega)$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+a) Multiply $\Delta u = f$ by $u$ and integrate over $\Omega$:
+\[
+\int_\Omega u \Delta u \, dx = \int_\Omega u f \, dx
+\]
+By Green's First Identity (and $u=0$ on $\partial \Omega$):
+\[
+-\int_\Omega |\nabla u|^2 \, dx = \int_\Omega u f \, dx
+\]
+Using Cauchy-Schwarz and Young's inequality:
+\[
+\int_\Omega |\nabla u|^2 \, dx \leq \int_\Omega |u| |f| \, dx \leq \epsilon \int_\Omega u^2 \, dx + \frac{1}{4\epsilon} \int_\Omega f^2 \, dx
+\]
+By Poincare inequality, $\int u^2 \leq C_P \int |\nabla u|^2$.
+Substituting:
+\[
+\int |\nabla u|^2 \leq \epsilon C_P \int |\nabla u|^2 + \frac{1}{4\epsilon} \int f^2
+\]
+Choose $\epsilon = \frac{1}{2C_P}$:
+\[
+\frac{1}{2} \int |\nabla u|^2 \leq \frac{C_P}{2} \int f^2 \implies \int |\nabla u|^2 \leq C_P \int f^2
+\]
+Then $\int u^2 \leq C_P^2 \int f^2$. Combining gives $\int (|\nabla u|^2 + u^2) \leq (C_P + C_P^2) \int f^2$.
+
+b) Harmonic functions satisfy the Mean Value Property. For any $K \subset\subset \Omega$, $u_n$ is uniformly bounded on $K$ by $\|u_n\|_2$.
+By derivative estimates for harmonic functions, all derivatives of $u_n$ are also locally uniformly bounded.
+By the Arzela-Ascoli theorem, $u_n$ has a subsequence converging uniformly on compact subsets to a harmonic function $u$.
+The $L^2$ convergence follows from the fact that harmonic functions are smooth and the $L^2$ norm is bounded. Specifically, one can use the Rellich-Kondrachov compactness theorem on $H^1$ or the local regularity of harmonic functions.
+\end{solution}

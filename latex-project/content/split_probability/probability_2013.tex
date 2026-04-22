@@ -1,0 +1,200 @@
+\section{2013 Probability and Statistics}
+
+\subsection{Individual}
+Please solve 5 out of the following 6 problems.
+
+\begin{exercise}
+Let $(X_n)$ be a sequence of random variables.
+
+(1) Assume that $\sum_{n=0}^\infty P(|X_n| > n) < \infty$. Prove that $\limsup_{n\to\infty} \frac{|X_n|}{n} \leq 1$ a.s.
+
+(2) Prove that $(X_n)$ converges in probability to 0 if and only if for certain $r > 0$, $E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \to 0$.
+\end{exercise}
+
+\begin{solution}
+(1) Let $A_n$ be the event $\{|X_n| > n\}$. We are given that $\sum_{n=0}^\infty P(A_n) < \infty$. By the Borel-Cantelli Lemma, the probability that infinitely many $A_n$ occur is zero. That is,
+\[ P(\limsup_{n\to\infty} A_n) = 0. \]
+This implies that for almost all $\omega \in \Omega$, there exists an integer $N(\omega)$ such that for all $n \geq N(\omega)$, we have $|X_n(\omega)| \leq n$. 
+Consequently, for $n \geq N(\omega)$,
+\[ \frac{|X_n(\omega)|}{n} \leq 1. \]
+Taking the limit superior as $n \to \infty$, we obtain
+\[ \limsup_{n\to\infty} \frac{|X_n(\omega)|}{n} \leq 1 \]
+for almost all $\omega$. Thus, $\limsup_{n\to\infty} \frac{|X_n|}{n} \leq 1$ a.s.
+
+(2) ($\implies$) Suppose $X_n \xrightarrow{P} 0$. Then for any $r > 0$, $|X_n|^r \xrightarrow{P} 0$. Consider the function $f(x) = \frac{x}{1+x}$ for $x \geq 0$. This function is bounded ($0 \leq f(x) < 1$) and continuous. By the property of convergence in probability, if $Y_n \xrightarrow{P} Y$ and $f$ is bounded and continuous, then $E[f(Y_n)] \to E[f(Y)]$. Taking $Y_n = |X_n|^r$ and $Y = 0$, we have
+\[ E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \to \frac{0}{1+0} = 0. \]
+
+($\impliedby$) Suppose $E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \to 0$ for some $r > 0$. Let $\epsilon > 0$. We want to show $P(|X_n| > \epsilon) \to 0$.
+Observe that $f(x) = \frac{x}{1+x}$ is monotonically increasing for $x \geq 0$. Thus, $|X_n| > \epsilon$ is equivalent to $|X_n|^r > \epsilon^r$, which implies $f(|X_n|^r) > f(\epsilon^r)$.
+By Markov's inequality:
+\[ P(|X_n| > \epsilon) = P(f(|X_n|^r) > f(\epsilon^r)) \leq \frac{E[f(|X_n|^r)]}{f(\epsilon^r)}. \]
+Since $E[f(|X_n|^r)] \to 0$ and $f(\epsilon^r) = \frac{\epsilon^r}{1+\epsilon^r} > 0$ is a constant, it follows that $P(|X_n| > \epsilon) \to 0$ as $n \to \infty$. Hence, $X_n \xrightarrow{P} 0$.
+\end{solution}
+
+\begin{exercise}
+Let $X$ and $Y$ be independent $N(0,1)$ random variables.
+
+(1) Find $E[X+Y | X \geq 0, Y \geq 0]$;
+
+(2) Find the distribution function of $X+Y$ given that $X \geq 0$ and $Y \geq 0$.
+
+Hint: For (2), using the fact that $U = (X+Y)/\sqrt{2}$ and $V = (X-Y)/\sqrt{2}$ are independent and $N(0,1)$ distributed.
+\end{exercise}
+
+\begin{solution}
+(1) By linearity of conditional expectation and the fact that $X$ and $Y$ are independent and $X, Y \geq 0$ are independent events:
+\[ E[X+Y | X \geq 0, Y \geq 0] = E[X | X \geq 0, Y \geq 0] + E[Y | X \geq 0, Y \geq 0]. \]
+By independence, $E[X | X \geq 0, Y \geq 0] = E[X | X \geq 0]$.
+Using the density of $N(0,1)$, $\phi(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2}$:
+\[ E[X | X \geq 0] = \frac{\int_0^\infty x \phi(x) dx}{P(X \geq 0)} = \frac{\frac{1}{\sqrt{2\pi}} \int_0^\infty x e^{-x^2/2} dx}{1/2} = 2 \left[ \frac{1}{\sqrt{2\pi}} (-e^{-x^2/2}) \right]_0^\infty = \frac{2}{\sqrt{2\pi}} = \sqrt{\frac{2}{\pi}}. \]
+Since $X$ and $Y$ are i.i.d., $E[Y | Y \geq 0] = \sqrt{\frac{2}{\pi}}$. Thus,
+\[ E[X+Y | X \geq 0, Y \geq 0] = 2\sqrt{\frac{2}{\pi}} = \sqrt{\frac{8}{\pi}}. \]
+
+(2) Let $S = X+Y$. We want to find $F_S(s | X \geq 0, Y \geq 0) = P(X+Y \leq s | X \geq 0, Y \geq 0)$.
+Note that $P(X \geq 0, Y \geq 0) = P(X \geq 0)P(Y \geq 0) = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.
+Following the hint, let $U = \frac{X+Y}{\sqrt{2}}$ and $V = \frac{X-Y}{\sqrt{2}}$. Then $X = \frac{U+V}{\sqrt{2}}$ and $Y = \frac{U-V}{\sqrt{2}}$.
+The conditions $X \geq 0$ and $Y \geq 0$ translate to:
+\[ U+V \geq 0 \implies V \geq -U, \quad \text{and} \quad U-V \geq 0 \implies V \leq U. \]
+This describes the region $|V| \leq U$.
+Since $S = \sqrt{2}U$, we have
+\[ P(X+Y \leq s, X \geq 0, Y \geq 0) = P(\sqrt{2}U \leq s, |V| \leq U) = P(0 \leq U \leq s/\sqrt{2}, -U \leq V \leq U). \]
+Since $U, V \sim N(0,1)$ are independent:
+\begin{align*}
+P(U \leq s/\sqrt{2}, |V| \leq U) &= \int_0^{s/\sqrt{2}} \phi(u) \left( \int_{-u}^u \phi(v) dv \right) du \\
+&= \int_0^{s/\sqrt{2}} \phi(u) (2\Phi(u) - 1) du \\
+&= 2 \int_0^{s/\sqrt{2}} \Phi(u) \Phi'(u) du - \int_0^{s/\sqrt{2}} \phi(u) du \\
+&= \left[ \Phi(u)^2 \right]_0^{s/\sqrt{2}} - (\Phi(s/\sqrt{2}) - \Phi(0)) \\
+&= \Phi(s/\sqrt{2})^2 - \frac{1}{4} - \Phi(s/\sqrt{2}) + \frac{1}{2} \\
+&= \Phi(s/\sqrt{2})^2 - \Phi(s/\sqrt{2}) + \frac{1}{4} \\
+&= \left( \Phi(s/\sqrt{2}) - \frac{1}{2} \right)^2.
+\end{align*}
+Then the conditional distribution is:
+\[ F_S(s | X \geq 0, Y \geq 0) = \frac{(\Phi(s/\sqrt{2}) - 1/2)^2}{1/4} = 4 \left( \Phi(s/\sqrt{2}) - \frac{1}{2} \right)^2 = (2\Phi(s/\sqrt{2}) - 1)^2 \]
+for $s \geq 0$, and $0$ otherwise.
+\end{solution}
+
+\begin{exercise}
+Let $\{X_n\}$ be a sequence of i.i.d. continuous real valued random variables. Let
+\[
+A_n = \{X_n = \max\{X_1, X_2, \dots, X_n\}\}.
+\]
+We say that a maximum record occurs at $n$ in such an event.
+
+(1) Evaluate the probability $P(A_n)$.
+
+(2) Denote by $Y_n$ the number of maximum records occurred until time $n$. Evaluate $EY_n$ and $DY_n$.
+\end{exercise}
+
+\begin{solution}
+(1) Since $X_1, \dots, X_n$ are i.i.d. and continuous, ties occur with probability zero. By symmetry, any of the $n$ variables is equally likely to be the maximum. There are $n!$ equally likely permutations of the ranks of $X_1, \dots, X_n$. In $(n-1)!$ of these, $X_n$ is the largest. Thus,
+\[ P(A_n) = \frac{(n-1)!}{n!} = \frac{1}{n}. \]
+
+(2) Let $I_k$ be the indicator function of the event $A_k$. Then $Y_n = \sum_{k=1}^n I_k$.
+The expectation is:
+\[ EY_n = \sum_{k=1}^n E[I_k] = \sum_{k=1}^n P(A_k) = \sum_{k=1}^n \frac{1}{k}. \]
+This is the $n$-th harmonic number $H_n \approx \ln n + \gamma$.
+To find the variance $DY_n$, we first check if the indicators $I_k$ are independent.
+The event $A_k$ depends only on the relative ordering of $X_1, \dots, X_k$. Specifically, given the relative ordering of $X_1, \dots, X_{k-1}$, the new variable $X_k$ is equally likely to occupy any of the $k$ possible positions in the sorted list of $X_1, \dots, X_k$. The event $A_k$ occurs if $X_k$ is in the last position, which happens with probability $1/k$ regardless of the internal ordering of $X_1, \dots, X_{k-1}$. Thus $I_k$ is independent of $I_1, \dots, I_{k-1}$.
+Since the indicators are independent, the variance of the sum is the sum of the variances:
+\[ DY_n = \sum_{k=1}^n Var(I_k) = \sum_{k=1}^n P(A_k)(1 - P(A_k)) = \sum_{k=1}^n \frac{1}{k} \left(1 - \frac{1}{k}\right) = \sum_{k=1}^n \frac{1}{k} - \sum_{k=1}^n \frac{1}{k^2}. \]
+\end{solution}
+
+\begin{exercise}
+Let $X = (X_1, \cdots, X_n)$ be an iid sample from an exponential density with mean $\theta$. Consider testing $H_0: \theta = \theta_0$ vs. $H_1: \theta > \theta_0$. Let $P(X)$ be your p-value for an appropriate test.
+
+(a) What is $E_{\theta_0}(P(X))$? Derive your answer explicitly.
+
+(b) Derive $E_\theta(P(X))$ for $\theta \neq \theta_0$. Specifically, assuming only one sample, i.e., $n=1$, calculate $E_\theta(P(X))$ as explicitly as possible for $\theta \neq \theta_0$.
+
+(c) When there is only one sample, is $E_\theta(P(X))$ a decreasing function of $\theta$? In general, can you prove your result for an arbitrary MLR family?
+\end{exercise}
+
+\begin{solution}
+The exponential distribution has density $f(x|\theta) = \frac{1}{\theta} e^{-x/\theta}$ for $x > 0$. The sufficient statistic for $\theta$ is $T = \sum_{i=1}^n X_i$. Under $H_0$, $T \sim \text{Gamma}(n, \theta_0)$. Since $H_1$ specifies a larger mean, the rejection region is of the form $\{T > c\}$. The p-value is $P(X) = P_{\theta_0}(T \geq T_{obs})$.
+
+(a) Under $H_0$, $T$ has a continuous distribution. Let $F_0$ be the CDF of $T$ under $\theta_0$. The p-value is $P(X) = 1 - F_0(T)$. It is a standard result that if a random variable $T$ has a continuous CDF $F$, then $F(T) \sim \text{Uniform}(0,1)$. Thus $P(X) \sim \text{Uniform}(0,1)$, and
+\[ E_{\theta_0}(P(X)) = \frac{1}{2}. \]
+
+(b) For $n=1$, $T = X_1$. The p-value is $P(X) = P_{\theta_0}(X_1 \geq x) = \int_x^\infty \frac{1}{\theta_0} e^{-t/\theta_0} dt = e^{-x/\theta_0}$.
+Under $\theta$, $X_1 \sim \text{Exp}(\theta)$, so:
+\[ E_\theta(P(X)) = E_\theta(e^{-X_1/\theta_0}) = \int_0^\infty e^{-x/\theta_0} \frac{1}{\theta} e^{-x/\theta} dx = \frac{1}{\theta} \int_0^\infty e^{-x(\frac{1}{\theta_0} + \frac{1}{\theta})} dx = \frac{1}{\theta} \frac{1}{\frac{1}{\theta_0} + \frac{1}{\theta}} = \frac{\theta_0}{\theta + \theta_0}. \]
+
+(c) For $n=1$, $E_\theta(P(X)) = \frac{\theta_0}{\theta + \theta_0}$. As $\theta$ increases, the denominator increases, so $E_\theta(P(X))$ is a decreasing function of $\theta$.
+In general, for a family with Monotone Likelihood Ratio (MLR) in $T(X)$, let $F_\theta(t)$ be the CDF of $T$ under $\theta$. A family has MLR if for $\theta_2 > \theta_1$, the ratio $f_{\theta_2}(t)/f_{\theta_1}(t)$ is increasing in $t$. This implies that $T$ is stochastically increasing in $\theta$, i.e., $F_\theta(t)$ is a decreasing function of $\theta$ for fixed $t$.
+The p-value is $P(X) = 1 - F_{\theta_0}(T)$.
+$E_\theta(P(X)) = E_\theta[1 - F_{\theta_0}(T)] = 1 - E_\theta[F_{\theta_0}(T)]$.
+Since $F_{\theta_0}(t)$ is an increasing function of $t$, and $T$ is stochastically increasing in $\theta$, $E_\theta[F_{\theta_0}(T)]$ is an increasing function of $\theta$.
+Consequently, $1 - E_\theta[F_{\theta_0}(T)]$ is a decreasing function of $\theta$.
+\end{solution}
+
+\begin{exercise}
+Let $X_1, X_2$ be i.i.d. uniform on $\theta - \frac{1}{2}$ to $\theta + \frac{1}{2}$.
+
+(a) Show that for any given $0 < \alpha < 1$, you can find $c > 0$ such that
+\[
+P_\theta\{\bar{X} - c < \theta < \bar{X} + c\} = 1 - \alpha,
+\]
+where $\bar{X}$ is the sample mean.
+
+(b) Show that for $\epsilon$ positive and sufficiently small,
+\[
+P_\theta\left\{\bar{X} - c < \theta < \bar{X} + c \mid |X_2 - X_1| \geq 1 - \epsilon\right\} = 1.
+\]
+
+(c) The statement in (a) is used to assert that $\bar{X} \pm c$ is a $100(1-\alpha)\%$ confidence interval for $\theta$. Does the assertion in (b) contradict this? If your sample observations are $X_1 = 1, X_2 = 2$, would you use the confidence interval in (a)?
+\end{exercise}
+
+\begin{solution}
+(a) Let $Y_i = X_i - \theta$. Then $Y_i \sim \text{Uniform}(-1/2, 1/2)$.
+$\bar{X} - \theta = \frac{Y_1 + Y_2}{2} = \bar{Y}$.
+The probability $P_\theta(\bar{X}-c < \theta < \bar{X}+c)$ is equal to $P(|\bar{Y}| < c)$.
+The sum $Z = Y_1 + Y_2$ follows a triangular distribution on $[-1, 1]$ with density $f_Z(z) = 1 - |z|$ for $|z| \leq 1$.
+$P(|\bar{Y}| < c) = P(|Z| < 2c) = \int_{-2c}^{2c} (1 - |z|) dz = 2 \int_0^{2c} (1 - z) dz = 2(2c - 2c^2) = 4c - 4c^2$.
+We want $4c - 4c^2 = 1 - \alpha$, which is $4c^2 - 4c + (1-\alpha) = 0$.
+Solving for $c$: $c = \frac{4 \pm \sqrt{16 - 16(1-\alpha)}}{8} = \frac{1 \pm \sqrt{\alpha}}{2}$.
+Since $2c \leq 1$ must hold for the integral to be valid as written, we take $c = \frac{1 - \sqrt{\alpha}}{2}$.
+
+(b) Let $D = |X_2 - X_1| = |Y_2 - Y_1|$. If $D \geq 1 - \epsilon$, then the two points $Y_1, Y_2$ are at opposite ends of the interval $[-1/2, 1/2]$.
+Specifically, if $Y_2 - Y_1 \geq 1 - \epsilon$, then since $Y_i \in [-1/2, 1/2]$, we must have $Y_2 \in [1/2 - \epsilon, 1/2]$ and $Y_1 \in [-1/2, -1/2 + \epsilon]$.
+Then $\bar{Y} = \frac{Y_1 + Y_2}{2}$ must satisfy:
+\[ \frac{(1/2 - \epsilon) + (-1/2)}{2} \leq \bar{Y} \leq \frac{1/2 + (-1/2 + \epsilon)}{2} \implies -\frac{\epsilon}{2} \leq \bar{Y} \leq \frac{\epsilon}{2}. \]
+Thus $|\bar{Y}| \leq \epsilon/2$.
+If we choose $\epsilon$ small enough such that $\epsilon/2 < c$ (which is possible since $c > 0$ for $\alpha < 1$), then $|\bar{Y}| < c$ occurs with probability 1.
+So $P_\theta(|\bar{Y}| < c | D \geq 1 - \epsilon) = 1$.
+
+(c) It does not contradict (a). The confidence level in (a) is an unconditional probability (the frequentist coverage over all possible samples). (b) shows that the coverage probability can depend on the sample through an ancillary statistic $D$.
+If $X_1 = 1, X_2 = 2$, then $D = 1$. This is the maximum possible difference. The only way to get a difference of 1 from a $U(\theta-1/2, \theta+1/2)$ distribution is if one observation is exactly $\theta-1/2$ and the other is $\theta+1/2$.
+Then $\bar{X} = \frac{(\theta-1/2) + (\theta+1/2)}{2} = \theta$. So $\theta = 1.5$ exactly.
+In this case, any interval $\bar{X} \pm c$ with $c > 0$ contains $\theta$ with $100\%$ certainty. Using the interval from (a) is "safe" but ignores the extra information provided by the sample range. A more precise (shorter) interval could be constructed.
+\end{solution}
+
+\begin{exercise}
+Suppose you want to estimate the total number of enemy tanks in a war on the basis of the captured tanks. Assume without loss of generality that the tank serial numbers are $1, 2, \cdots, N$, where $N$ is the unknown total number of enemy tanks. Also assume the serial numbers of the $n$ captured tanks are i.i.d. uniform on $1, 2, \cdots, N$.
+
+(a) Find the complete sufficient statistic.
+
+(b) Suggest how you may find the minimum variance unbiased estimate of $N$.
+\end{exercise}
+
+\begin{solution}
+The probability mass function for a single observation $X$ is $f(k|N) = \frac{1}{N}$ for $k \in \{1, \dots, N\}$.
+For a sample $X_1, \dots, X_n$, the likelihood is:
+\[ L(N) = \prod_{i=1}^n \frac{1}{N} I(1 \leq X_i \leq N) = N^{-n} I(\max(X_1, \dots, X_n) \leq N). \]
+(a) Let $T = X_{(n)} = \max(X_1, \dots, X_n)$. By the Factorization Theorem, $T$ is a sufficient statistic.
+To check completeness, we find the PMF of $T$:
+\[ P(T \leq k) = P(X_1 \leq k, \dots, X_n \leq k) = \left( \frac{k}{N} \right)^n. \]
+\[ P(T = k) = P(T \leq k) - P(T \leq k-1) = \frac{k^n - (k-1)^n}{N^n}. \]
+Suppose $E[g(T)] = 0$ for all $N \geq 1$:
+\[ \sum_{k=1}^N g(k) \frac{k^n - (k-1)^n}{N^n} = 0 \implies \sum_{k=1}^N g(k) [k^n - (k-1)^n] = 0. \]
+For $N=1$, $g(1)[1^n - 0^n] = 0 \implies g(1) = 0$.
+Assuming $g(1) = \dots = g(N-1) = 0$, the equation for $N$ reduces to $g(N)[N^n - (N-1)^n] = 0$, which implies $g(N) = 0$. By induction, $g(k) = 0$ for all $k$. Thus $T$ is a complete sufficient statistic.
+
+(b) By the Lehmann-Scheff\'e Theorem, if we find an unbiased estimator that is a function of the complete sufficient statistic $T$, it will be the MVUE.
+We seek $h(T)$ such that $E[h(T)] = N$ for all $N$:
+\[ \sum_{k=1}^N h(k) \frac{k^n - (k-1)^n}{N^n} = N \implies \sum_{k=1}^N h(k) [k^n - (k-1)^n] = N^{n+1}. \]
+Let $S(N) = \sum_{k=1}^N h(k) [k^n - (k-1)^n] = N^{n+1}$.
+Then $h(N) [N^n - (N-1)^n] = S(N) - S(N-1) = N^{n+1} - (N-1)^{n+1}$.
+Thus the MVUE is:
+\[ \hat{N} = h(T) = \frac{T^{n+1} - (T-1)^{n+1}}{T^n - (T-1)^n}. \]
+Note: For large $n$, $\hat{N} \approx \frac{(n+1)T^n}{nT^{n-1}} = \frac{n+1}{n} T$.
+\end{solution}

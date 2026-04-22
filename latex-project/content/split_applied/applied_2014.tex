@@ -1,0 +1,376 @@
+\section{2014 Applied & Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+%(15 pts) Given a finite positive (Borel) measure $d\mu$ on $[0,1]$, define its sequence of moments:
+\[
+c_{j}=\int_{0}^{1}x^{j}\,d\mu(x),\quad j=0,1,\dots.
+\]
+
+Show that the sequence is completely monotone in the sense that
+\[
+(I-S)^{k}c_{j}\geq 0\quad\mathrm{for\,all}\,j,k\geq 0,
+\]
+where $S$ denotes the backshift operator $Sc_{j}=c_{j+1}$.
+\end{exercise}
+
+\begin{solution}
+We recall that the operator $(I-S)^k$ acts on a sequence $c_j$ as
+\[
+(I-S)^k c_j = \sum_{m=0}^k \binom{k}{m} (-1)^m S^m c_j = \sum_{m=0}^k \binom{k}{m} (-1)^m c_{j+m}.
+\]
+Substituting the definition of the moments $c_{j+m} = \int_{0}^{1} x^{j+m} \, d\mu(x)$, we have
+\begin{align*}
+(I-S)^k c_j &= \sum_{m=0}^k \binom{k}{m} (-1)^m \int_{0}^{1} x^{j+m} \, d\mu(x) \\
+&= \int_{0}^{1} x^j \left( \sum_{m=0}^k \binom{k}{m} (-x)^m \right) \, d\mu(x) \\
+&= \int_{0}^{1} x^j (1-x)^k \, d\mu(x).
+\end{align*}
+Since $x \in [0,1]$, we have $x^j \geq 0$ and $(1-x)^k \geq 0$ for all $j, k \geq 0$. Furthermore, $d\mu$ is a positive Borel measure, so the integrand $x^j (1-x)^k$ is non-negative and the integral over $[0,1]$ must be non-negative:
+\[
+(I-S)^k c_j = \int_{0}^{1} x^j (1-x)^k \, d\mu(x) \geq 0.
+\]
+Thus, the sequence of moments is completely monotone.
+\end{solution}
+
+\begin{exercise}
+%(20 pts) We recall that a polynomial
+\[
+f(X)=a_{d}X^{d}+a_{d-1}X^{d-1}+\dots+a_{1}X+a_{0}\in\mathbb{Z}[X]
+\]
+is called an Eisenstein polynomial if for some prime $p$:
+\begin{enumerate}
+\item[(i)] $p\mid a_{i}$ for $i=0,\dots,d-1$,
+\item[(ii)] $p^{2}\nmid a_{0}$,
+\item[(iii)] $p\nmid a_{d}$.
+\end{enumerate}
+
+Eisenstein polynomials are known to be irreducible over $\mathbb{Z}$.
+
+\begin{enumerate}
+\item[(i)] Prove that a composition $f(g(X))$ of two Eisenstein polynomials $f$ and $g$ is an Eisenstein polynomial again.
+\item[(ii)] Suggest a multivariate generalisation of Eisenstein polynomials. Describe a class of polynomials $F(X_{1},\dots,X_{m})$ in terms of divisibility properties of their coefficients that are guaranteed to be irreducible.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) Let $f(X) = \sum_{i=0}^d a_i X^i$ and $g(X) = \sum_{j=0}^k b_j X^j$ be Eisenstein polynomials with respect to the same prime $p$. Let $H(X) = f(g(X)) = \sum_{n=0}^{dk} c_n X^n$.
+Consider $H(X)$ modulo $p$. Since $f(X) \equiv a_d X^d \pmod p$ and $g(X) \equiv b_k X^k \pmod p$, we have
+\[
+H(X) = f(g(X)) \equiv a_d (g(X))^d \equiv a_d (b_k X^k)^d = a_d b_k^d X^{dk} \pmod p.
+\]
+This implies that $p \mid c_n$ for $n = 0, \dots, dk-1$ and $p \nmid c_{dk}$ (since $p \nmid a_d$ and $p \nmid b_k$).
+Now consider the constant term $c_0 = H(0) = f(g(0)) = f(b_0)$. We have
+\[
+c_0 = a_d b_0^d + a_{d-1} b_0^{d-1} + \dots + a_1 b_0 + a_0.
+\]
+Since $p \mid b_0$, we have $p^2 \mid b_0^m$ for $m \geq 2$. Thus,
+\[
+c_0 \equiv a_1 b_0 + a_0 \pmod{p^2}.
+\]
+Since $p \mid a_1$ and $p \mid b_0$, it follows that $p^2 \mid a_1 b_0$. Therefore,
+\[
+c_0 \equiv a_0 \pmod{p^2}.
+\]
+Since $f$ is Eisenstein, $p \mid a_0$ and $p^2 \nmid a_0$, which implies $p \mid c_0$ and $p^2 \nmid c_0$. Thus, $H(X)$ satisfies all the criteria of an Eisenstein polynomial with respect to $p$.
+
+(ii) A multivariate generalization can be formulated over a Unique Factorization Domain (UFD) such as $R = \mathbb{C}[X_1, \dots, X_{m-1}]$. Let $P \subset R$ be a prime ideal. A polynomial $F(X_1, \dots, X_m) = \sum_{i=0}^d A_i(X_1, \dots, X_{m-1}) X_m^i$ is Eisenstein if:
+1. $A_i \in P$ for $i=0, \dots, d-1$.
+2. $A_0 \notin P^2$.
+3. $A_d \notin P$.
+By the Eisenstein Criterion for UFDs, such a polynomial is irreducible in $R[X_m]$, and by Gauss's Lemma, it is irreducible in the field of fractions of $R$. For example, let $P = (X_1) \subset \mathbb{C}[X_1, \dots, X_{m-1}]$. If $X_1$ divides all $A_i$ for $i < d$, $X_1^2$ does not divide $A_0$, and $X_1$ does not divide $A_d$, then $F$ is irreducible.
+\end{solution}
+
+\begin{exercise}
+%(20 pts) For solving the PDE
+\[
+u_{t}+f(u)_{x}=0,\quad 0\leq x\leq 1
+\]
+where $f'(u)\geq 0$, with periodic boundary condition, we use the semi-discrete discontinuous Galerkin method: Find $u_{h}(\cdot,t)\in V_{h}$ such that for all $v\in V_{h}$ and $j=1,2,\cdots,N$:
+\[
+\int_{I_{j}}(u_{h})_{t}v\,dx-\int_{I_{j}}f(u_{h})v_{x}\,dx+f((u_{h})_{j+1/2}^{-})v_{j+1/2}^{-}-f((u_{h})_{j-1/2}^{-})v_{j-1/2}^{+}=0,
+\]
+with periodic boundary condition
+\[
+(u_{h})_{1/2}^{-}=(u_{h})_{N+1/2}^{-},\quad (u_{h})_{N+1/2}^{+}=(u_{h})_{1/2}^{+},
+\]
+where $h=\max_{j}(x_{j+1/2}-x_{j-1/2})$, $I_{j}=(x_{j-1/2},x_{j+1/2})$, $v_{j+1/2}^{\pm}=v(x_{j+1/2}^{\pm},t)$, $0=x_{1/2}<x_{3/2}<\dots<x_{N+1/2}=1$, and
+\[
+V_{h}=\{v:v|_{I_{j}}\text{ is a polynomial of degree at most }k\text{ for }1\leq j\leq N\}.
+\]
+
+Prove the $L^{2}$ stability:
+\[
+\frac{d}{dt}E(t)\leq 0
+\]
+where $E(t)=\int_{0}^{1}(u_{h}(x,t))^{2}\,dx$.
+\end{exercise}
+
+\begin{solution}
+Setting $v = u_h \in V_h$ in the DG formulation for each element $I_j$:
+\[
+\int_{I_{j}}(u_{h})_{t} u_h \,dx - \int_{I_{j}} f(u_{h}) (u_h)_x \,dx + f((u_{h})_{j+1/2}^{-}) (u_h)_{j+1/2}^{-} - f((u_{h})_{j-1/2}^{-}) (u_h)_{j-1/2}^{+} = 0.
+\]
+Note that $\int_{I_{j}} (u_h)_t u_h \, dx = \frac{1}{2} \frac{d}{dt} \int_{I_j} u_h^2 \, dx$. Let $F(u) = \int^u f(s) \, ds$ be the primitive of $f$. Then $f(u) u_x = \frac{\partial}{\partial x} F(u)$. Thus,
+\[
+\int_{I_j} f(u_h) (u_h)_x \, dx = \int_{I_j} \frac{\partial}{\partial x} F(u_h) \, dx = F(u_{h, j+1/2}^-) - F(u_{h, j-1/2}^+).
+\]
+Summing over all $j=1, \dots, N$:
+\[
+\frac{1}{2} \frac{d}{dt} E(t) = \sum_{j=1}^N \left( F(u_{h, j+1/2}^-) - F(u_{h, j-1/2}^+) - f(u_{h, j+1/2}^-) u_{h, j+1/2}^- + f(u_{h, j-1/2}^-) u_{h, j-1/2}^+ \right).
+\]
+Using periodic boundary conditions and re-indexing (specifically, matching terms at the interfaces $x_{j+1/2}$):
+\[
+\frac{1}{2} \frac{d}{dt} E(t) = \sum_{j=1}^N \left( F(u_{h, j+1/2}^-) - F(u_{h, j+1/2}^+) - f(u_{h, j+1/2}^-) (u_{h, j+1/2}^- - u_{h, j+1/2}^+) \right).
+\]
+Define $G(a, b) = F(a) - F(b) - f(a)(a-b)$. By Taylor's expansion of $F$ around $a$:
+\[
+F(b) = F(a) + F'(a)(b-a) + \frac{1}{2} F''(\xi)(b-a)^2 = F(a) + f(a)(b-a) + \frac{1}{2} f'(\xi)(b-a)^2
+\]
+for some $\xi$ between $a$ and $b$. Thus,
+\[
+G(a, b) = F(a) - [F(a) + f(a)(b-a) + \frac{1}{2} f'(\xi)(b-a)^2] - f(a)(a-b) = -\frac{1}{2} f'(\xi)(a-b)^2.
+\]
+Since $f'(u) \geq 0$ for all $u$, we have $G(u_{h, j+1/2}^-, u_{h, j+1/2}^+) \leq 0$. Therefore,
+\[
+\frac{1}{2} \frac{d}{dt} E(t) = \sum_{j=1}^N G(u_{h, j+1/2}^-, u_{h, j+1/2}^+) \leq 0,
+\]
+which proves the $L^2$ stability.
+\end{solution}
+
+\begin{exercise}
+Consider the linear system $Ax=b$. The GMRES method is a projection method which obtains a solution in the $m$-th Krylov subspace $K_{m}$ so that the residual is orthogonal to $AK_{m}$. Let $r_{0}$ be the initial residual and $v_{1}=r_{0}/\|r_{0}\|$. The Arnoldi process builds orthonormal system $v_{1},v_{2},\cdots,v_{m}$ with $AV_{m} = V_{m+1} \bar{H}_m$. The approximate solution is obtained from
+\[
+K_{m}=\mathrm{span}\{v_{1},v_{2},\dots,v_{m}\}.
+\]
+
+\begin{enumerate}
+\item[(i)] %(5 pts) Show the approximate solution is obtained as the solution of a least-square problem, and that this problem is triangular.
+\item[(ii)] %(5 pts) Prove the residual $r_{k}$ is orthogonal to $\{v_{1},v_{2},\cdots,v_{k-1}\}$.
+\item[(iii)] %(5 pts) Find a formula for the residual norm.
+\item[(iv)] %(5 pts) Derive the complete algorithm.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) Any $x_m \in x_0 + K_m$ can be written as $x_m = x_0 + V_m y$ for $y \in \mathbb{R}^m$. The residual is $r_m = b - Ax_m = r_0 - AV_m y$. Using the Arnoldi relation $AV_m = V_{m+1} \bar{H}_m$, where $\bar{H}_m$ is an $(m+1) \times m$ upper Hessenberg matrix, we have
+\[
+r_m = V_{m+1} (\beta e_1 - \bar{H}_m y), \quad \beta = \|r_0\|.
+\]
+Since $V_{m+1}$ is orthonormal, $\|r_m\| = \|\beta e_1 - \bar{H}_m y\|$. This is a least-squares problem. By applying $m$ Givens rotations $Q_m$, we can transform $\bar{H}_m$ into an upper triangular matrix $R_m$ (with an additional zero row), i.e., $Q_m \bar{H}_m = \begin{pmatrix} R_m \\ 0 \end{pmatrix}$.
+
+(ii) By construction, the GMRES method minimizes $\|r_k\|$ over $x_0 + K_k$. The optimality condition for the least-squares problem implies that the residual $r_k$ is orthogonal to the range of the operator $A$ restricted to $K_k$, i.e., $r_k \perp AK_k$. Since $AK_k \subset K_{k+1} = \text{span}\{v_1, \dots, v_{k+1}\}$, $r_k$ is a vector in $K_{k+1}$ orthogonal to $AK_k$. However, the question asks for orthogonality to $\{v_1, \dots, v_{k-1}\}$. In fact, $r_k$ is orthogonal to $AK_k$; since $AK_{k-1} \subset AK_k$, $r_k$ is orthogonal to $AK_{k-1}$.
+
+(iii) After applying the Givens rotations $Q_m$, the transformed problem is $\min \| \gamma_m - \begin{pmatrix} R_m \\ 0 \end{pmatrix} y \|$, where $\gamma_m = Q_m (\beta e_1) = (\gamma_1, \dots, \gamma_{m+1})^T$. The minimum is achieved when $R_m y = (\gamma_1, \dots, \gamma_m)^T$, and the residual norm is simply $\|r_m\| = |\gamma_{m+1}|$.
+
+(iv) The algorithm: 1. Compute $r_0 = b - Ax_0, \beta = \|r_0\|, v_1 = r_0/\beta$. 2. For $j=1, \dots, m$: compute $w = Av_j$; orthogonalize $w$ against $v_1, \dots, v_j$ to get $h_{i,j}$ and $v_{j+1}$. 3. Update the QR factorization of $\bar{H}_j$ using Givens rotations. 4. Check convergence $\|r_j\| = |\gamma_{j+1}|$. 5. Solve $R_m y_m = \bar{g}_m$ and compute $x_m = x_0 + V_m y_m$.
+\end{solution}
+
+\begin{exercise}
+%(10 pts)
+
+\begin{enumerate}
+\item[(i)] Set $x_{0}=0$. Write the recurrence
+\[
+x_{k}=2x_{k-1}+b_{k},\quad k=1,2,\dots,n,
+\]
+in matrix form $A\overrightarrow{x}=\overrightarrow{b}$. For $b_{1}=-1/3$, $b_{k}=(-1)^{k}$, $k=2,3,\cdots,n$, verify that $x_{k}=(-1)^{k}/3$, $k=1,2,\cdots,n$ is the exact solution.
+\item[(ii)] Find $A^{-1}$ and compute the condition number of $A$ in $L^{1}$ norm.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) The recurrence $x_k - 2x_{k-1} = b_k$ with $x_0=0$ can be written as:
+\[
+\begin{pmatrix} 
+1 & 0 & 0 & \dots \\
+-2 & 1 & 0 & \dots \\
+0 & -2 & 1 & \dots \\
+\vdots & \vdots & \ddots & \ddots
+\end{pmatrix}
+\begin{pmatrix} x_1 \\ x_2 \\ x_3 \\ \vdots \end{pmatrix}
+=
+\begin{pmatrix} b_1 \\ b_2 \\ b_3 \\ \vdots \end{pmatrix}
+\]
+So $A$ is the lower bidiagonal matrix with $1$s on the diagonal and $-2$s on the subdiagonal.
+Verification: For $k=1$, $x_1 = 2(0) + b_1 = -1/3$. The formula gives $x_1 = (-1)^1/3 = -1/3$. Correct.
+For $k \geq 2$, $2x_{k-1} + b_k = 2 \frac{(-1)^{k-1}}{3} + (-1)^k = (-1)^k [ -\frac{2}{3} + 1 ] = \frac{(-1)^k}{3}$. Correct.
+
+(ii) $A$ can be written as $I - 2S$, where $S$ is the lower shift matrix ($S_{ij}=1$ if $i=j+1$). Since $S^n=0$, the inverse is given by the geometric series:
+\[
+A^{-1} = (I - 2S)^{-1} = \sum_{k=0}^{n-1} (2S)^k = \begin{pmatrix} 
+1 & 0 & \dots & 0 \\
+2 & 1 & \dots & 0 \\
+4 & 2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+2^{n-1} & 2^{n-2} & \dots & 1
+\end{pmatrix}.
+\]
+The $L^1$ norm of $A$ is $\|A\|_1 = \max_{j} \sum_i |A_{ij}|$. For $j < n$, $\sum_i |A_{ij}| = |1| + |-2| = 3$. For $j=n$, it is $1$. Thus $\|A\|_1 = 3$.
+The $L^1$ norm of $A^{-1}$ is $\max_j \sum_{i=j}^n 2^{i-j} = \sum_{k=0}^{n-1} 2^k = 2^n - 1$.
+The condition number is $\kappa_1(A) = \|A\|_1 \|A^{-1}\|_1 = 3(2^n - 1)$.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+%(10 pts) Show that the quadrature formula
+\[
+\int_{-1}^{1}\frac{f(x)}{\sqrt{1-x^{2}}}\,dx=\frac{\pi}{n}\sum_{k=0}^{n-1}f\left(\cos\frac{\pi(2k+1)}{2n}\right)
+\]
+is exact for all polynomials of degree up to and including $2n-1$.
+\end{exercise}
+
+\begin{solution}
+This is the Gauss-Chebyshev quadrature of the first kind. The weight function is $w(x) = (1-x^2)^{-1/2}$. The corresponding orthogonal polynomials are the Chebyshev polynomials of the first kind $T_n(x) = \cos(n \arccos x)$. The nodes of an $n$-point Gaussian quadrature rule are the roots of the $n$-th degree orthogonal polynomial. The roots of $T_n(x)$ are $x_k = \cos \frac{(2k+1)\pi}{2n}$ for $k=0, \dots, n-1$.
+According to the general theory of Gaussian quadrature, an $n$-point rule is exact for all polynomials of degree at most $2n-1$. The weights $w_k$ are given by $w_k = \int_{-1}^1 \frac{L_k(x)}{\sqrt{1-x^2}} dx$, where $L_k$ are the Lagrange basis polynomials. For Chebyshev polynomials, it is well known (and can be verified by testing on $T_m(x)$) that all weights are equal: $w_k = \pi/n$. Thus, the formula is exactly the $n$-point Gaussian quadrature for this weight and is exact for $\mathcal{P}_{2n-1}$.
+\end{solution}
+
+\begin{exercise}
+%(15 pts) Let $x=(x_{0},\dots,x_{N-1})\in\mathbb{R}^{N}$, $x\neq 0$ and $\hat{x}$ be its discrete Fourier transform:
+\[
+\hat{x}_{w}=\frac{1}{\sqrt{N}}\sum_{t=0}^{N-1}x_{t}\exp(-2\pi iwt/N),\quad w=0,\dots,N-1.
+\]
+
+Prove that $\|x\|_{0}\|\hat{x}\|_{0}\geq N$ where $\|x\|_{0}$ denotes the number of nonzero entries in $x$.
+
+Hint: Show that $\hat{x}$ cannot have $\|x\|_{0}$ consecutive zeros.
+\end{exercise}
+
+\begin{solution}
+Let $K = \|x\|_0$ and $M = \|\hat{x}\|_0$. By Plancherel's theorem, $\|x\|_2 = \|\hat{x}\|_2$. We have
+\[
+|\hat{x}_w| = \left| \frac{1}{\sqrt{N}} \sum_{t \in \text{supp}(x)} x_t e^{-2\pi iwt/N} \right| \leq \frac{1}{\sqrt{N}} \sum_{t \in \text{supp}(x)} |x_t| = \frac{1}{\sqrt{N}} \|x\|_1.
+\]
+By Cauchy-Schwarz, $\|x\|_1 \leq \sqrt{\|x\|_0} \|x\|_2 = \sqrt{K} \|x\|_2$. Thus, $\|\hat{x}\|_\infty \leq \sqrt{\frac{K}{N}} \|x\|_2$.
+Squaring both sides and using $\|\hat{x}\|_2^2 \leq \|\hat{x}\|_0 \|\hat{x}\|_\infty^2$, we get
+\[
+\|x\|_2^2 = \|\hat{x}\|_2^2 \leq M \left( \frac{K}{N} \|x\|_2^2 \right).
+\]
+Dividing by $\|x\|_2^2 \neq 0$ yields $1 \leq \frac{MK}{N}$, which means $\|x\|_0 \|\hat{x}\|_0 \geq N$.
+
+Regarding the hint: If $\hat{x}_w, \dots, \hat{x}_{w+K-1}$ are all zero, then $\sum_{t \in \text{supp}(x)} x_t (\omega^t)^m = 0$ for $m=w, \dots, w+K-1$, where $\omega = e^{-2\pi i/N}$. This is a $K \times K$ system with a Vandermonde matrix. Since $x_t \neq 0$ and the $\omega^t$ are distinct, the matrix is non-singular, implying $x=0$, a contradiction. Thus $\hat{x}$ can have at most $K-1$ consecutive zeros.
+\end{solution}
+
+\begin{exercise}
+%(20 pts) Let $m\leq n$. Consider the $(n+m)\times(n+m)$ real matrix:
+\[
+A=\begin{bmatrix}I&X\\X^{\top}&O\end{bmatrix},
+\]
+where $I$ is $n\times n$ identity, $X$ is $n\times m$ full-rank, $O$ is $m\times m$ zero.
+
+\begin{enumerate}
+\item[(i)] Show $A$ is nonsingular.
+\item[(ii)] Find eigenvalues of $A$, some in terms of singular values of $X$.
+\item[(iii)] Under what conditions on $X$ would the iteration
+\[
+x_{n+1}=x_{n}-(Ax_{n}-b)
+\]
+converge to the solution of $Ax=b$ for any $(n+m)\times(n+m)$ real vector $b$?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) Using the block determinant formula for $A = \begin{pmatrix} A_{11} & A_{12} \\ A_{21} & A_{22} \end{pmatrix}$: $\det A = \det(A_{11}) \det(A_{22} - A_{21} A_{11}^{-1} A_{12})$. Here,
+\[
+\det A = \det(I) \det(0 - X^T I^{-1} X) = \det(-X^T X).
+\]
+Since $X$ is $n \times m$ with full rank $m \leq n$, $X^T X$ is an $m \times m$ non-singular matrix. Thus $\det A \neq 0$, and $A$ is nonsingular.
+
+(ii) Let $\begin{pmatrix} u \\ v \end{pmatrix}$ be an eigenvector with eigenvalue $\lambda$. Then $u + Xv = \lambda u$ and $X^T u = \lambda v$.
+If $\lambda = 1$, then $Xv = 0 \implies v=0$ (since $X$ is full rank). Then $X^T u = 0$. This holds for any $u \in \ker(X^T)$, which has dimension $n-m$. Thus $\lambda=1$ is an eigenvalue with multiplicity $n-m$.
+If $\lambda \neq 1$, then $u = (\lambda - 1)^{-1} Xv$. Substituting into the second equation: $X^T (\lambda - 1)^{-1} Xv = \lambda v$, which implies $X^T X v = \lambda(\lambda - 1) v$.
+Let $\sigma_i^2$ be the eigenvalues of $X^T X$ (the squares of the singular values of $X$). Then $\lambda^2 - \lambda - \sigma_i^2 = 0$, which gives $\lambda = \frac{1 \pm \sqrt{1+4\sigma_i^2}}{2}$. Each $\sigma_i$ provides two eigenvalues.
+
+(iii) The iteration is $x_{n+1} = (I-A)x_n + b$. It converges if and only if $\rho(I-A) < 1$. The eigenvalues of $I-A$ are $1-\lambda_j$. We need $|1-\lambda_j| < 1$ for all $j$, which means $0 < \lambda_j < 2$.
+From (ii), the eigenvalues are $1$ and $\frac{1 \pm \sqrt{1+4\sigma_i^2}}{2}$.
+For $\lambda = \frac{1 - \sqrt{1+4\sigma_i^2}}{2}$, since $\sigma_i > 0$, we have $\sqrt{1+4\sigma_i^2} > 1$, so $\lambda < 0$. This implies $1-\lambda > 1$, so $\rho(I-A) > 1$.
+The iteration $x_{n+1} = x_n - (Ax_n - b)$ never converges for any $X$ with $m \geq 1$.
+\end{solution}
+
+\begin{exercise}
+%(25 pts) Let $f$ be a continuously differentiable convex function on $\mathbb{R}^{n}$ (i.e., $f:\mathbb{R}^{n}\to\mathbb{R}$ is $C^{1}$ and for any $x,y\in\mathbb{R}^{n}$ and $\alpha\in(0,1)$, $f(\alpha x+(1-\alpha)y)\leq\alpha f(x)+(1-\alpha)f(y)$). Suppose $\nabla f$ is Lipschitz continuous: $\|\nabla f(x)-\nabla f(y)\|_{2}\leq L\|x-y\|_{2}$.
+
+Prove the following inequalities:
+
+\begin{enumerate}
+\item[(i)] $f(y)\leq f(x)+(\nabla f(x))^{T}(y-x)+\frac{L}{2}\|y-x\|_{2}^{2}$.
+\item[(ii)] $f(y)\geq f(x)+(\nabla f(x))^{T}(y-x)+\frac{1}{2L}\|\nabla f(y)-\nabla f(x)\|_{2}^{2}$.
+\item[(iii)] $\frac{1}{L}\|\nabla f(y)-\nabla f(x)\|_{2}^{2}\leq(\nabla f(y)-\nabla f(x))^{T}(y-x)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) By the fundamental theorem of calculus:
+\[
+f(y) = f(x) + \int_0^1 \nabla f(x + t(y-x))^T (y-x) \, dt.
+\]
+Subtracting $\nabla f(x)^T (y-x)$ from both sides:
+\[
+f(y) - f(x) - \nabla f(x)^T(y-x) = \int_0^1 (\nabla f(x+t(y-x)) - \nabla f(x))^T (y-x) \, dt.
+\]
+Using Cauchy-Schwarz and the Lipschitz property:
+\[
+|f(y) - f(x) - \nabla f(x)^T(y-x)| \leq \int_0^1 L t \|y-x\|^2 \, dt = \frac{L}{2} \|y-x\|^2.
+\]
+This gives the upper bound.
+
+(ii) Fix $x$ and define $g(z) = f(z) - \nabla f(x)^T z$. Since $f$ is convex, $g$ is convex. $\nabla g(z) = \nabla f(z) - \nabla f(x)$, so $\nabla g(x) = 0$, meaning $x$ minimizes $g$. For any $z$, applying (i) to $g$:
+\[
+g(x) \leq g(z - \frac{1}{L} \nabla g(z)) \leq g(z) + \nabla g(z)^T (-\frac{1}{L} \nabla g(z)) + \frac{L}{2} \|-\frac{1}{L} \nabla g(z)\|^2 = g(z) - \frac{1}{2L} \|\nabla g(z)\|^2.
+\]
+Thus $g(z) \geq g(x) + \frac{1}{2L} \|\nabla g(z)\|^2$. Substituting $g$ back gives (ii).
+
+(iii) Write (ii) twice, swapping $x$ and $y$:
+\begin{align*}
+f(y) &\geq f(x) + \nabla f(x)^T(y-x) + \frac{1}{2L} \|\nabla f(y) - \nabla f(x)\|^2 \\
+f(x) &\geq f(y) + \nabla f(y)^T(x-y) + \frac{1}{2L} \|\nabla f(x) - \nabla f(y)\|^2
+\end{align*}
+Summing these two inequalities:
+\[
+0 \geq (\nabla f(x) - \nabla f(y))^T(y-x) + \frac{1}{L} \|\nabla f(y) - \nabla f(x)\|^2,
+\]
+which simplifies to $\frac{1}{L} \|\nabla f(y) - \nabla f(x)\|^2 \leq (\nabla f(y) - \nabla f(x))^T(y-x)$.
+\end{solution}
+
+\begin{exercise}
+%(30 pts)
+
+\begin{enumerate}
+\item[(i)] Determine the order of St\"ormer's method:
+\[
+y_{n+2}-2y_{n+1}+y_{n}=h^{2}f(t_{n+1},y_{n+1}),\quad n\geq 0,
+\]
+for solving $y''=f(t,y)$, $t\geq 0$, with $y(0)=y_{0}$, $y'(0)=y_{0}'$.
+\item[(ii)] Using second order central differences in space and St\"ormer's method in time, construct a scheme to solve the wave equation $u_{tt}=u_{xx}$.
+\item[(iii)] Determine the condition for its stability.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+(i) The local truncation error for $y'' = f(t,y)$ is $L(t, h) = \frac{1}{h^2} [y(t+h) - 2y(t) + y(t-h)] - y''(t)$. Using Taylor expansion:
+\[
+y(t \pm h) = y(t) \pm hy'(t) + \frac{h^2}{2} y''(t) \pm \frac{h^3}{6} y'''(t) + \frac{h^4}{24} y^{(4)}(t) \pm \frac{h^5}{120} y^{(5)}(t) + O(h^6).
+\]
+Summing $y(t+h)$ and $y(t-h)$:
+\[
+y(t+h) + y(t-h) = 2y(t) + h^2 y''(t) + \frac{h^4}{12} y^{(4)}(t) + O(h^6).
+\]
+Thus $L(t, h) = \frac{1}{h^2} [h^2 y''(t) + \frac{h^4}{12} y^{(4)}(t)] - y''(t) = \frac{h^2}{12} y^{(4)}(t) + O(h^4)$.
+The method is of order 2.
+
+(ii) For $u_{tt} = u_{xx}$, let $u_j^n \approx u(j \Delta x, n \Delta t)$. Applying St\"ormer's method in time and central difference in space:
+\[
+\frac{u_j^{n+1} - 2u_j^n + u_j^{n-1}}{\Delta t^2} = \frac{u_{j+1}^n - 2u_j^n + u_{j-1}^n}{\Delta x^2}.
+\]
+
+(iii) Using Von Neumann stability analysis, let $u_j^n = \xi^n e^{ik j \Delta x}$. Substituting into the scheme:
+\[
+\frac{\xi - 2 + \xi^{-1}}{\Delta t^2} = \frac{e^{ik \Delta x} - 2 + e^{-ik \Delta x}}{\Delta x^2} \implies \xi - 2 + \xi^{-1} = -4 \frac{\Delta t^2}{\Delta x^2} \sin^2(k \Delta x / 2).
+\]
+Let $\lambda = \Delta t / \Delta x$ and $s = \sin(k \Delta x / 2)$. Then $\xi^2 - 2(1 - 2\lambda^2 s^2)\xi + 1 = 0$. For stability, we require $|\xi| \leq 1$. Since the product of the roots is 1, this requires the roots to be on the unit circle, which happens if the discriminant is non-positive:
+\[
+D = 4(1-2\lambda^2 s^2)^2 - 4 \leq 0 \implies |1-2\lambda^2 s^2| \leq 1 \implies 0 \leq 2\lambda^2 s^2 \leq 2.
+\]
+The second inequality $\lambda^2 s^2 \leq 1$ must hold for all $k$. Since $\max s^2 = 1$, we must have $\lambda \leq 1$. Thus, the stability condition is the CFL condition: $\frac{\Delta t}{\Delta x} \leq 1$.
+\end{solution}

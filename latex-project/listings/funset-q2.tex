@@ -1,0 +1,38 @@
+\begin{minted}
+  [
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  linenos
+  ]
+  {coq}
+
+Theorem preimage_image_subset (f : A -> B) :
+  injective f -> forall C, preimage f (image f C) ⊆ C.
+Proof.
+  intros Hinj C.
+  (** 2 clicks on conclusion *)
+
+  unfold subset.
+  (** Select conclusion, then apply Unfold from contextual action menu *)
+  intros x H.
+  (** 2 clicks on conclusion *)
+
+  unfold preimage in H.
+  (** Select [H], then apply Unfold from contextual action menu *)
+  unfold image in H.
+  (** Select [H], then apply Unfold from contextual action menu *)
+  destruct H as [x' [H1 H2]].
+  apply Hinj in H2.
+  (** Here we need to unfold [injective] so that Actema detects a possible DnD action:
+      1. Select [Hinj], then apply Unfold from contextual action menu
+      2. Click on [H]
+      3. DnD of [H] on [f x = f x'] in [Hinj] *)
+  rewrite <- H2 in H1.
+  (** DnD of last hypothesis on the leftmost [x] in [H] *)
+  apply H1.
+  (** DnD of last hypothesis on conclusion *)
+Qed.
+
+\end{minted}

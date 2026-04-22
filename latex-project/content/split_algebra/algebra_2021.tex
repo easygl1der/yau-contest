@@ -1,0 +1,145 @@
+\section{2021 Algebra \& Number Theory}
+
+\subsection*{Exam}
+\begin{exercise}
+For any prime $p$ and a nonzero element $a \in \mathbf{F}_p$, prove that the polynomial $A(x) = x^p - x - a$ is irreducible and separable over $\mathbf{F}_p$.
+\end{exercise}
+
+\begin{solution}
+First, we check \textbf{separability}. A polynomial $f(x)$ is separable if its roots in an algebraic closure are distinct, which is equivalent to $\gcd(f, f') = 1$.
+The derivative is $A'(x) = px^{p-1} - 1$. Since we are in characteristic $p$, $p \equiv 0$, so $A'(x) = -1$.
+A constant derivative $-1$ never vanishes, so $\gcd(A, A') = 1$. Thus, $A(x)$ is separable.
+
+Next, we prove \textbf{irreducibility}. This is a classic example of an Artin-Schreier polynomial.
+Let $\alpha$ be a root of $A(x)$ in some extension. Then $\alpha^p - \alpha = a$.
+Consider the effect of adding 1: $(\alpha+1)^p - (\alpha+1) = \alpha^p + 1^p - \alpha - 1 = \alpha^p - \alpha = a$.
+Thus, if $\alpha$ is a root, then $\alpha+1$ is also a root. Iterating this, the $p$ roots of $A(x)$ are exactly
+$$\alpha, \alpha+1, \alpha+2, \dots, \alpha+p-1.$$
+Let $f(x)$ be an irreducible factor of $A(x)$ in $\mathbf{F}_p[x]$ of degree $d$. All roots of $f$ are roots of $A$. If $\alpha$ is a root of $f$, then the Frobenius automorphism $\sigma(x) = x^p$ permutes the roots of $f$.
+We calculate $\sigma(\alpha) = \alpha^p = \alpha + a$.
+Continuing, $\sigma^k(\alpha) = \alpha + ka$ for any $k \in \mathbb{Z}$.
+Since $a \in \mathbf{F}_p \setminus \{0\}$, the smallest $k > 0$ such that $\sigma^k(\alpha) = \alpha$ is when $ka \equiv 0 \pmod p$, which implies $k = p$.
+The degree of the irreducible polynomial of $\alpha$ is the size of its orbit under Frobenius, which is $p$.
+Since $A(x)$ has degree $p$ and has an irreducible factor of degree $p$, $A(x)$ itself must be irreducible.
+\end{solution}
+
+\begin{exercise}
+Determine the automorphism group of the splitting field of $f(x) = x^3 - 3x + 1$ over $\mathbb{Q}$.
+\end{exercise}
+
+\begin{solution}
+The automorphism group of the splitting field is the Galois group $G = \text{Gal}(L/\mathbb{Q})$.
+1. \textbf{Irreducibility}: By the Rational Root Theorem, the only possible rational roots are $\pm 1$. 
+$f(1) = 1 - 3 + 1 = -1 \neq 0$ and $f(-1) = -1 + 3 + 1 = 3 \neq 0$.
+Since $f(x)$ has degree 3 and no rational roots, it is irreducible over $\mathbb{Q}$. Thus $[L:\mathbb{Q}]$ is a multiple of 3.
+
+2. \textbf{Discriminant}: The discriminant of $x^3 + px + q$ is $D = -4p^3 - 27q^2$.
+For $f(x)$, $p = -3$ and $q = 1$:
+$$D = -4(-3)^3 - 27(1)^2 = -4(-27) - 27 = 108 - 27 = 81 = 9^2.$$
+The discriminant is a perfect square in $\mathbb{Q}$. 
+
+3. \textbf{Galois Group}: For an irreducible cubic, the Galois group is $A_3 \cong \mathbb{Z}/3\mathbb{Z}$ if the discriminant is a square, and $S_3$ otherwise.
+Since $D = 9^2$, the automorphism group is $\text{Gal}(L/\mathbb{Q}) \cong \mathbb{Z}/3\mathbb{Z}$.
+Physically, this means the three roots can be permuted cyclically, and any one root generates the entire splitting field (the extension is cyclic).
+\end{solution}
+
+\begin{exercise}
+Let $R = F[x, y]/(x^2 - y^3)$ for some field $F$.
+
+(a) Prove that $R$ is an integral domain.
+
+(b) If $t$ denotes the element $x/y$ in the fraction field $K$ of $R$, prove that $K$ is equal to $F(t)$.
+
+(c) Prove that $F[t]$ is the integral closure of $R$ in $K = F(t)$.
+\end{exercise}
+
+\begin{solution}
+(a) Consider the map $\phi: F[x, y] \to F[T]$ defined by $\phi(x) = T^3$ and $\phi(y) = T^2$.
+The image is the subring $F[T^2, T^3] \subset F[T]$. Since $F[T]$ is an integral domain, the image is an integral domain.
+The kernel $\ker(\phi)$ contains the ideal $(x^2 - y^3)$ because $(T^3)^2 - (T^2)^3 = 0$.
+To show $\ker(\phi) = (x^2 - y^3)$, note that any $f \in F[x, y]$ can be reduced modulo $x^2 - y^3$ to $A(y) + xB(y)$.
+Then $\phi(A(y) + xB(y)) = A(T^2) + T^3 B(T^2)$.
+The terms in $A(T^2)$ are all even powers of $T$, and the terms in $T^3 B(T^2)$ are all odd powers of $T$.
+For their sum to be zero, we must have $A = 0$ and $B = 0$.
+Thus $R \cong F[T^2, T^3]$, which is an integral domain.
+
+(b) In the fraction field $K$, let $t = x/y$. In terms of $T$, $t = T^3/T^2 = T$.
+Then $y = t^2$ and $x = t^3$. Since $x, y \in F(t)$, we have $R \subset F(t)$ and $K \subset F(t)$.
+Conversely, $t = x/y \in K$, so $F(t) \subset K$. Thus $K = F(t)$.
+
+(c) The ring $F[t]$ is the polynomial ring, which is a UFD and thus integrally closed in its fraction field $F(t)$.
+Every element of $F[t]$ is integral over $R = F[t^2, t^3]$ because $t$ satisfies the monic equation $Z^2 - t^2 = 0$ with $t^2 \in R$.
+Since $R \subset F[t] \subset K$, and $F[t]$ is integrally closed and integral over $R$, it must be the integral closure.
+\end{solution}
+
+\begin{exercise}
+Let $p_1, \ldots, p_n$ be $n$ distinct prime numbers. Show: $\sqrt{p_1} + \cdots + \sqrt{p_n}$ is not rational.
+\end{exercise}
+
+\begin{solution}
+Let $K = \mathbb{Q}(\sqrt{p_1}, \dots, \sqrt{p_n})$. It is a standard result in Galois theory that $[K:\mathbb{Q}] = 2^n$, and the Galois group $G = \text{Gal}(K/\mathbb{Q}) \cong (\mathbb{Z}/2\mathbb{Z})^n$.
+An element $\sigma \in G$ is determined by $\sigma(\sqrt{p_i}) = \epsilon_i \sqrt{p_i}$ for $\epsilon_i \in \{1, -1\}$.
+Suppose $\alpha = \sum_{i=1}^n \sqrt{p_i} \in \mathbb{Q}$.
+Then $\sigma(\alpha) = \alpha$ for all $\sigma \in G$.
+Pick $\sigma$ such that $\sigma(\sqrt{p_1}) = -\sqrt{p_1}$ and $\sigma(\sqrt{p_i}) = \sqrt{p_i}$ for $i > 1$. (This $\sigma$ exists because $[K:\mathbb{Q}] = 2^n$ implies all sign combinations are possible).
+Then $\sigma(\alpha) = -\sqrt{p_1} + \sqrt{p_2} + \dots + \sqrt{p_n}$.
+Equating $\sigma(\alpha) = \alpha$:
+$$-\sqrt{p_1} + \sqrt{p_2} + \dots + \sqrt{p_n} = \sqrt{p_1} + \sqrt{p_2} + \dots + \sqrt{p_n}$$
+This simplifies to $2\sqrt{p_1} = 0$, which implies $\sqrt{p_1} = 0$, a contradiction.
+Thus $\alpha$ cannot be rational.
+\end{solution}
+
+\begin{exercise}
+Find all integral solutions $(x, y)$ for the equation $x^2 + 13 = y^3$. (Hint: You can use the fact that $\mathbb{Q}(\sqrt{-13})$ has class number 2.)
+\end{exercise}
+
+\begin{solution}
+We work in the ring of integers $\mathcal{O}_K = \mathbb{Z}[\sqrt{-13}]$ of the field $K = \mathbb{Q}(\sqrt{-13})$.
+The equation factors as $(x + \sqrt{-13})(x - \sqrt{-13}) = y^3$.
+First, we check if the two factors on the left are coprime. If a prime ideal $\mathfrak{p}$ divides both, it must divide their difference $2\sqrt{-13}$ and their sum $2x$.
+Thus $\mathfrak{p}$ could only divide 2 or 13.
+- If $13 \mid y$, then $13 \mid x^2 \implies 13 \mid x$. Writing $x = 13k$, we get $169k^2 + 13 = y^3$. This implies $13 \mid y^3$, so $13^3 \mid y^3$, but the LHS is only divisible by 13 (as $13k^2+1$ is not div by 13). Contradiction.
+- If $2 \mid y$, then $x^2 + 13 \equiv 0 \pmod 8$. Since $x^2 \equiv 0, 1, 4 \pmod 8$, $x^2 + 13 \equiv 5, 6, 1 \pmod 8$. Never 0. Contradiction.
+Thus $(x + \sqrt{-13})$ and $(x - \sqrt{-13})$ are coprime as ideals.
+Since their product is a cube, and the class number is 2, the ideal $(x + \sqrt{-13})$ must be the cube of some ideal $\mathfrak{b}$.
+In the class group $Cl(K)$, $[\mathfrak{b}]^3 = [1]$. Since the order of the group is 2, and $\gcd(2, 3) = 1$, the only element of order dividing 3 is the identity.
+Thus $\mathfrak{b}$ is a principal ideal $(a + b\sqrt{-13})$.
+The units in $\mathbb{Z}[\sqrt{-13}]$ are just $\pm 1$, which are cubes ($\pm 1^3$).
+So $x + \sqrt{-13} = (a + b\sqrt{-13})^3$ for some $a, b \in \mathbb{Z}$.
+Expanding the right side:
+$$x + \sqrt{-13} = a^3 + 3a^2 b\sqrt{-13} - 39ab^2 - 13b^3\sqrt{-13}$$
+Equating imaginary parts:
+$$1 = b(3a^2 - 13b^2)$$
+Possible values for $b$ are $\pm 1$.
+- If $b = 1$, $3a^2 - 13 = 1 \implies 3a^2 = 14$ (no integer solution).
+- If $b = -1$, $13 - 3a^2 = 1 \implies 3a^2 = 12 \implies a^2 = 4 \implies a = \pm 2$.
+Substituting $a = \pm 2, b = -1$ into the real part:
+$x = a^3 - 39ab^2 = (\pm 2)^3 - 39(\pm 2)(1) = \pm 8 \mp 78 = \mp 70$.
+Then $y^3 = x^2 + 13 = 4900 + 13 = 4913 = 17^3$, so $y = 17$.
+The integral solutions are $(\pm 70, 17)$.
+\end{solution}
+
+\begin{exercise}
+Let $p$ be a prime number and $\mathbb{Q}_p$ be the field of $p$-adic numbers. Fix an algebraic closure $\overline{\mathbb{Q}_p}$ of $\mathbb{Q}_p$. Let $g: \mathbb{Z}_{\geq 0} \to \mathbb{N}$ be a strictly increasing function. For each $i \in \mathbb{Z}_{\geq 0}$, pick a primitive $(p^{g(i)} - 1)$-th root of unity $\zeta_i$ in $\overline{\mathbb{Q}_p}$.
+
+(a) Show that for each $i \geq 0$, $K_i := \mathbb{Q}_p(\zeta_i)$ is an unramified Galois extension of $\mathbb{Q}_p$ of degree $g(i)$.
+
+(b) Give an explicit function $g$ as above such that $K_{i-1} \subset K_i$ for all $i > 0$. Let $0 = N_0 < N_1 < N_2 < \cdots$ be an increasing sequence of nonnegative integers. Let $\alpha_i := \sum_{j=0}^i \zeta_j p^{N_j}$. Show that for each $i \geq 0$, $K_i = \mathbb{Q}_p(\alpha_i)$ and that $(\alpha_i)$ is a Cauchy sequence in $\overline{\mathbb{Q}_p}$.
+
+(c) Let $\eta \in \overline{\mathbb{Q}_p}$ be of degree $g$ over $\mathbb{Q}_p$, prove that there exists $M \in \mathbb{N}$ such that $\zeta_i$ does not satisfy any $\eta$-congruence
+$$s_{g-1}\eta^{g-1} + s_{g-2}\eta^{g-2} + \cdots + s_1\eta + s_0 \equiv 0 \pmod{p^M}$$
+in which the $s_i$'s are $p$-adic integers not all of which are divisible by $p$.
+
+(d) Take a suitable sequence $(N_i)$ as above such that $(a_i)$ does not converge in $\overline{\mathbb{Q}_p}$. Conclude that $\overline{\mathbb{Q}_p}$ is not complete with respect to the $p$-adic topology.
+\end{exercise}
+
+\begin{solution}
+(a) The extension $\mathbb{Q}_p(\zeta)$ where $\zeta$ is a $(p^n-1)$-th root of unity is the unique unramified extension of degree $n$. This is because the residue field extension is $\mathbf{F}_p(\bar{\zeta}) = \mathbf{F}_{p^n}$ (since $\bar{\zeta}$ has order $p^n-1$), which has degree $n$. By the theory of local fields, unramified extensions are in one-to-one correspondence with residue field extensions.
+
+(b) Take $g(i) = (i+1)!$. Then $g(i-1) \mid g(i)$. The field $K_i$ has degree $g(i)$. Since $g(i-1) \mid g(i)$, there is a unique unramified extension of degree $g(i-1)$ inside $K_i$, which must be $K_{i-1}$.
+For $\alpha_i = \sum_{j=0}^i \zeta_j p^{N_j}$, the sequence $(\alpha_i)$ is Cauchy because $|\alpha_{i+1} - \alpha_i|_p = |p^{N_{i+1}}|_p = p^{-N_{i+1}}$, which goes to 0 as $N_i \to \infty$.
+
+(c) Any element $\eta \in \overline{\mathbb{Q}_p}$ lies in some finite extension of $\mathbb{Q}_p$. Let $L = \mathbb{Q}_p(\eta)$. If $\zeta_i$ were to satisfy such a congruence for arbitrarily large $M$, then by Krasner's Lemma, $\zeta_i$ would eventually have to lie in $L$. However, as $i \to \infty$, the degree $g(i)$ of $\zeta_i$ over $\mathbb{Q}_p$ goes to infinity. Since $[L:\mathbb{Q}_p]$ is finite, this is impossible. Thus such an $M$ must exist.
+
+(d) If we choose $(N_i)$ growing fast enough, the limit $\alpha = \lim \alpha_i$ (which exists in the completion $\mathbb{C}_p$ of $\overline{\mathbb{Q}_p}$) cannot be algebraic over $\mathbb{Q}_p$. If it were, it would have some finite degree $d$ and lie in some finite extension. But its "approximations" $\alpha_i$ have degrees $g(i) \to \infty$. This implies $\alpha$ is transcendental. Since $\alpha \notin \overline{\mathbb{Q}_p}$ but is a limit of elements in $\overline{\mathbb{Q}_p}$, the algebraic closure $\overline{\mathbb{Q}_p}$ is not complete.
+\end{solution}

@@ -1,0 +1,150 @@
+\section{2017 Analysis & Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Let the sequence of functions $\{f_n\}_{n=1}^{\infty}$ in $L^2(\mathbb{R}^d)$ satisfy that $\|f_n\|_{L^2}=1$.
+
+\begin{itemize}
+\item[1)] Show that there exists a subsequence of function $\{f_{n_j}\}_{j=1}^{\infty}$ such that $f_{n_j}$ converges weakly to some function $f$ in $L^2(\mathbb{R}^d)$, i.e.
+\[
+(f_{n_j}, g) \to (f,g)
+\]
+for all $g\in L^2(\mathbb{R}^d)$.
+
+\item[2)] If $f_n\rightharpoonup f$ weakly in $L^2(\mathbb{R}^d)$, and $\|f_n\|_{L^2}\to\|f\|_{L^2}$ as $n\to\infty$. Show that $\|f_n-f\|_{L^2}\to 0$ as $n\to\infty$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item $L^2(\mathbb{R}^d)$ is a Hilbert space, and by the Riesz Representation Theorem, it is its own dual, $L^2(\mathbb{R}^d) \cong (L^2(\mathbb{R}^d))^*$. Hilbert spaces are reflexive. According to the Banach-Alaoglu Theorem, the closed unit ball in a reflexive Banach space is weakly compact. Since the sequence $\{f_n\}$ satisfies $\|f_n\|_{L^2} = 1$, it lies within the unit ball of $L^2(\mathbb{R}^d)$. Therefore, there exists a subsequence $\{f_{n_j}\}$ and a function $f \in L^2(\mathbb{R}^d)$ such that $f_{n_j} \rightharpoonup f$ weakly in $L^2(\mathbb{R}^d)$. By definition, this means $(f_{n_j}, g) \to (f, g)$ for all $g \in L^2(\mathbb{R}^d)$.
+    
+    \item We calculate the $L^2$ norm of the difference using the inner product:
+    \[
+    \|f_n - f\|_{L^2}^2 = (f_n - f, f_n - f) = \|f_n\|_{L^2}^2 - (f_n, f) - (f, f_n) + \|f\|_{L^2}^2.
+    \]
+    As $n \to \infty$, we are given that $\|f_n\|_{L^2} \to \|f\|_{L^2}$. Also, by the definition of weak convergence $f_n \rightharpoonup f$, we have:
+    \[
+    (f_n, f) \to (f, f) = \|f\|_{L^2}^2 \quad \text{and} \quad (f, f_n) = \overline{(f_n, f)} \to \overline{\|f\|_{L^2}^2} = \|f\|_{L^2}^2.
+    \]
+    Substituting these limits into the expression, we get:
+    \[
+    \lim_{n\to\infty} \|f_n - f\|_{L^2}^2 = \|f\|_{L^2}^2 - \|f\|_{L^2}^2 - \|f\|_{L^2}^2 + \|f\|_{L^2}^2 = 0.
+    \]
+    Thus, $\|f_n - f\|_{L^2} \to 0$ as $n \to \infty$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $f:U\to\mathbb{C}$ be a non-constant holomorphic function where $U\subset\mathbb{C}$ is the open set containing the closure $\bar{D}$ of the unit disk $D=\{z\in\mathbb{C}\mid |z|<1\}$.
+
+If $|f(z)|=1$ for all $z\in\partial D$, prove that $D\subset f(\bar{D})$.
+\end{exercise}
+
+\begin{solution}
+We will prove that $f(D)$ must contain the origin, and then extend this to show $D \subset f(D)$.
+
+First, we show that $f$ must have at least one zero in $D$. Suppose $f(z) \neq 0$ for all $z \in D$. Since $f$ is continuous on $\bar{D}$, $1/f$ is also holomorphic in $D$ and continuous on $\bar{D}$. On the boundary $\partial D$, we have $|1/f(z)| = 1/|f(z)| = 1/1 = 1$. By the Maximum Modulus Principle applied to $1/f$, we have $|1/f(z)| \leq 1$ for all $z \in \bar{D}$, which implies $|f(z)| \geq 1$ for all $z \in \bar{D}$. However, by the Maximum Modulus Principle applied to $f$, since $|f(z)| = 1$ on $\partial D$, we must have $|f(z)| \leq 1$ for all $z \in \bar{D}$. Thus, $|f(z)| = 1$ for all $z \in \bar{D}$. This implies that $f$ is constant, which contradicts the assumption that $f$ is non-constant. Therefore, $f$ must have a zero in $D$, i.e., $0 \in f(D)$.
+
+Now, fix any $a \in D$. Consider the Mobius transformation $\phi_a(w) = \frac{w-a}{1-\bar{a}w}$, which is an automorphism of the unit disk $D$ and maps $\partial D$ to $\partial D$. Define $g(z) = \phi_a(f(z))$. Since $|f(z)| = 1$ for $z \in \partial D$, we have $|g(z)| = 1$ for $z \in \partial D$. Moreover, $g$ is holomorphic on $U$ because $f(z) \in \bar{D}$ for all $z \in \bar{D}$ (by Maximum Modulus Principle) and $|a| < 1$, so the denominator $1-\bar{a}f(z)$ never vanishes. $g$ is also non-constant because $f$ is non-constant and $\phi_a$ is injective. By the same argument as before, $g$ must have a zero in $D$. Let $z_0 \in D$ such that $g(z_0) = 0$. This implies $\phi_a(f(z_0)) = 0$, so $f(z_0) = a$. Since $a$ was arbitrary in $D$, we conclude that $D \subset f(D) \subset f(\bar{D})$.
+\end{solution}
+
+\begin{exercise}
+Prove that if a sequence of harmonic function on the open disk converges uniformly on compact subset of the disk, then the limit is harmonic.
+\end{exercise}
+
+\begin{solution}
+Let $\{u_n\}$ be a sequence of harmonic functions on the open disk $D$ that converges uniformly on compact subsets to a function $u$. Since each $u_n$ is harmonic, it is continuous and satisfies the Mean Value Property: for any $x \in D$ and any $r > 0$ such that the closed ball $\bar{B}_r(x) \subset D$, we have
+\[
+u_n(x) = \frac{1}{|B_r(x)|} \int_{B_r(x)} u_n(y) dy.
+\]
+Since $u_n \to u$ uniformly on compact subsets, and $\bar{B}_r(x)$ is a compact subset of $D$, the limit function $u$ is continuous on $D$. Furthermore, we can pass the limit inside the integral:
+\[
+u(x) = \lim_{n \to \infty} u_n(x) = \lim_{n \to \infty} \frac{1}{|B_r(x)|} \int_{B_r(x)} u_n(y) dy = \frac{1}{|B_r(x)|} \int_{B_r(x)} u(y) dy.
+\]
+This shows that $u$ satisfies the Mean Value Property for every ball contained in $D$. A continuous function that satisfies the Mean Value Property is harmonic. Thus, $u$ is harmonic on $D$.
+\end{solution}
+
+\begin{exercise}
+Let $\mu$ be a Borel measure on $\mathbb{R}^n$. Let $\rho>0$ be a fixed positive number, and $B_{\rho}(x)=\{y\in\mathbb{R}^n\mid d(x,y)<\rho\}$. For $x\in\mathbb{R}^n$, define a function:
+\[
+\theta(x): x \to \mu(\overline{B_{\rho}(x)}).
+\]
+
+\begin{itemize}
+\item[1)] Show that $\theta$ is upper semi-continuous, i.e. for every $x\in\mathbb{R}^n$, $\theta(x) \geq \limsup_{y\to x}\theta(y)$.
+\item[2)] Give an example of a Borel measure $\mu$, such that the function $\theta$ is not continuous.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item \textbf{Upper Semi-continuity:} We want to show that for every $x \in \mathbb{R}^n$, $\theta(x) \geq \limsup_{y \to x} \theta(y)$.
+    Let $x_k \to x$. We consider the sequence of sets $A_k = \overline{B_\rho(x_k)}$. 
+    For any $y \in \mathbb{R}^n$, let $f_k(y) = \chi_{A_k}(y)$. 
+    If $y \notin \overline{B_\rho(x)}$, then $d(y, x) > \rho$. For sufficiently large $k$, $d(y, x_k) > \rho$ as well, so $f_k(y) = 0$.
+    Thus $\limsup f_k(y) = 0$ for $y \notin \overline{B_\rho(x)}$.
+    If $y \in \overline{B_\rho(x)}$, then $\limsup f_k(y) \leq 1 = \chi_{\overline{B_\rho(x)}}(y)$.
+    Therefore, $\limsup_{k \to \infty} \chi_{\overline{B_\rho(x_k)}}(y) \leq \chi_{\overline{B_\rho(x)}}(y)$ for all $y \in \mathbb{R}^n$.
+    Since the measures of the balls are locally bounded, we can use the reverse Fatou's Lemma:
+    \[
+    \limsup_{k \to \infty} \theta(x_k) = \limsup_{k \to \infty} \int \chi_{\overline{B_\rho(x_k)}} d\mu \leq \int \limsup_{k \to \infty} \chi_{\overline{B_\rho(x_k)}} d\mu \leq \int \chi_{\overline{B_\rho(x)}} d\mu = \theta(x).
+    \]
+    Thus $\theta$ is upper semi-continuous.
+
+    \item \textbf{Discontinuity Example:} Discontinuity typically occurs when the boundary of the ball has non-zero measure.
+    Let $n=1, \rho=1$. Let $\mu = \delta_1$ (Dirac measure at 1).
+    For $x=0$, $\theta(0) = \mu([-1, 1]) = 1$.
+    For $x = -\epsilon < 0$, $\theta(-\epsilon) = \mu([-1-\epsilon, 1-\epsilon]) = 0$ because $1 \notin [-1-\epsilon, 1-\epsilon]$.
+    As $\epsilon \to 0^+$, the limit from the left is $0$, while the value at $0$ is $1$. The function "jumps" because the point mass at 1 enters or leaves the closed ball. In general, $\theta$ is continuous at $x$ if and only if the boundary $\mu(\partial B_\rho(x)) = 0$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $g$ denote a smooth function on $\mathbb{R}^n$ with compact support. Let $f$ denote the function given by the formula
+\[
+f(x) = \frac{1}{n(n-1)\alpha(n)}\int_{\mathbb{R}^n}\frac{1}{|x-y|^{n-2}}g(y)\,dy.
+\]
+Here $\alpha(n)$ is volume of the unit ball in $\mathbb{R}^n$.
+
+\begin{itemize}
+\item[(a)] Prove that the integral that defines $f$ converges for each $x\in\mathbb{R}^n$.
+\item[(b)] Prove that $f$ is differentiable and that the gradient of $f$ is given by the formula
+\[
+\nabla f|_x = \frac{1}{n(n-1)\alpha(n)}\int_{\mathbb{R}^n}\frac{1}{|x-y|^{n-2}}(\nabla g)|_y\,dy.
+\]
+\item[(c)] Prove the $f$ obeys $-\Delta f = g$ with $\Delta$ denoting $\frac{\partial^2}{\partial x_1^2} + \cdots + \frac{\partial^2}{\partial x_n^2}$.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+(a) Let $K = \text{supp}(g)$. Since $g$ is smooth and has compact support, $g$ is bounded, say $|g(y)| \leq M$. The integral is $\int_K \frac{g(y)}{|x-y|^{n-2}} dy$. The only potential singularity is at $y=x$. Switching to polar coordinates centered at $x$, let $r = |x-y|$. The integral near $x$ behaves like $\int_0^R \frac{1}{r^{n-2}} r^{n-1} dr = \int_0^R r dr$, which is finite for $n \geq 2$. For $y$ far from $x$, the integrand is zero outside $K$. Thus, the integral converges.
+
+(b) We can write $f$ as a convolution: $f = \Phi * g$, where $\Phi(x) = \frac{1}{C |x|^{n-2}}$ with $C = n(n-1)\alpha(n)$. Since $g$ is smooth and compactly supported, we can differentiate the convolution by moving the derivative to $g$:
+\[
+\partial_i f(x) = \partial_i (\Phi * g)(x) = (\Phi * \partial_i g)(x) = \frac{1}{C} \int \frac{\partial_i g(y)}{|x-y|^{n-2}} dy.
+\]
+This justifies the gradient formula: $\nabla f = \Phi * \nabla g$.
+
+(c) Note that the standard fundamental solution for the Laplacian in $\mathbb{R}^n$ ($n > 2$) is $\Gamma(x) = \frac{1}{n(n-2)\alpha(n) |x|^{n-2}}$, which satisfies $-\Delta \Gamma = \delta$. The formula given for $f$ uses a coefficient $n(n-1)\alpha(n)$. Let's assume the question uses the standard normalization where $f = \Gamma * g$. Then $\Delta f = (\Delta \Gamma) * g = -\delta * g = -g$, so $-\Delta f = g$. 
+If we use the specific constant $C = n(n-1)\alpha(n)$, then $f = \frac{n-2}{n-1} \Gamma * g$, so $-\Delta f = \frac{n-2}{n-1} g$. However, the intent of the exercise is to show that the Newton potential solves Poisson's equation. Specifically, for $n=3$, $n(n-2)\alpha(n) = 3(1)(4/3 \pi) = 4\pi$, and the formula for $f$ typically has $4\pi$ in the denominator. The given constant $n(n-1)\alpha(n)$ might be a typo for $n(n-2)\alpha(n)$ or depends on a different convention for $\alpha(n)$. Under the standard definition, $-\Delta f = g$.
+\end{solution}
+
+\begin{exercise}
+If $u$ is a positive harmonic function on $\mathbb{R}^n\setminus\{0\}$ ($n\geq 2$), then there exist constants $a\geq 0$, $b\geq 0$ such that
+\[
+u(x) = a + b|x|^{2-n}
+\]
+for all $x\in\mathbb{R}^n\setminus\{0\}$.
+\end{exercise}
+
+\begin{solution}
+By Bôcher's Theorem, if $u$ is a positive harmonic function on $B_R(0) \setminus \{0\}$, then $u(x) = v(x) + b E(x)$, where $v$ is harmonic on $B_R(0)$, $b \geq 0$, and $E(x)$ is the fundamental solution of the Laplacian ($E(x) = |x|^{2-n}$ for $n > 2$ and $E(x) = -\log|x|$ for $n=2$). Since $u$ is harmonic on the entire space $\mathbb{R}^n \setminus \{0\}$, $v = u - b E$ is harmonic on all of $\mathbb{R}^n$.
+
+For $n > 2$: $E(x) = |x|^{2-n}$. Since $u(x) > 0$, we have $v(x) = u(x) - b|x|^{2-n} > -b|x|^{2-n}$. As $|x| \to \infty$, $|x|^{2-n} \to 0$, so $v$ is bounded below on $\mathbb{R}^n$. By Liouville's Theorem for harmonic functions, any harmonic function on $\mathbb{R}^n$ that is bounded below must be constant. Thus $v(x) = a$ for some constant $a$. Since $u > 0$, and $b|x|^{2-n} \to 0$ as $|x| \to \infty$, we must have $a \geq 0$. Hence $u(x) = a + b|x|^{2-n}$.
+
+For $n=2$: $E(x) = -\log|x|$. Then $u(z) = v(z) - b \log|z|$. If $b > 0$, then as $|z| \to \infty$, $-b \log|z| \to -\infty$. For $u$ to remain positive, $v(z)$ would have to grow at least as fast as $b \log|z|$. However, a harmonic function on $\mathbb{R}^2$ that grows at most logarithmically and is bounded below is constant. If $b > 0$, $u(z)$ would eventually become negative for large $|z|$ unless $v$ compensates, but a positive harmonic function on $\mathbb{R}^2$ is constant. In fact, for $n=2$, the only positive harmonic functions on $\mathbb{R}^2 \setminus \{0\}$ are constants. The formula $a + b|x|^{2-2} = a + b$ correctly represents a constant. Thus, the result holds for all $n \geq 2$.
+\end{solution}
+
+

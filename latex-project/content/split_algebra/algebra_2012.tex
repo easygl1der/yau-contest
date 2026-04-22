@@ -1,0 +1,212 @@
+\section{2012 Algebra & Number Theory}
+
+\subsection*{Individual}
+\begin{exercise}
+Prove that the polynomial $x^6 + 30x^5 - 15x^3 + 6x - 120$ is irreducible over $\mathbb{Q}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} To show a polynomial is irreducible over $\mathbb{Q}$, the most common tools are Eisenstein's Criterion, the Reduction Modulo $p$ test, or checking for roots (for low degrees).
+We observe that most coefficients are multiples of 3.
+Let $f(x) = x^6 + 30x^5 - 15x^3 + 6x - 120$.
+Check \textbf{Eisenstein's Criterion} with $p = 3$:
+\begin{enumerate}
+    \item $a_6 = 1$, which is not divisible by 3.
+    \item The other coefficients are $a_5 = 30$, $a_4 = 0$, $a_3 = -15$, $a_2 = 0$, $a_1 = 6$, $a_0 = -120$.
+    All these are divisible by 3.
+    \item The constant term $a_0 = -120$. We check if $3^2 \mid a_0$.
+    $120 = 3 \times 40$. Since $3 \nmid 40$, $9$ does not divide $120$.
+\end{enumerate}
+Since all conditions of Eisenstein's Criterion are satisfied for $p=3$, the polynomial $f(x)$ is irreducible over $\mathbb{Q}$.
+\end{solution}
+
+\begin{exercise}
+Let $\mathbb{F}_p$ be the field of $p$-elements.
+(1) Order of $GL_n(\mathbb{F}_p)$.
+(2) Sylow $p$-subgroup.
+(3) Number of Sylow $p$-subgroups.
+\end{exercise}
+
+\begin{solution}
+(1) \textbf{Pedagogical Remark:} The group $GL_n(\mathbb{F}_p)$ consists of invertible matrices. A matrix is invertible if its columns (or rows) form a basis for $\mathbb{F}_p^n$.
+- For the 1st column, we can choose any non-zero vector: $p^n - 1$ choices.
+- For the 2nd column, we can choose any vector not in the span of the 1st: $p^n - p$ choices.
+- For the $k$-th column, we can choose any vector not in the span of the previous $k-1$ linearly independent columns: $p^n - p^{k-1}$ choices.
+Thus, $|GL_n(\mathbb{F}_p)| = (p^n - 1)(p^n - p) \cdots (p^n - p^{n-1})$.
+
+(2) The power of $p$ in $|GL_n(\mathbb{F}_p)|$ is $p \cdot p^2 \cdots p^{n-1} = p^{n(n-1)/2}$.
+The group $U$ of upper unitriangular matrices (diagonal entries all 1) has order $p^{\# \text{upper entries}} = p^{n(n-1)/2}$.
+Thus, $U = \{ (a_{ij}) : a_{ii}=1, a_{ij}=0 \text{ for } i>j \}$ is a Sylow $p$-subgroup.
+
+(3) \textbf{Theorem:} The Sylow $p$-subgroups of $GL_n(\mathbb{F}_p)$ are the unipotent radicals of the Borel subgroups. The Borel subgroups are the stabilizers of complete flags.
+A complete flag is $0 = V_0 \subset V_1 \subset \dots \subset V_n = \mathbb{F}_p^n$ with $\dim V_i = i$.
+The number of such flags is:
+$n_p = [GL_n(\mathbb{F}_p) : B]$ where $B$ is the stabilizer of the standard flag (the upper triangular matrices).
+$|B| = (p-1)^n p^{n(n-1)/2}$ (since diagonal entries can be any of $p-1$ non-zero values).
+Thus $n_p = \frac{\prod_{i=0}^{n-1} (p^n - p^i)}{(p-1)^n p^{n(n-1)/2}} = \frac{\prod (p^i-1)(p-1) \dots}{(p-1)^n} = \prod_{i=1}^n \frac{p^i - 1}{p - 1}$.
+This is the $q$-factorial $[n]_p!$ or related to Gaussian binomial coefficients.
+\end{solution}
+
+\begin{exercise}
+$V$ has a nondegenerate symmetric bilinear form. Show $(V \otimes V)^{O(V)}$ is 1D.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} Invariants of tensor products are related to homomorphisms between representations.
+Specifically, $V \otimes V \cong V \otimes V^* \cong \text{End}(V)$ using the isomorphism $\phi: V \to V^*$ induced by the bilinear form $B(u, v) = (u, v)$.
+The action of $g \in O(V)$ on $V \otimes V^*$ is $g \cdot (v \otimes \omega) = gv \otimes \omega \circ g^{-1}$.
+Under the isomorphism with $\text{End}(V)$, this is $A \mapsto gAg^{-1}$.
+The fixed points $(V \otimes V)^{O(V)}$ correspond to endomorphisms $A$ such that $gAg^{-1} = A$ for all $g \in O(V)$, i.e., $gA = Ag$.
+By \textbf{Schur's Lemma}, if $V$ is an irreducible representation, the only endomorphisms commuting with the action are scalars $cI$.
+The standard representation of $O(V)$ on $V \cong \mathbb{C}^n$ is irreducible for $n \geq 1$.
+Thus $(V \otimes V)^{O(V)} = \{ cI : c \in \mathbb{C} \}$, which is 1-dimensional.
+The invariant element corresponds to the bilinear form itself (the "metric tensor").
+\end{solution}
+
+\begin{exercise}
+$\mathfrak{D}$ is the Weyl algebra. Show (1) $\forall b \neq 0, \exists D : D(b)=c$. (2) $b_i$ independent $\implies \exists D : D(b_i)=c_i$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This problem explores the density of the Weyl algebra action on polynomials.
+(1) Let $\deg b = k$. Then $b^{(k)}$ is a non-zero constant $k! a_k$.
+Let $D = \frac{c(x)}{k! a_k} \frac{d^k}{dx^k}$. Since $c(x)$ is a polynomial, $D \in \mathfrak{D}$.
+Then $D(b) = \frac{c(x)}{k! a_k} (k! a_k) = c(x)$.
+
+(2) \textbf{Theorem (Jacobson Density):} Let $M$ be a simple $R$-module. Let $\Delta = \text{End}_R(M)$ be its endomorphism ring (which is a division ring by Schur's Lemma). If $b_1, \dots, b_m$ are linearly independent over $\Delta$, then for any $c_1, \dots, c_m \in M$, there exists $r \in R$ such that $rb_i = c_i$.
+In our case, $R = \mathfrak{D}$ and $M = \mathbb{R}[x]$.
+First, $M$ is a simple $\mathfrak{D}$-module (any non-zero polynomial can be mapped to any other by (1), and the orbit of any non-zero element is $M$).
+Second, we find $\Delta = \text{End}_{\mathfrak{D}}(M)$. If $\phi \in \Delta$, $\phi$ commutes with $x$ and $\partial$.
+$\phi x = x \phi \implies \phi$ is multiplication by some function $h(x)$.
+$\phi \partial = \partial \phi \implies h'(x) = 0 \implies h$ is a constant.
+Thus $\Delta = \mathbb{R}$.
+Since $b_1, \dots, b_m$ are linearly independent over $\mathbb{R}$, there exists $D \in \mathfrak{D}$ such that $D(b_i) = c_i$.
+\end{solution}
+
+\begin{exercise}
+$R = \{ \alpha : \alpha \Lambda \subset \Lambda \}$.
+(1) $R = \mathbb{Z}$ or rank 2. (2) $n \geq 3 \implies R^\times \to (R/nR)^\times$ injective. (3) Max size of $R^\times$.
+\end{exercise}
+
+\begin{solution}
+(1) \textbf{Complex Multiplication:} Let $\Lambda = \mathbb{Z} \oplus \mathbb{Z}\tau$ where $\tau \notin \mathbb{R}$.
+If $\alpha \in R \setminus \mathbb{Z}$, then $\alpha \cdot 1 = a + b\tau$ and $\alpha \cdot \tau = c + d\tau$.
+This implies $\alpha$ is a root of a quadratic with integer coefficients. Since $\alpha \in \mathbb{C} \setminus \mathbb{R}$, it must be an imaginary quadratic integer.
+$R$ is a subring of the ring of integers of $\mathbb{Q}(\tau)$, so it is either $\mathbb{Z}$ or a rank 2 lattice (an order).
+
+(2) Let $u \in R^\times$ such that $u \equiv 1 \pmod n$.
+Then $u = 1 + n\beta$ for some $\beta \in R$.
+Since $u$ is a unit in an imaginary quadratic order, $|u| = 1$ (it's a root of unity).
+If $u \neq 1$, then $|u-1| = |e^{i\theta}-1| = 2|\sin(\theta/2)| \leq 2$.
+But $|u-1| = |n\beta| = n |\beta|$.
+Since $\beta \in R$ and $\beta \neq 0$ (if $u \neq 1$), $|\beta| \geq 1$ (the shortest vector in $R$ is at least 1).
+Thus $n \leq 2$.
+For $n \geq 3$, we must have $u=1$. So the map is injective.
+
+(3) The units are roots of unity. The only possible roots of unity in imaginary quadratic fields are $\pm 1$ (degree 2), $\pm i$ (degree 4 in $\mathbb{Q}(i)$), or $\pm \omega, \pm \omega^2$ (degree 6 in $\mathbb{Q}(\sqrt{-3})$).
+Maximal size is 6.
+\end{solution}
+
+\begin{exercise}
+$A/2A$ finite and $\{ a : \|a\| < c \}$ finite $\implies A$ finite rank.
+\end{exercise}
+
+\begin{solution}
+\textbf{Motivation:} This is a standard property of lattices.
+Condition (2) implies $A$ is a discrete subgroup of $V$. Any discrete subgroup of a normed space is a free abelian group.
+If the rank were infinite, say $e_1, e_2, \dots$ are basis elements, then the elements $e_i \pmod{2A}$ would all be distinct and non-zero? No, but there would be infinitely many independent elements.
+Actually, if $A \cong \mathbb{Z}^\infty$, then $A/2A \cong (\mathbb{Z}/2\mathbb{Z})^\infty$, which is infinite.
+Since $A/2A$ is finite of order $2^r$, the rank of $A$ must be $r$.
+Specifically, any discrete subgroup of $V$ is finitely generated in any finite-dimensional subspace. The bound on $A/2A$ prevents the accumulation of basis elements.
+\end{solution}
+
+\subsection*{Team}
+\begin{exercise}
+Cauchy Determinant: $\det(1/(a_i+b_j))$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Explanatory Remark:} This is a famous determinant identity.
+Let $D_n = \det(\frac{1}{a_i+b_j})$.
+We can factor out $\prod_{i=1}^n \frac{1}{a_i+b_n}$ from the columns? No, let's use the rational function method.
+$D_n$ as a function of $a_1$ has poles at $a_1 = -b_j$ and zeros at $a_1 = a_j$ (since two rows would be identical).
+The denominator must be $\prod_{i,j}(a_i+b_j)$.
+The numerator must be $\prod_{i<j}(a_i-a_j) \prod_{i<j}(b_i-b_j)$.
+The degree of $D_n$ in $a_i$ is $-n$. The degree of the proposed formula in $a_i$ is $(n-1) - n = -1$?
+Wait, the degree in the formula is: numerator has $n(n-1)/2 + n(n-1)/2 = n(n-1)$. Denominator has $n^2$.
+The degree is $n^2-n - n^2 = -n$. Correct.
+The formula is:
+\[ \det\left(\frac{1}{a_i+b_j}\right) = \frac{\prod_{i<j}(a_i-a_j)(b_i-b_j)}{\prod_{i,j}(a_i+b_j)}. \]
+\end{solution}
+
+\begin{exercise}
+$GL_3(\mathbb{F}_7)$. (1) $P_7$, (2) $N(P_7)$, (3) $P_2$.
+\end{exercise}
+
+\begin{solution}
+(1) Order $|G| = (7^3-1)(7^3-7)(7^3-7^2) = 2^6 \cdot 3^4 \cdot 7^3 \cdot 19$.
+$P_7 = \{ \begin{pmatrix} 1 & a & b \\ 0 & 1 & c \\ 0 & 0 & 1 \end{pmatrix} \}$.
+(2) $N(P_7)$ is the Borel subgroup $B$ (upper triangular matrices).
+$|B| = (7-1)^3 \cdot 7^3 = 6^3 \cdot 7^3$.
+(3) $P_2$ has order $2^6 = 64$.
+A 2-Sylow of $GL_2(\mathbb{F}_7)$ has order $2^5$. $GL_1(\mathbb{F}_7)$ has order $6$, so its 2-Sylow is $\{\pm 1\}$.
+Thus $P_2 = P_2(GL_2) \times \{ \pm 1 \}$ is a subgroup of order $2^5 \cdot 2 = 64$.
+\end{solution}
+
+\begin{exercise}
+Cartan-Dieudonn\'e: $O(V)$ generated by reflections.
+\end{exercise}
+
+\begin{solution}
+(1) $s_v(w) = w - 2\frac{(v,w)}{(v,v)}v$.
+$(s_v w, s_v w') = (w, w') - 2\frac{(v,w')(w,v)}{(v,v)} - 2\frac{(v,w)(v,w')}{(v,v)} + 4\frac{(v,w)(v,w')(v,v)}{(v,v)^2} = (w, w')$.
+(2) If $\|v\|=\|w\|$, let $u = v-w$.
+$s_u(v) = v - 2\frac{(v-w, v)}{(v-w, v-w)}(v-w)$.
+Since $\|v\|^2=\|w\|^2$, $(v-w, v-w) = \|v\|^2+\|w\|^2-2(v,w) = 2(\|v\|^2-(v,w)) = 2(v-w, v)$.
+Thus $s_u(v) = v - (v-w) = w$.
+(3) \textbf{Theorem (Cartan-Dieudonn\'e):} Any orthogonal transformation in an $n$-dimensional space is a product of at most $n$ reflections.
+Proof by induction: let $g \in O(V)$. Pick $v$. Let $w = gv$. By (2) $\exists s$ such that $sv=w$, so $s^{-1}gv = v$.
+$s^{-1}g$ fixes $v$, so it acts on $v^\perp$ (dimension $n-1$).
+By induction $s^{-1}g = s_1 \dots s_{n-1}$. Thus $g = s s_1 \dots s_{n-1}$.
+\end{solution}
+
+\begin{exercise}
+$\pi_1(SL_2(\mathbb{R})) = \mathbb{Z}$ and universal cover.
+\end{exercise}
+
+\begin{solution}
+\textbf{Iwasawa Decomposition:} $SL_2(\mathbb{R}) = KAN \cong SO(2) \times \mathbb{R} \times \mathbb{R}^+$.
+As a manifold, $SL_2(\mathbb{R}) \cong S^1 \times \mathbb{R}^2$.
+Thus $\pi_1(SL_2(\mathbb{R})) \cong \pi_1(S^1) \cong \mathbb{Z}$.
+The universal cover $\widetilde{SL}_2(\mathbb{R})$ is a Lie group whose center is $\mathbb{Z}$.
+Elements can be represented by $(\theta, a, n)$ where $\theta \in \mathbb{R}$.
+The map to $SL_2(\mathbb{R})$ is $(\theta, a, n) \mapsto \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix} A N$.
+\end{solution}
+
+\begin{exercise}
+Hilbert polynomial: $P(n) = \dim S_n / f S_{n-d}$.
+\end{exercise}
+
+\begin{solution}
+$\dim S_n = \binom{n+2}{2} = \frac{(n+2)(n+1)}{2}$.
+$P(n) = \frac{(n+2)(n+1)}{2} - \frac{(n-d+2)(n-d+1)}{2}$.
+$P(n) = \frac{1}{2} [ (n^2+3n+2) - (n^2-2nd+d^2+3n-3d+2) ]$
+$P(n) = \frac{2nd - d^2 + 3d}{2} = dn + \frac{d(3-d)}{2}$.
+Thus $c = d(3-d)/2$.
+\end{solution}
+
+\begin{exercise}
+Structure of $\mathbb{Z}_p^\times$.
+\end{exercise}
+
+\begin{solution}
+(1) \textbf{Teichmüller Lift:} $a^p \equiv a \pmod p$. By induction $a^{p^n} \equiv a^{p^{n-1}} \pmod{p^n}$.
+The limit $\omega(a)$ is the unique root of $x^p-x=0$ in $\mathbb{Z}_p$ such that $\omega(a) \equiv a \pmod p$.
+(2) The $p$-adic log series $\sum \frac{(-1)^{n-1} z^n}{n}$ converges if $v_p(z) > \frac{1}{p-1}$.
+For $z \in p\mathbb{Z}_p$ and $p \geq 3$, $v_p(z) \geq 1 > \frac{1}{p-1}$.
+The isomorphism $1+p\mathbb{Z}_p \cong p\mathbb{Z}_p$ is given by $\log$.
+(3) $\mathbb{Z}_p^\times \cong \mu_{p-1} \times (1+p\mathbb{Z}_p)$.
+The group of roots of unity $\mu_{p-1}$ is the image of $\omega$, isomorphic to $\mathbb{Z}/(p-1)\mathbb{Z}$.
+$(1+p\mathbb{Z}_p) \cong \mathbb{Z}_p$ via $\log$.
+Thus $\mathbb{Z}_p^\times \cong \mathbb{Z}/(p-1)\mathbb{Z} \times \mathbb{Z}_p$.
+\end{solution}

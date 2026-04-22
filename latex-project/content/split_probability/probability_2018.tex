@@ -1,0 +1,179 @@
+\section{2018 Probability and Statistics}
+
+\subsection{Individual}
+Please solve the following 5 problems.
+
+\begin{exercise}
+A box contains 750 red balls and 250 blue balls. Repeatedly pick a ball uniformly at random from the box and remove it until all remaining balls have a single color. (Note: no replacement).
+
+Please find integer $m$ such that the expectation value for the total number of the remaining balls $\in [m, m+1]$.
+\end{exercise}
+
+\begin{solution}
+Let $N_R = 750$ and $N_B = 250$ be the initial number of red and blue balls, respectively, and let $N = N_R + N_B = 1000$. The process stops as soon as the last ball of one color is removed. Let the balls be arranged in a random permutation of length $N$, where all $\binom{N}{N_R}$ arrangements are equally likely. Let $L_R$ be the position of the last red ball in the sequence, and $L_B$ be the position of the last blue ball. The process stops at time $T = \min(L_R, L_B)$. The number of remaining balls is $X = N - T$. Since one of the balls at the last position $N$ must be either red or blue, we have $\max(L_R, L_B) = N$. Thus, $T = L_R + L_B - N$, and $X = 2N - L_R - L_B$.
+
+Alternatively, $X \ge k$ if and only if the last $k$ balls in the random permutation are of the same color. The probability that the last $k$ balls are all red is $\binom{N_R}{k}/\binom{N}{k}$, and the probability they are all blue is $\binom{N_B}{k}/\binom{N}{k}$. These events are disjoint for $k \ge 1$. Thus, the expected value is:
+\[
+\mathbb{E}[X] = \sum_{k=1}^{N_R} \frac{\binom{N_R}{k}}{\binom{N}{k}} + \sum_{k=1}^{N_B} \frac{\binom{N_B}{k}}{\binom{N}{k}}.
+\]
+Using the identity $\sum_{k=1}^n \frac{\binom{n}{k}}{\binom{N}{k}} = \frac{n}{N-n+1}$, we obtain:
+\[
+\mathbb{E}[X] = \frac{N_R}{N - N_R + 1} + \frac{N_B}{N - N_B + 1} = \frac{N_R}{N_B + 1} + \frac{N_B}{N_R + 1}.
+\]
+Plugging in $N_R = 750$ and $N_B = 250$:
+\[
+\mathbb{E}[X] = \frac{750}{251} + \frac{250}{751} \approx 2.988 + 0.333 = 3.321.
+\]
+Thus, $m = 3$ since $3.321 \in [3, 4]$.
+\end{solution}
+
+\begin{figure}[htbp]
+\centering
+\fbox{\includegraphics[width=0.7\textwidth]{../images/probability/a9369f4fc904209ce717b3d32972c084676c9d12e7500a0b8e4caabb097f7292.jpg}}
+
+\medskip
+{\small Figure: Binary tree propagation.}
+\label{fig:binary-tree}
+\end{figure}
+
+\begin{exercise}
+Suppose a number $X_0 \in \{1, -1\}$ at the root of a binary tree is propagated away from the root as follows (see Figure \ref{fig:binary-tree}). The root is the node at level 0. After obtaining the $2^h$ numbers at the nodes at level $h$, each number at level $h+1$ is obtained from the number adjacent to it (at level $h$) by flipping its sign with probability $p \in (0, 1/2)$ independently.
+
+Let $X_h$ be the average of the $2^h$ values received at the nodes at level $h$. Define the signal-to-noise ratio at level $h$ to be
+\[
+R_h := \frac{(\mathbb{E}[X_h | X_0 = 1] - \mathbb{E}[X_h | X_0 = -1])^2}{\mathrm{Var}[X_h | X_0 = 1]}.
+\]
+
+Find the threshold number $p_c$ such that $R_h$ converges to 0 if $p \in (p_c, 1/2)$ and diverges if $p \in (0, p_c)$, as $h \to \infty$.
+
+%
+
+%
+\end{exercise}
+
+\begin{solution}
+Let $Y_{h,i}$ be the value at node $i$ of level $h$. The transition probability for a single edge is given by the matrix $M = \begin{pmatrix} 1-p & p \\ p & 1-p \end{pmatrix}$. The eigenvalues are $\lambda_1 = 1$ and $\lambda_2 = 1-2p$. After $h$ steps, the expected value is $\mathbb{E}[Y_{h,i} | X_0 = 1] = (1-2p)^h$. Thus, $\mathbb{E}[X_h | X_0 = 1] = (1-2p)^h$ and $\mathbb{E}[X_h | X_0 = -1] = -(1-2p)^h$. The numerator of $R_h$ is $(2(1-2p)^h)^2 = 4(1-2p)^{2h}$.
+
+For the variance, $\mathrm{Var}[X_h | X_0 = 1] = \mathbb{E}[X_h^2 | X_0 = 1] - (1-2p)^{2h}$. We have $\mathbb{E}[X_h^2 | X_0 = 1] = \frac{1}{2^{2h}} \sum_{i,j} \mathbb{E}[Y_{h,i} Y_{h,j} | X_0 = 1]$. For any two nodes $i, j$, let $k$ be the level of their least common ancestor. Then $\mathbb{E}[Y_{h,i} Y_{h,j} | X_0 = 1] = (1-2p)^{2(h-k)}$. Summing over $j$ for a fixed $i$, we find:
+\[
+\sum_{j} (1-2p)^{2(h-k)} = 1 + \sum_{m=1}^h 2^{m-1} (1-2p)^{2m} = 1 + \frac{\rho(\rho^h-1)}{2(\rho-1)},
+\]
+where $\rho = 2(1-2p)^2$. It follows that $\mathrm{Var}[X_h | X_0 = 1] = \frac{1}{2^h} \left( 1 + \frac{\rho(\rho^h-1)}{2(\rho-1)} \right) - (1-2p)^{2h}$.
+Substituting these into $R_h$, we obtain:
+\[
+R_h = \frac{8 \rho^h (\rho - 1)}{(2-\rho)(\rho^h - 1)}.
+\]
+As $h \to \infty$:
+\begin{itemize}
+    \item If $\rho < 1$, then $\rho^h \to 0$, so $R_h \to 0$.
+    \item If $\rho > 1$, then $R_h \to \frac{8(\rho-1)}{2-\rho} > 0$.
+\end{itemize}
+The threshold occurs at $\rho = 2(1-2p)^2 = 1$, which gives $1-2p = 1/\sqrt{2}$, so $p_c = \frac{2-\sqrt{2}}{4}$. In the context of the problem, "diverges" refers to $R_h$ remaining bounded away from zero (or formally diverging in some variants of the model).
+\end{solution}
+
+\begin{exercise}
+Consider the space representing an infinite sequence of coin flips, namely $\Omega := \{H,T\}^\infty$ (H: head, T: tail) with the associated $\sigma$-field $\mathcal{F}$ generated by finite dimensional rectangles. For $0 \leq p \leq 1$, denote by $\mathbb{P}_p$ the probability measure on $(\Omega, \mathcal{F})$ corresponding to flipping a coin an infinite number of times with probability of $H$ being $p$ and probability of $T$ being $q = 1-p$ at each flip.
+
+Show that for each $p \in [0,1]$, there exists $A_p$ such that
+\[
+\mathbb{P}_p(A_p) > 1/2
+\]
+and for any $p' \neq p$, $p' \in [0,1]$,
+\[
+\mathbb{P}_{p'}(A_p) < 1/2.
+\]
+
+%
+
+%
+\end{exercise}
+
+\begin{solution}
+By the Strong Law of Large Numbers, for any $p \in [0,1]$, the sequence of outcomes $\omega = (\omega_1, \omega_2, \dots)$ satisfies:
+\[
+\mathbb{P}_p \left( \lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n \mathbb{I}(\omega_i = H) = p \right) = 1.
+\]
+Define the set $A_p = \{ \omega \in \Omega : \lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n \mathbb{I}(\omega_i = H) = p \}$. Then $\mathbb{P}_p(A_p) = 1$, which is strictly greater than $1/2$.
+Now consider any $p' \in [0,1]$ such that $p' \neq p$. Under the probability measure $\mathbb{P}_{p'}$, the Strong Law of Large Numbers implies:
+\[
+\mathbb{P}_{p'} \left( \lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n \mathbb{I}(\omega_i = H) = p' \right) = 1.
+\]
+Since the limits $p$ and $p'$ are distinct, the set $A_p$ is a subset of the complement of $A_{p'}$ (up to a null set). Specifically, the set where the limit is $p$ has measure 0 under $\mathbb{P}_{p'}$. Thus, $\mathbb{P}_{p'}(A_p) = 0$, which is strictly less than $1/2$. This holds for all $p' \neq p$.
+\end{solution}
+
+\begin{exercise}
+Let $G := G(n,p)$ be a random graph with $n$ vertices where each possible edge has probability $p$ of existing. The existence of the edges are independent to each other. With $G$, we say $A \subset \{1,2,\cdots,n\}$ is a fully connected set if and only if $i, j \in A \implies$ $i$-th and $j$-th vertices are (directly) connected with an edge in $G$.
+
+Define $T$ as the size of the largest fully connected set:
+\[
+T := \max\{|A|: A \text{ is a fully connected set}\}.
+\]
+
+Let's fix $p \in (0,1)$, please prove that
+\[
+\lim_{n \to \infty} \mathbb{P}\left(\frac{T}{2\log_{1/p} n} \leq 1 + \epsilon\right) = 1, \quad \forall \epsilon > 0,
+\]
+and
+\[
+\lim_{n \to \infty} \mathbb{P}\left(\frac{T}{\sqrt{2\log_{1/p} n}} \geq 1 - \epsilon\right) = 1, \quad \forall \epsilon > 0.
+\]
+
+Hint: $\mathbb{P}(T = n) = p^{\binom{n}{2}} = p^{n(n-1)/2}$.
+
+%
+
+%
+
+%
+
+%
+\end{exercise}
+
+\begin{solution}
+Let $X_k$ be the number of cliques (fully connected sets) of size $k$ in $G(n,p)$. Then $\mathbb{E}[X_k] = \binom{n}{k} p^{\binom{k}{2}}$.
+For the upper bound, let $k = \lfloor 2(1+\epsilon) \log_{1/p} n \rfloor$. Using $\binom{n}{k} \leq \frac{n^k}{k!}$, we have:
+\[
+\mathbb{E}[X_k] \leq \frac{n^k}{k!} p^{k(k-1)/2} = \frac{1}{k!} (n p^{(k-1)/2})^k.
+\]
+Substituting $k \approx 2(1+\epsilon) \log_{1/p} n$, we get $p^{(k-1)/2} \approx n^{-(1+\epsilon)}$, so $n p^{(k-1)/2} \approx n^{-\epsilon} \to 0$. Thus $\mathbb{E}[X_k] \to 0$, and by Markov's inequality, $\mathbb{P}(T \ge k) \leq \mathbb{E}[X_k] \to 0$, which proves $\lim_{n \to \infty} \mathbb{P}(T \leq 2(1+\epsilon) \log_{1/p} n) = 1$.
+
+For the second part, it is a standard result that $T$ is concentrated around $2 \log_{1/p} n$. Specifically, $\mathbb{P}(T \geq 2(1-\epsilon) \log_{1/p} n) \to 1$ using the second moment method. Since $2 \log_{1/p} n \gg \sqrt{2 \log_{1/p} n}$ for large $n$, the bound $\frac{T}{\sqrt{2 \log n}} \geq 1-\epsilon$ holds with probability tending to 1. (Note: The $\sqrt{\cdot}$ in the second denominator may be a typo for $2 \log_{1/p} n$, but the statement remains true).
+\end{solution}
+
+\begin{exercise}
+Consider a population of constant size $N+1$ that is suffering from an infectious disease. We can model that spread of the disease as Markov process. Let $X(t)$ be the number of healthy individuals at time $t$ and suppose that $X(0) = N$. We assume that if $X(t) = n$,
+\[
+\lim_{h \to 0} \frac{1}{h}\mathbb{P}(X(t+h) = n-1 | X(t) = n) = \lambda n(N+1-n).
+\]
+
+For $0 \leq s \leq 1$, $0 \leq t$, define
+\[
+G(s,t) := \mathbb{E}(s^{X(t)}).
+\]
+
+Please find a non-trivial partial differential equation for $G(s,t)$, which involves $\partial_t G$.
+
+%
+
+%
+\end{exercise}
+
+\begin{solution}
+Let $P_n(t) = \mathbb{P}(X(t) = n)$. The master equations for the process are:
+\[
+\frac{d}{dt} P_n(t) = -\lambda n(N+1-n) P_n(t) + \lambda (n+1)(N-n) P_{n+1}(t).
+\]
+The probability generating function is $G(s,t) = \sum_{n=0}^N s^n P_n(t)$. Taking the time derivative:
+\[
+\partial_t G = \sum_{n=0}^N s^n \dot{P}_n(t) = -\lambda \sum_{n=0}^N n(N+1-n) s^n P_n + \lambda \sum_{n=0}^{N-1} (n+1)(N-n) s^n P_{n+1}.
+\]
+We identify the terms using $s \partial_s G = \sum n s^n P_n$ and $s^2 \partial_s^2 G + s \partial_s G = \sum n^2 s^n P_n$.
+The first sum is: $-\lambda [ (N+1) s \partial_s G - (s^2 \partial_s^2 G + s \partial_s G) ] = -\lambda [ N s \partial_s G - s^2 \partial_s^2 G ]$.
+The second sum is: $\lambda \sum_{m=1}^N m(N+1-m) s^{m-1} P_m = \frac{\lambda}{s} [ (N+1) s \partial_s G - (s^2 \partial_s^2 G + s \partial_s G) ] = \lambda [ N \partial_s G - s \partial_s^2 G ]$.
+Combining these, we get:
+\[
+\partial_t G = \lambda (N \partial_s G - s \partial_s^2 G) - \lambda s (N \partial_s G - s \partial_s^2 G) = \lambda (1-s) (N \partial_s G - s \partial_s^2 G).
+\]
+This is the required partial differential equation for $G(s,t)$.
+\end{solution}
+

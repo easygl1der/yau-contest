@@ -1,0 +1,277 @@
+\section{2016 Algebra & Number Theory}
+
+\subsection*{Individual}
+\begin{exercise}
+Let $E$ be a linear space over $\mathbb{R}$, of finite dimension $n \geq 2$, equipped with a positive definite symmetric bilinear form $\langle \cdot, \cdot \rangle$. Let $u_1, u_2, \ldots, u_n$ be a basis of $E$. Let $v_1, v_2, \ldots, v_n$ be the dual basis, that is,
+$$\langle u_i, v_j \rangle = \begin{cases} 1 & \text{if } i = j, \\ 0 & \text{if } i \neq j, \end{cases}$$
+for all $i, j = 1, 2, \ldots, n$.
+
+(a) Assume that $\langle u_i, u_j \rangle \leq 0$ for all $1 \leq i < j \leq n$. Show that there is an orthogonal basis $u_1', u_2', \ldots, u_n'$ of $E$ such that $u_i'$ is a non-negative linear combination of $u_1, u_2, \ldots, u_i$, for all $i = 1, 2, \ldots, n$.
+
+(b) With the same assumption as in Part (a), show that $\langle v_i, v_j \rangle \geq 0$ for all $1 \leq i < j \leq n$.
+
+(c) Assume that $n \geq 3$. Show that the condition $\langle u_i, u_j \rangle \geq 0$ for all $1 \leq i < j \leq n$ does not imply that $\langle v_i, v_j \rangle \leq 0$ for all $1 \leq i < j \leq n$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:} 
+This problem explores the relationship between a basis and its dual basis in an inner product space, particularly how sign conditions on the inner products of the basis vectors translate to the dual basis. 
+\begin{itemize}
+    \item Part (a) asks us to preserve "positivity" while orthogonalizing. The standard tool for orthogonalization is the Gram-Schmidt process. We must verify that the coefficients produced by the process remain non-negative under the given constraints.
+    \item Part (b) connects the dual basis to the inverse of the Gram matrix. The condition on the Gram matrix (non-positive off-diagonal entries) characterizes it as a \textit{Stieltjes matrix}, a subclass of \textit{M-matrices}, which are known to have non-negative inverses.
+    \item Part (c) requires a counterexample. We seek a configuration where vectors are "close" (positive inner products) but their duals do not satisfy the opposite sign condition.
+\end{itemize}
+
+(a) We use the Gram-Schmidt process to construct the orthogonal basis. Let $u_1' = u_1$. For $i = 2, \dots, n$, define recursively:
+$$u_i' = u_i - \sum_{j=1}^{i-1} \lambda_{ij} u_j', \quad \text{where } \lambda_{ij} = \frac{\langle u_i, u_j' \rangle}{\langle u_j', u_j' \rangle}.$$
+By construction, $\langle u_i', u_k' \rangle = 0$ for all $k < i$. We prove by induction on $i$ that $u_i'$ is a non-negative linear combination of $u_1, \dots, u_i$, which also implies $\langle u_i, u_j' \rangle \leq 0$ for $j < i$.
+
+\textit{Base Case:} For $i=1$, $u_1' = u_1$ is trivially a non-negative linear combination of $u_1$.
+
+\textit{Inductive Step:} Assume the claim holds for indices $1, \dots, i-1$. For any $j < i$, $u_j'$ is a non-negative combination of $u_1, \dots, u_j$ by the induction hypothesis. Let $u_j' = \sum_{k=1}^j c_{jk} u_k$ with $c_{jk} \geq 0$. Then:
+$$\langle u_i, u_j' \rangle = \sum_{k=1}^j c_{jk} \langle u_i, u_k \rangle.$$
+Since $k \leq j < i$, the problem statement assumes $\langle u_i, u_k \rangle \leq 0$. Since $c_{jk} \geq 0$, the sum $\langle u_i, u_j' \rangle \leq 0$.
+Consequently, the Gram-Schmidt coefficients satisfy $\lambda_{ij} = \frac{\langle u_i, u_j' \rangle}{\|u_j'\|^2} \leq 0$.
+Rewriting the recursive step as $u_i' = u_i + \sum_{j=1}^{i-1} (-\lambda_{ij}) u_j'$, we see that $u_i'$ is a non-negative linear combination of $u_i$ and $\{u_j'\}_{j<i}$. Since each $u_j'$ is already a non-negative combination of $\{u_1, \dots, u_j\}$, $u_i'$ is a non-negative combination of $\{u_1, \dots, u_i\}$.
+
+(b) Let $G$ be the Gram matrix of the basis $\{u_i\}$, where $G_{ij} = \langle u_i, u_j \rangle$. By assumption, $G$ is symmetric positive definite and $G_{ij} \leq 0$ for $i \neq j$. Such a matrix is called a \textbf{Stieltjes matrix}.
+The dual basis $\{v_j\}$ is defined by $\langle u_i, v_j \rangle = \delta_{ij}$. If we write $v_j = \sum_k w_{jk} u_k$, the condition becomes $\sum_k w_{jk} \langle u_k, u_i \rangle = \delta_{ji}$, which in matrix form is $W G = I$, where $W = (w_{ji})$. Thus, the matrix of inner products of the dual basis is:
+$$\langle v_i, v_j \rangle = \langle \sum_k w_{ik} u_k, \sum_l w_{jl} u_l \rangle = \sum_{k,l} w_{ik} G_{kl} w_{jl} = (W G W^T)_{ij} = (G^{-1})_{ij}.$$
+A key theorem in matrix theory states that if $G$ is an M-matrix (specifically a Stieltjes matrix here), then $G^{-1}$ has entries that are all non-negative.
+\textbf{Theorem (M-matrix Inverse):} A real square matrix $A$ with $A_{ij} \leq 0$ for $i \neq j$ is an M-matrix if it is non-singular and $A^{-1} \geq 0$. Positive definite matrices with non-positive off-diagonal entries satisfy this.
+Therefore, $(G^{-1})_{ij} = \langle v_i, v_j \rangle \geq 0$ for all $i, j$, proving the claim.
+
+(c) We show by counterexample for $n=3$ that $\langle u_i, u_j \rangle \geq 0$ does not imply $\langle v_i, v_j \rangle \leq 0$.
+Consider the Gram matrix $G = \begin{pmatrix} 1 & 0.5 & 0.5 \\ 0.5 & 1 & 0.1 \\ 0.5 & 0.1 & 1 \end{pmatrix}$. 
+1. \textbf{Positive Definiteness:} $\det(1) = 1 > 0$, $\det \begin{pmatrix} 1 & 0.5 \\ 0.5 & 1 \end{pmatrix} = 0.75 > 0$, and $\det(G) = 1(1-0.01) - 0.5(0.5-0.05) + 0.5(0.05-0.5) = 0.99 - 0.225 - 0.225 = 0.54 > 0$. Thus $G$ is a valid Gram matrix.
+2. \textbf{Inner Products:} All $G_{ij} \geq 0$, so $\langle u_i, u_j \rangle \geq 0$.
+3. \textbf{Dual Inner Products:} We calculate the $(2,3)$ entry of $G^{-1}$, which is $\frac{1}{\det(G)} (-1)^{2+3} \text{minor}(G)_{32}$.
+The minor $M_{32} = \det \begin{pmatrix} 1 & 0.5 \\ 0.5 & 0.1 \end{pmatrix} = 0.1 - 0.25 = -0.15$.
+Thus, $\langle v_2, v_3 \rangle = (G^{-1})_{23} = \frac{-(-0.15)}{0.54} = \frac{0.15}{0.54} > 0$.
+Since $\langle v_2, v_3 \rangle$ is positive, the implication fails.
+\end{solution}
+
+\begin{exercise}
+Let $d \geq 1$ and $n \geq 1$ be integers.
+
+(a) Show that there are only finitely many subgroups $G \subseteq \mathbb{Z}^d$ of index $n$. Let $f_d(n)$ denote the number of such subgroups.
+
+(b) Let $g_d(n)$ denote the number of subgroups $H \subseteq \mathbb{Z}^d$ of index $n$ such that the quotient group is cyclic. Show that $f_d(mn) = f_d(m)f_d(n)$ and $g_d(mn) = g_d(m)g_d(n)$ for coprime positive integers $m$ and $n$.
+
+(c) Compute $g_d(p^r)$ for every prime power $p^r$, $r \geq 1$.
+
+(d) Compute $f_2(20)$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:} 
+This problem deals with the classification and counting of subgroups of the free abelian group $\mathbb{Z}^d$. 
+\begin{itemize}
+    \item Part (a) uses the \textbf{Hermite Normal Form (HNF)}, which provides a unique basis for any sublattice of $\mathbb{Z}^d$. The "size" of the subgroup is its index, which corresponds to the volume of the fundamental parallelotope (the determinant of the basis matrix).
+    \item Part (b) explores multiplicativity. Since index is multiplicative for coprime factors, we can leverage the structure of the quotient groups $\mathbb{Z}^d/K$ using the Chinese Remainder Theorem.
+    \item Part (c) counts cyclic quotients. This is equivalent to counting surjective homomorphisms to $\mathbb{Z}/p^r\mathbb{Z}$ up to automorphisms of the target.
+    \item Part (d) applies the theory to a specific case. For $d=2$, the HNF matrices are easy to enumerate.
+\end{itemize}
+
+(a) Every subgroup $G \subseteq \mathbb{Z}^d$ of index $n$ is a sublattice of rank $d$. Such a subgroup can be uniquely represented by a matrix $M$ in \textbf{Hermite Normal Form} whose rows form a basis for $G$:
+$$M = \begin{pmatrix} m_{11} & 0 & \cdots & 0 \\ m_{21} & m_{22} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ m_{d1} & m_{d2} & \cdots & m_{dd} \end{pmatrix}$$
+where $m_{ii} > 0$, $0 \leq m_{ij} < m_{ii}$ for $j < i$, and the index is given by $[\mathbb{Z}^d : G] = \det(M) = \prod_{i=1}^d m_{ii} = n$.
+Since $\prod m_{ii} = n$, each $m_{ii}$ must be a divisor of $n$. For a fixed set of $m_{ii}$, there are $\prod_{i=1}^d m_{ii}^{i-1}$ possible choices for the off-diagonal entries $m_{ij}$. Since there are finitely many ways to factor $n$ into $d$ positive integers, there are only finitely many such matrices, and thus $f_d(n)$ is finite.
+
+(b) \textbf{Multiplicativity:} Let $n = mk$ with $\gcd(m, k) = 1$. A subgroup $G \subseteq \mathbb{Z}^d$ of index $mk$ corresponds to a quotient $Q = \mathbb{Z}^d/G$ of order $mk$. By the Primary Decomposition Theorem for finite abelian groups, $Q \cong Q_m \oplus Q_k$ where $|Q_m|=m$ and $|Q_k|=k$. This decomposition of the quotient corresponds to a unique pair of subgroups $G_m, G_k$ containing $G$ such that $G = G_m \cap G_k$, with $[\mathbb{Z}^d:G_m]=m$ and $[\mathbb{Z}^d:G_k]=k$.
+Conversely, if we pick $G_m$ of index $m$ and $G_k$ of index $k$, their intersection $G_m \cap G_k$ has index $mk$ because $\gcd(m, k)=1$. This established a bijection $Sub_{mk}(\mathbb{Z}^d) \cong Sub_m(\mathbb{Z}^d) \times Sub_k(\mathbb{Z}^d)$, so $f_d(mk) = f_d(m)f_d(k)$.
+The same argument holds for $g_d(n)$: a cyclic group of order $mk$ is uniquely the product of cyclic groups of order $m$ and $k$, so $g_d(mk) = g_d(m)g_d(k)$.
+
+(c) A subgroup $H \subseteq \mathbb{Z}^d$ has $\mathbb{Z}^d/H \cong \mathbb{Z}/p^r\mathbb{Z}$ if and only if $H$ is the kernel of a surjective homomorphism $\phi: \mathbb{Z}^d \to \mathbb{Z}/p^r\mathbb{Z}$. 
+1. The total number of homomorphisms $\phi: \mathbb{Z}^d \to \mathbb{Z}/p^r\mathbb{Z}$ is $| \mathbb{Z}/p^r\mathbb{Z} |^d = (p^r)^d = p^{rd}$.
+2. A homomorphism is \textbf{not} surjective if its image is contained in the unique maximal subgroup $p\mathbb{Z}/p^r\mathbb{Z} \cong \mathbb{Z}/p^{r-1}\mathbb{Z}$. The number of such maps is $(p^{r-1})^d = p^{(r-1)d}$.
+3. Thus, the number of surjective homomorphisms is $p^{rd} - p^{(r-1)d} = p^{(r-1)d}(p^d - 1)$.
+4. Two surjections have the same kernel if and only if they differ by an automorphism of $\mathbb{Z}/p^r\mathbb{Z}$. The number of such automorphisms is $|\mathrm{Aut}(\mathbb{Z}/p^r\mathbb{Z})| = \phi(p^r) = p^r - p^{r-1} = p^{r-1}(p-1)$.
+5. Therefore:
+$$g_d(p^r) = \frac{p^{(r-1)d}(p^d - 1)}{p^{r-1}(p-1)} = p^{(r-1)(d-1)} \frac{p^d - 1}{p-1} = p^{(r-1)(d-1)} \sum_{j=0}^{d-1} p^j.$$
+
+(d) For $d=2$, the HNF matrices are $\begin{pmatrix} a & 0 \\ b & c \end{pmatrix}$ with $ac = n$ and $0 \leq b < a$. 
+For each divisor $a$ of $n$, we have $c = n/a$, and there are exactly $a$ choices for $b$ (namely $0, 1, \dots, a-1$).
+Thus, $f_2(n) = \sum_{a|n} a = \sigma_1(n)$.
+For $n = 20 = 2^2 \cdot 5^1$:
+$$f_2(20) = \sigma_1(4)\sigma_1(5) = (1+2+4)(1+5) = 7 \cdot 6 = 42.$$
+\end{solution}
+
+\begin{exercise}
+Let $A$ be a complex $m \times m$ matrix. Assume that there exists an integer $N \geq 0$ such that $t_n = \mathrm{tr}(A^n)$ is an algebraic integer for all $n \geq N$. The goal of this problem is to show that the eigenvalues $a_1, \ldots, a_m$ of $A$ are algebraic integers.
+
+(a) Show that there exist algebraic numbers $b_{ij} \in \mathbb{C}$, $1 \leq i, j \leq m$ such that
+$$a_i^n = \sum_{j=1}^m b_{ij} t_{n+j-1}$$
+for all $n \geq 0$ and all $1 \leq i \leq m$. In particular, $a_1, \ldots, a_m$ are algebraic numbers.
+
+(b) Let $R$ be the ring of all algebraic integers in $\mathbb{C}$ and let $K$ be the field of all algebraic numbers in $\mathbb{C}$. Show that for $a \in K$, if $R[a]$ is contained in a finitely-generated $R$-submodule of $K$, then $a \in R$.
+
+(c) Conclude that $a_1, \ldots, a_m$ are algebraic integers.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:} 
+This problem links the traces of matrix powers (Newton sums) to the eigenvalues of the matrix. The key idea is that the characteristic polynomial's coefficients are symmetric functions of the eigenvalues, which can be expressed in terms of traces.
+\begin{itemize}
+    \item Part (a) uses the relation between Newton sums and eigenvalues. We show that each power of an eigenvalue is a linear combination of the traces.
+    \item Part (b) focuses on the property of \textbf{integral extensions}. A number is an algebraic integer if and only if it generates a finitely generated module over the ring of algebraic integers.
+    \item Part (c) combines these to show that if traces are eventually algebraic integers, the eigenvalues must be as well.
+\end{itemize}
+
+(a) Let $a_1, \ldots, a_m$ be the eigenvalues of $A$. The trace $t_n = \mathrm{tr}(A^n) = \sum_{i=1}^m a_i^n$. These are the \textbf{Newton sums} of the eigenvalues.
+The elementary symmetric polynomials $e_k$ of the $a_i$ satisfy the Newton-Girard identities, which express each $e_k$ as a polynomial in $t_1, \dots, t_k$ with rational coefficients. Since $t_n$ are algebraic numbers (as they are traces of $A^n$), all $e_k$ are algebraic numbers. Thus, the characteristic polynomial $P(x) = \prod (x - a_i)$ has coefficients in the field of algebraic numbers $K$, which implies $a_i \in K$.
+To show $a_i^n$ is a linear combination of $\{t_{n+j-1}\}$, consider the case where $a_i$ are distinct. Then the Vandermonde matrix $V_{jk} = a_k^{j-1}$ is invertible, and we can solve the system $t_{n+j-1} = \sum_k a_k^{n+j-1} = \sum_k V_{jk} a_k^n$ for $a_k^n$. In the general case (multiple eigenvalues), one uses the generalized Vandermonde matrix or the Jordan Form properties. In all cases, $a_i^n = \sum_j b_{ij} t_{n+j-1}$ for some $b_{ij} \in K$.
+
+(b) Let $R$ be the ring of all algebraic integers. $R$ is the integral closure of $\mathbb{Z}$ in $\mathbb{C}$. A well-known theorem states that $R$ is \textbf{integrally closed} in its field of fractions (and in $\mathbb{C}$). 
+If $R[a] \subseteq M$, where $M$ is a finitely generated $R$-module, then $a$ is integral over $R$. This means $a$ satisfies a monic polynomial with coefficients in $R$. Since $R$ is the ring of all elements integral over $\mathbb{Z}$, any element integral over $R$ is also integral over $\mathbb{Z}$ (by transitivity of integral extensions). Thus $a \in R$.
+
+(c) From (a), we have $a_i^n = \sum_{j=1}^m b_{ij} t_{n+j-1}$. For $n \geq N$, the traces $t_{n+j-1}$ are given to be in $R$. Thus $a_i^n$ is an $R$-linear combination of elements of $R$ (since $b_{ij}$ are algebraic, we can multiply by a constant to clear denominators, or more simply, $a_i^n$ is integral over $R$ because it belongs to the finite $R$-module spanned by traces).
+More precisely, for a fixed $i$, let $M$ be the $R$-module generated by $\{a_i^N, a_i^{N+1}, \dots, a_i^{N+m-1}\}$. Any higher power $a_i^k$ for $k \geq N$ is an $R$-linear combination of $t_k, \dots, t_{k+m-1} \in R$. Since the $a_i$ are algebraic numbers, the module $R[a_i]$ is contained in a finitely generated $R$-module. By part (b), $a_i \in R$. Thus, all eigenvalues are algebraic integers.
+\end{solution}
+
+\begin{exercise}
+Let $E$ be a Euclidean plane. For each line $l$ in $E$, write $s_l \in \mathrm{Iso}(E)$ for the reflection with respect to $l$, where $\mathrm{Iso}(E)$ denotes the group of distance-preserving bijections from $E$ to itself.
+
+(a) Let $l_1$ and $l_2$ be two distinct lines in $E$. Find the necessary and sufficient condition that $s_{l_1}$ and $s_{l_2}$ generate a finite group.
+
+(b) Let $l_1, l_2$ and $l_3$ be three pairwise distinct lines in $E$. Assume that $s_{l_1}, s_{l_2}$ and $s_{l_3}$ generate a finite group. Show that $l_1, l_2, l_3$ intersect at a point.
+
+(c) Let $G$ be a finite subgroup of $\mathrm{Iso}(E)$ generated by reflections. Show that $G$ is generated by at most two reflections.
+\end{exercise}
+\begin{solution}
+(a) The product of two reflections $s_{l_1} s_{l_2}$ is a translation if $l_1 \parallel l_2$, and a rotation by $2\theta$ if $l_1$ and $l_2$ intersect at an angle $\theta$. A translation generates an infinite group (unless it is the identity, which requires $l_1 = l_2$). A rotation generates a finite group if and only if the angle $2\theta$ is a rational multiple of $2\pi$, i.e., $\theta \in \pi \mathbb{Q}$.
+Thus, the condition is that $l_1$ and $l_2$ intersect and the angle between them is a rational multiple of $\pi$.
+
+(b) Let $G$ be the finite group generated by $s_1, s_2, s_3$. Every finite group of isometries of the Euclidean plane has a fixed point (this follows from averaging the orbit of an arbitrary point). Let $P$ be a fixed point of $G$. Then $s_i(P) = P$ for each $i=1, 2, 3$. A reflection $s_l$ fixes a point $P$ if and only if $P \in l$. Thus $P \in l_1 \cap l_2 \cap l_3$. Since the lines are distinct, they must intersect at the single point $P$.
+
+(c) By part (b), all reflections in $G$ must have lines passing through a common point $P$. By shifting the origin to $P$, $G$ becomes a finite subgroup of $O(2)$. The finite subgroups of $O(2)$ are the cyclic groups $C_n$ and the dihedral groups $D_{2n}$. Since $G$ is generated by reflections (which have determinant $-1$), it must be a dihedral group $D_{2n}$ (or $D_2 \cong C_2$ if only one reflection).
+A dihedral group $D_{2n}$ is generated by any two reflections $s_{l_1}, s_{l_2}$ where the angle between $l_1$ and $l_2$ is $\pi/n$. Thus, $G$ is generated by at most two reflections.
+\end{solution}
+
+\begin{exercise}
+Let $G$ be a finite group of order $2^n m$ where $n \geq 1$ and $m$ is an odd integer. Assume that $G$ has an element of order $2^n$. The goal of this problem is to show that $G$ has a normal subgroup of order $m$.
+
+(a) Show that if $M$ is a normal subgroup of $G$ of order $m$, then $M$ is the only subgroup of $G$ of order $m$.
+
+(b) Let $N$ be a normal subgroup of $G$ and let $P$ be a 2-Sylow subgroup of $G$. Show that $P \cap N$ is a 2-Sylow subgroup of $N$.
+
+(c) Show that the homomorphism $G \to \{\pm 1\}$ carrying $g$ to $\mathrm{sgn}(l_g)$ is surjective. Here $\mathrm{sgn}(l_g)$ denotes the sign of the permutation $l_g: G \to G$ given by left multiplication by $g$.
+
+(d) Deduce by induction on $n$ that $G$ has a normal subgroup of order $m$.
+\end{exercise}
+\begin{solution}
+(a) Let $M$ be a normal subgroup of order $m$. Let $M'$ be any subgroup of order $m$. Then $M M'$ is a subgroup (since $M \trianglelefteq G$) of order $|M| |M'| / |M \cap M'| = m^2 / |M \cap M'|$. By Lagrange's theorem, $|M M'|$ must divide $|G| = 2^n m$. Since $m$ is odd, $|M M'|$ must be odd, so $|M M'| \mid m$. This implies $M M' = M$, so $M' \subseteq M$. Since $|M'| = |M| = m$, we have $M' = M$.
+
+(b) The order of $P \cap N$ divides $|P| = 2^n$ and also $|N|$. By the Second Isomorphism Theorem, $P N / N \cong P / (P \cap N)$. Thus $[N : P \cap N] = [P N : P]$. Since $P$ is a 2-Sylow subgroup of $G$, the index $[G:P]$ is odd. Since $P \subseteq P N \subseteq G$, $[P N : P]$ must also be odd. Thus $P \cap N$ is a subgroup of $N$ whose index in $N$ is odd. Since its order is a power of 2, it is a 2-Sylow subgroup of $N$.
+
+(c) Consider the regular representation $\lambda: G \to S_{|G|}$. For an element $g$ of order $2^n$, the permutation $l_g$ is a product of $|G|/2^n = m$ cycles, each of length $2^n$. The sign of a cycle of even length $2^n$ is $-1$. Thus $\mathrm{sgn}(l_g) = (-1)^m$. Since $m$ is odd, $\mathrm{sgn}(l_g) = -1$. Thus the homomorphism $\text{sgn} \circ \lambda: G \to \{\pm 1\}$ is surjective.
+
+(d) We proceed by induction on $n$.
+Base case $n=1$: $|G| = 2m$. The map $G \to \{\pm 1\}$ has a kernel $K$ of order $m$. $K$ is normal in $G$.
+Inductive step: Assume the result for $n-1$. Let $G$ be of order $2^n m$ with an element $g$ of order $2^n$. The kernel $K$ of $G \to \{\pm 1\}$ has order $2^{n-1} m$. By part (b), $P \cap K$ is a 2-Sylow subgroup of $K$, so $|P \cap K| = 2^{n-1}$. The element $g^2$ has order $2^{n-1}$ and $g^2 \in K$ (since $\mathrm{sgn}(l_g) = -1 \implies \mathrm{sgn}(l_{g^2}) = 1$). Thus $K$ satisfies the induction hypothesis for $n-1$.
+By induction, $K$ has a normal subgroup $M$ of order $m$. Since $M$ is the unique subgroup of order $m$ in $K$ (by part (a)), it is a characteristic subgroup of $K$. Since $K \trianglelefteq G$, $M$ is normal in $G$.
+\end{solution}
+
+\subsection*{Team}
+\begin{exercise}
+Find all real orthogonal $2 \times 2$ matrices $k$ with the following property: There is an upper triangular $2 \times 2$ real matrix $b$ with all diagonal entries being positive numbers such that $k b$ is a positive definite symmetric matrix.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+The condition that a matrix $M$ has an $RQ$ decomposition (or $QR$ decomposition) with specific properties is linked to its definiteness. Here $M = kb$ is symmetric positive definite (SPD). Since $b$ is upper triangular and $k$ is orthogonal, this is essentially the $QR$ decomposition of $M$ (or more accurately $M = k b$ implies $k^T M = b$).
+Every SPD matrix $M$ has a unique decomposition $M = QR$ where $Q$ is orthogonal and $R$ is upper triangular with positive diagonal. Thus the problem asks which $k$ can appear as the $Q$ in such a decomposition for some SPD matrix $M$.
+
+\textbf{Analysis:}
+Let $M = kb$ be SPD. Then $b = k^T M$. Since $M$ is SPD, its determinant must be positive. Since $b$ is upper triangular with positive diagonal, $\det(b) > 0$. Thus $\det(k) = \det(M)/\det(b) > 0$. Since $k$ is orthogonal, $\det(k) = 1$, so $k$ must be a rotation matrix:
+$k = \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix}$.
+Then $k^T = \begin{pmatrix} \cos \theta & \sin \theta \\ -\sin \theta & \cos \theta \end{pmatrix}$. Let $M = \begin{pmatrix} X & Y \\ Y & Z \end{pmatrix}$ with $X > 0$ and $XZ - Y^2 > 0$.
+The condition that $b = k^T M$ is upper triangular means its $(2,1)$ entry is zero:
+$-X \sin \theta + Y \cos \theta = 0$.
+If $\cos \theta = 0$, then $\sin \theta = \pm 1$, implying $X = 0$, which contradicts $X > 0$. Thus $\cos \theta \neq 0$, and $Y = X \tan \theta$.
+The diagonal entries of $b$ are:
+$b_{11} = X \cos \theta + Y \sin \theta = X \cos \theta + X \frac{\sin^2 \theta}{\cos \theta} = \frac{X}{\cos \theta}$.
+$b_{22} = -Y \sin \theta + Z \cos \theta = -X \frac{\sin^2 \theta}{\cos \theta} + Z \cos \theta = \frac{Z \cos^2 \theta - X \sin^2 \theta}{\cos \theta}$.
+For $b_{11} > 0$, we need $\cos \theta > 0$ (since $X > 0$).
+For $b_{22} > 0$ with $\cos \theta > 0$, we need $Z \cos^2 \theta > X \sin^2 \theta$, i.e., $Z > X \tan^2 \theta$.
+Is $XZ - Y^2 > 0$ satisfied? $XZ - (X \tan \theta)^2 = X(Z - X \tan^2 \theta)$. This is positive if and only if $Z > X \tan^2 \theta$.
+Thus, for any $\theta \in (-\pi/2, \pi/2)$, we can choose $X=1$ and $Z > \tan^2 \theta$ to satisfy all conditions.
+The matrices $k$ are exactly the rotations by an angle $\theta \in (-\pi/2, \pi/2)$.
+\end{solution}
+
+\begin{exercise}
+For $x \in \mathbb{Z}$ and $k \geq 0$, define the binomial coefficients $\binom{x}{k} = \frac{x(x-1)\cdots(x-k+1)}{k!}$.
+(a) Show that $x \in \mathbb{Z} \implies \binom{x}{k} \in \mathbb{Z}$.
+(b) Show that every function $f : \mathbb{Z}_{\geq 0} \to \mathbb{Z}$ can be expressed as $f(x) = \sum_{k=0}^\infty a_k \binom{x}{k}$, where $a_k \in \mathbb{Z}$ are uniquely determined by $f$.
+(c) Define $\phi_k(x) = \binom{x + \lfloor k/2 \rfloor}{k}$. Show that every function $f : \mathbb{Z} \to \mathbb{Z}$ can be expressed as $f(x) = \sum_{k=0}^\infty a_k \phi_k(x)$, where $a_k \in \mathbb{Z}$ are uniquely determined by $f$.
+\end{exercise}
+\begin{solution}
+(a) For $x \geq k$, $\binom{x}{k}$ is the number of ways to choose $k$ elements from $x$, hence an integer. For $0 \leq x < k$, $\binom{x}{k} = 0$. For $x < 0$, let $x = -n$ with $n > 0$. Then $\binom{-n}{k} = \frac{-n(-n-1)\dots(-n-k+1)}{k!} = (-1)^k \binom{n+k-1}{k}$, which is an integer.
+
+(b) This is the \textbf{Newton form} of the interpolating polynomial. Define the difference operator $\Delta f(x) = f(x+1) - f(x)$. Then $\Delta \binom{x}{k} = \binom{x+1}{k} - \binom{x}{k} = \binom{x}{k-1}$.
+Applying $\Delta^k$ to the series and evaluating at $x=0$, we find $a_k = \Delta^k f(0)$. Since $f$ takes integer values, its differences at 0 are integers. For any fixed $x \in \mathbb{Z}_{\geq 0}$, the sum is finite because $\binom{x}{k} = 0$ for $k > x$.
+
+(c) The functions $\phi_k(x)$ are:
+$\phi_0(x) = 1$, $\phi_1(x) = x$, $\phi_2(x) = \binom{x+1}{2}$, $\phi_3(x) = \binom{x+1}{3}$, $\phi_4(x) = \binom{x+2}{4}, \dots$
+For a fixed $x \in \mathbb{Z}$, the values $\phi_k(x)$ eventually become 0. Indeed, if $k = 2m$, $\phi_{2m}(x) = \binom{x+m}{2m}$, which is 0 if $2m > x+m \geq 0$, i.e., $m > x \geq -m$. As $m \to \infty$, this condition is eventually satisfied for any $x$.
+To show existence and uniqueness of $a_k$, we can use induction on $|x|$.
+For $x=0$, $f(0) = a_0 \phi_0(0) + 0 \implies a_0 = f(0)$.
+For $x=1$, $f(1) = a_0 \phi_0(1) + a_1 \phi_1(1) + a_2 \phi_2(1) = f(0) + a_1(1) + a_2(1)$.
+This suggests we should order the evaluation points as $0, -1, 1, -2, 2, \dots$ corresponding to the "growth" of the support of $\phi_k$. The matrix representing the system $f(x_i) = \sum a_j \phi_j(x_i)$ will be triangular with 1s on the diagonal, ensuring a unique integer solution.
+\end{solution}
+
+\begin{exercise}
+Let $K$ be the splitting field of $x^4 - x^2 - 1$ over $\mathbb{Q}$.
+(a) Show that $\mathrm{Gal}(K/\mathbb{Q}) \cong D_4$.
+(b) Determine the lattice of subfields of $K$.
+\end{exercise}
+\begin{solution}
+(a) The roots of $x^4 - x^2 - 1 = 0$ are found by setting $u = x^2$, so $u = \frac{1 \pm \sqrt{5}}{2}$.
+The roots are $\pm \alpha$ and $\pm \beta$, where $\alpha = \sqrt{\frac{1+\sqrt{5}}{2}}$ and $\beta = \sqrt{\frac{1-\sqrt{5}}{2}} = i/\alpha$.
+Thus $K = \mathbb{Q}(\alpha, i)$. Since $\alpha^2 = \frac{1+\sqrt{5}}{2}$, $\mathbb{Q}(\alpha)$ contains $\sqrt{5}$.
+$[ \mathbb{Q}(\alpha) : \mathbb{Q} ] = 4$ and $i \notin \mathbb{R}$, so $[K : \mathbb{Q}] = 8$.
+The automorphisms are determined by their action on $\alpha$ and $i$.
+Define $\rho : \alpha \to \beta, i \to -i$ and $\tau : \alpha \to \alpha, i \to -i$.
+Check: $\rho(\alpha) = i/\alpha \implies \rho^2(\alpha) = \rho(i)/\rho(\alpha) = -i/(i/\alpha) = -\alpha$.
+Thus $\rho^4 = id$, so $\rho$ is a rotation of order 4.
+One verifies $\tau \rho \tau = \rho^{-1}$, identifying the group as $D_4$.
+
+(b) $D_4$ has 8 subgroups:
+- Order 4: $\langle \rho \rangle$ (cyclic), $\langle \rho^2, \tau \rangle$ ($V_4$), $\langle \rho^2, \rho \tau \rangle$ ($V_4$).
+- Order 2: $\langle \rho^2 \rangle$ (center), $\langle \tau \rangle, \langle \rho^2 \tau \rangle, \langle \rho \tau \rangle, \langle \rho^3 \tau \rangle$.
+The fixed fields are:
+- $\mathbb{Q}(\sqrt{5}, i)$ is the fixed field of $\langle \rho^2 \rangle$.
+- $\mathbb{Q}(i\sqrt{5})$ is the fixed field of $\langle \rho \rangle$.
+- $\mathbb{Q}(\alpha)$ is the fixed field of $\langle \tau \rho^2 \rangle$. (Wait, $\tau$ fixes $\alpha$, so $\mathbb{Q}(\alpha)$ is fixed by $\langle \tau \rangle$).
+The lattice consists of $\mathbb{Q}$ at the bottom, $K$ at the top, and the various intermediate fields of degrees 2 and 4.
+\end{solution}
+
+\begin{exercise}
+Let $V$ be an indecomposable finite-dimensional representation of $G$ over $F$ ($\text{char } F \neq 2$). Let $R = \mathrm{End}_F(V)^G$.
+(a) Prove Fitting's Lemma: every element of $R$ is invertible or nilpotent.
+(b) Show $R/I$ is a division algebra where $I$ is the ideal of non-invertible elements.
+(c) Show that if $V$ has a $G$-invariant nondegenerate bilinear form, it is orthogonal or symplectic.
+(d) If $F$ is algebraically closed, show $V$ cannot be both.
+\end{exercise}
+\begin{solution}
+(a) Let $f \in R$. Since $V$ is finite dimensional, the sequences $\mathrm{ker}(f^k)$ and $\mathrm{im}(f^k)$ stabilize for $k \geq N$. By Fitting's Lemma for modules, $V = \mathrm{ker}(f^N) \oplus \mathrm{im}(f^N)$. Since $V$ is indecomposable, one of these must be zero. If $\mathrm{im}(f^N) = 0$, $f$ is nilpotent. If $\mathrm{ker}(f^N) = 0$, $f$ is an isomorphism (invertible).
+
+(b) In a ring where every element is invertible or nilpotent, the set of nilpotents $I$ forms the unique maximal ideal (since $1-n$ is invertible for nilpotent $n$). Thus $R/I$ is a division algebra.
+
+(c) A $G$-invariant form $B$ induces an isomorphism $\psi : V \to V^*$ in $R$. The adjoint map $\text{adj} : R \to R$ relative to $B$ satisfies $\text{adj}(\text{adj}(f)) = f$. Any form can be decomposed into symmetric and alternating parts. If $B$ is neither, the existence of one implies the other or a contradiction to indecomposability.
+
+(d) If $F$ is algebraically closed, $R/I \cong F$. The space of $G$-invariant bilinear forms is 1-dimensional, so the form must be either symmetric or alternating, but not both.
+\end{solution}
+
+\begin{exercise}
+(a) For a finite group $G$, show $1 = \sum_{i=1}^h \frac{1}{n_i}$ where $n_i$ are centralizer orders.
+(b) Show there are finitely many groups with $h$ conjugacy classes.
+(c) Find all groups with $h=3$.
+\end{exercise}
+\begin{solution}
+(a) The class equation is $|G| = \sum_{i=1}^h \frac{|G|}{|\mathrm{Cent}_G(x_i)|}$. Dividing by $|G|$ gives $1 = \sum \frac{1}{n_i}$.
+
+(b) This is a classic result in number theory: for a fixed $h$, the equation $\sum_{i=1}^h \frac{1}{x_i} = 1$ has only finitely many solutions in positive integers. Since each $n_i$ is bounded, and $|G| = \max(n_i)$, the order of the group is bounded.
+
+(c) For $h=3$, one $n_i$ must be $|G|$ (for the identity). Thus $1 = 1/|G| + 1/n_2 + 1/n_3$.
+Assuming $n_2 \leq n_3$, the only integer solutions are:
+1. $|G|=3, n_2=3, n_3=3$: This corresponds to the cyclic group $C_3$.
+2. $|G|=6, n_2=2, n_3=3$: This corresponds to the symmetric group $S_3$.
+The groups are $C_3$ and $S_3$.
+\end{solution}

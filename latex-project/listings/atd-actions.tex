@@ -1,0 +1,49 @@
+\begin{minted}
+  [
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  linenos
+  ]
+  {ocaml}
+  
+(* -------------------------------------------------------------------- *)
+(** Actions *)
+
+(* A path refers to a subterm in the current subgoal, through a [handle]
+    identifying an item of kind [kind], and a list of integers [sub] designating
+    the specific subterm of the item *)
+type pkind = [Hyp | Concl | Var of [Head | Body]]
+type ctxt = { kind : pkind; handle : uid }
+type ipath = { ctxt : ctxt; sub : int list }
+
+(* Trace of a subformula linking, from which the list of rewrite rules to apply
+   can be reconstructed *)
+type choice = (int * (lenv * lenv * expr) option)
+type itrace = choice list
+
+type action = [
+  | AId                                     (* The empty action which does nothing *)
+  | ADef of (name * type_ * expr)           (* Introduction of a local definition *)
+  | AIntro of (int * (expr * type_) option) (* Click on a conclusion *)
+  | AExact of uid                           (* Proof by assumption *)
+  | AElim of (uid * int)                    (* Click on a hypothesis *)
+  | AInd of uid                             (* Click on a variable of inductive type *)
+  | ASimpl of ipath                         (* Simplify contextual action *)
+  | ARed of ipath                           (* Unfold contextual action *)
+  | AIndt of ipath                          (* Induction contextual action *)
+  | APbp of ipath                           (* Proof-by-Pointing contextual action *)
+  | ACase of ipath                          (* Case contextual action *)
+  | ACut of form                            (* Click on +hyp button *)
+  | AGeneralize of uid                      (* Generalization of a hypothesis *)
+  | AMove of (uid * uid option)             (* Reordering of a hypothesis *)
+  | ADuplicate of uid                       (* Duplication of a hypothesis *)
+  | ALink of (ipath * ipath * itrace)       (* DnD action for subformula linking *)
+  | AInstantiate of (expr * ipath)          (* DnD action for instantiating a quantifier *)
+]
+
+(* An action identifier is a pair of an abstract goal and an arbitrary string identifier *)
+type aident = (string * agoal)
+
+\end{minted}

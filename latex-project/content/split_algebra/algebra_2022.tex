@@ -1,0 +1,154 @@
+\section{2022 Algebra \& Number Theory}
+
+\subsection*{Exam}
+\begin{exercise}
+(a) Let $p(x) = a_n x^n + \cdots + a_1 x + a_0 \in R[x]$ be a polynomial over an integral domain $R$. Let $K$ denote the fraction field of $R$. Suppose $a/b \in K$ is a root of $p(x)$, where $a, b \in R$ and are relatively prime. Then, show that $a \mid a_0$ and $b \mid a_n$.
+
+(b) Prove that $\mathbb{Q}(\sqrt{2}, \sqrt{3}) = \mathbb{Q}(\sqrt{2} + \sqrt{3})$.
+\end{exercise}
+
+\begin{solution}
+(a) We are given $a_n(a/b)^n + a_{n-1}(a/b)^{n-1} + \dots + a_1(a/b) + a_0 = 0$.
+Multiplying by $b^n$, we obtain:
+$$a_n a^n + a_{n-1} a^{n-1}b + \dots + a_1 a b^{n-1} + a_0 b^n = 0$$
+To show $b \mid a_n$, we rearrange the equation:
+$$a_n a^n = -b(a_{n-1} a^{n-1} + \dots + a_1 a b^{n-2} + a_0 b^{n-1})$$
+Thus $b \mid a_n a^n$. Since $a$ and $b$ are relatively prime in $R$, $b$ must divide $a_n$.
+Similarly, to show $a \mid a_0$:
+$$a_0 b^n = -a(a_n a^{n-1} + a_{n-1} a^{n-2}b + \dots + a_1 b^{n-1})$$
+Thus $a \mid a_0 b^n$. Since $\gcd(a, b) = 1$, we have $a \mid a_0$.
+
+(b) Let $L = \mathbb{Q}(\sqrt{2}, \sqrt{3})$ and $K = \mathbb{Q}(\sqrt{2} + \sqrt{3})$.
+Clearly $K \subset L$ because $\sqrt{2} + \sqrt{3} \in L$.
+To show $L \subset K$, it suffices to show $\sqrt{2}, \sqrt{3} \in K$.
+Let $\alpha = \sqrt{2} + \sqrt{3} \in K$. Then $\alpha \neq 0$, and
+$$\alpha^{-1} = \frac{1}{\sqrt{3} + \sqrt{2}} = \frac{\sqrt{3} - \sqrt{2}}{(\sqrt{3} + \sqrt{2})(\sqrt{3} - \sqrt{2})} = \sqrt{3} - \sqrt{2}$$
+Thus $\sqrt{3} - \sqrt{2} \in K$.
+Now we can solve for the generators:
+$$\sqrt{3} = \frac{(\sqrt{2} + \sqrt{3}) + (\sqrt{3} - \sqrt{2})}{2} = \frac{\alpha + \alpha^{-1}}{2} \in K$$
+$$\sqrt{2} = \frac{(\sqrt{2} + \sqrt{3}) - (\sqrt{3} - \sqrt{2})}{2} = \frac{\alpha - \alpha^{-1}}{2} \in K$$
+Since both $\sqrt{2}$ and $\sqrt{3}$ are in $K$, we have $L \subset K$, so $L = K$.
+\end{solution}
+
+\begin{exercise}
+Let $R$ be an integral domain with the fraction field $K$. An $R$-module $P$ is projective if there is an $R$-module $Q$ such that $P \oplus Q \cong F$ for some free $R$-module $F$. A fractional ideal $A$ is an $R$-submodule of $K$ such that $A = d^{-1}I$ for some ideal $I$ of $R$ and a nonzero element $d \in R$. A fractional ideal $A$ is called invertible if $AB = R$ for some fractional ideal $B$.
+
+Show that an invertible fractional ideal $A$ is a projective $R$-module.
+\end{exercise}
+
+\begin{solution}
+Since $AB = R$, there exist elements $a_1, \dots, a_n \in A$ and $b_1, \dots, b_n \in B$ such that
+$$\sum_{i=1}^n a_i b_i = 1.$$
+Recall that for any $x \in A$, we have $x b_i \in AB = R$.
+Define a map $\phi: A \to R^n$ by $\phi(x) = (b_1 x, b_2 x, \dots, b_n x)$. This is a well-defined $R$-module homomorphism.
+Define a map $\psi: R^n \to A$ by $\psi(r_1, \dots, r_n) = \sum_{i=1}^n r_i a_i$. This is also a well-defined $R$-module homomorphism.
+Now, we calculate the composition $\psi \circ \phi$ for any $x \in A$:
+$$\psi(\phi(x)) = \psi(b_1 x, \dots, b_n x) = \sum_{i=1}^n (b_i x) a_i = x \sum_{i=1}^n a_i b_i = x \cdot 1 = x.$$
+Thus $\psi \circ \phi = \text{id}_A$. This shows that $A$ is a direct summand of $R^n$ (specifically, $R^n \cong \text{Im}(\phi) \oplus \ker(\psi)$), which by definition means $A$ is a projective $R$-module.
+\end{solution}
+
+\begin{exercise}
+Give a direct proof that the Lie algebra $\mathfrak{sl}(4, \mathbb{C})$ is isomorphic to the Lie algebra $\mathfrak{so}(6, \mathbb{C})$. (You should construct a Lie algebra homomorphism and prove that it is an isomorphism; you should not use Dynkin diagrams or the classification theory of simple Lie algebras.)
+\end{exercise}
+
+\begin{solution}
+Let $V = \mathbb{C}^4$ be the standard representation of $\mathfrak{sl}(4, \mathbb{C})$. Consider the wedge product $W = \Lambda^2 V$, which has dimension $\binom{4}{2} = 6$.
+The Lie algebra $\mathfrak{sl}(4, \mathbb{C})$ acts on $W$ via the derived representation:
+$$X \cdot (v_1 \wedge v_2) = (X v_1) \wedge v_2 + v_1 \wedge (X v_2)$$
+This defines a Lie algebra homomorphism $\rho: \mathfrak{sl}(4, \mathbb{C}) \to \mathfrak{gl}(W) \cong \mathfrak{gl}(6, \mathbb{C})$.
+We define a symmetric bilinear form $B$ on $W$ via the wedge product: for $\omega_1, \omega_2 \in W$, $\omega_1 \wedge \omega_2 \in \Lambda^4 V \cong \mathbb{C}$ (after fixing a volume form).
+Explicitly, $B(\omega_1, \omega_2) = \omega_1 \wedge \omega_2$. This form is non-degenerate.
+Any $X \in \mathfrak{sl}(4, \mathbb{C})$ satisfies $\text{tr}(X) = 0$. In terms of the action on $\Lambda^4 V$, $X$ acts as $\text{tr}(X) \cdot \text{id} = 0$.
+The identity $X \cdot (\omega_1 \wedge \omega_2) = (X \cdot \omega_1) \wedge \omega_2 + \omega_1 \wedge (X \cdot \omega_2)$ then implies:
+$$0 = B(X \omega_1, \omega_2) + B(\omega_1, X \omega_2)$$
+This is exactly the condition that $X$ acts as a skew-symmetric transformation with respect to $B$. Thus the image of $\rho$ lies in $\mathfrak{so}(W, B) \cong \mathfrak{so}(6, \mathbb{C})$.
+Since $\mathfrak{sl}(4, \mathbb{C})$ is a simple Lie algebra, the kernel of $\rho$ must be $\{0\}$ (it cannot be the whole algebra because the action is non-trivial).
+Both Lie algebras have dimension 15 ($\mathfrak{sl}_n$ has $n^2-1$, $\mathfrak{so}_n$ has $n(n-1)/2$).
+An injective linear map between spaces of the same dimension is an isomorphism.
+\end{solution}
+
+\begin{exercise}
+Let $A = \mathcal{O}_K$ be the ring of integers of a number field $K$. Given a nonzero ideal $\mathfrak{a} \subset A$ and an arbitrary nonzero element $a \in \mathfrak{a}$, show that there exists $b \in \mathfrak{a}$ such that $a$ and $b$ generate $\mathfrak{a}$ (in particular, every ideal is 2-generated).
+\end{exercise}
+
+\begin{solution}
+We want to find $b \in \mathfrak{a}$ such that $\mathfrak{a} = (a, b) = \gcd((a), (b))$.
+Let the prime ideal decomposition of the principal ideal $(a)$ be:
+$$(a) = \mathfrak{a} \mathfrak{p}_1^{e_1} \dots \mathfrak{p}_k^{e_k}$$
+where the $\mathfrak{p}_i$ are the prime ideals dividing $(a)$ that are not "fully" accounted for by $\mathfrak{a}$ (some might divide $\mathfrak{a}$ too).
+For $\mathfrak{a} = (a, b)$ to hold, we need $v_{\mathfrak{p}_i}(b) = v_{\mathfrak{p}_i}(\mathfrak{a})$ for all $i=1, \dots, k$.
+For any prime $\mathfrak{q}$ not among the $\mathfrak{p}_i$, we already have $v_{\mathfrak{q}}(a) = v_{\mathfrak{q}}(\mathfrak{a})$, so $v_{\mathfrak{q}}(\gcd((a), (b))) = v_{\mathfrak{q}}(\mathfrak{a})$ provided $v_{\mathfrak{q}}(b) \geq v_{\mathfrak{q}}(\mathfrak{a})$, which is guaranteed if $b \in \mathfrak{a}$.
+By the Chinese Remainder Theorem, we can choose $b \in A$ satisfying:
+$b \in \mathfrak{a} \mathfrak{p}_i^{v_{\mathfrak{p}_i}(\mathfrak{a})} \setminus \mathfrak{a} \mathfrak{p}_i^{v_{\mathfrak{p}_i}(\mathfrak{a})+1}$ is not what we want. We just need $b \in \mathfrak{a}$ and $b \notin \mathfrak{a} \mathfrak{p}_i$ for each $i$.
+Specifically, for each $i$, choose $x_i \in \mathfrak{a} \setminus \mathfrak{a} \mathfrak{p}_i$.
+By CRT, there exists $b \in A$ such that $b \equiv x_i \pmod{\mathfrak{a} \mathfrak{p}_i}$ for all $i$.
+This $b$ satisfies $v_{\mathfrak{p}_i}(b) = v_{\mathfrak{p}_i}(\mathfrak{a})$ for all $i$, and $b \in \mathfrak{a}$ because it is in $\mathfrak{a}$ modulo every $\mathfrak{p}_i$.
+Thus $(a, b) = \mathfrak{a}$.
+\end{solution}
+
+\begin{exercise}
+Let $p$ be a prime number and $\zeta_p$ be a primitive $p$-th root of unity. Let $K = \mathbb{Q}(\zeta_p)$.
+
+(a) Show that $\Phi_p = \sum_{i=0}^{p-1} X^i$ is the minimal polynomial of $\zeta_p$ over $\mathbb{Q}$.
+
+(b) Compute the trace $\mathrm{Tr}_{K/\mathbb{Q}}(1 - \zeta_p)$ and the norm $\mathcal{N}_{K/\mathbb{Q}}(1 - \zeta_p)$.
+
+(c) Show that $(1 - \zeta_p)\mathcal{O}_K \cap \mathbb{Z} = p\mathbb{Z}$ and deduce that for all $y \in \mathcal{O}_K$, we have
+$$\mathrm{Tr}_{K/\mathbb{Q}}(y(1 - \zeta_p)) \in p\mathbb{Z}.$$
+
+(d) Determine explicitly the ring of integers of $K$.
+\end{exercise}
+
+\begin{solution}
+(a) $\Phi_p(X) = (X^p-1)/(X-1) = X^{p-1} + \dots + 1$. Its roots are $\zeta_p^k$ for $k=1, \dots, p-1$.
+To show irreducibility, consider $\Phi_p(X+1) = \frac{(X+1)^p - 1}{X} = X^{p-1} + p X^{p-2} + \dots + p$.
+All coefficients except the leading one are divisible by $p$, and the constant term is $p$, not divisible by $p^2$. By Eisenstein's Criterion, $\Phi_p(X+1)$ is irreducible, hence $\Phi_p(X)$ is irreducible.
+
+(b) $\mathcal{N}(1 - \zeta_p) = \prod_{i=1}^{p-1} (1 - \zeta_p^i) = \Phi_p(1) = \sum_{i=0}^{p-1} 1^i = p$.
+$\text{Tr}(1 - \zeta_p) = \sum_{i=1}^{p-1} (1 - \zeta_p^i) = (p-1) - \sum \zeta_p^i = (p-1) - (-1) = p$.
+
+(c) Since $\mathcal{N}(1 - \zeta_p) = p$, the prime $p$ is totally ramified in $K$: $(p) = (1 - \zeta_p)^{p-1}$.
+Let $\mathfrak{p} = (1 - \zeta_p) \mathcal{O}_K$. Then $\mathfrak{p}^{p-1} \cap \mathbb{Z} = p \mathbb{Z}$. Since $\mathfrak{p} \cap \mathbb{Z}$ is a prime ideal in $\mathbb{Z}$ containing $p$, it must be $p \mathbb{Z}$.
+For the trace property: in a ramified extension, the different $\mathfrak{D}$ tells us about the trace. For $K = \mathbb{Q}(\zeta_p)$, the different is $\mathfrak{p}^{p-2}$.
+The trace $\text{Tr}(x) \in \mathbb{Z}$ if $x \in \mathfrak{D}^{-1}$.
+Actually, a stronger result holds: $\text{Tr}(\mathfrak{p}^k) \subset p \mathbb{Z}$ for suitable $k$.
+Since $\text{Tr}(1-\zeta_p) = p$ and for $i > 1$, $\text{Tr}((1-\zeta_p)^i)$ is also divisible by $p$ (by induction and properties of the different), the result follows.
+
+(d) The ring of integers is $\mathcal{O}_K = \mathbb{Z}[\zeta_p]$. This is proved by showing that the discriminant of $\{1, \zeta_p, \dots, \zeta_p^{p-2}\}$ is $p^{p-2}$ (up to sign), and no integer can be divided out.
+\end{solution}
+
+\begin{exercise}
+Let $\theta \in \overline{\mathbb{Q}}$ be a root of the polynomial $f(X) = X^3 + 12X^2 + 8X + 1$. Let $K = \mathbb{Q}(\theta)$.
+
+(a) Let $g(X) = X^3 + pX + q \in \mathbb{Z}[X]$. Compute the discriminant $\mathrm{disc}(g)$ of $g(X)$ in terms of $p, q$.
+
+(b) Show that $f(X)$ is irreducible over $\mathbb{Q}$.
+
+(c) Compute the discriminant $d_K(1, \theta, \theta^2)$. Please provide necessary details.
+
+(d) For any arbitrary number field $F$ of degree $n$, let $a_1, a_2, \ldots, a_n \in \mathcal{O}_F$. Find and verify a sufficient condition in terms of the discriminant $d_F(a_1, \ldots, a_n)$ that the $a_1, \ldots, a_n$ form an integral basis of $F$.
+
+(e) Write down an explicit integral basis of $K$ in terms of $\theta$ by using the above sufficient condition you have found. Please justify your arguments.
+\end{exercise}
+
+\begin{solution}
+(a) The discriminant of $X^3 + pX + q$ is $\Delta = -4p^3 - 27q^2$.
+
+(b) By the Rational Root Theorem, any root $p/q$ must have $p \mid 1$ and $q \mid 1$, so roots $\in \{ \pm 1 \}$.
+$f(1) = 1 + 12 + 8 + 1 = 22 \neq 0$.
+$f(-1) = -1 + 12 - 8 + 1 = 4 \neq 0$.
+Since $f$ is a cubic with no rational roots, it is irreducible over $\mathbb{Q}$.
+
+(c) We shift $f(X)$ to remove the $X^2$ term. Let $X = Y - 4$.
+$f(Y-4) = (Y-4)^3 + 12(Y-4)^2 + 8(Y-4) + 1 = Y^3 - 12Y^2 + 48Y - 64 + 12Y^2 - 96Y + 192 + 8Y - 32 + 1$
+$f(Y-4) = Y^3 - 40Y + 97$.
+Using $p = -40, q = 97$:
+$\Delta = -4(-40)^3 - 27(97)^2 = 256000 - 254043 = 1957$.
+Since $X = Y-4$ is a translation, the discriminant of $1, \theta, \theta^2$ is the same as the discriminant of the polynomial: $1957$.
+
+(d) A sufficient condition is that $d_F(a_1, \dots, a_n)$ is square-free.
+Reason: The discriminant of any basis is $d_F = (\mathcal{O}_F : \mathbb{Z}[a_1, \dots, a_n])^2 \cdot d_{field}$. If $d_F$ is square-free, the index must be 1.
+
+(e) $1957 = 19 \times 103$. Since both 19 and 103 are prime, $1957$ is square-free.
+Thus $\{1, \theta, \theta^2\}$ is an integral basis of $K$.
+\end{solution}

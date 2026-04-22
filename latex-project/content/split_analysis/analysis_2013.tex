@@ -1,0 +1,208 @@
+\section{2013 Analysis & Differential Equations}
+
+\subsection{Individual}
+
+\begin{exercise}
+Suppose that $f$ is an integrable function on $\mathbb{R}^d$. For each $\alpha>0$, let $E_{\alpha}=\{x\mid |f(x)|>\alpha\}$. Prove that:
+\[
+\int_{\mathbb{R}^d}|f(x)|\,dx = \int_0^{\infty} m(E_{\alpha})\,d\alpha.
+\]
+\end{exercise}
+
+\begin{solution}
+We use Fubini's theorem (or specifically Tonelli's theorem for non-negative functions) to express the integral of $|f(x)|$ as a double integral. Note that for any $x \in \mathbb{R}^d$, we have:
+\[
+|f(x)| = \int_0^{|f(x)|} 1 \, d\alpha = \int_0^\infty \chi_{\{\alpha < |f(x)|\}}(\alpha) \, d\alpha
+\]
+where $\chi$ denotes the characteristic function. Substituting this into the integral over $\mathbb{R}^d$, we get:
+\[
+\int_{\mathbb{R}^d} |f(x)| \, dx = \int_{\mathbb{R}^d} \left( \int_0^\infty \chi_{\{\alpha < |f(x)|\}}(\alpha) \, d\alpha \right) dx.
+\]
+Since the integrand $\chi_{\{\alpha < |f(x)|\}}(\alpha)$ is non-negative and measurable on $\mathbb{R}^d \times (0, \infty)$, we can swap the order of integration by Tonelli's theorem:
+\[
+\int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty \left( \int_{\mathbb{R}^d} \chi_{\{\alpha < |f(x)|\}}(x) \, dx \right) d\alpha.
+\]
+The inner integral is exactly the measure of the set where $|f(x)| > \alpha$:
+\[
+\int_{\mathbb{R}^d} \chi_{\{x \mid |f(x)| > \alpha\}}(x) \, dx = m(\{x \in \mathbb{R}^d \mid |f(x)| > \alpha\}) = m(E_\alpha).
+\]
+Thus, we obtain:
+\[
+\int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty m(E_\alpha) \, d\alpha.
+\]
+\end{solution}
+
+\begin{exercise}
+Let $p(z)$ be a polynomial of degree $d\geq 2$, with distinct roots $a_1,a_2,\cdots,a_d$. Show that
+\[
+\sum_{i=1}^d \frac{1}{p'(a_i)} = 0.
+\]
+\end{exercise}
+
+\begin{solution}
+Consider the rational function $f(z) = \frac{1}{p(z)}$. Since $p(z)$ is a polynomial of degree $d \geq 2$ with distinct roots $a_1, \dots, a_d$, the function $f(z)$ has simple poles at each $a_i$. The residue of $f(z)$ at $z = a_i$ is given by:
+\[
+\text{Res}(f, a_i) = \lim_{z \to a_i} (z - a_i) \frac{1}{p(z)} = \frac{1}{p'(a_i)}.
+\]
+By the Residue Theorem, if $C_R$ is a circle of radius $R$ centered at the origin that encloses all roots $a_1, \dots, a_d$, then:
+\[
+\oint_{C_R} \frac{1}{p(z)} \, dz = 2\pi i \sum_{i=1}^d \text{Res}(f, a_i) = 2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)}.
+\]
+Now we analyze the behavior of the integral as $R \to \infty$. Since $p(z)$ is a polynomial of degree $d$, for large $|z|$, we have $|p(z)| \geq C |z|^d$ for some constant $C > 0$. Therefore, on the circle $C_R$ ($|z| = R$):
+\[
+\left| \frac{1}{p(z)} \right| \leq \frac{1}{C R^d}.
+\]
+The length of the contour $C_R$ is $2\pi R$. Thus, the integral is bounded by:
+\[
+\left| \oint_{C_R} \frac{1}{p(z)} \, dz \right| \leq 2\pi R \cdot \frac{1}{C R^d} = \frac{2\pi}{C R^{d-1}}.
+\]
+Since $d \geq 2$, the exponent $d-1 \geq 1$, so as $R \to \infty$, the integral tends to $0$:
+\[
+\lim_{R \to \infty} \oint_{C_R} \frac{1}{p(z)} \, dz = 0.
+\]
+It follows that:
+\[
+2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)} = 0 \implies \sum_{i=1}^d \frac{1}{p'(a_i)} = 0.
+\]
+\end{solution}
+
+\begin{exercise}
+Let $\alpha$ be a number such that $\alpha/\pi$ is not a rational number. Show that:
+
+\begin{itemize}
+\item $\lim_{N\to\infty} \sum_{n=1}^N e^{ik(x+n\alpha)} = \frac{1}{2\pi}\int_{-\pi}^{\pi} e^{ikt}\,dt$ for $k=-2$.
+\end{itemize}
+
+For every continuous periodic function $f:\mathbb{R}\to\mathbb{C}$ of period $2\pi$, we have
+\[
+\lim_{N\to\infty} \frac{1}{N}\sum_{n=1}^N f(x+n\alpha) = \frac{1}{2\pi}\int_{-\pi}^{\pi} f(t)\,dt.
+\]
+\end{exercise}
+
+\begin{solution}
+First, consider the case $f(t) = e^{ikt}$ for an integer $k$.
+If $k = 0$, then $f(t) = 1$. The sum is $\frac{1}{N} \sum_{n=1}^N 1 = 1$, and the integral is $\frac{1}{2\pi} \int_{-\pi}^\pi 1 \, dt = 1$. The equality holds.
+If $k \neq 0$, the integral is $\frac{1}{2\pi} \int_{-\pi}^\pi e^{ikt} \, dt = 0$.
+The sum is:
+\[
+\frac{1}{N} \sum_{n=1}^N e^{ik(x+n\alpha)} = \frac{e^{ikx}}{N} \sum_{n=1}^N (e^{ik\alpha})^n = \frac{e^{ikx}}{N} e^{ik\alpha} \frac{1 - e^{ikN\alpha}}{1 - e^{ik\alpha}}.
+\]
+Since $\alpha/\pi \notin \mathbb{Q}$, $k\alpha$ is not a multiple of $2\pi$, so $e^{ik\alpha} \neq 1$ and the denominator is non-zero. The numerator is bounded in absolute value by $|e^{ikx} \cdot e^{ik\alpha} \cdot 2| = 2$. Thus:
+\[
+\left| \frac{1}{N} \sum_{n=1}^N e^{ik(x+n\alpha)} \right| \leq \frac{1}{N} \cdot \frac{2}{|1 - e^{ik\alpha}|} \to 0 \text{ as } N \to \infty.
+\]
+This proves the result for any $k \neq 0$, including $k = -2$ (note: the problem statement for $k=-2$ seems to missing a $1/N$ factor in the limit expression, which is corrected in the general formulation).
+
+Now let $f$ be any continuous $2\pi$-periodic function. By the Stone-Weierstrass theorem, $f$ can be uniformly approximated by trigonometric polynomials. For any $\epsilon > 0$, there exists a trigonometric polynomial $P(t) = \sum_{k=-M}^M c_k e^{ikt}$ such that $\sup_t |f(t) - P(t)| < \epsilon$.
+Then:
+\[
+\left| \frac{1}{N} \sum_{n=1}^N f(x+n\alpha) - \int f \right| \leq \left| \frac{1}{N} \sum (f - P) \right| + \left| \frac{1}{N} \sum P - \int P \right| + \left| \int P - \int f \right|
+\]
+where $\int$ denotes $\frac{1}{2\pi} \int_{-\pi}^\pi$.
+The first and third terms are bounded by $\epsilon$. The middle term tends to 0 as $N \to \infty$ because it is a finite linear combination of terms that tend to 0. Since $\epsilon$ is arbitrary, the limit holds.
+\end{solution}
+
+\begin{exercise}
+Let $u$ be a positive harmonic function over the punctured complex plane $\mathbb{C}\setminus\{0\}$. Show that $u$ must be a constant function.
+\end{exercise}
+
+\begin{solution}
+Consider the universal covering map $p: \mathbb{C} \to \mathbb{C} \setminus \{0\}$ given by $p(z) = e^z$.
+Define $v(z) = u(e^z)$. Since $u$ is harmonic on $\mathbb{C} \setminus \{0\}$, $v$ is harmonic on $\mathbb{C}$ (the composition of a harmonic function with a holomorphic function is harmonic).
+Because $u$ is a positive function, $v$ is also a positive harmonic function on the entire complex plane $\mathbb{C} \cong \mathbb{R}^2$.
+Liouville's theorem for harmonic functions states that any harmonic function on $\mathbb{R}^n$ that is bounded from below (or above) must be constant.
+Since $v(z) > 0$ for all $z \in \mathbb{R}^2$, it is bounded from below, and therefore $v$ is constant.
+Since $v(z) = u(e^z)$ is constant and the map $e^z$ is surjective onto $\mathbb{C} \setminus \{0\}$, the original function $u$ must also be constant.
+\end{solution}
+
+\begin{exercise}
+Suppose $H=L^2(B)$, $B$ is the unit ball in $\mathbb{R}^d$. Let $K(x,y)$ be a measurable function on $B\times B$ that satisfies
+\[
+|K(x,y)| \leq A|x-y|^{-d+\alpha}
+\]
+for some $\alpha>0$, whenever $x,y\in B$. Define
+\[
+Tf(x) = \int_B K(x,y)f(y)\,dy.
+\]
+
+\begin{itemize}
+\item Prove that $T$ is a bounded operator on $H$.
+\item Prove that $T$ is compact.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{1. Boundedness:}
+We use Schur's Test. An operator $T$ with kernel $K$ is bounded on $L^2$ if there exist constants $C_1, C_2$ such that:
+\[
+\int_B |K(x,y)| \, dy \leq C_1 \text{ for a.e. } x \in B, \quad \int_B |K(x,y)| \, dx \leq C_2 \text{ for a.e. } y \in B.
+\]
+Given $|K(x,y)| \leq A |x-y|^{-d+\alpha}$, we compute:
+\[
+\int_B |x-y|^{-d+\alpha} \, dy \leq \int_{|z| \leq 2} |z|^{-d+\alpha} \, dz
+\]
+where we used the fact that for $x, y \in B$, $|x-y| \leq 2$. In polar coordinates in $\mathbb{R}^d$:
+\[
+\int_{|z| \leq 2} |z|^{-d+\alpha} \, dz = \omega_{d-1} \int_0^2 r^{-d+\alpha} r^{d-1} \, dr = \omega_{d-1} \int_0^2 r^{\alpha-1} \, dr = \omega_{d-1} \frac{2^\alpha}{\alpha} < \infty
+\]
+where $\omega_{d-1}$ is the surface area of the unit sphere. Since the kernel is symmetric in its bound, the same estimate holds for the integral over $x$. Thus $T$ is bounded on $L^2(B)$.
+
+\textbf{2. Compactness:}
+Define a sequence of kernels $K_n(x,y) = K(x,y)$ if $|x-y| \geq 1/n$ and $0$ otherwise.
+Each $K_n$ is a bounded function on $B \times B$ (since $|x-y| \geq 1/n$ implies $|K| \leq A n^{d-\alpha}$).
+Since $B$ is a set of finite measure, $K_n \in L^2(B \times B)$.
+A kernel operator is Hilbert-Schmidt if its kernel is in $L^2(B \times B)$. Hilbert-Schmidt operators are compact.
+Now we show that $T_n \to T$ in the operator norm. $T - T_n$ is the operator with kernel $G_n(x,y) = K(x,y)$ if $|x-y| < 1/n$.
+By the same Schur's test estimate:
+\[
+\|T - T_n\| \leq \sup_x \int_{|x-y| < 1/n} A |x-y|^{-d+\alpha} \, dy = A \omega_{d-1} \int_0^{1/n} r^{\alpha-1} \, dr = \frac{A \omega_{d-1}}{\alpha n^\alpha}.
+\]
+As $n \to \infty$, $\|T - T_n\| \to 0$. Since $T$ is the limit of compact operators in the operator norm, $T$ is compact.
+\end{solution}
+
+\begin{exercise}
+Let $A$ be an $n\times n$ real non-degenerate symmetric matrix. For $\lambda\in\mathbb{R}^+$, define:
+\[
+\int_{\mathbb{R}^n} \exp\left(i\lambda x^2\right)dx = \lim_{\epsilon\to 0^+}\int_{-\infty}^{\infty} \exp\left(i\lambda x^2 - \frac{1}{2}\epsilon x^2\right)dx.
+\]
+Show that:
+\[
+\int_{\mathbb{R}^n} \exp\left(i\frac{\lambda}{2}\langle Ax,x\rangle - i\langle x,\xi\rangle\right)dx = \left(\frac{2\pi}{\lambda}\right)^{n/2}|\det A|^{-1/2}\exp\left(-\frac{i}{2\lambda}\langle A^{-1}\xi,\xi\rangle\right)\exp\left(\frac{i\pi}{4}\operatorname{sgn}A\right).
+\]
+
+Here $\lambda\in\mathbb{R}^+$, $\xi\in\mathbb{R}^n$, $\operatorname{sgn}(A) = \nu_+(A) - \nu_-(A)$, where $\nu_+(A)$ ($\nu_-(A)$) is the number of positive (negative) eigenvalues of $A$.
+\end{exercise}
+
+\begin{solution}
+Let $A = Q D Q^T$ be the spectral decomposition of $A$, where $Q$ is orthogonal and $D = \text{diag}(\mu_1, \dots, \mu_n)$ is the diagonal matrix of eigenvalues.
+Change variables $x = Q y$. Then $dx = dy$, $\langle Ax, x \rangle = \sum \mu_j y_j^2$, and $\langle x, \xi \rangle = \langle y, Q^T \xi \rangle = \sum y_j \eta_j$ where $\eta = Q^T \xi$.
+The integral factorizes:
+\[
+\int_{\mathbb{R}^n} \exp\left(i \sum \left( \frac{\lambda}{2} \mu_j y_j^2 - \eta_j y_j \right) \right) dy = \prod_{j=1}^n \int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j \right) dy_j.
+\]
+Completing the square in the exponent: $i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j = i \frac{\lambda \mu_j}{2} \left( y_j - \frac{\eta_j}{\lambda \mu_j} \right)^2 - \frac{i \eta_j^2}{2 \lambda \mu_j}$.
+The 1D integral is:
+\[
+I_j = \exp\left( - \frac{i \eta_j^2}{2 \lambda \mu_j} \right) \int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} z^2 \right) dz.
+\]
+Using the definition $\int \exp(ia z^2) = \sqrt{\pi/|a|} \exp(i \frac{\pi}{4} \text{sgn}(a))$:
+\[
+\int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} z^2 \right) dz = \sqrt{\frac{2\pi}{\lambda |\mu_j|}} \exp\left( i \frac{\pi}{4} \text{sgn}(\mu_j) \right).
+\]
+Multiplying all $I_j$ together:
+\[
+\prod_{j=1}^n \sqrt{\frac{2\pi}{\lambda |\mu_j|}} \exp\left( i \frac{\pi}{4} \text{sgn}(\mu_j) \right) \exp\left( - \frac{i \eta_j^2}{2 \lambda \mu_j} \right) = \left( \frac{2\pi}{\lambda} \right)^{n/2} \left( \prod |\mu_j| \right)^{-1/2} \exp\left( \frac{i \pi}{4} \sum \text{sgn}(\mu_j) \right) \exp\left( - \frac{i}{2\lambda} \sum \frac{\eta_j^2}{\mu_j} \right).
+\]
+Observe that:
+\begin{itemize}
+    \item $\prod |\mu_j| = |\det A|$.
+    \item $\sum \text{sgn}(\mu_j) = \nu_+(A) - \nu_-(A) = \text{sgn}(A)$.
+    \item $\sum \frac{\eta_j^2}{\mu_j} = \langle D^{-1} \eta, \eta \rangle = \langle D^{-1} Q^T \xi, Q^T \xi \rangle = \langle Q D^{-1} Q^T \xi, \xi \rangle = \langle A^{-1} \xi, \xi \rangle$.
+\end{itemize}
+Substituting these back gives the desired result:
+\[
+\left( \frac{2\pi}{\lambda} \right)^{n/2} |\det A|^{-1/2} \exp\left( \frac{i \pi}{4} \text{sgn}(A) \right) \exp\left( - \frac{i}{2\lambda} \langle A^{-1} \xi, \xi \rangle \right).
+\]
+\end{solution}
+
+

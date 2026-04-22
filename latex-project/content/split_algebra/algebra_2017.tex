@@ -1,0 +1,182 @@
+\section{2017 Algebra & Number Theory}
+
+\subsection*{Individual}
+\begin{exercise}
+Let $\mathbb{Q}_p$ denote the field of $p$-adic numbers and let $\mathbb{Z}_p$ denote the ring of $p$-adic integers ($p$ is a prime number).
+
+(a) Show that for every integer $k \geq 0$, $(p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p \cong \mathbb{Z}/p^k\mathbb{Z}$ as abelian groups.
+
+(b) Determine the endomorphism ring of the abelian group $(p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p$ ($k \geq 0$).
+
+(c) Determine the endomorphism ring of the abelian group $\mathbb{Q}_p/\mathbb{Z}_p$.
+
+(d) Determine the endomorphism ring of the abelian group $\mathbb{Q}/\mathbb{Z}$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem explores the structure of quotients of $p$-adic groups and their endomorphism rings. 
+\begin{itemize}
+    \item Part (a) relates the fractional $p$-adic integers to cyclic groups by looking at the precision of the $p$-adic expansion.
+    \item Parts (b), (c), and (d) require identifying the endomorphism rings of various torsion abelian groups. A key tool here is the property of the Prüfer $p$-group and the decomposition of $\mathbb{Q}/\mathbb{Z}$.
+\end{itemize}
+
+(a) An element $x \in p^{-k}\mathbb{Z}_p$ can be written as $x = \sum_{i=-k}^{\infty} a_i p^i$ where $a_i \in \{0, 1, \dots, p-1\}$. In the quotient $(p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p$, two elements are equivalent if their difference lies in $\mathbb{Z}_p$ (i.e., their $p^i$ coefficients for $i \geq 0$ match). Thus, any element in the quotient has a unique representative of the form:
+$$x = \sum_{i=-k}^{-1} a_i p^i = \frac{1}{p^k} \sum_{j=0}^{k-1} a_{j-k} p^j = \frac{m}{p^k},$$
+where $m = \sum_{j=0}^{k-1} a_{j-k} p^j \in \{0, 1, \dots, p^k-1\}$. 
+The map $\phi: (p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p \to \mathbb{Z}/p^k\mathbb{Z}$ defined by $m/p^k \mapsto m \pmod{p^k}$ is a well-defined group isomorphism.
+
+(b) Since $(p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p \cong \mathbb{Z}/p^k\mathbb{Z}$ as abelian groups, its endomorphism ring as a group is $\mathrm{End}_{\mathbb{Z}}(\mathbb{Z}/p^k\mathbb{Z})$. For any cyclic group $C_n$, the endomorphism ring is isomorphic to $\mathbb{Z}/n\mathbb{Z}$ (where an endomorphism is determined by the image of a generator). Thus, the endomorphism ring is $\mathbb{Z}/p^k\mathbb{Z}$.
+
+(c) The group $\mathbb{Q}_p/\mathbb{Z}_p$ is the union of the increasing chain of subgroups $(p^{-k}\mathbb{Z}_p)/\mathbb{Z}_p$ for $k \geq 1$. It is isomorphic to the Prüfer $p$-group $\mathbb{Z}[p^\infty]$.
+An endomorphism $f$ of $\mathbb{Z}[p^\infty]$ must map each subgroup $C_{p^k} = \langle 1/p^k \rangle$ into itself (as it is the unique subgroup of order $p^k$). Thus $f|_{C_{p^k}}$ is multiplication by some $a_k \in \mathbb{Z}/p^k\mathbb{Z}$. Compatibility $f|_{C_{p^{k}}} = f|_{C_{p^{k+1}}}|_{C_{p^k}}$ implies $a_{k+1} \equiv a_k \pmod{p^k}$.
+This defines an element of the inverse limit $\varprojlim \mathbb{Z}/p^k\mathbb{Z}$, which is exactly the ring of $p$-adic integers $\mathbb{Z}_p$.
+Thus, $\mathrm{End}(\mathbb{Q}_p/\mathbb{Z}_p) \cong \mathbb{Z}_p$.
+
+(d) The group $\mathbb{Q}/\mathbb{Z}$ can be decomposed into its $p$-primary components:
+$$\mathbb{Q}/\mathbb{Z} \cong \bigoplus_{p} \mathbb{Z}[p^\infty].$$
+Since $\mathbb{Z}[p^\infty]$ and $\mathbb{Z}[l^\infty]$ have no non-zero homomorphisms between them for distinct primes $p \neq l$ (as every element in the first has order a power of $p$, and the second is $p$-divisible but contains no $p$-torsion besides 0), any endomorphism $f$ of the direct sum must preserve each component.
+Thus, $\mathrm{End}(\mathbb{Q}/\mathbb{Z}) \cong \prod_p \mathrm{End}(\mathbb{Z}[p^\infty]) \cong \prod_p \mathbb{Z}_p$.
+This ring is known as the ring of profinite integers $\hat{\mathbb{Z}}$.
+\end{solution}
+
+\begin{exercise}
+Let $A$ be a finite abelian group and let $\phi: A \to A$ be an endomorphism. Put
+$$A_{\mathrm{nil}} := \{x \in A \mid \phi^k(x) = 0 \text{ for some } k \geq 1\}.$$
+
+(a) Show that there is a subgroup $A_0$ of $A$ such that $\phi$ restricts to an automorphism of $A_0$ and $A = A_0 \oplus A_{\mathrm{nil}}$.
+
+(b) Show that such a subgroup is unique.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem is a version of \textbf{Fitting's Lemma} applied to finite abelian groups. 
+\begin{itemize}
+    \item Part (a) asks for a decomposition into a "persistent" part and a "vanishing" part. Since $A$ is finite, the chains of kernels and images must stabilize.
+    \item Part (b) focuses on the uniqueness, which follows from the specific characterization of the components derived in part (a).
+\end{itemize}
+
+(a) Consider the two chains of subgroups:
+$$A \supseteq \phi(A) \supseteq \phi^2(A) \supseteq \dots$$
+$$0 \subseteq \ker \phi \subseteq \ker \phi^2 \subseteq \dots$$
+Since $A$ is finite, both chains must stabilize. Let $N$ be such that $\phi^N(A) = \phi^{N+1}(A) = \dots$ and $\ker \phi^N = \ker \phi^{N+1} = \dots$. 
+Let $A_0 = \phi^N(A)$ and $A_{\mathrm{nil}} = \ker \phi^N$.
+1. \textbf{Automorphism on $A_0$:} By definition, $\phi$ maps $A_0 = \phi^N(A)$ onto $\phi^{N+1}(A) = A_0$. Since $A_0$ is finite, a surjective endomorphism is an automorphism.
+2. \textbf{Direct Sum Decomposition:} 
+   - \textbf{Intersection:} If $x \in A_0 \cap A_{\mathrm{nil}}$, then $x = \phi^N(y)$ for some $y \in A$, and $\phi^N(x) = 0$. Thus $\phi^{2N}(y) = 0$, so $y \in \ker \phi^{2N} = \ker \phi^N$. Then $x = \phi^N(y) = 0$.
+   - \textbf{Sum:} By the Rank-Nullity theorem for finite groups (or modules), $|A| = |\phi^N(A)| \cdot |\ker \phi^N| = |A_0| \cdot |A_{\mathrm{nil}}|$. Since the intersection is zero, the product of their sizes equals the size of their sum, hence $A = A_0 \oplus A_{\mathrm{nil}}$.
+
+(b) Suppose there exists another subgroup $B$ such that $A = B \oplus A_{\mathrm{nil}}$ and $\phi|_B$ is an automorphism.
+Since $\phi|_B$ is an automorphism, $\phi^N|_B$ is also an automorphism. Thus $\phi^N(B) = B$.
+Since $B \subseteq A$, we have $B = \phi^N(B) \subseteq \phi^N(A) = A_0$.
+However, the decomposition $A = B \oplus A_{\mathrm{nil}}$ implies $|B| = |A|/|A_{\mathrm{nil}}|$. 
+From part (a), we also know $|A_0| = |A|/|A_{\mathrm{nil}}|$.
+Thus $|B| = |A_0|$. Since $B \subseteq A_0$ and they are finite groups of the same size, we must have $B = A_0$.
+The subgroup $A_{\mathrm{nil}}$ is uniquely determined by the definition in the problem. Thus the decomposition is unique.
+\end{solution}
+
+\begin{exercise}
+Let $L/F$ be a Galois field extension, not necessarily finite. Let $x \in L$.
+
+(a) Show that the set $\mathcal{P}$ of subextensions of $L/F$ not containing $x$ has a maximal element $E$. Let $K/E$ be a nontrivial finite extension contained in $L$. Show that $x \in K$.
+
+(b) Let $K'$ be the Galois closure of $K/E$ in $L$. Show that there exists $g \in G = \mathrm{Gal}(K'/E)$ such that $gx \neq x$.
+
+(c) Deduce that $K/E$ is a cyclic Galois extension.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem explores the properties of extensions that are "maximal" with respect to excluding a specific element.
+\begin{itemize}
+    \item Part (a) is a standard application of Zorn's Lemma. The existence of a maximal element often reveals that the extension is "simple" or has a unique minimal subextension.
+    \item Part (b) uses the fundamental theorem of Galois theory. If an element is moved by the Galois group, it cannot be in the base field.
+    \item Part (c) requires showing that the Galois group of the extension has a very restrictive structure (a unique maximal subgroup), which characterizes cyclic $p$-groups.
+\end{itemize}
+
+(a) Let $\mathcal{P} = \{ E' \mid F \subseteq E' \subseteq L, x \notin E' \}$.
+1. \textbf{Non-empty:} $F \in \mathcal{P}$ because $x \in L \setminus F$ (if $x \in F$, no such $E$ exists, but the problem implies $x$ is not in $F$).
+2. \textbf{Chains:} For any chain $\{E_i\}$ in $\mathcal{P}$, the union $\bigcup E_i$ is a subfield. Since $x \notin E_i$ for all $i$, $x \notin \bigcup E_i$. Thus the union is in $\mathcal{P}$.
+3. \textbf{Maximality:} By Zorn's Lemma, $\mathcal{P}$ has a maximal element $E$.
+If $K/E$ is a nontrivial finite extension, then $E \subsetneq K$. By the maximality of $E$ in $\mathcal{P}$, we must have $K \notin \mathcal{P}$, which means $x \in K$.
+
+(b) Since $L/F$ is Galois, $L/E$ is also Galois. Let $K'$ be the Galois closure of $K/E$ in $L$. Then $K'/E$ is a finite Galois extension.
+Since $x \in K \subseteq K'$ and $x \notin E$, the element $x$ is not fixed by all elements of $\mathrm{Gal}(K'/E)$. By the Galois correspondence, $E = (K')^{\mathrm{Gal}(K'/E)}$. Thus there must exist some $g \in \mathrm{Gal}(K'/E)$ such that $gx \neq x$.
+
+(c) Every nontrivial subextension of $L/E$ contains $x$ (by part a). Thus $E(x)$ is the \textbf{unique minimal subextension} of $L/E$.
+Let $K/E$ be any finite extension. Its Galois closure $K'/E$ is a finite Galois extension. Every subfield of $K'$ must contain $E(x)$.
+By the Galois correspondence, every proper subgroup of $G = \mathrm{Gal}(K'/E)$ must be contained in the subgroup $H = \mathrm{Gal}(K'/E(x))$.
+A finite group $G$ has a unique maximal subgroup if and only if $G$ is a cyclic group of prime power order $p^n$.
+1. If $G$ is a cyclic $p$-group, then $K'/E$ is a cyclic Galois extension.
+2. Since all subextensions of a cyclic extension are Galois, $K$ must be Galois over $E$.
+3. Thus $K/E$ is a cyclic Galois extension.
+\end{solution}
+
+\begin{exercise}
+The goal of this problem is to prove the Chevalley-Warning theorem. Let $p$ be a prime number and $q$ a power of $p$.
+
+(a) Let $0 \leq a < q - 1$ be an integer. Show that $S(X^a) := \sum_{x \in \mathbb{F}_q} x^a$ equals 0. Here we adopt the convention $x^0 = 1$ in $\mathbb{F}_q$ even for $x = 0$.
+
+(b) Let $f_1, \ldots, f_m \in \mathbb{F}_q[X_1, \ldots, X_n]$ be polynomials in $n$ variables satisfying
+$$\sum_{i=1}^m \deg(f_i) < n.$$
+Show that
+$$S(P) := \sum_{(x_1,\ldots,x_n) \in \mathbb{F}_q^n} P(x_1,\ldots,x_n) = 0$$
+where $P = \prod_{i=1}^m (1 - f_i^{q-1})$.
+
+Deduce that $p$ divides the cardinality of the set
+$$V = \{(x_1, \ldots, x_n) \in \mathbb{F}_q^n \mid f_i(x_1, \ldots, x_n) = 0 \quad \forall i\}.$$
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This is the classic proof of the Chevalley-Warning theorem, which states that a system of polynomials with few variables over a finite field has a number of solutions divisible by the characteristic.
+\begin{itemize}
+    \item Part (a) is a lemma about sums of powers in finite fields. The symmetry of the field ensures these sums vanish unless the power is a multiple of $q-1$.
+    \item Part (b) constructs a "characteristic function" for the common zeros of the polynomials. By comparing the degree of this function to the number of variables, we can show the total sum vanishes using the lemma from (a).
+\end{itemize}
+
+(a) If $a = 0$, $S(X^0) = \sum_{x \in \mathbb{F}_q} 1 = q \cdot 1 = 0$ in $\mathbb{F}_q$ (since $\mathrm{char}(\mathbb{F}_q) = p$).
+If $0 < a < q - 1$, let $g$ be a generator of the cyclic group $\mathbb{F}_q^\times$. Then $g^a \neq 1$. We have:
+$$S(X^a) = 0^a + \sum_{x \in \mathbb{F}_q^\times} x^a = \sum_{j=0}^{q-2} (g^j)^a = \sum_{j=0}^{q-2} (g^a)^j = \frac{(g^a)^{q-1} - 1}{g^a - 1}.$$
+Since $(g^a)^{q-1} = (g^{q-1})^a = 1^a = 1$, the numerator is 0, so $S(X^a) = 0$.
+
+(b) Consider a monomial $X_1^{a_1} \dots X_n^{a_n}$. Its sum over $\mathbb{F}_q^n$ is:
+$$\sum_{(x_1,\dots,x_n) \in \mathbb{F}_q^n} x_1^{a_1} \dots x_n^{a_n} = \prod_{i=1}^n \left( \sum_{x_i \in \mathbb{F}_q} x_i^{a_i} \right).$$
+This product is non-zero if and only if every factor is non-zero. From part (a), this requires $a_i$ to be a non-zero multiple of $q-1$ for all $i$. Thus, for the sum to be non-zero, we must have $\sum a_i \geq n(q-1)$.
+Now consider $P = \prod_{i=1}^m (1 - f_i^{q-1})$. The degree of $P$ is:
+$$\deg(P) = \sum_{i=1}^m (q-1) \deg(f_i) = (q-1) \sum_{i=1}^m \deg(f_i) < (q-1)n.$$
+Every monomial in $P$ has total degree less than $(q-1)n$. By the observation above, the sum of each such monomial over $\mathbb{F}_q^n$ is 0. Thus $S(P) = 0$.
+Finally, for any $x \in \mathbb{F}_q^n$, note that $1 - f_i(x)^{q-1}$ is 1 if $f_i(x) = 0$ and 0 if $f_i(x) \neq 0$ (by Fermat's Little Theorem in $\mathbb{F}_q$).
+Thus $P(x) = 1$ if $x \in V$ and $P(x) = 0$ if $x \notin V$.
+The sum $S(P) = \sum_{x \in \mathbb{F}_q^n} P(x)$ is simply the cardinality of $V$ modulo $p$.
+Since $S(P) = 0$, we have $|V| \equiv 0 \pmod p$.
+\end{solution}
+
+\begin{exercise}
+In this problem, all matrices are $n \times n$ with complex entries. Let $U$ and $V$ be matrices such that $UV \neq VU$. Assume that $U$ is diagonalizable and commutes with $VUV^{-1}$.
+
+(a) For $\lambda, \mu \in \mathbb{C}$, let
+$$E_{\lambda,\mu} = \{x \in \mathbb{C}^n \mid Ux = \lambda x, \quad VUV^{-1}x = \mu x\}.$$
+Show that there exist couples $(\lambda_1, \mu_1) \neq (\lambda_2, \mu_2)$ satisfying $\lambda_i \neq \mu_i$ and $E_{\lambda_i, \mu_i} \neq 0$ for $i = 1, 2$.
+
+(b) For a matrix $A$, we define $\mathrm{N}(A) := \mathrm{tr}(A^*A)$, where $A^* = \bar{A}^T$ is the conjugate transpose of $A$. Assume that $U$ and $V$ are unitary. Deduce that $\mathrm{N}(1 + V) \geq 4$.
+\end{exercise}
+\begin{solution}
+\textbf{Motivation and Strategy:}
+This problem explores the constraints on matrices that "almost" commute, specifically when a matrix commutes with its own conjugate.
+\begin{itemize}
+    \item Part (a) uses the fact that commuting diagonalizable matrices are simultaneously diagonalizable. The condition $UV \neq VU$ implies that $U$ and its conjugate $VUV^{-1}$ are not identical, forcing diversity in the joint eigenvalues.
+    \item Part (b) relates the matrix norm to the trace of $V$. The previous part provides information about the structure of $V$ (it must "swap" eigenspaces), which bounds the trace.
+\end{itemize}
+
+(a) Let $W = VUV^{-1}$. Since $U$ is diagonalizable and $W$ is a conjugate of $U$, $W$ is also diagonalizable. Since $U$ and $W$ commute, they are simultaneously diagonalizable. Thus, $\mathbb{C}^n$ is the direct sum of the joint eigenspaces $E_{\lambda, \mu}$.
+Note that $V$ maps the $\lambda$-eigenspace of $U$ to the $\lambda$-eigenspace of $W$. Indeed, if $Ux = \lambda x$, then $W(Vx) = (VUV^{-1})Vx = VUx = V(\lambda x) = \lambda (Vx)$.
+If for all $E_{\lambda, \mu} \neq 0$ we had $\lambda = \mu$, then $U$ and $W$ would coincide on all joint eigenspaces, implying $U = W$, which contradicts $UV \neq VU$. Thus there exists at least one pair $(\lambda_1, \mu_1)$ with $\lambda_1 \neq \mu_1$ s.t. $E_{\lambda_1, \mu_1} \neq 0$.
+Now consider the sum of eigenvalues. $\mathrm{tr}(U) = \sum \lambda \cdot \dim(E_{\lambda, \mu})$ and $\mathrm{tr}(W) = \sum \mu \cdot \dim(E_{\lambda, \mu})$. Since $U$ and $W$ are conjugate, $\mathrm{tr}(U) = \mathrm{tr}(W)$.
+$$\sum_{\lambda, \mu} (\lambda - \mu) \dim(E_{\lambda, \mu}) = 0.$$
+If there were only one pair $(\lambda_1, \mu_1)$ with $\lambda_1 \neq \mu_1$ and $E_{\lambda_1, \mu_1} \neq 0$, the sum would be $(\lambda_1 - \mu_1) \dim(E_{\lambda_1, \mu_1}) = 0$, implying $\lambda_1 = \mu_1$, a contradiction. Thus there must be at least two such distinct pairs.
+
+(b) For any matrix $A$, $N(A)$ is the squared Frobenius norm. For a unitary matrix $V$:
+$$N(1+V) = \mathrm{tr}((I+V^*)(I+V)) = \mathrm{tr}(I + V^* + V + V^*V) = \mathrm{tr}(2I + V + V^*) = 2n + 2\mathrm{Re}(\mathrm{tr}(V)).$$
+From part (a), $V$ maps $E_{\lambda, \mu}$ to $E_{\mu, \lambda'}$. If we restrict to the simplest case $n=2$ where eigenvalues are $\lambda, \mu$ with $\lambda \neq \mu$, then $V$ must map $E_{\lambda, \mu}$ to $E_{\mu, \lambda}$. In the basis of joint eigenvectors, $V$ has the form $\begin{pmatrix} 0 & a \\ b & 0 \end{pmatrix}$.
+The trace of such a matrix is 0. Then $N(1+V) = 2(2) + 0 = 4$.
+In the general case, $V$ permutes the joint eigenspaces $E_{\lambda, \mu}$. Since $V$ is unitary and swaps (at least) two distinct joint eigenspaces, its diagonal entries in the joint eigenbasis corresponding to these spaces are 0. The trace will be minimized when $V$ has the maximum number of such "off-diagonal" blocks. For the components where $\lambda = \mu$, $V$ acts as a unitary on $E_{\lambda, \lambda}$, but for the parts where $\lambda \neq \mu$, $V$ is purely off-diagonal. The minimum occurs when $n=2$ and $V$ is a swap, yielding 4.
+\end{solution}
+

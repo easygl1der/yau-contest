@@ -1,0 +1,179 @@
+\section{2010 Applied \& Computational Mathematics}
+
+\subsection{Individual}
+
+\begin{exercise}
+(1) Suppose
+\[
+S = \begin{bmatrix} \sigma & \mathbf{u}^T \\ 0 & S_c \end{bmatrix}, \quad T = \begin{bmatrix} \tau & \mathbf{v}^T \\ 0 & T_c \end{bmatrix}, \quad \mathbf{b} = \begin{bmatrix} \beta \\ \mathbf{b}_c \end{bmatrix},
+\]
+where $\sigma, \tau$ and $\beta$ are scalars, $S_c$ and $T_c$ are $n$-by-$n$ matrices, and $\mathbf{b}_c$ is an $n$-vector. Show that if there exists a vector $\mathbf{x}_c$ such that $(S_c T_c - \lambda I) \mathbf{x}_c = \mathbf{b}_c$ and $\mathbf{w}_c = T_c \mathbf{x}_c$ is available, then
+\[
+\mathbf{x} = \begin{bmatrix} \gamma \\ \mathbf{x}_c \end{bmatrix}, \quad \gamma = \frac{\beta - \sigma \mathbf{v}^T \mathbf{x}_c - \mathbf{u}^T \mathbf{w}_c}{\sigma \tau - \lambda}
+\]
+solves $(ST - \lambda I) \mathbf{x} = \mathbf{b}$.
+
+(2) Hence or otherwise, derive an $O(n^2)$ algorithm for solving the linear system $(U_1 U_2 - \lambda I) \mathbf{x} = \mathbf{b}$ where $U_1$ and $U_2$ are $n$-by-$n$ upper triangular matrices, and $(U_1 U_2 - \lambda I)$ is nonsingular. Please write down your algorithm and prove that it is indeed of $O(n^2)$ complexity.
+
+(3) Hence or otherwise, derive an $O(pn^2)$ algorithm for solving the linear system $(U_1 U_2 \cdots U_p - \lambda I) \mathbf{x} = \mathbf{b}$ where $\{U_i\}_{i=1}^p$ are all $n$-by-$n$ upper triangular matrices, and $(U_1 U_2 \cdots U_p - \lambda I)$ is nonsingular. Please write down your algorithm and prove that it is indeed of $O(pn^2)$ complexity.
+\end{exercise}
+
+\begin{solution}
+\textbf{Part (1):}
+Compute $ST$:
+\[
+ST = \begin{bmatrix} \sigma & \mathbf{u}^T \\ 0 & S_c \end{bmatrix} \begin{bmatrix} \tau & \mathbf{v}^T \\ 0 & T_c \end{bmatrix} = \begin{bmatrix} \sigma \tau & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c \end{bmatrix}.
+\]
+The system $(ST - \lambda I)\mathbf{x} = \mathbf{b}$ becomes:
+\[
+\begin{bmatrix} \sigma \tau - \lambda & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c - \lambda I \end{bmatrix} \begin{bmatrix} \gamma \\ \mathbf{x}_c \end{bmatrix} = \begin{bmatrix} \beta \\ \mathbf{b}_c \end{bmatrix}.
+\]
+The second block equation is $(S_c T_c - \lambda I)\mathbf{x}_c = \mathbf{b}_c$, which is given.
+The first block equation is:
+\[
+(\sigma \tau - \lambda)\gamma + (\sigma \mathbf{v}^T + \mathbf{u}^T T_c)\mathbf{x}_c = \beta.
+\]
+Substituting $\mathbf{w}_c = T_c \mathbf{x}_c$:
+\[
+(\sigma \tau - \lambda)\gamma + \sigma \mathbf{v}^T \mathbf{x}_c + \mathbf{u}^T \mathbf{w}_c = \beta.
+\]
+Solving for $\gamma$:
+\[
+\gamma = \frac{\beta - \sigma \mathbf{v}^T \mathbf{x}_c - \mathbf{u}^T \mathbf{w}_c}{\sigma \tau - \lambda}.
+\]
+This proves the identity.
+
+\textbf{Part (2):}
+We use induction on the matrix size $n$.
+For $n=1$, it's a scalar equation.
+For $n > 1$, let $U_1, U_2$ be upper triangular. We can partition them as in Part (1), where $\sigma = (U_1)_{11}$, $\tau = (U_2)_{11}$, and $S_c, T_c$ are the $(n-1) \times (n-1)$ trailing submatrices of $U_1, U_2$ respectively.
+The algorithm:
+1. Base case: If $n=1$, $x = b / (u_{11} v_{11} - \lambda)$.
+2. Recursive step:
+   a. Solve the smaller system $(S_c T_c - \lambda I) \mathbf{x}_c = \mathbf{b}_c$ to find $\mathbf{x}_c$.
+   b. Compute $\mathbf{w}_c = T_c \mathbf{x}_c$ (Matrix-vector multiplication with upper triangular matrix).
+   c. Compute $\gamma$ using the formula from Part (1).
+Complexity analysis:
+- Let $C(n)$ be the cost for size $n$.
+- $C(n) = C(n-1) + \text{cost}(\text{triangular matrix-vector mult}) + \text{cost}(\text{inner products}) + O(1)$.
+- Cost of $T_c \mathbf{x}_c$ where $T_c$ is $(n-1)\times(n-1)$ triangular is $(n-1)^2/2$ multiplications and additions.
+- Cost of inner products $\mathbf{v}^T \mathbf{x}_c$ and $\mathbf{u}^T \mathbf{w}_c$ is $O(n)$.
+- $C(n) = C(n-1) + \frac{1}{2}n^2 + O(n)$.
+- Summing up: $C(n) \approx \sum_{k=1}^n \frac{1}{2}k^2 \approx \frac{1}{6}n^3$? Wait, something is wrong.
+Actually, we don't need a full matrix-vector multiplication at each step if we are careful.
+Wait, if $U_2$ is upper triangular, $T_c \mathbf{x}_c$ only involves the submatrix.
+Actually, the standard back-substitution for triangular systems is $O(n^2)$. Here $U_1 U_2$ is upper triangular. The product of two upper triangular matrices is upper triangular.
+Solving $(U - \lambda I) \mathbf{x} = \mathbf{b}$ where $U$ is upper triangular takes $O(n^2)$ by back-substitution.
+If we compute $U = U_1 U_2$ first, it takes $O(n^3)$. But we can avoid it.
+In the formula, we need $T_c \mathbf{x}_c$. As we descend the recursion (from $n$ to $1$), the total work for all $\mathbf{w}_c$ computations is $\sum O(k) = O(n^2)$? No, matrix-vector is $O(k^2)$.
+Wait, the "Hence" suggests using the formula. Let's look closer.
+To solve $(U_1 U_2 - \lambda I) \mathbf{x} = \mathbf{b}$:
+$\gamma_k$ depends on $\mathbf{x}_{k+1:n}$.
+$w_k = (U_2 \mathbf{x})_k$.
+Since $U_2$ is upper triangular, $w_k = \sum_{j=k}^n (U_2)_{kj} x_j$.
+The formula for $x_k$ is:
+$x_k = \frac{b_k - (U_1)_{kk} \sum_{j=k+1}^n (U_2)_{kj} x_j - \sum_{j=k+1}^n (U_1)_{kj} w_j}{(U_1)_{kk}(U_2)_{kk} - \lambda}$.
+At step $k$ (counting from $n$ down to 1):
+1. Compute $w_k = (U_2)_{kk} x_k + \sum_{j=k+1}^n (U_2)_{kj} x_j$.
+2. Compute $x_{k-1}$ using previous $x_j, w_j$.
+Total complexity: Each $x_k$ and $w_k$ takes $O(n-k)$ work. Total is $\sum O(n-k) = O(n^2)$.
+
+\textbf{Part (3):}
+For $p$ matrices, let $M = U_1 \cdots U_p$.
+We can solve $(U_1 (U_2 \cdots U_p) - \lambda I)\mathbf{x} = \mathbf{b}$.
+This requires solving $(U_2 \cdots U_p - \lambda I)$ internally? No, that's not quite right because the $\lambda$ stays with the identity.
+Actually, we can define a sequence of vectors $\mathbf{w}^{(1)}, \dots, \mathbf{w}^{(p)}$ where $\mathbf{w}^{(p)} = \mathbf{x}$, $\mathbf{w}^{(p-1)} = U_p \mathbf{w}^{(p)}$, $\mathbf{w}^{(p-2)} = U_{p-1} \mathbf{w}^{(p-1)}$, etc.
+By induction on $p$ and $n$, we can maintain the state of all partial products.
+For each row $i = n, n-1, \dots, 1$:
+For each matrix $j = p, p-1, \dots, 1$, compute the $i$-th component of the partial products.
+The complexity is $O(p n^2)$ because we do $O(n^2)$ work for each of the $p$ matrices.
+\end{solution}
+
+\begin{exercise}
+(1) Let $A \in \mathbb{R}^{m \times n}$. Show that there exists an $m$-by-$m$ orthogonal matrix $U$ and an $n$-by-$n$ orthogonal matrix $V$ such that $U^T A V = \text{diag}(\sigma_1, \dots, \sigma_p)$, where $p = \min\{m, n\}$ and $\sigma_1 \geq \sigma_2 \geq \dots \geq \sigma_p \geq 0$.
+
+(2) Let $\text{rank}(A) = r$. Show that for any positive integer $k < r$
+\[
+\min_{\text{rank}(B) = k} \| A - B \|_2 = \sigma_{k+1}.
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{Part (1):}
+This is the Singular Value Decomposition (SVD).
+Consider the matrix $A^T A$. It is symmetric and positive semi-definite. Thus, it has an orthonormal basis of eigenvectors $v_1, \dots, v_n$ with eigenvalues $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_n \geq 0$.
+Let $\sigma_i = \sqrt{\lambda_i}$. Let $r$ be the number of non-zero $\sigma_i$.
+For $i \leq r$, define $u_i = \frac{1}{\sigma_i} A v_i$.
+Then $\{u_1, \dots, u_r\}$ are orthonormal:
+$u_i^T u_j = \frac{1}{\sigma_i \sigma_j} v_i^T A^T A v_j = \frac{1}{\sigma_i \sigma_j} v_i^T (\lambda_j v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij}$.
+Extend $\{u_i\}$ to an orthonormal basis of $\mathbb{R}^m$.
+Then $A v_i = \sigma_i u_i$ for $i \leq r$, and $A v_i = 0$ for $i > r$.
+In matrix form, $A V = U \Sigma \implies U^T A V = \Sigma$.
+
+\textbf{Part (2):}
+This is the Eckart-Young-Mirsky Theorem.
+Let $A = \sum_{i=1}^r \sigma_i u_i v_i^T$. Let $B_k = \sum_{i=1}^k \sigma_i u_i v_i^T$.
+Then $\| A - B_k \|_2 = \| \sum_{i=k+1}^r \sigma_i u_i v_i^T \|_2 = \sigma_{k+1}$.
+To show this is the minimum, let $B$ be any matrix with rank $k$.
+The null space of $B$, $\mathcal{N}(B)$, has dimension $n-k$.
+The subspace $V_{k+1} = \text{span}\{v_1, \dots, v_{k+1}\}$ has dimension $k+1$.
+Since $(n-k) + (k+1) = n+1 > n$, there exists a unit vector $z \in \mathcal{N}(B) \cap V_{k+1}$.
+$z = \sum_{i=1}^{k+1} \alpha_i v_i$ with $\sum \alpha_i^2 = 1$.
+$\| (A-B)z \|_2^2 = \| Az \|_2^2 = \| \sum_{i=1}^{k+1} \sigma_i \alpha_i u_i \|_2^2 = \sum_{i=1}^{k+1} \sigma_i^2 \alpha_i^2 \geq \sigma_{k+1}^2 \sum \alpha_i^2 = \sigma_{k+1}^2$.
+Thus $\| A-B \|_2 \geq \sigma_{k+1}$.
+\end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+Prove that the scheme $u_j^{n+1} = u_j^n - \lambda(u_j^n - u_{j-1}^n)$ is stable in the sense of $\|u^n\| \leq C\|u^0\|$ for both the $L^2$ norm and the $L^\infty$ norm under the time step restriction $\lambda \leq 1$. Explain the mistake made by Student A who argues that stability in one norm implies stability in all norms due to equivalence.
+\end{exercise}
+
+\begin{solution}
+\textbf{Stability Analysis:}
+The scheme is $u_j^{n+1} = (1-\lambda) u_j^n + \lambda u_{j-1}^n$.
+1. $L^\infty$ norm: If $0 \leq \lambda \leq 1$, then $u_j^{n+1}$ is a convex combination of $u_j^n$ and $u_{j-1}^n$.
+$|u_j^{n+1}| \leq (1-\lambda)|u_j^n| + \lambda |u_{j-1}^n| \leq \|u^n\|_\infty$.
+Thus $\|u^{n+1}\|_\infty \leq \|u^n\|_\infty \leq \|u^0\|_\infty$. Stable with $C=1$.
+2. $L^2$ norm: Use Von Neumann analysis. $u_j^n = \hat{u}^n e^{ij\theta}$.
+$\hat{u}^{n+1} = (1 - \lambda + \lambda e^{-i\theta}) \hat{u}^n$.
+Amplification factor $g(\theta) = 1 - \lambda + \lambda (\cos \theta - i \sin \theta)$.
+$|g(\theta)|^2 = (1-\lambda + \lambda \cos \theta)^2 + (\lambda \sin \theta)^2 = (1-\lambda)^2 + \lambda^2 + 2\lambda(1-\lambda)\cos \theta = 1 - 2\lambda(1-\lambda)(1 - \cos \theta)$.
+For stability, $|g(\theta)|^2 \leq 1 \iff 2\lambda(1-\lambda)(1-\cos \theta) \geq 0$.
+Since $1-\cos \theta \geq 0$, this requires $\lambda(1-\lambda) \geq 0 \iff 0 \leq \lambda \leq 1$.
+
+\textbf{Student A's Mistake:}
+The equivalence of norms $\|u\|_a \leq K \|u\|_b$ on a finite-dimensional space holds, but the constant $K$ depends on the dimension $J$ of the space. In numerical analysis, $J \to \infty$ as $\Delta x \to 0$. Stability requires the constant $C$ in $\|u^n\| \leq C\|u^0\|$ to be independent of $\Delta x$ (and thus $J$).
+For example, $\|u\|_\infty \leq \|u\|_2 \leq \sqrt{J} \|u\|_\infty$.
+If a scheme is stable in $L^2$ with $C=1$, we have $\|u^n\|_\infty \leq \|u^n\|_2 \leq \|u^0\|_2 \leq \sqrt{J} \|u^0\|_\infty$.
+As $\Delta x \to 0$, $J \to \infty$, so $\|u^n\|_\infty$ could potentially grow like $1/\sqrt{\Delta x}$, violating the stability definition.
+\end{solution}
+
+\begin{exercise}
+(i) Prove that $u_t + A u_x = 0$ is well-posed in $L^2$ if $A$ is diagonalizable with real eigenvalues.
+(ii) Show that the sum $C = A+B$ of two such matrices is not necessarily well-posed.
+(iii) Discuss the stability of the splitting scheme $u^{n+1} = B_h A_h u^n$.
+\end{exercise}
+
+\begin{solution}
+\textbf{(i) Well-posedness:}
+Let $A = P D P^{-1}$ where $D = \text{diag}(\lambda_1, \dots, \lambda_m)$ and $\lambda_i \in \mathbb{R}$.
+Let $v = P^{-1}u$. Then $v_t + D v_x = 0$.
+For each component $v_i$, we have $(v_i)_t + \lambda_i (v_i)_x = 0$, which is a scalar advection equation.
+The solution is $v_i(x, t) = v_i(x - \lambda_i t, 0)$.
+$\|v_i(\cdot, t)\|_2 = \|v_i(\cdot, 0)\|_2 \implies \|v(\cdot, t)\|_2 = \|v(\cdot, 0)\|_2$.
+Then $\|u(\cdot, t)\|_2 = \|P v(\cdot, t)\|_2 \leq \|P\| \|v(\cdot, t)\|_2 = \|P\| \|v(\cdot, 0)\|_2 = \|P\| \|P^{-1} u(\cdot, 0)\|_2 \leq \|P\| \|P^{-1}\| \|u(\cdot, 0)\|_2$.
+Since $C(T) = \|P\| \|P^{-1}\|$ is independent of the initial data, it is well-posed.
+
+\textbf{(ii) Counterexample:}
+Let $A = \begin{bmatrix} 1 & a \\ 0 & -1 \end{bmatrix}$ and $B = \begin{bmatrix} -1 & 0 \\ b & 1 \end{bmatrix}$. Both have eigenvalues $\pm 1$ and are diagonalizable.
+$C = A + B = \begin{bmatrix} 0 & a \\ b & 0 \end{bmatrix}$.
+The eigenvalues of $C$ are $\pm \sqrt{ab}$.
+If we choose $a=1, b=-1$, then the eigenvalues are $\pm i$.
+A system with complex eigenvalues $\lambda = \pm i$ has solutions that grow like $e^{|\xi| t}$ in Fourier space, which makes the problem ill-posed in $L^2$.
+
+\textbf{(iii) Splitting Scheme:}
+A splitting scheme $u^{n+1} = B_h A_h u^n$ is consistent with the PDE $u_t + (A+B)u_x = 0$.
+By the Lax Equivalence Theorem, for a consistent scheme, stability is equivalent to the well-posedness of the underlying PDE.
+Since the PDE $u_t + (A+B)u_x = 0$ can be ill-posed (as shown in Part ii), the splitting scheme cannot be stable in those cases. The amplification factor of the splitting scheme will mirror the growth of the ill-posed PDE as the mesh is refined.
+\end{solution}

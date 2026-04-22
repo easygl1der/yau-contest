@@ -1,0 +1,102 @@
+\section{2013 Geometry & Topology}
+
+\subsection{Individual Exam}
+
+\begin{exercise}
+Find the homology and fundamental group of the space $X = S^{1} \times S^{1} / \{p, q\}$ obtained from the torus by identifying two distinct points $p, q$ to one point.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} Imagine a rubber torus. If you pinch two distinct points together, you've created a new "handle" or loop that wasn't there before. This loop is the path that used to go from $p$ to $q$, which now returns to the same point. Topologically, this is equivalent to taking the original torus and attaching a circle ($S^1$) at a single point.
+
+\textbf{Fundamental Group:}
+The space $X$ is homotopy equivalent to $T^2 \vee S^1$. 
+Since $X$ is the quotient $T^2 / \{p \sim q\}$, and $T^2$ is a "good" space, we have:
+\[ \pi_1(X) \cong \pi_1(T^2 \vee S^1) \cong \pi_1(T^2) * \pi_1(S^1) \cong (\mathbb{Z} \oplus \mathbb{Z}) * \mathbb{Z} \]
+where $*$ denotes the free product. This captures the two loops of the torus and the new loop created by the identification.
+
+\textbf{Homology Groups:}
+Using the wedge sum property for reduced homology $\tilde{H}_n(Y \vee Z) \cong \tilde{H}_n(Y) \oplus \tilde{H}_n(Z)$:
+The homology of the torus $T^2$ is $H_0 = \mathbb{Z}, H_1 = \mathbb{Z}^2, H_2 = \mathbb{Z}$.
+The homology of $S^1$ is $H_0 = \mathbb{Z}, H_1 = \mathbb{Z}$.
+Thus:
+\begin{itemize}
+    \item $H_0(X) \cong \mathbb{Z}$ (since $X$ is path-connected).
+    \item $H_1(X) \cong H_1(T^2) \oplus H_1(S^1) \cong \mathbb{Z}^2 \oplus \mathbb{Z} \cong \mathbb{Z}^3$.
+    \item $H_2(X) \cong H_2(T^2) \oplus H_2(S^1) \cong \mathbb{Z} \oplus 0 \cong \mathbb{Z}$.
+\end{itemize}
+The third generator in $H_1$ corresponds to the cycle formed by the identification.
+\end{solution}
+
+\begin{exercise}
+Suppose $(X, d)$ is a compact metric space and $f : X \to X$ is a map so that $d(f(x), f(y)) = d(x, y)$ for all $x, y \in X$. Show that $f$ is an onto map.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} An isometry preserves the "spacing" between points. In a compact space, there is only a "finite amount of room." If the map were not onto, the image would have to be "smaller" than the original, but the isometry condition prevents any shrinking. Eventually, the points would have to "pile up" somewhere, which compactness allows but the isometry condition (maintaining a minimum distance from the missed region) forbids.
+
+\textbf{Proof:} Suppose $f$ is not surjective. Let $y \in X \setminus f(X)$. Since $f(X)$ is compact (and thus closed), there is an $\epsilon > 0$ such that $d(y, f(X)) \geq \epsilon$.
+Consider the sequence $x_n = f^n(y)$. For $n > m$:
+\[ d(x_n, x_m) = d(f^m(x_{n-m}), f^m(x_0)) = d(x_{n-m}, y) \]
+Since $n-m \geq 1$, $x_{n-m} \in f(X)$, so $d(x_{n-m}, y) \geq \epsilon$.
+Thus, all points in the sequence $\{x_n\}$ are at least $\epsilon$ apart. This means the sequence can have no convergent subsequence, contradicting the compactness of $X$.
+\end{solution}
+
+\begin{exercise}
+Let $M^{2}$ be a complete regular surface and $K$ be the Gaussian curvature. Suppose $\sigma : [0, \infty) \to M$ is a geodesic such that $K(\sigma(t)) \leq f(t)$, where $f$ is a differentiable function on $[0, \infty)$. Prove that any solution $u(t)$ of the equation
+\[ u''(t) + f(t)u(t) = 0 \]
+has a zero on $[0, t_{0}]$, where $\sigma(t_{0})$ is the first conjugate point to $\sigma(0)$ along $\sigma$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} In differential geometry, curvature acts as a "focusing force" for geodesics. High positive curvature makes geodesics converge quickly (shorter distance to conjugate points). The equation $u'' + fu = 0$ is a model for how Jacobi fields (which measure geodesic deviation) behave. If $f$ is "stronger" than the actual curvature $K$, it will force its "Jacobi field" $u$ to vanish even sooner than the actual one.
+
+\textbf{Proof:} A non-trivial Jacobi field $J(t)$ along $\sigma$ with $J(0) = 0$ satisfies $J''(t) + K(\sigma(t))J(t) = 0$. By definition of the first conjugate point $t_0$, $J(t_0) = 0$ and $J(t) > 0$ on $(0, t_0)$.
+We compare this with $u'' + f(t)u = 0$, where $f(t) \geq K(\sigma(t))$.
+By the Sturm Comparison Theorem, between any two zeros of a solution to the "lesser" equation ($J$), any solution to the "greater" equation ($u$) must have a zero.
+Since $J(0) = 0$ and $J(t_0) = 0$, $u(t)$ must have a zero in the interval $[0, t_0]$. If $u(0) \neq 0$, the zero must be in $(0, t_0)$. If $u(0) = 0$, the zero is at the endpoint.
+\end{solution}
+
+\begin{exercise}
+Let $g_{1}, g_{2}$ be Riemannian metrics on a differentiable manifold $M$, and denote by $R_{1}$ and $R_{2}$ their respective Riemannian curvature tensor. Suppose that $R_{1}(X, Y, Y, X) = R_{2}(X, Y, Y, X)$ holds for any tangent vectors $X, Y \in T_{p}M$. Show that $R_{1}(X, Y, Z, W) = R_{2}(X, Y, Z, W)$ for any $X, Y, Z, W \in T_{p}M$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} $R(X, Y, Y, X)$ is essentially the sectional curvature of the plane spanned by $X$ and $Y$. This exercise shows that the full Riemann curvature tensor, which has many components, is completely determined by the sectional curvatures of all 2-planes. This is a powerful algebraic property of tensors satisfying the Bianchi identities.
+
+\textbf{Proof:} Let $R = R_1 - R_2$. We are given $R(X, Y, Y, X) = 0$ for all $X, Y$.
+Through polarization (replacing $Y$ with $Y+Z$):
+$R(X, Y+Z, Y+Z, X) = R(X, Y, Y, X) + R(X, Y, Z, X) + R(X, Z, Y, X) + R(X, Z, Z, X) = 0$.
+Since $R(X, Y, Y, X) = 0$ and $R(X, Z, Z, X) = 0$, and using $R(X, Y, Z, X) = R(Z, X, X, Y) = R(X, Z, Y, X)$, we find $R(X, Y, Z, X) = 0$ for all $X, Y, Z$.
+Polarizing $X$ again ($X \to X+W$):
+$R(X+W, Y, Z, X+W) = R(X, Y, Z, W) + R(W, Y, Z, X) = 0$.
+This implies $R(X, Y, Z, W) = -R(W, Y, Z, X) = R(Y, W, Z, X)$.
+Using the First Bianchi Identity $R(X, Y, Z, W) + R(Y, Z, X, W) + R(Z, X, Y, W) = 0$ and the derived symmetries, we find $3R(X, Y, Z, W) = 0$, hence $R = 0$.
+\end{solution}
+
+\begin{exercise}
+Let $M^{n}$ be an even dimensional, orientable Riemannian manifold with positive sectional curvature. Let $\sigma : [0, l] \to M$ be a closed geodesic, namely, $\sigma$ is a geodesic with $\sigma(0) = \sigma(l)$ and $\sigma'(0) = \sigma'(l)$. Show that there exist an $\epsilon > 0$ and a smooth map $F : [0, l] \times (-\epsilon, \epsilon) \to M$, such that $F(t, 0) = \sigma(t)$, and for any fixed $s \neq 0$ in $(-\epsilon, \epsilon)$, $\sigma_{s}(t) = F(t, s)$ is a closed smooth curve with length less than that of $\sigma$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} This is the core of Synge's Theorem. In positive curvature, "parallel" geodesics tend to bend towards each other. If we can find a parallel vector field along a closed geodesic that stays parallel after one full trip, we can "shrink" the geodesic. In even dimensions, orientability ensures that the normal space doesn't "flip" in a way that prevents such a field from closing up.
+
+\textbf{Proof:} Let $V$ be a parallel vector field along $\sigma$ such that $V \perp \sigma'$. Parallel transport around the closed loop defines an isometry $P : \dot{\sigma}(0)^\perp \to \dot{\sigma}(0)^\perp$.
+The normal space $\dot{\sigma}(0)^\perp$ has dimension $n-1$. Since $M$ is orientable and $n$ is even, $n-1$ is odd and the orientation is preserved. An orientation-preserving isometry of an odd-dimensional space must have an eigenvalue 1. Thus there exists a parallel vector field $V(t)$ such that $V(0) = V(l)$.
+The second variation of length is $L''(0) = -\int_0^l R(\sigma', V, V, \sigma') dt = -\int_0^l K(\sigma', V) dt$.
+Since $K > 0$, $L''(0) < 0$. This means the length decreases for small perturbations in the $V$ direction.
+\end{solution}
+
+\begin{exercise}
+Let $(M^{2}, ds^{2})$ be a minimal surface in $\mathbb{R}^{3}$, where $ds^{2}$ is the restriction of the Euclidean metric. Assume that the Gaussian curvature $K$ of $(M^{2}, ds^{2})$ is negative. Denote by $\widetilde{K}$ the Gaussian curvature of the metric $\widetilde{ds^{2}} = -K\, ds^{2}$. Show that $\widetilde{K} = 1$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Geometric Intuition:} For a minimal surface, the Gauss map $G: M \to S^2$ is conformal. Specifically, the pulling back of the spherical metric via the Gauss map gives a metric that is proportional to the original surface metric. The proportionality factor is exactly the negative of the Gaussian curvature. Since this "new" metric is just the sphere's metric in disguise, its curvature must be 1.
+
+\textbf{Proof:} The Gauss map $G$ has derivative $dG = S$, where $S$ is the shape operator. The metric induced by the Gauss map (the third fundamental form) is $h(X, Y) = \langle SX, SY \rangle = \langle S^2 X, Y \rangle$.
+For a minimal surface, the mean curvature $H = \text{tr}(S)/2 = 0$, so the principal curvatures are $\lambda, -\lambda$.
+Then $S^2 = \lambda^2 I = -K I$, where $K = -\lambda^2$ is the Gaussian curvature.
+Thus $h = -K g$. The metric $\widetilde{ds^2} = -K ds^2$ is precisely the metric $h$ pulled back from the unit sphere $S^2$.
+Because the curvature of a metric pulled back by a local isometry (the Gauss map) is the same as the curvature of the target space, and the curvature of the unit sphere is 1, it follows that $\widetilde{K} = 1$.
+\end{solution}
