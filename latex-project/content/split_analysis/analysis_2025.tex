@@ -14,46 +14,86 @@ R(1) = 2025,\quad R'(1) = 0 \quad \text{and}\quad R''(1) = 1.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is an Euler-Cauchy differential equation, characterized by the fact that the degree of the power of $r$ matches the order of the derivative. Such equations can be converted to linear ODEs with constant coefficients using a logarithmic transformation of the independent variable.
+\textbf{Motivation:} This is an Euler-Cauchy differential equation. An Euler-Cauchy equation is a linear differential equation where the degree of the monomial coefficient $r^k$ matches the order of the derivative $R^{(k)}(r)$. A standard method to solve such equations is to use the substitution $r = e^t$, which transforms the equation into a linear ordinary differential equation (ODE) with constant coefficients, which we can easily solve.
 
-To solve it, we use the transformation $r = e^t$ (for $r > 1$, $t > 0$), or equivalently $t = \ln r$. Let $y(t) = R(e^t)$. The derivatives of $R(r)$ with respect to $r$ can be expressed in terms of derivatives of $y(t)$ with respect to $t$:
+\textbf{Step 1: Transform the independent variable.}
+Let $r = e^t$. Since $r \geq 1$, we have $t = \ln r \geq 0$. We define a new function $y(t) = R(e^t)$, which means $y(\ln r) = R(r)$.
+We need to find the derivatives $R'(r), R''(r)$, and $R'''(r)$ in terms of $y$ and $t$. Using the chain rule:
 \begin{align*}
-R'(r) &= \frac{dy}{dt} \frac{dt}{dr} = \frac{1}{r} y', \\
-R''(r) &= \frac{d}{dr}\left(\frac{1}{r} y'\right) = -\frac{1}{r^2} y' + \frac{1}{r^2} y'' = \frac{1}{r^2}(y'' - y'), \\
-R'''(r) &= \frac{d}{dr}\left(\frac{1}{r^2}(y'' - y')\right) = -\frac{2}{r^3}(y'' - y') + \frac{1}{r^3}(y''' - y'') = \frac{1}{r^3}(y''' - 3y'' + 2y').
+R'(r) &= \frac{d}{dr} y(\ln r) = y'(t) \cdot \frac{d}{dr}(\ln r) = \frac{1}{r} y'(t) \\
+R''(r) &= \frac{d}{dr} \left( \frac{1}{r} y'(t) \right) = -\frac{1}{r^2} y'(t) + \frac{1}{r} \frac{d}{dr} y'(t) \\
+      &= -\frac{1}{r^2} y'(t) + \frac{1}{r} \left( y''(t) \cdot \frac{1}{r} \right) = \frac{1}{r^2} (y''(t) - y'(t)) \\
+R'''(r) &= \frac{d}{dr} \left( \frac{1}{r^2} (y''(t) - y'(t)) \right) = -\frac{2}{r^3} (y''(t) - y'(t)) + \frac{1}{r^2} \frac{d}{dr} (y''(t) - y'(t)) \\
+       &= -\frac{2}{r^3} (y''(t) - y'(t)) + \frac{1}{r^2} \left( (y'''(t) - y''(t)) \cdot \frac{1}{r} \right) \\
+       &= \frac{1}{r^3} (y'''(t) - 3y''(t) + 2y'(t))
 \end{align*}
-Substituting these expressions into the original differential equation:
+
+\textbf{Step 2: Substitute into the differential equation.}
+Substitute these derivatives back into the original equation $r^3 R'''(r) + 2r^2 R''(r) - rR'(r) + R(r) = 2025$:
 \[
-r^3 \left[\frac{1}{r^3}(y''' - 3y'' + 2y')\right] + 2r^2 \left[\frac{1}{r^2}(y'' - y')\right] - r \left[\frac{1}{r} y'\right] + y = 2025.
+r^3 \left[ \frac{1}{r^3}(y''' - 3y'' + 2y') \right] + 2r^2 \left[ \frac{1}{r^2}(y'' - y') \right] - r \left[ \frac{1}{r} y' \right] + y = 2025.
 \]
-Simplifying the coefficients:
+The $r$ terms perfectly cancel out (as expected for an Euler-Cauchy equation), leaving:
 \[
-(y''' - 3y'' + 2y') + 2(y'' - y') - y' + y = 2025 \implies y''' - y'' - y' + y = 2025.
+(y''' - 3y'' + 2y') + 2(y'' - y') - y' + y = 2025.
 \]
-The homogeneous part is $y''' - y'' - y' + y = 0$. The characteristic equation is:
+Simplify by grouping the derivatives:
 \[
-m^3 - m^2 - m + 1 = 0 \implies m^2(m-1) - (m-1) = 0 \implies (m^2-1)(m-1) = 0 \implies (m+1)(m-1)^2 = 0.
+y''' + (-3 + 2)y'' + (2 - 2 - 1)y' + y = 2025 \implies y''' - y'' - y' + y = 2025.
 \]
-The roots are $m_1 = -1$ (simple) and $m_2, m_3 = 1$ (double). Thus, the homogeneous solution is:
+
+\textbf{Step 3: Solve the homogeneous equation.}
+First, we solve the associated homogeneous equation: $y''' - y'' - y' + y = 0$.
+We assume a solution of the form $y = e^{mt}$, which leads to the characteristic equation:
+\[
+m^3 - m^2 - m + 1 = 0.
+\]
+We can factor this by grouping:
+\[
+m^2(m - 1) - 1(m - 1) = 0 \implies (m^2 - 1)(m - 1) = 0 \implies (m + 1)(m - 1)^2 = 0.
+\]
+The roots are $m_1 = -1$ (a single root) and $m_2 = m_3 = 1$ (a double root).
+According to the theory of linear ODEs, the general solution for the homogeneous part $y_h(t)$ is:
 \[
 y_h(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t.
 \]
-Returning to the variable $r$:
+
+\textbf{Step 4: Find a particular solution.}
+Next, we find a particular solution $y_p(t)$ for the non-homogeneous equation $y''' - y'' - y' + y = 2025$.
+Since the right-hand side is a constant ($2025$), we guess a constant particular solution: $y_p(t) = A$.
+Substituting $y_p = A$ into the ODE gives:
 \[
-R_h(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r.
+0 - 0 - 0 + A = 2025 \implies A = 2025.
 \]
-For the non-homogeneous part, the constant 2025 suggests a particular solution $R_p(r) = A$. Substituting into the ODE, we find $A = 2025$. Thus, the general solution is:
+So, the general solution in terms of $t$ is:
+\[
+y(t) = y_h(t) + y_p(t) = c_1 e^{-t} + c_2 e^t + c_3 t e^t + 2025.
+\]
+
+\textbf{Step 5: Convert back to $r$ and apply initial conditions.}
+Recall that $t = \ln r$, $e^t = r$, and $e^{-t} = r^{-1} = \frac{1}{r}$. Substituting these back gives the general solution for $R(r)$:
 \[
 R(r) = \frac{c_1}{r} + c_2 r + c_3 r \ln r + 2025.
 \]
-We use the initial conditions at $r=1$:
+Now, we use the initial conditions to find the constants $c_1, c_2,$ and $c_3$. We need $R'(r)$ and $R''(r)$:
+\begin{align*}
+R'(r) &= -\frac{c_1}{r^2} + c_2 + c_3(\ln r + 1) \\
+R''(r) &= \frac{2c_1}{r^3} + \frac{c_3}{r}
+\end{align*}
+Apply the conditions at $r=1$ (note that $\ln 1 = 0$):
 1. $R(1) = c_1 + c_2 + 2025 = 2025 \implies c_1 + c_2 = 0 \implies c_1 = -c_2$.
-2. $R'(r) = -\frac{c_1}{r^2} + c_2 + c_3(\ln r + 1)$.
-   $R'(1) = -c_1 + c_2 + c_3 = 0 \implies c_2 + c_2 + c_3 = 0 \implies 2c_2 + c_3 = 0 \implies c_3 = -2c_2$.
-3. $R''(r) = \frac{2c_1}{r^3} + \frac{c_3}{r}$.
-   $R''(1) = 2c_1 + c_3 = 1 \implies -2c_2 - 2c_2 = 1 \implies -4c_2 = 1 \implies c_2 = -1/4$.
-Then $c_1 = 1/4$ and $c_3 = 1/2$.
-The unique solution is:
+2. $R'(1) = -c_1 + c_2 + c_3 = 0$. Since $c_1 = -c_2$, this becomes $-(-c_2) + c_2 + c_3 = 0 \implies 2c_2 + c_3 = 0 \implies c_3 = -2c_2$.
+3. $R''(1) = 2c_1 + c_3 = 1$. Substitute $c_1 = -c_2$ and $c_3 = -2c_2$:
+\[
+2(-c_2) + (-2c_2) = 1 \implies -4c_2 = 1 \implies c_2 = -\frac{1}{4}.
+\]
+With $c_2 = -1/4$, we find the other constants:
+\[
+c_1 = -c_2 = \frac{1}{4}, \quad c_3 = -2c_2 = -2\left(-\frac{1}{4}\right) = \frac{1}{2}.
+\]
+
+\textbf{Final Solution:}
+Substituting these constants back into $R(r)$, the unique solution is:
 \[
 R(r) = \frac{1}{4r} - \frac{r}{4} + \frac{1}{2} r \ln r + 2025.
 \]
@@ -70,32 +110,65 @@ R(r) = \frac{1}{4r} - \frac{r}{4} + \frac{1}{2} r \ln r + 2025.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is Hardy's inequality, which provides a bound on the $L^2$ norm of a function weighted by its distance from the origin. It is a key tool in analysis, specifically for problems involving singular potentials and the uncertainty principle.
+\textbf{Motivation:} This inequality is known as Hardy's inequality. It is extremely useful in partial differential equations because it allows us to control the $L^2$ norm of a function $u$ (weighted heavily near the origin by $1/|x|^2$) using only the $L^2$ norm of its gradient $\nabla u$.
 
-(1) By density of $C_c^\infty(\mathbb{R}^n \setminus \{0\})$ in $H^1(\mathbb{R}^n)$ for $n \geq 3$, we may assume $u \in C_c^\infty(\mathbb{R}^n \setminus \{0\})$.
-Consider the vector field $\mathbf{F}(x) = \frac{x}{|x|^2}$. Its divergence is:
-\[
-\text{div} \mathbf{F} = \sum_{i=1}^n \partial_i \left(\frac{x_i}{|x|^2}\right) = \sum_{i=1}^n \left(\frac{1}{|x|^2} - \frac{2x_i^2}{|x|^4}\right) = \frac{n}{|x|^2} - \frac{2|x|^2}{|x|^4} = \frac{n-2}{|x|^2}.
-\]
-Using integration by parts (the divergence theorem):
-\[
-(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx = \int_{\mathbb{R}^n} u^2 \text{div} \mathbf{F} dx = -\int_{\mathbb{R}^n} \nabla(u^2) \cdot \mathbf{F} dx = -2 \int_{\mathbb{R}^n} u \nabla u \cdot \frac{x}{|x|^2} dx.
-\]
-Applying the Cauchy-Schwarz inequality to the right-hand side:
-\[
-(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq 2 \int_{\mathbb{R}^n} \frac{|u|}{|x|} |\nabla u| dx \leq 2 \left( \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \right)^{1/2} \left( \int_{\mathbb{R}^n} |\nabla u|^2 dx \right)^{1/2}.
-\]
-Dividing by $\left( \int \frac{u^2}{|x|^2} dx \right)^{1/2}$ and squaring both sides gives:
-\[
-\int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq \frac{4}{(n-2)^2} \int_{\mathbb{R}^n} |\nabla u|^2 dx.
-\]
-Thus, the inequality holds with $C = \frac{4}{(n-2)^2}$.
+\textbf{Part (1): Proving the inequality}
+First, it is a standard result in Sobolev spaces that smooth functions with compact support, denoted $C_c^\infty(\mathbb{R}^n)$, are dense in the Sobolev space $H^1(\mathbb{R}^n)$. Because the origin $x=0$ is just a single point (and $n \geq 3$), we can further assume our test functions $u$ vanish near the origin, meaning $u \in C_c^\infty(\mathbb{R}^n \setminus \{0\})$. If we prove the inequality for these smooth functions, it holds for all $H^1$ functions by taking limits.
 
-(2) To show that $C_0 = \frac{4}{(n-2)^2}$ is optimal, we consider a sequence of test functions that saturate the inequality. Let $u(x) = |x|^{-\alpha}$. Then $|\nabla u|^2 = \alpha^2 |x|^{-2\alpha-2}$. Hardy's inequality requires:
+The trick to proving Hardy's inequality is to use integration by parts with a cleverly chosen vector field. Let's define the vector field $\mathbf{F}(x) = \frac{x}{|x|^2}$.
+We first compute the divergence of $\mathbf{F}$, denoted as $\text{div} \mathbf{F}$ or $\nabla \cdot \mathbf{F}$.
+Recall that $x = (x_1, x_2, \dots, x_n)$ and $|x|^2 = x_1^2 + x_2^2 + \dots + x_n^2$.
+The $i$-th component of $\mathbf{F}$ is $F_i = \frac{x_i}{|x|^2}$. The partial derivative is:
 \[
-\int |x|^{-2\alpha-2} dx \leq C \int \alpha^2 |x|^{-2\alpha-2} dx \implies 1 \leq C \alpha^2 \implies C \geq 1/\alpha^2.
+\partial_i F_i = \frac{\partial}{\partial x_i} \left( x_i (|x|^2)^{-1} \right) = 1 \cdot (|x|^2)^{-1} + x_i \cdot (-1)(|x|^2)^{-2} \cdot 2x_i = \frac{1}{|x|^2} - \frac{2x_i^2}{|x|^4}.
 \]
-To minimize the right-hand side, we need to find the supremum of $\alpha$ such that $|x|^{-\alpha}$ is "almost" in $L^2_{loc}$ or $H^1$. The critical exponent is $\alpha = (n-2)/2$. Taking $\alpha$ close to this value shows that the constant $C = \frac{4}{(n-2)^2}$ cannot be improved.
+Summing over all $i$ from 1 to $n$:
+\[
+\text{div} \mathbf{F} = \sum_{i=1}^n \left( \frac{1}{|x|^2} - \frac{2x_i^2}{|x|^4} \right) = \frac{n}{|x|^2} - \frac{2 \sum x_i^2}{|x|^4} = \frac{n}{|x|^2} - \frac{2|x|^2}{|x|^4} = \frac{n-2}{|x|^2}.
+\]
+
+Now, we evaluate the integral of $\frac{u^2}{|x|^2}$. Using our divergence identity, we have:
+\[
+\int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx = \frac{1}{n-2} \int_{\mathbb{R}^n} u^2 \text{div} \mathbf{F} dx.
+\]
+We apply integration by parts (the Divergence Theorem). Since $u$ has compact support, there are no boundary terms at infinity:
+\[
+\int_{\mathbb{R}^n} u^2 \text{div} \mathbf{F} dx = - \int_{\mathbb{R}^n} \nabla(u^2) \cdot \mathbf{F} dx = - \int_{\mathbb{R}^n} (2u \nabla u) \cdot \frac{x}{|x|^2} dx.
+\]
+Taking the absolute value of both sides and using the property that $|x \cdot y| \leq |x||y|$:
+\[
+(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq 2 \int_{\mathbb{R}^n} |u| |\nabla u| \frac{|x|}{|x|^2} dx = 2 \int_{\mathbb{R}^n} \left( \frac{|u|}{|x|} \right) |\nabla u| dx.
+\]
+Now we apply the Cauchy-Schwarz inequality for integrals, $\int |fg| \leq \left(\int f^2\right)^{1/2} \left(\int g^2\right)^{1/2}$, with $f = \frac{|u|}{|x|}$ and $g = |\nabla u|$:
+\[
+(n-2) \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq 2 \left( \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \right)^{1/2} \left( \int_{\mathbb{R}^n} |\nabla u|^2 dx \right)^{1/2}.
+\]
+Assume $\int \frac{u^2}{|x|^2} dx > 0$ (otherwise the inequality is trivially $0 \leq 0$). Divide both sides by $\left( \int \frac{u^2}{|x|^2} dx \right)^{1/2}$:
+\[
+(n-2) \left( \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \right)^{1/2} \leq 2 \left( \int_{\mathbb{R}^n} |\nabla u|^2 dx \right)^{1/2}.
+\]
+Squaring both sides and isolating the integral of $u^2/|x|^2$:
+\[
+(n-2)^2 \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq 4 \int_{\mathbb{R}^n} |\nabla u|^2 dx \implies \int_{\mathbb{R}^n} \frac{u^2}{|x|^2} dx \leq \frac{4}{(n-2)^2} \int_{\mathbb{R}^n} |\nabla u|^2 dx.
+\]
+This proves the inequality with $C = \frac{4}{(n-2)^2}$.
+
+\textbf{Part (2): Proving the constant is optimal}
+To show $C = \frac{4}{(n-2)^2}$ is the best possible constant, we must show that no smaller constant works. We do this by testing the inequality with a specific sequence of functions.
+Let's consider a radial function $u(x) = |x|^{-\alpha}$. The gradient is $\nabla u = -\alpha |x|^{-\alpha - 1} \frac{x}{|x|}$, so $|\nabla u|^2 = \alpha^2 |x|^{-2\alpha - 2}$.
+If we plug this into Hardy's inequality:
+\[
+\int_{\mathbb{R}^n} \frac{(|x|^{-\alpha})^2}{|x|^2} dx \leq C \int_{\mathbb{R}^n} \alpha^2 |x|^{-2\alpha - 2} dx \implies \int_{\mathbb{R}^n} |x|^{-2\alpha - 2} dx \leq C \alpha^2 \int_{\mathbb{R}^n} |x|^{-2\alpha - 2} dx.
+\]
+Assuming the integral is non-zero and finite, we can divide both sides by it, leaving:
+\[
+1 \leq C \alpha^2 \implies C \geq \frac{1}{\alpha^2}.
+\]
+To make $C$ as small as possible, we need to make $\alpha$ as large as possible. However, we cannot choose any $\alpha$. For $u(x)$ to be in $L^2_{loc}$ (square-integrable near the origin), we need the integral $\int_0^R r^{-2\alpha} r^{n-1} dr$ to converge, which requires $-2\alpha + n - 1 > -1$, meaning $\alpha < n/2$.
+Similarly, for the gradient to be in $L^2$, we need $\int_0^R r^{-2\alpha-2} r^{n-1} dr$ to converge, which requires $-2\alpha - 2 + n - 1 > -1 \implies \alpha < (n-2)/2$.
+The limiting case where the function *just barely* fails to be in $H^1$ is when $\alpha = \frac{n-2}{2}$.
+By defining a sequence of smooth cutoff functions that approximate $u(x) = |x|^{-(n-2)/2}$, the ratio of the two integrals will approach $\frac{1}{\alpha^2} = \frac{1}{((n-2)/2)^2} = \frac{4}{(n-2)^2}$.
+Thus, no constant smaller than $\frac{4}{(n-2)^2}$ can satisfy the inequality for all $u \in H^1(\mathbb{R}^n)$.
 \end{solution}
 
 \begin{exercise}
