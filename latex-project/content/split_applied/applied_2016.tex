@@ -197,3 +197,77 @@ f(tx+(1-t)y)\leq tf(x)+(1-t)f(y)-\frac{m}{2}t(1-t)\|x-y\|^{2}.
     Taking $t \to 0$ gives the directional derivative of the gradient, which is $v^T \nabla^2 f(x) v \geq m\|v\|^2$. Since this holds for all $v$, $\nabla^2 f(x) \succeq mI$.
 \end{itemize}
 \end{solution}
+
+\subsection{Team}
+
+\begin{exercise}
+For solving the following partial differential equation
+\begin{equation}
+u_t + u_x = 0, \quad -\infty \leq x \leq \infty
+\end{equation}
+with compactly supported initial condition, we consider the following one-step, three-point scheme on a uniform mesh $x_j = j\Delta x$ with spatial mesh size $\Delta x$:
+\begin{equation}
+u_j^{n+1} = a u_j^n + b u_{j-1}^n + c u_{j-2}^n, \quad j = \dots, -1, 0, 1, \dots
+\end{equation}
+where $a, b, c$ are constants which may depend on the mesh ratio $\lambda = \frac{\Delta t}{\Delta x}$. Here $\Delta t$ is the time step, and $u_j^n$ approximates the exact solution at $u(x_j, t^n)$ with $t^n = n\Delta t$.
+\begin{enumerate}
+    \item Find the constants $a, b, c$ such that the scheme is second order accurate.
+    \item Find the CFL number $\lambda_0$ such that the scheme, with the constants determined by the step above, is stable in $L^2$ under the time step restriction $\lambda \leq \lambda_0$.
+    \item If the PDE is defined on $(0, \infty)$ with an initial condition compactly supported in $(0, \infty)$ and a boundary condition $u(0, t) = g(t)$, how would you modify the scheme so that it can be applied? Can you prove the stability and accuracy of your modified scheme?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Inverse problem. Answer the famous Mark Kac's question: ``can you hear the shape of drum?'' for the special case.
+Consider the one-dimensional oscillator $\ddot{x} = -u'(x)$ with symmetric potential $u(-x) = u(x)$, $u(0) = u'(0) = 0$, $u'(x) > 0$ for $x > 0$, $\lim_{x \to \infty} u(x) = \infty$. Denote the inverse function of $y = u(x)$, $x \geq 0$ as $x = u^{-1}(y) = \phi(y)$.
+\begin{enumerate}
+    \item[(a)] For any solution $x(t)$, show there is a conservation of energy
+    \[
+    \frac{\dot{x}^2(t)}{2} + u(x(t)) \equiv e
+    \]
+    where $e$ is a constant.
+    \item[(b)] For any energy $e > 0$, find a periodic solution with total energy $e$. Show that the period is given by
+    \[
+    P(e) = 2\sqrt{2} \int_0^{\phi(e)} \frac{dx}{\sqrt{e - u(x)}}.
+    \]
+    \item[(c)] Show that
+    \[
+    \phi(z) = \frac{1}{2\pi\sqrt{2}} \int_0^z \frac{P(e) de}{\sqrt{z - e}}.
+    \]
+    \item[(d)] In the case of iso-chronous $P(e) \equiv 2\pi$, show that $\phi(z) = \sqrt{2z}$. Then you have $u(x) = \frac{1}{2}x^2$, $x(t) = a\cos(t) + b\sin(t)$, the famous harmonic oscillator.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+The following statement informally means that if a system of homogeneous equations with integer coefficients has a nontrivial solution then it has an integer solution with reasonably small components.
+Let $A = (a_{ij})$ be an $m \times n$ matrix of rank $r \leq n-1$ with integer entries of size at most $H$, that is, $|a_{ij}| \leq H$.
+Prove that there is an integer non-zero vector $\mathbf{x} = (x_1, \ldots, x_n) \in \mathbb{Z}^n$ such that $A\mathbf{x} = \mathbf{0}$ and
+\[
+\|\mathbf{x}\|_\infty \leq (2nH)^{n-1}
+\]
+where $\|\mathbf{x}\|_\infty = \max_{1 \leq i \leq n} |x_i|$.
+\end{exercise}
+
+\begin{exercise}
+This problem considers an iterative scheme $x_{k+1} = x_k + \beta_k p_k$ for the linear system $Ax = b$, where $A \in \mathbb{R}^{n \times n}$ is a given non-singular matrix and $b \in \mathbb{R}^n$. $x_k$ denotes the approximate solution at the $k$-th iteration, $\beta_k$ is a scalar and $p_k \in \mathbb{R}^n$ is a search direction. If $x_k$ is given, $x_{k+1}$ is determined such that the residual $r_{k+1} := b - Ax_{k+1}$ is minimized with respect to the 2-norm.
+\begin{enumerate}
+    \item Determine $\beta_k$.
+    \item Prove that the residual $r_{k+1}$ is orthogonal to $Ap_k$ with respect to the usual inner-product.
+    \item Prove that the residuals satisfy $\|r_{k+1}\| \leq \|r_k\| \sin(\alpha)$ where $\alpha$ is the angle between $r_k$ and $Ap_k$.
+    \item Assume that the inner product of $r_k$ and $Ap_k$ is non-zero. Will the above scheme always converge?
+    \item Assume that $A$ is positive definite. We take the search direction $p_k = r_k$. Show that the above scheme converges for any initial guess $x_0$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Let $f: \mathbb{R}^n \to \mathbb{R}$ be convex and in $C^1$. Suppose $f$ has a local minimum $x^*$.
+\begin{enumerate}
+    \item Must this local minimum $x^*$ be a global minimum?
+    \item Consider the following backward gradient method: starting from any $x^0 \in \mathbb{R}^n$ define
+    \[
+    x^k = x^{k-1} - t \nabla f(x^k), \quad k \geq 1,
+    \]
+    where $t > 0$ is a fixed step size. Do you need any condition on $t$ to guarantee $\{f(x^k)\}$ converge? Prove your convergence argument, if $\{f(x^k)\}$ converges.
+    \item Suppose $f$ is strongly convex, that is, $\exists m > 0$ such that $\langle \nabla f(x) - \nabla f(y), x-y \rangle \geq m \|x-y\|^2$. Under this additional condition, show that $\{x^k\}$ converges.
+\end{enumerate}
+\end{exercise}
