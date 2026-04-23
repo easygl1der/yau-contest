@@ -1,0 +1,94 @@
+\chapter{Probability \& Statistics}
+
+This section covers foundational and advanced prerequisite knowledge in Probability and Statistics, providing key definitions, theorems, and examples.
+
+\section{Foundations of Probability}
+
+\begin{definition}[Probability Space]
+A probability space is a mathematical triplet $(\Omega, \mathcal{F}, P)$ that models a random experiment. Here, $\Omega$ is the sample space (all possible outcomes), $\mathcal{F}$ is a $\sigma$-algebra of events (subsets of $\Omega$), and $P$ is a probability measure assigning a value between 0 and 1 to each event.
+\end{definition}
+
+\begin{theorem}[Bayes' Theorem]
+Let $A$ and $B$ be events with $P(B) > 0$. The conditional probability of $A$ given $B$ is
+\[ P(A|B) = \frac{P(B|A)P(A)}{P(B)} \]
+This theorem provides a way to revise existing predictions or theories (update probabilities) given new or additional evidence.
+\end{theorem}
+
+\begin{example}[Geometric Probability]
+Consider choosing a point uniformly at random from a circle of radius $R$. The probability that the point falls within a concentric inner circle of radius $r < R$ is the ratio of their areas: $P = \frac{\pi r^2}{\pi R^2} = \left(\frac{r}{R}\right)^2$.
+\end{example}
+
+\section{Random Variables and Distributions}
+
+\begin{definition}[Random Variable]
+A random variable $X$ is a measurable function from the sample space $\Omega$ to the real numbers $\mathbb{R}$. It can be discrete (taking countably many values) or continuous (taking an uncountably infinite number of values, often characterized by a probability density function).
+\end{definition}
+
+\begin{theorem}[Central Limit Theorem (CLT)]
+Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with expected value $\mu$ and finite variance $\sigma^2 > 0$. As $n \to \infty$, the sample average $\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i$ converges in distribution to a normal distribution: $\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} \mathcal{N}(0, \sigma^2)$.
+\end{theorem}
+
+\begin{example}[Normal Distribution]
+The Normal (Gaussian) distribution $\mathcal{N}(\mu, \sigma^2)$ is a fundamental continuous distribution with probability density function
+\[ f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}} \]
+\end{example}
+
+\section{Mathematical Expectation}
+
+\begin{definition}[Expected Value]
+The expected value (or mean) of a discrete random variable $X$ with probability mass function $p(x)$ is $\mathbb{E}[X] = \sum x p(x)$. For a continuous random variable with probability density function $f(x)$, the expected value is $\mathbb{E}[X] = \int_{-\infty}^\infty x f(x) \,dx$.
+\end{definition}
+
+\begin{theorem}[Wald's Equation]
+Let $X_1, X_2, \ldots$ be an i.i.d. sequence of random variables, and let $N$ be a stopping time with respect to the natural filtration of $(X_n)$ such that $\mathbb{E}[N] < \infty$. If $\mathbb{E}[|X_1|] < \infty$, then the expected sum of a random number of terms is given by:
+\[ \mathbb{E}\left[\sum_{i=1}^N X_i\right] = \mathbb{E}[N]\mathbb{E}[X_1] \]
+\end{theorem}
+
+\begin{example}[Martingale]
+A sequence of random variables $M_1, M_2, \ldots$ is a martingale with respect to a filtration $\mathcal{F}_n$ if $\mathbb{E}[|M_n|] < \infty$ and $\mathbb{E}[M_{n+1} \mid \mathcal{F}_n] = M_n$ almost surely. A classic example is a symmetric random walk where the expected future position, given the current position, is equal to the current position.
+\end{example}
+
+\section{Stochastic Processes}
+
+\begin{definition}[Markov Chain]
+A discrete-time Markov chain is a sequence of random variables $X_0, X_1, X_2, \ldots$ satisfying the Markov property: the future state depends only on the current state and not on the sequence of events that preceded it.
+\[ P(X_{n+1} = j \mid X_n = i, X_{n-1} = i_{n-1}, \ldots, X_0 = i_0) = P(X_{n+1} = j \mid X_n = i) \]
+\end{definition}
+
+\begin{theorem}[Stationary Distribution]
+For an irreducible and positive recurrent discrete-time Markov chain with transition matrix $P$, there exists a unique stationary distribution vector $\pi$ satisfying the global balance equations $\pi = \pi P$.
+\end{theorem}
+
+\begin{example}[Poisson Process]
+A Poisson process $\{N(t), t \geq 0\}$ of rate $\lambda > 0$ is a continuous-time counting process with stationary and independent increments. The number of events in any interval of length $\tau$ follows a Poisson distribution with parameter $\lambda \tau$.
+\end{example}
+
+\section{Statistical Estimation and Decision Theory}
+
+\begin{definition}[Maximum Likelihood Estimation]
+Given a statistical model parameterized by $\theta$, the likelihood function $L(\theta; \mathbf{x})$ measures how likely the observed sample $\mathbf{x}$ is as a function of $\theta$. The maximum likelihood estimator (MLE) $\hat{\theta}$ is the parameter value that maximizes $L(\theta; \mathbf{x})$.
+\end{definition}
+
+\begin{theorem}[Cram\'er--Rao Lower Bound]
+Under standard regularity conditions, the variance of any unbiased estimator $\hat{\theta}$ of a parameter $\theta$ is bounded below by the inverse of the Fisher information $I(\theta)$:
+\[ \text{Var}(\hat{\theta}) \geq \frac{1}{I(\theta)} \]
+An estimator that achieves this lower bound is called an efficient estimator.
+\end{theorem}
+
+\begin{example}[Linear Regression and Least Squares]
+In a multiple linear regression model $Y = X\beta + \epsilon$, the ordinary least squares (OLS) estimator $\hat{\beta} = (X^T X)^{-1} X^T Y$ is an unbiased estimator of $\beta$ and coincides with the MLE when the errors $\epsilon$ are normally distributed.
+\end{example}
+
+\section{Causal Inference and Experimental Design}
+
+\begin{definition}[Potential Outcomes]
+In the Neyman--Rubin causal model, each unit $i$ has two potential outcomes: $Y_i(1)$ if the unit receives the treatment and $Y_i(0)$ if the unit receives the control. The fundamental problem of causal inference is that we can observe at most one potential outcome for each unit.
+\end{definition}
+
+\begin{theorem}[Unconfoundedness]
+If the treatment assignment $Z$ is independent of the potential outcomes conditional on a set of observed covariates $X$, i.e., $(Y(0), Y(1)) \perp\!\!\!\perp Z \mid X$, then the average treatment effect (ATE) can be consistently estimated by adjusting for $X$.
+\end{theorem}
+
+\begin{example}[Propensity Score Matching]
+The propensity score $e(x) = P(Z=1 \mid X=x)$ is the conditional probability of assignment to a particular treatment given a vector of observed covariates. Weighting by the inverse of the propensity score (IPW) creates a pseudo-population where the treatment assignment is independent of measured confounders.
+\end{example}

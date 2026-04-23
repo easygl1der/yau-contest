@@ -11,6 +11,72 @@
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Bayes' Theorem \& Law of Total Probability:} Tools to reverse conditional probabilities and sum over mutually exclusive events.
+    \item \textbf{Pólya Urn Model:} A classical probabilistic setup where drawn items are replaced along with additional items of the same color, introducing positive correlation between draws.
+    \item \textbf{Uniform Tightness (Boundedness in Probability):} A sequence $(X_n)$ is uniformly tight if for any small probability $\epsilon$, there is a finite bound $a$ such that no $X_n$ exceeds $a$ with probability greater than $\epsilon$.
+    \item \textbf{Convergence in Probability:} $Y_n \xrightarrow{P} 0$ means for any $\epsilon > 0$, $\lim_{n \to \infty} P(|Y_n| > \epsilon) = 0$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Part (1) is a classic "reverse inference" problem using the Pólya urn scheme. We know the final outcome (a red ball was drawn second), and we want to guess the past (was the first ball black?). By breaking the timeline down into forward chronological steps and then applying Bayes' Theorem, the math elegantly sorts out the reverse inference.
+Part (2) is a fundamental result in asymptotic probability: multiplying a sequence that vanishes ($Y_n \to 0$) by a sequence that doesn't blow up to infinity ($(X_n)$ is tight) results in a sequence that vanishes. It is the probabilistic equivalent of saying "bounded $\times$ zero = zero".
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the events and their forward probabilities for Part (1).}
+
+Let $B_1$ be the event that the first ball drawn is black, and $R_1$ be the event that the first ball is red.
+Let $R_2$ be the event that the second ball drawn is red. We want to find $P(B_1 \mid R_2)$.
+Initially, there are $b$ black and $r$ red balls (total $b+r$). Thus:
+\[ P(B_1) = \frac{b}{b+r}, \quad P(R_1) = \frac{r}{b+r} \]
+If $B_1$ occurs, the first ball was black, so we add $a$ black balls. The urn now has $b+a$ black and $r$ red balls (total $b+r+a$). The probability of drawing red next is:
+\[ P(R_2 \mid B_1) = \frac{r}{b+r+a} \]
+If $R_1$ occurs, the first ball was red, so we add $a$ red balls. The urn now has $b$ black and $r+a$ red balls. The probability of drawing red next is:
+\[ P(R_2 \mid R_1) = \frac{r+a}{b+r+a} \]
+
+\textbf{Step 2: Apply the Law of Total Probability and Bayes' Theorem.}
+
+First, find the unconditional probability of drawing a red ball on the second draw:
+\begin{align*}
+P(R_2) &= P(R_2 \mid B_1) P(B_1) + P(R_2 \mid R_1) P(R_1) \\
+&= \left( \frac{r}{b+r+a} \right) \left( \frac{b}{b+r} \right) + \left( \frac{r+a}{b+r+a} \right) \left( \frac{r}{b+r} \right) \\
+&= \frac{rb + r(r+a)}{(b+r+a)(b+r)} = \frac{r(b+r+a)}{(b+r+a)(b+r)} = \frac{r}{b+r}
+\end{align*}
+(Notice that the marginal probability of drawing a red ball stays the same across draws in a Pólya urn).
+Now, apply Bayes' Theorem:
+\[ P(B_1 \mid R_2) = \frac{P(R_2 \mid B_1) P(B_1)}{P(R_2)} = \frac{ \frac{rb}{(b+r+a)(b+r)} }{ \frac{r}{b+r} } = \frac{b}{b+r+a} \]
+
+\textbf{Step 3: Analyze the limit condition for Part (2).}
+
+The condition $\lim_{a \to \infty} \sup_{n \geq 1} P(|X_n| > a) = 0$ means that the sequence $(X_n)$ is uniformly tight. For any arbitrary small $\delta > 0$, we can find a large constant $M > 0$ such that for all $n \geq 1$:
+\[ P(|X_n| > M) < \frac{\delta}{2} \]
+
+\textbf{Step 4: Bound the probability of the product sequence.}
+
+We want to show $X_n Y_n \xrightarrow{P} 0$. This means we must show that for any $\epsilon > 0$, $P(|X_n Y_n| > \epsilon) \to 0$ as $n \to \infty$.
+We can split the event $\{|X_n Y_n| > \epsilon\}$ into two mutually exclusive scenarios based on whether $X_n$ is "well-behaved" (bounded by $M$) or "extreme":
+\[ P(|X_n Y_n| > \epsilon) = P(|X_n Y_n| > \epsilon \text{ and } |X_n| \leq M) + P(|X_n Y_n| > \epsilon \text{ and } |X_n| > M) \]
+We can bound each term individually.
+For the second term, we know it is bounded simply by the probability that $X_n$ is extreme:
+\[ P(|X_n Y_n| > \epsilon \text{ and } |X_n| > M) \leq P(|X_n| > M) < \frac{\delta}{2} \]
+For the first term, if $|X_n| \leq M$ and $|X_n Y_n| > \epsilon$, it mathematically requires $|Y_n| > \epsilon / M$. Thus:
+\[ P(|X_n Y_n| > \epsilon \text{ and } |X_n| \leq M) \leq P\left(|Y_n| > \frac{\epsilon}{M}\right) \]
+
+\textbf{Step 5: Apply the limit as $n \to \infty$.}
+
+Combining the bounds:
+\[ P(|X_n Y_n| > \epsilon) \leq P\left(|Y_n| > \frac{\epsilon}{M}\right) + \frac{\delta}{2} \]
+Since $Y_n \xrightarrow{P} 0$, we know that $\lim_{n \to \infty} P(|Y_n| > \epsilon / M) = 0$.
+Therefore, there exists some $N$ such that for all $n > N$:
+\[ P\left(|Y_n| > \frac{\epsilon}{M}\right) < \frac{\delta}{2} \]
+For all $n > N$, we have $P(|X_n Y_n| > \epsilon) < \frac{\delta}{2} + \frac{\delta}{2} = \delta$.
+Since $\delta$ was arbitrary, this proves $\lim_{n \to \infty} P(|X_n Y_n| > \epsilon) = 0$, establishing convergence in probability.
+\end{solution}
+
 \begin{exercise}
 \begin{enumerate}
     \item Let $(\Omega, \mathcal{F}, P)$ be a probability space, $\mathcal{G}$ be a sub-algebra of $\mathcal{F}$. Assume that $X$ is a non-negative integrable random variable. Set $Y = E[X \mid \mathcal{G}]$. Prove that
@@ -22,6 +88,70 @@
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Measure-Theoretic Conditional Expectation:} $Y = E[X \mid \mathcal{G}]$ is the unique $\mathcal{G}$-measurable random variable satisfying $\int_A Y dP = \int_A X dP$ for all $A \in \mathcal{G}$.
+    \item \textbf{Almost Sure (a.s.) Inclusion:} $A \subset B$ a.s. means $P(A \setminus B) = 0$.
+    \item \textbf{Essential Infimum of Sets:} The smallest measurable set (up to measure zero) that satisfies a condition.
+    \item \textbf{Bivariate Normal Conditioning:} If $(X, Z)$ are jointly normal, the conditional expectation $E[X \mid Z]$ is linear: $E[X] + \frac{\operatorname{Cov}(X,Z)}{\operatorname{Var}(Z)}(Z - E[Z])$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Part (1) deals with abstract probability spaces. If $X$ is non-negative, its conditional expectation $Y$ must also be non-negative. If $Y$ (the "smeared out" average of $X$ over the sub-algebra) is zero on some region, $X$ itself must have been completely zero in that region. Thus, wherever $X$ is positive, $Y$ must also be positive. Furthermore, the set where $Y > 0$ forms the tightest possible "envelope" within the sub-algebra $\mathcal{G}$ that contains all the areas where $X > 0$.
+Part (2) is a concrete application. The sum of two bivariate normal variables is normal. Since normal variables have purely linear conditional expectations governed by their covariance, solving the problem reduces to algebraic calculation of variances and covariances.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove $[X > 0] \subset [Y > 0]$ a.s. (Part 1a).}
+
+We need to show $P(X > 0 \text{ and } Y \leq 0) = 0$. Since $X \geq 0$, $Y = E[X \mid \mathcal{G}]$ is also non-negative almost surely, so $Y \leq 0$ is equivalent to $Y = 0$ a.s.
+Let $A = \{ \omega \in \Omega \mid Y(\omega) = 0 \}$. Because $Y$ is $\mathcal{G}$-measurable, the set $A \in \mathcal{G}$.
+By the defining property of conditional expectation over any set in $\mathcal{G}$:
+\[ \int_A Y dP = \int_A X dP \]
+Since $Y = 0$ on $A$, the left side is $0$. Therefore, $\int_A X dP = 0$.
+Because $X$ is non-negative ($X \geq 0$), an integral evaluating to zero implies that the integrand must be zero almost everywhere on that domain.
+Thus, $X = 0$ almost surely on $A$.
+This means $P(X > 0 \text{ and } Y = 0) = 0$, which translates to $\{X > 0\} \subset \{Y > 0\}$ almost surely.
+
+\textbf{Step 2: Prove $[Y > 0]$ is the essential infimum (Part 1b).}
+
+Let $S = \{ A \in \mathcal{G} \mid [X > 0] \subset A \text{ a.s.} \}$. The essential infimum is the smallest set in $\mathcal{G}$ that belongs to $S$.
+First, let's verify that $B = [Y > 0]$ is in $S$. Because $Y$ is $\mathcal{G}$-measurable, $B \in \mathcal{G}$. From Step 1, $[X > 0] \subset B$ a.s. Thus $B \in S$.
+Second, we must show that $B$ is the "infimum" (i.e., contained in any other set in $S$).
+Take any arbitrary set $A \in S$. By definition, $A \in \mathcal{G}$ and $[X > 0] \subset A$ a.s.
+This means that on the complement $A^c$, the variable $X = 0$ a.s.
+Because $A^c \in \mathcal{G}$, we use the conditional expectation property:
+\[ \int_{A^c} Y dP = \int_{A^c} X dP = 0 \]
+Since $Y \geq 0$ a.s., this implies $Y = 0$ a.s. on $A^c$.
+Therefore, any point where $Y > 0$ must be outside $A^c$. This means $[Y > 0] \subset A$ a.s.
+Since $B \in S$ and $B \subset A$ a.s. for every $A \in S$, $B$ is the essential infimum.
+
+\textbf{Step 3: Define variables for the Bivariate Normal case (Part 2).}
+
+We have $X, Y \sim \text{Bivariate Normal}$. Let $Z = X+Y$.
+Since linear combinations of bivariate normal variables are normal, the joint distribution of $(X, Z)$ is also bivariate normal.
+The expectation $E[X] = 0$ and $E[Z] = E[X] + E[Y] = 0$.
+For a joint normal distribution with zero means, the conditional expectation is given by the linear regression formula:
+\[ E[X \mid Z] = \frac{\operatorname{Cov}(X, Z)}{\operatorname{Var}(Z)} Z \]
+
+\textbf{Step 4: Compute the Variance and Covariance components.}
+
+We are given: $\operatorname{Var}(X) = \sigma^2$, $\operatorname{Var}(Y) = \tau^2$, and the correlation is $\rho$.
+The covariance of $X$ and $Y$ is:
+\[ \operatorname{Cov}(X, Y) = \rho \sqrt{\operatorname{Var}(X)\operatorname{Var}(Y)} = \rho \sigma \tau \]
+Now, calculate the covariance of $X$ and $Z$:
+\[ \operatorname{Cov}(X, Z) = \operatorname{Cov}(X, X+Y) = \operatorname{Cov}(X, X) + \operatorname{Cov}(X, Y) = \sigma^2 + \rho \sigma \tau \]
+Next, calculate the variance of $Z$:
+\[ \operatorname{Var}(Z) = \operatorname{Var}(X+Y) = \operatorname{Var}(X) + \operatorname{Var}(Y) + 2\operatorname{Cov}(X, Y) = \sigma^2 + \tau^2 + 2\rho\sigma\tau \]
+
+\textbf{Step 5: Substitute into the conditional expectation formula.}
+
+Substitute the derived components into the regression formula:
+\[ E[X \mid X+Y] = \frac{\sigma^2 + \rho \sigma \tau}{\sigma^2 + \tau^2 + 2\rho\sigma\tau} (X+Y) \]
+\end{solution}
+
 \begin{exercise}
 Suppose that $\{ p(i, j) : i = 1, \dots, m; j = 1, \dots, n \}$ is a finite bivariate joint probability distribution, i.e., $p(i, j) > 0, \sum_i \sum_j p(i, j) = 1$.
 \begin{enumerate}
@@ -29,6 +159,48 @@ Suppose that $\{ p(i, j) : i = 1, \dots, m; j = 1, \dots, n \}$ is a finite biva
     \item Prove or disprove the above relation by use of conditional probability.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Joint and Marginal Probability:} $p(i, j) = P(X=i, Y=j)$. The marginal is $P(Y=j) = \sum_i p(i, j)$.
+    \item \textbf{Conditional Probability:} $P(X=i \mid Y=j) = \frac{P(X=i, Y=j)}{P(Y=j)}$. This inherently factors a joint distribution into a marginal and a conditional component.
+    \item \textbf{Dirac Delta / Indicator Function:} A sequence or function that is 1 at a specific index and 0 elsewhere.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+The problem asks if any 2D probability grid can be decomposed into a weighted sum of independent 1D probability grids. If we think about how a joint distribution is generated sequentially, we can first pick a column $j$ (based on the marginal probability of $Y$), and then pick a row $i$ (based on the conditional probability of $X$ given $Y=j$). This exact generative process can be mapped directly onto the required mathematical summation structure.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Answer the question (Part 1).}
+
+Yes, the joint probability distribution $\{p(i, j)\}$ can always be expressed in this exact decomposed form.
+
+\textbf{Step 2: Prove using conditional probability (Part 2).}
+
+Let $X$ and $Y$ be the random variables corresponding to the indices $i$ and $j$. By the definition of conditional probability:
+\[ p(i, j) = P(X=i, Y=j) = P(Y=j) P(X=i \mid Y=j) \]
+We want to map this product onto the target form $\sum_k \lambda_k a_k(i) b_k(j)$.
+Let the summation index $k$ run over the possible values of $j$, so $k \in \{1, \dots, n\}$.
+We define the components as follows:
+\begin{itemize}
+    \item \textbf{Define $\lambda_k$ (The marginal probability):} Let $\lambda_k = P(Y=k) = \sum_{i=1}^m p(i, k)$. Since $p(i, j) > 0$, we have $\lambda_k > 0$. Also, the sum over all marginals is $\sum_{k=1}^n \lambda_k = 1$. This satisfies the conditions for $\lambda_k$.
+    \item \textbf{Define $a_k(i)$ (The conditional probability):} Let $a_k(i) = P(X=i \mid Y=k) = \frac{p(i, k)}{\lambda_k}$. Because probabilities are non-negative, $a_k(i) \geq 0$. Furthermore, summing over all possible outcomes of $X$ given $Y=k$ yields $\sum_{i=1}^m a_k(i) = 1$. This satisfies the conditions for $a_k(i)$.
+    \item \textbf{Define $b_k(j)$ (The indicator/selector function):} Let $b_k(j) = 1$ if $j = k$, and $0$ if $j \neq k$. Clearly, $b_k(j) \geq 0$. For any fixed $k$, there is only one $j$ that equals $k$, so $\sum_{j=1}^n b_k(j) = 1$. This satisfies the conditions for $b_k(j)$.
+\end{itemize}
+
+\textbf{Step 3: Verify the summation.}
+
+Substitute our defined components back into the target summation:
+\[ \sum_{k=1}^n \lambda_k a_k(i) b_k(j) \]
+Because $b_k(j) = 0$ for all $k \neq j$, all terms in the sum disappear except the single term where $k = j$.
+The sum collapses to exactly one term:
+\[ \lambda_j a_j(i) b_j(j) = \lambda_j a_j(i) (1) = P(Y=j) P(X=i \mid Y=j) \]
+By the definition of conditional probability, this exactly equals the joint probability $P(X=i, Y=j) = p(i, j)$.
+This completes the constructive proof.
+\end{solution}
 
 \begin{exercise}
 Let $X_1, \dots, X_m \sim F$ i.i.d. and $Y_1, \dots, Y_n \sim G$ i.i.d. Test $H_0: F=G$ vs $H_1: F \neq G$. Total size $N = m+n$.
@@ -38,9 +210,117 @@ Let $X_1, \dots, X_m \sim F$ i.i.d. and $Y_1, \dots, Y_n \sim G$ i.i.d. Test $H_
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Nonparametric Rank Tests:} Instead of using actual data values, we sort all $N$ observations and assign them ranks $1$ to $N$.
+    \item \textbf{Indicator Functions in Ranking:} The rank of a value in a pooled sample is exactly 1 plus the number of other values that are strictly less than it (assuming no ties).
+    \item \textbf{Finite Population Sampling:} Under the null hypothesis $F=G$, the sum of ranks of the $Y$ sample behaves identically to drawing $n$ numbers at random without replacement from the set $\{1, 2, \dots, N\}$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+The Mann-Whitney $U$ statistic directly counts how many times an $X$ observation is "beaten" by a $Y$ observation. The Wilcoxon $W$ statistic just adds up the ranks of the $Y$ observations in the pooled list.
+Part (1) proves these two concepts are mathematically identical. A $Y$ observation's rank is boosted by two things: the $X$'s it beats, and the other $Y$'s it beats. Summing this up gives the $U$ statistic plus a constant factor representing the internal ranking of the $Y$'s.
+Part (2) derives the baseline mean and variance of this rank sum if there were no difference between the groups, using standard discrete uniform sampling formulas.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Decompose the rank of $Y_j$ (Part 1).}
+
+Assume the distributions are continuous so there are no tied values.
+Let $R_{Y_j}$ be the rank of observation $Y_j$ in the combined sample of size $N$.
+The rank is defined as the number of observations in the pooled sample that are less than or equal to $Y_j$.
+We can split the pooled sample into the $X$ group and the $Y$ group:
+\[ R_{Y_j} = \sum_{i=1}^m I(X_i < Y_j) + \sum_{k=1}^n I(Y_k \leq Y_j) \]
+
+\textbf{Step 2: Sum the ranks over all $j$ to connect $W$ to $U$.}
+
+The Wilcoxon statistic is $W = \sum_{j=1}^n R_{Y_j}$. Substitute the decomposition:
+\[ W = \sum_{j=1}^n \left[ \sum_{i=1}^m I(X_i < Y_j) + \sum_{k=1}^n I(Y_k \leq Y_j) \right] \]
+Distribute the outer summation:
+\[ W = \sum_{j=1}^n \sum_{i=1}^m I(X_i < Y_j) + \sum_{j=1}^n \sum_{k=1}^n I(Y_k \leq Y_j) \]
+The first term is exactly the definition of the Mann-Whitney $U$ statistic.
+The second term compares the $Y$ values exclusively against themselves. Since there are $n$ distinct $Y$ values, their ranks relative only to each other must be the integers $1, 2, \dots, n$.
+The sum of these internal ranks is simply the sum of the first $n$ integers:
+\[ \sum_{j=1}^n \sum_{k=1}^n I(Y_k \leq Y_j) = 1 + 2 + \dots + n = \frac{n(n+1)}{2} \]
+Thus, we have proven:
+\[ W = U + \frac{n(n+1)}{2} \]
+
+\textbf{Step 3: Calculate the expected value under $H_0$ (Part 2).}
+
+Under the null hypothesis $H_0: F = G$, all $N$ observations are identically distributed. Thus, any rank configuration is equally likely.
+The $n$ ranks assigned to the $Y$ sample can be viewed as a simple random sample of size $n$ drawn without replacement from the population of ranks $\{1, 2, \dots, N\}$.
+The expected value of a single draw $R$ from this population is the average of the integers 1 to $N$:
+\[ E[R] = \frac{1 + N}{2} \]
+Since $W$ is the sum of $n$ such draws, by linearity of expectation:
+\[ \mu_W = E[W] = n \cdot E[R] = \frac{n(N+1)}{2} \]
+
+\textbf{Step 4: Calculate the variance under $H_0$.}
+
+To find the variance of the sum of draws without replacement, we use the finite population correction factor.
+First, find the variance of the uniform population $\{1, 2, \dots, N\}$:
+\[ \sigma_{pop}^2 = \frac{N^2 - 1}{12} \]
+The variance of the sum of $n$ draws without replacement from a population of size $N$ is given by:
+\[ \sigma_W^2 = n \cdot \sigma_{pop}^2 \cdot \left( \frac{N - n}{N - 1} \right) \]
+Substitute $\sigma_{pop}^2$ and use the fact that $N - n = m$:
+\[ \sigma_W^2 = n \left( \frac{(N-1)(N+1)}{12} \right) \left( \frac{m}{N-1} \right) \]
+The $(N-1)$ terms cancel out:
+\[ \sigma_W^2 = \frac{n(N+1)m}{12} = \frac{mn(N+1)}{12} \]
+\end{solution}
+
 \begin{exercise}
 Let $X$ be a random variable with $E X^2 < \infty$, and $Y = |X|$. Assume $X$ has a Lebesgue density symmetric about 0. Show that $X$ and $Y$ are uncorrelated, but they are not independent.
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Covariance and Correlation:} Two variables are uncorrelated if $\operatorname{Cov}(X,Y) = E[XY] - E[X]E[Y] = 0$.
+    \item \textbf{Symmetry and Odd Functions:} If a random variable $X$ has a symmetric density around 0, then the expectation of any odd function of $X$ (like $X$ or $X|X|$) is zero, provided the expectation exists.
+    \item \textbf{Independence vs. Uncorrelatedness:} Independence is a strong condition requiring the entire joint distribution to factorize: $P(X \in A, Y \in B) = P(X \in A)P(Y \in B)$. Uncorrelatedness is a weak condition only requiring a lack of linear association.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Correlation only measures *linear* relationships. In this problem, $Y = |X|$, so $Y$ is perfectly determined by $X$. This is the ultimate form of dependence! However, the relationship is a V-shape. If you try to draw a single straight line of best fit through a V-shape centered at the origin, the best line is completely flat (slope zero). Thus, the linear correlation is strictly zero, even though the functional dependence is absolute.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove that $X$ and $Y$ are uncorrelated.}
+
+To show they are uncorrelated, we must prove $\operatorname{Cov}(X, Y) = 0$.
+By definition:
+\[ \operatorname{Cov}(X, Y) = E[XY] - E[X]E[Y] \]
+Because $X$ has a Lebesgue density $f_X(x)$ that is symmetric about 0 (i.e., $f_X(x) = f_X(-x)$) and has finite variance ($E[X^2] < \infty$), its mean exists and is exactly 0:
+\[ E[X] = \int_{-\infty}^\infty x f_X(x) dx = 0 \]
+This makes the second term $E[X]E[Y] = 0$.
+Now consider $E[XY]$. Since $Y = |X|$, we have:
+\[ E[XY] = E[X|X|] \]
+Let $g(x) = x|x|$. Notice that $g(-x) = (-x)|-x| = -x|x| = -g(x)$. Thus, $g(x)$ is an odd function.
+The expected value is the integral of an odd function multiplied by an even function $f_X(x)$:
+\[ E[X|X|] = \int_{-\infty}^\infty x|x| f_X(x) dx \]
+Because the domain is symmetric and the integral is absolutely convergent (since $|x| \cdot |x| = x^2$ and $E[X^2] < \infty$), the integral from $-\infty$ to $0$ perfectly cancels the integral from $0$ to $\infty$.
+Therefore, $E[XY] = 0$.
+Since both $E[XY]$ and $E[X]E[Y]$ are zero, $\operatorname{Cov}(X, Y) = 0$. The variables are uncorrelated.
+
+\textbf{Step 2: Prove that $X$ and $Y$ are not independent.}
+
+We must show that knowing $Y$ gives us information about $X$.
+If $X$ and $Y$ were genuinely independent, any function of $X$ would be independent of any function of $Y$.
+Specifically, $X^2$ and $Y^2$ would be independent, which implies:
+\[ E[X^2 Y^2] = E[X^2] E[Y^2] \]
+However, we know $Y = |X|$, which means $Y^2 = X^2$.
+Substitute $Y^2$ with $X^2$ on both sides:
+Left side: $E[X^2 X^2] = E[X^4]$
+Right side: $E[X^2] E[X^2] = (E[X^2])^2$
+For these to be equal, we must have:
+\[ E[X^4] - (E[X^2])^2 = 0 \implies \operatorname{Var}(X^2) = 0 \]
+A variance of zero means that $X^2$ is a constant almost surely (i.e., $X \in \{-c, c\}$ for some constant $c$).
+But we are explicitly given that $X$ has a \textit{Lebesgue density}. A continuous density cannot be concentrated on just two points; its variance cannot be zero.
+Therefore, $\operatorname{Var}(X^2) > 0$, which means $E[X^2 Y^2] \neq E[X^2] E[Y^2]$.
+This contradiction rigorously proves that $X$ and $Y$ are not independent.
+\end{solution}
 
 \begin{exercise}
 Let $E_i \sim \mathrm{Exponential}(1)$ i.i.d. and $U_i \sim \mathrm{Uniform}(0,1)$ i.i.d., all independent.
@@ -50,6 +330,73 @@ Let $E_i \sim \mathrm{Exponential}(1)$ i.i.d. and $U_i \sim \mathrm{Uniform}(0,1
     \item Find the density of $(U_1 \dots U_n)^{-X}$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Gamma Distribution and Sums of Exponentials:} The sum of $k$ i.i.d. Exponential(1) variables follows a Gamma$(k, 1)$ distribution. Note: $\text{Exp}(1) = \text{Gamma}(1, 1)$.
+    \item \textbf{Beta Distribution from Gamma Ratios:} If $V_1 \sim \text{Gamma}(\alpha, 1)$ and $V_2 \sim \text{Gamma}(\beta, 1)$ are independent, then $\frac{V_1}{V_1+V_2} \sim \text{Beta}(\alpha, \beta)$, and this ratio is independent of the sum $V_1+V_2$.
+    \item \textbf{F-Distribution:} Defined as the ratio of two independent Chi-square variables, each divided by its degrees of freedom. A Gamma$(k, 1)$ variable, when multiplied by 2, becomes a Chi-square variable with $2k$ degrees of freedom ($\chi^2_{2k}$).
+    \item \textbf{Logarithmic Transformation of Uniforms:} If $U \sim \text{Uniform}(0,1)$, then $-\ln(U) \sim \text{Exponential}(1)$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+This problem is a masterclass in distribution transformations. By viewing Exponentials as Gamma variables, we can instantly identify ratios of their sums as Beta distributions (Part 1). By tweaking that ratio, we hit the definition of the F-distribution, bridging Exponentials to Chi-squares to F-statistics (Part 2). Finally, the product of Uniform variables connects back to the sum of Exponentials via the natural logarithm, creating an elegant full-circle composition of Beta and Gamma variables (Part 3).
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Identify the components of $X$ (Part 1).}
+
+Let $S_m = \sum_{i=1}^m E_i$. Since $E_i \sim \text{Exp}(1)$ i.i.d., $S_m \sim \text{Gamma}(m, 1)$.
+Let the remainder of the sum be $S_{n-m} = \sum_{i=m+1}^n E_i$. This is independent of $S_m$, and $S_{n-m} \sim \text{Gamma}(n-m, 1)$.
+The total sum is $S_n = S_m + S_{n-m}$.
+We can write $X$ as:
+\[ X = \frac{S_m}{S_n} = \frac{S_m}{S_m + S_{n-m}} \]
+By the well-known property of independent Gamma variables, this ratio follows a Beta distribution with parameters equal to the shape parameters of the numerator and denominator.
+Thus, $X \sim \text{Beta}(m, n-m)$.
+Its probability density function is:
+\[ f_X(x) = \frac{\Gamma(n)}{\Gamma(m)\Gamma(n-m)} x^{m-1} (1-x)^{n-m-1}, \quad \text{for } 0 < x < 1 \]
+
+\textbf{Step 2: Transform $X$ into an $F$-statistic (Part 2).}
+
+We want to analyze $Y = \frac{(n-m)X}{m(1-X)}$.
+First, simplify the ratio $\frac{X}{1-X}$ using our Gamma components:
+\[ \frac{X}{1-X} = \frac{\frac{S_m}{S_m + S_{n-m}}}{\frac{S_{n-m}}{S_m + S_{n-m}}} = \frac{S_m}{S_{n-m}} \]
+Therefore, $Y = \frac{S_m / m}{S_{n-m} / (n-m)}$.
+We know $E_i \sim \text{Exp}(1)$. Multiplying an Exp(1) by 2 gives a $\chi^2_2$ distribution.
+Thus, $2S_m = \sum_{i=1}^m 2E_i \sim \chi^2_{2m}$.
+Similarly, $2S_{n-m} \sim \chi^2_{2(n-m)}$.
+Multiply the numerator and denominator of $Y$ by 2:
+\[ Y = \frac{2S_m / m}{2S_{n-m} / (n-m)} = \frac{(2S_m) / (2m)}{(2S_{n-m}) / (2(n-m))} \]
+This is exactly the ratio of two independent Chi-square random variables, each divided by its respective degrees of freedom ($2m$ and $2(n-m)$).
+By definition, this constructs an $F$-distribution: $Y \sim F(2m, 2(n-m))$.
+
+\textbf{Step 3: Analyze the Uniform product (Part 3).}
+
+We want the density of $W = (U_1 \dots U_n)^{-X}$.
+Let's simplify the base. Let $Z = -\ln(U_1 \dots U_n) = \sum_{i=1}^n (-\ln U_i)$.
+Since $U_i \sim \text{Unif}(0,1)$, the variable $-\ln U_i \sim \text{Exp}(1)$.
+Therefore, $Z$ is the sum of $n$ independent Exp(1) variables, so $Z \sim \text{Gamma}(n, 1)$.
+The target variable is $W = (e^{-Z})^{-X} = e^{XZ}$.
+Because the $U_i$ variables are independent of the $E_i$ variables, $Z$ is independent of $X$.
+We have $X \sim \text{Beta}(m, n-m)$ and $Z \sim \text{Gamma}(n, 1)$ independent.
+A key property of the Gamma-Beta algebra is that the product of an independent $\text{Beta}(\alpha, \beta)$ and $\text{Gamma}(\alpha+\beta, 1)$ results in a $\text{Gamma}(\alpha, 1)$ random variable.
+Therefore, the product $V = XZ \sim \text{Gamma}(m, 1)$.
+
+\textbf{Step 4: Find the density of $W = e^V$.}
+
+We know $V \sim \text{Gamma}(m, 1)$, so its density is:
+\[ f_V(v) = \frac{1}{\Gamma(m)} v^{m-1} e^{-v}, \quad \text{for } v > 0 \]
+We want the density of $W = e^V$. We use the change of variables formula:
+$v = \ln w$, and the Jacobian is $\frac{dv}{dw} = \frac{1}{w}$.
+Since $v > 0$, the support for $w$ is $w > 1$.
+Substituting into the density formula:
+\[ f_W(w) = f_V(\ln w) \left| \frac{dv}{dw} \right| = \frac{1}{\Gamma(m)} (\ln w)^{m-1} e^{-\ln w} \frac{1}{w} \]
+Since $e^{-\ln w} = \frac{1}{w}$, this simplifies to:
+\[ f_W(w) = \frac{(\ln w)^{m-1}}{\Gamma(m) w^2}, \quad \text{for } w > 1 \]
+This is a Log-Gamma distribution.
+\end{solution}
 
 \subsection{Team}
 
@@ -66,11 +413,70 @@ Let $(X_n)$ be a sequence of i.i.d. random variables.
 \end{exercise}
 
 \begin{solution}
-1) (a) Let $A_n = \{X_n > \alpha \log n\}$. $P(A_n) = e^{-\alpha \log n} = n^{-\alpha}$.
-By Borel-Cantelli, if $\alpha > 1$, $\sum P(A_n) < \infty \implies P(A_n \text{ i.o.}) = 0$.
-If $\alpha \leq 1$, $\sum P(A_n) = \infty \implies P(A_n \text{ i.o.}) = 1$ by independence.
-(b) From (a), $L \leq 1+\epsilon$ and $L \geq 1-\epsilon$ for any $\epsilon > 0$.
-2) Similar using $P(X \geq k) \approx \frac{\lambda^k e^{-\lambda}}{k!}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Borel-Cantelli Lemmas:} 
+        \begin{itemize}
+            \item First Lemma: If $\sum P(A_n) < \infty$, then the probability that infinitely many $A_n$ occur is 0 ($P(A_n \text{ i.o.}) = 0$).
+            \item Second Lemma: If $\sum P(A_n) = \infty$ and the events $A_n$ are mutually independent, then $P(A_n \text{ i.o.}) = 1$.
+        \end{itemize}
+    \item \textbf{Limsup of Events:} "i.o." stands for infinitely often, which is mathematically $\limsup_{n \to \infty} A_n$.
+    \item \textbf{Stirling's Approximation:} $n! \approx \sqrt{2\pi n} (n/e)^n$, which implies $\log(n!) \approx n \log n - n$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+How large can the maximum of $n$ random variables get? This problem establishes the "speed limit" for the growth of extremes in Exponential and Poisson sequences. Because the tails drop off exponentially (or faster), an extreme value event becomes exceedingly rare. The Borel-Cantelli lemmas act as a sharp knife: if the sum of probabilities of extreme events converges, the sequence will almost surely stay below that boundary. By tweaking the boundary multiplier $\alpha$, we find the exact razor's edge where the sequence transitions from crossing the boundary infinitely often to eventually staying below it forever.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Apply Borel-Cantelli to the Exponential distribution (Part 1a).}
+
+Let $A_n$ be the event that $\{X_n > \alpha \log n\}$.
+Since $X_n \sim \text{Exp}(1)$, its survival function is $P(X_n > x) = e^{-x}$.
+Substitute $x = \alpha \log n$:
+\[ P(A_n) = \exp(-\alpha \log n) = n^{-\alpha} \]
+We now check the sum of these probabilities, $\sum_{n=1}^\infty P(A_n) = \sum_{n=1}^\infty \frac{1}{n^\alpha}$.
+This is the standard p-series.
+- If $\alpha > 1$, the series converges ($\sum P(A_n) < \infty$). By the First Borel-Cantelli Lemma, $P(A_n \text{ i.o.}) = 0$.
+- If $\alpha \leq 1$, the series diverges ($\sum P(A_n) = \infty$). Because the random variables $X_n$ are i.i.d., the events $A_n$ are independent. By the Second Borel-Cantelli Lemma, $P(A_n \text{ i.o.}) = 1$.
+
+\textbf{Step 2: Connect the i.o. events to the limsup (Part 1b).}
+
+Let $L = \limsup_{n \to \infty} \frac{X_n}{\log n}$.
+For any arbitrary $\epsilon > 0$, set $\alpha = 1 + \epsilon > 1$. From Part 1a, $P(X_n > (1+\epsilon) \log n \text{ i.o.}) = 0$.
+This means that for large enough $n$, $\frac{X_n}{\log n}$ is almost surely bounded above by $1+\epsilon$. Thus, $L \leq 1+\epsilon$ a.s. Since this holds for any $\epsilon > 0$, we conclude $L \leq 1$ a.s.
+Now set $\alpha = 1 \leq 1$. From Part 1a, $P(X_n > \log n \text{ i.o.}) = 1$.
+This means that infinitely often, $\frac{X_n}{\log n} > 1$. Thus, the upper limit must be at least 1, so $L \geq 1$ a.s.
+Combining both bounds, $P(L = 1) = 1$.
+
+\textbf{Step 3: Analyze the Poisson tail probabilities (Part 2).}
+
+Let $X_n \sim \text{Poisson}(\lambda)$. We want to find the boundary $k_n$ such that $P(X_n \geq k_n)$ acts like $1/n$.
+For large $k$, the Poisson tail is dominated by its leading term: $P(X_n \geq k) \approx P(X_n = k) = \frac{\lambda^k e^{-\lambda}}{k!}$.
+Taking the natural logarithm:
+\[ \log P(X_n \geq k) \approx k \log \lambda - \lambda - \log(k!) \]
+Using Stirling's approximation $\log(k!) \approx k \log k - k$:
+\[ \log P(X_n \geq k) \approx k \log \lambda - \lambda - k \log k + k \approx -k \log k \]
+(The $-k \log k$ term heavily dominates as $k \to \infty$).
+
+\textbf{Step 4: Find the exact boundary curve for Poisson.}
+
+We are testing the limit $\limsup \frac{X_n \log \log n}{\log n} = 1$. This implies we should test the boundary $k_n = c \frac{\log n}{\log \log n}$ for a constant $c$.
+Substitute $k_n$ into our logarithmic tail approximation $-k_n \log k_n$:
+\[ \log k_n = \log c + \log \log n - \log \log \log n \approx \log \log n \]
+Therefore:
+\[ -k_n \log k_n \approx - \left( c \frac{\log n}{\log \log n} \right) (\log \log n) = -c \log n \]
+Exponentiating both sides gives the tail probability:
+\[ P(X_n \geq k_n) \approx \exp(-c \log n) = n^{-c} \]
+
+\textbf{Step 5: Apply Borel-Cantelli to the Poisson sequence.}
+
+We have $P\left(X_n \geq c \frac{\log n}{\log \log n}\right) \approx \frac{1}{n^c}$.
+Just like in Part 1a, this sums to a finite value if $c > 1$ and diverges if $c \leq 1$.
+- For $c = 1+\epsilon$, sum converges $\implies \limsup \frac{X_n \log \log n}{\log n} \leq 1+\epsilon$ a.s.
+- For $c = 1$, sum diverges $\implies \limsup \frac{X_n \log \log n}{\log n} \geq 1$ a.s.
+Thus, the limit supremum is almost surely exactly 1.
 \end{solution}
 
 \begin{exercise}
@@ -78,8 +484,48 @@ Let $X_i \sim \mathrm{Exp}(1)$ i.i.d., $N \sim \mathrm{Geom}(p)$ independent of 
 \end{exercise}
 
 \begin{solution}
-The MGF of $\sum_1^N X_i$ is $G_N(M_X(t)) = \frac{p/(1-t)}{1-(1-p)/(1-t)} = \frac{p}{1-t-(1-p)} = \frac{p}{p-t} = \frac{1}{1-t/p}$.
-This is the MGF of $\mathrm{Exp}(p)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Moment Generating Functions (MGF):} The MGF uniquely defines a probability distribution. For $X \sim \text{Exp}(\lambda)$, $M_X(t) = \frac{\lambda}{\lambda - t}$.
+    \item \textbf{Probability Generating Functions (PGF):} Used for discrete variables. For $N \sim \text{Geom}(p)$ (supported on $1, 2, \dots$), $G_N(s) = E[s^N] = \frac{ps}{1 - (1-p)s}$.
+    \item \textbf{Compound Distributions:} The MGF of a random sum $S_N = \sum_{i=1}^N X_i$ is found by composing the PGF of $N$ with the MGF of $X$: $M_{S_N}(t) = G_N(M_X(t))$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are adding up a random number of waiting times. This represents processes like waiting for a machine to suffer a catastrophic failure, where each minor shock takes an Exponential amount of time, and the machine survives each shock with probability $1-p$. The elegance of compound distributions allows us to solve this algebraically using generating functions, revealing that a Geometric sum of Exponential variables miraculously collapses back into a single, slower Exponential variable!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Identify the generating functions of the components.}
+
+Let $X \sim \text{Exp}(1)$. Its Moment Generating Function (MGF) is:
+\[ M_X(t) = E[e^{tX}] = \int_0^\infty e^{tx} e^{-x} dx = \frac{1}{1-t}, \quad \text{for } t < 1 \]
+Let $N \sim \text{Geom}(p)$, where $N$ represents the number of trials up to and including the first success (so $N \in \{1, 2, 3, \dots\}$). Its Probability Generating Function (PGF) is:
+\[ G_N(s) = E[s^N] = \sum_{k=1}^\infty s^k p (1-p)^{k-1} = p s \sum_{j=0}^\infty (s(1-p))^j = \frac{ps}{1 - s(1-p)} \]
+
+\textbf{Step 2: Apply the law of total expectation for the random sum.}
+
+Let $S_N = \sum_{i=1}^N X_i$. To find the MGF of $S_N$, we condition on the random variable $N$:
+\[ M_{S_N}(t) = E[e^{t S_N}] = E_N [ E [ e^{t \sum X_i} \mid N ] ] \]
+Because the $X_i$'s are independent of each other and of $N$, the inner expectation is just the MGF of $X$ raised to the power of $N$:
+\[ M_{S_N}(t) = E_N [ (M_X(t))^N ] \]
+Notice that this perfectly matches the definition of the PGF of $N$, evaluated at $s = M_X(t)$:
+\[ M_{S_N}(t) = G_N(M_X(t)) \]
+
+\textbf{Step 3: Calculate the composed generating function.}
+
+Substitute $M_X(t) = \frac{1}{1-t}$ into $G_N(s)$:
+\[ M_{S_N}(t) = \frac{p \left( \frac{1}{1-t} \right)}{1 - (1-p) \left( \frac{1}{1-t} \right)} \]
+Multiply the numerator and the denominator by $(1-t)$ to clear the fractions:
+\[ M_{S_N}(t) = \frac{p}{(1-t) - (1-p)} = \frac{p}{1 - t - 1 + p} = \frac{p}{p - t} \]
+Divide the numerator and denominator by $p$ to match the standard MGF format:
+\[ M_{S_N}(t) = \frac{1}{1 - t/p} = \frac{p}{p - t} \]
+
+\textbf{Step 4: Identify the resulting distribution.}
+
+The resulting MGF $\frac{p}{p - t}$ is exactly the Moment Generating Function of an Exponential distribution with rate parameter $p$.
+Because Moment Generating Functions uniquely identify distributions, we conclude that the random sum $S_N$ follows an $\text{Exp}(p)$ distribution.
 \end{solution}
 
 \begin{exercise}
@@ -87,5 +533,63 @@ Let $X, Y$ be i.i.d. real valued. Prove $P(|X+Y| < 1) \leq 3 P(|X-Y| < 1)$.
 \end{exercise}
 
 \begin{solution}
-This is a standard concentration inequality. $X-Y$ is symmetric about 0.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Discretization Bound:} Continuous probabilities can be bounded by discretizing the real line into distinct intervals and analyzing the combinatorics of the grid.
+    \item \textbf{Algebraic Inequality:} For any real numbers $a, b$, the inequality $2ab \leq a^2 + b^2$ applies.
+    \item \textbf{Symmetry of i.i.d. Variables:} If $X$ and $Y$ are i.i.d., the probability that they land in the same interval is a squared probability $P(X \in I)^2$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+It seems strange that the sum $X+Y$ being small is restricted by the difference $X-Y$ being small. However, if $X$ and $Y$ are independent, the only way $X+Y \approx 0$ is if $X \approx c$ and $Y \approx -c$. If the distribution has high probability mass at $c$ and $-c$, it must also generate pairs where both $X$ and $Y$ are near $c$ (or both near $-c$), which makes $X-Y \approx 0$. By dividing the real line into discrete "buckets" of size 1, we can prove that the cross-bucket combinations required for $|X+Y|<1$ are strictly mathematically bounded by the same-bucket collisions that generate $|X-Y|<1$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Discretize the real line.}
+
+Divide the real number line into disjoint intervals of length 1: $I_k = [k, k+1)$ for $k \in \mathbb{Z}$.
+Let $p_k = P(X \in I_k)$. Since $X$ and $Y$ are identically distributed, $P(Y \in I_k) = p_k$ as well.
+Because the intervals are mutually exclusive and collectively exhaustive, we can express the target probabilities by summing over these buckets.
+
+\textbf{Step 2: Establish a lower bound for $P(|X-Y| < 1)$.}
+
+If $X$ and $Y$ both fall into the exact same interval $I_k$, the maximum possible distance between them is the length of the interval, which is 1.
+Therefore, if $X \in I_k$ and $Y \in I_k$, it is guaranteed that $|X-Y| < 1$.
+Using this sufficient condition, we can lower bound the probability:
+\[ P(|X-Y| < 1) \geq \sum_{k=-\infty}^\infty P(X \in I_k \text{ and } Y \in I_k) \]
+Because $X$ and $Y$ are independent:
+\[ P(|X-Y| < 1) \geq \sum_{k=-\infty}^\infty P(X \in I_k) P(Y \in I_k) = \sum_{k=-\infty}^\infty p_k^2 \]
+
+\textbf{Step 3: Establish an upper bound for $P(|X+Y| < 1)$.}
+
+Suppose $X \in I_k$. Then $k \leq X < k+1$.
+We are looking for the event $|X+Y| < 1$, which means $-1 < X+Y < 1$.
+Subtracting $X$ from all sides gives $-1-X < Y < 1-X$.
+Substitute the bounds for $X$:
+- The minimum possible value for $Y$ is when $X$ is near $k+1$, giving $Y > -1 - (k+1) = -k-2$.
+- The maximum possible value for $Y$ is when $X$ is near $k$, giving $Y < 1 - k = -k+1$.
+Thus, $Y$ must strictly lie in the range $(-k-2, -k+1)$.
+This span covers exactly three of our discrete intervals of length 1: $I_{-k-2}$, $I_{-k-1}$, and $I_{-k}$.
+Therefore, if $|X+Y| < 1$, $Y$ must belong to one of these three intervals. We can formulate an upper bound:
+\[ P(|X+Y| < 1) \leq \sum_{k=-\infty}^\infty P(X \in I_k \text{ and } Y \in I_{-k-2} \cup I_{-k-1} \cup I_{-k}) \]
+Using independence:
+\[ P(|X+Y| < 1) \leq \sum_{k=-\infty}^\infty p_k (p_{-k-2} + p_{-k-1} + p_{-k}) \]
+
+\textbf{Step 4: Connect the upper and lower bounds algebraically.}
+
+We expand the upper bound into three separate sums:
+\[ P(|X+Y| < 1) \leq \sum_{k} p_k p_{-k} + \sum_{k} p_k p_{-k-1} + \sum_{k} p_k p_{-k-2} \]
+We apply the fundamental algebraic inequality $ab \leq \frac{1}{2}(a^2 + b^2)$ to each term:
+1. $\sum_k p_k p_{-k} \leq \sum_k \frac{1}{2}(p_k^2 + p_{-k}^2) = \frac{1}{2} \sum_k p_k^2 + \frac{1}{2} \sum_k p_k^2 = \sum_k p_k^2$
+2. $\sum_k p_k p_{-k-1} \leq \sum_k \frac{1}{2}(p_k^2 + p_{-k-1}^2) = \frac{1}{2} \sum_k p_k^2 + \frac{1}{2} \sum_k p_k^2 = \sum_k p_k^2$
+3. $\sum_k p_k p_{-k-2} \leq \sum_k \frac{1}{2}(p_k^2 + p_{-k-2}^2) = \frac{1}{2} \sum_k p_k^2 + \frac{1}{2} \sum_k p_k^2 = \sum_k p_k^2$
+
+\textbf{Step 5: Final conclusion.}
+
+Adding the three bounds together gives:
+\[ P(|X+Y| < 1) \leq \sum_k p_k^2 + \sum_k p_k^2 + \sum_k p_k^2 = 3 \sum_{k=-\infty}^\infty p_k^2 \]
+Since we proved in Step 2 that $\sum p_k^2 \leq P(|X-Y| < 1)$, we substitute this directly:
+\[ P(|X+Y| < 1) \leq 3 P(|X-Y| < 1) \]
+This brilliantly completes the proof.
 \end{solution}

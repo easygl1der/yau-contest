@@ -7,25 +7,23 @@ Find the homology and fundamental group of the space $X = S^{1} \times S^{1} / \
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} Imagine a rubber torus. If you pinch two distinct points together, you've created a new "handle" or loop that wasn't there before. This loop is the path that used to go from $p$ to $q$, which now returns to the same point. Topologically, this is equivalent to taking the original torus and attaching a circle ($S^1$) at a single point.
+\textbf{Prerequisites:} Homotopy equivalence, Wedge sum ($\vee$), Fundamental group of the torus $T^2$ and the circle $S^1$, and basic Homology theory.
 
-\textbf{Fundamental Group:}
-The space $X$ is homotopy equivalent to $T^2 \vee S^1$. 
-Since $X$ is the quotient $T^2 / \{p \sim q\}$, and $T^2$ is a "good" space, we have:
-\[ \pi_1(X) \cong \pi_1(T^2 \vee S^1) \cong \pi_1(T^2) * \pi_1(S^1) \cong (\mathbb{Z} \oplus \mathbb{Z}) * \mathbb{Z} \]
-where $*$ denotes the free product. This captures the two loops of the torus and the new loop created by the identification.
+\textbf{Steps:}
 
-\textbf{Homology Groups:}
-Using the wedge sum property for reduced homology $\tilde{H}_n(Y \vee Z) \cong \tilde{H}_n(Y) \oplus \tilde{H}_n(Z)$:
-The homology of the torus $T^2$ is $H_0 = \mathbb{Z}, H_1 = \mathbb{Z}^2, H_2 = \mathbb{Z}$.
-The homology of $S^1$ is $H_0 = \mathbb{Z}, H_1 = \mathbb{Z}$.
-Thus:
-\begin{itemize}
-    \item $H_0(X) \cong \mathbb{Z}$ (since $X$ is path-connected).
-    \item $H_1(X) \cong H_1(T^2) \oplus H_1(S^1) \cong \mathbb{Z}^2 \oplus \mathbb{Z} \cong \mathbb{Z}^3$.
-    \item $H_2(X) \cong H_2(T^2) \oplus H_2(S^1) \cong \mathbb{Z} \oplus 0 \cong \mathbb{Z}$.
-\end{itemize}
-The third generator in $H_1$ corresponds to the cycle formed by the identification.
+1. Identify the homotopy type of the quotient space $X$. By collapsing two points $p, q$ to a single point, we are effectively adding a new loop that connects $p$ to $q$. This transformation is equivalent to taking the wedge sum of the original torus $T^2$ and a circle $S^1$, written as $T^2 \vee S^1$.
+
+2. Compute the fundamental group $\pi_1(X)$. Using the Seifert-van Kampen Theorem, the fundamental group of a wedge sum is the free product of the fundamental groups of the constituent spaces. Thus, $\pi_1(X) \cong \pi_1(T^2 \vee S^1) \cong \pi_1(T^2) * \pi_1(S^1)$. Substituting the known groups, we get $(\mathbb{Z} \oplus \mathbb{Z}) * \mathbb{Z}$.
+
+3. Compute the homology groups $H_n(X)$. For path-connected spaces, $H_0(X) \cong \mathbb{Z}$. For higher dimensions, we use the property $\tilde{H}_n(Y \vee Z) \cong \tilde{H}_n(Y) \oplus \tilde{H}_n(Z)$. Since $H_1(T^2) = \mathbb{Z}^2$ and $H_1(S^1) = \mathbb{Z}$, we have $H_1(X) \cong \mathbb{Z}^2 \oplus \mathbb{Z} = \mathbb{Z}^3$. For $n=2$, $H_2(T^2) = \mathbb{Z}$ and $H_2(S^1) = 0$, so $H_2(X) \cong \mathbb{Z}$.
+
+\textbf{Intuition:}
+
+Imagine a rubber torus (like a donut). If you pinch two distinct points $p$ and $q$ together until they touch, you've created a new "handle" or loop that wasn't there before. Any path that used to go from $p$ to $q$ on the surface now becomes a loop starting and ending at the same (newly identified) point.
+
+In topological terms, this is exactly what happens when you glue a circle ($S^1$) onto the torus at a single point. This new circle accounts for the extra "loop" in the fundamental group (the free product with $\mathbb{Z}$) and the extra generator in the first homology group $H_1$.
+
+The space still looks like a torus in 2D, so its "inner volume" or 2nd homology $H_2$ remains $\mathbb{Z}$, and it's still all in one piece, so $H_0$ is $\mathbb{Z}$.
 \end{solution}
 
 \begin{exercise}
@@ -33,13 +31,29 @@ Suppose $(X, d)$ is a compact metric space and $f : X \to X$ is a map so that $d
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} An isometry preserves the "spacing" between points. In a compact space, there is only a "finite amount of room." If the map were not onto, the image would have to be "smaller" than the original, but the isometry condition prevents any shrinking. Eventually, the points would have to "pile up" somewhere, which compactness allows but the isometry condition (maintaining a minimum distance from the missed region) forbids.
+\textbf{Prerequisites:} Compact metric spaces, Isometries (distance-preserving maps), Sequences and subsequences, and Proof by contradiction.
 
-\textbf{Proof:} Suppose $f$ is not surjective. Let $y \in X \setminus f(X)$. Since $f(X)$ is compact (and thus closed), there is an $\epsilon > 0$ such that $d(y, f(X)) \geq \epsilon$.
-Consider the sequence $x_n = f^n(y)$. For $n > m$:
-\[ d(x_n, x_m) = d(f^m(x_{n-m}), f^m(x_0)) = d(x_{n-m}, y) \]
-Since $n-m \geq 1$, $x_{n-m} \in f(X)$, so $d(x_{n-m}, y) \geq \epsilon$.
-Thus, all points in the sequence $\{x_n\}$ are at least $\epsilon$ apart. This means the sequence can have no convergent subsequence, contradicting the compactness of $X$.
+\textbf{Steps:}
+
+1. Assume $f$ is not surjective (not "onto"). This means there exists some point $y \in X$ that is not in the image $f(X)$.
+
+2. Because $f(X)$ is the image of a compact space under a continuous map (isometries are always continuous), $f(X)$ is itself compact and therefore closed. Since $y$ is not in $f(X)$, there must be some minimum positive distance $\epsilon > 0$ between $y$ and the entire set $f(X)$. That is, $d(y, f(x)) \geq \epsilon$ for all $x \in X$.
+
+3. Construct a sequence of points by repeatedly applying $f$ to $y$. Let $x_0 = y$, $x_1 = f(y)$, $x_2 = f(f(y))$, and in general $x_n = f^n(y)$.
+
+4. Show that all points in this sequence are far apart. For any $n > m$, we have $d(x_n, x_m) = d(f^m(x_{n-m}), f^m(x_0))$. Because $f$ is an isometry, it preserves distances at each step, so $d(f^m(x_{n-m}), f^m(x_0)) = d(x_{n-m}, x_0) = d(x_{n-m}, y)$.
+
+5. Since $n-m \geq 1$, the point $x_{n-m}$ is in the image $f(X)$. From step 2, we know $d(x_{n-m}, y) \geq \epsilon$. Thus, $d(x_n, x_m) \geq \epsilon$ for all distinct $n, m$.
+
+6. Reach a contradiction. In a compact metric space, every sequence must have a convergent subsequence. However, a sequence where all points are at least $\epsilon$ apart can never have a convergent subsequence (because the points never get closer to each other). This contradicts the compactness of $X$, so our initial assumption that $f$ was not surjective must be false.
+
+\textbf{Intuition:}
+
+Imagine you have a fixed amount of string in a small, tight jar (a compact space). An isometry is like moving the string around without stretching or shrinking it. 
+
+If the map were not "onto," it would mean you've moved the string in such a way that it no longer covers some part of the jar it could have reached. But because the jar is small and the string's length is preserved, you can't just "leave a hole" without the string piling up somewhere else. 
+
+If you keep moving the string according to this rule, you would eventually need more "room" to keep all the different parts of the string far enough apart. Since the jar is compact, you eventually run out of room, forcing the map to cover everything.
 \end{solution}
 
 \begin{exercise}
@@ -49,12 +63,27 @@ has a zero on $[0, t_{0}]$, where $\sigma(t_{0})$ is the first conjugate point t
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} In differential geometry, curvature acts as a "focusing force" for geodesics. High positive curvature makes geodesics converge quickly (shorter distance to conjugate points). The equation $u'' + fu = 0$ is a model for how Jacobi fields (which measure geodesic deviation) behave. If $f$ is "stronger" than the actual curvature $K$, it will force its "Jacobi field" $u$ to vanish even sooner than the actual one.
+\textbf{Prerequisites:} Jacobi equation, Conjugate points, Gaussian curvature $K$, and the Sturm Comparison Theorem for differential equations.
 
-\textbf{Proof:} A non-trivial Jacobi field $J(t)$ along $\sigma$ with $J(0) = 0$ satisfies $J''(t) + K(\sigma(t))J(t) = 0$. By definition of the first conjugate point $t_0$, $J(t_0) = 0$ and $J(t) > 0$ on $(0, t_0)$.
-We compare this with $u'' + f(t)u = 0$, where $f(t) \geq K(\sigma(t))$.
-By the Sturm Comparison Theorem, between any two zeros of a solution to the "lesser" equation ($J$), any solution to the "greater" equation ($u$) must have a zero.
-Since $J(0) = 0$ and $J(t_0) = 0$, $u(t)$ must have a zero in the interval $[0, t_0]$. If $u(0) \neq 0$, the zero must be in $(0, t_0)$. If $u(0) = 0$, the zero is at the endpoint.
+\textbf{Steps:}
+
+1. Set up the Jacobi equation. A Jacobi field $J(t)$ along a geodesic $\sigma$ measures how nearby geodesics diverge or converge. It satisfies the differential equation $J''(t) + K(\sigma(t))J(t) = 0$.
+
+2. Define the conjugate point. By definition, $\sigma(t_0)$ is the first conjugate point to $\sigma(0)$ if there exists a non-trivial Jacobi field $J(t)$ such that $J(0) = 0$ and $J(t_0) = 0$, with $J(t) > 0$ for all $t \in (0, t_0)$.
+
+3. State the comparison. We are given the equation $u''(t) + f(t)u(t) = 0$, where $f(t) \geq K(\sigma(t))$. This means the "restoring force" in the $u$ equation is at least as strong as the one in the Jacobi equation.
+
+4. Apply the Sturm Comparison Theorem. This theorem states that if $f(t) \geq K(t)$, then any solution $u(t)$ to $u'' + fu = 0$ must have at least one zero between any two consecutive zeros of a solution $J(t)$ to $J'' + KJ = 0$.
+
+5. Conclude the proof. Since $J(0) = 0$ and $J(t_0) = 0$, the function $u(t)$ must vanish at least once in the interval $[0, t_0]$. If $u(0) \neq 0$, the zero must occur strictly within $(0, t_0)$. If $u(0) = 0$, the zero is at the start of the interval.
+
+\textbf{Intuition:}
+
+In differential geometry, curvature acts like a "focusing" or "bending" force on geodesics. Positive curvature pulls geodesics together, while negative curvature pushes them apart. 
+
+The Jacobi field $J(t)$ tracks the separation between two geodesics starting from the same point. When $J(t)$ becomes zero, the geodesics have "refocused" and met again; this meeting point is called a conjugate point. 
+
+The equation $u'' + fu = 0$ acts like a model for a spring system where $f(t)$ is the "stiffness." If the stiffness $f(t)$ is greater than the actual curvature $K(t)$, the "spring" $u$ will pull back to zero even faster than the Jacobi field $J$ does. Therefore, if $J$ hits zero at $t_0$, the "tighter" system $u$ must have already hit zero at or before that time.
 \end{solution}
 
 \begin{exercise}
@@ -62,16 +91,31 @@ Let $g_{1}, g_{2}$ be Riemannian metrics on a differentiable manifold $M$, and d
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} $R(X, Y, Y, X)$ is essentially the sectional curvature of the plane spanned by $X$ and $Y$. This exercise shows that the full Riemann curvature tensor, which has many components, is completely determined by the sectional curvatures of all 2-planes. This is a powerful algebraic property of tensors satisfying the Bianchi identities.
+\textbf{Prerequisites:} Riemannian curvature tensor $R(X,Y,Z,W)$, Sectional curvature, Polarization identities, and the First Bianchi Identity.
 
-\textbf{Proof:} Let $R = R_1 - R_2$. We are given $R(X, Y, Y, X) = 0$ for all $X, Y$.
-Through polarization (replacing $Y$ with $Y+Z$):
-$R(X, Y+Z, Y+Z, X) = R(X, Y, Y, X) + R(X, Y, Z, X) + R(X, Z, Y, X) + R(X, Z, Z, X) = 0$.
-Since $R(X, Y, Y, X) = 0$ and $R(X, Z, Z, X) = 0$, and using $R(X, Y, Z, X) = R(Z, X, X, Y) = R(X, Z, Y, X)$, we find $R(X, Y, Z, X) = 0$ for all $X, Y, Z$.
-Polarizing $X$ again ($X \to X+W$):
-$R(X+W, Y, Z, X+W) = R(X, Y, Z, W) + R(W, Y, Z, X) = 0$.
-This implies $R(X, Y, Z, W) = -R(W, Y, Z, X) = R(Y, W, Z, X)$.
-Using the First Bianchi Identity $R(X, Y, Z, W) + R(Y, Z, X, W) + R(Z, X, Y, W) = 0$ and the derived symmetries, we find $3R(X, Y, Z, W) = 0$, hence $R = 0$.
+\textbf{Steps:}
+
+1. Define the difference tensor. Let $R = R_1 - R_2$. Because both $R_1$ and $R_2$ are curvature tensors, their difference $R$ also satisfies the standard symmetries of a curvature tensor (linearity, antisymmetry in the first two and last two indices, and the First Bianchi Identity).
+
+2. Use the given condition. We are told $R_1(X, Y, Y, X) = R_2(X, Y, Y, X)$, which implies $R(X, Y, Y, X) = 0$ for all tangent vectors $X, Y$.
+
+3. Apply Polarization to the $Y$ variable. Replace $Y$ with $Y+Z$ in the equation $R(X, Y, Y, X) = 0$. Expanding this gives:
+\[ R(X, Y+Z, Y+Z, X) = R(X, Y, Y, X) + R(X, Y, Z, X) + R(X, Z, Y, X) + R(X, Z, Z, X) = 0 \]
+Using $R(X, Y, Y, X) = 0$ and $R(X, Z, Z, X) = 0$, we find $R(X, Y, Z, X) + R(X, Z, Y, X) = 0$. Since $R(X, Y, Z, X) = R(Z, X, X, Y) = R(X, Z, Y, X)$, this reduces to $2R(X, Y, Z, X) = 0$, so $R(X, Y, Z, X) = 0$.
+
+4. Apply Polarization to the $X$ variable. Now replace $X$ with $X+W$ in $R(X, Y, Z, X) = 0$. Expanding this yields:
+\[ R(X+W, Y, Z, X+W) = R(X, Y, Z, X) + R(X, Y, Z, W) + R(W, Y, Z, X) + R(W, Y, Z, W) = 0 \]
+This simplifies to $R(X, Y, Z, W) + R(W, Y, Z, X) = 0$, or $R(X, Y, Z, W) = -R(W, Y, Z, X)$.
+
+5. Use the First Bianchi Identity. The identity states $R(X, Y, Z, W) + R(Y, Z, X, W) + R(Z, X, Y, W) = 0$. Using the symmetry derived in step 4 and the standard tensor symmetries, one can algebraically show that $R(X, Y, Z, W)$ must be zero for all inputs. Thus, $R_1 = R_2$.
+
+\textbf{Intuition:}
+
+The full Riemann curvature tensor is a complex object with many components, but it is highly constrained by symmetry. The quantity $R(X, Y, Y, X)$ essentially tells us the "sectional curvature" of the plane spanned by $X$ and $Y$. 
+
+This problem proves a beautiful algebraic fact: if you know the sectional curvature for every possible 2-plane in the tangent space, you have enough information to reconstruct every single component of the full curvature tensor. 
+
+It is similar to how a symmetric matrix $A$ is completely determined if you know the value of $v^T A v$ for every vector $v$. By testing the tensor on enough combinations of vectors (the "polarization" process), we can eventually isolate each individual component and show they must match.
 \end{solution}
 
 \begin{exercise}
@@ -79,12 +123,29 @@ Let $M^{n}$ be an even dimensional, orientable Riemannian manifold with positive
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} This is the core of Synge's Theorem. In positive curvature, "parallel" geodesics tend to bend towards each other. If we can find a parallel vector field along a closed geodesic that stays parallel after one full trip, we can "shrink" the geodesic. In even dimensions, orientability ensures that the normal space doesn't "flip" in a way that prevents such a field from closing up.
+\textbf{Prerequisites:} Riemannian manifolds, Sectional curvature, Parallel transport, Orientability, and the Second variation of arc length.
 
-\textbf{Proof:} Let $V$ be a parallel vector field along $\sigma$ such that $V \perp \sigma'$. Parallel transport around the closed loop defines an isometry $P : \dot{\sigma}(0)^\perp \to \dot{\sigma}(0)^\perp$.
-The normal space $\dot{\sigma}(0)^\perp$ has dimension $n-1$. Since $M$ is orientable and $n$ is even, $n-1$ is odd and the orientation is preserved. An orientation-preserving isometry of an odd-dimensional space must have an eigenvalue 1. Thus there exists a parallel vector field $V(t)$ such that $V(0) = V(l)$.
-The second variation of length is $L''(0) = -\int_0^l R(\sigma', V, V, \sigma') dt = -\int_0^l K(\sigma', V) dt$.
-Since $K > 0$, $L''(0) < 0$. This means the length decreases for small perturbations in the $V$ direction.
+\textbf{Steps:}
+
+1. Construct the normal space. Consider the normal space to the curve at the starting point, $\dot{\sigma}(0)^\perp$. Because the manifold $M^n$ is $n$-dimensional and the velocity vector $\dot{\sigma}(0)$ takes up 1 dimension, this normal space has dimension $n-1$. Since $n$ is even, $n-1$ is an odd number.
+
+2. Analyze parallel transport. Parallel transport around the entire closed loop $\sigma$ defines a linear map $P : \dot{\sigma}(0)^\perp \to \dot{\sigma}(0)^\perp$. This map is an isometry (it preserves lengths and angles). Because the manifold is orientable, this map also preserves orientation.
+
+3. Find a stable direction. We now have an orientation-preserving isometry $P$ acting on an odd-dimensional vector space. In linear algebra, any such map must have an eigenvalue of exactly 1. This means there is a non-zero vector $v \in \dot{\sigma}(0)^\perp$ such that $P(v) = v$. We can extend this vector along the whole curve by parallel transport to get a parallel vector field $V(t)$ that seamlessly closes up on itself: $V(0) = V(l)$.
+
+4. Use the second variation of length. We create a family of curves $\sigma_s(t)$ by slightly pushing the original curve $\sigma(t)$ in the direction of our parallel vector field $V(t)$. The second derivative of the length $L(s)$ at $s=0$ tells us how the length changes. The formula for the second variation, given $V$ is parallel, simplifies to $L''(0) = -\int_0^l R(\sigma', V, V, \sigma') dt$.
+
+5. Apply the curvature condition. The term $R(\sigma', V, V, \sigma')$ is precisely the sectional curvature $K(\sigma', V)$ scaled by the norms of the vectors. Since we are given that the sectional curvature is strictly positive everywhere, the integrand is positive. Therefore, $L''(0) < 0$.
+
+6. Conclude. Because the first variation $L'(0) = 0$ (since $\sigma$ is a geodesic) and the second variation $L''(0) < 0$, the length of the curve has a strict local maximum at $s=0$. This means that any small perturbation in the direction of $V$ (for $s \neq 0$ small enough) will yield a curve $\sigma_s$ that is strictly shorter than the original geodesic $\sigma$.
+
+\textbf{Intuition:}
+
+This problem lies at the heart of Synge's Theorem. Imagine a rubber band wrapped around the "equator" of a sphere. The sphere has positive curvature, which means it "bulges outward." If you try to slide the rubber band slightly to the north or south, it will slip into a region with a smaller circumference, meaning it can shrink. 
+
+In higher dimensions, we need to find a "north-south" direction that doesn't get twisted around as we travel along the equator. If the dimension of the space is even (like the 2D sphere), the available orthogonal directions form an odd-dimensional space. An important property of odd-dimensional rotations is that there's always an "axis of rotation" that stays completely fixed. 
+
+This fixed axis guarantees we can find a direction to slip the rubber band that lines up perfectly after one full trip. Because the space has positive curvature everywhere, slipping the band in this stable direction will always make it shorter.
 \end{solution}
 
 \begin{exercise}
@@ -92,13 +153,31 @@ Let $(M^{2}, ds^{2})$ be a minimal surface in $\mathbb{R}^{3}$, where $ds^{2}$ i
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} For a minimal surface, the Gauss map $G: M \to S^2$ is conformal. Specifically, the pulling back of the spherical metric via the Gauss map gives a metric that is proportional to the original surface metric. The proportionality factor is exactly the negative of the Gaussian curvature. Since this "new" metric is just the sphere's metric in disguise, its curvature must be 1.
+\textbf{Prerequisites:} Minimal surfaces, Mean curvature, Principal curvatures, the Gauss map, and Conformal metrics.
 
-\textbf{Proof:} The Gauss map $G$ has derivative $dG = S$, where $S$ is the shape operator. The metric induced by the Gauss map (the third fundamental form) is $h(X, Y) = \langle SX, SY \rangle = \langle S^2 X, Y \rangle$.
-For a minimal surface, the mean curvature $H = \text{tr}(S)/2 = 0$, so the principal curvatures are $\lambda, -\lambda$.
-Then $S^2 = \lambda^2 I = -K I$, where $K = -\lambda^2$ is the Gaussian curvature.
-Thus $h = -K g$. The metric $\widetilde{ds^2} = -K ds^2$ is precisely the metric $h$ pulled back from the unit sphere $S^2$.
-Because the curvature of a metric pulled back by a local isometry (the Gauss map) is the same as the curvature of the target space, and the curvature of the unit sphere is 1, it follows that $\widetilde{K} = 1$.
+\textbf{Steps:}
+
+1. Analyze the principal curvatures. Let $S$ be the shape operator (also known as the Weingarten map) of the surface $M$. For a minimal surface, the mean curvature $H$, which is half the trace of the shape operator, is zero. This means the two principal curvatures (the eigenvalues of $S$) must sum to zero, so they can be written as $\lambda$ and $-\lambda$.
+
+2. Relate the shape operator to Gaussian curvature. The Gaussian curvature $K$ is the determinant of $S$. Therefore, $K = \lambda \cdot (-\lambda) = -\lambda^2$. This is consistent with the given fact that $K < 0$. Also, notice that squaring the shape operator gives $S^2 = \lambda^2 I$, where $I$ is the identity matrix. Thus, $S^2 = -K I$.
+
+3. Understand the Gauss map. The Gauss map $G : M \to S^2$ takes a point on the surface to its unit normal vector on the unit sphere. The derivative of the Gauss map is exactly the negative of the shape operator, $dG = -S$.
+
+4. Relate the metrics. The metric pulled back from the sphere by the Gauss map is defined as the inner product of the vectors after applying $dG$. So the new metric $h(X, Y)$ is $\langle dG(X), dG(Y) \rangle = \langle -SX, -SY \rangle = \langle SX, SY \rangle$.
+
+5. Substitute the squared shape operator. Because $S$ is symmetric, $\langle SX, SY \rangle = \langle S^2X, Y \rangle$. Substituting our finding from step 2 ($S^2 = -K I$), we get $h(X, Y) = \langle -K X, Y \rangle = -K \langle X, Y \rangle$.
+
+6. Conclude. The metric $-K ds^2$ is precisely the metric $h$ that the Gauss map pulls back from the standard unit sphere $S^2$. Since the metric $\widetilde{ds^2}$ is just a "copy" of the sphere's metric mapped onto the surface, its curvature must be exactly the same as the sphere's curvature, which is constantly $1$.
+
+\textbf{Intuition:}
+
+Imagine you have a complicated, wavy surface (like a potato chip), and you draw a tiny square on it. If you look at the normal vectors sticking straight out of the four corners of your square, they will point in slightly different directions. 
+
+If you gather all those normal vectors and place their tails at the center of a unit sphere, their tips will trace out a tiny shape on the sphere. This translation of shapes from the surface to the sphere is the "Gauss map."
+
+For a "minimal" surface (a shape that minimizes area, like a soap film), something special happens. The surface bends exactly the same amount in opposite directions (like a saddle). Because of this perfect symmetry, the Gauss map acts like a perfect magnifying glass. It doesn't stretch things unevenly; it just scales any tiny shape uniformly by a factor equal to the Gaussian curvature.
+
+So, if we artificially stretch our surface's ruler (the metric) by exactly this factor (multiplying by $-K$), we are essentially adopting the sphere's own ruler. Because we are measuring things using the "sphere's ruler," the curvature we measure must be the curvature of the sphere itself, which is $1$.
 \end{solution}
 
 \subsection{Team}

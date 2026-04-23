@@ -16,16 +16,56 @@ Show that
 \end{exercise}
 
 \begin{solution}
-First, we show that $\limsup_{n \to \infty} X_n^{1/n} \leq 1$ almost surely. For any $\epsilon > 0$, by Markov's inequality:
-\[ \mathbb{P}(X_n > (1+\epsilon)^n) \leq \frac{\mathbb{E}[X_n]}{(1+\epsilon)^n} \leq \frac{C}{(1+\epsilon)^n}. \]
-Since $\sum_{n=1}^\infty \frac{C}{(1+\epsilon)^n} < \infty$, the Borel-Cantelli Lemma implies that $\mathbb{P}(X_n > (1+\epsilon)^n \text{ i.o.}) = 0$. Thus, $\limsup_{n \to \infty} X_n^{1/n} \leq 1+\epsilon$ a.s. for all $\epsilon > 0$, which gives $\limsup_{n \to \infty} X_n^{1/n} \leq 1$ a.s.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Borel-Cantelli Lemma:} If the sum of probabilities of a sequence of events is finite, then the probability that infinitely many of them occur is zero.
+    \item \textbf{Markov's Inequality:} For any non-negative random variable $X$ and $a > 0$, $\mathbb{P}(X \geq a) \leq \frac{\mathbb{E}[X]}{a}$.
+    \item \textbf{Jensen's Inequality:} For a concave function like the logarithm, the expected value of the function is less than or equal to the function of the expected value: $\mathbb{E}[\log(Y)] \leq \log(\mathbb{E}[Y])$.
+    \item \textbf{Convergence in Probability to Almost Sure Convergence:} If a sequence converges in probability, there exists a subsequence that converges almost surely.
+\end{itemize}
 
-Next, we show that $\limsup_{n \to \infty} X_n^{1/n} \geq 1$ almost surely. Let $Z_n = \frac{1}{n} \log X_n$. We have $Z_n = \frac{1}{n} (\log^+ X_n - \log^- X_n)$.
-By Jensen's inequality, $\mathbb{E}[\log^+ X_n] \leq \log \mathbb{E}[X_n \vee 1] \leq \log(C+1)$. Thus $\mathbb{E}[Z_n^+] \leq \frac{\log(C+1)}{n} \to 0$.
-By the second assumption, $\mathbb{E}[\log^- X_n] \leq C$, so $\mathbb{E}[Z_n^-] \leq C/n \to 0$.
-Thus $\mathbb{E}[|Z_n|] \to 0$, which implies $Z_n \to 0$ in probability.
-Therefore, $X_n^{1/n} = e^{Z_n} \to 1$ in probability. This implies there exists a subsequence $n_k$ such that $X_{n_k}^{1/n_k} \to 1$ almost surely. Hence, $\limsup_{n \to \infty} X_n^{1/n} \geq \lim_{k \to \infty} X_{n_k}^{1/n_k} = 1$ a.s.
-Combining both bounds, we have $\limsup_{n \to \infty} X_n^{1/n} = 1$ a.s.
+\textbf{Intuition / Motivation:}
+
+We want to understand the long-term behavior of $X_n^{1/n}$. This is equivalent to studying $\frac{1}{n} \log X_n$.
+The problem gives us two constraints on $X_n$: its expectation is bounded by $C$ (so it can't explode to $+\infty$ too fast), and the expectation of its negative logarithm is bounded by $C$ (so it can't crash to $0$ too fast).
+Because $X_n$ can't grow faster than exponentially, the $n$-th root $X_n^{1/n}$ shouldn't exceed $1$. We prove this using Markov's inequality and the Borel-Cantelli lemma. 
+On the flip side, we need to ensure $X_n^{1/n}$ doesn't always stay strictly below $1$. We do this by looking at $\frac{1}{n} \log X_n$. Since $\log X_n$ is bounded in expectation (both positive and negative parts), dividing by $n$ forces the expected value to 0. This implies the sequence converges to 0 in probability, meaning it must frequently get arbitrarily close to 0. Thus, its $n$-th root frequently gets arbitrarily close to $e^0 = 1$. Combining the absolute ceiling of 1 with the fact that it repeatedly visits 1 gives exactly the limit superior of 1.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the upper bound $\limsup_{n \to \infty} X_n^{1/n} \leq 1$ almost surely.}
+
+We want to show that $X_n^{1/n}$ rarely exceeds any value slightly larger than $1$. Let $\epsilon > 0$. We evaluate the probability of the event $E_n = \{X_n > (1+\epsilon)^n\}$.
+Applying Markov's inequality to the positive random variable $X_n$:
+\[ \mathbb{P}(E_n) = \mathbb{P}(X_n > (1+\epsilon)^n) \leq \frac{\mathbb{E}[X_n]}{(1+\epsilon)^n} \leq \frac{C}{(1+\epsilon)^n} \]
+We sum these probabilities over all $n$:
+\[ \sum_{n=1}^\infty \mathbb{P}(E_n) \leq \sum_{n=1}^\infty \frac{C}{(1+\epsilon)^n} = C \frac{1/(1+\epsilon)}{1 - 1/(1+\epsilon)} = \frac{C}{\epsilon} < \infty \]
+Since the sum of probabilities is finite, the First Borel-Cantelli Lemma guarantees that the probability of infinitely many $E_n$ occurring is 0.
+Thus, with probability 1, for all sufficiently large $n$, $X_n \leq (1+\epsilon)^n$, which implies $X_n^{1/n} \leq 1+\epsilon$.
+Taking the limit superior, $\limsup_{n \to \infty} X_n^{1/n} \leq 1+\epsilon$ almost surely. Since this holds for any arbitrarily small $\epsilon > 0$, we conclude:
+\[ \limsup_{n \to \infty} X_n^{1/n} \leq 1 \quad \text{a.s.} \]
+
+\textbf{Step 2: Prove the sequence converges to 1 in probability.}
+
+Let $Z_n = \frac{1}{n} \log X_n$. We split $\log X_n$ into its positive and negative parts: $\log X_n = \log^+ X_n - \log^- X_n$, where $\log^+ X_n = \max(0, \log X_n)$ and $\log^- X_n = \max(0, -\log X_n)$.
+Let's bound the expectation of the positive part. Notice that $\max(1, X_n) \leq 1 + X_n$. By Jensen's inequality on the concave function $\log(x)$:
+\[ \mathbb{E}[\log^+ X_n] = \mathbb{E}[\log(\max(1, X_n))] \leq \log(\mathbb{E}[\max(1, X_n)]) \leq \log(\mathbb{E}[1 + X_n]) \leq \log(1+C) \]
+Now let's look at the negative part. We are directly given that $\mathbb{E}[\log^- X_n] \leq C$.
+The absolute value of the logarithm is $|\log X_n| = \log^+ X_n + \log^- X_n$.
+Taking the expectation of the absolute value of $Z_n$:
+\[ \mathbb{E}[|Z_n|] = \frac{1}{n} \left( \mathbb{E}[\log^+ X_n] + \mathbb{E}[\log^- X_n] \right) \leq \frac{\log(1+C) + C}{n} \]
+As $n \to \infty$, the numerator is a constant, so $\mathbb{E}[|Z_n|] \to 0$.
+Since $L^1$ convergence implies convergence in probability, $Z_n \xrightarrow{P} 0$.
+By the Continuous Mapping Theorem (using the continuous function $e^x$), $X_n^{1/n} = e^{Z_n} \xrightarrow{P} e^0 = 1$.
+
+\textbf{Step 3: Extract the almost sure lower bound.}
+
+Convergence in probability to 1 implies that there exists a deterministic subsequence $(n_k)_{k=1}^\infty$ such that the subsequence converges almost surely:
+\[ \lim_{k \to \infty} X_{n_k}^{1/n_k} = 1 \quad \text{a.s.} \]
+The limit superior of a sequence is always greater than or equal to the limit of any of its subsequences. Therefore:
+\[ \limsup_{n \to \infty} X_n^{1/n} \geq \lim_{k \to \infty} X_{n_k}^{1/n_k} = 1 \quad \text{a.s.} \]
+Combining the upper bound from Step 1 and the lower bound from Step 3, we conclude:
+\[ \limsup_{n \to \infty} X_n^{1/n} = 1 \quad \text{almost surely.} \]
 \end{solution}
 
 \begin{exercise}
@@ -38,13 +78,60 @@ Show that $(Y_n)_{n \geq 0}$ is an irreducible Markov chain on the state space $
 \end{exercise}
 
 \begin{solution}
-The process $(Y_n)_{n \geq 0}$ is a random walk on $\mathbb{N}$ with a reflecting barrier at 0. The transitions are given by $Y_{n+1} = \max\{0, Y_n + X_{n+1}\}$, where $X_{n+1} = \xi_{n+1} - 1$. The increments $X_n$ take values in $\{-1, 0, 1\}$ with probabilities $p_{-1} = \gamma(0)$, $p_0 = \gamma(1)$, and $p_1 = \gamma(2)$.
-\begin{enumerate}
-    \item \textbf{Irreducibility}: Since $\gamma(0) > 0$ and $\gamma(2) > 0$, the chain can move from $k$ to $k-1$ and $k$ to $k+1$ for $k \geq 1$. Also, it can move from 0 to 1 and from 1 to 0. Thus, all states communicate, and the chain is irreducible on $\mathbb{N}$.
-    \item \textbf{Positive Recurrence}: We check the drift of the chain. For $Y_n > 0$, the expected change is $\mathbb{E}[Y_{n+1} - Y_n | Y_n] = \mathbb{E}[X] = -1 \cdot \gamma(0) + 0 \cdot \gamma(1) + 1 \cdot \gamma(2) = \gamma(2) - \gamma(0)$.
-    By assumption, $\gamma(0) > \gamma(2)$, so the drift $\mathbb{E}[X]$ is strictly negative.
-    By Foster's Theorem, an irreducible Markov chain on $\mathbb{N}$ with a drift $\mathbb{E}[Y_{n+1} - Y_n | Y_n = y] \leq -\epsilon$ for all $y > M$ and $\mathbb{E}[Y_{n+1} | Y_n = y] < \infty$ for all $y$ is positive recurrent. Since the drift is constant and negative for all $y > 0$, the chain is positive recurrent.
-\end{enumerate}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Markov Chain Irreducibility:} A Markov chain is irreducible if it is possible to reach any state from any other state in a finite number of steps with non-zero probability.
+    \item \textbf{Foster's Theorem (Foster-Lyapunov Criteria):} A powerful tool to prove positive recurrence. If there exists a Lyapunov function $V(x)$ such that the expected drift $\mathbb{E}[V(X_{n+1}) - V(X_n) \mid X_n = x]$ is strictly negative for all states outside a finite set, and bounded within the finite set, the chain is positive recurrent.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a random walker on the non-negative integers $\mathbb{N} = \{0, 1, 2, \dots\}$. 
+At each step, the walker draws a random number $\xi$ from $\{0, 1, 2\}$. They then move by $\xi - 1$. This means they can step left (if $\xi=0$), stay in place (if $\xi=1$), or step right (if $\xi=2$).
+If they are at 0 and try to step left, they bump into a "wall" and just stay at 0. This is the $\max\{0, \dots\}$ part of the equation.
+Because the probability of stepping left $\gamma(0)$ is strictly greater than the probability of stepping right $\gamma(2)$, the walker has a persistent "drift" pushing them toward the wall at 0. Because they are constantly being pushed back to 0, they will visit 0 infinitely often, and the expected time between visits to 0 will be finite. This is the definition of "positive recurrence".
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the transitions and prove irreducibility.}
+
+Let the step size be $X_{n+1} = \xi_{n+1} - 1$. The random variable $X_{n+1}$ takes values in $\{-1, 0, 1\}$ with probabilities:
+- $\mathbb{P}(X_{n+1} = -1) = \gamma(0) > 0$
+- $\mathbb{P}(X_{n+1} = 0) = \gamma(1)$
+- $\mathbb{P}(X_{n+1} = 1) = \gamma(2) > 0$
+
+The state update is $Y_{n+1} = \max\{0, Y_n + X_{n+1}\}$.
+To show irreducibility, we must show that any state $j \in \mathbb{N}$ is accessible from any state $i \in \mathbb{N}$.
+- \textbf{Moving Right ($i < j$):} The chain can move from $k$ to $k+1$ because $\mathbb{P}(Y_{n+1} = k+1 \mid Y_n = k) = \mathbb{P}(X_{n+1} = 1) = \gamma(2) > 0$. By taking $j-i$ consecutive steps to the right, we can reach $j$ from $i$ with strictly positive probability.
+- \textbf{Moving Left ($i > j$):} The chain can move from $k$ to $k-1$ because $\mathbb{P}(Y_{n+1} = k-1 \mid Y_n = k) = \mathbb{P}(X_{n+1} = -1) = \gamma(0) > 0$. By taking $i-j$ consecutive steps to the left, we can reach $j$ from $i$ with strictly positive probability.
+
+Since every state can reach every other state, the Markov chain is irreducible.
+
+\textbf{Step 2: Calculate the expected drift.}
+
+We analyze the expected change in position, or "drift", when the chain is at a state $y > 0$.
+If $y > 0$, the boundary at 0 does not interfere with a single step, because $y + X_{n+1} \geq 1 - 1 = 0$. Therefore, $Y_{n+1} = Y_n + X_{n+1}$ exactly.
+The expected drift is:
+\[ \mathbb{E}[Y_{n+1} - Y_n \mid Y_n = y] = \mathbb{E}[X_{n+1}] \]
+\[ \mathbb{E}[X_{n+1}] = (-1) \cdot \mathbb{P}(X_{n+1} = -1) + (0) \cdot \mathbb{P}(X_{n+1} = 0) + (1) \cdot \mathbb{P}(X_{n+1} = 1) \]
+\[ \mathbb{E}[X_{n+1}] = -\gamma(0) + \gamma(2) \]
+We are given the strict inequality $\gamma(0) > \gamma(2)$. Therefore, the drift is strictly negative:
+\[ \mathbb{E}[Y_{n+1} - Y_n \mid Y_n = y] = -(\gamma(0) - \gamma(2)) < 0 \]
+Let $\epsilon = \gamma(0) - \gamma(2) > 0$. The drift is exactly $-\epsilon$ for all $y \geq 1$.
+
+\textbf{Step 3: Apply Foster's Theorem to prove positive recurrence.}
+
+Foster's Theorem for a Markov chain on a countable state space states that the chain is positive recurrent if there exists a non-negative function $V(y)$ (a Lyapunov function), a finite set $F$, and a constant $\epsilon > 0$ such that:
+1. $\mathbb{E}[V(Y_{n+1}) - V(Y_n) \mid Y_n = y] \leq -\epsilon$ for all $y \notin F$.
+2. $\mathbb{E}[V(Y_{n+1}) \mid Y_n = y] < \infty$ for all $y \in F$.
+
+We choose the Lyapunov function to simply be the state itself: $V(y) = y$.
+We choose the finite set to be $F = \{0\}$.
+- For $y \notin F$ (i.e., $y \geq 1$), we proved in Step 2 that the drift is $\leq -\epsilon$.
+- For $y \in F$ (i.e., $y = 0$), the expected next state is:
+\[ \mathbb{E}[Y_{n+1} \mid Y_n = 0] = \mathbb{E}[\max\{0, X_{n+1}\}] = (0)\gamma(0) + (0)\gamma(1) + (1)\gamma(2) = \gamma(2) < \infty \]
+
+Both conditions of Foster's Theorem are satisfied. Because the chain is irreducible and satisfies the Foster-Lyapunov drift criteria, it is positive recurrent.
 \end{solution}
 
 \begin{exercise}
@@ -57,10 +144,42 @@ Consider the random series $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$. Show that 
 \end{exercise}
 
 \begin{solution}
-Let $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$. As $x \to 1^-$, the behavior of $f(x)$ is dominated by the behavior of the partial sums $S_k = \sum_{n=1}^k \epsilon_n$. Specifically, as $x \to 1^-$, $f(x)$ behaves similarly to a Brownian motion on a logarithmic scale. 
-A result by Salem and Zygmund on random power series states that if $\sum a_n^2 = \infty$, the series $\sum \epsilon_n a_n x^n$ oscillates. For $a_n=1$, the law of the iterated logarithm for power series implies that:
-\[ \limsup_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = 1 \text{ and } \liminf_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = -1 \]
-almost surely. Since $f(x)$ is a continuous function on $[0, 1)$ and it oscillates between $+\infty$ and $-\infty$ as $x \to 1^-$, the Intermediate Value Theorem guarantees that $f(x)$ must cross zero infinitely many times as $x$ approaches 1.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Random Power Series:} A power series whose coefficients are random variables. In this case, it's a Rademacher series where coefficients are independently $\pm 1$.
+    \item \textbf{Law of the Iterated Logarithm (LIL):} Describes the magnitude of the fluctuations of a random walk. For a standard random walk $S_n$, $\limsup_{n \to \infty} \frac{S_n}{\sqrt{2n \log \log n}} = 1$ almost surely.
+    \item \textbf{Continuous Mapping / Intermediate Value Theorem:} If a continuous function oscillates between positive and negative values, it must cross zero.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Think of $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$ as a weighted random walk. The coin flips $\epsilon_n$ decide whether we step up or down, and the $x^n$ terms decide the size of the step.
+If we set $x=1$, this is a standard random walk $\sum_{n=1}^\infty \epsilon_n$. We know a standard random walk is recurrent in 1D; it swings wildly between $+\infty$ and $-\infty$ as we take more and more steps.
+Here, $x \in [0, 1)$ acts as a "discount factor" that makes the steps shrink. The closer $x$ is to 1, the more steps we take before the sizes become negligible, so the more it acts like a full random walk.
+As $x$ approaches 1 from below, the effective number of steps we take approaches infinity. Since an infinite random walk swings between $+\infty$ and $-\infty$, the continuous function $f(x)$ must also swing between positive and negative numbers infinitely many times as $x \to 1$. By the Intermediate Value Theorem, every time it swings from positive to negative, it must hit exactly zero!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Relate the power series to a random walk.}
+
+Consider the continuous function $f(x) = \sum_{n=1}^\infty \epsilon_n x^n$ defined for $x \in [0, 1)$. The coefficients $\epsilon_n$ are independent Rademacher random variables ($\mathbb{P}(\epsilon_n = 1) = \mathbb{P}(\epsilon_n = -1) = 1/2$).
+Since $|x| < 1$, the terms $|\epsilon_n x^n| = x^n$ form a convergent geometric series. Therefore, $f(x)$ is absolutely convergent and uniformly convergent on any compact subset $[0, 1-\delta]$.
+Thus, $f(x)$ is a continuous function on the open interval $[0, 1)$.
+
+\textbf{Step 2: Apply the Law of the Iterated Logarithm for power series.}
+
+We want to analyze the behavior of $f(x)$ as $x \to 1^-$. As $x$ gets very close to 1, the variance of $f(x)$ explodes:
+\[ \operatorname{Var}(f(x)) = \sum_{n=1}^\infty \operatorname{Var}(\epsilon_n x^n) = \sum_{n=1}^\infty x^{2n} = \frac{x^2}{1-x^2} \]
+Notice that as $x \to 1^-$, $\frac{x^2}{1-x^2} \to \infty$. This confirms that $f(x)$ is aggregating an infinite amount of independent noise.
+According to the Salem-Zygmund theorem for random power series (which is the continuous-time analog of the Law of the Iterated Logarithm), the almost sure fluctuation bounds of the series as $x \to 1^-$ are given by:
+\[ \limsup_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = 1 \quad \text{a.s.} \]
+\[ \liminf_{x \to 1^-} \frac{f(x)}{\sqrt{\frac{1}{1-x^2} \log \log \frac{1}{1-x^2}}} = -1 \quad \text{a.s.} \]
+
+\textbf{Step 3: Conclude using the Intermediate Value Theorem.}
+
+The LIL bounds mean that almost surely, there exists a sequence of points $(x_k)_{k=1}^\infty$ approaching 1 such that $f(x_k)$ is strictly positive (and diverging to $+\infty$), and another sequence of points $(y_k)_{k=1}^\infty$ approaching 1 such that $f(y_k)$ is strictly negative (and diverging to $-\infty$).
+Because $f(x)$ is continuous on $[0, 1)$, and it repeatedly alternates between strictly positive values at $x_k$ and strictly negative values at $y_k$, the Intermediate Value Theorem guarantees that there must be a root between every $x_k$ and $y_k$.
+Since there are infinitely many such alternations as $x \to 1^-$, the function $f(x)$ must attain the value zero infinitely many times on the interval $[0, 1)$ almost surely.
 \end{solution}
 
 \begin{exercise}
@@ -88,17 +207,76 @@ h) Finally, consider the randomized experiment in part g) when $N_t$ and $N_c$ a
 \end{exercise}
 
 \begin{solution}
-This problem uses the Neyman-Rubin Causal Model. Let $Y_i(1)$ and $Y_i(0)$ be potential outcomes. The estimand is $\tau = \frac{1}{2N} \sum_{i=1}^{2N} (Y_i(1) - Y_i(0)) = \bar{Y}(1) - \bar{Y}(0)$.
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item[a)] Let $Z_i \in \{0,1\}$ be the treatment assignment. $\sum Z_i = N$. The estimator is $\hat{\tau} = \bar{y}_t - \bar{y}_c$. Since $\mathbb{E}[Z_i] = 1/2$, $\mathbb{E}[\hat{\tau}] = \tau$. It is unbiased.
-    \item[b)] The variance is $Var(\hat{\tau}) = \frac{S_1^2}{N} + \frac{S_0^2}{N} - \frac{S_\tau^2}{2N}$, where $S_1^2, S_0^2$ are population variances of $Y(1), Y(0)$ and $S_\tau^2$ is the variance of individual treatment effects $\tau_i = Y_i(1) - Y_i(0)$.
-    \item[c)] Under additivity, $S_\tau^2 = 0$. An unbiased estimator is $\widehat{Var} = \frac{s_t^2}{N} + \frac{s_c^2}{N}$, where $s_t^2, s_c^2$ are sample variances.
-    \item[d)] If non-additive, the bias is $\mathbb{E}[\widehat{Var}] - Var(\hat{\tau}) = \frac{S_\tau^2}{2N} \geq 0$. The estimator is conservative.
-    \item[e)] Generalization: $Var(\hat{\tau}) = \frac{S_1^2}{N_t} + \frac{S_0^2}{N_c} - \frac{S_\tau^2}{N_t+N_c}$. Unbiased variance estimator under additivity is $\frac{s_t^2}{N_t} + \frac{s_c^2}{N_c}$.
-    \item[f)] By the Finite Population CLT, $\hat{\tau}$ is asymptotically Gaussian. Simulation involves sampling $N$ units from $2N$ and computing $\hat{\tau}$ repeatedly.
-    \item[g)] With covariate $X$, one can use block randomization or ANCOVA. The adjusted estimator $\hat{\tau}_{adj} = (\bar{y}_t - \bar{y}_c) - \hat{\beta}(\bar{x}_t - \bar{x}_c)$ reduces variance by accounting for $X$.
-    \item[h)] The formulas for $N_t \neq N_c$ follow similar logic to part (e) with covariate adjustment terms.
+    \item \textbf{Neyman-Rubin Causal Model:} A framework for causal inference where each unit has two potential outcomes: $Y_i(1)$ if treated, and $Y_i(0)$ if control. The fundamental problem of causal inference is that we only observe one of the two for each unit.
+    \item \textbf{Stable Unit Treatment Value Assumption (SUTVA):} The potential outcomes for any unit do not depend on the treatment assigned to other units, and there is only one version of each treatment.
+    \item \textbf{Finite Population Inference:} We treat the $2N$ units as a fixed population. The only randomness comes from the random assignment of the treatment, not from sampling units from a super-population.
 \end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We want to know if a medicine works. We have $2N$ specific patients. Ideally, we would give all of them the medicine, record the results, then go back in time, give none of them the medicine, record the results, and subtract the averages. This difference is our target "estimand" $\tau$.
+Since we can't time travel, we randomly give half the medicine and half the placebo. The difference in the averages we *actually* observe is our "estimator" $\hat{\tau}$.
+Because the assignment is completely random, the group getting the medicine is, on average, identical to the group getting the placebo. Thus, our estimator perfectly hits the target on average (it's unbiased).
+However, it will fluctuate depending on who specifically got the medicine. If the medicine's effect is exactly the same for everyone (additivity), the variance is easy to estimate from the sample variances. If the medicine helps some people but hurts others, the variance changes, but our standard variance estimator remains "conservative" (it might overestimate the variance, which is safe for hypothesis testing).
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Setup and Expectation (Part a).}
+
+Let $Y_i(1)$ and $Y_i(0)$ be the fixed potential outcomes for unit $i$.
+The estimand (target parameter) is the average treatment effect:
+\[ \tau = \frac{1}{2N} \sum_{i=1}^{2N} Y_i(1) - \frac{1}{2N} \sum_{i=1}^{2N} Y_i(0) = \bar{Y}(1) - \bar{Y}(0) \]
+Let $Z_i \in \{0, 1\}$ be the treatment assignment indicator for unit $i$. We have $\sum_{i=1}^{2N} Z_i = N$.
+The observed outcome is $Y_i = Z_i Y_i(1) + (1-Z_i) Y_i(0)$.
+The estimator is the difference in sample means:
+\[ \hat{\tau} = \frac{1}{N} \sum_{i=1}^{2N} Z_i Y_i - \frac{1}{N} \sum_{i=1}^{2N} (1-Z_i) Y_i = \frac{1}{N} \sum_{i=1}^{2N} Z_i Y_i(1) - \frac{1}{N} \sum_{i=1}^{2N} (1-Z_i) Y_i(0) \]
+By random assignment, the probability that unit $i$ receives treatment is $\mathbb{E}[Z_i] = \frac{N}{2N} = \frac{1}{2}$.
+\[ \mathbb{E}[\hat{\tau}] = \frac{1}{N} \sum_{i=1}^{2N} \mathbb{E}[Z_i] Y_i(1) - \frac{1}{N} \sum_{i=1}^{2N} \mathbb{E}[1-Z_i] Y_i(0) = \frac{1}{N} \sum_{i=1}^{2N} \frac{1}{2} Y_i(1) - \frac{1}{N} \sum_{i=1}^{2N} \frac{1}{2} Y_i(0) = \tau \]
+The estimator is exactly unbiased.
+
+\textbf{Step 2: Variance of the estimator (Part b).}
+
+Define the population variances for the potential outcomes and the treatment effect $\tau_i = Y_i(1) - Y_i(0)$:
+\[ S_1^2 = \frac{1}{2N-1} \sum_{i=1}^{2N} (Y_i(1) - \bar{Y}(1))^2, \quad S_0^2 = \frac{1}{2N-1} \sum_{i=1}^{2N} (Y_i(0) - \bar{Y}(0))^2, \quad S_\tau^2 = \frac{1}{2N-1} \sum_{i=1}^{2N} (\tau_i - \tau)^2 \]
+By applying the formula for the variance of a difference of means from a finite population without replacement, the exact variance of the estimator is:
+\[ \operatorname{Var}(\hat{\tau}) = \frac{S_1^2}{N} + \frac{S_0^2}{N} - \frac{S_\tau^2}{2N} \]
+The third term represents the variance of the unobservable individual treatment effects.
+
+\textbf{Step 3: Variance estimator under additivity (Part c \& d).}
+
+If the treatment effects are additive (constant), then $\tau_i = \tau$ for all $i$. This means there is no variation in the treatment effect, so $S_\tau^2 = 0$.
+The variance simplifies to $\operatorname{Var}(\hat{\tau}) = \frac{S_1^2}{N} + \frac{S_0^2}{N}$.
+We can unbiasedly estimate the population variances $S_1^2$ and $S_0^2$ using the sample variances of the observed treated and control groups, $s_t^2$ and $s_c^2$.
+Thus, an unbiased estimator for the variance is:
+\[ \widehat{\operatorname{Var}}(\hat{\tau}) = \frac{s_t^2}{N} + \frac{s_c^2}{N} \]
+If the effects are non-additive (Part d), $S_\tau^2 > 0$. However, our variance estimator $\widehat{\operatorname{Var}}$ still has expectation $\frac{S_1^2}{N} + \frac{S_0^2}{N}$.
+The bias of our variance estimator is:
+\[ \mathbb{E}[\widehat{\operatorname{Var}}(\hat{\tau})] - \operatorname{Var}(\hat{\tau}) = \frac{S_\tau^2}{2N} \geq 0 \]
+Because the bias is strictly non-negative, the sample variance estimator is conservative (it tends to overestimate the true variance, which protects us from falsely claiming significance).
+
+\textbf{Step 4: Generalization to unequal groups (Part e).}
+
+If $N_t$ receive treatment and $N_c$ receive control ($N_t + N_c$ total units), the estimator is still the difference in sample means. It remains unbiased.
+The finite population variance generalizes to:
+\[ \operatorname{Var}(\hat{\tau}) = \frac{S_1^2}{N_t} + \frac{S_0^2}{N_c} - \frac{S_\tau^2}{N_t + N_c} \]
+The unbiased variance estimator under additivity generalizes to:
+\[ \widehat{\operatorname{Var}}(\hat{\tau}) = \frac{s_t^2}{N_t} + \frac{s_c^2}{N_c} \]
+
+\textbf{Step 5: Asymptotic Normality (Part f).}
+
+By the Finite Population Central Limit Theorem (e.g., Hajek's CLT), as $N_t, N_c \to \infty$, any linear combination of a random sample without replacement converges to a normal distribution, provided the potential outcomes are bounded or satisfy mild moment conditions.
+Thus, $\frac{\hat{\tau} - \tau}{\sqrt{\operatorname{Var}(\hat{\tau})}} \xrightarrow{d} N(0, 1)$.
+
+\textbf{Step 6: Covariate Adjustment (Parts g \& h).}
+
+If we have a pre-treatment covariate $X_i$, we can define population means $\bar{X}$. The standard estimator ignores $X$.
+We can use an ANCOVA (Analysis of Covariance) adjusted estimator to reduce variance. By fitting a linear regression of $Y$ on $Z$ and $X$, the estimated treatment effect becomes:
+\[ \hat{\tau}_{adj} = (\bar{Y}_t - \bar{Y}_c) - \hat{\beta} (\bar{X}_t - \bar{X}_c) \]
+Because treatment assignment is random, $\mathbb{E}[\bar{X}_t - \bar{X}_c] = 0$, so the adjusted estimator remains asymptotically unbiased.
+However, it "corrects" for accidental imbalances in the covariate. If the treated group randomly happens to have higher $X$, and $X$ is positively correlated with $Y$, the $\hat{\beta}$ term will correctly subtract the expected artificial bump in $Y$.
+This drastically reduces the residual variance, shrinking the effective $S_1^2$ and $S_0^2$. This holds whether $N_t = N_c$ (Part g) or $N_t \neq N_c$ (Part h).
 \end{solution}
 
 \subsection{Team}
@@ -107,19 +285,69 @@ Please solve the following 4 problems.
 \begin{exercise}
 Suppose $(X_n)_{n \geq 1}$ is a sequence of i.i.d. random variables and the common law is exponential with parameter one. Show that
 \[
-\mathbb{P}\left[\lim_{n \to \infty} \sup_{\log n} \frac{X_n}{1} = 1\right] = 1.
+\mathbb{P}\left[ \limsup_{n \to \infty} \frac{X_n}{\log n} = 1 \right] = 1.
 \]
 \end{exercise}
 
 \begin{solution}
-We interpret the problem as showing $\frac{M_n}{\log n} \to 1$ almost surely, where $M_n = \max_{1 \leq i \leq n} X_i$.
-For $X_i \sim \text{Exp}(1)$, $\mathbb{P}(X_i > x) = e^{-x}$.
-\begin{enumerate}
-    \item Upper bound: For any $\epsilon > 0$, $\mathbb{P}(X_n > (1+\epsilon)\log n) = e^{-(1+\epsilon)\log n} = n^{-(1+\epsilon)}$. Since $\sum n^{-(1+\epsilon)} < \infty$, by Borel-Cantelli, $X_n \leq (1+\epsilon)\log n$ for all sufficiently large $n$. Thus $\limsup \frac{M_n}{\log n} \leq 1$ a.s.
-    \item Lower bound: $\mathbb{P}(M_n \leq (1-\epsilon)\log n) = (1 - e^{-(1-\epsilon)\log n})^n = (1 - n^{-(1-\epsilon)})^n \leq \exp(-n \cdot n^{-(1-\epsilon)}) = \exp(-n^\epsilon)$.
-    Since $\sum \exp(-n^\epsilon) < \infty$, by Borel-Cantelli, $M_n > (1-\epsilon)\log n$ for all sufficiently large $n$. Thus $\liminf \frac{M_n}{\log n} \geq 1$ a.s.
-\end{enumerate}
-Therefore, $\lim_{n \to \infty} \frac{M_n}{\log n} = 1$ almost surely.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Exponential Distribution:} The probability that an $\text{Exp}(1)$ variable exceeds a value $x$ is $\mathbb{P}(X > x) = e^{-x}$.
+    \item \textbf{Borel-Cantelli Lemmas:}
+    \begin{enumerate}
+        \item If $\sum \mathbb{P}(A_n) < \infty$, then $\mathbb{P}(A_n \text{ infinitely often}) = 0$.
+        \item If the events $A_n$ are independent and $\sum \mathbb{P}(A_n) = \infty$, then $\mathbb{P}(A_n \text{ infinitely often}) = 1$.
+    \end{enumerate}
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are drawing independent random numbers from an exponential distribution over and over. As we draw more numbers (larger $n$), we have more chances to see an unusually large number. How large? The sequence of records will grow, but slowly.
+Since the tail of the exponential distribution shrinks exponentially ($e^{-x}$), to see a number as large as $x$, we need to wait roughly $e^x$ trials. Reversing this, after $n$ trials, we expect the largest number to be around $\log n$.
+The question asks for the limit superior of $X_n / \log n$. This means looking at the "peak" values that the sequence occasionally hits.
+If we set our threshold slightly above $1$, say $(1+\epsilon)\log n$, the chance of hitting it is $n^{-(1+\epsilon)}$. Summing this over all $n$ gives a finite number, so we will almost never hit it. Thus, the peaks cannot be strictly higher than $1$.
+If we set our threshold slightly below $1$, say $(1-\epsilon)\log n$, the chance of hitting it is $n^{-(1-\epsilon)}$. Because this sums to infinity and the draws are independent, we are guaranteed to hit it infinitely many times!
+Combining the two bounds, the highest peaks of the sequence $X_n / \log n$ must perfectly align with $1$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the upper bound using the First Borel-Cantelli Lemma.}
+
+We want to show that $\limsup_{n \to \infty} \frac{X_n}{\log n} \leq 1$ almost surely.
+Let $\epsilon > 0$. Consider the event $A_n = \{ X_n > (1+\epsilon)\log n \}$.
+The probability of this event is:
+\[ \mathbb{P}(A_n) = \mathbb{P}(X_n > (1+\epsilon)\log n) = e^{-(1+\epsilon)\log n} = n^{-(1+\epsilon)} \]
+We sum these probabilities over all $n$:
+\[ \sum_{n=1}^\infty \mathbb{P}(A_n) = \sum_{n=1}^\infty \frac{1}{n^{1+\epsilon}} \]
+Because $1+\epsilon > 1$, this is a convergent $p$-series. The sum is finite.
+By the First Borel-Cantelli Lemma, the probability that infinitely many $A_n$ occur is 0.
+This means that, with probability 1, for all sufficiently large $n$, $X_n \leq (1+\epsilon)\log n$.
+Dividing by $\log n$, we get $\frac{X_n}{\log n} \leq 1+\epsilon$ for all large $n$.
+Taking the limit superior, we have $\limsup_{n \to \infty} \frac{X_n}{\log n} \leq 1+\epsilon$ almost surely. Since this holds for any $\epsilon > 0$, we conclude:
+\[ \limsup_{n \to \infty} \frac{X_n}{\log n} \leq 1 \quad \text{a.s.} \]
+
+\textbf{Step 2: Prove the lower bound using the Second Borel-Cantelli Lemma.}
+
+We want to show that $\limsup_{n \to \infty} \frac{X_n}{\log n} \geq 1$ almost surely.
+Let $\epsilon \in (0, 1)$. Consider the event $B_n = \{ X_n > (1-\epsilon)\log n \}$.
+The probability of this event is:
+\[ \mathbb{P}(B_n) = \mathbb{P}(X_n > (1-\epsilon)\log n) = e^{-(1-\epsilon)\log n} = n^{-(1-\epsilon)} \]
+We sum these probabilities over all $n$:
+\[ \sum_{n=1}^\infty \mathbb{P}(B_n) = \sum_{n=1}^\infty \frac{1}{n^{1-\epsilon}} \]
+Because $1-\epsilon < 1$, this $p$-series diverges to infinity.
+Crucially, the events $B_n$ depend only on $X_n$, and since the sequence $(X_n)$ is independent, the events $B_n$ are mutually independent.
+By the Second Borel-Cantelli Lemma, because the sum diverges and the events are independent, the probability that infinitely many $B_n$ occur is 1.
+This means that, with probability 1, there is an infinite subsequence of times $n_k$ where $X_{n_k} > (1-\epsilon)\log n_k$.
+Dividing by $\log n_k$, we get $\frac{X_{n_k}}{\log n_k} > 1-\epsilon$.
+Since this happens infinitely often, the limit superior must be at least this large:
+\[ \limsup_{n \to \infty} \frac{X_n}{\log n} \geq 1-\epsilon \quad \text{a.s.} \]
+Since this holds for any $\epsilon \in (0, 1)$, we conclude:
+\[ \limsup_{n \to \infty} \frac{X_n}{\log n} \geq 1 \quad \text{a.s.} \]
+
+\textbf{Step 3: Combine the bounds.}
+
+Since we have proven that the limit superior is almost surely less than or equal to 1, and almost surely greater than or equal to 1, it must be exactly 1 almost surely:
+\[ \mathbb{P}\left[ \limsup_{n \to \infty} \frac{X_n}{\log n} = 1 \right] = 1 \]
 \end{solution}
 
 \begin{exercise}
@@ -127,13 +355,53 @@ Let $(X_n)_{n \geq 1}$ be i.i.d. real random variables and set $S_n = \sum_{i=1}
 \end{exercise}
 
 \begin{solution}
-Assume $S_n/n \to c$ a.s. Then we have:
-\[ \frac{X_n}{n} = \frac{S_n - S_{n-1}}{n} = \frac{S_n}{n} - \frac{n-1}{n} \frac{S_{n-1}}{n-1} \to c - 1 \cdot c = 0 \text{ a.s.} \]
-By the Borel-Cantelli Lemma, for i.i.d. variables, $X_n/n \to 0$ a.s. implies $\sum_{n=1}^\infty \mathbb{P}(|X_n| > n) < \infty$.
-Since $\mathbb{P}(|X_n| > n) = \mathbb{P}(|X_1| > n)$, we have $\sum_{n=1}^\infty \mathbb{P}(|X_1| > n) < \infty$.
-This is a necessary and sufficient condition for $\mathbb{E}[|X_1|] < \infty$.
-Now that $X_1$ has a finite first moment, by the Strong Law of Large Numbers, $S_n/n \to \mathbb{E}[X_1]$ a.s.
-Since we are given $S_n/n \to c$ a.s., it must be that $\mathbb{E}[X_1] = c$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Strong Law of Large Numbers (SLLN):} If $X_i$ are i.i.d. with a finite expected value $\mu = \mathbb{E}[X_1]$, then the sample average $S_n/n$ converges almost surely to $\mu$.
+    \item \textbf{Borel-Cantelli Lemma for Integrability:} For any random variable $X$, the expectation $\mathbb{E}[|X|]$ is finite if and only if $\sum_{n=1}^\infty \mathbb{P}(|X| > n) < \infty$. This implies that for i.i.d. sequences, $X_n/n \to 0$ almost surely if and only if $\mathbb{E}[|X_1|] < \infty$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are given that the sample average $S_n/n$ converges to a constant $c$. This is exactly the conclusion of the Strong Law of Large Numbers. But does the \textit{conclusion} of SLLN imply its \textit{premise} (that the first moment is finite)?
+Yes! If the average $S_n/n$ stabilizes to $c$, it means that the individual terms $X_n$ being added must be relatively small compared to $n$. If a single $X_n$ was massive (say, on the order of $n$), it would cause a huge "jump" in the average, preventing it from converging smoothly. 
+By looking at the difference between two consecutive averages, we can mathematically isolate the $n$-th term $X_n$. Because the averages converge, the isolated term $X_n / n$ must shrink to 0. Using Borel-Cantelli, this shrinking property for an i.i.d. sequence is mathematically equivalent to the distribution having a finite expected value. Once we know the expected value exists, SLLN guarantees the average converges to it, so the constant $c$ must be exactly the expected value.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Isolate $X_n / n$ and show it converges to 0.}
+
+We are given that $\frac{S_n}{n} \to c$ almost surely as $n \to \infty$.
+We can express the $n$-th variable $X_n$ in terms of the partial sums:
+\[ X_n = S_n - S_{n-1} \]
+Divide this equation by $n$:
+\[ \frac{X_n}{n} = \frac{S_n}{n} - \frac{S_{n-1}}{n} \]
+We can rewrite the second term to use the known limit of $S_{n-1}/(n-1)$:
+\[ \frac{X_n}{n} = \frac{S_n}{n} - \left( \frac{n-1}{n} \right) \frac{S_{n-1}}{n-1} \]
+Now, take the limit as $n \to \infty$ almost surely. We know $\frac{S_n}{n} \to c$, $\frac{S_{n-1}}{n-1} \to c$, and $\frac{n-1}{n} \to 1$.
+\[ \lim_{n \to \infty} \frac{X_n}{n} = c - 1 \cdot c = 0 \quad \text{a.s.} \]
+
+\textbf{Step 2: Connect $X_n / n \to 0$ to the finite first moment.}
+
+The statement $\frac{X_n}{n} \to 0$ almost surely means that for any $\epsilon > 0$, the event $\{|X_n| > \epsilon n\}$ happens only finitely many times.
+Taking $\epsilon = 1$, the event $\{|X_n| > n\}$ occurs only finitely many times almost surely.
+By the Borel-Cantelli Lemma, since the events $A_n = \{|X_n| > n\}$ are independent (because $X_n$ are i.i.d.), the probability of them happening infinitely often is 0 if and only if the sum of their probabilities is finite:
+\[ \sum_{n=1}^\infty \mathbb{P}(|X_n| > n) < \infty \]
+Since the variables $X_n$ are identically distributed, $\mathbb{P}(|X_n| > n) = \mathbb{P}(|X_1| > n)$.
+\[ \sum_{n=1}^\infty \mathbb{P}(|X_1| > n) < \infty \]
+There is a fundamental identity in probability theory that relates the expectation of a positive random variable to the integral (or sum) of its tail probabilities:
+\[ \mathbb{E}[|X_1|] = \int_0^\infty \mathbb{P}(|X_1| > x) dx \leq 1 + \sum_{n=1}^\infty \mathbb{P}(|X_1| > n) \]
+Because the sum is finite, the expected value $\mathbb{E}[|X_1|]$ is also finite. This proves that $X_1$ has a finite first moment.
+
+\textbf{Step 3: Conclude that $\mathbb{E}[X_1] = c$.}
+
+Now that we have established that $\mathbb{E}[|X_1|] < \infty$, we can apply the Kolmogorov Strong Law of Large Numbers.
+The SLLN states that for i.i.d. random variables with a finite first moment, the sample average almost surely converges to the true expected value:
+\[ \frac{S_n}{n} \to \mathbb{E}[X_1] \quad \text{a.s.} \]
+However, we were given in the problem statement that:
+\[ \frac{S_n}{n} \to c \quad \text{a.s.} \]
+Since a sequence of real numbers can have at most one limit, it must be exactly true that:
+\[ \mathbb{E}[X_1] = c \]
 \end{solution}
 
 \begin{exercise}
@@ -145,13 +413,51 @@ and justify your answer.
 \end{exercise}
 
 \begin{solution}
-Let $X_n$ be the number of cycles. We can represent $X_n = \sum_{k=1}^n I_k$, where $I_k$ is the indicator that the $k$-th element starts a new cycle in a standard construction (e.g., the Feller coupling). For a uniform permutation, the probability that the $k$-th element chosen starts a new cycle is $1/k$. These indicators $I_k$ are independent.
-Thus, the expected number of cycles is:
-\[ \mathbb{E}[X_n] = \sum_{k=1}^n \mathbb{E}[I_k] = \sum_{k=1}^n \frac{1}{k} = H_n, \]
- where $H_n$ is the $n$-th harmonic number. Using the asymptotic expansion of harmonic numbers, $H_n = \log n + \gamma + O(1/n)$, where $\gamma$ is the Euler-Mascheroni constant.
-By choosing $a_n = \log n$, we have:
-\[ \lim_{n \to \infty} \frac{\mathbb{E}[X_n]}{\log n} = \lim_{n \to \infty} \frac{\log n + \gamma + O(1/n)}{\log n} = 1. \]
-Thus, $a_n = \log n$ is the required sequence.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Cycle Decomposition of Permutations:} Any permutation can be uniquely broken down into a set of disjoint cycles.
+    \item \textbf{Feller's Coupling (Canonical Cycle Notation):} A clever way to generate a random permutation one element at a time, such that the event "element $k$ starts a new cycle" has a simple, independent probability.
+    \item \textbf{Harmonic Numbers:} The sum of the reciprocals of the first $n$ integers, $H_n = \sum_{k=1}^n \frac{1}{k}$, grows logarithmically: $H_n \approx \log n + \gamma$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine building a random permutation of $n$ people by having them sit at circular tables. The 1st person sits at a new table. The 2nd person can either sit with the 1st person or start a new table. In a uniformly random permutation, the probability they start a new table is exactly $1/2$. The 3rd person has a $1/3$ chance of starting a new table, and so on.
+If we define $I_k$ as an indicator variable (1 if the $k$-th person starts a new table, 0 otherwise), the total number of tables (cycles) is simply the sum of these indicators.
+Because the chance of starting a new table drops off like $1/k$, the expected number of tables is the sum of $1/k$ up to $n$. This is the famous Harmonic Series, which is known to grow precisely at the same rate as the natural logarithm function.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Express the number of cycles as a sum of indicators.}
+
+We can construct a uniform random permutation using Feller's Coupling (also known as the Chinese Restaurant Process for permutations).
+We insert elements $1, 2, \dots, n$ one by one into cycles.
+- Element 1 forms a new cycle of length 1.
+- Element 2 has 2 choices: join the existing cycle (after element 1) or form a new cycle. To make all permutations equally likely, it forms a new cycle with probability $1/2$.
+- In general, when inserting element $k$, there are $k-1$ existing elements. Element $k$ can be placed immediately after any of the $k-1$ elements (joining their cycle), or it can form a new cycle. To maintain uniformity, each of the $k$ possible choices is equally likely (probability $1/k$).
+Let $I_k$ be the indicator variable that element $k$ forms a new cycle. From the construction:
+\[ \mathbb{P}(I_k = 1) = \frac{1}{k} \]
+The total number of cycles $X_n$ is the sum of the new cycles created:
+\[ X_n = \sum_{k=1}^n I_k \]
+
+\textbf{Step 2: Calculate the exact expected value.}
+
+Using the linearity of expectation, the expected number of cycles is the sum of the expected values of the indicators:
+\[ \mathbb{E}[X_n] = \mathbb{E} \left[ \sum_{k=1}^n I_k \right] = \sum_{k=1}^n \mathbb{E}[I_k] = \sum_{k=1}^n \frac{1}{k} \]
+This sum is exactly the $n$-th Harmonic number, denoted $H_n$.
+\[ \mathbb{E}[X_n] = H_n \]
+
+\textbf{Step 3: Find the asymptotic sequence $a_n$.}
+
+We know from calculus that the Harmonic series can be approximated by the integral of $1/x$. The asymptotic expansion of $H_n$ is:
+\[ H_n = \log n + \gamma + O\left(\frac{1}{n}\right) \]
+where $\log n$ is the natural logarithm and $\gamma \approx 0.577$ is the Euler-Mascheroni constant.
+We want to find a sequence $a_n$ such that $\lim_{n \to \infty} \frac{\mathbb{E}[X_n]}{a_n} = 1$.
+Let's test $a_n = \log n$:
+\[ \lim_{n \to \infty} \frac{\mathbb{E}[X_n]}{\log n} = \lim_{n \to \infty} \frac{\log n + \gamma + O(1/n)}{\log n} \]
+Divide the numerator and denominator by $\log n$:
+\[ \lim_{n \to \infty} \left( 1 + \frac{\gamma}{\log n} + \frac{O(1/n)}{\log n} \right) = 1 + 0 + 0 = 1 \]
+Therefore, the sequence of reals $a_n = \log n$ satisfies the required condition.
 \end{solution}
 
 \begin{exercise}
@@ -169,17 +475,70 @@ The Erd\H{o}s-R\'enyi random graph $G(n,p)$ with parameters $n \geq 1$ and $p \i
 \end{exercise}
 
 \begin{solution}
-Let $Y$ be the number of isolated vertices. $\mathbb{E}[Y] = n(1-p)^{n-1}$.
-\begin{enumerate}
-    \item[(a)] For $p_n \geq (1+\epsilon)\frac{\log n}{n}$:
-    $\mathbb{E}[Y] = n(1-p)^{n-1} \leq n e^{-p(n-1)} = n e^{-p n} e^p \approx n e^{-(1+\epsilon)\log n} = n^{-\epsilon} \to 0$.
-    By Markov's inequality, $\mathbb{P}(Y \geq 1) \leq \mathbb{E}[Y] \to 0$.
-    \item[(b)] For $p_n \leq (1-\epsilon)\frac{\log n}{n}$:
-    $\mathbb{E}[Y] \approx n e^{-(1-\epsilon)\log n} = n^\epsilon \to \infty$.
-    We use the second moment method: $\mathbb{P}(Y > 0) \geq \frac{(\mathbb{E}[Y])^2}{\mathbb{E}[Y^2]}$.
-    $\mathbb{E}[Y^2] = \mathbb{E}[Y] + n(n-1)\mathbb{P}(I_1=1, I_2=1)$, where $I_1, I_2$ are indicators for vertices 1 and 2 being isolated.
-    $\mathbb{P}(I_1=1, I_2=1) = (1-p)^{2(n-2)+1}$.
-    The ratio $\frac{\mathbb{E}[Y^2]}{(\mathbb{E}[Y])^2} = \frac{1}{\mathbb{E}[Y]} + \frac{n(n-1)(1-p)^{2n-3}}{n^2(1-p)^{2n-2}} = \frac{1}{\mathbb{E}[Y]} + \frac{n-1}{n} \frac{1}{1-p} \to 1$ as $n \to \infty$.
-    Thus $\mathbb{P}(Y > 0) \to 1$.
-\end{enumerate}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Erdős-Rényi Graph $G(n,p)$:} A random graph with $n$ vertices where each possible edge exists independently with probability $p$.
+    \item \textbf{First Moment Method:} If the expected number of an event (like an isolated vertex) goes to 0, the probability of seeing even one such event goes to 0. $\mathbb{P}(Y \geq 1) \leq \mathbb{E}[Y]$.
+    \item \textbf{Second Moment Method:} If the variance of $Y$ is small compared to the square of its expectation (specifically, $\mathbb{E}[Y^2] \approx \mathbb{E}[Y]^2$), and $\mathbb{E}[Y] \to \infty$, then the probability of seeing at least one event goes to 1.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a cocktail party with $n$ people, where any two people independently talk with probability $p$. An "isolated vertex" is a person who talks to absolutely no one.
+The probability a specific person is completely ignored is $(1-p)^{n-1}$. Since there are $n$ people, we expect to see roughly $n(1-p)^n \approx n e^{-pn}$ loners.
+There is a sharp "threshold" where loners disappear. If $pn$ (the average number of conversations per person) is slightly more than $\log n$, say $(1+\epsilon)\log n$, the expected number of loners becomes $n \cdot e^{-(1+\epsilon)\log n} = n^{-\epsilon}$, which shrinks to 0. Since we expect 0 loners, the chance of seeing any is 0.
+If $pn$ is slightly less than $\log n$, say $(1-\epsilon)\log n$, the expected number of loners becomes $n^{\epsilon}$, which blows up to infinity. However, just expecting a lot of loners doesn't mathematically guarantee we will see one (maybe the loners are highly correlated!). The Second Moment Method proves that the loner events are "independent enough" that an infinite expectation practically guarantees we will see loners.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the indicator variables.}
+
+Let $I_i$ be the indicator variable that vertex $i$ is isolated. A vertex is isolated if all $n-1$ possible edges connected to it are absent.
+The probability of a specific edge being absent is $1-p$. Since edges are independent, the probability that vertex $i$ is isolated is:
+\[ \mathbb{P}(I_i = 1) = (1-p)^{n-1} \]
+Let $Y = \sum_{i=1}^n I_i$ be the total number of isolated vertices. By linearity of expectation:
+\[ \mathbb{E}[Y] = n(1-p)^{n-1} \]
+
+\textbf{Step 2: Prove part (a) using the First Moment Method.}
+
+Suppose $p_n \geq (1+\epsilon)\frac{\log n}{n}$. We use the standard bound $1-x \leq e^{-x}$:
+\[ \mathbb{E}[Y] \leq n \exp(-p_n(n-1)) = n \exp(-p_n n) \exp(p_n) \]
+Substitute the lower bound for $p_n$:
+\[ \mathbb{E}[Y] \leq n \exp\left(-(1+\epsilon)\frac{\log n}{n} n\right) \exp(p_n) = n e^{-(1+\epsilon)\log n} e^{p_n} = n \cdot n^{-(1+\epsilon)} e^{p_n} = n^{-\epsilon} e^{p_n} \]
+Since $p_n \to 0$, $e^{p_n} \to 1$. As $n \to \infty$, $n^{-\epsilon} \to 0$. Therefore, $\mathbb{E}[Y] \to 0$.
+Since $Y$ is a non-negative integer, we can apply Markov's Inequality (the First Moment Method):
+\[ \mathbb{P}(Y \geq 1) \leq \mathbb{E}[Y] \]
+Because the right side goes to 0, the probability that the graph has any isolated vertices goes to 0.
+
+\textbf{Step 3: Prepare the Second Moment Method for part (b).}
+
+Suppose $p_n \leq (1-\epsilon)\frac{\log n}{n}$.
+Let's first check the expectation. For $x$ close to 0, $\log(1-x) \approx -x - x^2/2$, so $(1-p)^n \approx e^{-pn}$.
+\[ \mathbb{E}[Y] \approx n e^{-(1-\epsilon)\log n} = n \cdot n^{-(1-\epsilon)} = n^\epsilon \]
+Since $\epsilon > 0$, $\mathbb{E}[Y] \to \infty$ as $n \to \infty$.
+To rigorously prove $\mathbb{P}(Y > 0) \to 1$, we use the Second Moment Method inequality:
+\[ \mathbb{P}(Y > 0) \geq \frac{(\mathbb{E}[Y])^2}{\mathbb{E}[Y^2]} \]
+We need to calculate $\mathbb{E}[Y^2]$. Since $Y = \sum I_i$:
+\[ \mathbb{E}[Y^2] = \mathbb{E}\left[ \left(\sum_{i=1}^n I_i\right)^2 \right] = \sum_{i=1}^n \mathbb{E}[I_i^2] + \sum_{i \neq j} \mathbb{E}[I_i I_j] \]
+Since $I_i$ is an indicator, $I_i^2 = I_i$, so the first sum is exactly $\mathbb{E}[Y]$.
+
+\textbf{Step 4: Calculate the cross-terms and conclude.}
+
+For the cross-terms $\mathbb{E}[I_i I_j] = \mathbb{P}(I_i = 1 \text{ and } I_j = 1)$ for $i \neq j$:
+For both $i$ and $j$ to be isolated, the edge between them must be absent (1 condition), all other $n-2$ edges connected to $i$ must be absent, and all other $n-2$ edges connected to $j$ must be absent. These are all independent edges!
+Total edges that must be absent: $1 + (n-2) + (n-2) = 2n-3$.
+\[ \mathbb{P}(I_i = 1, I_j = 1) = (1-p_n)^{2n-3} \]
+There are $n(n-1)$ such pairs. So:
+\[ \mathbb{E}[Y^2] = \mathbb{E}[Y] + n(n-1)(1-p_n)^{2n-3} \]
+We need the ratio $\frac{\mathbb{E}[Y^2]}{(\mathbb{E}[Y])^2}$ to approach 1.
+\[ \frac{\mathbb{E}[Y^2]}{(\mathbb{E}[Y])^2} = \frac{\mathbb{E}[Y]}{(\mathbb{E}[Y])^2} + \frac{n(n-1)(1-p_n)^{2n-3}}{\left(n(1-p_n)^{n-1}\right)^2} \]
+\[ = \frac{1}{\mathbb{E}[Y]} + \frac{n(n-1)}{n^2} \frac{(1-p_n)^{2n-3}}{(1-p_n)^{2n-2}} = \frac{1}{\mathbb{E}[Y]} + \left(1 - \frac{1}{n}\right) \frac{1}{1-p_n} \]
+As $n \to \infty$:
+- $\mathbb{E}[Y] \to \infty$, so $\frac{1}{\mathbb{E}[Y]} \to 0$.
+- $p_n \to 0$, so $\frac{1}{1-p_n} \to 1$.
+- $1 - \frac{1}{n} \to 1$.
+Therefore, the entire ratio $\frac{\mathbb{E}[Y^2]}{(\mathbb{E}[Y])^2} \to 0 + 1 \cdot 1 = 1$.
+Substituting this into the Second Moment inequality:
+\[ \mathbb{P}(Y > 0) \geq \frac{1}{1 + o(1)} \to 1 \]
+Thus, the probability that the graph has an isolated vertex goes to 1.
 \end{solution}

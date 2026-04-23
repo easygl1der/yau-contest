@@ -22,6 +22,15 @@
 
 \input{config}
 
+% TikZ for fancy cover
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,calc,shapes.geometric}
+
+% Colors for fancy cover
+\definecolor{myDColor}{HTML}{101010}
+\definecolor{myLColor}{HTML}{1a5276}  % Deep blue matching exampaper color
+\definecolor{myAccent}{HTML}{c0392b}  % Red accent
+
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -29,8 +38,9 @@
 %----------------------------------------------------------------------------------------
 
 \title{2010-2025 Past Exam Papers Collection}
-\author{YAU Contest}
-\date{\today}
+\subtitle{Mathematics Contest Problems}
+\author{Yue Yihua\\Sun Yat-sen University}
+\date{\the\year}
 
 %----------------------------------------------------------------------------------------
 %	FRONT MATTER
@@ -38,8 +48,98 @@
 
 \frontmatter % Denotes the start of the pre-document content, uses roman numerals
 
-% Title page
-\maketitle
+% === Fancy Title Page ===
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture, overlay, x=1cm, y=1cm]
+    % White background
+    \fill[white] (current page.south west) rectangle (current page.north east);
+
+    % Top-right: decorative hexagons cluster
+    \foreach \i in {3,6,...,24}{%
+        \node[
+            myLColor!8,
+            regular polygon,
+            regular polygon sides=6,
+            rounded corners,
+            minimum size=\i cm,
+            very thick,
+            draw,
+        ] at ($(current page.north east)+(-1,-1)$) {};
+    }
+
+    % Top-right accent hexagon with year
+    \node[
+        myLColor,
+        regular polygon,
+        regular polygon sides=6,
+        rounded corners,
+        minimum size=4cm,
+        ultra thick,
+        fill=myLColor,
+        text=white,
+    ] at ($(current page.north east)+(-4,4)$) {%
+        \fontsize{48}{56}\selectfont\bfseries\the\year%
+    };
+
+    % Bottom-left: decorative hexagons
+    \foreach \i/\j in {4/1,6/1,5/2,7/2,6/3,8/3}{%
+        \node[
+            myLColor!\j0,
+            regular polygon,
+            regular polygon sides=6,
+            rounded corners,
+            minimum size=\i cm,
+            thick,
+            draw,
+        ] at ($(current page.south west)+(\i+1,\i*0.5-2)$) {};
+    }
+
+    % Left vertical accent bars
+    \draw[myLColor, very thick] ($(current page.north west)+(0.8,0)$) -- ($(current page.south west)+(0.8,-25)$);
+    \draw[myLColor!40, thick] ($(current page.north west)+(1.2,0)$) -- ($(current page.south west)+(1.2,-25)$);
+
+    % Main title
+    \node[right, text=myDColor!80, anchor=north west] (T) at ($(current page.north west)+(2,-4.5)$){%
+        \parbox{0.8\paperwidth}{%
+            \fontsize{44}{52}\selectfont\bfseries 2010--2025\\[-3pt]
+            \fontsize{36}{44}\selectfont\bfseries Past Exam Papers\\[-3pt]
+            \fontsize{28}{36}\selectfont\bfseries Collection%
+        }%
+    };
+
+    % Subtitle
+    \node[right, text=myDColor, anchor=north west] at ($(T.south west)+(0,-2)$){%
+        \parbox{0.8\paperwidth}{%
+            \Large\textit{S.-T. Yau College Student Mathematics Contest}%
+        }%
+    };
+
+    % Divider line
+    \draw[myLColor, ultra thick] ($(T.south west)+(0,-3.2)$) -- ($(T.south west)+(0.75\paperwidth,-3.2)$);
+
+    % Author info
+    \node[right, text=myDColor!70, anchor=north west] at ($(T.south west)+(0,-4.8)$){%
+        \parbox{0.8\paperwidth}{%
+            \large\textsc{Yue Yihua}\\[6pt]
+            \normalsize Sun Yat-sen University%
+        }%
+    };
+
+    % Bottom decorative line
+    \draw[myLColor!30, very thick] ($(current page.south west)+(2,2)$) -- ($(current page.south east)+(-4,2)$);
+
+    % Subject tags
+    \node[right, text=myLColor!70, anchor=north west] at ($(current page.south west)+(2,1)$){%
+        \footnotesize Algebra $\cdot$ Geometry $\cdot$ Analysis $\cdot$ Probability $\cdot$ Applied Math $\cdot$ Physics%
+    };
+\end{tikzpicture}
+\vfill
+% === End Fancy Title Page ===
+
+\newpage
+\thispagestyle{empty}
+~
+\newpage
 
 %----------------------------------------------------------------------------------------
 %	TABLE OF CONTENTS
@@ -53,6 +153,8 @@
 
 \tableofcontents % Output the table of contents
 
+\listoffigures % Output the list of figures
+
 \endgroup
 
 %----------------------------------------------------------------------------------------
@@ -60,54 +162,7 @@
 %----------------------------------------------------------------------------------------
 
 \mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
-\setchapterstyle{kao} % Choose the default chapter heading style
-
-\setchapterpreamble[u]{\margintoc}
-\chapter{Introduction}
-\label{ch:introduction}
-\input{content/introduction.tex}
-
-% Chapter: Exam Preparation Guide
-\setchapterpreamble[u]{\margintoc}
-\chapter{Exam Preparation Guide}
-\label{ch:preparation}
-\input{content/preparation_guide.tex}
-
-% Chapter 1: Algebra & Number Theory
-\setchapterpreamble[u]{\margintoc}
-\chapter{Algebra \& Number Theory}
-\label{ch:algebra}
-\input{content/algebra}
-
-% Chapter 2: Geometry & Topology
-\setchapterpreamble[u]{\margintoc}
-\chapter{Geometry \& Topology}
-\label{ch:geometry}
-\input{content/geometry}
-
-% Chapter 3: Probability & Statistics
-\setchapterpreamble[u]{\margintoc}
-\chapter{Probability \& Statistics}
-\label{ch:probability}
-\input{content/probability}
-
-% Chapter 4: Applied & Computational Mathematics
-\setchapterpreamble[u]{\margintoc}
-\chapter{Applied \& Computational Mathematics}
-\label{ch:applied}
-\input{content/applied}
-
-% Chapter 5: Analysis & Differential Equations
-\setchapterpreamble[u]{\margintoc}
-\chapter{Analysis \& Differential Equations}
-\label{ch:analysis}
-\input{content/analysis}
-
-% Chapter 6: Mathematical Physics
-\setchapterpreamble[u]{\margintoc}
-\chapter{Mathematical Physics}
-\label{ch:physics}
-\input{content/physics}
+\input{content/parts/all_parts.tex}
 
 %----------------------------------------------------------------------------------------
 %	BACK MATTER

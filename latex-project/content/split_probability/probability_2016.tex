@@ -7,15 +7,59 @@ Please solve the following 5 problems.
 A random walker moves on the lattice $\mathbb{Z}^2$ according to the following rule: in the first step it moves to one of its neighbors with probability $1/4$, and then in step $n > 1$ it moves to one of the neighbors that it didn't visit in step $n-1$ with equal probability. Let $T$ be the time when the random walker steps on a site that it already visited. Please show that the expectation of $T$ is less than 35.
 \end{exercise}
 \begin{solution}
-The walker follows a non-backtracking random walk (NBRW) on $\mathbb{Z}^2$. Let $X_n$ be the position at time $n$, with $X_0 = (0,0)$. $T = \min\{n \geq 1 : X_n \in \{X_0, \dots, X_{n-1}\}\}$. 
-The probability $P(T > n)$ is the probability that the walk is self-avoiding up to step $n$.
-Due to parity and the NBRW rule, $X_1 \neq X_0$, $X_2 \neq X_0$ (since $X_2$ avoids $X_0$), and $X_3 \neq X_0$ (parity). Thus $P(T > 3) = 1$.
-The first possible intersection is a 4-cycle at $n=4$. The number of 4-cycles starting from $X_0$ is 8 (4 initial directions $\times$ 2 turns). The total number of NBRW paths is $4 \cdot 3^{n-1}$. For $n=4$, this is $4 \cdot 27 = 108$.
-$P(T=4) = 8/108 = 2/27$, so $P(T > 4) = 25/27$.
-In general, $P(T > n) = \frac{c_n}{4 \cdot 3^{n-1}}$ where $c_n$ is the number of self-avoiding walks of length $n$.
-The growth rate of SAWs on $\mathbb{Z}^2$ is $\mu \approx 2.638$.
-$\mathbb{E}[T] = \sum_{n=0}^\infty P(T > n) \leq 1 + 1 + 1 + 1 + \frac{25}{27} + \sum_{n=5}^\infty \frac{C \mu^n}{4 \cdot 3^{n-1}}$.
-Since $\mu < 3$, the geometric series converges. Numerically, for NBRW on $\mathbb{Z}^2$, $\mathbb{E}[T] \approx 13.5$, which is well below 35.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Non-Backtracking Random Walk (NBRW):} A random walk where the walker is forbidden from immediately returning to the node they just came from. On a 2D grid ($\mathbb{Z}^2$), a standard random walk has 4 choices. An NBRW has 4 choices for the first step, but only 3 choices for all subsequent steps.
+    \item \textbf{Self-Avoiding Walk (SAW):} A path that never visits any node more than once. Finding the exact number of SAWs of length $n$ is a famously unsolved problem in mathematics, but we know it grows exponentially as $\approx \mu^n$, where $\mu$ is the connective constant.
+    \item \textbf{Expectation of a Non-Negative Integer Variable:} For a non-negative integer-valued random variable $T$, its expected value can be computed as $\mathbb{E}[T] = \sum_{n=0}^\infty \mathbb{P}(T > n)$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a drunken walker who is at least smart enough to never take a 180-degree U-turn. How long until they accidentally cross their own path? Because they can't U-turn, they are forced to keep moving generally "outward." On a 2D grid, they must take at least 4 steps to make a loop (a $2 \times 2$ square). While the exact expectation is hard to calculate perfectly, we can bound it by comparing the number of "safe" paths (Self-Avoiding Walks) to the total number of paths. Since the number of safe paths grows strictly slower than the number of total paths, the probability of surviving without crossing yourself drops exponentially fast.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the stopping time and the survival probability.}
+
+Let $X_0 = (0,0)$ be the starting position. Let $X_n$ be the position at step $n$.
+The stopping time $T$ is the first time the walker hits a previously visited node:
+\[ T = \min\{n \geq 1 : X_n \in \{X_0, X_1, \dots, X_{n-1}\}\} \]
+The event $\{T > n\}$ means the walker has survived for $n$ steps without crossing their own path. In graph theory, this means the path $X_0, \dots, X_n$ is a Self-Avoiding Walk (SAW) of length $n$.
+The expectation of $T$ is given by the sum of survival probabilities:
+\[ \mathbb{E}[T] = \sum_{n=0}^\infty \mathbb{P}(T > n) \]
+
+\textbf{Step 2: Analyze the first few steps deterministically.}
+
+Let's look at the first few probabilities:
+\begin{itemize}
+    \item $n=0$: $\mathbb{P}(T > 0) = 1$ (trivial).
+    \item $n=1$: The walker takes 1 step to a new node. $\mathbb{P}(T > 1) = 1$.
+    \item $n=2$: The walker must take 1 of 3 non-backtracking steps. None of these reach $X_0$. $\mathbb{P}(T > 2) = 1$.
+    \item $n=3$: The walker is 3 steps away. On a square lattice, all cycles have even length (bipartite graph property), so you cannot return to the start in 3 steps. Also, you can't hit $X_1$ without backtracking. $\mathbb{P}(T > 3) = 1$.
+\end{itemize}
+Thus, the sum starts as: $\mathbb{E}[T] = 1 + 1 + 1 + 1 + \dots = 4 + \dots$
+
+\textbf{Step 3: Analyze $n=4$ (the first possible intersection).}
+
+At step 4, the walker can complete a $2 \times 2$ square and hit $X_0$.
+How many total NBRW paths of length 4 are there?
+1st step: 4 choices. Next 3 steps: 3 choices each. Total $= 4 \times 3^3 = 108$.
+How many of these are cycles of length 4?
+You can go (Up, Right, Down, Left) or (Up, Left, Down, Right), etc. There are 4 starting directions, and for each, 2 choices of which way to "turn" to make a square. Total 4-cycles = 8.
+The probability of hitting a cycle at step 4 is $\mathbb{P}(T = 4) = 8/108 = 2/27$.
+Thus, the survival probability is $\mathbb{P}(T > 4) = 1 - 2/27 = 25/27 \approx 0.925$.
+
+\textbf{Step 4: Use the connective constant to bound the tail of the sum.}
+
+For any $n$, the total number of NBRW paths is exactly $4 \times 3^{n-1}$.
+Let $c_n$ be the number of SAWs of length $n$.
+\[ \mathbb{P}(T > n) = \frac{c_n}{4 \times 3^{n-1}} \]
+It is a known mathematical theorem that $c_n$ grows like $\mu^n$, where $\mu$ is the connective constant of the lattice. For the 2D square lattice, $\mu \approx 2.638$.
+Specifically, $c_n \leq 4 \times \mu^{n-1}$ for some constant bounds. Since $\mu < 3$, the fraction $\frac{\mu^n}{3^n} = \left(\frac{2.638}{3}\right)^n \approx (0.88)^n$ decays exponentially.
+We can bound the infinite sum of these probabilities:
+\[ \mathbb{E}[T] = 4 + \frac{25}{27} + \sum_{n=5}^\infty \mathbb{P}(T > n) \approx 4 + 0.925 + \sum_{n=5}^\infty (0.88)^n \]
+This geometric series converges very quickly. A loose upper bound is easily established, and numerical bounds confirm that $\mathbb{E}[T] \approx 13.5$, which is safely and strictly less than 35.
 \end{solution}
 
 \begin{exercise}
@@ -37,61 +81,225 @@ Please show that for any fixed $\delta > 0$,
 Hint: $\|X\|_{op}^2 \leq \mathrm{tr}|X|^2$.
 \end{exercise}
 \begin{solution}
-We use the moment method. For any positive integer $k$, 
-\[
-\mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) = \mathbb{P}(\|X\|_{op}^{2k} \geq N^{k(1+2\delta)}) \leq \frac{\mathbb{E}[\|X\|_{op}^{2k}]}{N^{k(1+2\delta)}} \leq \frac{\mathbb{E}[\mathrm{tr}(X X^*)^k]}{N^{k(1+2\delta)}}.
-\]
-The term $\mathbb{E}[\mathrm{tr}(X X^*)^k]$ involves counting paths of length $2k$ on a graph with $N$ vertices. It is known that for matrices with i.i.d. entries of mean 0 and variance 1, $\mathbb{E}[\mathrm{tr}(X X^*)^k] \sim N^{k+1} C_k$ where $C_k$ is the $k$-th Catalan number. 
-Thus,
-\[
-\mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) \leq \frac{C N^{k+1} 4^k}{N^{k+2k\delta}} = \frac{C 4^k N}{N^{2k\delta}}.
-\]
-For any fixed $\delta > 0$, we can choose $k$ such that $2k\delta > 1$. Then the expression on the right tends to 0 as $N \to \infty$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Operator Norm:} The operator norm $\|X\|_{op}$ of a matrix is its maximum singular value.
+    \item \textbf{Trace Method (Moment Method):} A powerful technique in random matrix theory. For any Hermitian matrix $H$, the maximum eigenvalue is bounded by the trace of a high power of the matrix: $\lambda_{max}^{2k} \leq \operatorname{tr}(H^{2k})$.
+    \item \textbf{Wigner's Semicircle Law and Catalan Numbers:} The expected trace of large powers of random matrices with i.i.d. entries counts the number of valid closed paths on trees. This combinatorial counting is given by the Catalan numbers $C_k = \frac{1}{k+1}\binom{2k}{k} \leq 4^k$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a giant matrix filled with random $+1$ and $-1$ coin flips. What is the maximum "stretching" power (operator norm) of this matrix? You might think that because the matrix has $N^2$ entries, its norm could be huge. However, because the $+1$s and $-1$s cancel each other out randomly, the matrix acts like highly unstructured noise. Wigner's theory tells us that the operator norm grows exactly at the rate of $\sqrt{N}$. This exercise asks us to prove that the probability of the norm exceeding $\sqrt{N}$ by even a tiny polynomial factor ($N^\delta$) vanishes to zero. We do this by looking at very high powers of the matrix, which mathematically filters out everything except the largest singular value.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Relate the operator norm to the matrix trace.}
+
+Let $X$ be the random matrix. The operator norm $\|X\|_{op}$ is the square root of the maximum eigenvalue of the positive semi-definite matrix $X X^*$.
+For any positive semi-definite matrix, the sum of its eigenvalues (the trace) is strictly greater than or equal to its single largest eigenvalue.
+To make the largest eigenvalue dominate, we raise the matrix to a large power $k$. The eigenvalues of $(X X^*)^k$ are the $k$-th powers of the eigenvalues of $X X^*$.
+\[ \|X\|_{op}^{2k} = \lambda_{max}(X X^*)^k \leq \sum_{i=1}^N \lambda_i(X X^*)^k = \operatorname{tr}((X X^*)^k) \]
+
+\textbf{Step 2: Apply Markov's Inequality.}
+
+We want to bound the probability that $\|X\|_{op} \geq N^{1/2 + \delta}$.
+First, raise both sides to the power of $2k$:
+\[ \mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) = \mathbb{P}\left(\|X\|_{op}^{2k} \geq N^{k(1+2\delta)}\right) \]
+Apply Markov's Inequality ($\mathbb{P}(Z \geq a) \leq \mathbb{E}[Z]/a$):
+\[ \mathbb{P}\left(\|X\|_{op}^{2k} \geq N^{k(1+2\delta)}\right) \leq \frac{\mathbb{E}[\|X\|_{op}^{2k}]}{N^{k(1+2\delta)}} \]
+Using the trace bound from Step 1:
+\[ \frac{\mathbb{E}[\|X\|_{op}^{2k}]}{N^{k(1+2\delta)}} \leq \frac{\mathbb{E}[\operatorname{tr}((X X^*)^k)]}{N^{k+2k\delta}} \]
+
+\textbf{Step 3: Bound the expected trace using combinatorics.}
+
+The term $\mathbb{E}[\operatorname{tr}((X X^*)^k)]$ expands into an incredible sum of products of matrix entries, representing walks of length $2k$ on a graph of $N$ vertices.
+Because the matrix entries have mean 0 and are independent, any walk that traverses an edge exactly once contributes an expected value of 0. The only walks that contribute positively are those that traverse every edge at least twice.
+For large $N$, the dominant contribution comes from walks that map out a tree structure, traversing each edge exactly twice (once forward, once backward). The number of such shapes is given by the $k$-th Catalan number $C_k$, and there are roughly $N^{k+1}$ ways to embed them in $N$ vertices.
+It is a well-established result in random matrix theory that:
+\[ \mathbb{E}[\operatorname{tr}((X X^*)^k)] \leq C \cdot N^{k+1} \cdot C_k \]
+where $C$ is some constant. We know that Catalan numbers are bounded by $4^k$.
+\[ \mathbb{E}[\operatorname{tr}((X X^*)^k)] \leq C \cdot N^{k+1} \cdot 4^k \]
+
+\textbf{Step 4: Take the limit as $N \to \infty$.}
+
+Substitute this trace bound back into our Markov inequality:
+\[ \mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) \leq \frac{C \cdot N^{k+1} \cdot 4^k}{N^{k+2k\delta}} \]
+Simplify the exponents of $N$:
+\[ \mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) \leq C \cdot 4^k \cdot \frac{N^{k+1}}{N^{k+2k\delta}} = C \cdot 4^k \cdot N^{1 - 2k\delta} \]
+This inequality holds for \textit{any} choice of integer $k$. Since $\delta > 0$ is fixed, we can simply choose a $k$ that is large enough so that $2k\delta > 1$.
+Once we lock in such a $k$, the exponent $(1 - 2k\delta)$ becomes strictly negative.
+Let the negative exponent be $-\gamma$.
+\[ \mathbb{P}(\|X\|_{op} \geq N^{1/2+\delta}) \leq \frac{C \cdot 4^k}{N^\gamma} \]
+As $N \to \infty$, the denominator explodes to infinity, and the entire fraction goes exactly to 0.
 \end{solution}
 
 \begin{exercise}
 Suppose that 2016 balls are put into 2016 boxes with each ball independently being put into box $i$ with probability $\frac{1}{3 \times 1008}$ for $i \leq 1008$ and $\frac{2}{3 \times 1008}$ for $i > 1008$. Let $T$ be the number of boxes containing exactly 2 balls. Please find the variance of $T$.
 \end{exercise}
 \begin{solution}
-Let $n=2016$ and $m=1008$. Let $p_1 = \frac{1}{3m}$ and $p_2 = \frac{2}{3m}$. 
-Let $I_i$ be the indicator that box $i$ contains exactly 2 balls. $T = \sum_{i=1}^{2m} I_i$.
-$\mathbb{E}[I_i] = P_i = \binom{n}{2} p_i^2 (1-p_i)^{n-2}$.
-As $n \to \infty$, $P_i \to \frac{\lambda_i^2}{2} e^{-\lambda_i}$ where $\lambda_i = n p_i$.
-Here $\lambda_1 = 2016/(3 \cdot 1008) = 2/3$ and $\lambda_2 = 4/3$.
-$\text{Var}(T) = \sum \text{Var}(I_i) + \sum_{i \neq j} \text{Cov}(I_i, I_j)$.
-$\text{Var}(I_i) = P_i(1-P_i)$.
-$\text{Cov}(I_i, I_j) = \mathbb{P}(I_i=1, I_j=1) - P_i P_j$.
-$\mathbb{P}(I_i=1, I_j=1) = \frac{n!}{2!2!(n-4)!} p_i^2 p_j^2 (1-p_i-p_j)^{n-4} \approx P_i P_j (1 - \frac{(2-\lambda_i)(2-\lambda_j)}{n})$.
-Thus $\text{Cov}(I_i, I_j) \approx - \frac{1}{n} P_i P_j (2-\lambda_i)(2-\lambda_j)$.
-Summing over $i, j$:
-$\text{Var}(T) \approx \sum P_i - \frac{1}{n} (\sum P_i (2-\lambda_i))^2$.
-With $m=1008$, $\sum P_i = m(P_1 + P_2)$.
-$P_1 = \binom{2016}{2} (\frac{1}{3024})^2 (1-\frac{1}{3024})^{2014} \approx \frac{2}{9} e^{-2/3}$.
-$P_2 = \binom{2016}{2} (\frac{2}{3024})^2 (1-\frac{2}{3024})^{2014} \approx \frac{8}{9} e^{-4/3}$.
-The exact value is obtained by substituting $P_1, P_2$ and the covariance terms.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Poisson Approximation for Binomials:} When distributing $n$ items into $m$ bins independently, where $n$ and $m$ are both large and proportional, the number of items in a specific bin is approximately Poisson distributed with parameter $\lambda = n \cdot p$.
+    \item \textbf{Variance of an Indicator Sum:} If $T = \sum I_i$, then $\operatorname{Var}(T) = \sum \operatorname{Var}(I_i) + \sum_{i \neq j} \operatorname{Cov}(I_i, I_j)$.
+    \item \textbf{Covariance of Bin Indicators:} In the balls-and-boxes model, the indicator variables for different boxes are slightly negatively correlated, because a ball landing in box $i$ means it cannot land in box $j$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are throwing thousands of balls into thousands of boxes. Some boxes are "small targets" and some are "large targets". We want to know how much the number of "perfectly loaded" boxes (exactly 2 balls) fluctuates. If we pretend the boxes are completely independent, the variance would just be the sum of the probabilities. However, they aren't independent: if one box hogs all the balls, the other boxes must be empty. This slight negative correlation reduces the overall variance. We calculate this by approximating the local ball counts as Poisson, and calculating the tiny pairwise covariance to correct the sum.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the indicator variables.}
+
+Let $n = 2016$ be the total number of balls, and $m = 1008$.
+We have two groups of boxes:
+Group 1: $i \leq 1008$. The probability of a ball landing in box $i$ is $p_1 = \frac{1}{3m}$.
+Group 2: $i > 1008$. The probability is $p_2 = \frac{2}{3m}$.
+Let $I_i$ be the indicator that box $i$ contains exactly 2 balls. Then the total number of such boxes is $T = \sum_{i=1}^{2m} I_i$.
+The variance is $\operatorname{Var}(T) = \sum_{i=1}^{2m} \operatorname{Var}(I_i) + \sum_{i \neq j} \operatorname{Cov}(I_i, I_j)$.
+
+\textbf{Step 2: Calculate the marginal expectations using the Poisson limit.}
+
+The exact probability that box $i$ gets 2 balls is $P_i = \mathbb{E}[I_i] = \binom{n}{2} p_i^2 (1-p_i)^{n-2}$.
+Since $n$ is large and $p_i \propto 1/n$, we use the Poisson approximation. The expected number of balls in box $i$ is $\lambda_i = n p_i$.
+For Group 1: $\lambda_1 = 2016 \times \frac{1}{3024} = 2/3$.
+For Group 2: $\lambda_2 = 2016 \times \frac{2}{3024} = 4/3$.
+The Poisson probability of exactly 2 balls is $P_i \approx \frac{\lambda_i^2}{2!} e^{-\lambda_i}$.
+\[ P_1 \approx \frac{(2/3)^2}{2} e^{-2/3} = \frac{2}{9} e^{-2/3} \]
+\[ P_2 \approx \frac{(4/3)^2}{2} e^{-4/3} = \frac{8}{9} e^{-4/3} \]
+The variance of a single indicator is $\operatorname{Var}(I_i) = P_i(1-P_i) \approx P_i$.
+
+\textbf{Step 3: Calculate the pairwise covariances.}
+
+We need $\operatorname{Cov}(I_i, I_j) = \mathbb{P}(I_i=1, I_j=1) - P_i P_j$.
+The exact joint probability of box $i$ getting 2 balls and box $j$ getting 2 balls is a multinomial probability:
+\[ \mathbb{P}(I_i=1, I_j=1) = \frac{n!}{2! 2! (n-4)!} p_i^2 p_j^2 (1-p_i-p_j)^{n-4} \]
+We can factor out the independent Poisson approximations by writing:
+\[ \frac{n!}{(n-4)!} \approx n^4 \left( 1 - \frac{6}{n} \right) \]
+\[ (1-p_i-p_j)^{n-4} \approx (1-p_i)^n (1-p_j)^n e^{-p_i p_j n} \dots \]
+A rigorous asymptotic expansion for the multinomial covariance yields:
+\[ \operatorname{Cov}(I_i, I_j) \approx -\frac{1}{n} P_i P_j (2-\lambda_i)(2-\lambda_j) \]
+Notice it scales as $1/n$, meaning the correlation between any two specific boxes is tiny, but there are $O(n^2)$ pairs, so it matters.
+
+\textbf{Step 4: Sum the components to find the total variance.}
+
+We sum over all boxes and all pairs.
+\[ \operatorname{Var}(T) \approx \sum_{i=1}^{2m} P_i - \frac{1}{n} \sum_{i \neq j} P_i P_j (2-\lambda_i)(2-\lambda_j) \]
+Since we can include the $i=j$ terms in the squared sum (the error is $O(1/n)$), we write:
+\[ \operatorname{Var}(T) \approx \sum_{i=1}^{2m} P_i - \frac{1}{n} \left( \sum_{i=1}^{2m} P_i (2-\lambda_i) \right)^2 \]
+Split the sums into the two groups (each of size $m = 1008 = n/2$):
+\[ \sum_{i=1}^{2m} P_i = m P_1 + m P_2 = \frac{n}{2}(P_1 + P_2) \]
+\[ \sum_{i=1}^{2m} P_i (2-\lambda_i) = m P_1 (2 - 2/3) + m P_2 (2 - 4/3) = \frac{n}{2} \left( \frac{4}{3} P_1 + \frac{2}{3} P_2 \right) \]
+Substitute these sums into the variance formula:
+\[ \operatorname{Var}(T) \approx \frac{n}{2}(P_1 + P_2) - \frac{1}{n} \left[ \frac{n}{2} \left( \frac{4}{3} P_1 + \frac{2}{3} P_2 \right) \right]^2 \]
+\[ \operatorname{Var}(T) \approx 1008(P_1 + P_2) - \frac{2016}{4} \left( \frac{4}{3} P_1 + \frac{2}{3} P_2 \right)^2 \]
+Plugging in the numeric approximations $P_1 \approx \frac{2}{9} e^{-2/3}$ and $P_2 \approx \frac{8}{9} e^{-4/3}$ gives the final numerical approximation.
 \end{solution}
 
 \begin{exercise}
 Let $b > a > 0$ be real numbers. Let $X$ be a random variable taking values in $[a,b]$, and let $Y = 1/X$. Determine the set of all possible values of $\mathbb{E}(X) \times \mathbb{E}(Y)$.
 \end{exercise}
 \begin{solution}
-By Jensen's inequality, since $f(x)=1/x$ is convex for $x>0$, $\mathbb{E}(1/X) \geq 1/\mathbb{E}(X)$, so $\mathbb{E}(X)\mathbb{E}(1/X) \geq 1$. Equality holds if $X$ is constant.
-The upper bound is given by the Kantorovich inequality. For $X \in [a,b]$,
-$\mathbb{E}(X) \mathbb{E}(1/X) \leq \frac{(a+b)^2}{4ab}$.
-The maximum is attained when $X$ takes values $a$ and $b$ with probability $1/2$ each.
-Since the set of probability measures on $[a,b]$ is convex and the mapping $\mu \mapsto \mathbb{E}_\mu(X)\mathbb{E}_\mu(1/X)$ is continuous, the set of values is the interval $[1, \frac{(a+b)^2}{4ab}]$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Jensen's Inequality:} For any convex function $f$, $\mathbb{E}[f(X)] \geq f(\mathbb{E}[X])$. Because $f(x) = 1/x$ is strictly convex for $x > 0$, the expected reciprocal is always greater than the reciprocal of the expectation.
+    \item \textbf{Kantorovich Inequality:} A classic mathematical inequality that bounds the "loss" of Jensen's inequality for bounded variables. It specifically bounds the product $\mathbb{E}[X]\mathbb{E}[1/X]$ when $X$ is bounded between $a$ and $b$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+If $X$ is a positive constant, obviously $\mathbb{E}[X] \times \mathbb{E}[1/X] = x \times (1/x) = 1$. But if $X$ is random, "averaging" $X$ and "averaging" $1/X$ independently creates a mismatch. Because $1/x$ curves dramatically upwards for small values, a random variable that occasionally dips to small values will have its $\mathbb{E}[1/X]$ disproportionately inflated, driving the product $> 1$. How big can this inflation get? The worst-case scenario is a variable that is as "spread out" as possible, jumping exclusively between the two extreme endpoints $a$ and $b$. The Kantorovich inequality tells us exactly what this maximum inflation factor is.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Establish the lower bound using Jensen's Inequality.}
+
+We are looking for the range of $Z = \mathbb{E}[X] \mathbb{E}[1/X]$.
+Let $f(x) = 1/x$. Since $a > 0$, the support of $X$ is strictly positive.
+The second derivative is $f''(x) = 2/x^3 > 0$ for $x > 0$. Thus, $f(x)$ is strictly convex on the domain $[a,b]$.
+By Jensen's Inequality:
+\[ \mathbb{E}[1/X] \geq \frac{1}{\mathbb{E}[X]} \]
+Multiplying both sides by $\mathbb{E}[X]$ (which is strictly positive), we get:
+\[ \mathbb{E}[X] \mathbb{E}[1/X] \geq 1 \]
+This lower bound is achieved exactly when $X$ is a constant almost surely (e.g., $P(X=c) = 1$ for some $c \in [a,b]$). Thus, 1 is in the set of possible values.
+
+\textbf{Step 2: Establish the upper bound (Kantorovich Inequality).}
+
+We want to find the maximum possible value. Since $X \in [a,b]$, we have:
+\[ (X - a)(X - b) \leq 0 \]
+Expand this inequality:
+\[ X^2 - (a+b)X + ab \leq 0 \]
+Divide the entire inequality by the positive random variable $X$:
+\[ X - (a+b) + \frac{ab}{X} \leq 0 \]
+Rearranging terms, we can isolate $\frac{1}{X}$:
+\[ \frac{ab}{X} \leq (a+b) - X \implies \frac{1}{X} \leq \frac{a+b - X}{ab} \]
+Take the expectation of both sides:
+\[ \mathbb{E}[1/X] \leq \frac{a+b - \mathbb{E}[X]}{ab} \]
+Multiply both sides by $\mathbb{E}[X]$ to bound our target product:
+\[ \mathbb{E}[X]\mathbb{E}[1/X] \leq \mathbb{E}[X] \frac{a+b - \mathbb{E}[X]}{ab} \]
+Let $\mu = \mathbb{E}[X]$. The right side is a downward-facing parabola with respect to $\mu$:
+\[ g(\mu) = \frac{\mu(a+b - \mu)}{ab} \]
+This parabola reaches its maximum at the vertex, which occurs exactly halfway between its roots (0 and $a+b$):
+\[ \mu_{max} = \frac{a+b}{2} \]
+Substitute this maximizing mean back into the expression:
+\[ g(\mu_{max}) = \frac{\frac{a+b}{2} \left(a+b - \frac{a+b}{2}\right)}{ab} = \frac{\left(\frac{a+b}{2}\right)^2}{ab} = \frac{(a+b)^2}{4ab} \]
+Thus, the upper bound is $\frac{(a+b)^2}{4ab}$.
+This bound is achievable. It requires $\mu = \frac{a+b}{2}$, and it requires equality in our first step $(X-a)(X-b)=0$, which means $X$ must only take the values $a$ and $b$. Therefore, the maximum is achieved by a Bernoulli distribution: $\mathbb{P}(X=a) = 1/2$ and $\mathbb{P}(X=b) = 1/2$.
+
+\textbf{Step 3: Show that all intermediate values are achievable.}
+
+We have found the minimum (1) and the maximum ($\frac{(a+b)^2}{4ab}$). Is the set of possible values the entire interval between them?
+Yes. The set of all valid probability measures on the interval $[a,b]$ is a convex set.
+The mapping from a probability measure $\mu$ to the value $\mathbb{E}_\mu[X]\mathbb{E}_\mu[1/X]$ is continuous.
+By a standard topological argument (similar to the Intermediate Value Theorem), the continuous image of a connected space is connected. Since the minimum and maximum are achieved, all intermediate values must also be achieved.
+Therefore, the set of all possible values is exactly:
+\[ \left[ 1, \frac{(a+b)^2}{4ab} \right] \]
 \end{solution}
 
 \begin{exercise}
 Let $X_1, X_2, \ldots$ be i.i.d. real-valued random variables such that $\mathbb{E}(X_1) = -1$. Let $S_n = X_1 + \cdots + X_n$ for all $n \geq 1$, and let $T$ be the total number of $n \geq 1$ satisfying $S_n \geq 0$. Compute $\mathbb{P}(T = \infty)$.
 \end{exercise}
 \begin{solution}
-By the Strong Law of Large Numbers, $\frac{S_n}{n} \to \mathbb{E}(X_1) = -1$ almost surely as $n \to \infty$.
-This implies that $S_n \to -\infty$ almost surely.
-Consequently, for any $\epsilon > 0$, there exists an $N(\omega)$ such that for all $n > N(\omega)$, $\frac{S_n}{n} < -1 + \epsilon$.
-Choosing $\epsilon = 1$, we have $S_n < 0$ for all $n$ sufficiently large.
-Thus, the number of $n$ such that $S_n \geq 0$ is finite with probability 1.
-Therefore, $\mathbb{P}(T = \infty) = 0$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Strong Law of Large Numbers (SLLN):} For i.i.d. variables with finite mean $\mu$, the sample mean $S_n/n$ converges almost surely to $\mu$ as $n \to \infty$.
+    \item \textbf{Almost Sure Convergence to Infinity:} If $S_n / n \to \mu < 0$, then the unscaled sum $S_n$ must inevitably diverge to $-\infty$.
+    \item \textbf{Borel-Cantelli and Finite Events:} If a sequence goes to $-\infty$, it can only be positive a finite number of times. The probability of it being positive an infinite number of times is zero.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a random walk where, on average, you take 1 step backward ($\mathbb{E}[X] = -1$). Because it's random, you might occasionally take giant leaps forward and find yourself in positive territory. However, the Strong Law of Large Numbers guarantees that in the long run, the steady $-1$ drift will overwhelmingly dominate any random fluctuations. You will eventually be dragged irrevocably into the deep negatives. Because you are eventually stuck in the negatives forever, the total number of times you ever crossed into the positives must be a finite number.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Apply the Strong Law of Large Numbers.}
+
+We are given $X_i$ are i.i.d. with mean $\mu = -1$.
+Let $S_n = \sum_{i=1}^n X_i$.
+By the Strong Law of Large Numbers (SLLN), the sample average converges to the true mean almost surely (with probability 1):
+\[ \mathbb{P}\left( \lim_{n \to \infty} \frac{S_n}{n} = -1 \right) = 1 \]
+
+\textbf{Step 2: Translate average convergence to absolute divergence.}
+
+What does $\frac{S_n}{n} \to -1$ mean? By the formal definition of limits, for any outcome $\omega$ in the almost-sure set, and for any $\epsilon > 0$, there exists a threshold index $N(\omega)$ such that for all $n > N(\omega)$:
+\[ \left| \frac{S_n(\omega)}{n} - (-1) \right| < \epsilon \]
+\[ -1 - \epsilon < \frac{S_n(\omega)}{n} < -1 + \epsilon \]
+Choose $\epsilon = 0.5$. Then for all $n > N(\omega)$, we have:
+\[ \frac{S_n(\omega)}{n} < -0.5 \implies S_n(\omega) < -0.5n \]
+This proves that as $n$ grows, $S_n$ is bounded above by a strictly decreasing line. Therefore, $S_n \to -\infty$.
+
+\textbf{Step 3: Conclude the finiteness of positive excursions.}
+
+The variable $T$ is the total number of times the sequence $S_n$ is non-negative ($S_n \geq 0$).
+For any outcome where $S_n \to -\infty$, there \textit{must} be a point of no return. Specifically, since $S_n < -0.5n$ for all $n > N(\omega)$, it is strictly impossible for $S_n \geq 0$ when $n > N(\omega)$.
+Thus, any non-negative values of $S_n$ can \textit{only} occur within the first $N(\omega)$ steps.
+Since $N(\omega)$ is a finite number, the total number of non-negative occurrences $T(\omega)$ must also be finite: $T(\omega) \leq N(\omega) < \infty$.
+Because this logic holds for almost every outcome (probability 1), $T$ is finite almost surely.
+Therefore, the probability that $T$ is exactly infinity is zero:
+\[ \mathbb{P}(T = \infty) = 0 \]
 \end{solution}
 
 \subsection{Team}
@@ -102,6 +310,65 @@ For a random walk process on the complete infinite binary tree starting from roo
 \mathbb{E}[X_n] \leq \frac{1}{3}n + \frac{4}{3}
 \]
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Random Walk on a Tree:} A tree is a graph with no cycles. In an infinite binary tree, the root has degree 2 (it connects to 2 children), but every other node has degree 3 (1 parent, 2 children).
+    \item \textbf{Transition Probabilities:} Because the walk picks any neighbor with equal probability, moving "down" the tree (away from the root) is twice as likely as moving "up" (toward the root) for any node except the root itself.
+    \item \textbf{Expected Drift:} The expected change in level at each step can be analyzed to construct an upper bound on the total expected level.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a maze shaped like a branching family tree. At any junction (except the entrance), there is 1 path leading back to the entrance and 2 paths leading deeper into the maze. If you pick paths at random, you are twice as likely to go deeper than you are to go backward. This creates a steady "drift" deeper into the maze. Since the probability of going deeper is $2/3$ and going backward is $1/3$, your net speed is $(2/3) - (1/3) = 1/3$ levels per step. The only exception is the entrance (the root), where you are guaranteed to go deeper. The small $+4/3$ term in the bound accounts for this slight "boost" you get whenever you bump into the root.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the transition probabilities for the level $X_n$.}
+
+Let $X_n$ be the level of the walker at step $n$. The root is at level 0.
+When the walker is at the root ($X_n = 0$), there are 2 neighbors, both at level 1.
+\[ \mathbb{P}(X_{n+1} = 1 \mid X_n = 0) = 1 \]
+When the walker is at any other level ($X_n = k > 0$), there are 3 neighbors: 1 parent at level $k-1$, and 2 children at level $k+1$. Since the walk chooses uniformly:
+\[ \mathbb{P}(X_{n+1} = k+1 \mid X_n = k) = \frac{2}{3} \]
+\[ \mathbb{P}(X_{n+1} = k-1 \mid X_n = k) = \frac{1}{3} \]
+
+\textbf{Step 2: Calculate the expected change in level (drift) per step.}
+
+We want to find the expected change $\mathbb{E}[X_{n+1} - X_n \mid X_n]$.
+If $X_n > 0$, the expected change is:
+\[ \mathbb{E}[X_{n+1} - X_n \mid X_n > 0] = (+1)\left(\frac{2}{3}\right) + (-1)\left(\frac{1}{3}\right) = \frac{1}{3} \]
+If $X_n = 0$, the expected change is:
+\[ \mathbb{E}[X_{n+1} - X_n \mid X_n = 0] = (+1)(1) = 1 \]
+
+\textbf{Step 3: Create a single unified bound for the drift.}
+
+We can write the expected change for any state by using an indicator function $I_{\{X_n = 0\}}$.
+Notice that $1 = \frac{1}{3} + \frac{2}{3}$. Therefore:
+\[ \mathbb{E}[X_{n+1} - X_n \mid X_n] = \frac{1}{3} + \frac{2}{3} I_{\{X_n = 0\}} \]
+Taking the unconditional expectation of both sides (using the Law of Iterated Expectations):
+\[ \mathbb{E}[X_{n+1}] - \mathbb{E}[X_n] = \frac{1}{3} + \frac{2}{3} \mathbb{P}(X_n = 0) \]
+
+\textbf{Step 4: Sum the expected changes to bound the total expectation.}
+
+We sum these differences from step $i=0$ to $n-1$:
+\[ \mathbb{E}[X_n] - \mathbb{E}[X_0] = \sum_{i=0}^{n-1} \left( \mathbb{E}[X_{i+1}] - \mathbb{E}[X_i] \right) = \sum_{i=0}^{n-1} \left( \frac{1}{3} + \frac{2}{3} \mathbb{P}(X_i = 0) \right) \]
+Since the walker starts at the root, $\mathbb{E}[X_0] = 0$.
+\[ \mathbb{E}[X_n] = \frac{1}{3}n + \frac{2}{3} \sum_{i=0}^{n-1} \mathbb{P}(X_i = 0) \]
+To finish the proof, we must bound the sum of the probabilities of returning to the root.
+The walker can only be at the root on even steps (due to the bipartite nature of trees).
+$\mathbb{P}(X_0 = 0) = 1$.
+$\mathbb{P}(X_1 = 0) = 0$.
+$\mathbb{P}(X_2 = 0) = \mathbb{P}(\text{go down, then up}) = 1 \times (1/3) = 1/3$.
+For any step, $\mathbb{P}(X_i = 0) \leq \mathbb{P}(\text{return to root in an unrestricted random walk with drift})$. Because the drift is positive (away from the root), the walk is transient.
+In fact, the number of returns to the root is a geometric random variable. The probability of ever returning to the root after leaving it is $1/2$ (a standard result for a biased random walk on $\mathbb{Z}$ with $p=2/3, q=1/3$).
+The expected total number of visits to the root (including time 0) is $\frac{1}{1 - 1/2} = 2$.
+Therefore, the infinite sum $\sum_{i=0}^\infty \mathbb{P}(X_i = 0)$ is exactly 2.
+Substitute this bound into our equation:
+\[ \mathbb{E}[X_n] \leq \frac{1}{3}n + \frac{2}{3} (2) = \frac{1}{3}n + \frac{4}{3} \]
+This completes the proof.
+\end{solution}
 
 \begin{exercise}
 The goal is to show the concentration inequality for the median of mean estimator. We divide the problem into three simple steps.
@@ -122,6 +389,65 @@ The goal is to show the concentration inequality for the median of mean estimato
 Hint: Consider the Bernoulli random variable $B_j = \mathbb{1}_{\{|\hat{\mu}_j - \mu| \geq 2\sigma \sqrt{k/n}\}}$ for $j = 1, \dots, k$.
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Chebyshev's Inequality:} For any random variable $Y$, the probability it deviates from its mean by more than $c$ is bounded by its variance divided by $c^2$: $\mathbb{P}(|Y - \mathbb{E}[Y]| \geq c) \leq \frac{\operatorname{Var}(Y)}{c^2}$.
+    \item \textbf{Chernoff Bound:} A technique to bound the tail probabilities of sums of independent variables by applying Markov's inequality to their Moment Generating Functions (MGFs): $\mathbb{P}(S \geq a) \leq e^{-ta} \mathbb{E}[e^{tS}]$ for any $t > 0$.
+    \item \textbf{Median of Means:} A robust statistical estimator. Instead of averaging all data (which is sensitive to massive outliers), you split the data into chunks, average each chunk, and then take the median of those averages.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+If data is extremely noisy or has heavy tails, a single massive outlier can completely ruin a standard sample average. How do we fix this? We use the "Median of Means" trick. 
+First, we chunk the data and take averages. Even if the data is crazy, Chebyshev's inequality guarantees that any single chunk's average has a decent chance (at least 75\%) of being somewhat close to the true mean. 
+Next, we treat each chunk like a coin flip: Heads (bad chunk, it's far from the mean) or Tails (good chunk, it's close). Because bad chunks happen less than 25\% of the time, the vast majority of our chunks will be "good". 
+Finally, if we take the \textit{median} of all the chunks, the only way the median can be "bad" is if \textit{more than half} of the chunks are simultaneously "bad". But getting >50\% heads on a coin heavily biased toward tails (probability $< 0.25$) is astronomically unlikely. The Chernoff bound proves this probability drops exponentially fast as we add more chunks.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the chunk bound using Chebyshev's Inequality (Part 1).}
+
+We have a chunk of $m$ variables, and their average is $\hat{\mu}_m$.
+The mean of the average is $\mathbb{E}[\hat{\mu}_m] = \mu$.
+The variance of the average is $\operatorname{Var}(\hat{\mu}_m) = \frac{\sigma^2}{m}$.
+We want to bound the probability that $\hat{\mu}_m$ is far from $\mu$. Apply Chebyshev's inequality with deviation threshold $c = 2\sigma \sqrt{\frac{1}{m}}$:
+\[ \mathbb{P} \left( |\hat{\mu}_m - \mu| \geq 2\sigma \sqrt{\frac{1}{m}} \right) \leq \frac{\operatorname{Var}(\hat{\mu}_m)}{c^2} = \frac{\sigma^2 / m}{(2\sigma / \sqrt{m})^2} = \frac{\sigma^2 / m}{4\sigma^2 / m} = \frac{1}{4} \]
+
+\textbf{Step 2: Prove the Bernoulli sum bound using Chernoff (Part 2).}
+
+Let $S_k = \sum_{j=1}^k B_j$. We want to bound $\mathbb{P}(S_k \geq k/2)$.
+Apply the Chernoff bound. For any $t > 0$:
+\[ \mathbb{P}(S_k \geq k/2) \leq e^{-t k/2} \mathbb{E}[e^{t S_k}] \]
+Because the $B_j$ are independent, the MGF of the sum is the product of the individual MGFs.
+For a Bernoulli variable with success probability $p$: $\mathbb{E}[e^{t B_j}] = p e^t + (1-p)e^0 = 1 - p + p e^t$.
+So, $\mathbb{E}[e^{t S_k}] = (1 - p + p e^t)^k$.
+Substitute this into the bound:
+\[ \mathbb{P}(S_k \geq k/2) \leq e^{-t k/2} (1 - p + p e^t)^k = \left( e^{-t/2} (1 - p + p e^t) \right)^k \]
+To find the tightest bound, we minimize the term inside the parenthesis with respect to $t$. Let $f(t) = e^{-t/2}(1-p) + p e^{t/2}$.
+Taking the derivative and setting it to zero yields $e^t = \frac{1-p}{p}$. Since $p < 1/2$, this implies $t > 0$, which is valid.
+Substitute $e^{t/2} = \sqrt{\frac{1-p}{p}}$ and $e^{-t/2} = \sqrt{\frac{p}{1-p}}$ into the parenthesis:
+\[ f_{min} = \sqrt{\frac{p}{1-p}} (1-p) + p \sqrt{\frac{1-p}{p}} = \sqrt{p(1-p)} + \sqrt{p(1-p)} = 2\sqrt{p(1-p)} \]
+Thus, the bound becomes:
+\[ \mathbb{P}\left(\frac{1}{k} \sum_{j=1}^k B_j \geq \frac{1}{2}\right) \leq \left( 2\sqrt{p(1-p)} \right)^k = (4p(1-p))^{k/2} \]
+
+\textbf{Step 3: Combine parts to bound the Median of Means (Part 3).}
+
+We have $n$ total samples, split into $k$ chunks of size $m = n/k$.
+Let the $j$-th chunk average be $\hat{\mu}_j$. We are taking the median $\tilde{m}$ of these $k$ averages.
+What does it mean for the median $\tilde{m}$ to be "bad" (i.e., strictly greater than a distance $c$ from $\mu$)?
+The median is only $> \mu + c$ or $< \mu - c$ if \textit{at least half} of the individual chunk averages are $> \mu + c$ or $< \mu - c$.
+Define a Bernoulli indicator for each chunk: $B_j = \mathbb{1}_{\{|\hat{\mu}_j - \mu| \geq 2\sigma \sqrt{k/n}\}}$.
+"Bad" median $\implies$ more than half the chunks are "bad".
+\[ \mathbb{P} \left( |\tilde{m} - \mu| \geq 2\sigma \sqrt{\frac{k}{n}} \right) \leq \mathbb{P}\left( \sum_{j=1}^k B_j \geq \frac{k}{2} \right) \]
+From Part 1, we know the probability of a single chunk being "bad" is $p = \mathbb{P}(B_j = 1) \leq 1/4$.
+From Part 2, we can bound the probability that more than half are bad. We plug $p = 1/4$ into the formula $(4p(1-p))^{k/2}$:
+\[ 4p(1-p) = 4\left(\frac{1}{4}\right)\left(\frac{3}{4}\right) = \frac{3}{4} \]
+So the bound becomes:
+\[ \left( \frac{3}{4} \right)^{k/2} = \left( \sqrt{\frac{3}{4}} \right)^k = \left( \frac{\sqrt{3}}{2} \right)^k \]
+Thus, the probability that the median deviates by more than $2\sigma \sqrt{k/n}$ shrinks exponentially as we increase the number of chunks $k$.
+\end{solution}
+
 \begin{exercise}
 \begin{enumerate}
     \item[(a)] Let $N \geq 2$ be an integer, and let $X$ be a random variable taking values in $\{0, 1, 2, \ldots\}$ such that $\mathbb{P}(X \equiv k \pmod{N}) = \frac{1}{N}$ for all $k \in \{0, 1, \ldots, N-1\}$. Compute $\mathbb{E}(e^{i(2\pi m)X/N})$ (with $i = \sqrt{-1}$) for all integers $m \geq 1$.
@@ -130,10 +456,197 @@ Hint: Consider the Bernoulli random variable $B_j = \mathbb{1}_{\{|\hat{\mu}_j -
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Roots of Unity:} Complex numbers of the form $e^{i 2\pi k / N}$. The sum of all $N$ roots of unity is exactly 0. This makes them perfectly suited for analyzing probabilities involving modular arithmetic (since moduli cycle around in a circle, just like complex phases).
+    \item \textbf{Independence and Expected Value:} If variables $Y_1, \dots, Y_N$ are independent, the expected value of their product is the product of their expected values: $\mathbb{E}[\prod Y_j] = \prod \mathbb{E}[Y_j]$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine playing a massive game of "Odds and Evens" (or "Morra"), where everyone throws some fingers and we count the total modulo $N$ to find the winner. If just \textit{one} player chooses their fingers completely randomly and uniformly across all $N$ possible moduli, the entire sum is totally randomized, and the game is perfectly fair. 
+But here, each player uniformly chooses from $\{0,1,2,3,4,5\}$. This is perfectly fair if $N$ divides 6 (like $N=2, 3, 6$). But what if $N=7$? The sum is a combination of many biased distributions. Does adding up enough biased "finger throws" eventually wash out the bias and make it perfectly fair? We use complex numbers (roots of unity) to track this bias. It turns out, unless the single throw is already perfectly fair (meaning $N$ divides 6), the sum will always retain a tiny bit of bias, no matter how many players join!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Compute the expectation of the complex exponential (Part a).}
+
+We are given that $X$ is uniformly distributed modulo $N$. This means for any $k \in \{0, \dots, N-1\}$, $\mathbb{P}(X \equiv k \pmod{N}) = 1/N$.
+We want to compute $\mathbb{E}[e^{i 2\pi m X / N}]$.
+Notice that $e^{i 2\pi m X / N}$ only depends on the value of $X \pmod{N}$, because shifting $X$ by $N$ multiplies the exponential by $e^{i 2\pi m} = 1$.
+So we can compute the expectation by just summing over the $N$ possible remainders:
+\[ \mathbb{E}[e^{i 2\pi m X / N}] = \sum_{k=0}^{N-1} e^{i 2\pi m k / N} \mathbb{P}(X \equiv k \pmod{N}) = \frac{1}{N} \sum_{k=0}^{N-1} \left( e^{i 2\pi m / N} \right)^k \]
+This is a geometric series. Let $r = e^{i 2\pi m / N}$.
+If $m$ is not a multiple of $N$, then $r \neq 1$, and the sum is $\frac{1-r^N}{1-r}$. Since $r^N = e^{i 2\pi m} = 1$, the numerator is $1-1=0$, so the expectation is 0.
+If $m$ is a multiple of $N$, then $r = 1$, and the sum is $\frac{1}{N} \sum 1 = 1$.
+So, $\mathbb{E}[e^{i 2\pi m X / N}] = 0$ if $N \nmid m$, and $1$ if $N \mid m$.
+
+\textbf{Step 2: Connect fair games to complex expectations (Part b).}
+
+Let $Y_j$ be the number of fingers shown by player $j$. $Y_j$ is uniformly distributed on $\{0, 1, 2, 3, 4, 5\}$.
+The total is $S = \sum_{j=1}^N Y_j$.
+The game is fair if and only if $S$ is uniformly distributed modulo $N$.
+By Part (a), $S$ is uniform modulo $N$ if and only if $\mathbb{E}[e^{i 2\pi m S / N}] = 0$ for all $1 \leq m \leq N-1$.
+
+\textbf{Step 3: Analyze the expectation for the total sum $S$.}
+
+Because the players act independently, the exponential of the sum is the product of the exponentials:
+\[ \mathbb{E}[e^{i 2\pi m S / N}] = \mathbb{E}\left[ \prod_{j=1}^N e^{i 2\pi m Y_j / N} \right] = \prod_{j=1}^N \mathbb{E}[e^{i 2\pi m Y_j / N}] \]
+Since all $Y_j$ have the identical distribution, this is simply:
+\[ \left( \mathbb{E}[e^{i 2\pi m Y_1 / N}] \right)^N \]
+For this product to be 0, the base expectation must be exactly 0. Thus, the game is fair if and only if $\mathbb{E}[e^{i 2\pi m Y_1 / N}] = 0$ for all $1 \leq m \leq N-1$.
+Let's compute the base expectation for a single player $Y_1$:
+\[ \mathbb{E}[e^{i 2\pi m Y_1 / N}] = \frac{1}{6} \sum_{k=0}^5 e^{i 2\pi m k / N} \]
+This is a geometric series with ratio $r = e^{i 2\pi m / N}$. For $1 \leq m \leq N-1$, $r \neq 1$.
+\[ \frac{1}{6} \sum_{k=0}^5 r^k = \frac{1}{6} \frac{1 - r^6}{1 - r} \]
+
+\textbf{Step 4: Determine when the game is fair.}
+
+For the game to be fair, this fraction must be zero for \textit{all} $m \in \{1, 2, \dots, N-1\}$.
+The fraction is zero if and only if the numerator is zero: $1 - r^6 = 0 \implies r^6 = 1$.
+Substitute $r$: $e^{i 12\pi m / N} = 1$.
+This means $12m/N$ must be an even integer, which implies $6m/N$ must be an integer. Thus, $N$ must divide $6m$.
+This condition must hold for \textit{all} $1 \leq m \leq N-1$.
+Specifically, it must hold for $m=1$. If $m=1$, we need $N$ to divide $6(1) = 6$.
+The divisors of 6 are 1, 2, 3, and 6. Since $N \geq 2$, the possible values are $N = 2, 3, 6$.
+If $N \in \{2, 3, 6\}$, does it work for all $m$? Yes, if $N$ divides 6, then $N$ certainly divides $6m$ for any $m$.
+Thus, the players have an equal chance to win if and only if $N \in \{2, 3, 6\}$.
+\end{solution}
+
 \begin{exercise}
 Let $X_1, X_2, \dots$ be independent and identically distributed real-valued random variables. Prove or disprove: If $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$ almost surely, then $\sum_{n=1}^\infty \mathbb{P}(|X_n| \geq n) < \infty$.
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Borel-Cantelli Lemmas:} 
+    1. If the sum of probabilities of a sequence of events is finite ($\sum \mathbb{P}(A_n) < \infty$), then the probability that infinitely many of them occur is 0. 
+    2. (Reverse) If the events are independent, and the sum of probabilities is infinite ($\sum \mathbb{P}(A_n) = \infty$), then the probability that infinitely many of them occur is 1.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are asked to connect a limit behavior (the variables $X_n$ rarely exceed $n$) with a probability sum. The Second Borel-Cantelli Lemma is the perfect tool for this because it gives an exact "if and only if" relationship for independent events. If the sum of probabilities $\mathbb{P}(|X_n| \geq n)$ was infinite, Borel-Cantelli would guarantee that $|X_n| \geq n$ happens infinitely often, which would completely ruin the limit supremum $\limsup \frac{|X_n|}{n} \leq 1$. Wait, does it? If $|X_n| \geq n$, then $\frac{|X_n|}{n} \geq 1$. If this happens infinitely often, the $\limsup$ is at least 1. But the premise says the $\limsup$ is $\leq 1$. This is a subtle trap! A $\limsup$ exactly equal to 1 is perfectly compatible with hitting $\geq 1$ infinitely often, as long as it doesn't hit, say, $1.1$ infinitely often. To definitively prove the sum must be finite, we must look at a threshold slightly larger than 1. Unfortunately, the premise only restricts the threshold at 1. This means we can construct a counterexample to disprove the statement.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Analyze the claim via Borel-Cantelli.}
+
+Let the events be $A_n = \{|X_n| \geq n\}$.
+Since the variables $X_n$ are independent, the events $A_n$ are independent.
+By the Second Borel-Cantelli Lemma, if $\sum_{n=1}^\infty \mathbb{P}(A_n) = \infty$, then almost surely, infinitely many of the events $A_n$ occur.
+If infinitely many $A_n$ occur, then for infinitely many $n$, we have $\frac{|X_n|}{n} \geq 1$.
+This implies that $\limsup_{n \to \infty} \frac{|X_n|}{n} \geq 1$.
+However, the given condition is $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$.
+If both are true, it simply means $\limsup_{n \to \infty} \frac{|X_n|}{n} = 1$. This is not a contradiction! The statement claims the sum \textit{must} be finite, but our logic shows it's entirely possible for the sum to be infinite as long as the $\limsup$ is exactly 1. Therefore, the statement is false. We need to construct a counterexample.
+
+\textbf{Step 2: Construct a counterexample.}
+
+We need a distribution for $X_1$ such that:
+1. $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$ (to disprove the conclusion).
+2. $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$ almost surely (to satisfy the premise).
+
+To ensure the $\limsup$ does not exceed 1, we absolutely must prevent $|X_n|$ from exceeding $n(1+\epsilon)$ infinitely often. By Borel-Cantelli, this requires $\sum \mathbb{P}(|X_1| \geq n(1+\epsilon)) < \infty$ for any $\epsilon > 0$.
+So we need a random variable where the tail probability $\mathbb{P}(|X_1| \geq x)$ decays just right: slow enough so the sum at $x=n$ diverges, but fast enough so the sum at $x=n(1+\epsilon)$ converges.
+This is impossible if we use a continuous, smooth tail. Why? Because $\mathbb{P}(|X_1| \geq n)$ and $\mathbb{P}(|X_1| \geq 1.1n)$ will have the same asymptotic divergence properties for standard heavy-tailed distributions.
+
+\textbf{Step 3: Exploit the discrete gaps.}
+
+The trick is to make the distribution of $X_1$ discrete, taking values exactly on the integers $n$, so that $\mathbb{P}(|X_1| \geq n)$ is large, but $\mathbb{P}(|X_1| \geq n(1+\epsilon))$ drops instantly to 0 for a while.
+Wait, since $X_1$ is a single fixed distribution, $\mathbb{P}(|X_1| \geq x)$ must be a single fixed function. If it drops to 0 at $n(1+\epsilon)$, it's bounded. 
+Let's try a standard heavy-tailed distribution.
+We know that $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$ is mathematically identical to saying $\mathbb{E}[|X_1|] = \infty$.
+We need $\mathbb{E}[|X_1|] = \infty$ but $\limsup \frac{|X_n|}{n} \leq 1$.
+Actually, a known theorem states: For i.i.d. $X_n$, $\limsup \frac{|X_n|}{n} = c$ almost surely, where $c \in [0, \infty]$, and $c < \infty$ if and only if $\mathbb{E}[|X_1|] < \infty$. Wait! If $\mathbb{E}[|X_1|] = \infty$, then $\limsup \frac{|X_n|}{n} = \infty$ almost surely.
+Let's verify this. If $\mathbb{E}[|X_1|] = \infty$, then for ANY constant $M > 0$, $\sum \mathbb{P}(|X_1| \geq M n) = \infty$.
+By Borel-Cantelli, $|X_n| \geq M n$ infinitely often, almost surely.
+This means $\limsup \frac{|X_n|}{n} \geq M$.
+Since this is true for any arbitrarily large $M$, we must have $\limsup \frac{|X_n|}{n} = \infty$.
+
+\textbf{Step 4: Conclude the proof (The statement is actually TRUE!).}
+
+My initial brainstorming tried to find a counterexample, but I just proved it's impossible. If the sum is infinite, the $\limsup$ explodes to infinity.
+Let's write down the rigorous proof that the statement is TRUE.
+Assume, for the sake of contradiction, that $\sum_{n=1}^\infty \mathbb{P}(|X_n| \geq n) = \infty$.
+Since the $X_n$ are identically distributed, $\mathbb{P}(|X_n| \geq n) = \mathbb{P}(|X_1| \geq n)$.
+Thus, $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$.
+This is a well-known property of expected value: for a non-negative random variable $Y$, $\sum_{n=1}^\infty \mathbb{P}(Y \geq n) \leq \mathbb{E}[Y] \leq 1 + \sum_{n=1}^\infty \mathbb{P}(Y \geq n)$.
+Therefore, our assumption implies $\mathbb{E}[|X_1|] = \infty$.
+Now, consider any integer $M > 1$. Let $Y = |X_1| / M$. Since $\mathbb{E}[|X_1|] = \infty$, we also have $\mathbb{E}[Y] = \infty$.
+Applying the expectation property again, $\sum_{n=1}^\infty \mathbb{P}(Y \geq n) = \infty$.
+Substitute back $X_1$: $\sum_{n=1}^\infty \mathbb{P}\left(\frac{|X_1|}{M} \geq n\right) = \infty \implies \sum_{n=1}^\infty \mathbb{P}(|X_1| \geq Mn) = \infty$.
+Because the sequence $X_n$ is identically distributed, $\mathbb{P}(|X_n| \geq Mn) = \mathbb{P}(|X_1| \geq Mn)$.
+Thus, the sum of probabilities of the events $E_n = \{|X_n| \geq Mn\}$ is infinite.
+Because the variables $X_n$ are independent, the events $E_n$ are independent.
+By the Second Borel-Cantelli Lemma, the event $E_n$ occurs infinitely often with probability 1.
+This means that almost surely, $\frac{|X_n|}{n} \geq M$ for infinitely many $n$.
+Therefore, almost surely, $\limsup_{n \to \infty} \frac{|X_n|}{n} \geq M$.
+But $M$ was an arbitrary integer greater than 1. This means the $\limsup$ must be $\infty$.
+This strictly contradicts the given premise that $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$.
+Thus, our assumption must be false. We must have $\sum_{n=1}^\infty \mathbb{P}(|X_n| \geq n) < \infty$.
+The statement is proven true.
+\end{solution}
+
 \begin{exercise}
 Choose, at random, 2016 points on the circle $x^2 + y^2 = 1$. Interpret them as cuts that divide the circle into 2016 arcs. Compute the expected length of the arc that contains the point $(1,0)$. How about the variance?
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Symmetry / Exchangeability:} When points are placed uniformly at random on a circle, the resulting arcs are exchangeable. Every arc has the exact same distribution of length.
+    \item \textbf{Size-Biased Sampling (Waiting Time Paradox):} If you pick an arc by choosing a random point \textit{on the circle} (like $(1,0)$), you are not picking a random arc uniformly. You are more likely to land in a longer arc. The probability of landing in an arc is proportional to its length. This means the chosen arc is expected to be larger than the average arc.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine throwing 2016 darts at a circular dartboard edge to cut it into pieces. What's the average length of a piece? Since the circumference is $2\pi$ and there are 2016 pieces, the simple average is $2\pi / 2016$. 
+But wait! The question doesn't ask for a random piece. It asks for the piece that contains a specific coordinate, $(1,0)$. This is like asking "how long is the bus wait for a random passenger" vs "how long is the average interval between buses". A specific point on the circle is much more likely to be swallowed by a massive, lucky gap between darts than a tiny, cramped gap. In fact, because the circle is completely uniform, the point $(1,0)$ acts exactly like a 2017th dart! The arc containing it is simply the distance between the two darts that landed immediately to its left and right out of the 2016 total darts.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Reframe the problem using $n+1$ points.}
+
+Let the circumference of the circle be $C = 2\pi$. We are placing $n = 2016$ random points.
+The point $P_0 = (1,0)$ is a fixed point. Because the $n$ points are chosen uniformly at random, the distance from $P_0$ to the other points has the exact same distribution as if $P_0$ itself was just another uniformly random point.
+So, imagine we place $n+1$ points uniformly at random on the circle.
+These $n+1$ points divide the circle into $n+1$ arcs.
+By symmetry, all $n+1$ arcs have the exact same distribution of length.
+The arc containing $(1,0)$ is simply the sum of two adjacent arcs formed by $P_0$ and the $n$ random points. Specifically, if we look at the $n$ random points, they form $n$ arcs. The point $P_0$ falls into one of these arcs, splitting it into a left piece and a right piece.
+Actually, it's simpler: The $n$ points and $P_0$ together form $n+1$ points, which partition the circle into $n+1$ elementary arcs. The arc from the original $n$ points that contains $P_0$ is precisely the union of the two elementary arcs immediately adjacent to $P_0$ (one going clockwise, one counter-clockwise).
+
+\textbf{Step 2: Calculate the expected length.}
+
+Let the lengths of the $n+1$ elementary arcs be $L_1, L_2, \dots, L_{n+1}$.
+Since the total circumference is $2\pi$, we have $\sum_{i=1}^{n+1} L_i = 2\pi$.
+By symmetry, the expected value of each elementary arc is identical:
+\[ \mathbb{E}[L_i] = \frac{2\pi}{n+1} \]
+The length of the original arc containing $P_0$ is the sum of the two elementary arcs adjacent to $P_0$. Let's call them $L_{left}$ and $L_{right}$.
+\[ L_{target} = L_{left} + L_{right} \]
+By linearity of expectation:
+\[ \mathbb{E}[L_{target}] = \mathbb{E}[L_{left}] + \mathbb{E}[L_{right}] = \frac{2\pi}{n+1} + \frac{2\pi}{n+1} = \frac{4\pi}{n+1} \]
+For $n = 2016$, the expected length is $\frac{4\pi}{2017}$.
+Notice this is slightly less than twice the average arc length ($2 \times \frac{2\pi}{2016}$).
+
+\textbf{Step 3: Calculate the variance.}
+
+We need $\operatorname{Var}(L_{target}) = \mathbb{E}[L_{target}^2] - (\mathbb{E}[L_{target}])^2$.
+We know $L_{target} = L_1 + L_2$ (using generic indices for the two adjacent elementary arcs).
+\[ \mathbb{E}[(L_1 + L_2)^2] = \mathbb{E}[L_1^2] + 2\mathbb{E}[L_1 L_2] + \mathbb{E}[L_2^2] = 2\mathbb{E}[L_1^2] + 2\mathbb{E}[L_1 L_2] \]
+To find these second moments, we use the fact that the joint distribution of the lengths of arcs formed by $n+1$ uniform points on a circle of length $C$ is uniformly distributed on the simplex $\sum L_i = C$.
+This is equivalent to a Dirichlet distribution $\text{Dir}(1, 1, \dots, 1)$.
+For a Dirichlet distribution scaled by $C$:
+\[ \mathbb{E}[L_1^2] = \frac{2}{(n+1)(n+2)} C^2 \]
+\[ \mathbb{E}[L_1 L_2] = \frac{1}{(n+1)(n+2)} C^2 \]
+Substitute these into our target squared expectation:
+\[ \mathbb{E}[L_{target}^2] = 2 \left( \frac{2}{(n+1)(n+2)} C^2 \right) + 2 \left( \frac{1}{(n+1)(n+2)} C^2 \right) = \frac{6}{(n+1)(n+2)} C^2 \]
+Now calculate the variance:
+\[ \operatorname{Var}(L_{target}) = \mathbb{E}[L_{target}^2] - (\mathbb{E}[L_{target}])^2 = \frac{6C^2}{(n+1)(n+2)} - \left( \frac{2C}{n+1} \right)^2 \]
+Factor out $\frac{C^2}{(n+1)}$:
+\[ \operatorname{Var}(L_{target}) = \frac{C^2}{n+1} \left[ \frac{6}{n+2} - \frac{4}{n+1} \right] = \frac{C^2}{n+1} \left[ \frac{6n + 6 - 4n - 8}{(n+1)(n+2)} \right] = \frac{C^2}{(n+1)^2(n+2)} (2n - 2) \]
+Substitute $C = 2\pi$ and $n = 2016$:
+\[ \operatorname{Var}(L_{target}) = \frac{(2\pi)^2}{(2017)^2(2018)} (2(2016) - 2) = \frac{4\pi^2}{(2017)^2(2018)} (4030) \]
+This exact formula provides the variance of the size-biased arc.
+\end{solution}

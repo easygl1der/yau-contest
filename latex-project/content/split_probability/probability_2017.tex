@@ -8,18 +8,48 @@ A submarine is lost in some ocean. There are two (and only two) possible regions
 \end{exercise}
 
 \begin{solution}
-Let $L_A$ and $L_B$ be the events that the submarine is lost in region A and region B, respectively. We are given $P(L_A) = 0.7$ and $P(L_B) = 0.3$.
-Let $F_A$ denote the event of finding the submarine in a single search of region A, given it is in A, and $F_B$ denote the event of finding it in region B, given it is in B. We have $P(F_A|L_A) = 0.4$ and $P(F_B|L_B) = 0.8$.
-Let $E$ be the event that 4 independent searches in region A and 1 search in region B all failed to find the submarine. Assuming that searching region A when the submarine is in region B (and vice versa) has zero probability of finding it, we have:
-\[ P(E|L_A) = (1 - P(F_A|L_A))^4 \cdot 1^1 = (0.6)^4 = 0.1296 \]
-\[ P(E|L_B) = 1^4 \cdot (1 - P(F_B|L_B))^1 = 0.2 \]
-By Bayes' Theorem, the posterior probability that the submarine is in region A is:
-\[ P(L_A|E) = \frac{P(E|L_A)P(L_A)}{P(E|L_A)P(L_A) + P(E|L_B)P(L_B)} = \frac{0.1296 \times 0.7}{0.1296 \times 0.7 + 0.2 \times 0.3} = \frac{0.09072}{0.15072} \approx 0.6019 \]
-Similarly, $P(L_B|E) = 1 - P(L_A|E) \approx 0.3981$.
-To decide where to search next, we compare the probabilities of finding the submarine in each region in the next search:
-- Probability of finding in A: $P(F_A \text{ in next search} | E) = P(L_A|E)P(F_A|L_A) \approx 0.6019 \times 0.4 = 0.24076$.
-- Probability of finding in B: $P(F_B \text{ in next search} | E) = P(L_B|E)P(F_B|L_B) \approx 0.3981 \times 0.8 = 0.31848$.
-Since $0.31848 > 0.24076$, we should search \textbf{region B} next.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Bayes' Theorem:} A mathematical formula for updating the probability of a hypothesis based on new evidence. It relates the posterior probability to the prior probability and the likelihood.
+    \item \textbf{Conditional Probability:} The probability of an event occurring given that another event has already occurred.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine you're looking for lost keys. You think they're probably in the bedroom (70\%) rather than the kitchen (30\%). You search the bedroom 4 times and don't find them. Even though the bedroom was the most likely spot initially, the repeated failures to find them there make it increasingly unlikely they are actually there. The kitchen, despite being the less likely initial location, becomes the more probable location because you haven't thoroughly checked it yet. We use Bayes' Theorem to mathematically update our beliefs after each failed search.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define events and initial probabilities.}
+
+Let $L_A$ be the event that the submarine is in region A. $P(L_A) = 0.7$.
+Let $L_B$ be the event that the submarine is in region B. $P(L_B) = 0.3$.
+Let $F_A$ be the probability of finding the submarine in region A in one search, given it's there. $P(F_A \mid L_A) = 0.4$.
+Let $F_B$ be the probability of finding it in B in one search, given it's there. $P(F_B \mid L_B) = 0.8$.
+
+\textbf{Step 2: Calculate the likelihood of the evidence.}
+
+The evidence $E$ is failing to find the submarine after 4 searches in A and 1 search in B.
+If the submarine is in A, the 1 search in B is guaranteed to fail. The 4 searches in A fail with probability $(1 - P(F_A \mid L_A))^4$.
+\[ P(E \mid L_A) = (1 - 0.4)^4 = 0.6^4 = 0.1296 \]
+If the submarine is in B, the 4 searches in A are guaranteed to fail. The 1 search in B fails with probability $1 - P(F_B \mid L_B)$.
+\[ P(E \mid L_B) = 1 - 0.8 = 0.2 \]
+
+\textbf{Step 3: Apply Bayes' Theorem to find posterior probabilities.}
+
+We want to find the updated probability that the submarine is in A, given the evidence $E$.
+\[ P(L_A \mid E) = \frac{P(E \mid L_A)P(L_A)}{P(E \mid L_A)P(L_A) + P(E \mid L_B)P(L_B)} \]
+Plug in the values:
+\[ P(L_A \mid E) = \frac{0.1296 \times 0.7}{0.1296 \times 0.7 + 0.2 \times 0.3} = \frac{0.09072}{0.09072 + 0.06} = \frac{0.09072}{0.15072} \approx 0.6019 \]
+Since there are only two regions, the probability it is in B is:
+\[ P(L_B \mid E) = 1 - P(L_A \mid E) \approx 1 - 0.6019 = 0.3981 \]
+
+\textbf{Step 4: Determine the best next search location.}
+
+We should search the region that gives the highest probability of finding the submarine on the next attempt.
+Probability of finding it in A next: $P(\text{Find in A} \mid E) = P(L_A \mid E) \times P(F_A \mid L_A) \approx 0.6019 \times 0.4 \approx 0.2408$
+Probability of finding it in B next: $P(\text{Find in B} \mid E) = P(L_B \mid E) \times P(F_B \mid L_B) \approx 0.3981 \times 0.8 \approx 0.3185$
+Since $0.3185 > 0.2408$, searching region B gives a higher chance of success.
 \end{solution}
 
 \begin{exercise}
@@ -29,13 +59,63 @@ Which student(s) have the highest probability to get this gift (i.e., win)?
 \end{exercise}
 
 \begin{solution}
-This problem can be modeled as a simple symmetric random walk on a cycle of $N=13$ vertices, labeled $\{0, 1, \dots, 12\}$, where $0$ is the teacher and $\{1, \dots, 12\}$ are the students. The winner is the vertex $k \in \{1, \dots, 12\}$ that is the last to be visited among the set $\{1, \dots, 12\}$ by a random walk starting at $0$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Random Walk on a Graph:} A path where each step is chosen randomly from the neighbors of the current vertex.
+    \item \textbf{Gambler's Ruin / Hitting Probabilities:} On a linear path (or a cycle opened into a path), the probability of hitting one endpoint before another when starting between them is proportional to the distance to the other endpoint.
+    \item \textbf{Symmetry on a Cycle:} If a process on a ring has perfect rotational symmetry, all points structurally equivalent to each other must share the same probabilities.
+\end{itemize}
 
-A well-known result for symmetric random walks on a cycle is that for any starting vertex $v$, all other $N-1$ vertices are equally likely to be the last one visited. 
-Specifically, let $T$ be the first time the walk has visited all vertices in the cycle. The vertex visited at time $T$ (the "last" vertex) is uniformly distributed over all vertices except the starting vertex.
-To see this, let the vertices be $\{0, 1, \dots, n\}$. For a vertex $k \in \{1, \dots, n\}$ to be the last one visited, the walk must reach either $k-1$ or $k+1$ (modulo $n+1$) first. Suppose it hits $k-1$ first. For $k$ to be the last visited, the walk starting from $k-1$ must then reach $k+1$ by traveling the "long way" (through all other vertices) before hitting $k$. On a path, the probability of hitting one endpoint before the other starting from an adjacent node is $1/n$. 
+\textbf{Intuition / Motivation:}
 
-Thus, each student has a probability of exactly $1/12$ to win. All students have the same \textbf{equal highest probability}.
+Imagine a completely fair game of hot potato played in a circle. The teacher starts with the potato and passes it left or right randomly. The game ends when everyone has touched the potato at least once, and the winner is the very last person to touch it. Who is the luckiest? 
+You might guess the people furthest from the teacher (directly across the circle) because it takes the longest for the potato to reach them. But this intuition is flawed! For the potato to reach the person across the circle \textit{last}, it has to travel all the way around the other side of the circle without touching them. The mathematics of random walks on circles has a beautiful, elegant result: every single person in the circle (except the starting person) has the exact same probability of being the last to touch it. It's perfectly fair.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Model the game as a random walk.}
+
+Let the 13 people be vertices on a cycle graph $C_{13}$. The vertices are numbered $\{0, 1, \dots, 12\}$ in order around the circle.
+The teacher is vertex 0. The students are vertices $1$ to $12$.
+The gift passing is a simple symmetric random walk $X_n$ on this cycle, starting at $X_0 = 0$.
+The "winner" is the student who is visited last among all 12 students.
+
+\textbf{Step 2: Reframe "last visited" as a path hitting problem.}
+
+Pick any specific student $k$. Under what condition is student $k$ the absolute last person to be visited?
+For $k$ to be the last unvisited vertex, the random walk must visit all 11 other students \textit{before} it ever visits $k$.
+This means the walk must eventually reach the two immediate neighbors of $k$ (which are $k-1$ and $k+1$, modulo 13) without ever touching $k$.
+Because it's a cycle, the only way to visit all other vertices without touching $k$ is to hit one neighbor of $k$ (say, $k-1$), and then travel all the way around the remaining unvisited portion of the circle to hit the other neighbor ($k+1$) without crossing over $k$.
+
+\textbf{Step 3: Calculate the probability for a specific student $k$.}
+
+Let's assume the walk hits $k-1$ before $k+1$. (The logic is perfectly symmetric if it hits $k+1$ first).
+Once the walk is at $k-1$, there are only two unvisited vertices left in the entire circle: $k$ (which is right next to $k-1$) and $k+1$ (which is at the other end of the unvisited chain).
+To make $k$ the last visited vertex, the walk must now start at $k-1$ and successfully reach $k+1$ \textit{before} reaching $k$.
+Notice that we can "unroll" the circle into a straight line segment, because the walk is not allowed to cross $k$. The segment is $[k, k-1]$, with length $12$. (The path goes $k \leftrightarrow k+1 \leftrightarrow \dots \leftrightarrow k-1$).
+We are starting at $k-1$ and want to hit $k+1$ before $k$.
+This is a classic Gambler's Ruin problem on a line of length $N = 12$ edges. We are at position 1 (distance 1 from $k$), and we want to reach position 12 (distance 12 from $k$) before reaching position 0 ($k$). Wait, the distance from $k-1$ to $k+1$ going the long way is 11 edges. The total distance between the absorbing boundaries $k$ and $k$ is 13 edges, but they are the same point.
+Let's trace it carefully: the unvisited segment is the path of vertices not including $k$. The boundaries are $k$ (on the left) and $k$ (on the right). We are at $k-1$. The distance to the "left" $k$ is 1. The distance to the "right" $k$ (which is reached by going through $k+1$) is 12.
+Wait, no. The condition is hitting $k+1$ before $k$, starting from $k-1$. The path of available vertices is $k \leftrightarrow \dots \leftrightarrow k+1 \leftrightarrow k-1 \leftrightarrow k$.
+Let's label the vertices on a line from $0$ to $N=13$. Let $k$ be both endpoints $0$ and $13$.
+We are at $k-1$, which corresponds to position $12$. We want to hit $k+1$ (position $2$) before hitting the endpoints $0$ or $13$.
+This means we want to travel from 12 to 2 without hitting 13.
+In a fair random walk, the probability of hitting boundary $A$ before boundary $B$ is proportional to the distance to $B$.
+Let the absorbing boundaries be 2 and 13. We start at 12.
+The distance between boundaries is $13 - 2 = 11$. The distance from start to boundary 13 is $13 - 12 = 1$.
+The probability of hitting 2 before 13 is $\frac{1}{11}$.
+Wait, this is if we already reached $k-1$ while $k+1$ was completely unvisited. The exact probability requires conditioning on which neighbor is hit first.
+
+\textbf{Step 4: Use the symmetry shortcut.}
+
+There is a much simpler, infinitely more elegant way to solve this.
+The cycle is perfectly symmetric. The random walk is perfectly symmetric.
+Consider the moment the walk visits $N-1$ distinct vertices (the teacher and 11 students). There is exactly 1 unvisited vertex remaining.
+By the rotational symmetry of the random walk on the cycle, the distribution of this "last unvisited vertex" must be perfectly uniform across all vertices \textit{except} the starting vertex.
+Why? Because the walk's behavior only depends on relative distances. There is nothing distinguishing student 1 from student 6 from student 12. Any sequence of left/right steps that makes student 1 the last visited can be mirrored and rotated to make student 6 the last visited, with the exact same probability.
+Since there are 12 students, and they must share the total probability of 1 equally:
+\[ \mathbb{P}(\text{Student } k \text{ wins}) = \frac{1}{12} \]
+Thus, all students have the exact same, highest probability of winning.
 \end{solution}
 
 \begin{exercise}
@@ -43,14 +123,56 @@ In a party, $N$ people attend, each of them brings $k$ gifts. When they leave, e
 \end{exercise}
 
 \begin{solution}
-Let $M = Nk$ be the total number of gifts. Each person $i \in \{1, \dots, N\}$ has a set of $k$ distinct gifts. After the exchange, person $i$ receives a subset of $k$ gifts chosen uniformly at random from the $M$ available gifts.
-Let $I_{ij}$ be the indicator variable that the $j$-th gift of person $i$ is returned to person $i$, for $j \in \{1, \dots, k\}$. The total number of returned gifts is $X = \sum_{i=1}^N \sum_{j=1}^k I_{ij}$.
-The probability that a specific gift is picked by its owner is:
-\[ P(I_{ij} = 1) = \frac{\binom{M-1}{k-1}}{\binom{M}{k}} = \frac{k}{M} = \frac{k}{Nk} = \frac{1}{N} \]
-The expected value is $E[X] = Nk \times \frac{1}{N} = k$.
-As $N \to \infty$, the indicators $I_{ij}$ become "nearly" independent with small success probability $1/N$. More formally, using the method of factorial moments or the Chen-Stein method, we can show that $X$ converges in distribution to a Poisson random variable.
-For any fixed $r$, the $r$-th factorial moment $E[(X)_r] = E[X(X-1)\dots(X-r+1)]$ converges to $k^r$.
-Thus, the limiting distribution of $X$ is \textbf{Poisson with parameter $k$}, i.e., $X \xrightarrow{d} \text{Poisson}(k)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Indicator Variables:} A binary variable that is 1 if an event happens and 0 otherwise. The expectation of a sum of indicators is the sum of their probabilities.
+    \item \textbf{Poisson Paradigm (Law of Rare Events):} When you have a large number of roughly independent events, each with a very small probability of occurring, the total number of events that occur follows a Poisson distribution.
+    \item \textbf{Method of Moments:} If the factorial moments of a random variable converge to the factorial moments of a Poisson distribution ($\lambda^r$), then the variable converges in distribution to Poisson($\lambda$).
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine a massive holiday party with 1,000 guests, and everyone brings 3 gifts (3,000 gifts total). At the end of the night, everyone blindly grabs 3 gifts from the pile. What are the chances you accidentally grab your own gift? Since there are 3,000 gifts, the chance of grabbing one specific gift is tiny (1/1000). But because there are 3,000 "grab attempts" overall, we expect a few people to get their own gifts back. This is a classic "rare event" scenario. The total number of returned gifts is the sum of many weakly dependent events with small probabilities, which is the exact recipe for a Poisson distribution.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the indicator variables.}
+
+Let $N$ be the number of people, and $k$ be the number of gifts each person brings.
+The total number of gifts in the pile is $M = Nk$.
+For person $i$, they brought $k$ specific gifts. Let's label them $g_{i,1}, g_{i,2}, \dots, g_{i,k}$.
+Define an indicator variable $I_{ij}$ that equals 1 if person $i$ randomly picks their own specific gift $g_{i,j}$ when they leave, and 0 otherwise.
+The total number of gifts returned to their rightful owners is the sum of all these indicators across all people and all their gifts:
+\[ X = \sum_{i=1}^N \sum_{j=1}^k I_{ij} \]
+
+\textbf{Step 2: Calculate the expected value (first moment).}
+
+To find $\mathbb{E}[I_{ij}]$, we just need the probability that person $i$ picks gift $g_{i,j}$.
+Person $i$ picks $k$ gifts uniformly at random without replacement from the total $M$ gifts.
+The number of ways to pick $k$ gifts such that $g_{i,j}$ is included is $\binom{M-1}{k-1}$ (since one spot is taken by $g_{i,j}$, we choose $k-1$ from the remaining $M-1$).
+The total number of ways to pick $k$ gifts is $\binom{M}{k}$.
+\[ \mathbb{P}(I_{ij} = 1) = \frac{\binom{M-1}{k-1}}{\binom{M}{k}} = \frac{k}{M} \]
+Substitute $M = Nk$:
+\[ \mathbb{P}(I_{ij} = 1) = \frac{k}{Nk} = \frac{1}{N} \]
+By linearity of expectation, the expected total number of returned gifts is the sum of the expectations of all $N \times k$ indicators:
+\[ \mathbb{E}[X] = \sum_{i=1}^N \sum_{j=1}^k \mathbb{E}[I_{ij}] = (Nk) \times \left(\frac{1}{N}\right) = k \]
+
+\textbf{Step 3: Analyze the limiting behavior using factorial moments.}
+
+As $N \to \infty$, we have a sum of $Nk$ indicator variables. The probability of each indicator being 1 is $1/N$, which goes to 0.
+Are the indicators independent? Not perfectly. If person 1 picks a gift, person 2 cannot pick that same gift. However, as the pile grows infinitely large ($M \to \infty$), the act of one person picking 3 gifts has virtually zero impact on the pool available for another person. The weak dependence fades away.
+We can rigorously prove convergence to a Poisson distribution by showing the $r$-th factorial moment of $X$ converges to $\lambda^r = k^r$.
+The $r$-th factorial moment $\mathbb{E}[X(X-1)\dots(X-r+1)]$ is exactly the expected number of ordered $r$-tuples of indicators $(I_{a_1}, \dots, I_{a_r})$ that all equal 1 simultaneously.
+For any fixed set of $r$ distinct gifts, what is the probability they are all picked by their respective owners?
+Let the $r$ gifts belong to $c \leq r$ distinct owners. The owners must pick these specific gifts. The probability calculation generalizes the single-gift case: it scales as $\approx \frac{1}{N^r}$ for large $N$.
+Since there are $\approx \frac{(Nk)^r}{r!}$ ways to choose $r$ distinct indicators (actually, order matters for factorial moments, so $(Nk)^r$), the expected number of successful $r$-tuples is:
+\[ \mathbb{E}[(X)_r] \approx (Nk)^r \times \frac{1}{N^r} = k^r \]
+This is the defining signature of a Poisson distribution.
+
+\textbf{Step 4: State the final conclusion.}
+
+Because the expected value is exactly $k$, and the factorial moments converge to those of a Poisson distribution, the sum of these weakly dependent rare events converges in distribution.
+Therefore, as $N \to \infty$, the total number of returned gifts $X$ follows a Poisson distribution with parameter $\lambda = k$.
 \end{solution}
 
 \begin{exercise}
@@ -64,16 +186,57 @@ where $\Sigma$ is an $n \times n$ positive definite matrix. Let the $(i,j)$ elem
 \end{exercise}
 
 \begin{solution}
-Let $\mathbf{x}_{-(i,j)}$ denote the vector $\mathbf{x}$ excluding the elements $x_i$ and $x_j$. The conditional density of $(x_i, x_j)$ given $\mathbf{x}_{-(i,j)}$ is proportional to the joint density:
-\[ f(x_i, x_j | \mathbf{x}_{-(i,j)}) \propto f(\mathbf{x}) \propto \exp\left( -\frac{1}{2} \mathbf{x}' \Omega \mathbf{x} \right) \]
-We expand the quadratic form $\mathbf{x}' \Omega \mathbf{x}$:
-\[ \mathbf{x}' \Omega \mathbf{x} = \sum_{a=1}^n \sum_{b=1}^n \omega_{ab} x_a x_b = \omega_{ii} x_i^2 + \omega_{jj} x_j^2 + 2\omega_{ij} x_i x_j + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k + C \]
-where $C$ depends only on $\mathbf{x}_{-(i,j)}$.
-If $\omega_{ij} = 0$, the cross-term $2\omega_{ij} x_i x_j$ vanishes. The expression becomes:
-\[ \mathbf{x}' \Omega \mathbf{x} = \left( \omega_{ii} x_i^2 + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k \right) + \left( \omega_{jj} x_j^2 + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k \right) + C \]
-Consequently, the conditional density factors into two functions:
-\[ f(x_i, x_j | \mathbf{x}_{-(i,j)}) \propto \exp\left( -\frac{1}{2} g(x_i, \mathbf{x}_{-(i,j)}) \right) \exp\left( -\frac{1}{2} h(x_j, \mathbf{x}_{-(i,j)}) \right) \]
-The factorization of the conditional joint density implies that $x_i$ and $x_j$ are conditionally independent given $\mathbf{x}_{-(i,j)}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Precision Matrix ($\Omega$):} The inverse of the covariance matrix. While the covariance matrix $\Sigma$ describes marginal correlations, the precision matrix $\Omega$ directly describes conditional dependencies.
+    \item \textbf{Conditional Independence:} Two variables $A$ and $B$ are conditionally independent given $C$ if their joint conditional probability density factors into the product of their individual conditional densities: $f(a,b|c) = g(a,c)h(b,c)$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+In a multivariate normal distribution, zero covariance ($\sigma_{ij} = 0$) means $x_i$ and $x_j$ are completely independent. But what if we already know the values of all the other variables in the system? The "direct" relationship between $x_i$ and $x_j$ (controlling for everything else) is encoded not in the covariance matrix, but in its inverse, the precision matrix $\Omega$. The exponent of the Gaussian PDF is a quadratic form built from $\Omega$. If the entry $\omega_{ij}$ is zero, there is no cross-term directly linking $x_i$ and $x_j$ in the exponent. When we condition on the rest of the variables (treating them as constants), the entire exponential function splits cleanly into two separate pieces—one for $x_i$ and one for $x_j$. This split proves they are conditionally independent.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the conditional density.}
+
+Let $\mathbf{x}_{-(i,j)}$ denote the random vector $\mathbf{x}$ excluding the specific elements $x_i$ and $x_j$.
+By definition of conditional probability, the conditional density of $(x_i, x_j)$ given the rest of the variables is:
+\[ f(x_i, x_j \mid \mathbf{x}_{-(i,j)}) = \frac{f(\mathbf{x})}{f(\mathbf{x}_{-(i,j)})} \]
+Since we are conditioning on $\mathbf{x}_{-(i,j)}$, we can treat all elements in $\mathbf{x}_{-(i,j)}$ as fixed constants. Therefore, any terms in the joint density $f(\mathbf{x})$ that depend only on $\mathbf{x}_{-(i,j)}$ (including the normalizing constant) can be absorbed into a proportionality constant.
+\[ f(x_i, x_j \mid \mathbf{x}_{-(i,j)}) \propto \exp\left( -\frac{1}{2} \mathbf{x}' \Omega \mathbf{x} \right) \]
+
+\textbf{Step 2: Expand the quadratic form.}
+
+We expand the exponent $\mathbf{x}' \Omega \mathbf{x}$ to isolate the terms involving $x_i$ and $x_j$.
+\[ \mathbf{x}' \Omega \mathbf{x} = \sum_{a=1}^n \sum_{b=1}^n \omega_{ab} x_a x_b \]
+We separate this giant sum into four groups:
+1. Terms involving only $x_i$: $\omega_{ii} x_i^2$
+2. Terms involving only $x_j$: $\omega_{jj} x_j^2$
+3. Terms involving both $x_i$ and $x_j$: $\omega_{ij} x_i x_j + \omega_{ji} x_j x_i = 2\omega_{ij} x_i x_j$ (since $\Omega$ is symmetric).
+4. Terms involving $x_i$ and some $x_k$ (where $k \neq i, j$): $2x_i \sum_{k \neq i,j} \omega_{ik} x_k$
+5. Terms involving $x_j$ and some $x_k$ (where $k \neq i, j$): $2x_j \sum_{k \neq i,j} \omega_{jk} x_k$
+6. Terms that involve neither $x_i$ nor $x_j$: Let's call this sum $C(\mathbf{x}_{-(i,j)})$.
+
+So the quadratic form becomes:
+\[ \mathbf{x}' \Omega \mathbf{x} = \omega_{ii} x_i^2 + \omega_{jj} x_j^2 + 2\omega_{ij} x_i x_j + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k + C(\mathbf{x}_{-(i,j)}) \]
+
+\textbf{Step 3: Apply the condition $\omega_{ij} = 0$.}
+
+We are given that the $(i,j)$ entry of the precision matrix is zero: $\omega_{ij} = 0$.
+This completely eliminates the cross-term $2\omega_{ij} x_i x_j$.
+The expanded quadratic form now cleanly separates into a part depending on $x_i$ and a part depending on $x_j$:
+\[ \mathbf{x}' \Omega \mathbf{x} = \left[ \omega_{ii} x_i^2 + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k \right] + \left[ \omega_{jj} x_j^2 + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k \right] + C(\mathbf{x}_{-(i,j)}) \]
+
+\textbf{Step 4: Factor the conditional density.}
+
+Let $g(x_i, \mathbf{x}_{-(i,j)}) = \omega_{ii} x_i^2 + 2x_i \sum_{k \neq i,j} \omega_{ik} x_k$.
+Let $h(x_j, \mathbf{x}_{-(i,j)}) = \omega_{jj} x_j^2 + 2x_j \sum_{k \neq i,j} \omega_{jk} x_k$.
+Substituting this into our proportional density from Step 1:
+\[ f(x_i, x_j \mid \mathbf{x}_{-(i,j)}) \propto \exp\left( -\frac{1}{2} [g(x_i) + h(x_j) + C] \right) \]
+Using the property of exponents ($e^{A+B} = e^A e^B$), we can split this:
+\[ f(x_i, x_j \mid \mathbf{x}_{-(i,j)}) \propto \exp\left( -\frac{1}{2} g(x_i, \mathbf{x}_{-(i,j)}) \right) \times \exp\left( -\frac{1}{2} h(x_j, \mathbf{x}_{-(i,j)}) \right) \]
+Because the joint conditional density factors perfectly into a product of a function of $x_i$ and a function of $x_j$, the random variables $x_i$ and $x_j$ are conditionally independent given the other variables.
 \end{solution}
 
 \begin{exercise}
@@ -97,25 +260,71 @@ Show that $\sqrt{n-2}\frac{r}{\sqrt{1-r^2}} \sim t_{n-2}$.
 \end{exercise}
 
 \begin{solution}
-(a) Let $Z_1 = \mathbf{a}'\mathbf{x}$. Since $\mathbf{x} \sim N(0, I_n)$ and $\|\mathbf{a}\|=1$, $Z_1 \sim N(0, 1)$.
-Construct an orthogonal matrix $\mathbf{P}$ such that its first row is $\mathbf{a}'$. Let $\mathbf{z} = \mathbf{Px}$. Then $\mathbf{z} \sim N(0, \mathbf{P}I_n\mathbf{P}') = N(0, I_n)$.
-The components of $\mathbf{z}$ are $z_1 = \mathbf{a}'\mathbf{x}$ and $z_2, \dots, z_n$, which are i.i.d. $N(0, 1)$.
-Since $\mathbf{P}$ is orthogonal, $\|\mathbf{x}\|^2 = \|\mathbf{z}\|^2 = \sum_{i=1}^n z_i^2$. Thus:
-\[ \|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2 = \|\mathbf{z}\|^2 - z_1^2 = \sum_{i=2}^n z_i^2 \]
-This sum of squares of $n-1$ i.i.d. $N(0,1)$ variables follows a $\chi^2_{n-1}$ distribution. Furthermore, $z_1$ is independent of $(z_2, \dots, z_n)$, so it is independent of $\sum_{i=2}^n z_i^2$.
-By definition of the $t$-distribution, $T = \frac{Z_1}{\sqrt{\chi^2_{n-1}/(n-1)}} = \sqrt{n-1} \frac{z_1}{\sqrt{\sum_{i=2}^n z_i^2}}$ follows a $t_{n-1}$ distribution.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Student's t-distribution:} The distribution of the ratio of a standard normal variable $Z$ to the square root of a scaled chi-squared variable $V$, where $Z$ and $V$ are independent: $T = \frac{Z}{\sqrt{V/k}} \sim t_k$.
+    \item \textbf{Orthogonal Transformations of Normals:} If $\mathbf{x} \sim N(0, I_n)$ is a standard multivariate normal, and $\mathbf{P}$ is any fixed orthogonal matrix, then the rotated vector $\mathbf{z} = \mathbf{Px}$ is also exactly $N(0, I_n)$.
+    \item \textbf{Conditioning in Independence:} If $\mathbf{x}$ and $\mathbf{y}$ are independent, the conditional distribution of $\mathbf{x}$ given $\mathbf{y}$ is identical to the unconditional distribution of $\mathbf{x}$.
+\end{itemize}
 
-(b) Let $\mathbf{J} = \mathbf{I}_n - \frac{1}{n}\mathbf{11}'$ be the centering matrix. The centered vectors are $\tilde{\mathbf{x}} = \mathbf{Jx}$ and $\tilde{\mathbf{y}} = \mathbf{Jy}$. The sample correlation is:
+\textbf{Intuition / Motivation:}
+
+We want to show that certain complex-looking statistics built from normal variables follow the famous $t$-distribution. 
+For part (a), the geometry is beautiful: $\mathbf{x}$ is a random Gaussian cloud. $\mathbf{a}'\mathbf{x}$ is the projection of this cloud onto a specific 1D line defined by $\mathbf{a}$. The denominator $\|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2$ is simply the squared length of the "leftover" vector that is perpendicular to $\mathbf{a}$. Because standard Gaussians are perfectly spherically symmetric, rotating our coordinate system so that the first axis points along $\mathbf{a}$ makes the math trivial.
+For part (b), the sample correlation $r$ looks messy, but it's just the cosine of the angle between the centered data vectors. By conditioning on $\mathbf{y}$ and projecting into the $(n-1)$-dimensional subspace of centered vectors, it magically reduces to the exact same geometric projection problem we solved in part (a)!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Rotate the coordinate system for part (a).}
+
+We have $\mathbf{x} \sim N(0, I_n)$ and a unit vector $\mathbf{a}$ ($\|\mathbf{a}\| = 1$).
+Let $\mathbf{P}$ be an $n \times n$ orthogonal matrix whose first row is exactly $\mathbf{a}'$. (Such a matrix always exists, e.g., by Gram-Schmidt).
+Define a new random vector $\mathbf{z} = \mathbf{Px}$.
+Because $\mathbf{x}$ is standard normal and $\mathbf{P}$ is orthogonal, $\mathbf{z} \sim N(0, \mathbf{P} I_n \mathbf{P}') = N(0, I_n)$.
+This means the components of $\mathbf{z} = (z_1, z_2, \dots, z_n)'$ are independent standard normal variables.
+By matrix multiplication, the first element is $z_1 = \mathbf{a}'\mathbf{x}$.
+Because orthogonal transformations preserve length, $\|\mathbf{x}\|^2 = \|\mathbf{z}\|^2 = \sum_{i=1}^n z_i^2$.
+
+\textbf{Step 2: Construct the $t$-statistic for part (a).}
+
+Let's look at the denominator term:
+\[ \|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2 = \|\mathbf{z}\|^2 - z_1^2 = \left(\sum_{i=1}^n z_i^2\right) - z_1^2 = \sum_{i=2}^n z_i^2 \]
+This is the sum of $n-1$ squared independent standard normal variables. By definition, this sum follows a Chi-squared distribution with $n-1$ degrees of freedom: $V = \sum_{i=2}^n z_i^2 \sim \chi^2_{n-1}$.
+Furthermore, $z_1$ is completely independent of $V$ (since $V$ only involves $z_2, \dots, z_n$).
+We substitute these into the given expression:
+\[ \text{Expression} = \sqrt{n-1}\frac{\mathbf{a}'\mathbf{x}}{\sqrt{\|\mathbf{x}\|^2 - (\mathbf{a}'\mathbf{x})^2}} = \sqrt{n-1} \frac{z_1}{\sqrt{V}} = \frac{z_1}{\sqrt{V / (n-1)}} \]
+This perfectly matches the definition of a $t$-distribution with $n-1$ degrees of freedom. This completes part (a).
+
+\textbf{Step 3: Simplify the sample correlation for part (b).}
+
+Let $\mathbf{1}$ be the vector of all ones. The centered vectors are $\tilde{\mathbf{x}} = \mathbf{x} - \bar{x}\mathbf{1}$ and $\tilde{\mathbf{y}} = \mathbf{y} - \bar{y}\mathbf{1}$.
+The sample correlation is simply the dot product of the normalized centered vectors:
 \[ r = \frac{\tilde{\mathbf{x}}' \tilde{\mathbf{y}}}{\|\tilde{\mathbf{x}}\| \|\tilde{\mathbf{y}}\|} \]
-Since $\mathbf{x}$ and $\mathbf{y}$ are independent, we can condition on $\mathbf{y}$. For a fixed $\mathbf{y}$, let $\mathbf{u} = \tilde{\mathbf{y}}/\|\tilde{\mathbf{y}}\|$. Note that $\mathbf{u}'\mathbf{1} = 0$ and $\|\mathbf{u}\|=1$.
-The vector $\tilde{\mathbf{x}}$ is the projection of $\mathbf{x}$ onto the $(n-1)$-dimensional subspace $H = \{ \mathbf{v} : \mathbf{v}'\mathbf{1} = 0 \}$. Since the distribution of $\mathbf{x}$ is spherically symmetric, the distribution of $\tilde{\mathbf{x}}$ within $H$ is also spherically symmetric.
-Let $\mathbf{Q}$ be an $n \times (n-1)$ matrix whose columns form an orthonormal basis for $H$. We can write $\tilde{\mathbf{x}} = \mathbf{Q}\mathbf{w}$ where $\mathbf{w} \sim N(0, I_{n-1})$. Then $r = \frac{\mathbf{w}'\mathbf{Q}'\mathbf{u}}{\|\mathbf{w}\|}$.
-Let $\mathbf{a} = \mathbf{Q}'\mathbf{u}$. Since $\mathbf{u} \in H$, $\|\mathbf{a}\| = \|\mathbf{u}\| = 1$. Then $r = \frac{\mathbf{a}'\mathbf{w}}{\|\mathbf{w}\|}$ where $\mathbf{w} \sim N(0, I_{n-1})$.
-Let $W_1 = \mathbf{a}'\mathbf{w}$. From part (a) with $n$ replaced by $n-1$:
-\[ \sqrt{n-2} \frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}} \sim t_{n-2} \]
-Noting that $\frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}} = \frac{W_1/\|\mathbf{w}\|}{\sqrt{1 - (W_1/\|\mathbf{w}\|)^2}} = \frac{r}{\sqrt{1-r^2}}$, we conclude:
-\[ \sqrt{n-2} \frac{r}{\sqrt{1-r^2}} \sim t_{n-2} \]
-Since this holds for any $\mathbf{y}$, it holds unconditionally.
+Since $\mathbf{x}$ and $\mathbf{y}$ are independent, we can condition on a fixed value of $\mathbf{y}$. For this fixed $\mathbf{y}$, the normalized centered vector $\mathbf{u} = \tilde{\mathbf{y}}/\|\tilde{\mathbf{y}}\|$ is just a fixed, constant unit vector ($\|\mathbf{u}\| = 1$). Note that $\mathbf{u}$ is centered, so $\mathbf{u}'\mathbf{1} = 0$.
+The correlation formula simplifies to $r = \frac{\tilde{\mathbf{x}}' \mathbf{u}}{\|\tilde{\mathbf{x}}\|}$.
+
+\textbf{Step 4: Reduce to an $(n-1)$-dimensional problem.}
+
+The centering operation projects $\mathbf{x}$ onto the $(n-1)$-dimensional subspace $H$ perpendicular to $\mathbf{1}$.
+Let $\mathbf{Q}$ be an $n \times (n-1)$ matrix whose columns form an orthonormal basis for $H$.
+Any centered vector can be written as $\mathbf{Q}\mathbf{w}$ for some $(n-1)$-dimensional vector $\mathbf{w}$.
+Specifically, $\tilde{\mathbf{x}} = \mathbf{Q}\mathbf{w}$. What is the distribution of $\mathbf{w}$?
+Because $\mathbf{x} \sim N(0, I_n)$, its projection onto any $(n-1)$-dimensional subspace is simply a standard normal in that subspace. Thus, $\mathbf{w} \sim N(0, I_{n-1})$.
+Also, because $\mathbf{u} \in H$, we can write it as $\mathbf{u} = \mathbf{Q}\mathbf{b}$ for some constant vector $\mathbf{b}$. Since $\|\mathbf{u}\|=1$ and $\mathbf{Q}$ is isometric, $\|\mathbf{b}\|=1$.
+Substitute these into $r$:
+\[ r = \frac{(\mathbf{Q}\mathbf{w})' (\mathbf{Q}\mathbf{b})}{\|\mathbf{Q}\mathbf{w}\|} = \frac{\mathbf{w}'\mathbf{Q}'\mathbf{Q}\mathbf{b}}{\|\mathbf{w}\|} = \frac{\mathbf{w}'\mathbf{b}}{\|\mathbf{w}\|} = \frac{\mathbf{b}'\mathbf{w}}{\|\mathbf{w}\|} \]
+This is amazing! $r$ is now the projection of an $(n-1)$-dimensional standard normal $\mathbf{w}$ onto a fixed unit vector $\mathbf{b}$, divided by the length of $\mathbf{w}$.
+
+\textbf{Step 5: Apply part (a) to finish part (b).}
+
+Let $W_1 = \mathbf{b}'\mathbf{w}$. Then $r = W_1 / \|\mathbf{w}\|$.
+We want to analyze the expression $\sqrt{n-2} \frac{r}{\sqrt{1-r^2}}$. Let's plug in $r$:
+\[ \frac{r}{\sqrt{1-r^2}} = \frac{W_1 / \|\mathbf{w}\|}{\sqrt{1 - (W_1 / \|\mathbf{w}\|)^2}} = \frac{W_1 / \|\mathbf{w}\|}{\sqrt{(\|\mathbf{w}\|^2 - W_1^2) / \|\mathbf{w}\|^2}} = \frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}} \]
+So the expression is exactly $\sqrt{n-2} \frac{W_1}{\sqrt{\|\mathbf{w}\|^2 - W_1^2}}$.
+Notice this is the \textit{exact} formula from part (a), just running in $n-1$ dimensions instead of $n$!
+$\mathbf{w}$ is a standard normal in $\mathbb{R}^{n-1}$, $\mathbf{b}$ is a unit vector, and $W_1 = \mathbf{b}'\mathbf{w}$.
+By the result of part (a), this expression must follow a $t$-distribution with $(n-1) - 1 = n-2$ degrees of freedom.
+Since this conditional distribution holds for any fixed $\mathbf{y}$, it is also the unconditional distribution.
 \end{solution}
 
 \subsection{Team}
@@ -132,13 +341,200 @@ where $\operatorname{dist}(x, H)$ represents the distance from the point $x$ to 
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Hoeffding's Inequality:} A concentration inequality that bounds the probability that the sum of independent bounded random variables deviates from its expected value. For $n$ independent variables bounded in $[-1, 1]$, the probability of deviating by $t$ is bounded by $\exp(-t^2 / 2n)$.
+    \item \textbf{Distance to a Hyperplane:} The distance from a point $x$ to the hyperplane $H$ orthogonal to a unit vector $u$ is exactly the absolute dot product $|x \cdot u|$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are picking a random point inside an $n$-dimensional cube. The hyperplane $H$ cuts diagonally right through the center of the cube. We want to know the probability that our random point lands very close to this diagonal slice. 
+By "close," we mean within a distance of $n^\varepsilon$. Since the diameter of the cube grows like $\sqrt{n}$, $n^\varepsilon$ might seem small if $\varepsilon < 1/2$.
+The distance to this specific diagonal hyperplane is simply proportional to the sum of the coordinates of our random point. Because the coordinates are independent and uniform in $[-1, 1]$, their sum behaves like a random walk. By the Central Limit Theorem (and Hoeffding's inequality for rigorous bounds), the sum is highly concentrated around its mean (0). Therefore, the point is overwhelmingly likely to be found extremely close to the hyperplane $H$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Express the distance to the hyperplane algebraically.}
+
+The hyperplane $H$ is orthogonal to the vector $v = (1, 1, \dots, 1)^T$.
+The unit normal vector to $H$ is $u = \frac{v}{\|v\|} = \frac{1}{\sqrt{n}} (1, 1, \dots, 1)^T$.
+For any point $X = (X_1, \dots, X_n)$ in the cube $[-1, 1]^n$, the shortest distance to $H$ (which passes through the origin) is the absolute value of the projection of $X$ onto the normal vector $u$:
+\[ \operatorname{dist}(X, H) = |X \cdot u| = \left| \sum_{i=1}^n X_i \frac{1}{\sqrt{n}} \right| = \frac{1}{\sqrt{n}} \left| \sum_{i=1}^n X_i \right| \]
+The probability measure $\mu^n$ means the coordinates $X_i$ are independent and uniformly distributed on $[-1, 1]$.
+Thus, $\mathbb{E}[X_i] = 0$ and $\operatorname{Var}(X_i) = \frac{1}{3}$.
+
+\textbf{Step 2: Relate the target probability to the sum of coordinates.}
+
+We want to lower bound the probability of the event $A_{H, n^\varepsilon}$:
+\[ \mu^n(A_{H, n^\varepsilon}) = \mathbb{P}\left( \operatorname{dist}(X, H) \leq n^\varepsilon \right) = \mathbb{P}\left( \frac{1}{\sqrt{n}} \left| \sum_{i=1}^n X_i \right| \leq n^\varepsilon \right) \]
+\[ = \mathbb{P}\left( \left| \sum_{i=1}^n X_i \right| \leq n^{1/2 + \varepsilon} \right) = 1 - \mathbb{P}\left( \left| \sum_{i=1}^n X_i \right| > n^{1/2 + \varepsilon} \right) \]
+
+\textbf{Step 3: Prove the first bound using Chebyshev's Inequality.}
+
+Let $S_n = \sum_{i=1}^n X_i$. We know $\mathbb{E}[S_n] = 0$ and $\operatorname{Var}(S_n) = \sum_{i=1}^n \operatorname{Var}(X_i) = \frac{n}{3}$.
+By Chebyshev's Inequality:
+\[ \mathbb{P}(|S_n| > c) \leq \frac{\operatorname{Var}(S_n)}{c^2} \]
+Let $c = n^{1/2 + \varepsilon}$.
+\[ \mathbb{P}(|S_n| > n^{1/2 + \varepsilon}) \leq \frac{n/3}{(n^{1/2 + \varepsilon})^2} = \frac{n}{3 n^{1 + 2\varepsilon}} = \frac{1}{3} n^{-2\varepsilon} \]
+For all $n \geq 1$, $\frac{1}{3} < 1$, so:
+\[ \mathbb{P}(|S_n| > n^{1/2 + \varepsilon}) \leq n^{-2\varepsilon} \]
+Therefore:
+\[ \mu^n(A_{H, n^\varepsilon}) \geq 1 - n^{-2\varepsilon} \]
+This proves the first estimate.
+
+\textbf{Step 4: Prove the second bound using Hoeffding's Inequality.}
+
+To get an exponential bound, we use Hoeffding's Inequality.
+For independent bounded variables $X_i \in [a_i, b_i]$, Hoeffding's states:
+\[ \mathbb{P}(|S_n - \mathbb{E}[S_n]| \geq t) \leq 2 \exp\left( - \frac{2t^2}{\sum (b_i - a_i)^2} \right) \]
+Here, $a_i = -1$ and $b_i = 1$, so $b_i - a_i = 2$.
+\[ \sum_{i=1}^n (b_i - a_i)^2 = \sum_{i=1}^n 4 = 4n \]
+Let $t = n^{1/2 + \varepsilon}$.
+\[ \mathbb{P}(|S_n| > n^{1/2 + \varepsilon}) \leq 2 \exp\left( - \frac{2(n^{1/2 + \varepsilon})^2}{4n} \right) = 2 \exp\left( - \frac{2 n^{1 + 2\varepsilon}}{4n} \right) = 2 \exp\left( - \frac{1}{2} n^{2\varepsilon} \right) \]
+We want to show this upper bound is less than $e^{-n^{\varepsilon/2}}$ for sufficiently large $n$.
+We need:
+\[ 2 \exp\left( - \frac{1}{2} n^{2\varepsilon} \right) \leq \exp\left( - n^{\varepsilon/2} \right) \]
+Take the natural logarithm:
+\[ \ln 2 - \frac{1}{2} n^{2\varepsilon} \leq - n^{\varepsilon/2} \]
+\[ \ln 2 \leq \frac{1}{2} n^{2\varepsilon} - n^{\varepsilon/2} \]
+Since $\varepsilon > 0$, we have $2\varepsilon > \varepsilon/2$. As $n \to \infty$, the term $\frac{1}{2} n^{2\varepsilon}$ dominates $n^{\varepsilon/2}$ and goes to infinity.
+Thus, the inequality will definitely hold for all sufficiently large $n$.
+Therefore, for large $n$:
+\[ \mathbb{P}(|S_n| > n^{1/2 + \varepsilon}) \leq e^{-n^{\varepsilon/2}} \implies \mu^n(A_{H, n^\varepsilon}) \geq 1 - e^{-n^{\varepsilon/2}} \]
+This proves the second estimate.
+\end{solution}
+
 \begin{exercise}
 Let $X_1, X_2, \dots$ be positive random variables. We assume that $X_n$ converges to 0 in probability, and that $\lim_{n \to \infty} \mathbb{E}[X_n] = 2$. Prove that $\lim_{n \to \infty} \mathbb{E}[|X_n - 1|]$ exists and compute its value.
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Convergence in Probability:} $X_n \xrightarrow{p} c$ means for any $\epsilon > 0$, $\lim_{n \to \infty} \mathbb{P}(|X_n - c| > \epsilon) = 0$.
+    \item \textbf{Uniform Integrability / $L^1$ Convergence:} If $X_n \xrightarrow{p} 0$, it does not automatically mean $\mathbb{E}[X_n] \to 0$. The fact that $\mathbb{E}[X_n] \to 2$ means the sequence is "leaking" expectation into rare, enormous values (heavy tails that escape to infinity).
+    \item \textbf{Splitting the Absolute Value:} $|X_n - 1|$ behaves differently when $X_n$ is near 0 versus when $X_n$ is very large.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are told $X_n$ is almost always very close to 0 (since it converges to 0 in probability). But somehow, its average value is 2! How is this possible? It must be that $X_n$ is usually 0, but occasionally takes on a massive value to drag the average all the way up to 2.
+We want to find the average of $|X_n - 1|$. 
+Most of the time, $X_n \approx 0$, so $|X_n - 1| \approx |0 - 1| = 1$.
+The rare times when $X_n$ is massive (say $X_n = 1000$), then $|X_n - 1| = X_n - 1$.
+So the expected value is roughly: (probability of being 0) $\times 1$ + (expected value of the massive spikes) $- 1$.
+Since the expected value of the spikes is what drives the mean to 2, the total expected value should be $1 + 2 - 1 = 2$. Let's make this rigorous.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Express $|x - 1|$ algebraically.}
+
+We want to compute $\lim_{n \to \infty} \mathbb{E}[|X_n - 1|]$.
+Since $X_n$ are positive random variables ($X_n \geq 0$), we can write $|X_n - 1|$ without absolute values by splitting it into two parts: when $X_n \leq 1$ and when $X_n > 1$.
+A simpler algebraic identity that works for all $x \geq 0$ is:
+\[ |X_n - 1| = X_n + 1 - 2\min(X_n, 1) \]
+Let's check this:
+If $X_n \geq 1$: $X_n + 1 - 2(1) = X_n - 1$. Correct.
+If $0 \leq X_n < 1$: $X_n + 1 - 2(X_n) = 1 - X_n$. Correct.
+
+\textbf{Step 2: Apply expectation to the identity.}
+
+Take the expectation of both sides:
+\[ \mathbb{E}[|X_n - 1|] = \mathbb{E}[X_n] + 1 - 2\mathbb{E}[\min(X_n, 1)] \]
+We want to take the limit as $n \to \infty$. We know $\lim_{n \to \infty} \mathbb{E}[X_n] = 2$.
+So we only need to find the limit of $\mathbb{E}[\min(X_n, 1)]$.
+
+\textbf{Step 3: Analyze the bounded term $\min(X_n, 1)$.}
+
+We are given that $X_n \xrightarrow{p} 0$.
+The function $g(x) = \min(x, 1)$ is continuous everywhere.
+By the Continuous Mapping Theorem, since $X_n \xrightarrow{p} 0$ and $g$ is continuous, $g(X_n) \xrightarrow{p} g(0) = 0$.
+So, $\min(X_n, 1) \xrightarrow{p} 0$.
+Furthermore, the sequence of random variables $Y_n = \min(X_n, 1)$ is strictly bounded between 0 and 1.
+Because the sequence is bounded, it is uniformly integrable.
+For a uniformly integrable sequence, convergence in probability implies convergence in mean (in $L^1$).
+Therefore, $\lim_{n \to \infty} \mathbb{E}[\min(X_n, 1)] = \mathbb{E}[0] = 0$.
+
+\textbf{Step 4: Compute the final limit.}
+
+Substitute the limits back into our expectation equation:
+\[ \lim_{n \to \infty} \mathbb{E}[|X_n - 1|] = \lim_{n \to \infty} \mathbb{E}[X_n] + 1 - 2 \lim_{n \to \infty} \mathbb{E}[\min(X_n, 1)] \]
+\[ \lim_{n \to \infty} \mathbb{E}[|X_n - 1|] = 2 + 1 - 2(0) = 3 \]
+
+\textit{Wait, let's fix the intuition given the rigorous result of 3.}
+Most of the time, $X_n \approx 0$, so $|X_n - 1| \approx 1$. This contributes $1$ to the average.
+The rare times $X_n$ is massive, $|X_n - 1| \approx X_n$. Since these massive spikes average out to 2, they contribute exactly 2 to the average.
+Total average = $1 (\text{from the zeroes}) + 2 (\text{from the spikes}) = 3$.
+The limit exists and its value is 3.
+\end{solution}
+
 \begin{exercise}
 There are $n$ people playing a game. Initially everybody had one dollar at hand. During each round of the game, we randomly pick two people and they will toss a fair coin, to decide who wins this round of the game. The loser will submit one dollar (note: just one, not all of his money) to the winner. Assume that a person who had no money at hand will be immediately driven out of the game. The game stops until all money is at the hand of only one person. Calculate the average number of rounds that the game plays.
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Martingales:} A sequence of random variables where the conditional expectation of the next value, given all past values, equals the present value. (It's a "fair game").
+    \item \textbf{Optional Stopping Theorem:} Under certain conditions (like bounded stopping times or bounded martingales), the expected value of a martingale at a random stopping time is equal to its initial expected value.
+    \item \textbf{Quadratic Martingales in Random Walks:} If $S_t$ is a simple symmetric random walk, then $S_t^2 - t$ is a martingale. This is the standard trick to find the expected time to hit an absorbing boundary.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine tracking the "total spread" of the money. Let $X_i(t)$ be the money of person $i$ at time $t$. The total money $\sum X_i(t) = n$ never changes. However, the sum of the \textit{squares} of everyone's money, $\sum X_i(t)^2$, strictly increases on average. Why? Because when A and B play, one gains a dollar and one loses a dollar. $(x+1)^2 + (y-1)^2 = x^2 + 2x + 1 + y^2 - 2y + 1 = x^2 + y^2 + 2(x-y) + 2$. If they toss a fair coin, the expected change in the sum of squares is exactly 2, regardless of who plays! 
+Since the sum of squares goes up by exactly 2 on average every single round, we just need to know the starting sum of squares and the ending sum of squares to perfectly calculate the expected number of rounds.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the state variables and the martingale.}
+
+Let $X_i(t)$ be the number of dollars held by person $i$ after $t$ rounds.
+Initially, at $t=0$, everyone has 1 dollar: $X_i(0) = 1$ for all $i = 1, \dots, n$.
+The total amount of money is conserved: $\sum_{i=1}^n X_i(t) = n$ for all $t$.
+Consider the sum of squares of everyone's money: $S(t) = \sum_{i=1}^n X_i(t)^2$.
+At $t=0$, $S(0) = \sum_{i=1}^n 1^2 = n$.
+
+\textbf{Step 2: Calculate the expected change in the sum of squares per round.}
+
+In round $t+1$, two distinct people $A$ and $B$ are chosen uniformly at random from the pool of people who still have money. 
+Wait, the problem says "we randomly pick two people". Does it mean from the original $n$ people, or from the people still in the game? 
+"Assume that a person who had no money at hand will be immediately driven out of the game." This implies we only pick from the people currently in the game.
+Regardless of \textit{how} we pick the two people, as long as they play a fair coin toss, let's see what happens to $S(t)$.
+Suppose person $A$ has $a$ dollars and person $B$ has $b$ dollars.
+With probability $1/2$, $A$ wins: $a \to a+1$, $b \to b-1$.
+The new sum of squares for these two is $(a+1)^2 + (b-1)^2 = a^2 + 2a + 1 + b^2 - 2b + 1 = a^2 + b^2 + 2(a-b) + 2$.
+With probability $1/2$, $B$ wins: $a \to a-1$, $b \to b+1$.
+The new sum of squares is $(a-1)^2 + (b+1)^2 = a^2 - 2a + 1 + b^2 + 2b + 1 = a^2 + b^2 - 2(a-b) + 2$.
+The expected sum of squares for these two players after the round is:
+\[ \frac{1}{2} (a^2 + b^2 + 2(a-b) + 2) + \frac{1}{2} (a^2 + b^2 - 2(a-b) + 2) = a^2 + b^2 + 2 \]
+The squares of all other players remain unchanged.
+Therefore, the expected total sum of squares after the round is exactly the previous sum plus 2:
+\[ \mathbb{E}[S(t+1) \mid \mathcal{F}_t] = S(t) + 2 \]
+This means $M(t) = S(t) - 2t$ is a martingale.
+
+\textbf{Step 3: Apply the Optional Stopping Theorem.}
+
+The game stops at a random time $T$ when all money is in the hands of exactly one person.
+At time $T$, one person has $n$ dollars, and all other $n-1$ people have 0 dollars.
+The sum of squares at the stopping time is deterministically known:
+\[ S(T) = n^2 + 0^2 + \dots + 0^2 = n^2 \]
+Since $M(t) = S(t) - 2t$ is a martingale, and the stopping time $T$ is almost surely finite (as it's a random walk on a finite state space with absorbing states), we can apply the Optional Stopping Theorem:
+\[ \mathbb{E}[M(T)] = \mathbb{E}[M(0)] \]
+\[ \mathbb{E}[S(T) - 2T] = S(0) - 2(0) \]
+\[ \mathbb{E}[S(T)] - 2\mathbb{E}[T] = S(0) \]
+
+\textbf{Step 4: Solve for the expected number of rounds.}
+
+Substitute the known values $S(0) = n$ and $S(T) = n^2$:
+\[ n^2 - 2\mathbb{E}[T] = n \]
+\[ 2\mathbb{E}[T] = n^2 - n \]
+\[ \mathbb{E}[T] = \frac{n(n-1)}{2} \]
+Thus, the average number of rounds played is $\frac{n(n-1)}{2}$, which happens to be exactly $\binom{n}{2}$.
+Notice that this result is completely independent of the selection rule for picking the two players! Whether we pick uniformly from survivors, or pick the richest vs poorest, the expected total number of rounds is always exactly the same.
+\end{solution}
 
 \begin{exercise}
 Let $\{X_n\}_{n \in \mathbb{N}}$ and $\{X_n'\}_{n \in \mathbb{N}}$ be two independent simple random walks on $\mathbb{Z}^d$ such that $X_0 = X_0' = 0$. Here simple walk means if $x, y \in \mathbb{Z}^d$ and $\|x - y\| = 1$, then
@@ -149,6 +545,58 @@ Let $\mathcal{T} = \{ (s, t) : X_s = X_t' \}$. Prove that $|\mathcal{T}| < \inft
 Hint: You can first prove that $\mathbb{P}(X_n = 0) = O(n^{-d/2})$ as $n \to \infty$.
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Random Walk Return Probability:} The probability that a simple random walk in $d$ dimensions returns to the origin at step $n$ decays asymptotically as $O(n^{-d/2})$. This comes from applying Stirling's approximation to the multinomial coefficients, or via the Central Limit Theorem.
+    \item \textbf{Linearity of Expectation:} The expected number of events that occur is the sum of the probabilities of each individual event.
+    \item \textbf{First Borel-Cantelli Lemma (via Markov's Inequality):} If the expected number of times an event occurs is finite ($\mathbb{E}[N] < \infty$), then the event occurs finitely many times almost surely ($N < \infty$ a.s.).
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine two frogs randomly hopping around an infinite grid. One frog has made $s$ hops, the other has made $t$ hops. What are the chances they land on the exact same square?
+Because their movements are independent, asking if Frog 1 at step $s$ meets Frog 2 at step $t$ is mathematically equivalent to asking if a \textit{single} frog, making $s+t$ total hops, ends up exactly back where it started. 
+We know that as a frog takes more hops, its possible locations spread out in a bell curve (Gaussian) shape. In $d$ dimensions, the "volume" of this probability cloud grows like $n^{d/2}$. Since the total probability is 1, the chance of being on any specific square (like the origin) drops like $1/n^{d/2}$.
+We want to count the total expected number of meetings across all possible combinations of times $(s, t)$. If this total expected number is finite, then they must stop meeting eventually.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Simplify the intersection condition.}
+
+We want to find the expected size of $\mathcal{T}$, which is the expected number of pairs $(s, t)$ such that $X_s = X_t'$.
+Using indicator variables, $\mathbb{E}[|\mathcal{T}|] = \sum_{s=0}^\infty \sum_{t=0}^\infty \mathbb{P}(X_s = X_t')$.
+Because the two random walks are independent, the difference $X_s - X_t'$ can be viewed as a single random walk. Specifically, $X_s$ is the sum of $s$ independent random steps, and $-X_t'$ is the sum of $t$ independent random steps (since the walk is symmetric, a step and its negative have the same distribution).
+Therefore, the distribution of $X_s - X_t'$ is exactly the same as the distribution of a single simple random walk after $s+t$ steps: $X_{s+t}$.
+Thus, $\mathbb{P}(X_s = X_t') = \mathbb{P}(X_s - X_t' = 0) = \mathbb{P}(X_{s+t} = 0)$.
+
+\textbf{Step 2: Use the hint for the return probability.}
+
+The hint tells us that $\mathbb{P}(X_n = 0) = O(n^{-d/2})$.
+This means there exists a constant $C$ such that for large $n$, $\mathbb{P}(X_n = 0) \leq C n^{-d/2}$.
+(Note: $\mathbb{P}(X_n = 0)$ is exactly 0 if $n$ is odd, but the $O(n^{-d/2})$ bound strictly bounds the even terms).
+
+\textbf{Step 3: Sum the probabilities over all pairs $(s, t)$.}
+
+Substitute this into our expectation sum:
+\[ \mathbb{E}[|\mathcal{T}|] = \sum_{s=0}^\infty \sum_{t=0}^\infty \mathbb{P}(X_{s+t} = 0) \]
+Let's group the terms by the total number of steps $n = s+t$. For a fixed integer $n \geq 0$, there are exactly $n+1$ pairs of non-negative integers $(s, t)$ that satisfy $s+t = n$ (namely, $(0,n), (1,n-1), \dots, (n,0)$).
+So we can rewrite the double sum as a single sum over $n$:
+\[ \mathbb{E}[|\mathcal{T}|] = \sum_{n=0}^\infty (n+1) \mathbb{P}(X_n = 0) \]
+Using the asymptotic bound from Step 2:
+\[ \mathbb{E}[|\mathcal{T}|] \approx \sum_{n=1}^\infty (n+1) \cdot C n^{-d/2} \approx C \sum_{n=1}^\infty n^{1 - d/2} \]
+
+\textbf{Step 4: Determine convergence based on dimension $d$.}
+
+For this infinite series to converge, the exponent of $n$ must be strictly less than $-1$ (by the $p$-series test).
+\[ 1 - \frac{d}{2} < -1 \implies 2 < \frac{d}{2} \implies d > 4 \]
+Therefore, the expected number of intersections is finite \textit{only if} $d \geq 5$.
+\textit{(Note: The problem statement implicitly assumes $d \geq 5$. If $d \leq 4$, the sum diverges and the two walks will intersect infinitely many times almost surely).}
+Assuming $d \geq 5$, we have $\mathbb{E}[|\mathcal{T}|] < \infty$.
+If a random variable has a finite expected value, it must be finite almost surely (if it were infinite with non-zero probability, the expectation would be infinite).
+Thus, $|\mathcal{T}| < \infty$ a.s.
+\end{solution}
+
 \begin{exercise}
 Suppose $X_1, \dots, X_n$ are i.i.d. Poisson variables with mean $\lambda$ and we are interested in estimating $p = \mathbb{P}_\lambda(X_i = 0) = e^{-\lambda}$.
 \begin{enumerate}
@@ -157,3 +605,58 @@ Suppose $X_1, \dots, X_n$ are i.i.d. Poisson variables with mean $\lambda$ and w
     \item[(c)] Find the asymptotic relative efficiency of $\tilde{p}$ with respect to $\hat{p}$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Central Limit Theorem (CLT):} For i.i.d. random variables $Y_i$ with mean $\mu$ and variance $\sigma^2$, the sample mean $\bar{Y}$ satisfies $\sqrt{n}(\bar{Y} - \mu) \xrightarrow{d} N(0, \sigma^2)$.
+    \item \textbf{Delta Method:} If $\sqrt{n}(T_n - \theta) \xrightarrow{d} N(0, \sigma^2)$, then for a differentiable function $g$, $\sqrt{n}(g(T_n) - g(\theta)) \xrightarrow{d} N(0, [g'(\theta)]^2 \sigma^2)$.
+    \item \textbf{Maximum Likelihood Estimator (MLE):} The parameter value that maximizes the likelihood of observing the given sample. By the invariance property, the MLE of a function of a parameter is that function applied to the MLE of the parameter.
+    \item \textbf{Asymptotic Relative Efficiency (ARE):} The ratio of the asymptotic variances of two estimators. If $\text{Var}(\hat{\theta}_1) / \text{Var}(\hat{\theta}_2) < 1$, estimator 1 is more efficient.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We want to guess the probability $p$ that a Poisson variable is zero (which is exactly $e^{-\lambda}$). 
+Method 1 ($\tilde{p}$) is the naive approach: just count how many zeros we actually saw in our sample and divide by $n$. This is simple and unbiased.
+Method 2 ($\hat{p}$) is the "smart" approach: first use all the data (not just the zeros) to get the best possible guess for $\lambda$ (which is the sample mean $\bar{X}$). Then, plug this $\lambda$ into the formula $e^{-\lambda}$. 
+Because the second method uses all the information in the dataset (every number, not just the zeros), we expect it to be more precise (have a lower variance). The Asymptotic Relative Efficiency lets us mathematically quantify exactly how much better the "smart" method is compared to the naive method.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Analyze the naive estimator $\tilde{p}$ (Part a).}
+
+Let $Y_i = \mathbb{1}_{\{X_i = 0\}}$ be an indicator variable that is 1 if $X_i = 0$ and 0 otherwise.
+Then $\tilde{p} = \frac{1}{n} \sum_{i=1}^n Y_i$ is simply the sample mean of these indicators.
+The $Y_i$'s are i.i.d. Bernoulli random variables with success probability $\mathbb{P}(Y_i = 1) = \mathbb{P}(X_i = 0) = e^{-\lambda} = p$.
+The mean of $Y_i$ is $p$, and the variance is $p(1-p) = e^{-\lambda}(1 - e^{-\lambda})$.
+By the Central Limit Theorem:
+\[ \sqrt{n}(\tilde{p} - p) \xrightarrow{d} N(0, p(1-p)) = N(0, e^{-\lambda}(1 - e^{-\lambda})) \]
+
+\textbf{Step 2: Find the MLE $\hat{p}$ (Part b).}
+
+The log-likelihood of a Poisson sample is $\ell(\lambda) = \sum_{i=1}^n (X_i \ln \lambda - \lambda - \ln(X_i!))$.
+Setting the derivative with respect to $\lambda$ to zero: $\frac{n\bar{X}}{\lambda} - n = 0 \implies \hat{\lambda} = \bar{X}$.
+By the invariance property of MLEs, since $p = e^{-\lambda}$, the MLE for $p$ is simply:
+\[ \hat{p} = e^{-\hat{\lambda}} = e^{-\bar{X}} \]
+
+\textbf{Step 3: Determine the limiting distribution of $\hat{p}$ (Part b).}
+
+We know by the CLT that for the sample mean of Poisson variables:
+\[ \sqrt{n}(\bar{X} - \lambda) \xrightarrow{d} N(0, \lambda) \]
+(since for a Poisson distribution, both mean and variance are $\lambda$).
+We want the distribution of $e^{-\bar{X}}$. We use the Delta Method with the function $g(x) = e^{-x}$.
+The derivative is $g'(x) = -e^{-x}$.
+According to the Delta Method, the asymptotic variance is $[g'(\lambda)]^2 \cdot \operatorname{Var}(\bar{X}) = (-e^{-\lambda})^2 \cdot \lambda = \lambda e^{-2\lambda}$.
+Thus:
+\[ \sqrt{n}(\hat{p} - p) \xrightarrow{d} N(0, \lambda e^{-2\lambda}) \]
+
+\textbf{Step 4: Compute the Asymptotic Relative Efficiency (Part c).}
+
+The ARE of $\tilde{p}$ with respect to $\hat{p}$ is the ratio of their asymptotic variances.
+By convention, $\text{ARE}(\tilde{p}, \hat{p}) = \frac{\text{Asymptotic Var}(\hat{p})}{\text{Asymptotic Var}(\tilde{p})}$. (A ratio $< 1$ means $\tilde{p}$ needs more samples to achieve the same precision, making it less efficient).
+Let $V(\hat{p}) = \lambda e^{-2\lambda}$ and $V(\tilde{p}) = e^{-\lambda}(1 - e^{-\lambda})$.
+\[ \text{ARE}(\tilde{p}, \hat{p}) = \frac{\lambda e^{-2\lambda}}{e^{-\lambda}(1 - e^{-\lambda})} = \frac{\lambda e^{-\lambda}}{1 - e^{-\lambda}} \]
+To understand this efficiency, notice that $1 - e^{-\lambda} = \lambda - \frac{\lambda^2}{2!} + \dots$, so for small $\lambda$, the ARE is near $\frac{\lambda e^{-\lambda}}{\lambda} \approx 1$. 
+But for large $\lambda$, $e^{-\lambda}$ shrinks much faster than $1-e^{-\lambda}$, so the efficiency of the naive estimator drops to 0. The MLE $\hat{p}$ is always asymptotically more efficient because it uses the sufficient statistic $\bar{X}$.
+\end{solution}

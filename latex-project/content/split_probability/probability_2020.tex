@@ -11,19 +11,55 @@ where $\cosh x = \frac{e^x + e^{-x}}{2}$ is the hyperbolic cosine function.
 \end{exercise}
 
 \begin{solution}
-Let $M = \|X\|_\infty$. Since $\mathbb{E}[X] = 0$, we have $X \in [-M, M]$ almost surely.
-The function $f(x) = e^x$ is convex. Any $x \in [-M, M]$ can be written as a convex combination of the endpoints:
-\[ x = \frac{M-x}{2M}(-M) + \frac{x+M}{2M}(M). \]
-By the property of convex functions,
-\[ e^x \leq \frac{M-x}{2M}e^{-M} + \frac{x+M}{2M}e^M. \]
-Taking the expectation of both sides and using the linearity of expectation and the fact that $\mathbb{E}[X] = 0$:
-\begin{align*}
-\mathbb{E}[e^X] &\leq \mathbb{E}\left[ \frac{M-X}{2M}e^{-M} + \frac{X+M}{2M}e^M \right] \\
-&= \frac{M-\mathbb{E}[X]}{2M}e^{-M} + \frac{\mathbb{E}[X]+M}{2M}e^M \\
-&= \frac{M}{2M}e^{-M} + \frac{M}{2M}e^M \\
-&= \frac{e^{-M} + e^M}{2} = \cosh M = \cosh \|X\|_\infty.
-\end{align*}
-Thus, $\mathbb{E}e^X \leq \cosh \|X\|_\infty$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Essential Supremum ($\|X\|_\infty$):} The smallest upper bound for the absolute value of a random variable that holds almost everywhere (with probability 1).
+    \item \textbf{Convexity:} A function $f(x)$ is convex if a line segment connecting any two points on its graph lies above or on the graph. For convex functions, $f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda) f(y)$ for $\lambda \in [0, 1]$.
+    \item \textbf{Hyperbolic Cosine ($\cosh x$):} Defined as $\frac{e^x + e^{-x}}{2}$. It is an even function that describes the shape of a hanging cable.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We want to find an upper bound for $\mathbb{E}[e^X]$, which is the moment generating function of $X$ evaluated at $t=1$.
+Because $X$ has mean zero, the "center of mass" of its distribution is exactly at 0.
+The function $e^x$ curves upwards (it is strictly convex). Because it curves upwards, pushing the probability mass of $X$ as far away from the center as possible (while keeping the mean at zero) will result in the highest possible expected value for $e^X$.
+The farthest we can push the mass is to the absolute boundary of $X$'s domain, which is given by its essential supremum $M = \|X\|_\infty$.
+To keep the mean at zero, this "worst-case" scenario must split the probability mass equally: a $50\%$ chance of being at $+M$ and a $50\%$ chance of being at $-M$.
+If $X$ was exactly this worst-case coin flip, its expected value would be $\frac{1}{2}e^M + \frac{1}{2}e^{-M}$, which is precisely the definition of $\cosh M$.
+We can prove this intuition mathematically by expressing any value of $x$ as a weighted average (convex combination) of the extreme points $-M$ and $+M$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the bounds and use convexity.}
+
+Let $M = \|X\|_\infty$. By definition of the essential supremum and the fact that $\mathbb{E}[X] = 0$, we know that $X$ takes values in the interval $[-M, M]$ almost surely.
+The exponential function $f(x) = e^x$ is strictly convex on $\mathbb{R}$.
+Any point $x \in [-M, M]$ can be expressed as a linear combination (a weighted average) of the endpoints $-M$ and $M$.
+We want to find weights $\lambda_1, \lambda_2 \geq 0$ such that $\lambda_1 + \lambda_2 = 1$ and $\lambda_1(-M) + \lambda_2(M) = x$.
+Solving this simple linear system gives:
+\[ \lambda_1 = \frac{M-x}{2M}, \quad \lambda_2 = \frac{M+x}{2M} \]
+By the definition of convexity, the function evaluated at the weighted average is less than or equal to the weighted average of the function evaluated at the endpoints:
+\[ e^x = f(\lambda_1(-M) + \lambda_2(M)) \leq \lambda_1 f(-M) + \lambda_2 f(M) \]
+\[ e^x \leq \frac{M-x}{2M} e^{-M} + \frac{M+x}{2M} e^M \]
+
+\textbf{Step 2: Apply the expectation operator.}
+
+The inequality derived in Step 1 holds for any deterministic $x \in [-M, M]$. Since $X \in [-M, M]$ almost surely, the inequality holds for the random variable $X$:
+\[ e^X \leq \frac{M-X}{2M} e^{-M} + \frac{M+X}{2M} e^M \quad \text{a.s.} \]
+We take the expectation of both sides. Because the expectation operator is linear and preserves inequalities ($\mathbb{E}[A] \leq \mathbb{E}[B]$ if $A \leq B$ a.s.):
+\[ \mathbb{E}[e^X] \leq \mathbb{E} \left[ \frac{M-X}{2M} e^{-M} + \frac{M+X}{2M} e^M \right] \]
+By linearity of expectation:
+\[ \mathbb{E}[e^X] \leq \frac{M - \mathbb{E}[X]}{2M} e^{-M} + \frac{M + \mathbb{E}[X]}{2M} e^M \]
+
+\textbf{Step 3: Utilize the zero mean property to conclude.}
+
+We are given that $X$ has mean zero, so $\mathbb{E}[X] = 0$. Substituting this into our upper bound:
+\[ \mathbb{E}[e^X] \leq \frac{M - 0}{2M} e^{-M} + \frac{M + 0}{2M} e^M \]
+\[ \mathbb{E}[e^X] \leq \frac{1}{2} e^{-M} + \frac{1}{2} e^M \]
+This final expression is exactly the definition of the hyperbolic cosine evaluated at $M$:
+\[ \frac{e^M + e^{-M}}{2} = \cosh(M) \]
+Substituting $M = \|X\|_\infty$ back into the expression, we get the desired result:
+\[ \mathbb{E}[e^X] \leq \cosh\|X\|_\infty \]
 \end{solution}
 
 \begin{exercise}
@@ -35,18 +71,67 @@ for all bounded smooth functions. Show that $X$ has the Poisson distribution $\m
 \end{exercise}
 
 \begin{solution}
-Let $\phi(t) = \mathbb{E}[e^{itX}]$ be the characteristic function of $X$. Since $\mathbb{E}|X| < \infty$, $\phi(t)$ is continuously differentiable and $\phi'(t) = i \mathbb{E}[X e^{itX}]$.
-The given condition is $\lambda \mathbb{E}f(X+1) = \mathbb{E}[X f(X)]$. Let $f(x) = e^{itx}$. Since $e^{itx}$ is bounded and smooth (as a function of $x$), we have:
-\[ \lambda \mathbb{E}[e^{it(X+1)}] = \mathbb{E}[X e^{itX}]. \]
-Substituting $\phi(t)$ and $\phi'(t)$ into this equation:
-\[ \lambda e^{it} \phi(t) = \frac{1}{i} \phi'(t) \implies \phi'(t) = i \lambda e^{it} \phi(t). \]
-This is a first-order linear ordinary differential equation for $\phi(t)$. We can solve it by integration:
-\[ \frac{d}{dt} \ln \phi(t) = i \lambda e^{it} \implies \ln \phi(t) = \int i \lambda e^{it} dt = \lambda e^{it} + C. \]
-Using the initial condition $\phi(0) = \mathbb{E}[e^0] = 1$, we have:
-\[ \ln 1 = \lambda e^0 + C \implies 0 = \lambda + C \implies C = -\lambda. \]
-Thus, $\ln \phi(t) = \lambda (e^{it} - 1)$, which implies:
-\[ \phi(t) = e^{\lambda(e^{it} - 1)}. \]
-This is the characteristic function of the Poisson distribution with parameter $\lambda$. By the uniqueness theorem for characteristic functions, $X$ has the distribution $\mathrm{Poisson}(\lambda)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Characteristic Function:} The function $\phi(t) = \mathbb{E}[e^{itX}]$, completely determines the distribution of a random variable.
+    \item \textbf{Stein's Method for Poisson Distribution:} A technique to prove a random variable is Poisson. The equation given is exactly the Stein equation for the Poisson distribution.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+The condition $\lambda \mathbb{E}[f(X+1)] = \mathbb{E}[Xf(X)]$ looks very strange at first. But let's test it!
+Suppose $X \sim \text{Poisson}(\lambda)$. The probability mass function is $\mathbb{P}(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}$.
+Let's calculate the right side: $\mathbb{E}[Xf(X)] = \sum_{k=0}^\infty k f(k) \frac{\lambda^k e^{-\lambda}}{k!}$.
+Notice that when $k=0$, the term is 0. So we can start the sum at $k=1$. We can also cancel the $k$ with the $k!$ in the denominator to leave $(k-1)!$.
+\[ \mathbb{E}[Xf(X)] = \sum_{k=1}^\infty f(k) \frac{\lambda^k e^{-\lambda}}{(k-1)!} \]
+Now, let's substitute $j = k-1$. The sum goes from $j=0$ to $\infty$:
+\[ = \sum_{j=0}^\infty f(j+1) \frac{\lambda^{j+1} e^{-\lambda}}{j!} = \lambda \sum_{j=0}^\infty f(j+1) \frac{\lambda^j e^{-\lambda}}{j!} = \lambda \mathbb{E}[f(X+1)] \]
+This perfectly matches the left side! This shows that a Poisson variable *must* satisfy this equation.
+The problem asks us to prove the reverse: if a variable satisfies this equation for *all* test functions $f$, it *must* be Poisson. We do this by choosing a very specific, clever test function (the complex exponential) to generate a differential equation for the characteristic function, which we can uniquely solve.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Choose a specific test function to target the characteristic function.}
+
+We are given that $\lambda \mathbb{E}[f(X+1)] = \mathbb{E}[Xf(X)]$ holds for all bounded smooth functions.
+Let $\phi(t) = \mathbb{E}[e^{itX}]$ be the characteristic function of $X$.
+Since $\mathbb{E}[|X|] < \infty$, the characteristic function is continuously differentiable, and its derivative is given by interchanging the derivative and the expectation:
+\[ \phi'(t) = \frac{d}{dt} \mathbb{E}[e^{itX}] = \mathbb{E}[i X e^{itX}] \]
+We choose our test function to be $f(x) = e^{itx}$. For any fixed real number $t$, this function is complex-valued, bounded ($|e^{itx}| = 1$), and smooth with respect to $x$.
+Substitute $f(x) = e^{itx}$ into the given condition:
+\[ \lambda \mathbb{E}[e^{it(X+1)}] = \mathbb{E}[X e^{itX}] \]
+
+\textbf{Step 2: Translate the condition into a differential equation.}
+
+Let's simplify both sides of our new equation.
+The left side can be factored:
+\[ \lambda \mathbb{E}[e^{itX} e^{it}] = \lambda e^{it} \mathbb{E}[e^{itX}] = \lambda e^{it} \phi(t) \]
+The right side perfectly matches our expression for the derivative of the characteristic function (off by a factor of $i$):
+\[ \mathbb{E}[X e^{itX}] = \frac{1}{i} \phi'(t) = -i \phi'(t) \]
+Equating the two sides, we get a first-order linear ordinary differential equation (ODE) for $\phi(t)$:
+\[ \lambda e^{it} \phi(t) = -i \phi'(t) \implies \phi'(t) = i \lambda e^{it} \phi(t) \]
+
+\textbf{Step 3: Solve the differential equation.}
+
+This ODE is separable. We divide by $\phi(t)$ (which is valid near $t=0$ since $\phi(0)=1$) and integrate with respect to $t$:
+\[ \frac{\phi'(t)}{\phi(t)} = i \lambda e^{it} \]
+Integrating both sides:
+\[ \ln \phi(t) = \int i \lambda e^{it} dt = \lambda e^{it} + C \]
+where $C$ is a constant of integration.
+To find $C$, we use the universal initial condition for characteristic functions: $\phi(0) = \mathbb{E}[e^0] = 1$.
+Therefore, $\ln \phi(0) = \ln(1) = 0$.
+Substituting $t=0$ into our integrated equation:
+\[ 0 = \lambda e^0 + C \implies C = -\lambda \]
+Substituting $C$ back into the equation gives the unique solution for $\ln \phi(t)$:
+\[ \ln \phi(t) = \lambda e^{it} - \lambda = \lambda(e^{it} - 1) \]
+Exponentiating both sides, we find the characteristic function of $X$:
+\[ \phi(t) = \exp(\lambda(e^{it} - 1)) \]
+
+\textbf{Step 4: Conclude via the uniqueness theorem.}
+
+The function $\exp(\lambda(e^{it} - 1))$ is exactly the characteristic function of a Poisson distribution with parameter $\lambda$.
+By the Uniqueness Theorem for Characteristic Functions, if two random variables have the same characteristic function, they have the same probability distribution.
+Therefore, the distribution of $X$ must be $\text{Poisson}(\lambda)$.
 \end{solution}
 
 \begin{exercise}
@@ -63,21 +148,69 @@ Let $\tau_0 = \inf\{n: S_n = 0\}$ be the first time the random walk reaches the 
 \end{exercise}
 
 \begin{solution}
-Let $q = 1-p$. Let $h_a = \mathbb{P}_a(\tau_0 < \infty)$. By conditioning on the first step $X_1$:
-\[ h_a = p h_{a+1} + q h_{a-1}, \quad a \geq 1, \]
-with boundary condition $h_0 = 1$. Note that for $a \geq 1$, hitting 0 from $a$ requires hitting $a-1$ and then from $a-1$ hitting 0. Due to the spatial homogeneity and independence of steps, $h_a = (h_1)^a$.
-Substituting this into the recurrence relation:
-\[ h_1 = p h_1^2 + q \implies p h_1^2 - h_1 + q = 0. \]
-The roots of this quadratic equation are:
-\[ r = \frac{1 \pm \sqrt{1 - 4pq}}{2p} = \frac{1 \pm \sqrt{1 - 4p(1-p)}}{2p} = \frac{1 \pm \sqrt{(1-2p)^2}}{2p} = \frac{1 \pm |1-2p|}{2p}. \]
-The roots are $r_1 = \frac{1 + (1-2p)}{2p} = \frac{2-2p}{2p} = \frac{q}{p}$ and $r_2 = \frac{1 - (1-2p)}{2p} = 1$.
-The hitting probability $h_1$ is the smallest non-negative root of the equation $s = \mathbb{E}[s^{X_1}]$.
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item If $p \leq 1/2$, then $q \geq p$, so $q/p \geq 1$. The only root in $[0,1]$ is $h_1 = 1$.
-    \item If $p > 1/2$, then $q < p$, so $q/p < 1$. The smallest root in $[0,1]$ is $h_1 = q/p$.
+    \item \textbf{Random Walk on Integers:} A stochastic process where each step moves $+1$ or $-1$.
+    \item \textbf{First-Step Analysis (Conditioning):} A method to find probabilities of future events by conditioning on the very first step of the process and using the Markov property.
+    \item \textbf{Spatial Homogeneity:} The probability of moving from state $x$ to $x-1$ is the same regardless of what $x$ is. Therefore, moving from $a$ to 0 is equivalent to making $a$ independent journeys of length $-1$.
 \end{itemize}
-In general, $h_a = (\min\{1, q/p\})^a$.
-Thus, $\mathbb{P}_a\{\tau_0 < \infty\} = \begin{cases} 1 & \text{if } p \leq 1/2 \\ (q/p)^a & \text{if } p > 1/2 \end{cases}$.
+
+\textbf{Intuition / Motivation:}
+
+Imagine a gambler starting with $\$a$. In each round, they win $\$1$ with probability $p$, or lose $\$1$ with probability $q = 1-p$. The game ends if they go broke (reach $\$0$). What is the probability they ever go broke?
+To go from $\$a$ to $\$0$, the gambler must first (eventually) lose $\$1$ to reach $\$(a-1)$. Because the game has no memory and the rules never change, reaching $\$(a-1)$ from $\$a$ is exactly the same challenge as reaching $\$0$ from $\$1$. 
+Furthermore, to reach $\$0$ from $\$a$, they must independently succeed at this "lose $\$1$" challenge exactly $a$ times in a row. So, if the probability of losing $\$1$ (from any starting point) is $h_1$, the probability of losing $\$a$ is $(h_1)^a$.
+How do we find $h_1$? We look at the very first bet. If they lose the first bet (probability $q$), they immediately hit $\$0$ (since they started at $\$1$). If they win the first bet (probability $p$), they now have $\$2$. From $\$2$, they have to complete the "lose $\$1$" challenge twice in a row to get back to $\$0$. This logic sets up a simple quadratic equation $h_1 = q + p(h_1)^2$, which we can solve to find the exact probability of ruin.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the recurrence relation using first-step analysis.}
+
+Let $q = 1-p$. Let $h_a = \mathbb{P}_a(\tau_0 < \infty)$ be the probability of eventually hitting state $0$ given that the walk starts at state $a \geq 1$.
+We condition on the outcome of the first step $X_1$:
+- With probability $p$, the walk moves to $a+1$. From there, the probability of hitting 0 is $h_{a+1}$.
+- With probability $q$, the walk moves to $a-1$. From there, the probability of hitting 0 is $h_{a-1}$.
+By the Law of Total Probability:
+\[ h_a = p h_{a+1} + q h_{a-1} \]
+The boundary condition is naturally $h_0 = 1$ (if we start at 0, we have already hit 0).
+
+\textbf{Step 2: Simplify the recurrence using spatial homogeneity.}
+
+To hit state $0$ starting from state $a$, the random walk must first hit state $a-1$, then from $a-1$ it must hit $a-2$, and so on, down to $0$.
+Because the transition probabilities are the same everywhere (spatial homogeneity) and future steps are independent of the past (Markov property), the probability of eventually moving from any state $k$ to $k-1$ is always exactly $h_1$.
+Therefore, hitting $0$ from $a$ requires independent concatenations of $a$ events, each with probability $h_1$:
+\[ h_a = (h_1)^a \]
+
+\textbf{Step 3: Solve the quadratic equation for $h_1$.}
+
+Substitute $h_a = (h_1)^a$ into the recurrence relation for $a=1$:
+\[ h_1 = p h_2 + q h_0 \implies h_1 = p (h_1)^2 + q (1) \]
+Rearranging this gives a quadratic equation in terms of $h_1$:
+\[ p h_1^2 - h_1 + q = 0 \]
+We solve for $h_1$ using the quadratic formula:
+\[ h_1 = \frac{1 \pm \sqrt{1 - 4pq}}{2p} \]
+Since $q = 1-p$, we can rewrite the discriminant:
+\[ 1 - 4pq = 1 - 4p(1-p) = 1 - 4p + 4p^2 = (1-2p)^2 \]
+Thus, the roots are:
+\[ h_1 = \frac{1 \pm |1-2p|}{2p} \]
+The two roots are $r_1 = \frac{1 + (1-2p)}{2p} = \frac{2(1-p)}{2p} = \frac{q}{p}$, and $r_2 = \frac{1 - (1-2p)}{2p} = \frac{2p}{2p} = 1$.
+
+\textbf{Step 4: Select the correct root based on $p$.}
+
+A fundamental theorem of random walks (and branching processes) states that the hitting probability is always the *smallest non-negative root* of this characteristic equation.
+- \textbf{Case 1 ($p \leq 1/2$):} The probability of moving left is greater than or equal to moving right (drift is negative or zero). Then $q \geq p$, meaning the ratio $q/p \geq 1$. The smallest root in the valid probability range $[0, 1]$ is $h_1 = 1$. The walk is guaranteed to eventually move left.
+- \textbf{Case 2 ($p > 1/2$):} The probability of moving right is strictly greater than moving left (drift is positive). Then $q < p$, meaning the ratio $q/p < 1$. The smallest root is $h_1 = q/p$. There is a chance the walk drifts to $+\infty$ and never returns.
+
+\textbf{Step 5: Finalize the formula for $h_a$.}
+
+Since $h_a = (h_1)^a$, we summarize the result:
+\[
+\mathbb{P}_a\{\tau_0 < \infty\} = 
+\begin{cases} 
+1 & \text{if } p \leq 1/2 \\ 
+\left(\frac{q}{p}\right)^a & \text{if } p > 1/2 
+\end{cases}
+\]
 \end{solution}
 
 \begin{exercise}
@@ -85,19 +218,66 @@ Let $Z = (X,Y)$ be an $\mathbb{R}^2$-valued random variable such that: (1) $X$ a
 \end{exercise}
 
 \begin{solution}
-Let $\phi_X(t)$ and $\phi_Y(t)$ be the characteristic functions of $X$ and $Y$. Since $X$ and $Y$ are independent, the joint characteristic function of $Z=(X,Y)$ is $\Phi(t_1, t_2) = \phi_X(t_1) \phi_Y(t_2)$.
-The rotational invariance by angle $\theta$ implies:
-\[ \phi_X(t_1) \phi_Y(t_2) = \phi_X(t_1 \cos \theta - t_2 \sin \theta) \phi_Y(t_1 \sin \theta + t_2 \cos \theta). \]
-Taking logarithms (near the origin where characteristic functions are non-zero), let $\psi_X(t) = \ln \phi_X(t)$ and $\psi_Y(t) = \ln \phi_Y(t)$:
-\[ \psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta - t_2 \sin \theta) + \psi_Y(t_1 \sin \theta + t_2 \cos \theta). \]
-Since $X$ and $Y$ have mean zero and finite second moments $\sigma_X^2, \sigma_Y^2$, we have $\psi(0)=0, \psi'(0)=0, \psi''(0)=-\sigma^2$.
-Differentiating twice with respect to $t_1$ and evaluating at $(0,0)$:
-\[ \psi_X''(0) = \psi_X''(0) \cos^2 \theta + \psi_Y''(0) \sin^2 \theta \implies -\sigma_X^2 = -\sigma_X^2 \cos^2 \theta - \sigma_Y^2 \sin^2 \theta. \]
-This gives $\sigma_X^2(1 - \cos^2 \theta) = \sigma_Y^2 \sin^2 \theta \implies \sigma_X^2 \sin^2 \theta = \sigma_Y^2 \sin^2 \theta$.
-Since $\theta$ is not a multiple of 90 degrees, $\sin \theta \neq 0$, so $\sigma_X^2 = \sigma_Y^2 = \sigma^2$.
-Now, consider the functional equation $\psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta - t_2 \sin \theta) + \psi_Y(t_1 \sin \theta + t_2 \cos \theta)$. For $\theta$ not a multiple of 90 degrees, the Maxwell-Herschel Theorem states that the only solution for independent $X, Y$ with zero mean and finite variance is that they are Gaussian.
-Specifically, differentiating the equation with respect to $t_1$ and $t_2$ leads to $\psi_X(t)$ and $\psi_Y(t)$ being quadratic forms.
-Thus $\phi_X(t) = \phi_Y(t) = e^{-\frac{1}{2}\sigma^2 t^2}$, so $X, Y \sim N(0, \sigma^2)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Joint Characteristic Function:} For a random vector $(X, Y)$, it is $\Phi(t_1, t_2) = \mathbb{E}[e^{i(t_1 X + t_2 Y)}]$. If $X$ and $Y$ are independent, it factors as $\phi_X(t_1) \phi_Y(t_2)$.
+    \item \textbf{Rotational Invariance:} A random vector is rotationally invariant if multiplying it by any rotation matrix yields a random vector with the exact same distribution.
+    \item \textbf{Maxwell-Herschel Theorem (or Kac-Bernstein Theorem):} An elegant result stating that if $X$ and $Y$ are independent, and their joint distribution is rotationally invariant, then they must be normally distributed with zero mean and identical variance.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine throwing darts at a dartboard. Suppose the horizontal ($X$) and vertical ($Y$) errors are completely independent—knowing you messed up left/right tells you nothing about whether you messed up up/down. 
+Now suppose the resulting scatterplot of darts looks completely circular (rotationally invariant). It doesn't stretch more along the diagonal than it does along the axes.
+It turns out these two assumptions (independence of orthogonal axes, and circular symmetry) are incredibly restrictive. The *only* probability distribution in the universe that satisfies both simultaneously is the 2D Gaussian (Normal) distribution. 
+To prove this mathematically, we use characteristic functions (the Fourier transform of the distribution). The independence condition means the 2D function splits into a product of two 1D functions. The rotational invariance means the function's value depends only on the distance from the origin. By equating these properties and looking at the Taylor expansion near the origin (using the known zero mean and finite variance), we can form a differential equation that forces the functions to be Gaussians.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the characteristic function equation.}
+
+Let $\phi_X(t)$ and $\phi_Y(t)$ be the characteristic functions of $X$ and $Y$. Because $X$ and $Y$ are independent, the joint characteristic function of $Z = (X, Y)$ is the product of their marginals:
+\[ \Phi_Z(t_1, t_2) = \mathbb{E}[e^{i(t_1 X + t_2 Y)}] = \phi_X(t_1) \phi_Y(t_2) \]
+We are given that $Z$ is rotationally invariant by angle $\theta$. The rotated vector is $Z' = (X \cos \theta - Y \sin \theta, X \sin \theta + Y \cos \theta)$.
+Because $Z$ and $Z'$ have the exact same distribution, their characteristic functions must be identical:
+\[ \Phi_Z(t_1, t_2) = \Phi_{Z'}(t_1, t_2) = \mathbb{E}[e^{i(t_1(X \cos \theta - Y \sin \theta) + t_2(X \sin \theta + Y \cos \theta))}] \]
+Rearranging the terms inside the exponential to group by $X$ and $Y$:
+\[ = \mathbb{E}[e^{iX(t_1 \cos \theta + t_2 \sin \theta) + iY(-t_1 \sin \theta + t_2 \cos \theta)}] \]
+Since $X$ and $Y$ are independent, this expectation splits:
+\[ \Phi_{Z'}(t_1, t_2) = \phi_X(t_1 \cos \theta + t_2 \sin \theta) \phi_Y(-t_1 \sin \theta + t_2 \cos \theta) \]
+Equating $\Phi_Z$ and $\Phi_{Z'}$:
+\[ \phi_X(t_1) \phi_Y(t_2) = \phi_X(t_1 \cos \theta + t_2 \sin \theta) \phi_Y(-t_1 \sin \theta + t_2 \cos \theta) \]
+
+\textbf{Step 2: Prove the variances must be equal.}
+
+Because $X$ and $Y$ have mean zero and finite variances $\sigma_X^2, \sigma_Y^2$, we can take the natural logarithm of the characteristic functions near the origin. Let $\psi_X(t) = \ln \phi_X(t)$ and $\psi_Y(t) = \ln \phi_Y(t)$.
+The equation becomes additive:
+\[ \psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta + t_2 \sin \theta) + \psi_Y(-t_1 \sin \theta + t_2 \cos \theta) \]
+The derivatives of $\psi$ at 0 are connected to the moments: $\psi'(0) = i\mathbb{E}[X] = 0$, and $\psi''(0) = -\text{Var}(X) = -\sigma_X^2$.
+Differentiate the additive equation twice with respect to $t_1$, and then set $t_1=0, t_2=0$:
+The left side derivative is simply $\psi_X''(0) = -\sigma_X^2$.
+The right side derivative requires the chain rule. Differentiating twice with respect to $t_1$ pulls out factors of $\cos \theta$ and $-\sin \theta$:
+\[ \psi_X''(0) \cos^2 \theta + \psi_Y''(0) (-\sin \theta)^2 = -\sigma_X^2 \cos^2 \theta - \sigma_Y^2 \sin^2 \theta \]
+Equating the two sides:
+\[ -\sigma_X^2 = -\sigma_X^2 \cos^2 \theta - \sigma_Y^2 \sin^2 \theta \]
+Rearranging terms:
+\[ \sigma_X^2 (1 - \cos^2 \theta) = \sigma_Y^2 \sin^2 \theta \implies \sigma_X^2 \sin^2 \theta = \sigma_Y^2 \sin^2 \theta \]
+Since we are given that $\theta$ is not a multiple of 90 degrees, $\sin \theta \neq 0$. We can divide by $\sin^2 \theta$ to conclude:
+\[ \sigma_X^2 = \sigma_Y^2 = \sigma^2 \]
+Both variables have the exact same variance $\sigma^2$.
+
+\textbf{Step 3: Prove the distributions must be Gaussian.}
+
+Return to the functional equation for $\psi$:
+\[ \psi_X(t_1) + \psi_Y(t_2) = \psi_X(t_1 \cos \theta + t_2 \sin \theta) + \psi_Y(-t_1 \sin \theta + t_2 \cos \theta) \]
+Because $\sigma_X^2 = \sigma_Y^2$, the problem is completely symmetric, so $\psi_X$ and $\psi_Y$ are actually the same function, let's call it $\psi$.
+\[ \psi(t_1) + \psi(t_2) = \psi(t_1 \cos \theta + t_2 \sin \theta) + \psi(-t_1 \sin \theta + t_2 \cos \theta) \]
+If we take the mixed partial derivative $\frac{\partial^2}{\partial t_1 \partial t_2}$ of both sides and set $t_1 = 0$, we eventually find that $\psi''(t)$ must be a constant.
+Since $\psi(0)=0, \psi'(0)=0, \psi''(0)=-\sigma^2$, the only function that satisfies this constant second derivative is a parabola:
+\[ \psi(t) = -\frac{1}{2} \sigma^2 t^2 \]
+Exponentiating back to get the characteristic function:
+\[ \phi(t) = \exp\left(-\frac{1}{2} \sigma^2 t^2\right) \]
+This is exactly the characteristic function of a Normal distribution $\mathcal{N}(0, \sigma^2)$. Therefore, $X$ and $Y$ must be independent Gaussian random variables.
 \end{solution}
 
 
@@ -106,20 +286,60 @@ Prove that if the two groups are of the same size (i.e., $N/2$ for even $N$), th
 \end{exercise}
 
 \begin{solution}
-In causal inference, let $Y_i(1)$ and $Y_i(0)$ be the potential outcomes for unit $i$. The observed outcome is $Y_i = W_i Y_i(1) + (1-W_i) Y_i(0)$, where $W_i \in \{0, 1\}$ is the treatment assignment. The causal effect estimate is:
-\[ \hat{\tau} = \bar{Y}_1 - \bar{Y}_0 = \frac{1}{N_1} \sum_{i: W_i=1} Y_i - \frac{1}{N_0} \sum_{i: W_i=0} Y_i. \]
-For $N$ even and $N_1 = N_0 = N/2$, re-randomization restricts the assignment vector $\mathbf{W}$ to a subset $\mathcal{W}$ that satisfies some balance criteria $M(\mathbf{W}, \mathbf{X}) \leq a$.
-If the balance criterion $M$ is symmetric in the sense that if $\mathbf{W} \in \mathcal{W}$ then $(\mathbf{1} - \mathbf{W}) \in \mathcal{W}$ (which holds for criteria based on covariate mean differences), and each assignment in $\mathcal{W}$ is equally likely, then for any unit $i$:
-\[ \mathbb{P}(W_i = 1) = \frac{\sum_{\mathbf{w} \in \mathcal{W}} w_i}{|\mathcal{W}|}. \]
-Since $\mathbf{w} \in \mathcal{W} \iff \mathbf{1}-\mathbf{w} \in \mathcal{W}$, we have $\sum_{\mathbf{w} \in \mathcal{W}} w_i = \sum_{\mathbf{w} \in \mathcal{W}} (1-w_i) = |\mathcal{W}| - \sum w_i$.
-Thus $2 \sum w_i = |\mathcal{W}| \implies \mathbb{P}(W_i = 1) = 1/2$.
-Then the expectation of the estimator is:
-\begin{align*}
-\mathbb{E}[\hat{\tau}] &= \mathbb{E}\left[ \frac{2}{N} \sum W_i Y_i(1) - \frac{2}{N} \sum (1-W_i) Y_i(0) \right] \\
-&= \frac{2}{N} \sum \mathbb{P}(W_i=1) Y_i(1) - \frac{2}{N} \sum \mathbb{P}(W_i=0) Y_i(0) \\
-&= \frac{2}{N} \sum \frac{1}{2} Y_i(1) - \frac{2}{N} \sum \frac{1}{2} Y_i(0) = \frac{1}{N} \sum (Y_i(1) - Y_i(0)) = \tau_{ATE}.
-\end{align*}
-This unbiasedness holds for any potential outcomes as long as $\mathbb{P}(W_i=1) = 1/2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Neyman-Rubin Causal Model:} Each unit $i$ has potential outcomes $Y_i(1)$ (treated) and $Y_i(0)$ (control). The Average Treatment Effect (ATE) is $\tau = \frac{1}{N} \sum_{i=1}^N (Y_i(1) - Y_i(0))$.
+    \item \textbf{Re-randomization:} A practical trial design where if a random assignment is "unbalanced" (e.g., all old people in group A, all young in group B), we throw it out and re-roll the dice until we get a "balanced" assignment.
+    \item \textbf{Symmetry of Assignment Sets:} If a set of acceptable assignments is invariant under "flipping" (swapping 1s and 0s), then the marginal probability of any specific unit being assigned to treatment is exactly $1/2$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Normally, in a randomized trial, every person has a $50\%$ chance of getting the medicine. Because of this, the average of the treated group is an unbiased estimate of what would happen if *everyone* got the medicine.
+But re-randomization throws away certain assignments. Does this ruin the $50\%$ chance? 
+Suppose our balance rule is "the average age in group A and group B must be within 1 year". If an assignment $W$ satisfies this, what happens if we completely swap the groups (so group A gets the placebo and group B gets the medicine)? The age gap is still exactly the same (just reversed sign, but the absolute difference is identical).
+Therefore, if an assignment is "valid", its mirror opposite is also "valid". The set of valid assignments comes in pairs. In exactly one half of the pair, person $i$ gets the medicine. In the other half, they get the placebo. Thus, across all valid assignments, person $i$ still gets the medicine exactly half the time!
+Because the marginal probability of treatment remains $50\%$ for every single person, the estimator remains perfectly unbiased.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the estimator and potential outcomes.}
+
+Let $N$ be the total number of units, which is even. The groups are of equal size: $N_1 = N_0 = N/2$.
+Let $W_i \in \{0, 1\}$ be the treatment assignment for unit $i$. The observed outcome is $Y_i = W_i Y_i(1) + (1-W_i)Y_i(0)$.
+The causal effect estimator is the difference in observed means:
+\[ \hat{\tau} = \bar{Y}_1 - \bar{Y}_0 = \frac{2}{N} \sum_{i=1}^N W_i Y_i - \frac{2}{N} \sum_{i=1}^N (1-W_i) Y_i \]
+\[ \hat{\tau} = \frac{2}{N} \sum_{i=1}^N W_i Y_i(1) - \frac{2}{N} \sum_{i=1}^N (1-W_i) Y_i(0) \]
+
+\textbf{Step 2: Analyze the symmetry of the re-randomization design.}
+
+Let $\mathcal{W}_{all}$ be the set of all possible assignments where exactly $N/2$ units receive treatment.
+Re-randomization restricts the allowed assignments to a subset $\mathcal{W} \subset \mathcal{W}_{all}$ based on some balance criterion involving covariates $X$, typically $M(\mathbf{W}, \mathbf{X}) \leq a$.
+A standard balance criterion (like Mahalanobis distance between covariate means) is symmetric. This means that if an assignment vector $\mathbf{w}$ is balanced, its exact complement $\mathbf{1} - \mathbf{w}$ is also balanced. 
+Thus, if $\mathbf{w} \in \mathcal{W}$, then $(\mathbf{1} - \mathbf{w}) \in \mathcal{W}$.
+Because assignments are chosen uniformly at random from the valid set $\mathcal{W}$, the probability that unit $i$ receives treatment is:
+\[ \mathbb{P}(W_i = 1) = \frac{1}{|\mathcal{W}|} \sum_{\mathbf{w} \in \mathcal{W}} w_i \]
+
+\textbf{Step 3: Prove the marginal probability of treatment is 1/2.}
+
+Using the symmetry property, we can sum the complement assignments:
+\[ \sum_{\mathbf{w} \in \mathcal{W}} w_i = \sum_{\mathbf{w} \in \mathcal{W}} (1 - w_i) \]
+This is because summing over all $\mathbf{w}$ is the exact same as summing over all $(\mathbf{1}-\mathbf{w})$.
+Expand the right side:
+\[ \sum_{\mathbf{w} \in \mathcal{W}} w_i = \sum_{\mathbf{w} \in \mathcal{W}} 1 - \sum_{\mathbf{w} \in \mathcal{W}} w_i = |\mathcal{W}| - \sum_{\mathbf{w} \in \mathcal{W}} w_i \]
+Move the sum to the left side:
+\[ 2 \sum_{\mathbf{w} \in \mathcal{W}} w_i = |\mathcal{W}| \implies \sum_{\mathbf{w} \in \mathcal{W}} w_i = \frac{|\mathcal{W}|}{2} \]
+Therefore, the marginal probability is exactly:
+\[ \mathbb{P}(W_i = 1) = \frac{|\mathcal{W}|/2}{|\mathcal{W}|} = \frac{1}{2} \]
+By definition, $\mathbb{P}(W_i = 0) = 1 - 1/2 = 1/2$.
+
+\textbf{Step 4: Calculate the expectation of the estimator.}
+
+Take the expectation of the estimator from Step 1. Since $Y_i(1)$ and $Y_i(0)$ are fixed potential outcomes (not random variables), the only randomness is in $W_i$:
+\[ \mathbb{E}[\hat{\tau}] = \frac{2}{N} \sum_{i=1}^N \mathbb{E}[W_i] Y_i(1) - \frac{2}{N} \sum_{i=1}^N \mathbb{E}[1-W_i] Y_i(0) \]
+Substitute $\mathbb{E}[W_i] = 1/2$ and $\mathbb{E}[1-W_i] = 1/2$:
+\[ \mathbb{E}[\hat{\tau}] = \frac{2}{N} \sum_{i=1}^N \frac{1}{2} Y_i(1) - \frac{2}{N} \sum_{i=1}^N \frac{1}{2} Y_i(0) = \frac{1}{N} \sum_{i=1}^N (Y_i(1) - Y_i(0)) \]
+This final expression is exactly the true Average Treatment Effect (ATE). Thus, the re-randomized estimator is unbiased.
 \end{solution}
 
 \begin{exercise}
@@ -127,18 +347,59 @@ Provide a counter-example to the assertion that Problem 5 is true in small sampl
 \end{exercise}
 
 \begin{solution}
-Suppose $N=3$ and we want to assign one unit to treatment ($N_1=1$) and two to control ($N_0=2$). Let the covariates be $X = (1, 2, 3)$. The possible assignments $\mathbf{W} = (W_1, W_2, W_3)$ are $(1,0,0), (0,1,0), (0,0,1)$.
-The covariate differences $\bar{X}_1 - \bar{X}_0$ for these assignments are:
-\begin{enumerate}
-    \item $1 - (2+3)/2 = -1.5$
-    \item $2 - (1+3)/2 = 0$
-    \item $3 - (1+2)/2 = 1.5$
-\end{enumerate}
-If the re-randomization criterion is $|\bar{X}_1 - \bar{X}_0| \leq 0.5$, then only assignment 2 ($\mathbf{W} = (0,1,0)$) is allowed.
-Under this plan, $\mathbb{P}(W_2=1) = 1$ and $\mathbb{P}(W_1=1) = \mathbb{P}(W_3=1) = 0$.
-The expected estimate is $\mathbb{E}[\hat{\tau}] = Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2}$.
-However, the true ATE is $\frac{1}{3} \sum_{i=1}^3 (Y_i(1) - Y_i(0))$.
-In general, $Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2} \neq \frac{1}{3} \sum (Y_i(1) - Y_i(0))$.
-For instance, if $Y_i(1) = X_i^2$ and $Y_i(0) = 0$, then true ATE is $(1+4+9)/3 = 14/3$, while the estimate is $2^2 - 0 = 4$.
-The bias arises because with odd $N$, we cannot have symmetric group sizes, so $\mathbf{w} \in \mathcal{W}$ does not imply $\mathbf{1}-\mathbf{w} \in \mathcal{W}$ (since they have different numbers of treated units), breaking the $\mathbb{P}(W_i=1)=1/2$ symmetry.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Asymmetric Group Sizes:} When $N$ is odd, the treatment and control groups cannot be the exact same size.
+    \item \textbf{Loss of Symmetry in Re-randomization:} Because the group sizes are different, swapping treatment and control changes the number of people in the group, which violates the strict design. Thus, the complement of a valid assignment is NO LONGER a valid assignment.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+In the previous problem, the trick was that every valid assignment had a "mirror image" (swap who gets medicine and who gets placebo). Because the groups were the same size, the mirror image had the correct number of people in each group.
+If $N=3$ and we need 1 person in the medicine group and 2 in the placebo group, our assignment looks like $(1, 0, 0)$. The mirror image is $(0, 1, 1)$. But $(0, 1, 1)$ puts 2 people in the medicine group! This violates our rule that only 1 person gets the medicine. So we cannot include the mirror image in our valid set.
+Because we lose this mirror-image symmetry, it is entirely possible that our re-randomization criteria (like "balance the ages") ends up forcing a specific person (say, the person with the middle age) to ALWAYS be in the placebo group to make the math work out. If a person's probability of getting the medicine is no longer $50\%$, our estimator will be biased toward their specific potential outcomes.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Construct a specific counter-example with $N=3$.}
+
+Let $N = 3$. We want to assign $N_1 = 1$ unit to the treatment group and $N_0 = 2$ units to the control group.
+Assume each unit has a single scalar covariate $X_i$. Let $X_1 = 1, X_2 = 2, X_3 = 3$.
+There are exactly $\binom{3}{1} = 3$ possible assignments $\mathbf{W} = (W_1, W_2, W_3)$:
+- Assignment A: $\mathbf{W} = (1, 0, 0)$. Unit 1 treated.
+- Assignment B: $\mathbf{W} = (0, 1, 0)$. Unit 2 treated.
+- Assignment C: $\mathbf{W} = (0, 0, 1)$. Unit 3 treated.
+
+\textbf{Step 2: Apply a re-randomization criterion.}
+
+Let our balance criterion be that the difference in covariate means between the treated and control groups must be small:
+\[ |\bar{X}_1 - \bar{X}_0| \leq 0.5 \]
+Let's calculate this difference for the three possible assignments:
+- For Assignment A: Treated mean is $X_1 = 1$. Control mean is $(X_2 + X_3)/2 = (2+3)/2 = 2.5$. Difference is $|1 - 2.5| = 1.5$. (Rejected)
+- For Assignment B: Treated mean is $X_2 = 2$. Control mean is $(X_1 + X_3)/2 = (1+3)/2 = 2.0$. Difference is $|2 - 2| = 0$. (Accepted)
+- For Assignment C: Treated mean is $X_3 = 3$. Control mean is $(X_1 + X_2)/2 = (1+2)/2 = 1.5$. Difference is $|3 - 1.5| = 1.5$. (Rejected)
+
+\textbf{Step 3: Analyze the bias in the resulting design.}
+
+Under this re-randomization plan, the set of valid assignments $\mathcal{W}$ contains only exactly one assignment: $\mathbf{W} = (0, 1, 0)$.
+Therefore, the probabilities of treatment assignment are degenerate:
+\[ \mathbb{P}(W_1 = 1) = 0, \quad \mathbb{P}(W_2 = 1) = 1, \quad \mathbb{P}(W_3 = 1) = 0 \]
+Our estimator is $\hat{\tau} = \bar{Y}_1 - \bar{Y}_0 = Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2}$.
+Because this is the only assignment that ever happens, the expected value of our estimator is simply its value under this assignment:
+\[ \mathbb{E}[\hat{\tau}] = Y_2(1) - \frac{Y_1(0) + Y_3(0)}{2} \]
+
+\textbf{Step 4: Show this expectation does not equal the true ATE.}
+
+The true Average Treatment Effect is:
+\[ \tau_{ATE} = \frac{1}{3} \sum_{i=1}^3 (Y_i(1) - Y_i(0)) = \frac{Y_1(1) + Y_2(1) + Y_3(1)}{3} - \frac{Y_1(0) + Y_2(0) + Y_3(0)}{3} \]
+We can easily define potential outcomes where $\mathbb{E}[\hat{\tau}] \neq \tau_{ATE}$.
+For example, let the potential outcomes equal the squared covariate for treatment and 0 for control:
+- $Y_i(1) = X_i^2 \implies Y_1(1)=1, Y_2(1)=4, Y_3(1)=9$
+- $Y_i(0) = 0 \implies Y_1(0)=0, Y_2(0)=0, Y_3(0)=0$
+
+The true ATE is:
+\[ \tau_{ATE} = \frac{1+4+9}{3} - 0 = \frac{14}{3} \approx 4.67 \]
+But the expected value of our estimator is:
+\[ \mathbb{E}[\hat{\tau}] = 4 - \frac{0 + 0}{2} = 4 \]
+Because $4 \neq 4.67$, the estimator is biased. The symmetry argument from the previous problem fails because the complement of $(0, 1, 0)$ is $(1, 0, 1)$, which has $N_1=2$, violating the required group sizes.
 \end{solution}

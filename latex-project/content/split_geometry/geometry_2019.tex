@@ -19,31 +19,58 @@ For every pair $(i, j)$ with $i \neq j$, we define the complex valued 1-form
 \end{exercise}
 
 \begin{solution}
-(a) Let $i, j$ be fixed. Consider the map $f: \mathrm{Conf}_n \to \mathbb{C}^*$ given by $f(z) = z_i - z_j$. This map is well-defined because $z_i \neq z_j$. Then $\omega_{ij} = f^*(dz/z)$. 
-The form $dz/z$ is the generator of $H^1(\mathbb{C}^*, \mathbb{C}) \cong \mathbb{C}$. To show $\omega_{ij}$ is non-zero in $H^1(\mathrm{Conf}_n)$, we integrate it over a loop $\gamma$. 
-Let $\gamma(t)$ be a path where $z_i$ and $z_j$ rotate around each other once, keeping other coordinates constant (e.g., $z_i(t) = e^{it}, z_j(t) = 0$). 
-Then $\int_\gamma \omega_{ij} = \int_0^{2\pi} \frac{ie^{it}}{e^{it}} dt = 2\pi i \neq 0$. Thus $[\omega_{ij}] \neq 0$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{de Rham Cohomology:} A tool for studying the shape of a manifold by examining differential forms. The $k$-th cohomology group $H^k(M)$ consists of closed $k$-forms modulo exact ones.
+    \item \textbf{Pullback of Forms:} If $f: M \to N$ is a smooth map and $\omega$ is a form on $N$, $f^*\omega$ is its representation on $M$.
+    \item \textbf{Integration over Loops:} A 1-form $\omega$ is non-zero in $H^1(M)$ if there exists a closed loop $\gamma$ such that $\int_\gamma \omega \neq 0$.
+\end{itemize}
 
-(b) This is the \textit{Arnold relation} in the cohomology of the braid group. 
-Let $a = z_i - z_j$, $b = z_j - z_k$, then $z_i - z_k = a+b$.
-Note $dz_i - dz_j = da$, $dz_j - dz_k = db$, and $dz_k - dz_i = -(da+db)$.
-Then:
-$\omega_{ij} = \frac{da}{a}$, $\omega_{jk} = \frac{db}{b}$, $\omega_{ki} = \frac{da+db}{a+b}$.
-The expression is:
-\[
-\frac{da}{a} \wedge \frac{db}{b} + \frac{db}{b} \wedge \frac{da+db}{a+b} + \frac{da+db}{a+b} \wedge \frac{da}{a}
-\]
-\[
-= \frac{1}{ab} da \wedge db + \frac{1}{b(a+b)} db \wedge da + \frac{1}{a(a+b)} db \wedge da \quad (\text{since } da \wedge da = 0, db \wedge db = 0)
-\]
-\[
-= \left( \frac{1}{ab} - \frac{1}{b(a+b)} - \frac{1}{a(a+b)} \right) da \wedge db
-\]
-The coefficient is:
-\[
-\frac{(a+b) - a - b}{ab(a+b)} = 0.
-\]
-Thus the sum is zero.
+\medskip
+\textbf{Steps for (a):}
+\begin{enumerate}
+    \item \textbf{Identify a reference map:} Fix indices $i$ and $j$. Consider the subtraction map $f: \mathrm{Conf}_n \to \mathbb{C} \setminus \{0\}$ defined by $f(z_1, \dots, z_n) = z_i - z_j$. This map is well-defined because the definition of $\mathrm{Conf}_n$ ensures $z_i \neq z_j$.
+    
+    \item \textbf{Relate the form to a known generator:} Note that $\omega_{ij} = \frac{d(z_i - z_j)}{z_i - z_j}$ is exactly the pullback $f^*(\omega_{std})$ where $\omega_{std} = \frac{dz}{z}$ is the standard generator of $H^1(\mathbb{C}^*)$.
+    
+    \item \textbf{Construct a test loop:} Define a loop $\gamma: [0, 2\pi] \to \mathrm{Conf}_n$ by $z_i(t) = e^{it}$, $z_j(t) = 0$, and $z_k(t) = k$ for $k \neq i, j$. This loop describes $z_i$ circling around $z_j$ once.
+    
+    \item \textbf{Perform the integration:} Calculate $\int_\gamma \omega_{ij} = \int_0^{2\pi} \frac{d(e^{it} - 0)}{e^{it} - 0} = \int_0^{2\pi} \frac{ie^{it}}{e^{it}} dt = 2\pi i$.
+    
+    \item \textbf{Conclude non-vanishing:} Since the integral over a closed loop is non-zero, the cohomology class $[\omega_{ij}]$ is non-trivial in $H^1(\mathrm{Conf}_n, \mathbb{C})$.
+\end{enumerate}
+
+\medskip
+\textbf{Steps for (b):}
+\begin{enumerate}
+    \item \textbf{Simplify variables:} Let $A = z_i - z_j$, $B = z_j - z_k$, and $C = z_k - z_i$. Note that $A + B + C = 0$, so $C = -(A+B)$. Also, $dz_i - dz_j = dA$, $dz_j - dz_k = dB$, and $dz_k - dz_i = dC = -(dA+dB)$.
+    
+    \item \textbf{Substitute into the expression:} 
+    $\omega_{ij} \wedge \omega_{jk} + \omega_{jk} \wedge \omega_{ki} + \omega_{ki} \wedge \omega_{ij} = \frac{dA}{A} \wedge \frac{dB}{B} + \frac{dB}{B} \wedge \frac{-(dA+dB)}{A+B} + \frac{-(dA+dB)}{A+B} \wedge \frac{dA}{A}$.
+    
+    \item \textbf{Expand using linearity:} Since $dB \wedge dB = 0$ and $dA \wedge dA = 0$, the expression becomes:
+    $\frac{dA \wedge dB}{AB} - \frac{dB \wedge dA}{B(A+B)} - \frac{dB \wedge dA}{(A+B)A}$.
+    
+    \item \textbf{Combine terms:} Use $dB \wedge dA = -dA \wedge dB$ to get:
+    $\left( \frac{1}{AB} + \frac{1}{B(A+B)} + \frac{1}{A(A+B)} \right) dA \wedge dB$.
+    
+    \item \textbf{Check the coefficient:} Find a common denominator $AB(A+B)$:
+    $\frac{(A+B) + A + B}{AB(A+B)} = \frac{2(A+B)}{AB(A+B)} = \frac{2}{AB}$. Wait, let's re-calculate the signs carefully.
+    $\omega_{ki} = \frac{dz_k - dz_i}{z_k - z_i} = \frac{d(z_k - z_i)}{z_k - z_i}$.
+    If $a = z_i - z_j$ and $b = z_j - z_k$, then $z_i - z_k = a+b$, so $z_k - z_i = -(a+b)$.
+    $\omega_{ki} = \frac{-d(a+b)}{-(a+b)} = \frac{da+db}{a+b}$.
+    Then $\omega_{jk} \wedge \omega_{ki} = \frac{db}{b} \wedge \frac{da+db}{a+b} = \frac{db \wedge da}{b(a+b)}$.
+    $\omega_{ki} \wedge \omega_{ij} = \frac{da+db}{a+b} \wedge \frac{da}{a} = \frac{db \wedge da}{a(a+b)}$.
+    Sum: $\frac{da \wedge db}{ab} + \frac{db \wedge da}{b(a+b)} + \frac{db \wedge da}{a(a+b)} = \left(\frac{1}{ab} - \frac{1}{b(a+b)} - \frac{1}{a(a+b)}\right) da \wedge db$.
+    Denominator $ab(a+b)$: $\frac{(a+b) - a - b}{ab(a+b)} = 0$.
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The 1-form $\omega_{ij}$ can be thought of as a mathematical "sensor" that detects when the $i$-th point loops around the $j$-th point. The result in (a) confirms that "looping" is a topologically significant act that cannot be "deformed away" to zero.
+
+\medskip
+The identity in (b) is known as the Arnold relation. It tells us that the way three points interact is not independent; if you know how $i$ moves relative to $j$ and $j$ relative to $k$, you've already determined the interaction with $k$ and $i$. This relation is the foundation for the cohomology of braid groups.
 \end{solution}
 
 \begin{exercise}
@@ -55,16 +82,48 @@ Let $\tau(M)$ be the signature of this bilinear form. Compute $\tau(M)$ for $M =
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} The signature is a topological invariant for 4-manifolds that describes the intersection of 2-cycles.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Cohomology of Standard Manifolds:} Knowledge of $H^k(S^n)$, $H^k(\mathbb{CP}^n)$, and the K\"unneth formula for products like $S^2 \times S^2$.
+    \item \textbf{Intersection Form:} For a 4-manifold, the wedge product of two 2-forms integrated over the manifold defines a symmetric bilinear form.
+    \item \textbf{Signature:} The signature $\tau$ is the number of positive eigenvalues minus the number of negative eigenvalues of the matrix representing the intersection form.
+\end{itemize}
 
-1. $M = S^4$: $H^2(S^4) = 0$. The bilinear form is on a zero-dimensional space. Thus $\tau(S^4) = 0$.
-2. $M = \mathbb{CP}^2$: $H^2(\mathbb{CP}^2) \cong \mathbb{Z}$, generated by the hyperplane class $h$. 
-The intersection form is given by $h \cdot h = 1$ (the fundamental class of $\mathbb{CP}^2$). 
-The matrix is $(1)$, which has one positive eigenvalue. Thus $\tau(\mathbb{CP}^2) = 1$.
-3. $M = S^2 \times S^2$: $H^2(S^2 \times S^2)$ is generated by $a = [S^2 \times \{pt\}]$ and $b = [\{pt\} \times S^2]$.
-The intersections are $a \cdot a = 0$ (self-intersection of a factor), $b \cdot b = 0$, and $a \cdot b = 1$ (the factors intersect at one point).
-The intersection matrix is $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$.
-The eigenvalues are $+1$ and $-1$. Thus $\tau(S^2 \times S^2) = 1 - 1 = 0$.
+\medskip
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Case $M = S^4$:}
+    \begin{itemize}
+        \item The second cohomology group $H^2(S^4; \mathbb{R}) = 0$.
+        \item Since the vector space is zero-dimensional, the bilinear form is trivial (empty).
+        \item By definition, the signature of an empty form is $\tau(S^4) = 0$.
+    \end{itemize}
+
+    \medskip
+    \item \textbf{Case $M = \mathbb{CP}^2$:}
+    \begin{itemize}
+        \item $H^2(\mathbb{CP}^2; \mathbb{R}) \cong \mathbb{R}$, generated by the first Chern class $x$ of the tautological line bundle (the hyperplane class).
+        \item The intersection product is given by $\int_{\mathbb{CP}^2} x \wedge x = 1$ (following standard orientation).
+        \item The intersection matrix is a $1 \times 1$ matrix $(1)$, which has one positive eigenvalue.
+        \item Thus, $\tau(\mathbb{CP}^2) = 1$.
+    \end{itemize}
+
+    \medskip
+    \item \textbf{Case $M = S^2 \times S^2$:}
+    \begin{itemize}
+        \item By the K\"unneth formula, $H^2(S^2 \times S^2; \mathbb{R})$ is 2-dimensional.
+        \item Generators are $a = \pi_1^*[\omega_{S^2}]$ and $b = \pi_2^*[\omega_{S^2}]$, where $\omega_{S^2}$ is the area form on $S^2$ with $\int_{S^2} \omega = 1$.
+        \item Intersection products: $\int a \wedge a = 0$ and $\int b \wedge b = 0$ (as they involve pullbacks of 4-forms from 2-manifolds).
+        \item The cross term is $\int a \wedge b = (\int_{S^2} \omega) \times (\int_{S^2} \omega) = 1$.
+        \item The intersection matrix in the $\{a, b\}$ basis is $Q = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$.
+        \item The eigenvalues of $Q$ are $1$ and $-1$.
+        \item Thus, $\tau(S^2 \times S^2) = 1 - 1 = 0$.
+    \end{itemize}
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The signature of a 4-manifold measures the "asymmetry" in how its 2-dimensional surfaces intersect. For $S^2 \times S^2$, the two spheres are independent and cross each other at a single point, but neither spheres can "self-intersect" in a topologically stable way, leading to a balanced signature of zero. $\mathbb{CP}^2$, however, has a fundamental "twist" where its basic surface (the complex line) necessarily intersects its own deformations, giving it a non-zero signature.
 \end{solution}
 
 \begin{exercise}
@@ -72,22 +131,57 @@ Let $X = \mathbb{R}^{4} / \sim$, with identified relations given. Compute $H_{1}
 \end{exercise}
 
 \begin{solution}
-The space $X$ is a quotient of $\mathbb{R}^4$ by a discrete group of isometries $G$. $H_1(X, \mathbb{Z})$ is the abelianization of $\pi_1(X) \cong G$.
-The generators of $G$ are:
-$e_1(x) = (x_1+1, x_2, x_3, x_4)$
-$e_2(x) = (x_1, x_2+1, x_3, x_4)$
-$e_3(x) = (x_1, x_2+x_4, x_3+1, x_4)$
-$e_4(x) = (x_1, x_2, x_3, x_4+1)$
-We check the commutators $[e_i, e_j] = e_i e_j e_i^{-1} e_j^{-1}$.
-- $e_1, e_2, e_4$ all commute with each other because they are translations.
-- For $e_3$ and $e_4$: 
-$e_3 e_4 (x) = e_3(x_1, x_2, x_3, x_4+1) = (x_1, x_2+x_4+1, x_3+1, x_4+1)$
-$e_4 e_3 (x) = e_4(x_1, x_2+x_4, x_3+1, x_4) = (x_1, x_2+x_4, x_3+1, x_4+1)$
-Thus $e_3 e_4 = e_2 e_4 e_3$, or $[e_3, e_4] = e_2$.
-- For $e_3$ and $e_1$ or $e_2$: they commute.
-So the relations are $[e_3, e_4] = e_2$ and all other pairs commute.
-The abelianization $G_{ab}$ is $G$ with the additional relation $e_2 = 1$.
-Thus $H_1(X, \mathbb{Z}) \cong \mathbb{Z} \langle e_1, e_3, e_4 \rangle \cong \mathbb{Z}^3$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Fundamental Groups of Quotients:} If $X = \mathbb{R}^n / G$ for a discrete group $G$ acting properly discontinuously and freely by isometries, then the fundamental group $\pi_1(X)$ is isomorphic to $G$.
+    \item \textbf{Hurewicz Theorem:} The first homology group $H_1(X, \mathbb{Z})$ is the abelianization of the fundamental group $\pi_1(X)$. The abelianization $G_{ab}$ is formed by adding the relations $xy = yx$ for all $x, y \in G$, or equivalently, quotienting by the commutator subgroup $[G, G]$.
+\end{itemize}
+
+\medskip
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Identify the Group $G$:} The relations given correspond to four transformations on $\mathbb{R}^4$:
+    \begin{align*}
+        e_1(x) &= (x_1+1, x_2, x_3, x_4) \\
+        e_2(x) &= (x_1, x_2+1, x_3, x_4) \\
+        e_3(x) &= (x_1, x_2+x_4, x_3+1, x_4) \\
+        e_4(x) &= (x_1, x_2, x_3, x_4+1)
+    \end{align*}
+    The group $G$ is generated by $\{e_1, e_2, e_3, e_4\}$.
+    
+    \item \textbf{Compute Commutators:} We need to determine how these generators interact. Let's compute their compositions.
+    \begin{itemize}
+        \item $e_1, e_2, e_4$ are pure translations along standard axes, so they obviously commute with each other: $e_1 e_2 = e_2 e_1$, $e_1 e_4 = e_4 e_1$, $e_2 e_4 = e_4 e_2$.
+        \item Does $e_3$ commute with $e_1$? $e_3(e_1(x)) = (x_1+1, x_2+x_4, x_3+1, x_4) = e_1(e_3(x))$. Yes.
+        \item Does $e_3$ commute with $e_2$? $e_3(e_2(x)) = (x_1, (x_2+1)+x_4, x_3+1, x_4) = e_2(e_3(x))$. Yes.
+        \item Does $e_3$ commute with $e_4$? 
+        Let's compute $e_3 e_4$:
+        \[
+        e_3(e_4(x)) = e_3(x_1, x_2, x_3, x_4+1) = (x_1, x_2+(x_4+1), x_3+1, x_4+1)
+        \]
+        Now let's compute $e_4 e_3$:
+        \[
+        e_4(e_3(x)) = e_4(x_1, x_2+x_4, x_3+1, x_4) = (x_1, x_2+x_4, x_3+1, x_4+1)
+        \]
+    \end{itemize}
+    
+    \item \textbf{Find the Non-Trivial Relation:} Notice that $e_3 e_4 (x)$ differs from $e_4 e_3 (x)$ exactly by an addition of $1$ in the second coordinate.
+    This means $e_3(e_4(x)) = e_2(e_4(e_3(x)))$. 
+    Therefore, $e_3 e_4 = e_2 e_4 e_3$.
+    Equivalently, the commutator $[e_3, e_4] = e_3 e_4 e_3^{-1} e_4^{-1} = e_2$.
+    
+    \item \textbf{Calculate Abelianization:} To find $H_1(X, \mathbb{Z})$, we abelianize $G$. In $G_{ab}$, all elements must commute.
+    Since we found $[e_3, e_4] = e_2$, in the abelianization, the commutator must be the identity. 
+    Thus, the relation $e_2 = 1$ is enforced.
+    
+    \item \textbf{Determine the Homology Group:} The generator $e_2$ is trivialized in homology. The remaining generators $e_1, e_3, e_4$ have no other relations among themselves (they are free to commute).
+    Therefore, $H_1(X, \mathbb{Z})$ is generated by $e_1, e_3, e_4$ with no further relations.
+    This gives $H_1(X, \mathbb{Z}) \cong \mathbb{Z} \oplus \mathbb{Z} \oplus \mathbb{Z} \cong \mathbb{Z}^3$.
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The space $X$ is formed by taking $\mathbb{R}^4$ and "gluing" edges together using the provided relations. Three of these relations correspond to wrapping $\mathbb{R}^4$ into a standard torus $T^4$. However, the fourth relation (for $e_3$) adds a "twist" involving the $x_2$ and $x_4$ coordinates as we move along the $x_3$ direction. Because of this twisting action, a loop going around the $x_2$ direction is topologically equivalent to the difference of paths going around $x_3$ and $x_4$. When we look at the commutative structure (first homology, which doesn't care about the order of paths), this implies the $x_2$ path is contractible. Thus, instead of a 4-torus ($H_1 = \mathbb{Z}^4$), one independent cycle is lost, yielding $H_1 = \mathbb{Z}^3$.
 \end{solution}
 
 \begin{exercise}
@@ -96,9 +190,47 @@ Thus $H_1(X, \mathbb{Z}) \cong \mathbb{Z} \langle e_1, e_3, e_4 \rangle \cong \m
 \end{exercise}
 
 \begin{solution}
-(a) By the Bianchi identity, $d_\nabla R^E = 0$. For any matrix power, $d \operatorname{tr}((R^E)^k) = k \operatorname{tr}(d_\nabla R^E \wedge (R^E)^{k-1}) = 0$. Since $f$ is a polynomial, the trace is a sum of these closed forms.
-(b) Consider a path of connections $\nabla_t = (1-t)\widetilde{\nabla} + t\nabla$. Let $R_t$ be the curvature. 
-The \textit{Transgression Formula} states $\operatorname{tr}(f(R)) - \operatorname{tr}(f(\widetilde{R})) = d \int_0^1 k \operatorname{tr}(\dot{\nabla}_t \wedge f'(R_t)) dt$, where $\dot{\nabla}_t = \nabla - \widetilde{\nabla}$ is an End(E)-valued 1-form. This defines the required $\omega$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Connections and Curvature:} A connection $\nabla^E$ on a vector bundle $E$ differentiates sections. Its curvature $R^E = (\nabla^E)^2$ is a 2-form with values in $\text{End}(E)$.
+    \item \textbf{Bianchi Identity:} The exterior covariant derivative of the curvature is zero: $d_\nabla R^E = 0$.
+    \item \textbf{Trace Properties:} The trace of a matrix of differential forms satisfies $d \operatorname{tr}(A) = \operatorname{tr}(d_\nabla A)$. Also, the trace of a commutator of forms is zero, $\operatorname{tr}([A, B]) = 0$, which implies cyclic permutations under trace are allowed with appropriate signs.
+\end{itemize}
+
+\medskip
+\textbf{Steps for (a):}
+\begin{enumerate}
+    \item \textbf{Linearity of the problem:} Since $f(x) = \sum a_k x^k$, we have $\operatorname{tr}[f(R^E)] = \sum a_k \operatorname{tr}((R^E)^k)$. It suffices to prove $d \operatorname{tr}((R^E)^k) = 0$ for each integer $k \ge 1$.
+    \item \textbf{Relate exterior derivative to connection:} Because the trace is invariant under conjugation, the ordinary exterior derivative of the trace equals the trace of the covariant exterior derivative: $d \operatorname{tr}((R^E)^k) = \operatorname{tr}(d_\nabla ((R^E)^k))$.
+    \item \textbf{Apply the product rule:} Using the Leibniz rule for $d_\nabla$, we get:
+    \[
+    d_\nabla ((R^E)^k) = (d_\nabla R^E) \wedge (R^E)^{k-1} + R^E \wedge (d_\nabla R^E) \wedge (R^E)^{k-2} + \dots + (R^E)^{k-1} \wedge (d_\nabla R^E)
+    \]
+    \item \textbf{Use Bianchi Identity:} By the Bianchi identity, $d_\nabla R^E = 0$. Thus, every term in the sum vanishes.
+    \item \textbf{Conclusion:} $d \operatorname{tr}((R^E)^k) = \operatorname{tr}(0) = 0$. By linearity, $d \operatorname{tr}[f(R^E)] = 0$, meaning the form is closed.
+\end{enumerate}
+
+\medskip
+\textbf{Steps for (b):}
+\begin{enumerate}
+    \item \textbf{Construct a path of connections:} The space of connections is an affine space. Define a straight-line path between the two connections: $\nabla_t = (1-t)\widetilde{\nabla}^E + t\nabla^E = \widetilde{\nabla}^E + tA$, where $A = \nabla^E - \widetilde{\nabla}^E \in \Omega^1(M, \text{End}(E))$.
+    \item \textbf{Calculate curvature derivative:} Let $R_t$ be the curvature of $\nabla_t$. Then $R_t = d\nabla_t + \nabla_t \wedge \nabla_t$. Taking the derivative with respect to $t$ gives $\frac{d}{dt} R_t = d A + \nabla_t \wedge A + A \wedge \nabla_t = d_{\nabla_t} A$.
+    \item \textbf{Differentiate the trace:} For a single power $k$:
+    \[
+    \frac{d}{dt} \operatorname{tr}((R_t)^k) = k \operatorname{tr}\left( \frac{d R_t}{dt} \wedge (R_t)^{k-1} \right) = k \operatorname{tr}\left( (d_{\nabla_t} A) \wedge (R_t)^{k-1} \right)
+    \]
+    \item \textbf{Pull out the derivative:} Using the Leibniz rule and $d_{\nabla_t} R_t = 0$ (Bianchi for $\nabla_t$), we have $d_{\nabla_t}(A \wedge (R_t)^{k-1}) = (d_{\nabla_t} A) \wedge (R_t)^{k-1}$.
+    Thus, $k \operatorname{tr}(d_{\nabla_t}(A \wedge (R_t)^{k-1})) = d \left[ k \operatorname{tr}(A \wedge (R_t)^{k-1}) \right]$.
+    \item \textbf{Integrate:} By the Fundamental Theorem of Calculus:
+    \[
+    \operatorname{tr}((R^E)^k) - \operatorname{tr}((\widetilde{R}^E)^k) = \int_0^1 \frac{d}{dt} \operatorname{tr}((R_t)^k) dt = d \left( \int_0^1 k \operatorname{tr}(A \wedge (R_t)^{k-1}) dt \right)
+    \]
+    \item \textbf{Conclusion:} Setting $\omega = \int_0^1 \operatorname{tr}(A \wedge f'(R_t)) dt$, where $f'$ is the formal derivative of the polynomial $f$, we obtain the exact form.
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The forms $\operatorname{tr}[f(R^E)]$ are known as characteristic classes (specifically, Chern or Pontryagin forms, depending on the bundle). Part (a) shows these forms are always closed, meaning they represent some cohomology class in $H^*(M)$. Part (b) shows that if you change the connection (which is a local, geometric choice), the form only changes by an exact amount (a boundary). Therefore, the cohomology class $[\operatorname{tr}[f(R^E)]]$ is entirely independent of the connection and depends only on the global topological "twist" of the bundle itself.
 \end{solution}
 
 \begin{exercise}
@@ -106,8 +238,47 @@ The \textit{Transgression Formula} states $\operatorname{tr}(f(R)) - \operatorna
 \end{exercise}
 
 \begin{solution}
-(a) Standard calculation using Ricci identity: $\nabla_i \nabla_j \nabla_k u - \nabla_j \nabla_i \nabla_k u = R_{ijk}^l \nabla_l u$.
-(b) This is related to the Uniformization Theorem and the Nirenberg problem. On $S^2$, the equation $\Delta \ln f + K' f^2 = K$ describes a change of metric $g' = f^2 g$ with new curvature $K'$. For $K'=E$, the solution is unique up to Mobius transformations. The specific form follows from the fact that the first eigenfunctions $\phi$ of $S^2$ correspond to coordinates $x, y, z$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Laplacian and Hessian:} For a function $u$, the Laplacian is the trace of the Hessian, $\Delta u = \operatorname{tr}(\nabla^2 u) = \nabla^i \nabla_i u$.
+    \item \textbf{Ricci Identity:} Commuting covariant derivatives introduces curvature: $\nabla_i \nabla_j X_k - \nabla_j \nabla_i X_k = -R_{ijk}^l X_l$. Contracting this yields $\nabla_i \nabla_j X^i - \nabla_j \nabla_i X^i = \operatorname{Ric}_j^l X_l$.
+    \item \textbf{Conformal Changes:} If a metric $g$ on a 2-dimensional surface is conformally changed to $g' = f^2 g$, the new Gaussian curvature $K'$ relates to the old curvature $K$ by the equation $\Delta_g \ln f - K + K' f^2 = 0$.
+\end{itemize}
+
+\medskip
+\textbf{Steps for (a):}
+\begin{enumerate}
+    \item \textbf{Expand the Laplacian:} We want to compute $\frac{1}{2} \Delta |\nabla u|^2 = \frac{1}{2} \nabla^i \nabla_i (\nabla_j u \nabla^j u)$.
+    \item \textbf{First derivative:} By the product rule, $\nabla_i (\nabla_j u \nabla^j u) = 2 \nabla_i \nabla_j u \nabla^j u$.
+    \item \textbf{Second derivative:} Applying $\nabla^i$ to this gives two terms:
+    \[
+    \frac{1}{2} \Delta |\nabla u|^2 = \nabla^i (\nabla_i \nabla_j u \nabla^j u) = (\nabla^i \nabla_i \nabla_j u) \nabla^j u + (\nabla_i \nabla_j u) (\nabla^i \nabla^j u)
+    \]
+    \item \textbf{Identify the Hessian term:} The second term is exactly the squared norm of the Hessian, $|\nabla^2 u|^2$.
+    \item \textbf{Commute derivatives:} For the first term, we need to swap $\nabla_i$ and $\nabla_j$. Using the Ricci identity:
+    \[
+    \nabla^i \nabla_i \nabla_j u = \nabla^i \nabla_j \nabla_i u = \nabla_j \nabla^i \nabla_i u + \operatorname{Ric}_{j}^k \nabla_k u = \nabla_j (\Delta u) + \operatorname{Ric}_{j}^k \nabla_k u
+    \]
+    \item \textbf{Combine:} Multiplying by $\nabla^j u$ gives:
+    \[
+    (\nabla_j \Delta u) \nabla^j u + \operatorname{Ric}_{j}^k \nabla_k u \nabla^j u = g(\nabla \Delta u, \nabla u) + \operatorname{Ric}(\nabla u, \nabla u)
+    \]
+    Adding the Hessian term gives Bochner's formula.
+\end{enumerate}
+
+\medskip
+\textbf{Steps for (b):}
+\begin{enumerate}
+    \item \textbf{Geometric Interpretation:} The standard unit sphere $S^2$ has Gaussian curvature $K = 1$. The given equation $\Delta \ln f + E f^2 = 1$ exactly matches the conformal curvature equation $\Delta \ln f - 1 + E f^2 = 0$.
+    \item \textbf{Identify the new metric:} This means that the metric $g' = f^2 g$ has constant Gaussian curvature $K' = E$.
+    \item \textbf{Use the Uniformization Theorem:} By the uniformization theorem, the only metrics on $S^2$ with constant curvature are those obtained by applying a conformal diffeomorphism (a M\"obius transformation) to the standard metric.
+    \item \textbf{Form of the conformal factor:} The M\"obius transformations of $S^2$ are generated by rigid rotations (which don't change the metric) and dilations. A general dilation pulling the metric from the standard one produces a conformal factor of the form $f = \frac{1}{A + \phi}$, where $A$ is a constant related to the dilation factor, and $\phi$ is a first eigenfunction of the Laplacian on $S^2$ (which corresponds to the coordinate functions $x, y, z$ determining the direction of the "push").
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+Bochner's formula is a magical bridge that connects the local analytic behavior of a function (its Laplacian) to the global geometric shape of the manifold (Ricci curvature). 
+Part (b) is a beautiful application of geometry to a partial differential equation. Instead of solving the PDE through brute-force analysis, we recognize it as the equation for "stretching" the sphere while keeping it perfectly round. Since the only way to do that is to shift the sphere via M\"obius transformations, the solutions drop out naturally from the geometry.
 \end{solution}
 
 \subsection{Team Exam}
@@ -117,8 +288,34 @@ Is $TS^{2}$ diffeomorphic to $S^{2} \times \mathbb{R}^{2}$?
 \end{exercise}
 
 \begin{solution}
-No. $TS^2$ is the tangent bundle. If it were diffeomorphic to $S^2 \times \mathbb{R}^2$, it would be a trivial bundle. 
-However, by the \textit{Hairy Ball Theorem}, $S^2$ does not admit any nowhere-zero continuous vector field. A trivial bundle $S^2 \times \mathbb{R}^2$ admits 2 linearly independent nowhere-zero sections (e.g., constant ones). Thus the bundles are not isomorphic, and the manifolds are not diffeomorphic as bundles. Topologically, $TS^2$ and $S^2 \times \mathbb{R}^2$ have different Euler classes ($\chi(S^2)=2$ vs $0$).
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Tangent Bundles:} The space $TS^2$ consists of all tangent vectors to all points on the sphere.
+    \item \textbf{Trivial Bundles vs. Products:} $S^2 \times \mathbb{R}^2$ is a trivial bundle, acting simply as a standard "thickened" sphere with no twists.
+    \item \textbf{Self-Intersection:} The self-intersection number of a submanifold inside a larger space counts how many times the submanifold intersects a slightly perturbed copy of itself.
+    \item \textbf{Euler Characteristic:} $\chi(S^2) = 2$. By the Poincaré-Hopf theorem (related to the Hairy Ball Theorem), the sum of the indices of isolated zeros of a vector field equals the Euler characteristic.
+\end{itemize}
+
+\medskip
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Compare the core submanifolds:} Both $TS^2$ and $S^2 \times \mathbb{R}^2$ contain a natural copy of $S^2$. In $TS^2$, it's the zero section (the set of zero vectors). In $S^2 \times \mathbb{R}^2$, it's the slice $S^2 \times \{(0,0)\}$.
+    
+    \item \textbf{Self-intersection in $S^2 \times \mathbb{R}^2$:} If we take the sphere $S^2 \times \{(0,0)\}$ and slightly perturb it by shifting it up in the $\mathbb{R}^2$ direction (say, to $S^2 \times \{(1,0)\}$), the new sphere is completely disjoint from the original one.
+    Therefore, the self-intersection number of $S^2$ in $S^2 \times \mathbb{R}^2$ is exactly $0$.
+    
+    \item \textbf{Self-intersection in $TS^2$:} A slight perturbation of the zero section in $TS^2$ corresponds to choosing a smooth vector field on $S^2$.
+    The intersection of this perturbed section with the zero section occurs exactly at the points where the vector field is zero.
+    By the Poincaré-Hopf theorem (the Hairy Ball Theorem), any continuous vector field on $S^2$ must have zeros, and the sum of the indices of these zeros must equal the Euler characteristic of the sphere, which is $\chi(S^2) = 2$.
+    Therefore, the self-intersection number of the zero section in $TS^2$ is $2$.
+    
+    \item \textbf{Conclusion:} A diffeomorphism between two manifolds must map homologically equivalent submanifolds to each other and preserve intersection numbers. Since the natural generators of homology (the $S^2$ core) have different self-intersection numbers ($0$ vs $2$), the two spaces cannot be diffeomorphic.
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+Imagine taking a sphere and "thickening" it. If you just multiply it by a plane ($S^2 \times \mathbb{R}^2$), the thickened space is flat and straightforward; you can slide the core sphere off itself without getting stuck. 
+However, $TS^2$ has an inherent topological "twist". This twist is famously described by the Hairy Ball Theorem ("you can't comb the hair on a coconut flat"). Because of this twist, the tangent bundle "winds" around the sphere, so if you try to slide the core sphere off itself (which means defining a vector field), the hairs inevitably cross the zero-point at the cowlicks, forcing the sphere to intersect itself twice.
 \end{solution}
 
 \begin{exercise}
@@ -126,10 +323,51 @@ Compute $\dim(V/W) = H^1(\mathbb{R}^3 \setminus X, \mathbb{R})$.
 \end{exercise}
 
 \begin{solution}
-The space $V$ consists of closed forms and $W$ consists of exact forms. Thus $V/W \cong H^1(\mathbb{R}^3 \setminus X, \mathbb{R})$.
-(a) $X = \{0\}$. $\mathbb{R}^3 \setminus \{0\} \simeq S^2$. $H^1(S^2) = 0$. Dimension 0.
-(b) $X = \{z\text{-axis}\}$. $\mathbb{R}^3 \setminus L \simeq S^1$. $H^1(S^1) = \mathbb{R}$. Dimension 1.
-(c) $X = \{z=0\text{ plane}\}$. $\mathbb{R}^3 \setminus P$ is two disjoint half-spaces, each contractible. $H^1 \cong H^1(pt) \oplus H^1(pt) = 0$. Dimension 0.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Vector Calculus to Differential Forms:} A vector field $F = (F_1, F_2, F_3)$ naturally corresponds to a 1-form $\omega_F = F_1 dx + F_2 dy + F_3 dz$. 
+    \item \textbf{Curl and Gradient:} The condition $\nabla \times F = 0$ (curl-free) is equivalent to $d\omega_F = 0$ (the form is closed). The condition $F = \nabla g$ (conservative) is equivalent to $\omega_F = dg$ (the form is exact).
+    \item \textbf{De Rham Cohomology:} The quotient space $V/W$ of closed 1-forms modulo exact 1-forms defines the first de Rham cohomology group, $H^1(M, \mathbb{R})$.
+    \item \textbf{Homotopy Equivalence:} Continuous deformations of a space (retractions) do not change its cohomology groups.
+\end{itemize}
+
+\medskip
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Translate the Problem:} We are asked to find the dimension of $V/W$ for the manifold $M = \mathbb{R}^3 \setminus X$. By our prerequisites, this dimension is exactly the first Betti number $b_1 = \dim H^1(\mathbb{R}^3 \setminus X, \mathbb{R})$.
+
+    \item \textbf{Case (a) - $X = \{x=y=z=0\}$ (The Origin):}
+    \begin{itemize}
+        \item The space $\mathbb{R}^3 \setminus \{0\}$ can be continuously shrunk (deformation retracted) onto the unit sphere $S^2$ surrounding the origin.
+        \item Therefore, $H^1(\mathbb{R}^3 \setminus \{0\}) \cong H^1(S^2)$.
+        \item Since the sphere $S^2$ has no 1-dimensional "holes" (loops), $H^1(S^2) = 0$.
+        \item Thus, $\dim(V/W) = 0$.
+    \end{itemize}
+
+    \medskip
+    \item \textbf{Case (b) - $X = \{x=y=0\}$ (The z-axis):}
+    \begin{itemize}
+        \item The space $\mathbb{R}^3 \setminus \{z\text{-axis}\}$ is essentially a cylinder. It can be retracted onto the unit circle $S^1$ in the $xy$-plane by flattening along the $z$-axis and shrinking radially.
+        \item Therefore, $H^1(\mathbb{R}^3 \setminus \text{line}) \cong H^1(S^1)$.
+        \item A circle has exactly one independent loop, so $H^1(S^1) = \mathbb{R}$.
+        \item Thus, $\dim(V/W) = 1$.
+    \end{itemize}
+
+    \medskip
+    \item \textbf{Case (c) - $X = \{x=0\}$ (The yz-plane):}
+    \begin{itemize}
+        \item Removing an entire plane slices $\mathbb{R}^3$ into two completely disconnected, infinite open half-spaces ($x>0$ and $x<0$).
+        \item Each half-space is convex, meaning it can be contracted to a single point (it is contractible).
+        \item Therefore, $H^1(\mathbb{R}^3 \setminus \text{plane}) \cong H^1(\text{point}) \oplus H^1(\text{point}) = 0 \oplus 0 = 0$.
+        \item Thus, $\dim(V/W) = 0$.
+    \end{itemize}
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The problem asks: "How many independent ways can a vector field be 'curl-free' but fail to have a global 'potential function'?" This physical failure happens only when the space has physical "loops" or "handles" that trap circulation (like a magnetic field circling around an infinite straight wire). 
+The quotient $V/W$ counts exactly these 1-dimensional topological holes.
+Removing a point (a 0D hole) doesn't create any loops in 3D. Removing a plane slices the space entirely, leaving no loops. But removing an infinitely long wire creates exactly one endless channel that a loop can be trapped around, giving 1 degree of freedom for such fields.
 \end{solution}
 
 \begin{exercise}
@@ -137,18 +375,49 @@ $F: T^2 \to T^2$, $\deg F = 1$, $F^2 = Id$, no fixed points. Prove $F^* = Id$ on
 \end{exercise}
 
 \begin{solution}
-Let $T^2 = \mathbb{R}^2 / \mathbb{Z}^2$. Since $F$ has no fixed points and $F^2=Id$, the quotient $M = T^2 / \langle F \rangle$ is a smooth compact surface. 
-The covering map $p: T^2 \to M$ is a 2-sheeted unbranched cover.
-By the Riemann-Hurwitz formula (or Euler characteristic properties): $\chi(T^2) = 2 \chi(M)$.
-Since $\chi(T^2) = 0$, we have $\chi(M) = 0$. Thus $M$ is also a torus (it must be oriented because $F$ has degree 1).
-The map $F$ acts on $H^1(T^2) \cong \mathbb{Z}^2$. Since $F^2=Id$, the eigenvalues of $F^*$ are $\pm 1$.
-The Lefschetz fixed point number is $L(F) = \sum (-1)^k \operatorname{tr}(F^* |_{H^k})$.
-$L(F) = \operatorname{tr}(F^* |_{H^0}) - \operatorname{tr}(F^* |_{H^1}) + \operatorname{tr}(F^* |_{H^2})$.
-Since $F$ has no fixed points, $L(F) = 0$.
-$F^*$ on $H^0$ is $1$. $F^*$ on $H^2$ is $\deg(F) = 1$.
-So $1 - \operatorname{tr}(F^* |_{H^1}) + 1 = 0 \implies \operatorname{tr}(F^* |_{H^1}) = 2$.
-For a $2 \times 2$ matrix with eigenvalues $\pm 1$, the trace is 2 only if both eigenvalues are 1.
-Thus $F^* = Id$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Cohomology of the Torus:} The Betti numbers (dimensions of $H^k$) for $T^2$ are $b_0 = 1, b_1 = 2, b_2 = 1$.
+    \item \textbf{Degree of a Map:} The degree determines the action on the top cohomology group $H^2$. Here, $F^*$ on $H^2$ acts as multiplication by $\deg F = 1$.
+    \item \textbf{Lefschetz Fixed-Point Theorem:} If a continuous map $F: M \to M$ has no fixed points, its Lefschetz number $L(F) = \sum_{k} (-1)^k \operatorname{tr}(F^* |_{H^k})$ must be strictly zero.
+\end{itemize}
+
+\medskip
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Determine Traces for $H^0$ and $H^2$:} 
+    \begin{itemize}
+        \item For any map on a connected space, $F^*$ acts as the identity on $H^0(T^2) \cong \mathbb{Z}$. Thus, $\operatorname{tr}(F^* |_{H^0}) = 1$.
+        \item By definition, the action on the top cohomology $H^2(T^2) \cong \mathbb{Z}$ is multiplication by the degree. Thus, $\operatorname{tr}(F^* |_{H^2}) = \deg(F) = 1$.
+    \end{itemize}
+
+    \item \textbf{Apply the Lefschetz Theorem:}
+    Since $F$ has no fixed points anywhere on the torus, the Lefschetz number is zero:
+    \[
+    L(F) = \operatorname{tr}(F^* |_{H^0}) - \operatorname{tr}(F^* |_{H^1}) + \operatorname{tr}(F^* |_{H^2}) = 0
+    \]
+    Substituting our values:
+    \[
+    1 - \operatorname{tr}(F^* |_{H^1}) + 1 = 0 \implies \operatorname{tr}(F^* |_{H^1}) = 2.
+    \]
+
+    \item \textbf{Analyze the Action on $H^1$:}
+    \begin{itemize}
+        \item $H^1(T^2) \cong \mathbb{Z}^2$, so $F^*$ acts as a $2 \times 2$ integer matrix on this space.
+        \item We are given that $F^2 = \operatorname{Id}$. Because taking cohomology is a functor, $(F^*)^2 = (F^2)^* = \operatorname{Id}^* = I_{2 \times 2}$.
+        \item Since the matrix squares to the identity, its minimal polynomial must divide $x^2 - 1 = (x-1)(x+1)$. Thus, its eigenvalues over $\mathbb{R}$ (and therefore over $\mathbb{C}$) can only be $+1$ or $-1$.
+        \item Let the eigenvalues be $\lambda_1, \lambda_2 \in \{+1, -1\}$. The trace is their sum: $\lambda_1 + \lambda_2 = 2$.
+        \item The only mathematical possibility is $\lambda_1 = 1$ and $\lambda_2 = 1$.
+    \end{itemize}
+
+    \item \textbf{Conclusion:}
+    A matrix that squares to the identity is diagonalizable. A diagonalizable matrix with all eigenvalues equal to $1$ must be the identity matrix. Therefore, $F^* |_{H^1} = \operatorname{Id}$.
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The map $F$ is a smooth transformation that behaves like a rigid "shift" or "translation". Because it has degree 1, it doesn't "flip" the torus inside-out or fold it over itself. Because it has no fixed points, it never pins any point down. When applied twice ($F^2 = \text{Id}$), everything perfectly returns to its origin. 
+The topological "shadow" of $F$ on the 1-dimensional holes must reflect these constraints. The Lefschetz formula beautifully balances the lack of fixed points against the degree, mathematically forcing the shadow on the loops to be entirely invisible. Thus, $F$ slides the torus along its existing loops without distorting their fundamental homological structure.
 \end{solution}
 
 \begin{exercise}
@@ -156,10 +425,50 @@ Thus $F^* = Id$.
 \end{exercise}
 
 \begin{solution}
-(a) $\dim(U(n)) = n^2$. $SU(n)$ is a hypersurface $\det A = 1$, so $\dim(SU(n)) = n^2 - 1$.
-$\dim(O(n)) = \frac{n(n-1)}{2}$. $SO(n)$ is the identity component, so same dimension $\frac{n(n-1)}{2}$.
-(b) $SU(n) \to S^{2n-1}$ fibration shows $\pi_1(SU(n)) = 0$ for $n \geq 2$.
-$SO(n)$ has $\pi_1(SO(2)) = \mathbb{Z}$ and $\pi_1(SO(n)) = \mathbb{Z}_2$ for $n \geq 3$ (the cover is $Spin(n)$).
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Lie Groups and Tangent Spaces:} The dimension of a matrix Lie group can be found by counting constraints on the components or looking at its tangent space (the Lie algebra).
+    \item \textbf{Fiber Bundles:} Matrix groups often act transitively on spheres. For instance, $SU(n)$ acts on the unit sphere $S^{2n-1}$ in $\mathbb{C}^n$, and the stabilizer of a point is isomorphic to $SU(n-1)$.
+    \item \textbf{Homotopy Exact Sequence:} A fibration $F \to E \to B$ yields a long exact sequence of homotopy groups: $\cdots \to \pi_2(B) \to \pi_1(F) \to \pi_1(E) \to \pi_1(B) \to \cdots$.
+\end{itemize}
+
+\medskip
+\textbf{Steps for (a) - Dimensions:}
+\begin{enumerate}
+    \item \textbf{Compute $\dim U(n)$:} The space of all $n \times n$ complex matrices has $2n^2$ real dimensions. The condition for unitarity is $A^\dagger A = I$. The matrix $A^\dagger A$ is Hermitian. A complex Hermitian matrix has $n$ real numbers on the diagonal and $n(n-1)/2$ complex numbers off the diagonal, totaling $n + 2(n(n-1)/2) = n^2$ real constraints. Therefore, $\dim U(n) = 2n^2 - n^2 = n^2$.
+    \item \textbf{Compute $\dim SU(n)$:} The group $SU(n)$ adds the condition $\det A = 1$. For $A \in U(n)$, $\det A$ is already restricted to the unit circle $S^1 \subset \mathbb{C}$, which is a 1-dimensional space. Forcing $\det A = 1$ adds 1 real constraint. Thus, $\dim SU(n) = n^2 - 1$.
+    \item \textbf{Compute $\dim O(n)$:} The space of $n \times n$ real matrices has $n^2$ dimensions. The orthogonality condition $A^T A = I$ means $A^T A$ is a real symmetric matrix. A real symmetric matrix has $n(n+1)/2$ independent entries. The constraint removes these degrees of freedom: $\dim O(n) = n^2 - n(n+1)/2 = n(n-1)/2$.
+    \item \textbf{Compute $\dim SO(n)$:} $O(n)$ consists of two disconnected components (matrices with $\det = 1$ and $\det = -1$). $SO(n)$ is simply the connected component containing the identity matrix. Since it's an open subset (a component) of $O(n)$, its dimension is the same: $\dim SO(n) = n(n-1)/2$.
+\end{enumerate}
+
+\medskip
+\textbf{Steps for (b) - Fundamental Groups ($\pi_1$):}
+\begin{enumerate}
+    \item \textbf{Analyze $SU(n)$:} 
+    \begin{itemize}
+        \item We use the fibration $SU(n-1) \to SU(n) \to S^{2n-1}$ (for $n \ge 2$).
+        \item The exact sequence includes: $\pi_2(S^{2n-1}) \to \pi_1(SU(n-1)) \to \pi_1(SU(n)) \to \pi_1(S^{2n-1})$.
+        \item For $n \ge 2$, the sphere $S^{2n-1}$ has dimension at least 3, so both $\pi_2$ and $\pi_1$ are $0$.
+        \item Thus, $\pi_1(SU(n-1)) \cong \pi_1(SU(n))$ for all $n \ge 2$. 
+        \item Since $SU(1)$ is just the trivial group $\{1\}$, $\pi_1(SU(1)) = 0$. By induction, $\pi_1(SU(n)) = 0$ for all $n$.
+    \end{itemize}
+    \item \textbf{Analyze $SO(n)$:}
+    \begin{itemize}
+        \item For $n=2$, a 2D rotation is determined by an angle $\theta \in [0, 2\pi)$. Thus $SO(2)$ is topologically the circle $S^1$. Therefore, $\pi_1(SO(2)) = \mathbb{Z}$.
+        \item For $n=3$, $SO(3)$ is homeomorphic to real projective space $\mathbb{RP}^3$ (rotations can be represented by solid ball of radius $\pi$ with antipodal points identified). Thus $\pi_1(SO(3)) = \mathbb{Z}_2$.
+        \item For $n > 3$, use the fibration $SO(n-1) \to SO(n) \to S^{n-1}$.
+        \item The exact sequence gives $\pi_2(S^{n-1}) \to \pi_1(SO(n-1)) \to \pi_1(SO(n)) \to \pi_1(S^{n-1})$.
+        \item Since $n > 3$, $n-1 \ge 3$, so $\pi_1(S^{n-1}) = \pi_2(S^{n-1}) = 0$.
+        \item Thus, $\pi_1(SO(n-1)) \cong \pi_1(SO(n))$. By induction starting from $n=3$, $\pi_1(SO(n)) = \mathbb{Z}_2$ for all $n \ge 3$.
+    \end{itemize}
+\end{enumerate}
+
+\medskip
+\textbf{Intuition:}
+The dimension of a matrix group is basically the number of "free knobs" you can turn to continuously deform the matrix while staying in the group. $U(n)$ is larger because complex numbers have two components each. 
+
+\medskip
+For the fundamental group $\pi_1$, we're asking if every smooth loop of matrices can be continuously shrunk to a point. For $SU(n)$, there's enough "room" in the complex dimensions to always untangle any loop without breaking the matrix properties, so the space is simply connected ($0$). But for real rotations $SO(n)$ in 3D or higher, there's a famous physical demonstration called the "belt trick" (or Dirac's belt): a $360^\circ$ rotation forms a loop in the space of rotations that \textit{cannot} be untangled, but performing the rotation twice ($720^\circ$) \textit{can} be untangled. This beautiful geometric fact is exactly what $\mathbb{Z}_2$ represents!
 \end{solution}
 
 \begin{exercise}

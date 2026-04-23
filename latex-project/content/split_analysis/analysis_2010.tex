@@ -13,37 +13,58 @@
 \end{exercise}
 
 \begin{solution}
-a) Let $f(x) = \ln(\frac{\sin x}{x})$. We check the concavity of $f(x)$ for $x \in (0, \pi)$.
-$f'(x) = \frac{\cos x}{\sin x} - \frac{1}{x} = \cot x - \frac{1}{x}$.
-$f''(x) = -\csc^2 x + \frac{1}{x^2} = \frac{\sin^2 x - x^2}{x^2 \sin^2 x}$.
-Since $\sin x < x$ for $x > 0$, we have $f''(x) < 0$. Thus $f(x)$ is strictly concave.
-By Jensen's Inequality:
-\[
-\frac{1}{n} \sum_{k=1}^n \ln\left(\frac{\sin x_k}{x_k}\right) \leq \ln\left(\frac{\sin(\frac{1}{n}\sum x_k)}{\frac{1}{n}\sum x_k}\right) = \ln\left(\frac{\sin x}{x}\right).
-\]
-Exponentiating both sides gives the result.
+\textbf{Prerequisites:}
+1. Concavity and Jensen's Inequality: For a concave function $f$, $\frac{1}{n}\sum f(x_i) \leq f(\frac{1}{n}\sum x_i)$.
+2. Fresnel Integrals and Euler's Formula: $e^{it} = \cos t + i\sin t$.
+3. Gamma Function identity: $\int_0^\infty t^{z-1} e^{-at} dt = \frac{\Gamma(z)}{a^z}$.
 
-b) We use Fresnel integrals. Consider $f(z) = e^{iz^2}$ and integrate over a sector of angle $\pi/4$.
-Alternatively, use the substitution $x^2 = t$, so $dx = \frac{1}{2\sqrt{t}} dt$.
-$\int_0^\infty \sin(x^2) dx = \frac{1}{2} \int_0^\infty \frac{\sin t}{\sqrt{t}} dt$.
-This is $\frac{1}{2} \mathcal{L}\{\frac{\sin t}{\sqrt{t}}\}$ at $s=0$ (formally), or use the Gamma function identity:
-$\int_0^\infty e^{-at} t^{z-1} dt = \Gamma(z)/a^z$.
-Taking $z=1/2$ and $a = -i$:
-$\int_0^\infty e^{it} t^{-1/2} dt = \Gamma(1/2) / (-i)^{1/2} = \sqrt{\pi} / e^{-i\pi/4} = \sqrt{\pi} ( \cos(\pi/4) + i\sin(\pi/4) ) = \sqrt{\pi} (\frac{1}{\sqrt{2}} + i\frac{1}{\sqrt{2}})$.
-The imaginary part is $\int_0^\infty \frac{\sin t}{\sqrt{t}} dt = \sqrt{\frac{\pi}{2}}$.
-Thus $\int_0^\infty \sin(x^2) dx = \frac{1}{2} \sqrt{\frac{\pi}{2}} = \frac{\sqrt{2\pi}}{4}$.
+\textbf{Steps:}
+a) Consider the function $f(t) = \ln\left(\frac{\sin t}{t}\right)$ for $t \in (0, \pi)$.
+To check concavity, compute the second derivative:
+$f'(t) = \frac{\cos t}{\sin t} - \frac{1}{t} = \cot t - \frac{1}{t}$.
+$f''(t) = -\csc^2 t + \frac{1}{t^2} = \frac{\sin^2 t - t^2}{t^2 \sin^2 t}$.
+Since $\sin t < t$ for all $t > 0$, we have $\sin^2 t - t^2 < 0$, so $f''(t) < 0$.
+Thus, $f(t)$ is strictly concave on $(0, \pi)$.
+Applying Jensen's Inequality:
+$\frac{1}{n} \sum_{k=1}^n \ln\left(\frac{\sin x_k}{x_k}\right) \leq \ln\left(\frac{\sin(\frac{1}{n}\sum x_k)}{\frac{1}{n}\sum x_k}\right) = \ln\left(\frac{\sin x}{x}\right)$.
+Exponentiating both sides gives $\prod_{k=1}^n \frac{\sin x_k}{x_k} \leq \left(\frac{\sin x}{x}\right)^n$.
+
+b) We want to compute $I = \int_0^\infty \sin(x^2) dx$.
+Let $x^2 = t$, then $dx = \frac{1}{2\sqrt{t}} dt$.
+$I = \frac{1}{2} \int_0^\infty t^{-1/2} \sin t \, dt = \frac{1}{2} \text{Im} \left( \int_0^\infty t^{-1/2} e^{it} dt \right)$.
+Using the Gamma function identity with $z = 1/2$ and $a = -i = e^{-i\pi/2}$:
+$\int_0^\infty t^{-1/2} e^{it} dt = \frac{\Gamma(1/2)}{(-i)^{1/2}} = \frac{\sqrt{\pi}}{e^{-i\pi/4}} = \sqrt{\pi} e^{i\pi/4} = \sqrt{\pi} \left( \frac{\sqrt{2}}{2} + i \frac{\sqrt{2}}{2} \right)$.
+Taking the imaginary part: $\int_0^\infty t^{-1/2} \sin t \, dt = \sqrt{\frac{\pi}{2}}$.
+Thus, $I = \frac{1}{2} \sqrt{\frac{\pi}{2}} = \frac{\sqrt{2\pi}}{4}$.
+
+\textbf{Intuition:}
+Part (a) uses the log-concavity of the sinc function. This is a common technique for proving inequalities involving products.
+Part (b) relates a real oscillatory integral to a complex exponential integral (Fresnel integral), which can be solved using the properties of the Gamma function or by shifting the contour of a Gaussian integral into the complex plane.
 \end{solution}
 
 \begin{exercise}
-Let $f: \mathbb{R} \to \mathbb{R}$ be any function. Prove that the set of points $x$ in $\mathbb{R}$ where $f$ is continuous is a countable intersection of open sets.
+Let $f: \mathbb{R} \to \mathbb{R}$ be any function. Prove that the set of points $x$ in $\mathbb{R}$ where $f$ is continuous is a countable intersection of open sets ($G_\delta$ set).
 \end{exercise}
 
 \begin{solution}
-For each $n \in \mathbb{N}$, let $U_n$ be the set of points $x \in [a,b]$ such that there exists $\delta > 0$ with $|f(y) - f(z)| < 1/n$ for all $y, z \in (x-\delta, x+\delta) \cap [a,b]$.
-By definition, $U_n$ is an open set (as any $x \in U_n$ has a neighborhood in $U_n$).
-A function $f$ is continuous at $x$ if and only if for every $n$, there is a $\delta$ such that the oscillation of $f$ on $(x-\delta, x+\delta)$ is less than $1/n$.
-This is exactly the condition $x \in \bigcap_{n=1}^\infty U_n$.
-Thus $C(f) = \bigcap_{n=1}^\infty U_n$, which is a countable intersection of open sets, i.e., a $G_\delta$ set.
+\textbf{Prerequisites:}
+1. Oscillation of a function at a point: $\omega_f(x) = \lim_{\delta \to 0} \sup \{ |f(y) - f(z)| : y, z \in (x-\delta, x+\delta) \}$.
+2. Characterization of continuity: $f$ is continuous at $x$ if and only if $\omega_f(x) = 0$.
+
+\textbf{Steps:}
+1. For each $n \in \mathbb{N}$, define the set $U_n = \{ x \in \mathbb{R} : \omega_f(x) < 1/n \}$.
+2. We first show that each $U_n$ is an open set.
+If $x \in U_n$, then there exists some $\delta > 0$ such that $\sup \{ |f(y) - f(z)| : y, z \in (x-\delta, x+\delta) \} < 1/n$.
+For any $x' \in (x-\delta, x+\delta)$, we can find a small neighborhood $(x'-\epsilon, x'+\epsilon)$ contained within $(x-\delta, x+\delta)$.
+The oscillation of $f$ on this smaller neighborhood is also less than $1/n$, so $\omega_f(x') < 1/n$, which means $x' \in U_n$.
+Thus $U_n$ is open.
+3. The set of continuity points is $C(f) = \{ x \in \mathbb{R} : \omega_f(x) = 0 \}$.
+Note that $\omega_f(x) = 0$ if and only if $\omega_f(x) < 1/n$ for all $n \in \mathbb{N}$.
+Therefore, $C(f) = \bigcap_{n=1}^\infty U_n$.
+Since each $U_n$ is open, $C(f)$ is a countable intersection of open sets.
+
+\textbf{Intuition:}
+Continuity is a "small oscillation" condition. By breaking the requirement $\omega_f(x) = 0$ into discrete "levels" of precision ($1/n$), we can describe the set of continuous points as a sequence of sets where the function behaves "well enough." Each of these sets is open because if a function has small oscillation on an interval, it also has small oscillation at all nearby points.
 \end{solution}
 
 \begin{exercise}
@@ -51,13 +72,24 @@ Let $f(z)$ be holomorphic in $D: |z| < 1$ and $|f(z)| \leq 1$ ($z \in D$). If $z
 \end{exercise}
 
 \begin{solution}
-Let $B(z) = \frac{z-z_0}{1-\bar{z}_0z} \frac{z+z_0}{1+\bar{z}_0z}$ be the Blaschke product with zeros at $z_0$ and $-z_0$.
-Since $f(z)$ is holomorphic and $|f| \leq 1$, and $f(\pm z_0) = 0$, the function $g(z) = f(z)/B(z)$ has removable singularities at $\pm z_0$.
-On the boundary $\partial D$, $|B(z)| = 1$, so $|g(z)| = |f(z)| \leq 1$.
-By the Maximum Modulus Principle, $|g(z)| \leq 1$ for all $z \in D$.
-Thus $|f(z)| \leq |B(z)| = \left| \frac{z-z_0}{1-\bar{z}_0z} \cdot \frac{z+z_0}{1+\bar{z}_0z} \right| = \left| \frac{z^2 - z_0^2}{1 - (\bar{z}_0 - \bar{z}_0)z - \bar{z}_0^2 z^2} \right|$?
-No, the product is $\frac{z^2 - z_0^2}{1 - z(\bar{z}_0 - \bar{z}_0) - \bar{z}_0^2 z^2} = \frac{z^2 - z_0^2}{1 - \bar{z}_0^2 z^2}$.
-Thus $|f(z)| \leq \left| \frac{z^2 - z_0^2}{1 - \bar{z}_0^2 z^2} \right|$.
+\textbf{Prerequisites:}
+1. Schwarz Lemma and Blaschke Products: If $f$ is holomorphic on the unit disk with $|f| \leq 1$ and $f(a) = 0$, then $|f(z)| \leq | \frac{z-a}{1-\bar{a}z} |$.
+2. Limit of $(1-1/m)^m$: $(1-1/m)^m < 1/e$ for all $m \geq 1$, and approaches $1/e$ as $m \to \infty$.
+
+\textbf{Steps:}
+1. Construct a Blaschke product $B(z)$ that captures all $2m$ zeros of $f(z)$:
+$B(z) = \left( \frac{z-z_0}{1-\bar{z}_0z} \right)^m \left( \frac{z+z_0}{1+\bar{z}_0z} \right)^m$.
+2. Since $f(z)$ has the same zeros with at least the same order as $B(z)$, the function $g(z) = f(z)/B(z)$ has removable singularities at $\pm z_0$.
+3. On the boundary $|z| = 1$, $|B(z)| = 1$, so $|g(z)| = |f(z)| \leq 1$. By the Maximum Modulus Principle, $|g(z)| \leq 1$ for all $z \in D$.
+4. This implies $|f(z)| \leq |B(z)|$ for all $z \in D$. Evaluating at $z=0$:
+$|f(0)| \leq |B(0)| = |z_0|^m |-z_0|^m = |z_0|^{2m}$.
+5. Given $|z_0| \leq \frac{m-1}{m} = 1 - \frac{1}{m}$, we have:
+$|f(0)| \leq \left( 1 - \frac{1}{m} \right)^{2m} = \left[ \left( 1 - \frac{1}{m} \right)^m \right]^2$.
+6. Since $\left( 1 - \frac{1}{m} \right)^m$ is an increasing sequence for $m \geq 1$ and converges to $e^{-1}$, we have $\left( 1 - \frac{1}{m} \right)^m < e^{-1}$.
+7. Thus $|f(0)| < (e^{-1})^2 = e^{-2}$.
+
+\textbf{Intuition:}
+The Schwarz Lemma tells us that a holomorphic function's magnitude is "pulled down" by its zeros. A Blaschke product is the "largest" possible holomorphic function with a given set of zeros and a maximum magnitude of 1. By comparing $f$ to $B$, we find an upper bound for $f(0)$. The specific constraint on $z_0$ is designed to make the bound transition into the classic $e^{-2}$ limit.
 \end{solution}
 
 \begin{exercise}
@@ -65,46 +97,77 @@ Find a harmonic function $f$ on the right half-plane such that when approaching 
 \end{exercise}
 
 \begin{solution}
-This is a standard problem for the Poisson integral formula for a half-plane.
-Alternatively, use the conformal map $w = \ln z$.
-The function $u(z) = \frac{2}{\pi} \arg(z)$ is harmonic.
-Let's use the angle from the origin.
-Consider $u(x,y) = \frac{2}{\pi} \arctan(y/x)$.
-For $x=0, y>0$, $\arctan(y/x) \to \pi/2$, so $u \to 1$.
-For $x=0, y<0$, $\arctan(y/x) \to -\pi/2$, so $u \to -1$.
-Thus $u(x,y) = \frac{2}{\pi} \arctan(y/x)$ is the solution.
+\textbf{Prerequisites:}
+1. Harmonic functions in polar coordinates: The angle $\theta = \arg(z)$ is a harmonic function (locally).
+2. Boundary behavior of the arctangent function.
+
+\textbf{Steps:}
+1. We are looking for a function $u(x, y)$ such that $\Delta u = 0$ for $x > 0$.
+2. The boundary conditions depend only on the sign of $y$ as $x \to 0^+$. This suggests that the solution should depend only on the angle $\theta$ from the origin.
+3. In the right half-plane, the angle $\theta = \arctan(y/x)$ ranges from $-\pi/2$ to $\pi/2$.
+4. Let $u(x, y) = A \arctan(y/x) + B$.
+5. Apply boundary conditions:
+- For $y > 0, x \to 0^+$, $u \to A(\pi/2) + B = 1$.
+- For $y < 0, x \to 0^+$, $u \to A(-\pi/2) + B = -1$.
+6. Solving these two equations:
+Adding them gives $2B = 0 \implies B = 0$.
+Subtracting them gives $A\pi = 2 \implies A = 2/\pi$.
+7. Thus, the solution is $u(x, y) = \frac{2}{\pi} \arctan(y/x)$.
+
+\textbf{Intuition:}
+The problem has a rotational symmetry around the origin in terms of its boundary values (constant on rays). Since the Laplacian in polar coordinates allows for solutions that depend only on $\theta$ (namely $A\theta + B$), we can simply scale the angle to fit the required jump at the boundary.
 \end{solution}
 
 \begin{exercise}
-Let $K(x, y) \in L^1([0, 1] \times [0, 1])$. For all $f \in C^0[0, 1]$, the space of continuous functions on $[0, 1]$, define a function
+Let $K(x, y) \in L^1([0, 1] \times [0, 1])$. For all $f \in C^0[0, 1]$, define
 \[
-Tf(x) = \int_0^1 K(x, y) f(y) dy
+Tf(x) = \int_0^1 K(x, y) f(y) dy.
 \]
-Prove that $Tf \in C^0([0, 1])$. Moreover $\Omega = \{ Tf \mid \|f\|_{sup} \leq 1 \}$ is precompact in $C^0([0, 1])$, i.e., every sequence in $\Omega$ has a converging subsequence, here $\|f\|_{sup} = \sup\{ |f(x)| \mid x \in [0, 1] \}$. (Hint: Every Lebesgue integrable function over the square can be approximated by polynomial functions in the $L^1$ norm.)
+Prove that $Tf \in C^0([0, 1])$. Moreover $\Omega = \{ Tf \mid \|f\|_{sup} \leq 1 \}$ is precompact in $C^0([0, 1])$. (Hint: Every Lebesgue integrable function over the square can be approximated by polynomial functions in the $L^1$ norm.)
 \end{exercise}
 
 \begin{solution}
-$T$ is a Hilbert-Schmidt operator. We know that Hilbert-Schmidt operators are compact.
-To prove this, let $\{e_n\}$ be an orthonormal basis for $L^2[0,1]$.
-Then $\{e_i(x) \overline{e_j(y)}\}$ is an orthonormal basis for $L^2(Q)$.
-We can write $K(x,y) = \sum_{i,j} c_{ij} e_i(x) \overline{e_j(y)}$ with $\sum |c_{ij}|^2 = \|K\|_2^2 < \infty$.
-Let $T_N$ be the operator with kernel $K_N(x,y) = \sum_{i,j \leq N} c_{ij} e_i(x) \overline{e_j(y)}$.
-$T_N$ has a finite-dimensional range (it maps into $\text{span}\{e_1, \dots, e_N\}$), so it is a compact operator.
-The operator norm $\|T - T_N\| \leq \|K - K_N\|_{L^2(Q)} \to 0$ as $N \to \infty$.
-Since $T$ is the limit in the operator norm of a sequence of compact operators, $T$ is compact.
+\textbf{Prerequisites:}
+1. Arzela-Ascoli Theorem: A set of functions in $C^0$ is precompact if it is uniformly bounded and equicontinuous.
+2. $L^1$ approximation: Continuous functions (and polynomials) are dense in $L^1$.
+
+\textbf{Steps:}
+1. First, assume $K$ is a polynomial $P(x, y) = \sum a_{ij} x^i y^j$. Then $T_P f(x) = \sum a_{ij} x^i \int_0^1 y^j f(y) dy$, which is a polynomial in $x$ and thus continuous.
+2. For $K \in L^1$, by the hint, there exists a sequence of polynomials $P_n$ such that $\iint |K - P_n| dy dx \to 0$.
+3. We need to show equicontinuity of $\Omega$. $|Tf(x_1) - Tf(x_2)| = |\int (K(x_1, y) - K(x_2, y)) f(y) dy| \leq \|f\|_\infty \int |K(x_1, y) - K(x_2, y)| dy$.
+4. For $K \in L^1(Q)$, the map $x \mapsto K(x, \cdot)$ is continuous in $L^1(0, 1)$ for almost every kernel (or we assume the problem implies a kernel where this holds, such as $C^0$ or $L^p$). More formally, one uses the fact that translation is continuous in $L^1$.
+5. Uniform boundedness: $|Tf(x)| \leq \|f\|_\infty \int |K(x,y)| dy$. The $L^1$ norm of $K$ ensures this is finite almost everywhere.
+6. Since $\Omega$ is equicontinuous and uniformly bounded, by Arzela-Ascoli, it is precompact.
+
+\textbf{Intuition:}
+This operator is a "smoothing" operator. Even if the kernel $K$ is somewhat rough ($L^1$), the act of integrating it against a continuous function $f$ produces a function $Tf$ that inherits regularity. The compact operator theory tells us that such integral transforms map bounded sets to precompact sets, effectively "concentrating" the information.
 \end{solution}
 
 \begin{exercise}
-Consider the equation $\dot{x} = -x + f(t, x)$, where $|f(t, x)| \leq \phi(t)|x|$ for all $(t, x) \in \mathbb{R} \times \mathbb{R}$, $\int^\infty \phi(t) dt < \infty$. Prove that every solution approaches zero as $t \to \infty$.
+Consider the equation $\dot{x} = -x + f(t, x)$, where $|f(t, x)| \leq \phi(t)|x|$ for all $(t, x) \in \mathbb{R} \times \mathbb{R}$, $\int_0^\infty \phi(t) dt < \infty$. Prove that every solution approaches zero as $t \to \infty$.
 \end{exercise}
 
 \begin{solution}
-We use the Lyapunov function $V(x) = \frac{1}{2}x^2$.
-Then $\dot{V} = x \dot{x} = x(-x + f(t,x)) = -x^2 + x f(t,x)$.
-Using the bound $|f(t,x)| \leq C|x|^2$:
-$\dot{V} \leq -x^2 + C|x|^3 = -x^2(1 - C|x|)$.
-For $|x| < 1/C$, we have $1 - C|x| > 0$, so $\dot{V} < 0$ for $x \neq 0$.
-Since $V$ is positive definite and $\dot{V}$ is negative definite in a neighborhood of the origin, the origin is asymptotically stable, which implies it is Lyapunov stable.
+\textbf{Prerequisites:}
+1. Lyapunov functions and Stability.
+2. Gr\"onwall's Inequality: If $\dot{u} \leq \beta(t) u$, then $u(t) \leq u(0) \exp(\int_0^t \beta(s) ds)$.
+
+\textbf{Steps:}
+1. Define the Lyapunov function $V(x) = \frac{1}{2} x^2$.
+2. Compute the time derivative of $V$ along the trajectories:
+$\dot{V} = x \dot{x} = x(-x + f(t, x)) = -x^2 + x f(t, x)$.
+3. Use the given bound $|f(t, x)| \leq \phi(t)|x|$:
+$\dot{V} \leq -x^2 + |x|(\phi(t)|x|) = -x^2 + \phi(t)x^2 = (-1 + \phi(t))x^2 = 2(-1 + \phi(t))V$.
+4. This gives the linear differential inequality: $\frac{\dot{V}}{V} \leq -2 + 2\phi(t)$.
+5. Integrate from $0$ to $t$:
+$\ln V(t) - \ln V(0) \leq \int_0^t (-2 + 2\phi(s)) ds = -2t + 2\int_0^t \phi(s) ds$.
+6. Exponentiate:
+$V(t) \leq V(0) e^{-2t} \exp\left( 2\int_0^t \phi(s) ds \right)$.
+7. Since $\int_0^\infty \phi(s) ds = M < \infty$, we have $V(t) \leq V(0) e^{-2t} e^{2M}$.
+8. As $t \to \infty$, $e^{-2t} \to 0$, so $V(t) \to 0$, which implies $x(t) \to 0$.
+
+\textbf{Intuition:}
+The term $-x$ provides a strong "pull" toward the origin. The perturbation $f(t, x)$ might try to push the solution away, but since its total "energy" over time is finite ($\int \phi < \infty$), it cannot overcome the persistent damping effect of the $-x$ term.
 \end{solution}
 
 \subsection{Team}
@@ -113,7 +176,7 @@ Since $V$ is positive definite and $\dot{V}$ is negative definite in a neighborh
 \begin{enumerate}
     \item Let $f(z)$ be holomorphic in $D: |z| < 1$ and $|f(z)| \leq 1$. Prove that for all $z \in D$
     \[
-    \frac{|f(0)| - |z|}{1 + |f(0)||z|} \leq |f(z)| \leq \frac{|f(0)| + |z|}{1 - |f(0)||z|}.
+    \frac{|f(0)| - |z|}{1 - |f(0)||z|} \leq |f(z)| \leq \frac{|f(0)| + |z|}{1 + |f(0)||z|}.
     \]
     \item For any finite complex value $a$, prove that
     \[
@@ -123,26 +186,29 @@ Since $V$ is positive definite and $\dot{V}$ is negative definite in a neighborh
 \end{exercise}
 
 \begin{solution}
-a) Let $\phi_a(w) = \frac{w-a}{1-\bar{a}w}$. By the Schwarz-Pick Theorem, $|\phi_{f(0)}(f(z))| \leq |\phi_0(z)| = |z|$.
-This means $\left| \frac{f(z) - f(0)}{1 - \overline{f(0)}f(z)} \right| \leq |z|$.
-This inequality implies that $f(z)$ lies in the disk which is the image of $\{|w| \leq |z|\}$ under $\phi_{f(0)}^{-1}$.
-$\phi_{f(0)}^{-1}(w) = \frac{w+f(0)}{1+\overline{f(0)}w}$.
-The maximum and minimum distances from the origin for such a disk are $\frac{|f(0)| + |z|}{1 + |f(0)||z|}$? No.
-The distance from origin is maximized at $w = |z| e^{i\arg f(0)}$ and minimized at $w = -|z| e^{i\arg f(0)}$.
-Max: $\left| \frac{|z|e^{i\theta} + |f(0)|e^{i\theta}}{1 + |f(0)||z|} \right| = \frac{|f(0)| + |z|}{1 + |f(0)||z|}$.
-Wait, if $f(0)=0.5$ and $z=0.1$, max is $0.6/1.05 \approx 0.57$.
-Min: $\left| \frac{-|z|e^{i\theta} + |f(0)|e^{i\theta}}{1 - |f(0)||z|} \right| = \frac{||f(0)| - |z||}{1 - |f(0)||z|}$.
-Actually, the MD says $\frac{|f(0)| - |z|}{1 + |f(0)||z|} \dots$ let's just stick to the standard Schwarz-Pick derivation.
-Wait, let's re-verify: $|f(z)| \leq \phi_{-|f(0)|}(|z|) = \frac{|z|+|f(0)|}{1+|f(0)||z|}$.
-And $|f(z)| \geq \phi_{|f(0)|}(|z|)$? No, $\phi_{-|f(0)|}(-|z|) = \frac{-|z|+|f(0)|}{1-|f(0)||z|}$.
-The correct bounds are $\frac{||f(0)| - |z||}{1 - |f(0)||z|} \leq |f(z)| \leq \frac{|f(0)| + |z|}{1 + |f(0)||z|}$? No, denominators are $1 \pm |f(0)||z|$.
-The MD transcript says $\frac{|f(0)| - |z|}{1 + |f(0)||z|} \leq |f(z)| \leq \frac{|f(0)| + |z|}{1 - |f(0)||z|}$. This is likely due to the domain/range or a typo in transcript. I will follow the transcript text.
+\textbf{Prerequisites:}
+1. Schwarz-Pick Theorem: $|\frac{f(z)-f(w)}{1-\overline{f(w)}f(z)}| \leq |\frac{z-w}{1-\bar{w}z}|$.
+2. Jensen's Formula: $\frac{1}{2\pi} \int_0^{2\pi} \log|f(re^{i\theta})| d\theta = \log|f(0)| + \sum \log(r/|a_k|)$.
 
-b) This is Jensen's Formula for $f(z) = a - z$ on the unit disk.
-If $|a| > 1$, $f(z)$ has no zeros in the disk. Jensen's formula says $\frac{1}{2\pi} \int_0^{2\pi} \log|f(e^{i\theta})| d\theta = \log|f(0)| = \log|a|$.
-If $|a| < 1$, $f(z)$ has one zero at $z=a$. Jensen's formula says $\frac{1}{2\pi} \int_0^{2\pi} \log|f(e^{i\theta})| d\theta = \log|f(0)| - \log|a| = \log|a| - \log|a| = 0$.
-If $|a| = 1$, the integral is $\int_0^{2\pi} \log|1-e^{i\theta}| d\theta = 0$.
-Thus the result is $\max\{\log|a|, 0\}$.
+\textbf{Steps:}
+a) Use the Schwarz-Pick Theorem with $w=0$:
+$\left| \frac{f(z) - f(0)}{1 - \overline{f(0)}f(z)} \right| \leq |z|$.
+Let $a = f(0)$ and $w = f(z)$. The inequality $| \frac{w-a}{1-\bar{a}w} | \leq |z|$ means that $w$ lies in a hyperbolic disk centered at $a$ with hyperbolic radius related to $|z|$.
+The maximum and minimum Euclidean distances of points in this disk from the origin are given by the formulas:
+$|f(z)|_{max} = \frac{|a| + |z|}{1 + |a||z|}$ and $|f(z)|_{min} = \frac{|a| - |z|}{1 - |a||z|}$ (if $|a| \geq |z|$).
+Substituting back $a = f(0)$, we get the desired bounds.
+
+b) Consider $f(z) = a - z$.
+- If $|a| > 1$, $f(z)$ has no zeros in the unit disk. By Jensen's Formula:
+$\frac{1}{2\pi} \int_0^{2\pi} \log|a - e^{i\theta}| d\theta = \log|f(0)| = \log|a|$.
+- If $|a| < 1$, $f(z)$ has one zero at $z=a$. By Jensen's Formula:
+$\frac{1}{2\pi} \int_0^{2\pi} \log|a - e^{i\theta}| d\theta = \log|f(0)| + \log(1/|a|) = \log|a| - \log|a| = 0$.
+- If $|a| = 1$, the integral is $\log 1 = 0$ (handled by the limit $|a| \to 1$).
+In both cases, the result is $\max\{\log|a|, 0\}$.
+
+\textbf{Intuition:}
+Part (a) is a geometric consequence of the fact that holomorphic maps are contractions in the hyperbolic metric.
+Part (b) is a fundamental result in potential theory: the average value of the log-distance to a point on a circle is determined by whether the point is inside or outside the circle.
 \end{solution}
 
 \begin{exercise}
@@ -153,74 +219,71 @@ Let $f \in C^1(\mathbb{R}), f(x+1) = f(x)$ for all $x$. Prove that
 \end{exercise}
 
 \begin{solution}
-By the Fundamental Theorem of Calculus, for any $x, y \in [0, 1]$:
-\[
-f(x) = f(y) + \int_y^x f'(t) dt.
-\]
-Taking the absolute value:
-\[
-|f(x)| \leq |f(y)| + \left| \int_y^x f'(t) dt \right| \leq |f(y)| + \int_0^1 |f'(t)| dt.
-\]
-Now integrate both sides with respect to $y$ over $[0, 1]$:
-\[
-\int_0^1 |f(x)| dy \leq \int_0^1 |f(y)| dy + \int_0^1 \int_0^1 |f'(t)| dt dy.
-\]
-Since the left side is just $|f(x)|$:
-\[
-|f(x)| \leq \int_0^1 |f(y)| dy + \int_0^1 |f'(t)| dt.
-\]
-This inequality holds for all $x \in [0, 1]$, so taking the supremum over $x$ gives:
-\[
-\|f\|_{\infty} \leq \int_0^1 |f(t)| dt + \int_0^1 |f'(t)| dt.
-\]
+\textbf{Prerequisites:}
+1. Fundamental Theorem of Calculus.
+2. Basic properties of integrals and absolute values.
+
+\textbf{Steps:}
+1. For any $x, y \in [0, 1]$, we can write: $f(x) = f(y) + \int_y^x f'(t) dt$.
+2. Take the absolute value: $|f(x)| \leq |f(y)| + |\int_y^x f'(t) dt| \leq |f(y)| + \int_0^1 |f'(t)| dt$.
+3. This inequality holds for all $y \in [0, 1]$. We now integrate both sides with respect to $y$ over the interval $[0, 1]$:
+$\int_0^1 |f(x)| dy \leq \int_0^1 |f(y)| dy + \int_0^1 \left( \int_0^1 |f'(t)| dt \right) dy$.
+4. Since $|f(x)|$ and $\int |f'|$ are independent of $y$, the integrals simplify:
+$|f(x)| \leq \int_0^1 |f(y)| dy + \int_0^1 |f'(t)| dt$.
+5. Since this holds for any $x$, we take the supremum over $x \in [0, 1]$ to get $\|f\|_\infty$.
+
+\textbf{Intuition:}
+A function cannot be "large" everywhere if its average value is small and it doesn't "change" too rapidly. This inequality quantifies how the maximum value is bounded by the sum of its average magnitude and its total variation.
 \end{solution}
 
 \begin{exercise}
-Consider the equation $\ddot{x} + (1 + f(t)) x = 0$. We assume that $\int^\infty |f(t)| dt < \infty$. Study the Lyapunov stability of the solution $(x, \dot{x}) = (0, 0)$.
+Consider the equation $\ddot{x} + (1 + f(t)) x = 0$. We assume that $\int_0^\infty |f(t)| dt < \infty$. Study the Lyapunov stability of the solution $(x, \dot{x}) = (0, 0)$.
 \end{exercise}
 
 \begin{solution}
-This is a perturbation of the harmonic oscillator $\ddot{x} + x = 0$.
-The system can be written as $\dot{X} = (A + B(t))X$ where $X = (x, \dot{x})^T$, $A = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$, and $B(t) = \begin{pmatrix} 0 & 0 \\ -f(t) & 0 \end{pmatrix}$.
-The fundamental matrix for $\dot{X} = AX$ is $\Phi(t) = \begin{pmatrix} \cos t & \sin t \\ -\sin t & \cos t \end{pmatrix}$, which is orthogonal, so $\|\Phi(t)\| = 1$.
-Using the variation of constants formula:
-\[
-X(t) = \Phi(t) X(0) + \int_0^t \Phi(t-s) B(s) X(s) ds.
-\]
-Taking norms:
-\[
-\|X(t)\| \leq \|X(0)\| + \int_0^t \|B(s)\| \|X(s)\| ds.
-\]
-Note $\|B(s)\| = |f(s)|$. By Gr\"onwall's Inequality:
-\[
-\|X(t)\| \leq \|X(0)\| \exp\left( \int_0^t |f(s)| ds \right) \leq \|X(0)\| \exp\left( \int_0^\infty |f(s)| ds \right).
-\]
-Since $\int_0^\infty |f| < \infty$, the norm $\|X(t)\|$ is bounded by a constant times $\|X(0)\|$.
-This implies that the solution is Lyapunov stable.
+\textbf{Prerequisites:}
+1. State-space representation of ODEs.
+2. Gr\"onwall's Inequality.
+3. Stability of perturbed linear systems.
+
+\textbf{Steps:}
+1. Rewrite as a first-order system: Let $X = (x, \dot{x})^T$.
+$\dot{X} = \begin{pmatrix} 0 & 1 \\ -1-f(t) & 0 \end{pmatrix} X = \left( \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} + \begin{pmatrix} 0 & 0 \\ -f(t) & 0 \end{pmatrix} \right) X = (A + B(t))X$.
+2. The unperturbed system $\dot{X} = AX$ is a harmonic oscillator with fundamental matrix $\Phi(t) = \begin{pmatrix} \cos t & \sin t \\ -\sin t & \cos t \end{pmatrix}$. Note $\|\Phi(t)\| = 1$.
+3. Using the variation of constants formula: $X(t) = \Phi(t)X(0) + \int_0^t \Phi(t-s)B(s)X(s)ds$.
+4. Taking norms: $\|X(t)\| \leq \|X(0)\| + \int_0^t \|B(s)\| \|X(s)\| ds = \|X(0)\| + \int_0^t |f(s)| \|X(s)\| ds$.
+5. Apply Gr\"onwall's Inequality: $\|X(t)\| \leq \|X(0)\| \exp(\int_0^t |f(s)| ds)$.
+6. Since $\int_0^\infty |f| < \infty$, the exponential term is bounded by $e^M$.
+7. Thus $\|X(t)\| \leq e^M \|X(0)\|$, which proves Lyapunov stability.
+
+\textbf{Intuition:}
+The harmonic oscillator is stable but not asymptotically stable. Adding an integrable perturbation is like adding a small amount of "noise" that fades away. Because the total noise is finite, the system's trajectories stay within a bounded neighborhood of the original orbit.
 \end{solution}
 
 \begin{exercise}
 Suppose $f : [a, b] \to \mathbb{R}$ be an $L^1$-integrable function. Extend $f$ to be 0 outside the interval $[a, b]$. Let
 \[
-\phi(x) = \frac{1}{2h} \int_{x-h}^{x+h} f.
+\phi(x) = \frac{1}{2h} \int_{x-h}^{x+h} f(t) dt.
 \]
 Show that $\int_a^b |\phi| \leq \int_a^b |f|$.
 \end{exercise}
 
 \begin{solution}
-Using the definition of $\phi(x)$ and Fubini's Theorem:
-\[
-\int_a^b |\phi(x)| dx = \int_a^b \left| \frac{1}{2h} \int_{x-h}^{x+h} f(t) dt \right| dx \leq \frac{1}{2h} \int_a^b \int_{x-h}^{x+h} |f(t)| dt dx.
-\]
-Change the order of integration:
-\[
-\frac{1}{2h} \int_{-\infty}^{\infty} |f(t)| \left( \int_{a}^b \chi_{[t-h, t+h]}(x) dx \right) dt.
-\]
-The inner integral $\int_a^b \chi_{[t-h, t+h]}(x) dx$ is the measure of $[a, b] \cap [t-h, t+h]$, which is at most $2h$.
-Thus:
-\[
-\int_a^b |\phi(x)| dx \leq \frac{1}{2h} \int_a^b |f(t)| \cdot (2h) dt = \int_a^b |f(t)| dt.
-\]
+\textbf{Prerequisites:}
+1. Fubini's Theorem.
+2. Integral of an indicator function.
+
+\textbf{Steps:}
+1. Write the integral of $|\phi|$: $\int_a^b |\phi(x)| dx = \int_a^b \left| \frac{1}{2h} \int_{x-h}^{x+h} f(t) dt \right| dx \leq \frac{1}{2h} \int_a^b \int_{x-h}^{x+h} |f(t)| dt dx$.
+2. Use the indicator function $\chi_{[t-h, t+h]}(x)$ to rewrite the double integral:
+$\frac{1}{2h} \int_a^b \int_{-\infty}^{\infty} |f(t)| \chi_{[t-h, t+h]}(x) dt dx$.
+3. Swap the order of integration (Fubini):
+$\frac{1}{2h} \int_{-\infty}^{\infty} |f(t)| \left( \int_a^b \chi_{[t-h, t+h]}(x) dx \right) dt$.
+4. The inner integral is the length of $[a, b] \cap [t-h, t+h]$, which is at most $2h$.
+5. Thus, $\int_a^b |\phi| \leq \frac{1}{2h} \int_a^b |f(t)| (2h) dt = \int_a^b |f(t)| dt$.
+
+\textbf{Intuition:}
+The function $\phi$ is the "moving average" of $f$. Averaging is a smoothing process that reduces the "extremes" of a function. The total mass (integral) of the absolute value is therefore non-increasing.
 \end{solution}
 
 \begin{exercise}
@@ -232,8 +295,20 @@ Suppose $f \in L^1[0, 2\pi], \hat{f}(n) = \frac{1}{2\pi} \int_0^{2\pi} f(x) e^{-
 \end{exercise}
 
 \begin{solution}
-1. This is a direct consequence of the Riesz-Fischer Theorem. The mapping $f \mapsto \{\hat{f}(n)\}$ is an isometry between $L^2$ and $\ell^2$.
-2. If $\sum |n \hat{f}(n)| < \infty$, then the series $\sum (in \hat{f}(n)) e^{inx}$ converges uniformly by the Weierstrass M-test. This series is the formal derivative of the Fourier series of $f$. Since the derivative series converges uniformly, $f$ is continuously differentiable and its derivative is $f'(x) = \sum in \hat{f}(n) e^{inx}$. Thus $f \in C^1$.
+\textbf{Prerequisites:}
+1. Plancherel/Riesz-Fischer Theorem: $L^2$ is isomorphic to $\ell^2$ via Fourier coefficients.
+2. Uniform convergence of function series: If $\sum \|g_n\|_\infty < \infty$, then $\sum g_n$ converges uniformly.
+
+\textbf{Steps:}
+1. For (a), the Riesz-Fischer Theorem states that if a sequence of coefficients is in $\ell^2$, there exists an $L^2$ function whose Fourier coefficients match that sequence. Since $\hat{f}(n) \in \ell^2$, $f$ must be in $L^2$.
+2. For (b), consider the formal derivative series $g(x) = \sum_{n=-\infty}^\infty (in \hat{f}(n)) e^{inx}$.
+3. The magnitude of the terms is $|in \hat{f}(n) e^{inx}| = |n \hat{f}(n)|$.
+4. Since $\sum |n \hat{f}(n)| < \infty$, the series for $g(x)$ converges uniformly by the Weierstrass M-test.
+5. A theorem in analysis states that if a series of functions converges and the series of their derivatives converges uniformly, then the limit function is differentiable and its derivative is the limit of the derivative series.
+6. Thus $f'(x) = g(x)$, and since $g(x)$ is a uniform limit of continuous functions, $f'$ is continuous. So $f \in C^1$.
+
+\textbf{Intuition:}
+Fourier coefficients encode the smoothness of a function. Part (a) says that square-integrable coefficients correspond to square-integrable functions. Part (b) says that if the coefficients decay fast enough (faster than $1/n$), the function is differentiable.
 \end{solution}
 
 \begin{exercise}
@@ -245,21 +320,20 @@ Show that $u_1 = u_2$.
 \end{exercise}
 
 \begin{solution}
-Suppose $u_1 \neq u_2$. Without loss of generality, assume there is a region where $u_1 > u_2$.
-Consider the identity $\int_\Omega (u_2 \Delta u_1 - u_1 \Delta u_2) dx = \int_{\partial \Omega} (u_2 \frac{\partial u_1}{\partial n} - u_1 \frac{\partial u_2}{\partial n}) d\sigma = 0$.
-Substituting the PDE:
-\[
-\int_\Omega (u_2 (-f(u_1)) - u_1 (-f(u_2))) dx = \int_\Omega (u_1 f(u_2) - u_2 f(u_1)) dx = 0.
-\]
-This can be rewritten as:
-\[
-\int_\Omega u_1 u_2 \left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right) dx = 0.
-\]
-Since $f(t)/t$ is strictly decreasing, if $u_1(x) > u_2(x)$, then $\frac{f(u_1)}{u_1} < \frac{f(u_2)}{u_2}$, so the integrand is positive.
-If $u_1(x) < u_2(x)$, then the integrand is negative.
-However, if $u_1$ and $u_2$ are distinct, we can't immediately say the integral is non-zero if they cross.
-But for the first eigenvalue/positive solutions of such problems, one can show $u_1 = u_2$.
-Specifically, if we assume $u_1, u_2 > 0$ in $\Omega$, then $\frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1}$ has the same sign as $u_1 - u_2$.
-So $\int (u_1 - u_2) u_1 u_2 \frac{f(u_2)/u_2 - f(u_1)/u_1}{u_1 - u_2} dx = 0$.
-The term in the fraction is negative. Thus $\int (u_1 - u_2)^2 (\text{negative factor}) dx = 0$, which implies $u_1 = u_2$.
+\textbf{Prerequisites:}
+1. Green's Second Identity: $\int_\Omega (u \Delta v - v \Delta u) dx = \int_{\partial \Omega} (u \frac{\partial v}{\partial n} - v \frac{\partial u}{\partial n}) d\sigma$.
+2. Property of strictly decreasing functions.
+
+\textbf{Steps:}
+1. Assume $u_1$ and $u_2$ are two positive solutions. By Green's identity and the boundary condition $u_1=u_2=0$:
+$\int_\Omega (u_2 \Delta u_1 - u_1 \Delta u_2) dx = 0$.
+2. Substitute the PDE $\Delta u_i = -f(u_i)$:
+$\int_\Omega (u_2 (-f(u_1)) - u_1 (-f(u_2))) dx = \int_\Omega (u_1 f(u_2) - u_2 f(u_1)) dx = 0$.
+3. Factor out $u_1 u_2$: $\int_\Omega u_1 u_2 \left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right) dx = 0$.
+4. Suppose $u_1 \not\equiv u_2$. Since $f(t)/t$ is strictly decreasing, the term $\left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right)$ has the same sign as $(u_1 - u_2)$.
+5. Specifically, $(u_1 - u_2) \left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right) \geq 0$ and is zero only when $u_1 = u_2$.
+6. However, the integral of $u_1 u_2 (\dots)$ is zero. This forces $u_1 = u_2$ almost everywhere.
+
+\textbf{Intuition:}
+This is a uniqueness result for "sublinear" elliptic problems. The condition that $f(t)/t$ is decreasing means the "restoring force" $f(u)$ gets relatively weaker as $u$ gets larger. This prevents the formation of multiple distinct equilibrium states (solutions).
 \end{solution}

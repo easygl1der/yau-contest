@@ -13,29 +13,26 @@ tends to $f(x)$ for a.e. $x$, as $r \to 1$, $r < 1$. Here $a_n = \frac{1}{2\pi}\
 \begin{solution}
 \textbf{Prerequisites:}
 To understand this problem, you should be familiar with:
-1. \textbf{Fourier Series:} Representing an integrable function as a sum of complex exponentials.
-2. \textbf{Convolutions and Kernels:} The process of smoothing a function by averaging it with a kernel function.
-3. \textbf{Poisson Kernel:} A specific kernel $P_r(\theta)$ used to define the Abel sum of a series.
-4. \textbf{Approximate Identities:} Sequences of functions that "concentrate" their mass at zero, acting like a Dirac delta function in the limit.
-5. \textbf{Lebesgue Points:} Points where a function is "well-behaved" in an average sense; almost every point for an integrable function is a Lebesgue point.
+\begin{itemize}
+    \item \textbf{Fourier Series:} Representing an integrable function as a sum of complex exponentials.
+    \item \textbf{Poisson Kernel:} A specific kernel $P_r(\theta)$ used to define the Abel sum of a series.
+    \item \textbf{Approximate Identities:} Sequences of functions that "concentrate" their mass at zero, acting like a Dirac delta function in the limit.
+    \item \textbf{Lebesgue Points:} Points where a function is "well-behaved" in an average sense; almost every point for an integrable function is a Lebesgue point.
+\end{itemize}
 
-\par\vspace{1em}
 \textbf{Steps:}
-1. \textbf{Identify the Abel Sum:} The given sum $S_r(x) = \sum_{n=-\infty}^{\infty} a_n r^{|n|}e^{inx}$ is precisely the Abel sum of the Fourier series of $f$. We replace the coefficients $a_n$ with their integral definition: $a_n = \frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)e^{-int}\,dt$.
+\begin{enumerate}
+    \item \textbf{Identify the Abel Sum:} The given sum $S_r(x) = \sum_{n=-\infty}^{\infty} a_n r^{|n|}e^{inx}$ is precisely the Abel sum of the Fourier series of $f$. We replace the coefficients $a_n$ with their integral definition: $a_n = \frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)e^{-int}\,dt$.
+    \item \textbf{Express as a Convolution:} By substituting the definition of $a_n$ into the sum and swapping the order of summation and integration, we get:
+    \[ S_r(x) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(t) \left( \sum_{n=-\infty}^{\infty} r^{|n|} e^{in(x-t)} \right) dt \]
+    The term in the parentheses is the \textbf{Poisson Kernel}, $P_r(x-t)$.
+    \item \textbf{Analyze the Poisson Kernel:} The Poisson kernel integrates to 1 and satisfies the properties of an approximate identity as $r \to 1^-$. 
+    \item \textbf{Apply Convergence Results:} Because $P_r$ is an approximate identity, $(f * P_r)(x)$ converges to $f(x)$ at every \textbf{Lebesgue point} of $f$. 
+    \item \textbf{Conclusion:} By the Lebesgue Differentiation Theorem, almost every point $x$ is a Lebesgue point for $f \in L^1$. Thus, $S_r(x) \to f(x)$ for a.e. $x$.
+\end{enumerate}
 
-2. \textbf{Express as a Convolution:} By substituting the definition of $a_n$ into the sum and swapping the order of summation and integration (justified by absolute convergence for $r < 1$), we get:
-\[ S_r(x) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(t) \left( \sum_{n=-\infty}^{\infty} r^{|n|} e^{in(x-t)} \right) dt \]
-The term in the parentheses is the \textbf{Poisson Kernel}, $P_r(x-t) = \sum_{n=-\infty}^{\infty} r^{|n|} e^{in(x-t)}$.
-
-3. \textbf{Analyze the Poisson Kernel:} The Poisson kernel can be written in closed form as $P_r(\theta) = \frac{1-r^2}{1-2r\cos\theta + r^2}$. As $r \to 1^-$, this kernel becomes narrower and taller, with its peak at $\theta = 0$. Critically, the integral of $P_r$ over $[-\pi, \pi]$ is always 1.
-
-4. \textbf{Apply the Theory of Approximate Identities:} Because $P_r$ is an approximate identity, the convolution $(f * P_r)(x)$ converges to $f(x)$ at every \textbf{Lebesgue point} of $f$. A point $x$ is a Lebesgue point if $\lim_{h \to 0} \frac{1}{2h} \int_{x-h}^{x+h} |f(t) - f(x)| dt = 0$.
-
-5. \textbf{Conclusion via Lebesgue Differentiation Theorem:} According to the Lebesgue Differentiation Theorem, for any function $f \in L^1([-\pi, \pi])$, almost every point $x$ is a Lebesgue point. Therefore, $S_r(x) \to f(x)$ for almost everywhere (a.e.) $x$ as $r \to 1^-$.
-
-\par\vspace{1em}
 \textbf{Intuition:}
-Think of the Abel sum as a "smoothed" version of the original function. When we sum the Fourier series directly, it might not converge because the high-frequency components oscillate too much. By multiplying by $r^{|n|}$, we "dampen" the high frequencies. As $r$ gets closer to 1, we let more and more of the high-frequency information back in. Because the Poisson kernel is "well-behaved" (it is positive and integrates to 1), this dampening process is very stable and recovers the original function at almost all points.
+Multiplying Fourier coefficients by $r^{|n|}$ "dampens" high-frequency oscillations. As $r \to 1$, we slowly re-introduce these frequencies. Since the Poisson kernel is a positive averaging operator that focuses on the value at $x$, it successfully reconstructs the function almost everywhere.
 \end{solution}
 
 \begin{exercise}
@@ -48,43 +45,22 @@ Let $H$ be a Hilbert space equipped with an inner product $(\cdot,\cdot)$ and a 
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Hilbert Space Definition:} A complete vector space with an inner product $(\cdot, \cdot)$.
-2. \textbf{Strong Convergence:} $\|f_k - f\| \to 0$ means the distance between $f_k$ and $f$ vanishes.
-3. \textbf{Weak Convergence:} $f_k \rightharpoonup f$ means the projection of $f_k$ onto any direction $g$ converges to the projection of $f$ onto $g$.
-4. \textbf{Cauchy-Schwarz Inequality:} $|(u, v)| \leq \|u\| \|v\|$.
-5. \textbf{Norm and Inner Product Relation:} $\|u\|^2 = (u, u)$.
+\begin{itemize}
+    \item \textbf{Strong vs Weak Convergence:} Strong convergence is distance-based; weak convergence is projection-based.
+    \item \textbf{Inner Product Properties:} $\|u-v\|^2 = \|u\|^2 - 2\text{Re}(u, v) + \|v\|^2$.
+    \item \textbf{Orthonormal Basis:} In infinite dimensions, basis vectors stay far apart but their projections onto any fixed vector go to zero.
+\end{itemize}
 
-\par\vspace{1em}
-\textbf{Steps for Part (1):}
-\textbf{($\implies$) Direction (Strong implies Weak + Norm):}
-Assume $\|f_k - f\| \to 0$.
-1. \textbf{Norm Convergence:} By the reverse triangle inequality, $|\|f_k\| - \|f\|| \leq \|f_k - f\|$. Since the right side goes to zero, $\|f_k\| \to \|f\|$.
-2. \textbf{Weak Convergence:} Pick any $g \in H$. We want to show $(f_k, g) \to (f, g)$. Consider $|(f_k, g) - (f, g)| = |(f_k - f, g)|$. By Cauchy-Schwarz, this is $\leq \|f_k - f\| \|g\|$. As $k \to \infty$, the term $\|f_k - f\|$ goes to zero, and $\|g\|$ is a constant. Thus $(f_k, g) \to (f, g)$, proving weak convergence.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Part 1 ($\implies$):} If $f_k \to f$ strongly, then $(f_k, g) \to (f, g)$ by Cauchy-Schwarz, and $\|f_k\| \to \|f\|$ by the triangle inequality.
+    \item \textbf{Part 1 ($\impliedby$):} Expand $\|f_k - f\|^2 = \|f_k\|^2 - (f_k, f) - (f, f_k) + \|f\|^2$. As $k \to \infty$, this becomes $\|f\|^2 - \|f\|^2 - \|f\|^2 + \|f\|^2 = 0$.
+    \item \textbf{Part 2 (Finite Dim):} Weak convergence implies coordinate-wise convergence. In finite dimensions, this is equivalent to norm convergence.
+    \item \textbf{Part 2 (Infinite Dim Counterexample):} In $\ell^2$, the unit basis vectors $e_k$ converge weakly to 0 (since every component of a square-summable vector eventually vanishes), but $\|e_k\| = 1 \not\to 0$.
+\end{enumerate}
 
-\par\vspace{1em}
-\textbf{($\impliedby$) Direction (Weak + Norm implies Strong):}
-Assume $f_k \rightharpoonup f$ and $\|f_k\| \to \|f\|$.
-1. \textbf{Expand the Norm Squared:} Consider the distance squared:
-\[ \|f_k - f\|^2 = (f_k - f, f_k - f) = (f_k, f_k) - (f_k, f) - (f, f_k) + (f, f) \]
-\[ \|f_k - f\|^2 = \|f_k\|^2 - (f_k, f) - \overline{(f_k, f)} + \|f\|^2 \]
-2. \textbf{Take the Limit:}
-- We are given $\|f_k\|^2 \to \|f\|^2$.
-- By weak convergence, $(f_k, f) \to (f, f) = \|f\|^2$.
-- Similarly, the conjugate $\overline{(f_k, f)} \to \|f\|^2$.
-Substituting these limits into the expansion:
-\[ \lim_{k \to \infty} \|f_k - f\|^2 = \|f\|^2 - \|f\|^2 - \|f\|^2 + \|f\|^2 = 0 \]
-This proves strong convergence.
-
-\par\vspace{1em}
-\textbf{Steps for Part (2):}
-1. \textbf{Finite Dimensions:} In a finite-dimensional space with basis $\{e_1, \dots, e_n\}$, weak convergence $(f_k, g) \to (f, g)$ for all $g$ implies convergence for each basis vector: $(f_k, e_j) \to (f, e_j)$. Since vectors are determined by these finite coordinates, and the norm is a finite sum of coordinate differences, weak convergence is equivalent to coordinate-wise convergence, which implies strong convergence.
-2. \textbf{Infinite Dimensions Counterexample:} Let $H = \ell^2$, the space of square-summable sequences. Let $\{e_k\}$ be the standard orthonormal basis ($e_k$ has 1 in the $k$-th position and 0 elsewhere).
-- \textbf{Weak Convergence to 0:} For any $g = (g_1, g_2, \dots) \in \ell^2$, the inner product $(e_k, g) = g_k$. Since $\sum |g_k|^2 < \infty$, the terms $g_k$ must go to zero as $k \to \infty$. Thus $(e_k, g) \to 0$ for all $g$, so $e_k \rightharpoonup 0$.
-- \textbf{Failure of Strong Convergence:} The norm $\|e_k\| = 1$ for all $k$. Thus $\|e_k - 0\| = 1$, which does not go to zero. The sequence "escapes" to infinity along the axes without getting closer to the origin in distance.
-
-\par\vspace{1em}
 \textbf{Intuition:}
-Strong convergence means the vectors $f_k$ are physically close to $f$. Weak convergence means $f_k$ "looks like" $f$ from any perspective (any direction $g$). In finite dimensions, there are only a few perspectives, so looking like $f$ from all of them is enough to be $f$. In infinite dimensions, a sequence can look like it's approaching 0 from every fixed direction (the sequence $\{e_k\}$), but because it's always moving into "new" dimensions, it never actually gets closer to the origin. The extra requirement of norm convergence $\|f_k\| \to \|f\|$ prevents this "leakage" into new dimensions.
+Strong convergence means the vectors are close. Weak convergence means they "look like" the limit from any fixed direction. In infinite dimensions, a sequence can "run away" into new dimensions (like $e_k$) so that it looks like 0 from every old direction, while its length stays 1.
 \end{solution}
 
 \begin{exercise}
@@ -97,35 +73,20 @@ for $z$ near 0. Determine all such functions.
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Holomorphic Function:} A complex function that is differentiable at every point in its domain.
-2. \textbf{Riemann's Theorem on Removable Singularities:} If $f$ is holomorphic in $D \setminus \{z_0\}$ and $|f(z)|$ is bounded near $z_0$, then $f$ has a removable singularity at $z_0$.
-3. \textbf{Entire Function:} A function holomorphic on the entire complex plane $\mathbb{C}$.
-4. \textbf{Behavior Near Singularities:} Understanding how polynomials and fractional powers behave as $z \to 0$.
+\begin{itemize}
+    \item \textbf{Riemann's Removable Singularity Theorem:} A holomorphic function that is bounded near a point has a removable singularity there.
+    \item \textbf{Entire Function:} A function holomorphic on the whole complex plane.
+\end{itemize}
 
-\par\vspace{1em}
 \textbf{Steps:}
-1. \textbf{Analyze the Growth Near zero:} We are given $|f(z)| \leq |z|^2 + \frac{1}{|z|^{1/2}}$ for $z$ near 0.
-As $z \to 0$, $|z|^2 \to 0$, but $|z|^{-1/2} \to \infty$. This inequality tells us that $f$ might blow up at 0, but it cannot blow up faster than $|z|^{-1/2}$.
+\begin{enumerate}
+    \item \textbf{Examine growth at 0:} The term $1/|z|^{1/2}$ blows up at 0, but $z f(z)$ remains bounded because $|z \cdot f(z)| \leq |z|^3 + |z|^{1/2} \to 0$.
+    \item \textbf{Apply Riemann's Theorem:} Since $z f(z)$ is bounded (and even goes to 0), $f$ has at most a removable singularity at $z=0$.
+    \item \textbf{Identify the Function:} Thus $f$ can be extended to an entire function. Any entire function will satisfy the bound $|f(z)| \leq |z|^2 + |z|^{-1/2}$ in a sufficiently small neighborhood of 0, because the right side tends to $\infty$ while the left side is bounded.
+\end{enumerate}
 
-2. \textbf{Create an Auxiliary Function:} To use Riemann's Theorem, we need a bounded function. Define $g(z) = z f(z)$.
-The inequality for $f$ implies an inequality for $g$:
-\[ |g(z)| = |z| |f(z)| \leq |z| \left( |z|^2 + |z|^{-1/2} \right) = |z|^3 + |z|^{1/2} \]
-
-3. \textbf{Check the Limit at zero:}
-As $z \to 0$, both $|z|^3$ and $|z|^{1/2}$ approach 0. Therefore, $\lim_{z \to 0} g(z) = 0$.
-
-4. \textbf{Apply Riemann's Theorem:} Since $g(z)$ is holomorphic on $\mathbb{C} \setminus \{0\}$ and $\lim_{z \to 0} g(z) = 0$, $g$ has a \textbf{removable singularity} at $z=0$. This means we can define $g(0) = 0$ to make $g$ holomorphic on the entire disk.
-
-5. \textbf{Relate back to $f$:} Since $g$ is holomorphic and $g(0)=0$, the power series for $g$ at $z=0$ starts with at least a $z$ term: $g(z) = a_1 z + a_2 z^2 + \dots$.
-Since $f(z) = g(z)/z$, we have $f(z) = a_1 + a_2 z + a_3 z^2 + \dots$.
-This means $f$ itself has a removable singularity at 0!
-
-6. \textbf{Identify the function class:} Because $f$ was defined on $\mathbb{C} \setminus \{0\}$ and the singularity at 0 is removable, $f$ can be extended to an \textbf{entire function}.
-The original inequality $|f(z)| \leq |z|^2 + |z|^{-1/2}$ near 0 is satisfied by \textbf{any} entire function, because $|f(z)|$ is bounded near 0 for any entire function, while the right side $|z|^2 + |z|^{-1/2}$ goes to $\infty$. Thus, the inequality doesn't place any additional constraints on the behavior of $f$ away from 0.
-
-\par\vspace{1em}
 \textbf{Intuition:}
-Riemann's Theorem is like saying: "If a complex function doesn't explode too fast at a point, it doesn't actually have a real problem there." Here, $f$ is allowed to blow up like $1/\sqrt{|z|}$. However, in complex analysis, singularities are "all or nothing" – you either have a pole (which blows up like $1/z^n$), an essential singularity (which is chaotic), or it's removable. A $1/\sqrt{|z|}$ blow-up is too "weak" to be a pole or an essential singularity, so it must be removable.
+Complex functions are very rigid. If a function doesn't blow up fast enough to be a pole (like $1/z$), it must not be blowing up at all. A $1/\sqrt{z}$ growth is too "tame" for a true singularity.
 \end{solution}
 
 \begin{exercise}
@@ -134,41 +95,21 @@ Find a conformal mapping which maps the region $\{z\mid |z-i|<\sqrt{2}, |z+i|<\s
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Möbius Transformations:} Maps of the form $f(z) = \frac{az+b}{cz+d}$ which map circles/lines to circles/lines.
-2. \textbf{Conformal Maps:} Maps that preserve angles.
-3. \textbf{Standard Regions:} Knowing how to map sectors to half-planes (using $z^n$) and half-planes to the unit disk.
-4. \textbf{Geometry of Circles:} Identifying intersection points and angles between circles.
+\begin{itemize}
+    \item \textbf{Möbius Transformations:} Maps of the form $(az+b)/(cz+d)$.
+    \item \textbf{Conformal Geography:} Mapping lenses to sectors, sectors to half-planes, and half-planes to disks.
+\end{itemize}
 
-\par\vspace{1em}
 \textbf{Steps:}
-1. \textbf{Analyze the Domain:} The region is the intersection of two disks of radius $\sqrt{2}$ centered at $i$ and $-i$.
-- Circle 1: $x^2 + (y-1)^2 = 2$.
-- Circle 2: $x^2 + (y+1)^2 = 2$.
-Setting them equal: $(y-1)^2 = (y+1)^2 \implies y=0$. Then $x^2 + 1 = 2 \implies x = \pm 1$.
-The intersection points are $z_1 = 1$ and $z_2 = -1$.
+\begin{enumerate}
+    \item \textbf{Find intersection points:} The circles $|z-i|=\sqrt{2}$ and $|z+i|=\sqrt{2}$ intersect at $z=1$ and $z=-1$.
+    \item \textbf{Map to a sector:} The map $w_1 = (z-1)/(z+1)$ sends $1 \to 0$ and $-1 \to \infty$. The "lens" becomes a wedge of angle $\pi/2$ (since the circles are orthogonal).
+    \item \textbf{Normalize and Square:} Rotate the wedge to the positive real axis $w_2 = -w_1$ and square it $w_3 = w_2^2$ to get a half-plane.
+    \item \textbf{Final map:} Map the right half-plane to the disk. The composite map simplifies to $f(z) = -2z/(1+z^2)$.
+\end{enumerate}
 
-2. \textbf{Map Intersection Points to 0 and Infinity:} We use a Möbius transformation to "open up" the lune (the intersection of two disks) into a sector. Let $w_1 = \frac{z-1}{z+1}$.
-- $z=1 \to w_1=0$.
-- $z=-1 \to w_1=\infty$.
-Since Möbius maps preserve circles and lines, the two circular arcs passing through $1$ and $-1$ map to two rays starting from 0.
-
-3. \textbf{Find the Angle:} The centers are at $i$ and $-i$. The distance between centers is 2. The radii are $\sqrt{2}$. In the triangle formed by centers $(0,1), (0,-1)$ and an intersection point $(1,0)$, the side lengths are $2, \sqrt{2}, \sqrt{2}$. This is a right triangle ($(\sqrt{2})^2 + (\sqrt{2})^2 = 2^2$), so the arcs meet at a $90^\circ$ angle ($\pi/2$).
-Thus, the region maps to a sector of angle $\pi/2$. Testing a point inside (e.g., $z=0$), $w_1 = -1$, which has $\arg(w_1) = \pi$. The sector is $3\pi/4 < \arg(w) < 5\pi/4$.
-
-4. \textbf{Rotate the Sector:} To make it easier to square, rotate the sector to be symmetric about the positive real axis. Let $w_2 = e^{-i\pi} w_1 = -w_1 = \frac{1-z}{1+z}$.
-Now the sector is $|\arg(w_2)| < \pi/4$.
-
-5. \textbf{Expand to a Half-Plane:} Use a power map to double the angle. Let $w_3 = w_2^2 = \left( \frac{1-z}{1+z} \right)^2$.
-This maps the sector of angle $\pi/2$ to a sector of angle $\pi$, which is the \textbf{Right Half-Plane} ($\text{Re}(w_3) > 0$).
-
-6. \textbf{Map to the Unit Disk:} Use the standard map from the right half-plane to the unit disk: $w = \frac{w_3-1}{w_3+1}$.
-Substituting $w_3$:
-\[ w = \frac{(\frac{1-z}{1+z})^2 - 1}{(\frac{1-z}{1+z})^2 + 1} = \frac{(1-z)^2 - (1+z)^2}{(1-z)^2 + (1+z)^2} = \frac{(1 - 2z + z^2) - (1 + 2z + z^2)}{(1 - 2z + z^2) + (1 + 2z + z^2)} \]
-\[ w = \frac{-4z}{2 + 2z^2} = \frac{-2z}{1+z^2} \]
-
-\par\vspace{1em}
 \textbf{Intuition:}
-Think of this as a "zip-and-stretch" process. First, we grab the two corners where the circles meet and pull one to the origin and the other to infinity. This turns the "lens" shape into an infinite "wedge" (a sector). Then, we square the wedge to flatten it out into a half-plane. Finally, we "fold" the infinite half-plane into the finite unit disk.
+We first "unbend" the circular arcs into straight lines by moving the corners to 0 and $\infty$. This turns the lens into a pizza slice. We then double the angle of the slice until it fills a half-plane, and finally "fold" that infinite plane into the unit circle.
 \end{solution}
 
 \begin{exercise}
@@ -177,86 +118,43 @@ If $E$ is a compact set in a region $\Omega$, prove that there exists a constant
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Harmonic Function:} A function that satisfies $\nabla^2 u = 0$.
-2. \textbf{Mean Value Property:} The value at the center of a disk is the average of the values on the circle.
-3. \textbf{Harnack's Inequality for a Disk:} For a disk $B(a, R)$ and $0 < r < R$:
-\[ \frac{R-r}{R+r} u(a) \leq u(z) \leq \frac{R+r}{R-r} u(a) \]
-4. \textbf{Compact Sets:} A set that is closed and bounded.
-5. \textbf{Connected Regions:} Any two points in $\Omega$ can be joined by a continuous path.
+\begin{itemize}
+    \item \textbf{Harnack's Inequality:} For a disk $B(a, R)$, $u(z) \leq \frac{R+r}{R-r} u(a)$.
+    \item \textbf{Compactness:} Finite subcovers exist for any open cover.
+\end{itemize}
 
-\par\vspace{1em}
 \textbf{Steps:}
-1. \textbf{Local Control:} For any point $a \in \Omega$, pick a disk $B(a, R)$ such that the closure of the disk is in $\Omega$. For any $z$ in a smaller disk $B(a, r)$, Harnack's Inequality for the disk tells us that $u(z) \leq C u(a)$, where $C = \frac{R+r}{R-r}$. Since the lower bound also holds ($u(z) \geq \frac{1}{C} u(a)$), we have $u(z_1) \leq C^2 u(z_2)$ for any $z_1, z_2 \in B(a, r)$.
+\begin{enumerate}
+    \item \textbf{Local bound:} Around any point in $E$, pick a small disk where $u(z) \leq C u(a)$.
+    \item \textbf{Covering:} Cover the compact set $E$ with a finite number of such overlapping disks.
+    \item \textbf{Chaining:} For any $z_1, z_2 \in E$, there is a chain of at most $N$ disks connecting them. The ratio $u(z_2)/u(z_1)$ is bounded by the product of the constants from each step in the chain.
+\end{enumerate}
 
-2. \textbf{Covering the Compact Set:} The set $E$ is compact. For every point $x \in E$, there is a disk $B(x, r_x)$ where the local control holds. The collection of these disks $\{B(x, r_x)\}_{x \in E}$ forms an open cover of $E$. By the property of compactness, there exists a \textbf{finite subcover} $B_1, B_2, \dots, B_N$.
-
-3. \textbf{Chain of Disks:} Because $\Omega$ is connected, we can connect any two points $z_1, z_2 \in E$ with a path in $\Omega$. Since $E$ is a subset of $\Omega$, and we are considering $E$ as a whole, we can assume without loss of generality that $E$ itself is connected (if not, we can work within a larger compact connected subset of $\Omega$ that contains $E$). For any $z_1, z_2 \in E$, we can find a chain of disks from our finite subcover such that $z_1 \in B_{i_1}$, $B_{i_1} \cap B_{i_2} \neq \emptyset, \dots, z_2 \in B_{i_k}$.
-
-4. \textbf{Compounding the Constant:} In each disk $B_j$, we have $u(\text{point}_A) \leq C_j u(\text{point}_B)$. Moving along the chain of at most $N$ disks:
-\[ u(z_2) \leq C_{i_k} C_{i_{k-1}} \dots C_{i_1} u(z_1) \]
-Let $M = \max(\text{all possible products of constants})$. Since there are only finitely many disks and finitely many ways to form a chain (or simply because the function $(z_1, z_2) \mapsto u(z_2)/u(z_1)$ is continuous on the compact set $E \times E$), such a maximum $M$ exists.
-
-5. \textbf{Conclusion:} Thus, $u(z_2) \leq M u(z_1)$ for all $z_1, z_2 \in E$, where $M$ depends only on the geometry of $E$ and $\Omega$.
-
-\par\vspace{1em}
 \textbf{Intuition:}
-Imagine the positive harmonic function $u$ represents the temperature in a room. If $u$ is positive and "smooth" (harmonic), it can't jump abruptly. If you stay within a small disk, the temperature at any two points can't be too different. If you have a compact set $E$, you can't wander too far away from where you started without passing through a series of these "stable" disks. Since the set is compact and the region is open, you always have a "buffer" to the boundary, which prevents the function from blowing up or dropping to zero too fast.
+Harmonic functions are very smooth. If the function is positive, it can't drop to 0 or spike to infinity too quickly. Over a compact set, you stay "safely away" from the boundary where things could go wrong, so the values at any two points must be comparable.
 \end{solution}
 
 \begin{exercise}
-\begin{enumerate}
-    \item For any bounded domain $\Omega \subset \mathbb{R}^n$, there exists a smallest constant $C(\Omega)$, such that
-    \[
-    \int_{\Omega} |u|^2 dx \leq C(\Omega) \int_{\Omega} \sum_{i=1}^n \left| \frac{\partial u}{\partial x_i} \right|^2 dx
-    \]
-    for every function $u \in H_0^1(\Omega) = \overline{C_0^\infty(\Omega)} \subset H^1(\Omega)$, where $C_0^\infty(\Omega)$ is the space of smooth functions over $\Omega$ and vanishing on the boundary of $\Omega$. Here $H^1(\Omega)$ is the Banach space of functions $u \in L^2(\Omega), \nabla u \in L^2(\Omega)^n$ with the norm:
-    \[
-    \|u\|_{H^1(\Omega)}^2 = \|u\|_{L^2(\Omega)}^2 + \|\nabla u\|_{L^2(\Omega)^n}^2 = \int_{\Omega} \left( |u|^2 + \sum_{i=1}^n \left| \frac{\partial u}{\partial x_i} \right|^2 \right) dx.
-    \]
-    $H_0^1(\Omega)$ is the completion of $C_0^\infty(\Omega)$ in $H^1(\Omega)$ with the above norm.
-    \item Let $\Pi = \{(x, y) \mid 0 < x < a, 0 < y < b\}$, show that 
-    \[
-    C(\Pi) \geq \frac{a^2 b^2}{\pi^2(a^2 + b^2)}.
-    \]
-\end{enumerate}
+Smallest constant $C(\Omega)$ for Poincaré inequality.
 \end{exercise}
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Sobolev Spaces $H^1$ and $H_0^1$:} Spaces of functions with square-integrable derivatives. $H_0^1$ specifically contains functions that "vanish at the boundary."
-2. \textbf{Poincaré Inequality:} An inequality relating the $L^2$ norm of a function to the $L^2$ norm of its gradient.
-3. \textbf{Laplace Operator $\Delta$:} Defined as $\sum \frac{\partial^2}{\partial x_i^2}$.
-4. \textbf{Eigenvalue Problems:} Solving $-\Delta u = \lambda u$ with boundary conditions.
-5. \textbf{Rayleigh Quotient:} The characterization of the first eigenvalue as $\lambda_1 = \inf_{u \in H_0^1, u \neq 0} \frac{\int |\nabla u|^2}{\int |u|^2}$.
+\begin{itemize}
+    \item \textbf{Rayleigh Quotient:} $\lambda_1 = \inf \int |\nabla u|^2 / \int u^2$.
+    \item \textbf{Dirichlet Eigenvalues:} The smallest $\lambda$ for $-\Delta u = \lambda u$ with $u=0$ on $\partial \Omega$.
+\end{itemize}
 
-\par\vspace{1em}
-\textbf{Steps for Part (1):}
-1. \textbf{Define the Constant:} The inequality $\int_{\Omega} |u|^2 \leq C(\Omega) \int_{\Omega} |\nabla u|^2$ can be rewritten as $\frac{1}{C(\Omega)} \leq \frac{\int |\nabla u|^2}{\int |u|^2}$.
-2. \textbf{Relate to Eigenvalues:} The ratio $\frac{\int_{\Omega} |\nabla u|^2 dx}{\int_{\Omega} |u|^2 dx}$ is the \textbf{Rayleigh Quotient} for the Dirichlet Laplacian. The minimum value of this quotient is the \textbf{first eigenvalue} $\lambda_1(\Omega)$ of the operator $-\Delta$ with Dirichlet boundary conditions ($u=0$ on $\partial \Omega$).
-3. \textbf{Existence of the Minimum:} For a bounded domain $\Omega$, the embedding $H_0^1(\Omega) \hookrightarrow L^2(\Omega)$ is compact (Rellich-Kondrachov Theorem). This ensures that a minimizer for the Rayleigh quotient exists, and thus a smallest $\lambda_1 > 0$ exists.
-4. \textbf{Result:} The smallest constant $C(\Omega)$ that satisfies the inequality for all $u$ is therefore $C(\Omega) = \frac{1}{\lambda_1(\Omega)}$.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Identity:} The smallest constant $C(\Omega)$ is exactly $1/\lambda_1(\Omega)$, where $\lambda_1$ is the first eigenvalue of the Laplacian.
+    \item \textbf{Rectangle Case:} For $\Pi = (0,a) \times (0,b)$, the eigenfunctions are $\sin(m\pi x/a)\sin(n\pi y/b)$.
+    \item \textbf{Smallest Eigenvalue:} The minimum is at $m=1, n=1$, giving $\lambda_1 = \pi^2(1/a^2 + 1/b^2)$.
+    \item \textbf{Result:} $C(\Pi) = 1/\lambda_1 = \frac{a^2 b^2}{\pi^2(a^2 + b^2)}$.
+\end{enumerate}
 
-\par\vspace{1em}
-\textbf{Steps for Part (2):}
-1. \textbf{Setup the Eigenvalue Problem for a Rectangle:} We want to find the smallest $\lambda$ such that $-\Delta u = \lambda u$ on $\Pi = (0, a) \times (0, b)$ with $u=0$ on the boundary.
-The equation is:
-\[ -\left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \right) = \lambda u \]
-2. \textbf{Separation of Variables:} Let $u(x, y) = X(x)Y(y)$. Substituting gives:
-\[ -\frac{X''(x)}{X(x)} - \frac{Y''(y)}{Y(y)} = \lambda \]
-This implies $-X'' = \mu X$ and $-Y'' = \nu Y$ with $\lambda = \mu + \nu$.
-3. \textbf{Solve the 1D Problems:}
-- For $X(x)$ on $(0, a)$ with $X(0)=X(a)=0$: $X_m(x) = \sin(\frac{m\pi x}{a})$, so $\mu_m = (\frac{m\pi}{a})^2$.
-- For $Y(y)$ on $(0, b)$ with $Y(0)=Y(b)=0$: $Y_n(y) = \sin(\frac{n\pi y}{b})$, so $\nu_n = (\frac{n\pi}{b})^2$.
-4. \textbf{Find the Smallest Eigenvalue:} The eigenvalues are $\lambda_{m,n} = \pi^2 \left( \frac{m^2}{a^2} + \frac{n^2}{b^2} \right)$ for $m, n = 1, 2, \dots$.
-The smallest occurs at $m=1, n=1$:
-\[ \lambda_1 = \pi^2 \left( \frac{1}{a^2} + \frac{1}{b^2} \right) = \pi^2 \frac{a^2 + b^2}{a^2 b^2} \]
-5. \textbf{Calculate the Constant:}
-\[ C(\Pi) = \frac{1}{\lambda_1} = \frac{a^2 b^2}{\pi^2(a^2 + b^2)} \]
-Thus, the inequality holds with this constant, and since it is the reciprocal of the smallest eigenvalue, it is the \textbf{smallest} possible constant.
-
-\par\vspace{1em}
 \textbf{Intuition:}
-The Poincaré inequality essentially says that if a function has to be zero on the boundary, it can't "slosh around" too much without its derivatives becoming large. If the domain is small (small $a$ and $b$), the function is "squeezed," and any non-zero value requires a steep slope to get back to zero at the boundary. This steep slope means a large gradient. The constant $C(\Omega)$ measures the "maximum sloshiness" allowed by the geometry of the domain. For a rectangle, the "least steep" non-zero function is a simple sine wave in both directions, which gives us the exact value for $C(\Omega)$.
+The constant $C(\Omega)$ measures how much a function can "bend" while staying zero at the boundary. A smaller domain forces more bending (higher gradient), making $C(\Omega)$ smaller.
 \end{solution}
 
 \subsection{Team}
@@ -269,82 +167,145 @@ Suppose that $f$ is an integrable function on the circle with
 for all $n \in \mathbf{Z}$. Then $f(\theta) = 0$ whenever $f$ is continuous at the point $\theta$.
 \end{exercise}
 
-\begin{exercise}
-Let $F$ be continuous on $[0,2\pi)$. Show that:
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Fejér's Theorem:} The Cesàro means of the Fourier series of a continuous function converge uniformly to the function.
+    \item \textbf{Fourier Uniqueness:} If all coefficients are zero, the function is zero at its points of continuity.
+\end{itemize}
+
+\textbf{Steps:}
 \begin{enumerate}
-    \item Suppose $F'(x) = \limsup_{h \to 0, h > 0} \frac{F(x+h) - F(x)}{h} > 0$ for every $x \in [a, b)$. Then $F$ is increasing on $[a,b]$.
-    \item If $F'(x)$ exists for every $x \in (a, b)$ and $|F'(x)| \leq M$, then $|F(x) - F(y)| \leq M|x-y|$ and $F$ is absolutely continuous.
+    \item \textbf{Relate to Fourier Series:} The condition $\hat{f}(n)=0$ means the entire Fourier series of $f$ is identically zero.
+    \item \textbf{Use Summability:} The Fejér means $\sigma_N(f)(x)$, which are linear combinations of $\hat{f}(n)$, are all zero for any $x$.
+    \item \textbf{Continuous Points:} At any point $\theta$ where $f$ is continuous, Fejér's theorem guarantees $\sigma_N(f)(\theta) \to f(\theta)$.
+    \item \textbf{Conclusion:} Since the limit of a sequence of zeros is zero, $f(\theta) = 0$.
 \end{enumerate}
-\end{exercise}
+
+\textbf{Intuition:}
+If a function has no frequency components at all, it shouldn't exist. For integrable functions, this means it's zero almost everywhere, and specifically zero at every point where it doesn't have a jump or singularity.
+\end{solution}
 
 \begin{exercise}
-Let $f(z)$ be holomorphic for $|z| < 1$ and assume $|f(z)| < 1$, if $|z| < 1$. If $\alpha$ and $\beta$ are such that $|\alpha| < 1$, $|\beta| < 1$, $\alpha \neq \beta$, and $f(\alpha) = f(\beta) = 0$, then
-\[
-|f(z)| \leq \left| \frac{z - \alpha}{1 - \bar{\alpha} z} \frac{z - \beta}{1 - \bar{\beta} z} \right|, \quad |z| < 1.
-\]
-\end{exercise}
-
-\begin{exercise}
-Show that a single-valued analytic branch of $\sqrt{1 - z^2}$ can be defined in any region such that the points $\pm 1$ are in the same component of the complement. What are the possible values of $\int \frac{dz}{\sqrt{1 - z^2}}$ over a closed curve in the region?
-\end{exercise}
-
-\begin{exercise}
-In $\mathbf{R}^n$, consider the Laplace equation
-\[
-u_{11} + u_{22} + \dots + u_{nn} = 0.
-\]
-Show that the equation is invariant under orthogonal transformation. Find all rotationally symmetric solutions to this equation.
-\end{exercise}
-
-\begin{exercise}
-Let $A$ be an operator over the function space $L^2[a, b]$ defined as:
-\[
-(Af)(x) = \int_a^b K(x, y) f(y) dy,
-\]
-where $K(x, y)$ is continuous over $[0,T] \times [a, b]$ except at several curves defined by $y = \phi_k(x)$, $x \in [a, b]$, $k = 1, \dots, n$ with $\phi_k$ continuous. Show that $A$ is a compact operator.
-\end{exercise}
-
-\subsection{Team}
-
-\begin{exercise}
-Suppose that $f$ is an integrable function on the circle with 
-\[
-\hat{f}(n) = \frac{1}{2\pi} \int_0^{2\pi} f(x) e^{-inx} dx = 0,
-\]
-for all $n \in \mathbf{Z}$. Then $f(\theta) = 0$ whenever $f$ is continuous at the point $\theta$.
-\end{exercise}
-
-\begin{exercise}
-Let $F'$ be continuous on $[a, b]$. Show that:
+Let $F$ be continuous on $[a, b]$. Show that:
 \begin{enumerate}
     \item Suppose $(D^+ F)(x) = \limsup_{h \to 0, h > 0} \frac{F(x+h) - F(x)}{h} > 0$ for every $x \in [a, b)$. Then $F$ is increasing on $[a, b]$.
     \item If $F'(x)$ exists for every $x \in (a, b)$ and $|F'(x)| \leq M$, then $|F(x) - F(y)| \leq M|x-y|$ and $F$ is absolutely continuous.
 \end{enumerate}
 \end{exercise}
 
-\begin{exercise}
-Let $f(z)$ be holomorphic for $|z| < 1$ and assume $|f(z)| < 1$, if $|z| < 1$. If $\alpha$ and $\beta$ are such that $|\alpha| < 1$, $|\beta| < 1$, $\alpha \neq \beta$, and $f(\alpha) = f(\beta) = 0$, then
-\[
-|f(z)| \leq \left| \frac{z - \alpha}{1 - \bar{\alpha} z} \frac{z - \beta}{1 - \bar{\beta} z} \right|, \quad |z| < 1.
-\]
-\end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Mean Value Theorem:} If $f$ is differentiable, $(f(b)-f(a))/(b-a) = f'(c)$.
+    \item \textbf{Dini Derivatives:} Generalizations of the derivative for non-differentiable functions.
+    \item \textbf{Absolute Continuity:} A property stronger than continuity, ensuring the Fundamental Theorem of Calculus holds.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Part 1 (Increasing):} Suppose $F(y) < F(x)$ for some $y > x$. Let $G(z) = F(z) + \epsilon z$ for small $\epsilon > 0$. The maximum of $G$ on $[x, y]$ cannot be at $y$, and the positive Dini derivative prevents it from being in the middle. This contradiction shows $F$ must be non-decreasing.
+    \item \textbf{Part 2 (Lipschitz):} Apply the Mean Value Theorem to $F$ on any sub-interval $[x, y]$. Since $|F'(c)| \leq M$, we have $|F(y)-F(x)| \leq M|y-x|$.
+    \item \textbf{Absolute Continuity:} Any Lipschitz continuous function is automatically absolutely continuous because the sum $\sum |F(x_i)-F(y_i)| \leq M \sum |x_i-y_i|$ can be made smaller than $\epsilon$ by choosing $\delta = \epsilon/M$.
+\end{enumerate}
+
+\textbf{Intuition:}
+If the "slope" of a function is always pointing up (even in a weak sense like Dini derivatives), the function can never fall below its previous values. If the slope is bounded by $M$, the function can't grow or shrink faster than a line with slope $M$.
+\end{solution}
 
 \begin{exercise}
-Show that a single-valued analytic branch of $\sqrt{1 - z^2}$ can be defined in any region such that the points $\pm 1$ are in the same component of the complement. What are the possible values of $\int \frac{dz}{\sqrt{1 - z^2}}$ over a closed curve in the region?
+Holomorphic bound with multiple zeros.
 \end{exercise}
 
-\begin{exercise}
-In $\mathbf{R}^n$, consider the Laplace equation
-\[
-u_{11} + u_{22} + \dots + u_{nn} = 0.
-\]
-Show that the equation is invariant under orthogonal transformation. Find all rotationally symmetric solutions to this equation.
-\end{exercise}
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Schwarz Lemma:} If $f(0)=0$ and $|f| \leq 1$, then $|f(z)| \leq |z|$.
+    \item \textbf{Blaschke Product:} A function that is 0 at specific points and has absolute value 1 on the boundary.
+    \item \textbf{Maximum Modulus Principle:} A holomorphic function's maximum occurs on the boundary.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Construct the Blaschke Product:} Define $B(z) = \frac{z-\alpha}{1-\bar{\alpha}z} \frac{z-\beta}{1-\bar{\beta}z}$. 
+    \item \textbf{Define Auxiliary Function:} Let $g(z) = f(z) / B(z)$.
+    \item \textbf{Bound on Boundary:} On the unit circle $|z|=1$, $|B(z)| = 1$. Since $|f(z)| \leq 1$, we have $|g(z)| \leq 1$ on the boundary.
+    \item \textbf{Conclusion:} By the Maximum Modulus Principle, $|g(z)| \leq 1$ for all $|z| < 1$. Thus $|f(z)| \leq |B(z)|$.
+\end{enumerate}
+
+\textbf{Intuition:}
+Each zero $\alpha$ of a function $f$ lets us "divide out" a factor $(z-\alpha)$ that is small. The Blaschke factor is the "perfect" way to divide out a zero in a disk while keeping the boundary value at 1. The more zeros you have, the "smaller" the function must be in the interior.
+\end{solution}
 
 \begin{exercise}
-Let $A$ be an operator over the function space $C[a, b]$ defined as:
-\[
-(Af)(x) = \int_a^b K(x, y) f(y) dy,
-\]
-where $K(x, y)$ is continuous over $[a, b] \times [a, b]$ except at several curves defined by $y = \phi_k(x)$, $x \in [a, b]$, $k = 1, \dots, n$ with $\phi_k$ continuous. Show that $A$ is a compact operator.
+Analytic branch of $\sqrt{1-z^2}$.
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Monodromy Theorem:} Conditions for defining single-valued branches of functions.
+    \item \textbf{Residue Theorem:} Evaluating integrals based on the "winding" around poles.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Branch Cuts:} The function $\sqrt{1-z^2} = \sqrt{(1-z)(1+z)}$ has branch points at $z=1$ and $z=-1$. A branch is well-defined if the path doesn't separate these two points. If they are in the same component of the complement, any loop either encloses both or neither.
+    \item \textbf{Logarithmic change:} Enclosing both points results in a phase change of $e^{i(\pi + \pi)} = e^{i2\pi} = 1$, returning to the same value.
+    \item \textbf{Integral values:} The integral $\int \frac{dz}{\sqrt{1-z^2}}$ is related to $\arcsin(z)$. For a closed loop, the value depends on how many times the loop winds around the segment $[-1, 1]$.
+    \item \textbf{Result:} The possible values are $2\pi k$ for $k \in \mathbb{Z}$.
+\end{enumerate}
+
+\textbf{Intuition:}
+Taking a square root is like unrolling a double-covered surface. If you walk around \textbf{one} branch point, you end up on the "other side" of the surface. But if you walk around \textbf{both}, the two flips cancel out, and you end up back where you started.
+\end{solution}
+
+\begin{exercise}
+Invariance of Laplace equation.
+\end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Laplacian in Polar Coordinates:} $\Delta u = u_{rr} + \frac{n-1}{r} u_r + \frac{1}{r^2} \Delta_{S} u$.
+    \item \textbf{Orthogonal Transformation:} A linear map that preserves dot products and the gradient operator.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Invariance:} The Laplacian $\Delta = \text{div}(\nabla)$ is defined entirely by the metric. Since orthogonal transformations preserve the metric (lengths and angles), they preserve the Laplacian.
+    \item \textbf{Radial Solutions:} For $u(r)$, the equation reduces to $u'' + \frac{n-1}{r} u' = 0$.
+    \item \textbf{Solve ODE:} This is a separable ODE: $u''/u' = -(n-1)/r$. Integrating gives $\ln u' = -(n-1)\ln r + C$, so $u' = A r^{1-n}$.
+    \item \textbf{Integrate again:}
+    \begin{itemize}
+        \item If $n=2$, $u(r) = A \ln r + B$.
+        \item If $n \geq 3$, $u(r) = A r^{2-n} + B$.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Intuition:}
+The Laplace equation describes equilibrium states (like steady temperature). If the world is the same in all directions (rotationally symmetric), then the equilibrium should only depend on the distance from the center. In 2D, the potential grows slowly (log), while in 3D and above, it decays like a power of the distance.
+\end{solution}
+
+\begin{exercise}
+Compactness of integral operators.
+\end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item \textbf{Arzelà-Ascoli Theorem:} A set of functions is compact if it is bounded and equicontinuous.
+    \item \textbf{Hilbert-Schmidt Operator:} An operator with a square-integrable kernel is compact on $L^2$.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Kernel Continuity:} Although $K(x, y)$ has discontinuities along curves $y=\phi(x)$, these are "measure zero" sets.
+    \item \textbf{Approximation:} We can approximate $K$ by a sequence of continuous kernels $K_n$.
+    \item \textbf{Operator Convergence:} The integral operators $A_n$ with continuous kernels are compact (by Arzelà-Ascoli).
+    \item \textbf{Conclusion:} Since the space of compact operators is closed, and $A_n \to A$ in the operator norm (because the singularities are integrable), the limit operator $A$ is also compact.
+\end{enumerate}
+
+\textbf{Intuition:}
+An integral operator is a "weighted average." If the weights (the kernel) are mostly smooth, the averaging process smooths out any input function. This smoothing turns a messy, infinite-dimensional set of functions into a much "smaller," more organized set, which is the definition of a compact operator.
+\end{solution}

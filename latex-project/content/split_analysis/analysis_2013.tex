@@ -10,26 +10,39 @@ Suppose that $f$ is an integrable function on $\mathbb{R}^d$. For each $\alpha>0
 \end{exercise}
 
 \begin{solution}
-We use Fubini's theorem (or specifically Tonelli's theorem for non-negative functions) to express the integral of $|f(x)|$ as a double integral. Note that for any $x \in \mathbb{R}^d$, we have:
-\[
-|f(x)| = \int_0^{|f(x)|} 1 \, d\alpha = \int_0^\infty \chi_{\{\alpha < |f(x)|\}}(\alpha) \, d\alpha
-\]
-where $\chi$ denotes the characteristic function. Substituting this into the integral over $\mathbb{R}^d$, we get:
-\[
-\int_{\mathbb{R}^d} |f(x)| \, dx = \int_{\mathbb{R}^d} \left( \int_0^\infty \chi_{\{\alpha < |f(x)|\}}(\alpha) \, d\alpha \right) dx.
-\]
-Since the integrand $\chi_{\{\alpha < |f(x)|\}}(\alpha)$ is non-negative and measurable on $\mathbb{R}^d \times (0, \infty)$, we can swap the order of integration by Tonelli's theorem:
-\[
-\int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty \left( \int_{\mathbb{R}^d} \chi_{\{\alpha < |f(x)|\}}(x) \, dx \right) d\alpha.
-\]
-The inner integral is exactly the measure of the set where $|f(x)| > \alpha$:
-\[
-\int_{\mathbb{R}^d} \chi_{\{x \mid |f(x)| > \alpha\}}(x) \, dx = m(\{x \in \mathbb{R}^d \mid |f(x)| > \alpha\}) = m(E_\alpha).
-\]
-Thus, we obtain:
-\[
-\int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty m(E_\alpha) \, d\alpha.
-\]
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Measure Theory: Definition of Lebesgue integral.
+    \item Tonelli's Theorem: Swapping the order of integration for non-negative functions.
+    \item Characteristic functions $\chi_E(x)$.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item We express the absolute value $|f(x)|$ as an integral of its characteristic function over height $\alpha$:
+    \[
+    |f(x)| = \int_0^{|f(x)|} 1 \, d\alpha = \int_0^\infty \chi_{\{ \alpha < |f(x)| \}}(\alpha) \, d\alpha.
+    \]\\[2ex]
+    \item Substitute this expression into the original integral over $\mathbb{R}^d$:
+    \[
+    \int_{\mathbb{R}^d} |f(x)| \, dx = \int_{\mathbb{R}^d} \left( \int_0^\infty \chi_{\{ \alpha < |f(x)| \}}(\alpha) \, d\alpha \right) dx.
+    \]\\[2ex]
+    \item Since the integrand is non-negative and measurable, we apply Tonelli's Theorem to swap the order of integration:
+    \[
+    \int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty \left( \int_{\mathbb{R}^d} \chi_{\{ x \mid |f(x)| > \alpha \}}(x) \, dx \right) d\alpha.
+    \]\\[2ex]
+    \item The inner integral is simply the measure of the set $E_\alpha = \{x \mid |f(x)| > \alpha\}$:
+    \[
+    \int_{\mathbb{R}^d} \chi_{E_\alpha}(x) \, dx = m(E_\alpha).
+    \]\\[2ex]
+    \item Substituting this back, we obtain the desired identity:
+    \[
+    \int_{\mathbb{R}^d} |f(x)| \, dx = \int_0^\infty m(E_\alpha) \, d\alpha.
+    \]
+\end{enumerate}
+
+\textbf{Intuition:}
+Think of the integral as the "volume" under the graph of $|f(x)|$. We can compute this volume by adding up horizontal slices. At each height $\alpha$, the "width" of the graph is the measure of the set where $|f(x)|$ exceeds $\alpha$. Summing these widths over all heights gives the total volume.
 \end{solution}
 
 \begin{exercise}
@@ -40,30 +53,37 @@ Let $p(z)$ be a polynomial of degree $d\geq 2$, with distinct roots $a_1,a_2,\cd
 \end{exercise}
 
 \begin{solution}
-Consider the rational function $f(z) = \frac{1}{p(z)}$. Since $p(z)$ is a polynomial of degree $d \geq 2$ with distinct roots $a_1, \dots, a_d$, the function $f(z)$ has simple poles at each $a_i$. The residue of $f(z)$ at $z = a_i$ is given by:
-\[
-\text{Res}(f, a_i) = \lim_{z \to a_i} (z - a_i) \frac{1}{p(z)} = \frac{1}{p'(a_i)}.
-\]
-By the Residue Theorem, if $C_R$ is a circle of radius $R$ centered at the origin that encloses all roots $a_1, \dots, a_d$, then:
-\[
-\oint_{C_R} \frac{1}{p(z)} \, dz = 2\pi i \sum_{i=1}^d \text{Res}(f, a_i) = 2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)}.
-\]
-Now we analyze the behavior of the integral as $R \to \infty$. Since $p(z)$ is a polynomial of degree $d$, for large $|z|$, we have $|p(z)| \geq C |z|^d$ for some constant $C > 0$. Therefore, on the circle $C_R$ ($|z| = R$):
-\[
-\left| \frac{1}{p(z)} \right| \leq \frac{1}{C R^d}.
-\]
-The length of the contour $C_R$ is $2\pi R$. Thus, the integral is bounded by:
-\[
-\left| \oint_{C_R} \frac{1}{p(z)} \, dz \right| \leq 2\pi R \cdot \frac{1}{C R^d} = \frac{2\pi}{C R^{d-1}}.
-\]
-Since $d \geq 2$, the exponent $d-1 \geq 1$, so as $R \to \infty$, the integral tends to $0$:
-\[
-\lim_{R \to \infty} \oint_{C_R} \frac{1}{p(z)} \, dz = 0.
-\]
-It follows that:
-\[
-2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)} = 0 \implies \sum_{i=1}^d \frac{1}{p'(a_i)} = 0.
-\]
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Complex Analysis: Residue Theorem.
+    \item Rational functions and their behavior at infinity.
+    \item Residue formula for simple poles: $\text{Res}(f, a) = \frac{1}{p'(a)}$ for $f(z) = \frac{1}{p(z)}$.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Define the function $f(z) = \frac{1}{p(z)}$. Since the roots $a_i$ of $p(z)$ are distinct, $f(z)$ has simple poles at each $z = a_i$.\\[2ex]
+    \item Calculate the residue at each pole:
+    \[
+    \text{Res}(f, a_i) = \lim_{z \to a_i} (z - a_i) \frac{1}{p(z)} = \frac{1}{p'(a_i)}.
+    \]\\[2ex]
+    \item Let $C_R$ be a large circle of radius $R$ enclosing all the roots. By the Residue Theorem:
+    \[
+    \oint_{C_R} \frac{1}{p(z)} \, dz = 2\pi i \sum_{i=1}^d \text{Res}(f, a_i) = 2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)}.
+    \]\\[2ex]
+    \item Analyze the integral as $R \to \infty$. Since $p(z)$ is a polynomial of degree $d$, $|p(z)| \approx C|z|^d$ for large $|z|$. Thus:
+    \[
+    \left| \oint_{C_R} \frac{1}{p(z)} \, dz \right| \leq (2\pi R) \cdot \frac{1}{C R^d} = \frac{2\pi}{C R^{d-1}}.
+    \]\\[2ex]
+    \item Since $d \geq 2$, $d-1 \geq 1$, so the integral tends to 0 as $R \to \infty$:
+    \[
+    \lim_{R \to \infty} \oint_{C_R} \frac{1}{p(z)} \, dz = 0.
+    \]\\[2ex]
+    \item Therefore, $2\pi i \sum_{i=1}^d \frac{1}{p'(a_i)} = 0$, which implies $\sum_{i=1}^d \frac{1}{p'(a_i)} = 0$.
+\end{enumerate}
+
+\textbf{Intuition:}
+The sum of the residues of a rational function in the complex plane is related to its residue at infinity. For a function that decays sufficiently fast ($1/z^2$ or faster), the sum of all its finite residues must be zero because there is no residue "leakage" at infinity.
 \end{solution}
 
 \begin{exercise}
@@ -81,26 +101,32 @@ Let $\alpha$ be a number such that $\alpha/\pi$ is not a rational number.
 \end{exercise}
 
 \begin{solution}
-First, consider the case $f(t) = e^{ikt}$ for an integer $k$.
-If $k = 0$, then $f(t) = 1$. The sum is $\frac{1}{N} \sum_{n=1}^N 1 = 1$, and the integral is $\frac{1}{2\pi} \int_{-\pi}^\pi 1 \, dt = 1$. The equality holds.
-If $k \neq 0$, the integral is $\frac{1}{2\pi} \int_{-\pi}^\pi e^{ikt} \, dt = 0$.
-The sum is:
-\[
-\frac{1}{N} \sum_{n=1}^N e^{ik(x+n\alpha)} = \frac{e^{ikx}}{N} \sum_{n=1}^N (e^{ik\alpha})^n = \frac{e^{ikx}}{N} e^{ik\alpha} \frac{1 - e^{ikN\alpha}}{1 - e^{ik\alpha}}.
-\]
-Since $\alpha/\pi \notin \mathbb{Q}$, $k\alpha$ is not a multiple of $2\pi$, so $e^{ik\alpha} \neq 1$ and the denominator is non-zero. The numerator is bounded in absolute value by $|e^{ikx} \cdot e^{ik\alpha} \cdot 2| = 2$. Thus:
-\[
-\left| \frac{1}{N} \sum_{n=1}^N e^{ik(x+n\alpha)} \right| \leq \frac{1}{N} \cdot \frac{2}{|1 - e^{ik\alpha}|} \to 0 \text{ as } N \to \infty.
-\]
-This proves the result for any $k \neq 0$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Geometric Series.
+    \item Stone-Weierstrass Theorem (Trigonometric approximation).
+    \item Weyl's Criterion for equidistribution.
+\end{itemize}
 
-Now let $f$ be any continuous $2\pi$-periodic function. By the Stone-Weierstrass theorem, $f$ can be uniformly approximated by trigonometric polynomials. For any $\epsilon > 0$, there exists a trigonometric polynomial $P(t) = \sum_{k=-M}^M c_k e^{ikt}$ such that $\sup_t |f(t) - P(t)| < \epsilon$.
-Then:
-\[
-\left| \frac{1}{N} \sum_{n=1}^N f(x+n\alpha) - \int f \right| \leq \left| \frac{1}{N} \sum (f - P) \right| + \left| \frac{1}{N} \sum P - \int P \right| + \left| \int P - \int f \right|
-\]
-where $\int$ denotes $\frac{1}{2\pi} \int_{-\pi}^\pi$.
-The first and third terms are bounded by $\epsilon$. The middle term tends to 0 as $N \to \infty$ because it is a finite linear combination of terms that tend to 0. Since $\epsilon$ is arbitrary, the limit holds.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Case $k=0$:} The left side is $\frac{1}{N} \sum 1 = 1$. The right side is $\frac{1}{2\pi} \int_{-\pi}^\pi 1 \, dt = 1$. The equality holds.\\[2ex]
+    \item \textbf{Case $k \neq 0$:} The right side integral is $\frac{1}{2\pi} \left[ \frac{e^{ikt}}{ik} \right]_{-\pi}^\pi = 0$ since $e^{ik\pi} = e^{-ik\pi} = (-1)^k$.
+    The left side is a geometric series:
+    \[
+    \frac{e^{ikx}}{N} \sum_{n=1}^N (e^{ik\alpha})^n = \frac{e^{ikx}}{N} e^{ik\alpha} \frac{1 - e^{ikN\alpha}}{1 - e^{ik\alpha}}.
+    \]\\[2ex]
+    \item Since $\alpha/\pi \notin \mathbb{Q}$, $k\alpha$ is not a multiple of $2\pi$, so $e^{ik\alpha} \neq 1$. The term $\frac{e^{ikx} e^{ik\alpha} (1 - e^{ikN\alpha})}{1 - e^{ik\alpha}}$ is bounded. Thus, its limit as $N \to \infty$ is 0.\\[2ex]
+    \item \textbf{General function $f$:} By Stone-Weierstrass, any continuous periodic $f$ can be uniformly approximated by trigonometric polynomials $P_\epsilon(t) = \sum c_k e^{ikt}$.\\[2ex]
+    \item Write the difference as:
+    \[
+    \left| \frac{1}{N} \sum f - \int f \right| \leq \left| \frac{1}{N} \sum (f - P_\epsilon) \right| + \left| \frac{1}{N} \sum P_\epsilon - \int P_\epsilon \right| + \left| \int (P_\epsilon - f) \right|.
+    \]\\[2ex]
+    \item The first and third terms are small by uniform approximation ($\epsilon$). The middle term vanishes as $N \to \infty$ by step 2.
+\end{enumerate}
+
+\textbf{Intuition:}
+This result is about "averaging". If you jump around a circle by an irrational angle $\alpha$, your positions $n\alpha$ will eventually "fill up" the circle evenly. The average of a function over these sampled points will then converge to the average of the function over the entire circle.
 \end{solution}
 
 \begin{exercise}
@@ -108,12 +134,24 @@ Let $u$ be a positive harmonic function over the punctured complex plane $\mathb
 \end{exercise}
 
 \begin{solution}
-Consider the universal covering map $p: \mathbb{C} \to \mathbb{C} \setminus \{0\}$ given by $p(z) = e^z$.
-Define $v(z) = u(e^z)$. Since $u$ is harmonic on $\mathbb{C} \setminus \{0\}$, $v$ is harmonic on $\mathbb{C}$ (the composition of a harmonic function with a holomorphic function is harmonic).
-Because $u$ is a positive function, $v$ is also a positive harmonic function on the entire complex plane $\mathbb{C} \cong \mathbb{R}^2$.
-Liouville's theorem for harmonic functions states that any harmonic function on $\mathbb{R}^n$ that is bounded from below (or above) must be constant.
-Since $v(z) > 0$ for all $z \in \mathbb{R}^2$, it is bounded from below, and therefore $v$ is constant.
-Since $v(z) = u(e^z)$ is constant and the map $e^z$ is surjective onto $\mathbb{C} \setminus \{0\}$, the original function $u$ must also be constant.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Harmonic functions: Liouville's Theorem (a bounded-below harmonic function on $\mathbb{R}^n$ is constant).
+    \item Complex Analysis: Universal covering maps (e.g., $e^z : \mathbb{C} \to \mathbb{C} \setminus \{0\}$).
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Consider the universal covering map $p: \mathbb{C} \to \mathbb{C} \setminus \{0\}$ defined by $p(z) = e^z$.\\[2ex]
+    \item Lift the function $u$ to the covering space by defining $v(z) = u(e^z)$.\\[2ex]
+    \item Since $u$ is harmonic on $\mathbb{C} \setminus \{0\}$ and $e^z$ is holomorphic, the composition $v = u \circ e^z$ is harmonic on the entire complex plane $\mathbb{C} \cong \mathbb{R}^2$.\\[2ex]
+    \item We are given that $u > 0$, which implies $v > 0$ for all $z \in \mathbb{C}$.\\[2ex]
+    \item By Liouville's Theorem for harmonic functions, any harmonic function on $\mathbb{R}^2$ that is bounded from below must be constant.\\[2ex]
+    \item Since $v$ is constant and the map $e^z$ is surjective onto $\mathbb{C} \setminus \{0\}$, it follows that $u$ must also be constant.
+\end{enumerate}
+
+\textbf{Intuition:}
+A positive harmonic function on the whole plane is like a "balanced" surface that never dips below zero; the only way to stay balanced and bounded is to be flat (constant). By using the exponential map, we "unroll" the punctured plane into the whole plane, allowing us to use this powerful property.
 \end{solution}
 
 \begin{exercise}
@@ -132,32 +170,31 @@ Tf(x) = \int_B K(x,y)f(y)\,dy.
 \end{exercise}
 
 \begin{solution}
-\textbf{1. Boundedness:}
-We use Schur's Test. An operator $T$ with kernel $K$ is bounded on $L^2$ if there exist constants $C_1, C_2$ such that:
-\[
-\int_B |K(x,y)| \, dy \leq C_1 \text{ for a.e. } x \in B, \quad \int_B |K(x,y)| \, dx \leq C_2 \text{ for a.e. } y \in B.
-\]
-Given $|K(x,y)| \leq A |x-y|^{-d+\alpha}$, we compute:
-\[
-\int_B |x-y|^{-d+\alpha} \, dy \leq \int_{|z| \leq 2} |z|^{-d+\alpha} \, dz
-\]
-where we used the fact that for $x, y \in B$, $|x-y| \leq 2$. In polar coordinates in $\mathbb{R}^d$:
-\[
-\int_{|z| \leq 2} |z|^{-d+\alpha} \, dz = \omega_{d-1} \int_0^2 r^{-d+\alpha} r^{d-1} \, dr = \omega_{d-1} \int_0^2 r^{\alpha-1} \, dr = \omega_{d-1} \frac{2^\alpha}{\alpha} < \infty
-\]
-where $\omega_{d-1}$ is the surface area of the unit sphere. Since the kernel is symmetric in its bound, the same estimate holds for the integral over $x$. Thus $T$ is bounded on $L^2(B)$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Functional Analysis: Schur's Test for boundedness.
+    \item Compact Operators: Limits of Hilbert-Schmidt operators.
+    \item Integral Calculus: Integration in polar coordinates in $\mathbb{R}^d$.
+\end{itemize}
 
-\textbf{2. Compactness:}
-Define a sequence of kernels $K_n(x,y) = K(x,y)$ if $|x-y| \geq 1/n$ and $0$ otherwise.
-Each $K_n$ is a bounded function on $B \times B$ (since $|x-y| \geq 1/n$ implies $|K| \leq A n^{d-\alpha}$).
-Since $B$ is a set of finite measure, $K_n \in L^2(B \times B)$.
-A kernel operator is Hilbert-Schmidt if its kernel is in $L^2(B \times B)$. Hilbert-Schmidt operators are compact.
-Now we show that $T_n \to T$ in the operator norm. $T - T_n$ is the operator with kernel $G_n(x,y) = K(x,y)$ if $|x-y| < 1/n$.
-By the same Schur's test estimate:
-\[
-\|T - T_n\| \leq \sup_x \int_{|x-y| < 1/n} A |x-y|^{-d+\alpha} \, dy = A \omega_{d-1} \int_0^{1/n} r^{\alpha-1} \, dr = \frac{A \omega_{d-1}}{\alpha n^\alpha}.
-\]
-As $n \to \infty$, $\|T - T_n\| \to 0$. Since $T$ is the limit of compact operators in the operator norm, $T$ is compact.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Boundedness via Schur's Test:} An operator $T$ with kernel $K$ is bounded on $L^2$ if $\int_B |K(x,y)| \, dy$ and $\int_B |K(x,y)| \, dx$ are bounded by a constant $C$.\\[2ex]
+    \item Compute the integral:
+    \[
+    \int_B |x-y|^{-d+\alpha} \, dy \leq \int_{|z| \leq 2} |z|^{-d+\alpha} \, dz = \omega_{d-1} \int_0^2 r^{-d+\alpha} r^{d-1} \, dr = \omega_{d-1} \frac{2^\alpha}{\alpha} < \infty.
+    \]
+    Thus, $T$ is bounded.\\[2ex]
+    \item \textbf{Compactness:} Define $K_n(x,y) = K(x,y)$ if $|x-y| \geq 1/n$ and $0$ otherwise. Since $K_n$ is bounded on a set of finite measure, it is in $L^2(B \times B)$, so $T_n$ is Hilbert-Schmidt and thus compact.\\[2ex]
+    \item Show $T_n \to T$ in operator norm. The difference $T - T_n$ has kernel $K$ restricted to $|x-y| < 1/n$. By Schur's Test:
+    \[
+    \|T - T_n\| \leq \int_{|z| < 1/n} A |z|^{-d+\alpha} \, dz = \frac{A \omega_{d-1}}{\alpha n^\alpha} \to 0 \text{ as } n \to \infty.
+    \]\\[2ex]
+    \item Since $T$ is the limit of compact operators, $T$ is compact.
+\end{enumerate}
+
+\textbf{Intuition:}
+The kernel $K(x,y)$ has a singularity at $x=y$, but it's "weak" enough (the power $-d+\alpha$ is better than $-d$) that it's still integrable. This integrability ensures the operator is well-behaved (bounded). By chopping off the singularity, we get operators that are very "smooth" (Hilbert-Schmidt/Compact), and the whole operator is just a limit of these smooth ones.
 \end{solution}
 
 \begin{exercise}
@@ -169,39 +206,30 @@ Show that:
 \[
 \int_{\mathbb{R}^n} \exp\left(i\frac{\lambda}{2}\langle Ax,x\rangle - i\langle x,\xi\rangle\right)dx = \left(\frac{2\pi}{\lambda}\right)^{n/2}|\det A|^{-1/2}\exp\left(-\frac{i}{2\lambda}\langle A^{-1}\xi,\xi\rangle\right)\exp\left(\frac{i\pi}{4}\operatorname{sgn}A\right).
 \]
-Here $\lambda\in\mathbb{R}^+$, $\xi\in\mathbb{R}^n$, $\operatorname{sgn}(A) = \nu_+(A) - \nu_-(A)$, where $\nu_+(A)$ ($\nu_-(A)$) is the number of positive (negative) eigenvalues of $A$.
 \end{exercise}
 
 \begin{solution}
-Let $A = Q D Q^T$ be the spectral decomposition of $A$, where $Q$ is orthogonal and $D = \text{diag}(\mu_1, \dots, \mu_n)$ is the diagonal matrix of eigenvalues.
-Change variables $x = Q y$. Then $dx = dy$, $\langle Ax, x \rangle = \sum \mu_j y_j^2$, and $\langle x, \xi \rangle = \langle y, Q^T \xi \rangle = \sum y_j \eta_j$ where $\eta = Q^T \xi$.
-The integral factorizes:
-\[
-\int_{\mathbb{R}^n} \exp\left(i \sum \left( \frac{\lambda}{2} \mu_j y_j^2 - \eta_j y_j \right) \right) dy = \prod_{j=1}^n \int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j \right) dy_j.
-\]
-Completing the square in the exponent: $i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j = i \frac{\lambda \mu_j}{2} \left( y_j - \frac{\eta_j}{\lambda \mu_j} \right)^2 - \frac{i \eta_j^2}{2 \lambda \mu_j}$.
-The 1D integral is:
-\[
-I_j = \exp\left( - \frac{i \eta_j^2}{2 \lambda \mu_j} \right) \int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} z^2 \right) dz.
-\]
-Using the definition $\int \exp(ia z^2) = \sqrt{\pi/|a|} \exp(i \frac{\pi}{4} \text{sgn}(a))$:
-\[
-\int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} z^2 \right) dz = \sqrt{\frac{2\pi}{\lambda |\mu_j|}} \exp\left( i \frac{\pi}{4} \text{sgn}(\mu_j) \right).
-\]
-Multiplying all $I_j$ together:
-\[
-\prod_{j=1}^n \sqrt{\frac{2\pi}{\lambda |\mu_j|}} \exp\left( i \frac{\pi}{4} \text{sgn}(\mu_j) \right) \exp\left( - \frac{i \eta_j^2}{2 \lambda \mu_j} \right) = \left( \frac{2\pi}{\lambda} \right)^{n/2} \left( \prod |\mu_j| \right)^{-1/2} \exp\left( \frac{i \pi}{4} \sum \text{sgn}(\mu_j) \right) \exp\left( - \frac{i}{2\lambda} \sum \frac{\eta_j^2}{\mu_j} \right).
-\]
-Observe that:
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item $\prod |\mu_j| = |\det A|$.
-    \item $\sum \text{sgn}(\mu_j) = \nu_+(A) - \nu_-(A) = \text{sgn}(A)$.
-    \item $\sum \frac{\eta_j^2}{\mu_j} = \langle D^{-1} \eta, \eta \rangle = \langle D^{-1} Q^T \xi, Q^T \xi \rangle = \langle Q D^{-1} Q^T \xi, \xi \rangle = \langle A^{-1} \xi, \xi \rangle$.
+    \item Multivariable Calculus: Change of variables and diagonalization of symmetric matrices.
+    \item Fresnel Integrals: $\int_{-\infty}^\infty e^{iax^2} dx = \sqrt{\frac{\pi}{|a|}} e^{i\frac{\pi}{4}\text{sgn}(a)}$.
+    \item Fourier Transform of a Gaussian.
 \end{itemize}
-Substituting these back gives the desired result:
-\[
-\left( \frac{2\pi}{\lambda} \right)^{n/2} |\det A|^{-1/2} \exp\left( \frac{i \pi}{4} \text{sgn}(A) \right) \exp\left( - \frac{i}{2\lambda} \langle A^{-1} \xi, \xi \rangle \right).
-\]
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Diagonalize $A = Q D Q^T$, where $D = \text{diag}(\mu_1, \dots, \mu_n)$ are the eigenvalues. Change variables $x = Qy$, so $dx = dy$.\\[2ex]
+    \item The exponent becomes $i\frac{\lambda}{2} \sum \mu_j y_j^2 - i \sum \eta_j y_j$, where $\eta = Q^T \xi$. The integral factorizes into $n$ 1D integrals:
+    \[
+    \prod_{j=1}^n \int_{-\infty}^\infty \exp\left( i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j \right) dy_j.
+    \]\\[2ex]
+    \item Complete the square: $i \frac{\lambda \mu_j}{2} y_j^2 - i \eta_j y_j = i \frac{\lambda \mu_j}{2} (y_j - \frac{\eta_j}{\lambda \mu_j})^2 - \frac{i \eta_j^2}{2 \lambda \mu_j}$.\\[2ex]
+    \item Use the 1D result: $\int_{-\infty}^\infty \exp( i \frac{\lambda \mu_j}{2} z^2 ) dz = \sqrt{\frac{2\pi}{\lambda |\mu_j|}} e^{i \frac{\pi}{4} \text{sgn}(\mu_j)}$.\\[2ex]
+    \item Multiply the results: The product of $\sqrt{1/|\mu_j|}$ gives $|\det A|^{-1/2}$, the sum of $\text{sgn}(\mu_j)$ gives $\text{sgn}(A)$, and the sum $\sum \frac{\eta_j^2}{\mu_j}$ gives $\langle A^{-1} \xi, \xi \rangle$.
+\end{enumerate}
+
+\textbf{Intuition:}
+This is a multidimensional version of the Gaussian integral. Just as a 1D Gaussian is determined by its variance, this integral is determined by the "variances" along the principal axes of the matrix $A$. The phase shift (the $\operatorname{sgn}A$ term) comes from whether each axis corresponds to a "valley" or a "peak" in the complex oscillation.
 \end{solution}
 
 \subsection{Team}
@@ -215,19 +243,28 @@ for all $z$ in $\Delta$. If equality holds in (1) for some $z_0 \in \Delta$, sho
 \end{exercise}
 
 \begin{solution}
-This is the Schwarz-Pick Theorem.
-Let $\psi_a(z) = \frac{a-z}{1-\bar{a}z}$ be an automorphism of $\Delta$ that maps $a$ to $0$.
-Define $g = \psi_{f(z_0)} \circ f \circ \psi_{z_0}^{-1}$.
-Then $g(0) = \psi_{f(z_0)}(f(z_0)) = 0$.
-By Schwarz Lemma, $|g'(0)| \leq 1$ and $|g(w)| \leq |w|$.
-Using the chain rule:
-$g'(0) = \psi_{f(z_0)}'(f(z_0)) \cdot f'(z_0) \cdot (\psi_{z_0}^{-1})'(0)$.
-Since $\psi_a'(a) = \frac{-1}{1-|a|^2}$ and $(\psi_a^{-1})'(0) = -(1-|a|^2)$:
-$|g'(0)| = \left| \frac{-1}{1-|f(z_0)|^2} \right| \cdot |f'(z_0)| \cdot |1-|z_0|^2| = \frac{|f'(z_0)|(1-|z_0|^2)}{1-|f(z_0)|^2} \leq 1$.
-This gives the desired inequality.
-If equality holds at $z_0$, then $|g'(0)| = 1$, so by Schwarz Lemma $g(w) = e^{i\theta} w$ for some $\theta$, which is an automorphism.
-Thus $f = \psi_{f(z_0)}^{-1} \circ g \circ \psi_{z_0}$ is a composition of automorphisms, hence $f \in \operatorname{Aut}(\Delta)$.
-For any automorphism, the equality in Schwarz-Pick holds everywhere.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Complex Analysis: Schwarz Lemma.
+    \item Möbius Transformations: Automorphisms of the unit disk $\Delta$.
+    \item Chain Rule for holomorphic functions.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $\psi_a(z) = \frac{a-z}{1-\bar{a}z}$ be an automorphism of $\Delta$ that maps $a$ to $0$.\\[2ex]
+    \item For a fixed $z_0 \in \Delta$, define a new function $g(w) = \psi_{f(z_0)} \circ f \circ \psi_{z_0}^{-1}(w)$.\\[2ex]
+    \item Note that $g(0) = \psi_{f(z_0)}(f(z_0)) = 0$, and since $f: \Delta \to \Delta$, we have $g: \Delta \to \Delta$.\\[2ex]
+    \item By the Schwarz Lemma, $|g'(0)| \leq 1$. We calculate $g'(0)$ using the chain rule:
+    \[
+    |g'(0)| = |\psi_{f(z_0)}'(f(z_0))| \cdot |f'(z_0)| \cdot |(\psi_{z_0}^{-1})'(0)| = \frac{1}{1-|f(z_0)|^2} \cdot |f'(z_0)| \cdot (1-|z_0|^2).
+    \]\\[2ex]
+    \item The inequality $|g'(0)| \leq 1$ yields $\frac{|f'(z_0)|}{1-|f(z_0)|^2} \leq \frac{1}{1-|z_0|^2}$.\\[2ex]
+    \item If equality holds at $z_0$, then $|g'(0)| = 1$. By the Schwarz Lemma, $g(w) = e^{i\theta}w$, which is an automorphism. Thus $f$ is a composition of automorphisms, hence $f \in \operatorname{Aut}(\Delta)$.
+\end{enumerate}
+
+\textbf{Intuition:}
+The Schwarz-Pick theorem says that holomorphic maps from the disk to itself are "contractions" with respect to the hyperbolic metric. The expression $\frac{|f'(z)|}{1-|f(z)|^2} dz$ is the hyperbolic length of the image of a small vector at $z$. The theorem states that this image vector is never longer than the original vector in the hyperbolic sense.
 \end{solution}
 
 \begin{exercise}
@@ -239,17 +276,31 @@ Let $f$ be a function of bounded variation on $[a, b]$, $f_1$ its generalized de
 \end{exercise}
 
 \begin{solution}
-a) If $f$ is absolutely continuous, then $f(x) = f(a) + \int_a^x f'(x) dx$ where $f'$ is the derivative almost everywhere. By the fundamental theorem of calculus for Lebesgue integrals, $f_1 = f'$ a.e.
-Plugging into the weak derivative formula and using integration by parts for absolutely continuous functions:
-$\int_a^b f(x) g'(x) dx = [f(x)g(x)]_a^b - \int_a^b f'(x) g(x) dx = -\int_a^b f'(x) g(x) dx$.
-Thus the weak derivative coincides with the pointwise derivative $f_1$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Real Analysis: Absolutely continuous functions and the Fundamental Theorem of Calculus for Lebesgue integrals.
+    \item Theory of Distributions: Definition of weak derivatives.
+    \item Integration by Parts for Lebesgue integrals.
+\end{itemize}
 
-b) If the weak derivative $f'$ is integrable, let $F(x) = \int_a^x f'(t) dt$. $F$ is absolutely continuous.
-Then for any test function $g$:
-$\int f g' = -\int f' g = -\int F' g = \int F g'$.
-So $\int (f-F) g' = 0$ for all $g$.
-This implies $f-F$ is constant almost everywhere.
-Thus $f(x) = F(x) + C$ a.e., where $F(x)+C$ is absolutely continuous.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Part (a):} If $f$ is absolutely continuous, then $f(x) = f(a) + \int_a^x f_1(t) dt$. Its pointwise derivative $f_1$ exists almost everywhere and is integrable.\\[2ex]
+    \item Using integration by parts for absolutely continuous functions:
+    \[
+    \int_a^b f(x) g'(x) dx = [f(x)g(x)]_a^b - \int_a^b f_1(x) g(x) dx = -\int_a^b f_1(x) g(x) dx.
+    \]
+    Since this holds for all test functions $g$, the weak derivative $f'$ coincides with $f_1$.\\[2ex]
+    \item \textbf{Part (b):} Suppose the weak derivative $f'$ is integrable. Define an absolutely continuous function $F(x) = \int_a^x f'(t) dt$.\\[2ex]
+    \item By the result in (a), the weak derivative of $F$ is $f'$. Thus, for any test function $g$:
+    \[
+    \int_a^b (f(x) - F(x)) g'(x) dx = \int_a^b f g' - \int_a^b F g' = -\int_a^b f' g + \int_a^b f' g = 0.
+    \]\\[2ex]
+    \item A distribution whose derivative is zero must be a constant. Thus $f(x) - F(x) = C$ almost everywhere. This means $f(x) = F(x) + C$ a.e., which is absolutely continuous.
+\end{enumerate}
+
+\textbf{Intuition:}
+Weak derivatives generalize the concept of a derivative to functions that might not be differentiable everywhere. However, if the weak derivative happens to be a nice integrable function, then the original function must have been "nice" too—specifically, absolutely continuous, which is the strongest form of continuity allowing for the Fundamental Theorem of Calculus.
 \end{solution}
 
 \begin{exercise}
@@ -257,16 +308,25 @@ Show that the convex hull of the roots of any polynomial contains all its critic
 \end{exercise}
 
 \begin{solution}
-This is the Gauss-Lucas Theorem.
-Let $P(z) = a \prod_{i=1}^n (z - z_i)$. Then
-$\frac{P'(z)}{P(z)} = \sum_{i=1}^n \frac{1}{z - z_i}$.
-If $z$ is a root of $P'(z)$ but not $P(z)$, then $\sum \frac{1}{z - z_i} = 0$.
-Taking the conjugate: $\sum \frac{1}{\bar{z} - \bar{z}_i} = \sum \frac{z - z_i}{|z - z_i|^2} = 0$.
-This can be written as $z \sum \frac{1}{|z - z_i|^2} = \sum \frac{z_i}{|z - z_i|^2}$.
-So $z = \frac{\sum w_i z_i}{\sum w_i}$ where $w_i = \frac{1}{|z - z_i|^2} > 0$.
-Thus $z$ is a convex combination of $z_i$, so $z$ is in the convex hull.
-If $z$ is also a root of $P(z)$, it is already in the convex hull.
-By induction, the roots of any higher derivative $P^{(k)}(z)$ are in the convex hull of the roots of $P^{(k-1)}(z)$, which is contained in the convex hull of the roots of $P(z)$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Algebra: Logarithmic derivative of a polynomial.
+    \item Geometry: Definition of convex hull and convex combinations.
+    \item Complex Numbers: Interpretation of $\sum w_i (z - z_i) = 0$ as $z$ being a center of mass.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $P(z) = a \prod_{i=1}^n (z - z_i)$. Its logarithmic derivative is $\frac{P'(z)}{P(z)} = \sum_{i=1}^n \frac{1}{z - z_i}$.\\[2ex]
+    \item If $z$ is a root of $P'(z)$, then either $P(z) = 0$ (so $z$ is one of the $z_i$, which is in the convex hull), or $\sum_{i=1}^n \frac{1}{z - z_i} = 0$.\\[2ex]
+    \item Take the complex conjugate: $\sum_{i=1}^n \frac{1}{\bar{z} - \bar{z}_i} = \sum_{i=1}^n \frac{z - z_i}{|z - z_i|^2} = 0$.\\[2ex]
+    \item Rearrange the terms: $z \sum_{i=1}^n \frac{1}{|z - z_i|^2} = \sum_{i=1}^n \frac{z_i}{|z - z_i|^2}$.\\[2ex]
+    \item This shows $z = \sum w_i z_i$ where $w_i = \frac{1/|z-z_i|^2}{\sum 1/|z-z_k|^2}$ are positive weights that sum to 1. Thus $z$ is in the convex hull of $\{z_i\}$.\\[2ex]
+    \item By induction, since the roots of $P^{(k)}$ are in the convex hull of the roots of $P^{(k-1)}$, they are all contained in the convex hull of the original roots.
+\end{enumerate}
+
+\textbf{Intuition:}
+This is the Gauss-Lucas Theorem. It tells us that the "descendants" of a polynomial (its derivatives) are always "trapped" within the geometric boundaries set by their "ancestors" (the original roots). Physically, you can think of the roots as point charges; the critical points are the equilibrium positions where the total force vanishes, which must lie within the region bounded by the charges.
 \end{solution}
 
 \begin{exercise}
@@ -274,14 +334,28 @@ Let $D \subset \mathbb{R}^3$ be an open domain. Show that every smooth vector fi
 \end{exercise}
 
 \begin{solution}
-This is the Helmholtz Decomposition.
-We want $\mathbf{F} = \nabla \phi + \nabla \times \mathbf{A}$.
-Then $\operatorname{rot}(\mathbf{F}_1) = \operatorname{rot}(\nabla \phi) = 0$ and $\operatorname{div}(\mathbf{F}_2) = \operatorname{div}(\nabla \times \mathbf{A}) = 0$.
-For a domain like $\mathbb{R}^3$ or a bounded domain with boundary conditions, we solve Poisson's equation.
-$\operatorname{div} \mathbf{F} = \operatorname{div} \mathbf{F}_1 = \Delta \phi$.
-Let $\phi(x) = -\frac{1}{4\pi} \int_D \frac{\operatorname{div} \mathbf{F}(y)}{|x-y|} dy$.
-Then $\mathbf{F}_1 = \nabla \phi$ satisfies the condition.
-Then $\mathbf{F}_2 = \mathbf{F} - \mathbf{F}_1$ satisfies $\operatorname{div} \mathbf{F}_2 = \operatorname{div} \mathbf{F} - \Delta \phi = 0$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Vector Calculus: Helmholtz Decomposition.
+    \item Differential Equations: Poisson's equation $\Delta \phi = \rho$.
+    \item Integral Calculus: Newton potential formula.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item We seek a decomposition $\mathbf{F} = \nabla \phi + \nabla \times \mathbf{A}$. Set $\mathbf{F}_1 = \nabla \phi$ and $\mathbf{F}_2 = \nabla \times \mathbf{A}$.\\[2ex]
+    \item To satisfy $\operatorname{div} \mathbf{F}_2 = 0$, we only need $\mathbf{F}_2$ to be a curl. To satisfy $\operatorname{rot} \mathbf{F}_1 = 0$, we need $\mathbf{F}_1$ to be a gradient.\\[2ex]
+    \item Taking the divergence of $\mathbf{F} = \mathbf{F}_1 + \mathbf{F}_2$, we get $\operatorname{div} \mathbf{F} = \operatorname{div}(\nabla \phi) = \Delta \phi$.\\[2ex]
+    \item We solve the Poisson equation $\Delta \phi = \operatorname{div} \mathbf{F}$. In $\mathbb{R}^3$, the solution is given by the Newton potential:
+    \[
+    \phi(x) = -\frac{1}{4\pi} \int_{\mathbb{R}^3} \frac{\operatorname{div} \mathbf{F}(y)}{|x-y|} dy.
+    \]\\[2ex]
+    \item Once $\phi$ is found, we define $\mathbf{F}_1 = \nabla \phi$. Then define $\mathbf{F}_2 = \mathbf{F} - \mathbf{F}_1$.\\[2ex]
+    \item By construction, $\operatorname{div} \mathbf{F}_2 = \operatorname{div} \mathbf{F} - \Delta \phi = 0$, and $\operatorname{rot} \mathbf{F}_1 = \operatorname{rot} \nabla \phi = 0$.
+\end{enumerate}
+
+\textbf{Intuition:}
+The Helmholtz decomposition states that any sufficiently smooth vector field can be split into an "irrotational" (curl-free) part and a "solenoidal" (divergence-free) part. Think of the field as a fluid flow: $\mathbf{F}_1$ represents the part of the flow caused by sources and sinks, while $\mathbf{F}_2$ represents the part caused by swirling vortices.
 \end{solution}
 
 \begin{exercise}
@@ -289,15 +363,26 @@ Let $\mathbf{H}$ be a Hilbert space and $\mathbf{A}$ a compact self-adjoint line
 \end{exercise}
 
 \begin{solution}
-This is the Spectral Theorem for compact self-adjoint operators.
-The nonzero eigenvalues are real and have finite multiplicity.
-Let $\{\lambda_k\}$ be the distinct nonzero eigenvalues and $E_k$ the corresponding finite-dimensional eigenspaces.
-Because $\mathbf{A}$ is self-adjoint, eigenspaces for different eigenvalues are orthogonal.
-Let $\{\varphi_{k,j}\}$ be an orthonormal basis for $E_k$.
-The span of these eigenvectors is dense in $(\operatorname{Ker} \mathbf{A})^\perp$.
-Thus $\mathbf{H} = \overline{\bigoplus E_k} \oplus \operatorname{Ker} \mathbf{A}$.
-Any $\xi \in \mathbf{H}$ can be projected onto the kernel and the sum of eigenspaces.
-The fact that $\lambda_n \to 0$ follows from the compactness of $\mathbf{A}$. If $\lambda_n$ did not go to zero, there would be an infinite-dimensional subspace where $\mathbf{A}$ is bounded away from zero, contradicting compactness.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Functional Analysis: Spectral Theorem for compact self-adjoint operators.
+    \item Linear Algebra: Eigenspaces and orthogonality.
+    \item Topology: Compactness and its relation to eigenvalue decay.
+\end{itemize}
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item For a compact self-adjoint operator, the nonzero eigenvalues are real and have finite multiplicity.\\[2ex]
+    \item Eigenspaces corresponding to different eigenvalues are orthogonal because $\mathbf{A}$ is self-adjoint.\\[2ex]
+    \item Let $\{\lambda_n\}$ be the sequence of nonzero eigenvalues and $\{\varphi_n\}$ the corresponding orthonormal eigenvectors. The closure of the span of these eigenvectors is exactly $(\operatorname{Ker} \mathbf{A})^\perp$.\\[2ex]
+    \item Any vector $\xi \in \mathbf{H}$ can be uniquely decomposed as $\xi = \xi_{perp} + \xi'$, where $\xi' \in \operatorname{Ker} \mathbf{A}$ and $\xi_{perp} \in \overline{\operatorname{span}\{\varphi_n\}}$.\\[2ex]
+    \item Thus $\xi = \sum c_n \varphi_n + \xi'$, where $c_n = \langle \xi, \varphi_n \rangle$.\\[2ex]
+    \item Applying $\mathbf{A}$, we get $\mathbf{A}\xi = \sum c_n \mathbf{A}\varphi_n + \mathbf{A}\xi' = \sum \lambda_n c_n \varphi_n$.\\[2ex]
+    \item If there were infinitely many $\lambda_n$ not converging to 0, there would be an infinite-dimensional subspace where $\mathbf{A}$ is bounded away from zero, which contradicts the compactness of $\mathbf{A}$.
+\end{enumerate}
+
+\textbf{Intuition:}
+Compact operators are "almost" finite-dimensional. Just like a symmetric matrix can be diagonalized, a compact self-adjoint operator can be diagonalized using an orthonormal basis. The eigenvalues must decay to zero because the operator "shrinks" the dimensions as we go further into the basis, eventually making the transformation infinitesimal in higher dimensions.
 \end{solution}
 
 \begin{exercise}
@@ -310,12 +395,23 @@ A function $f : \mathbb{R} \to \mathbb{R}$ is called convex if $f(\lambda x + (1
 \end{exercise}
 
 \begin{solution}
-a) \textbf{Continuity:} For any $x$, consider $x-h, x, x+h$. By convexity, the slope is increasing. This implies the function is locally bounded and Lipschitz, hence continuous.
-\textbf{Legendre Transform:} $g(y) = \sup_x (xy - f(x))$. Since $xy-f(x)$ is linear in $y$, $g(y)$ is the supremum of linear functions, hence convex. It is well-defined if $f(x)$ grows faster than linearly at infinity.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Real Analysis: Properties of convex functions (monotonicity of slopes).
+    \item Legendre Transform: Definition and properties.
+    \item Differentiability: Left and right derivatives $f'_-(x)$ and $f'_+(x)$.
+\end{itemize}
 
-b) \textbf{Differentiability:} A convex function has monotonic left and right derivatives $f'_-(x) \leq f'_+(x)$. These are monotonic functions, so they have at most countably many jump discontinuities. $f$ is differentiable where $f'_-(x) = f'_+(x)$.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Continuity:} For any $x$, convexity implies that the slope of secant lines is non-decreasing. This bound on slopes ensures the function is locally Lipschitz and thus continuous.\\[2ex]
+    \item \textbf{Legendre Transform:} $g(y) = \sup_x (xy - f(x))$. Since $xy-f(x)$ is linear in $y$, $g(y)$ is a supremum of convex (linear) functions, hence $g(y)$ is convex.\\[2ex]
+    \item \textbf{Differentiability:} A convex function has non-decreasing left and right derivatives $f'_-(x) \leq f'_+(x)$. These are monotonic functions, which can have at most countably many jump discontinuities. $f$ is differentiable exactly where $f'_-(x) = f'_+(x)$.\\[2ex]
+    \item \textbf{Strict Convexity and Differentiability:} The strict convexity of $g$ implies that for each $y$, the maximizer $x$ in $xy - f(x)$ is unique. This uniqueness is dual to the differentiability of $f$. If $f$ had a "kink" at $x$, there would be multiple $y$ values (slopes) supporting that point, making $g$ non-strictly convex.
+\end{enumerate}
 
-c) Strict convexity of $g$ implies that the maximizer $x$ in $xy-f(x)$ is unique for each $y$. This uniqueness is related to the differentiability of $f$. Specifically, $f$ is differentiable if and only if $g$ is strictly convex (under certain growth conditions).
+\textbf{Intuition:}
+Convexity is a very rigid property. It forces a function to be mostly smooth because its "bending" must always be in the same direction. The Legendre transform $g(y)$ is like looking at the function $f(x)$ through its slopes rather than its values. If the function is "curved" everywhere (strictly convex), then its dual is "smooth" (differentiable).
 \end{solution}
 
 

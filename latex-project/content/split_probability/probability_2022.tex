@@ -9,24 +9,76 @@ For any set of players $S \subseteq \{1,\dots,r\}$, let $X(S)$ denote the number
 \end{exercise}
 
 \begin{solution}
-The expected number of games $E(X(S))$ does not depend on the player selection mechanism, provided that the selection mechanism does not depend on the history of outcomes in a way that biases the fairness of individual games.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Martingales and Optional Stopping Theorem:} If you have a process whose expected future value equals its present value (a martingale), its expected value at a random stopping time is also its initial value, provided certain boundedness conditions are met.
+    \item \textbf{Potential Functions (Lyapunov functions):} Creating a synthetic function of the system's state $\Phi(t)$ such that its expected change at every single step is a constant. This allows us to easily relate the total number of steps to the total change in the function.
+\end{itemize}
 
-Let $N_{i,t}$ be the fortune of player $i$ after $t$ games. Let $\Phi_S(t) = \sum_{i,j \in S, i<j} N_{i,t} N_{j,t}$. We consider the change in $\Phi_S$ after the $(t+1)$-th game.
-Let players $a$ and $b$ be chosen for the $(t+1)$-th game.
-1. If $a, b \in S$: With probability $1/2$, $N_{a,t+1} = N_{a,t}+1, N_{b,t+1} = N_{b,t}-1$. The change in $\Phi_S$ is
-\[ (N_{a,t}+1)(N_{b,t}-1) - N_{a,t} N_{b,t} + \sum_{k \in S \setminus \{a,b\}} (N_{k,t}(N_{a,t}+1) + N_{k,t}(N_{b,t}-1) - N_{k,t} N_{a,t} - N_{k,t} N_{b,t}) = N_{b,t} - N_{a,t} - 1. \]
-With probability $1/2$, the change is $N_{a,t} - N_{b,t} - 1$. The expected change is $-1$.
-2. If $a \in S$ and $b \notin S$: With probability $1/2$, $N_{a,t+1} = N_{a,t} \pm 1$. The change in $\Phi_S$ is
-\[ \sum_{k \in S \setminus \{a\}} (N_{k,t}(N_{a,t} \pm 1) - N_{k,t} N_{a,t}) = \pm \sum_{k \in S \setminus \{a\}} N_{k,t}. \]
-The expected change is $0$.
-3. If $a, b \notin S$: The fortunes of players in $S$ do not change, so the expected change in $\Phi_S$ is $0$.
+\textbf{Intuition / Motivation:}
 
-Let $I_t(S)$ be the indicator that the $t$-th game involves only members of $S$. Then $E[\Phi_S(t+1) - \Phi_S(t) | \mathcal{F}_t] = -I_{t+1}(S)$.
-By the optional stopping theorem, $E[\Phi_S(T)] - E[\Phi_S(0)] = -E[\sum_{t=1}^T I_t(S)] = -E(X(S))$, where $T$ is the time the game ends.
-At time $T$, only one player remains with $n$ units. If that player is in $S$, then $\Phi_S(T) = 0$ (since all other players in $S$ have 0 units). If the winner is not in $S$, all players in $S$ have 0 units, so $\Phi_S(T) = 0$.
-Thus, $0 - \Phi_S(0) = -E(X(S))$, which gives
-\[ E(X(S)) = \Phi_S(0) = \sum_{i,j \in S, i<j} n_i n_j. \]
-This value depends only on the initial fortunes and is independent of the player selection mechanism.
+This game is equivalent to randomly choosing two players to flip a coin, with the winner taking a dollar from the loser.
+We want to know how many games occur *exclusively* between players in a specific subset $S$.
+Imagine $S$ is a group of friends in the tournament. We want to know how many times they play each other.
+If we look at a single friend's fortune, it goes up and down unpredictably. But what if we look at the *product* of their fortunes? $N_a \times N_b$.
+If $a$ and $b$ play each other, one goes up by 1, the other goes down by 1. The product changes from $N_a N_b$ to $(N_a+1)(N_b-1) = N_a N_b - N_a + N_b - 1$ (half the time) or $(N_a-1)(N_b+1) = N_a N_b + N_a - N_b - 1$ (half the time).
+Notice the magical "-1" in both cases! Regardless of who wins, the product drops by exactly 1 on average.
+If player $a$ plays someone *outside* the friend group, $N_a$ changes by $\pm 1$. The product $N_a N_b$ changes by $\pm N_b$, which averages to exactly 0.
+So, if we sum up the pairwise products of all friends in $S$, this total sum will decrease by exactly 1 on average *if and only if* two friends play each other. If anyone plays an outsider, the sum doesn't change on average.
+Because every "internal" game drops the expected value by 1, the total number of internal games must exactly equal the total drop from the beginning of the tournament to the end. Since the end state is always 0 (only one person has money left, so at most one friend has money, making all pairwise products 0), the expected number of internal games is simply the initial value of the sum!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the potential function.}
+
+Let $N_{i,t}$ be the fortune of player $i$ after $t$ games.
+Define the potential function for the subset $S$ as the sum of all pairwise products of fortunes within $S$:
+\[ \Phi_S(t) = \sum_{\{i,j\} \subseteq S, i \neq j} N_{i,t} N_{j,t} \]
+
+\textbf{Step 2: Calculate the expected change in the potential function.}
+
+Suppose the $(t+1)$-th game is played between player $a$ and player $b$. There are three cases for their membership in $S$:
+\begin{enumerate}
+    \item \textbf{Both $a, b \in S$:} With probability $1/2$, $N_{a,t+1} = N_{a,t}+1$ and $N_{b,t+1} = N_{b,t}-1$. With probability $1/2$, it's the reverse.
+    The terms in $\Phi_S$ that involve $a$ or $b$ are $N_{a}N_{b} + \sum_{k \in S \setminus \{a,b\}} N_{k}(N_{a} + N_{b})$.
+    Notice that the sum $N_a + N_b$ does not change during their game (money is conserved between them). So the second part is completely unchanged.
+    The only part that changes is the direct product $N_a N_b$.
+    The new expected value of this product is:
+    \[ \frac{1}{2}(N_{a,t}+1)(N_{b,t}-1) + \frac{1}{2}(N_{a,t}-1)(N_{b,t}+1) \]
+    \[ = \frac{1}{2}(N_a N_b - N_a + N_b - 1) + \frac{1}{2}(N_a N_b + N_a - N_b - 1) = N_a N_b - 1 \]
+    Thus, the expected change in $\Phi_S(t)$ is exactly $-1$.
+
+    \item \textbf{One in $S$, one outside (e.g., $a \in S, b \notin S$):} Player $a$'s fortune changes by $+1$ or $-1$ with equal probability. Player $b$'s fortune doesn't appear in $\Phi_S$.
+    The terms involving $a$ are $\sum_{k \in S \setminus \{a\}} N_k N_a = N_a \sum N_k$.
+    The expected new value is $\frac{1}{2}(N_a+1)\sum N_k + \frac{1}{2}(N_a-1)\sum N_k = N_a \sum N_k$.
+    The expected change in $\Phi_S(t)$ is exactly $0$.
+
+    \item \textbf{Neither in $S$ ($a, b \notin S$):} No fortunes in $S$ change. The expected change in $\Phi_S(t)$ is $0$.
+\end{enumerate}
+
+\textbf{Step 3: Relate the expected change to the number of games.}
+
+Let $I_{t}(S)$ be the indicator variable that is $1$ if the $t$-th game is exclusively between members of $S$ (Case 1), and $0$ otherwise.
+From Step 2, the expected change in $\Phi_S$ given the past history $\mathcal{F}_{t-1}$ is:
+\[ \mathbb{E}[\Phi_S(t) - \Phi_S(t-1) \mid \mathcal{F}_{t-1}] = -I_t(S) \]
+This means that $M_t = \Phi_S(t) + \sum_{k=1}^t I_k(S)$ is a martingale.
+
+\textbf{Step 4: Apply the Optional Stopping Theorem.}
+
+The game ends at a random stopping time $T$ when only one player has all $n$ units.
+Because the fortunes are bounded ($0 \leq N_{i,t} \leq n$), the martingale is bounded, and the Optional Stopping Theorem applies:
+\[ \mathbb{E}[M_T] = \mathbb{E}[M_0] \]
+\[ \mathbb{E}\left[ \Phi_S(T) + \sum_{k=1}^T I_k(S) \right] = \mathbb{E}[\Phi_S(0) + 0] \]
+Let $X(S) = \sum_{k=1}^T I_k(S)$ be the total number of internal games.
+\[ \mathbb{E}[\Phi_S(T)] + \mathbb{E}[X(S)] = \Phi_S(0) \]
+At the end of the game (time $T$), only one player has non-zero money. Therefore, there cannot be two players in $S$ who both have money. Consequently, every pairwise product in $S$ is zero, meaning $\Phi_S(T) = 0$ strictly.
+\[ 0 + \mathbb{E}[X(S)] = \Phi_S(0) \]
+
+\textbf{Step 5: Conclude.}
+
+The expected number of games is simply the initial value of the potential function:
+\[ \mathbb{E}[X(S)] = \sum_{\{i,j\} \subseteq S, i \neq j} n_i n_j \]
+Because this formula only depends on the initial fortunes $n_i$, it is completely independent of the player selection mechanism (as long as the mechanism doesn't bias the fair coin flips of the games themselves).
 \end{solution}
 
 \begin{exercise}
@@ -38,21 +90,66 @@ Let $X_1, X_2, \ldots$ be independent Bernoulli random variables satisfying $P(X
 \end{exercise}
 
 \begin{solution}
-(a) Note that $M \geq S_1/1 = X_1$. If $X_1 = 1$, then $M \geq 1 > 0$. Thus $M=0$ implies $X_1 = -1$.
-$M=0$ means $S_n \leq 0$ for all $n \geq 1$ and $S_n = 0$ for some $n \geq 1$.
-Let $f$ be the probability that a simple random walk starting at 0 never hits 1. We know that the probability of ever hitting 1 is $\rho = \min(1, p/q)$.
-If $p \geq q$ (i.e., $p \geq 1/2$), $\rho = 1$, so the walk hits 1 almost surely, implying $P(M > 0) = 1$, so $P(M=0) = 0$.
-If $p < q$, $P(M \leq 0) = P(\text{never hit 1}) = 1 - p/q$.
-$M=0$ specifically means the walk hits 0 at some $n \geq 1$ but never hits 1.
-$P(M \leq 0) = P(M=0) + P(M < 0)$.
-$P(M < 0) = P(X_1 = -1, \text{never hit 0 for } n \geq 1) = q P(\text{never hit 1 starting at 0}) = q(1-p/q) = q-p$.
-Thus, $P(M=0) = (1-p/q) - (q-p) = \frac{q-p}{q} - (q-p) = (q-p)(\frac{1}{q}-1) = \frac{p(q-p)}{q}$.
-Summary: $P(M=0) = \frac{p(q-p)}{q}$ if $p < 1/2$, and $0$ if $p \geq 1/2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Simple Random Walk:} A sequence of partial sums $S_n = \sum_{i=1}^n X_i$ where $X_i \in \{-1, 1\}$.
+    \item \textbf{Gambler's Ruin / Hitting Probabilities:} The probability that a random walk starting at 0 eventually reaches state $k > 0$ depends on the drift. If the drift is negative ($p < 1/2$), the probability of hitting 1 is $p/q$. If the drift is zero or positive ($p \geq 1/2$), it is 1.
+    \item \textbf{Strong Law of Large Numbers (SLLN):} The sample average $S_n/n$ converges almost surely to the expected value $\mathbb{E}[X_1] = p-q$.
+\end{itemize}
 
-(b) By the Strong Law of Large Numbers, $\lim_{n \to \infty} S_n/n = E(X_1) = p - q$ a.s. Thus $M = \sup S_n/n \geq p-q$ a.s. Since $X_i \leq 1$, $S_n/n \leq 1$, so $M \leq 1$.
-Wait, if $p-q > 0$, can $M = p-q$? Since $S_n/n \to p-q$ from "above" or "below", and the sequence is discrete, if $M = p-q$, it must be that $S_n/n \leq p-q$ for all $n$.
-However, the fluctuations of the random walk ensure that $P(M > p-q) = 1$ if $p > q$.
-For any rational $x = k/m \in (p-q, 1]$, $P(M=x) > 0$ because there is a finite path such that $S_m = k$ and $S_n/n < k/m$ for all $n < m$, and we can choose the tail of the walk such that $S_n/n$ stays below $k/m$ for all $n > m$ (which has positive probability since $S_n/n \to p-q < k/m$).
+\textbf{Intuition / Motivation:}
+
+We are looking at $M = \sup_{n \ge 1} (S_n/n)$, the highest "average score" the random walk ever achieves.
+(a) When is $M=0$? This means the average is NEVER positive, but it hits exactly 0 at some point. Since the first step $S_1/1$ must be either $1$ or $-1$, the only way the maximum isn't positive is if the very first step is $-1$. After that, the walk can wander, but it must eventually touch 0 (to make $M=0$) without EVER crossing into positive territory. This relates directly to the probability of a random walk hitting certain thresholds.
+(b) The average $S_n/n$ eventually settles down to its true mean $p-q$. If you look at the sequence of averages over time, it wiggles around but is magnetically pulled toward $p-q$. Because of the wiggles, the *highest* point it ever reaches must be at least $p-q$. Furthermore, because it's a discrete walk, if you pick a specific rational target $k/m$ slightly above the mean, there's a specific "lucky streak" (e.g., getting $k$ heads in the first $m$ flips) that gets you exactly to that target early on. Because the long-term trend pulls the walk down to $p-q$, that early lucky peak will never be beaten, making $M$ exactly $k/m$ with some positive probability.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Analyze the conditions for $M=0$.}
+
+For $M = \sup (S_n/n)$ to be exactly 0, two things must happen:
+1. $S_n/n \leq 0$ for all $n \geq 1$. (It never goes positive).
+2. $S_n/n = 0$ for some $n \geq 1$. (It actually achieves 0).
+
+Because $S_1 = X_1 \in \{1, -1\}$, if $X_1 = 1$, then $M \geq S_1/1 = 1 > 0$. Therefore, for $M=0$ to occur, we *must* have $X_1 = -1$.
+If $X_1 = -1$, the walk starts at $-1$. For it to hit an average of 0 later, the sum $S_n$ must reach 0. So the walk must eventually move from $-1$ to $0$. But to satisfy condition 1, it must *never* reach $1$.
+
+\textbf{Step 2: Calculate probabilities using Gambler's Ruin.}
+
+Let $\rho$ be the probability that a random walk starting at 0 eventually hits 1. From standard random walk theory:
+- If $p \geq q$ (drift is $\ge 0$), $\rho = 1$. The walk is guaranteed to reach any positive integer.
+- If $p < q$ (drift is negative), $\rho = p/q < 1$.
+
+If $p \ge q$, the walk almost surely hits 1 eventually. This means $S_n$ will be positive, so $S_n/n$ will be positive, meaning $M > 0$ almost surely. Thus, $\mathbb{P}(M=0) = 0$.
+Now assume $p < q$. We want the probability of the exact event $\{M=0\}$.
+We know $\mathbb{P}(M \leq 0)$ is the probability that the walk never hits 1. Since starting at 0, hitting 1 has probability $\rho = p/q$, the probability of never hitting 1 is $1 - \rho = 1 - p/q$.
+We can decompose this into $\{M=0\}$ and $\{M<0\}$:
+\[ \mathbb{P}(M \leq 0) = \mathbb{P}(M=0) + \mathbb{P}(M < 0) \]
+What is $\mathbb{P}(M < 0)$? This means the walk never even hits 0 again. This requires $X_1 = -1$, and from $-1$, the walk never reaches 0. The probability of going from $-1$ to $0$ is the same as going from $0$ to $1$, which is $\rho = p/q$.
+So, $\mathbb{P}(\text{never hit 0} \mid X_1 = -1) = 1 - p/q$.
+\[ \mathbb{P}(M < 0) = \mathbb{P}(X_1 = -1) \times (1 - p/q) = q \left(1 - \frac{p}{q}\right) = q - p \]
+Now we solve for $\mathbb{P}(M=0)$:
+\[ \mathbb{P}(M=0) = \mathbb{P}(M \leq 0) - \mathbb{P}(M < 0) = \left(1 - \frac{p}{q}\right) - (q - p) = \frac{q-p}{q} - \frac{q(q-p)}{q} \]
+\[ = \frac{(q-p)(1-q)}{q} = \frac{p(q-p)}{q} \]
+
+\textbf{Step 3: Show $\mathbb{P}(p-q < M \leq 1) = 1$.}
+
+Since $X_i \leq 1$, $S_n \leq n$, so $S_n/n \leq 1$ always. Thus $M \leq 1$.
+By the Strong Law of Large Numbers, $S_n/n \to \mathbb{E}[X_1] = p-q$ almost surely.
+Since the sequence converges to $p-q$, the supremum $M$ must be at least $p-q$.
+Could $M$ be *exactly* $p-q$? If $M = p-q$, then $S_n/n \leq p-q$ for all $n$. But the sequence converges to $p-q$, and due to the random fluctuations (Law of the Iterated Logarithm), the walk will cross its mean infinitely often. It will strictly exceed $p-q$ at some point.
+Therefore, $M > p-q$ almost surely. Combining bounds gives $\mathbb{P}(p-q < M \leq 1) = 1$.
+
+\textbf{Step 4: Prove $\mathbb{P}(M = x) > 0$ for rational $x \in (p-q, 1]$.}
+
+Let $x = k/m$ where $k, m$ are integers and $k \leq m$. We want to find a specific scenario that forces the absolute maximum average to be exactly $k/m$.
+Scenario:
+1. In the first $m$ steps, the walk perfectly hits $S_m = k$ such that it never exceeded $k/m$ along the way. For example, if we need $S_3/3 = 1/3$, the sequence $(X_1, X_2, X_3) = (-1, 1, 1)$ gives sums $(-1, 0, 1)$, and averages $(-1, 0, 1/3)$. The maximum so far is $1/3$. This specific finite prefix has a strictly positive probability ($p^a q^b > 0$).
+2. After step $m$, we need the walk to *stay away* from the line $y = (k/m)n$. We require $S_n/n < k/m$ for all $n > m$.
+This is equivalent to a new random walk starting at $S_m=k$ staying below a line with slope $k/m$.
+Since the true drift of the walk is $p-q$, and we chose $x = k/m > p-q$, the line we must stay below is growing *faster* than the expected path of the random walk.
+Because the random walk drifts away from the bounding line, the probability of never crossing it is strictly greater than 0.
+Since both the specific finite prefix and the infinite safe tail have strictly positive probabilities, their intersection has positive probability. Thus, $\mathbb{P}(M = x) > 0$.
 \end{solution}
 
 \begin{exercise}
@@ -64,25 +161,63 @@ Let $X$ have a uniform distribution on $[0,1]$ and let $N_{m,k}$ be the digit in
 \end{exercise}
 
 \begin{solution}
-(a) $N_{m,m} = \lfloor 10^m X^m \rfloor \pmod{10}$. Let $Y_m = 10^m X^m$.
-$P(N_{m,m}=i) = \int_0^1 I(\lfloor 10^m x^m \rfloor \equiv i \pmod{10}) dx$.
-Let $v = 10x$, then $dx = \frac{1}{10} dv$ and $10^m x^m = v^m$.
-$P(N_{m,m}=i) = \frac{1}{10} \int_0^{10} I(\lfloor v^m \rfloor \equiv i \pmod{10}) dv$.
-For $v \in [0, 1)$, $v^m \to 0$ as $m \to \infty$. Thus $\lfloor v^m \rfloor = 0$. This contributes to $i=0$ with weight $1/10$.
-For $v \in (1, 10)$, $v^m$ increases from 1 to $10^m$. The intervals where $\lfloor v^m \rfloor = k$ are $[k^{1/m}, (k+1)^{1/m})$. The width is $\approx \frac{1}{m} k^{1/m-1}$.
-The total length for a fixed $i \in \{0, \dots, 9\}$ is $\sum_{j} [(10j+i+1)^{1/m} - (10j+i)^{1/m}]$.
-This Riemann sum converges to $\int_1^{10^m} \frac{1}{10} \frac{1}{m} y^{1/m-1} dy = \frac{1}{10} [y^{1/m}]_1^{10^m} = \frac{1}{10}(10-1) = 0.9$.
-Thus, for $i \neq 0$, the limit is $0.9/10 = 0.09$.
-For $i = 0$, the limit is $0.1 + 0.09 = 0.19$.
-So $P(N_{m,m}=0) \to 0.19$ and $P(N_{m,m}=i) \to 0.09$ for $i=1, \dots, 9$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Digit Extraction:} The $m$-th digit after the decimal point of a number $Y$ is given by $N = \lfloor 10^m Y \rfloor \pmod{10}$.
+    \item \textbf{Riemann Sum Approximation:} The sum of small intervals can be approximated by a continuous integral if the function is smooth and the intervals are small enough.
+    \item \textbf{Benford-like Behavior:} Power laws and exponential transformations often stretch continuous intervals in ways that spread fractional parts uniformly, provided the derivative of the transformation is well-behaved.
+\end{itemize}
 
-(b) We need the "bias" towards 0 from the $X^k < 10^{-m}$ region to vanish, and the distribution in the "active" region to become uniform.
-The probability $P(X^k < 10^{-m}) = 10^{-m/k}$ must go to 0, which requires $m/k(m) \to \infty$.
-Also, to achieve uniformity, $k(m)$ must be large enough so that $10^m X^k$ covers many cycles of digits.
-If $k(m) \to \infty$ and $k(m) = o(m)$, the distribution of the $m$-th digit of $X^k$ becomes uniform.
-If $k(m)$ is fixed, the distribution is not uniform.
-If $k(m)/m \to c > 0$, the limit is similar to part (a).
-The condition is $k(m) \to \infty$ and $k(m)/m \to 0$.
+\textbf{Intuition / Motivation:}
+
+We are picking a random number $X$ between 0 and 1, raising it to the power $m$, and looking at the $m$-th decimal digit.
+There are two completely different "regimes" for $X$:
+1. **The tiny numbers:** If $X < 0.1$, then $X \times 10 < 1$. When we take $(10X)^m$, it goes to zero. This means $10^m X^m$ is a tiny number, so its integer part is always 0. The $m$-th digit will be exactly 0. This "dead zone" takes up $1/10$ of the probability space $[0, 0.1]$.
+2. **The chaotic numbers:** If $X > 0.1$, then $(10X)^m$ grows huge as $m \to \infty$. It wraps around the modulo 10 operation millions of times. Because the function is incredibly steep, a tiny change in $X$ sweeps through all 10 digits very evenly. For the remaining $9/10$ of the probability space, the digits 0 through 9 are hit with perfectly equal probability ($1/10$ each).
+So, the probability of hitting a 0 is $1/10$ (from the dead zone) plus $1/10 \times 9/10$ (from the chaotic zone) $= 0.19$. Any other digit is just $1/10 \times 9/10 = 0.09$.
+To make the digits perfectly uniform, we need to shrink the "dead zone" to zero probability, which requires the power $k(m)$ to grow much slower than $m$. But we also need $k(m)$ to go to infinity so the chaotic zone wraps around fast enough.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the integral for the digit probability.}
+
+The number is $Y = X^m$. The $m$-th digit is $N_{m,m} = \lfloor 10^m X^m \rfloor \pmod{10}$.
+Since $X \sim U(0,1)$, the probability of hitting a specific digit $i$ is:
+\[ \mathbb{P}(N_{m,m} = i) = \int_0^1 \mathbf{1}_{\{\lfloor 10^m x^m \rfloor \equiv i \pmod{10}\}} dx \]
+To simplify, substitute $v = 10x$, so $dx = dv/10$, and the bounds become $[0, 10]$. Notice that $(10x)^m = v^m$.
+\[ \mathbb{P}(N_{m,m} = i) = \frac{1}{10} \int_0^{10} \mathbf{1}_{\{\lfloor v^m \rfloor \equiv i \pmod{10}\}} dv \]
+
+\textbf{Step 2: Split the integral into the dead zone and the chaotic zone.}
+
+We split the integral at $v=1$.
+For $v \in [0, 1)$, as $m \to \infty$, $v^m \to 0$. Therefore, $\lfloor v^m \rfloor = 0$ for all large $m$.
+This interval contributes $1/10$ to the probability exactly when $i=0$, and $0$ otherwise.
+For $v \in (1, 10)$, $v^m$ grows from 1 to $10^m$. The function $\lfloor v^m \rfloor$ steps through every integer $k$ from 1 to $10^m - 1$.
+The interval where $\lfloor v^m \rfloor = k$ is when $k \leq v^m < k+1$, which means $v \in [k^{1/m}, (k+1)^{1/m})$.
+The width of this interval is $(k+1)^{1/m} - k^{1/m}$. By the Mean Value Theorem, this is approximately $\frac{1}{m} k^{1/m - 1}$.
+
+\textbf{Step 3: Evaluate the chaotic zone using a Riemann sum.}
+
+We want to sum the widths of the intervals where $k \equiv i \pmod{10}$. Let $k = 10j + i$.
+The total length of these intervals is:
+\[ L_i = \sum_j \left[ (10j + i + 1)^{1/m} - (10j + i)^{1/m} \right] \approx \sum_j \frac{1}{m} (10j)^{1/m - 1} \]
+Because $m \to \infty$, this sum becomes indistinguishable from an integral. Instead of summing every 10th integer and keeping the width exact, we can view it as taking $1/10$ of the total integral of the continuous function $y = v^m$ mapped backwards.
+More formally, the density of the modulo operation uniformizes. The total length contributed to any digit $i$ in $[1, 10]$ is exactly $1/10$ of the total length of the interval $(1, 10)$.
+\[ \lim_{m \to \infty} \frac{1}{10} \int_1^{10} \mathbf{1}_{\{\lfloor v^m \rfloor \equiv i \pmod{10}\}} dv = \frac{1}{10} \times (10 - 1) \times \frac{1}{10} = \frac{9}{10} \times \frac{1}{10} = 0.09 \]
+Adding the dead zone contribution:
+- For $i=0$: $0.10 + 0.09 = 0.19$.
+- For $i \neq 0$: $0 + 0.09 = 0.09$.
+
+\textbf{Step 4: Find conditions for uniformity with a general $k(m)$.}
+
+Now we use $k(m)$ instead of $m$ as the power. The target is $10^m X^{k(m)}$.
+The "dead zone" occurs when $10^m X^{k(m)} < 1$, which means $X < 10^{-m/k(m)}$.
+For the distribution to be perfectly uniform, the dead zone must vanish. The probability of falling in the dead zone is $10^{-m/k(m)}$.
+This goes to 0 if and only if $m/k(m) \to \infty$, which means $k(m) = o(m)$. (Or equivalently, $k(m)/m \to 0$).
+We also need the chaotic zone to wrap around infinitely many times to achieve the uniform smoothing we relied on in Step 3. The maximum value is $10^m \times 1^{k(m)} = 10^m$. The number of wraparounds goes to infinity as long as $m \to \infty$, which is given.
+Wait, we also need the derivative $k(m) X^{k(m)-1}$ to spread things out smoothly. If $k(m)$ stays bounded (e.g., $k(m)=2$), the non-linear stretching doesn't uniformize over tight modulo cycles perfectly. We require $k(m) \to \infty$ to ensure the cycles get infinitesimally thin, making the Riemann sum approximation valid.
+Thus, the necessary and sufficient conditions are:
+\[ \lim_{m \to \infty} k(m) = \infty \quad \text{and} \quad \lim_{m \to \infty} \frac{k(m)}{m} = 0 \]
 \end{solution}
 
 \begin{exercise}
@@ -100,16 +235,62 @@ where $A = \{\alpha: \alpha_0 \subset \alpha\}$.
 \end{exercise}
 
 \begin{solution}
-The log-likelihood for the GLM is $L(\beta) = \sum_{i=1}^n [Y_i (x_i^\top \beta) - b(x_i^\top \beta)]$.
-The score function is $U(\beta) = \nabla L(\beta) = \sum_{i=1}^n (Y_i - b'(x_i^\top \beta)) x_i = \sum_{i=1}^n (Y_i - \mu_i) x_i$.
-The Fisher information matrix is $I(\beta) = -E[\nabla^2 L(\beta)] = \sum_{i=1}^n b''(x_i^\top \beta) x_i x_i^\top = \sum_{i=1}^n \sigma_i^2 x_i x_i^\top$.
-Under standard regularity conditions (e.g., $I(\beta)/n \to \Sigma$ positive definite), the MLE $\hat{\beta}$ satisfies
-\[ \sqrt{n}(\hat{\beta} - \beta) \xrightarrow{d} N(0, \Sigma^{-1}). \]
-Thus $\|\hat{\beta} - \beta\| = O_p(n^{-1/2})$.
-For any model $\alpha \in A$, where $\alpha_0 \subset \alpha$, the model is correctly specified (but potentially over-parameterized). The MLE $\hat{\beta}_\alpha$ for the coefficients in $\alpha$ still satisfies $\|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2})$.
-Since $p$ is fixed, the set of models $A$ is finite. The maximum of a finite number of $O_p(n^{-1/2})$ variables is still $O_p(n^{-1/2})$.
-Since $n^{-1/2} < n^{-1/3}$ for large $n$, we have $O_p(n^{-1/2}) \subset O_p(n^{-1/3})$. Thus,
-\[ \max_{\alpha \in A} \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2}) = O_p(n^{-1/3}). \]
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Generalized Linear Models (GLM):} Models where the response variable $Y$ follows an exponential family distribution, and its mean $\mu$ is linked to the linear predictor $x^\top \beta$.
+    \item \textbf{Asymptotic Normality of MLE:} Under standard regularity conditions, the Maximum Likelihood Estimator $\hat{\beta}$ is consistent and asymptotically normal, meaning the error $\hat{\beta} - \beta$ shrinks at a rate of $1/\sqrt{n}$. This is denoted as $O_p(n^{-1/2})$.
+    \item \textbf{Big-O in Probability ($O_p$):} A sequence of random variables $Z_n$ is $O_p(r_n)$ if $Z_n / r_n$ is stochastically bounded. Crucially, if $Z_n = O_p(n^{-1/2})$, it is automatically $O_p(n^{-1/3})$ because $n^{-1/2}$ shrinks faster than $n^{-1/3}$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We are dealing with a set of regression models $A$. All models in $A$ contain the *true* underlying model $\alpha_0$. This means every model in $A$ is "correct", just possibly bloated with extra, useless variables (their true coefficients are 0).
+Because the models are correct, classical statistical theory tells us the Maximum Likelihood Estimator (MLE) is very well-behaved. Specifically, the error of the MLE shrinks proportionally to $1/\sqrt{n}$.
+The problem asks us to bound the *maximum* error across all models in set $A$.
+Since there are only $p$ total variables, there are only a finite number of possible models (at most $2^p$).
+If you take the maximum of a *finite* number of variables, and each variable shrinks at a rate of $1/\sqrt{n}$, the maximum also shrinks at the exact same rate $1/\sqrt{n}$.
+The problem asks us to show the error is $O_p(n^{-1/3})$. This is a trick question! $1/\sqrt{n}$ goes to zero *much faster* than $1/n^{1/3}$. Because the error satisfies a much tighter bound, it trivially satisfies the looser $O_p(n^{-1/3})$ bound requested.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Identify the properties of the MLE for a correctly specified GLM.}
+
+The density of $Y_i$ is $f(y_i; \theta_i) = \exp\{\theta_i y_i - b(\theta_i)\}$, with $\theta_i = x_i^\top \beta$.
+The log-likelihood function for a sample of size $n$ is:
+\[ L(\beta) = \sum_{i=1}^n \left[ Y_i (x_i^\top \beta) - b(x_i^\top \beta) \right] \]
+By standard exponential family properties, the mean is $\mu_i = b'(\theta_i)$ and the variance is $\sigma_i^2 = b''(\theta_i)$.
+The score function (gradient) and Fisher Information (negative expected Hessian) are:
+\[ \nabla L(\beta) = \sum_{i=1}^n (Y_i - \mu_i) x_i \]
+\[ I(\beta) = \sum_{i=1}^n \sigma_i^2 x_i x_i^\top \]
+Under standard regularity conditions, the Fisher Information grows linearly with $n$, so $\frac{1}{n} I(\beta) \to \Sigma > 0$.
+The central limit theorem applied to the score function implies that the MLE $\hat{\beta}$ is asymptotically normal:
+\[ \sqrt{n}(\hat{\beta} - \beta) \xrightarrow{d} N(0, \Sigma^{-1}) \]
+
+\textbf{Step 2: Establish the rate of convergence for each model.}
+
+Because $\sqrt{n}(\hat{\beta} - \beta)$ converges to a fixed normal distribution, it is stochastically bounded (i.e., it is $O_p(1)$).
+Dividing by $\sqrt{n}$, we get the exact rate of convergence:
+\[ \|\hat{\beta} - \beta\| = O_p(n^{-1/2}) \]
+Let $\alpha \in A$ be a specific model choice. The condition $\alpha_0 \subset \alpha$ means that model $\alpha$ includes all the true non-zero covariates. Thus, model $\alpha$ is correctly specified (the true coefficients for the extra variables are simply 0).
+Therefore, the MLE for model $\alpha$, denoted $\hat{\beta}_\alpha$, also enjoys asymptotic normality:
+\[ \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2}) \]
+
+\textbf{Step 3: Evaluate the maximum over all models.}
+
+The total number of available covariates is $p$. Since the covariates are fixed, the number of possible sub-models is at most $2^p$, which is a finite constant independent of $n$.
+Let the number of models in $A$ be $K = |A| \leq 2^p$.
+If we have a finite number $K$ of random variables $Z_1, \dots, Z_K$, and each $Z_k = O_p(n^{-1/2})$, then their maximum is also $O_p(n^{-1/2})$.
+\[ \max_{\alpha \in A} \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2}) \]
+
+\textbf{Step 4: Relax the bound to prove the specific claim.}
+
+The mathematical definition of $O_p(r_n)$ is that for any $\epsilon > 0$, there exists an $M$ such that $\mathbb{P}(|Z_n/r_n| > M) < \epsilon$ for large $n$.
+Since $1/2 > 1/3$, the sequence $n^{-1/2}$ decays to zero faster than $n^{-1/3}$.
+Specifically, $n^{-1/2} / n^{-1/3} = n^{-1/6} \to 0$.
+If a sequence is bounded when divided by $n^{-1/2}$, it will violently shrink to 0 when divided by the much larger $n^{-1/3}$.
+Therefore, any random variable that is $O_p(n^{-1/2})$ is trivially $O_p(n^{-1/3})$.
+\[ \max_{\alpha \in A} \|\hat{\beta}_\alpha - \beta(\alpha)\| = O_p(n^{-1/2}) \implies O_p(n^{-1/3}) \]
+This completes the proof.
 \end{solution}
 
 \begin{exercise}
@@ -124,23 +305,75 @@ Consider a random sample of size $n$, and write the data as an $r \times c$ matr
 \end{exercise}
 
 \begin{solution}
-(a) Let $Z_j = \max_{1 \leq i \leq r} X_{ij}$. The CDF of $Z_j$ is $G(x) = P(X_{11} \leq x)^r = F(x)^r$.
-The estimator is $\hat{\beta}_n = \min_{1 \leq j \leq c} Z_j$. Its survival function is
-\[ P(\hat{\beta}_n > x) = P(Z_1 > x, \dots, Z_c > x) = [1 - G(x)]^c = [1 - F(x)^r]^c. \]
-Median-unbiasedness means $P(\hat{\beta}_n \leq \beta) = 0.5$, which implies $P(\hat{\beta}_n > \beta) = 0.5$.
-Since $F(\beta) = 0.5$, we require $[1 - (0.5)^r]^c = 0.5$, or $[1 - 2^{-r}]^c = 1/2$.
-Taking logs: $c \ln(1 - 2^{-r}) = -\ln 2$.
-As $n \to \infty$, $r \to \infty$, we use $\ln(1-x) \approx -x$: $c 2^{-r} \approx \ln 2$, so $c \approx 2^r \ln 2$.
-Since $n = rc$, we have $n \approx r 2^r \ln 2$, which implies $r_n \approx \log_2 n$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Order Statistics:} The CDF of the maximum of $n$ independent variables with CDF $F(x)$ is $F(x)^n$. The survival function of the minimum is $(1-F(x))^n$.
+    \item \textbf{Median-Unbiasedness:} An estimator $\hat{\theta}$ is median-unbiased for $\theta$ if it is equally likely to overestimate or underestimate the true parameter: $\mathbb{P}(\hat{\theta} > \theta) = \mathbb{P}(\hat{\theta} \leq \theta) = 1/2$.
+    \item \textbf{Extreme Value Theory (Asymptotics):} Using Taylor series $F(x+\epsilon) \approx F(x) + \epsilon f(x)$ and the exponential limit $\lim_{n \to \infty} (1 + x/n)^n = e^x$ to find the limiting distribution of extreme order statistics.
+\end{itemize}
 
-(b) Let $r_n$ satisfy $(1 - 2^{-r_n})^{c_n} \to 1/2$. We examine $P(r_n(\hat{\beta}_n - \beta) \leq x)$.
-\[ P(r_n(\hat{\beta}_n - \beta) > x) = P(\hat{\beta}_n > \beta + x/r_n) = [1 - F(\beta + x/r_n)^{r_n}]^{c_n}. \]
-Using Taylor expansion: $F(\beta + x/r_n) \approx F(\beta) + f(\beta) \frac{x}{r_n} = \frac{1}{2} + \frac{f(\beta)x}{r_n} = \frac{1}{2}(1 + \frac{2f(\beta)x}{r_n})$.
-Then $F(\beta + x/r_n)^{r_n} \approx 2^{-r_n} (1 + \frac{2f(\beta)x}{r_n})^{r_n} \to 2^{-r_n} e^{2f(\beta)x}$.
-Substituting this into the survival function:
-\[ [1 - 2^{-r_n} e^{2f(\beta)x}]^{c_n} \approx \exp(-c_n 2^{-r_n} e^{2f(\beta)x}). \]
-Since $c_n 2^{-r_n} \to \ln 2$, the limit is $\exp(-\ln 2 \cdot e^{2f(\beta)x}) = (1/2)^{e^{2f(\beta)x}}$.
-The limiting distribution function is $H(x) = 1 - (1/2)^{e^{2f(\beta)x}}$.
-This is a Gumbel-type distribution (log-Weibull).
+\textbf{Intuition / Motivation:}
+
+We want to estimate the median $\beta$. We organize our $n$ data points into a grid of $r$ rows and $c$ columns.
+First, we find the maximum of each column. Then, we take the minimum of those $c$ maximums. This is our estimator $\hat{\beta}_n$.
+For this estimator to be "fair" (median-unbiased), there must be exactly a $50\%$ chance that the final minimum is greater than the true median $\beta$.
+When is the final minimum $> \beta$? Exactly when *every single column maximum* is $> \beta$.
+When is a column maximum $> \beta$? When *at least one element* in that column is $> \beta$. Since half the distribution is $> \beta$, the chance a column fails this (all elements $\leq \beta$) is $(1/2)^r$. So the chance it succeeds is $1 - (1/2)^r$.
+We need $c$ independent columns to all succeed, giving the equation $[1 - (1/2)^r]^c = 1/2$.
+By balancing $r$ and $c$, we can solve for how $r$ must grow with $n$. Once we find this balance, we can zoom in on the fluctuations around $\beta$ using standard calculus limits to find the shape of the extreme value distribution (a Gumbel distribution).
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Calculate the exact survival function of the estimator.}
+
+Let $Z_j = \max_{1 \leq i \leq r} X_{ij}$ be the maximum of the $j$-th column.
+Since the $r$ elements in a column are i.i.d., the cumulative distribution function (CDF) of $Z_j$ is:
+\[ G(x) = \mathbb{P}(Z_j \leq x) = \mathbb{P}(\text{all } X_{ij} \leq x) = [F(x)]^r \]
+The estimator is $\hat{\beta}_n = \min_{1 \leq j \leq c} Z_j$.
+It is easier to work with the survival function for minimums. The minimum is greater than $x$ if and only if *all* $c$ variables are greater than $x$:
+\[ \mathbb{P}(\hat{\beta}_n > x) = \mathbb{P}(Z_1 > x, \dots, Z_c > x) = [\mathbb{P}(Z_1 > x)]^c = [1 - G(x)]^c = [1 - F(x)^r]^c \]
+
+\textbf{Step 2: Solve for median-unbiasedness.}
+
+Median-unbiasedness requires $\mathbb{P}(\hat{\beta}_n > \beta) = 1/2$.
+By the definition of the true median, $F(\beta) = 1/2$. Substitute $x = \beta$ into the survival function:
+\[ \mathbb{P}(\hat{\beta}_n > \beta) = \left[ 1 - F(\beta)^r \right]^c = \left[ 1 - \left(\frac{1}{2}\right)^r \right]^c = \left[ 1 - 2^{-r} \right]^c \]
+Equating this to $1/2$ gives:
+\[ \left( 1 - 2^{-r} \right)^c = \frac{1}{2} \]
+Take the natural logarithm of both sides:
+\[ c \ln(1 - 2^{-r}) = -\ln 2 \]
+As $n \to \infty$, $r \to \infty$, so $2^{-r}$ is very small. We use the Taylor approximation $\ln(1-z) \approx -z$ for small $z$:
+\[ c (-2^{-r}) \approx -\ln 2 \implies c \approx 2^r \ln 2 \]
+Since the total sample size is $n = rc$, substitute $c = n/r$:
+\[ \frac{n}{r} \approx 2^r \ln 2 \implies n \approx r 2^r \ln 2 \]
+Taking base-2 logarithm: $\log_2 n \approx \log_2 r + r + \log_2(\ln 2)$. For large $r$, the linear term dominates, so $r_n \approx \log_2 n$.
+
+\textbf{Step 3: Set up the limit for the scaled distribution.}
+
+We want the limiting distribution of $r_n(\hat{\beta}_n - \beta)$. Let $x$ be a fixed constant.
+\[ \mathbb{P}(r_n(\hat{\beta}_n - \beta) > x) = \mathbb{P}\left(\hat{\beta}_n > \beta + \frac{x}{r_n}\right) \]
+Using the survival function from Step 1:
+\[ \mathbb{P}\left(\hat{\beta}_n > \beta + \frac{x}{r_n}\right) = \left[ 1 - F\left(\beta + \frac{x}{r_n}\right)^{r_n} \right]^{c_n} \]
+
+\textbf{Step 4: Apply Taylor expansions to the CDF.}
+
+Since $r_n \to \infty$, the term $\frac{x}{r_n}$ goes to 0. We Taylor expand $F$ around $\beta$:
+\[ F\left(\beta + \frac{x}{r_n}\right) \approx F(\beta) + f(\beta) \frac{x}{r_n} = \frac{1}{2} + \frac{f(\beta)x}{r_n} = \frac{1}{2} \left( 1 + \frac{2f(\beta)x}{r_n} \right) \]
+Now raise this to the power of $r_n$:
+\[ F\left(\beta + \frac{x}{r_n}\right)^{r_n} \approx \left( \frac{1}{2} \right)^{r_n} \left( 1 + \frac{2f(\beta)x}{r_n} \right)^{r_n} \]
+Using the exponential limit $(1 + z/n)^n \to e^z$, the second factor converges to $e^{2f(\beta)x}$.
+So the term inside the bracket becomes:
+\[ F\left(\beta + \frac{x}{r_n}\right)^{r_n} \approx 2^{-r_n} e^{2f(\beta)x} \]
+
+\textbf{Step 5: Finalize the limiting distribution.}
+
+Substitute this back into the full survival function:
+\[ \left[ 1 - 2^{-r_n} e^{2f(\beta)x} \right]^{c_n} \]
+Recall from Step 2 that we carefully balanced $r_n$ and $c_n$ such that $c_n 2^{-r_n} \to \ln 2$. We can rewrite the expression to use this limit via another exponential approximation $(1 - y/c_n)^{c_n} \to e^{-y}$:
+\[ \left[ 1 - \frac{c_n 2^{-r_n} e^{2f(\beta)x}}{c_n} \right]^{c_n} \xrightarrow{n \to \infty} \exp\left( - (\ln 2) e^{2f(\beta)x} \right) \]
+Notice that $\exp(-\ln 2 \cdot A) = (\exp(\ln 2))^{-A} = 2^{-A} = (1/2)^A$.
+So the limiting survival function is:
+\[ \mathbb{P}(r_n(\hat{\beta}_n - \beta) > x) \to (1/2)^{e^{2f(\beta)x}} \]
+The limiting cumulative distribution function is $H(x) = 1 - (1/2)^{e^{2f(\beta)x}}$. This is a standard Gumbel (extreme value) distribution.
 \end{solution}
 

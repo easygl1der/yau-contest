@@ -19,14 +19,14 @@ Prove that $f(x)\equiv 0$ is the only solution in $L^2(\mathbb{R}^n)$ such that
 
 \textbf{Steps:}\\[2ex]
 1. We start with the equation $\triangle f = 0$. Since $f \in L^2(\mathbb{R}^n)$, it is also a tempered distribution, so we can apply the Fourier transform to both sides.\\[2ex]
-2. Applying the transform gives us $-|\xi|^2 \hat{f}(\xi) = 0$. This equation holds in the sense of distributions. It tells us that the distribution $\hat{f}(\xi)$ must be zero everywhere except possibly at the point where $|\xi|^2 = 0$, which is the origin $\xi = 0$.\\[2ex]
-3. Because the support of $\hat{f}$ is contained in $\{0\}$, $\hat{f}$ must be of the form $\sum_{|\alpha| \leq N} c_\alpha \partial^\alpha \delta$, where $\delta$ is the Dirac delta and $\partial^\alpha$ are its derivatives.\\[2ex]
-4. Now we apply the $L^2$ condition. Plancherel's theorem states that $\hat{f}$ must be an $L^2$ function. However, the Dirac delta function and its derivatives are highly singular objects (distributions) and do not belong to $L^2(\mathbb{R}^n)$. For example, in 1D, $\int |\delta(x)|^2 dx$ is not a well-defined finite number.\\[2ex]
-5. The only distribution of this form that is actually a function in $L^2$ is the one where all coefficients $c_\alpha$ are zero. Thus, $\hat{f} = 0$.\\[2ex]
-6. Since the Fourier transform is an isomorphism, $\hat{f} = 0$ implies that $f = 0$ almost everywhere.
+2. Applying the transform gives us $-|\xi|^2 \hat{f}(\xi) = 0$. This equation holds in the sense of distributions. It tells us that the support of the distribution $\hat{f}(\xi)$ must be contained within the set where $|\xi|^2 = 0$, which is just the origin $\{0\}$.\\[2ex]
+3. Because the support of $\hat{f}$ is contained in $\{0\}$, $\hat{f}$ must be a linear combination of the Dirac delta function and its derivatives.\\[2ex]
+4. Now we apply the $L^2$ condition. Plancherel's theorem states that $\hat{f}$ must be an $L^2$ function. However, the Dirac delta function and its derivatives are highly singular distributions and do not belong to $L^2(\mathbb{R}^n)$.\\[2ex]
+5. The only distribution supported at $\{0\}$ that is actually a function in $L^2$ is the zero function. Thus, $\hat{f} = 0$ in $L^2(\mathbb{R}^n)$.\\[2ex]
+6. Since the Fourier transform is an isomorphism on $L^2$, $\hat{f} = 0$ implies that $f = 0$ in $L^2$. Since harmonic functions are smooth, $f \equiv 0$ everywhere.
 
 \textbf{Intuition:}
-Harmonic functions (those satisfying $\triangle f = 0$) satisfy the "mean value property," meaning the value at any point is the average of its neighbors. In a bounded domain, you can have many such functions (like a tilted plane). However, in the infinite space $\mathbb{R}^n$, the requirement that the function's square is integrable ($L^2$) is very strict. It essentially says the function must "die out" at infinity. But a non-constant "averaging" function can't die out fast enough without just becoming zero everywhere.
+Harmonic functions (those satisfying $\triangle f = 0$) satisfy the "mean value property," meaning the value at any point is the average of its neighbors. In a bounded domain, you can have many such functions. However, in the infinite space $\mathbb{R}^n$, the requirement that the function's square is integrable ($L^2$) is very strict. It essentially says the function must "die out" at infinity. A non-constant harmonic function simply cannot decay fast enough to be in $L^2$ without just being zero everywhere.
 \end{solution}
 
 \begin{exercise}
@@ -36,22 +36,23 @@ Let $X\subset C([0,1])$ be a finite dimensional linear subspace of the space of 
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Basis of a Vector Space:} Any function in an $n$-dimensional space $X$ can be uniquely written as $f(x) = \sum_{i=1}^n c_i e_i(x)$, where $\{e_1, \dots, e_n\}$ is a fixed set of "building block" functions (a basis).
-    \item \textbf{Norm Equivalence:} In a finite-dimensional space, all ways of measuring the "size" of an element are equivalent. This means if a sequence converges in one norm (like the max of its coefficients), it converges in any other norm (like the uniform norm $\|f\|_\infty$).
-    \item \textbf{Linear Independence of Evaluation Maps:} If $X$ is $n$-dimensional, we can find $n$ points $x_1, \dots, x_n$ such that knowing the values $f(x_1), \dots, f(x_n)$ completely determines the function $f$.
+    \item \textbf{Basis of a Vector Space:} Any function in an $n$-dimensional space $X$ can be uniquely written as $f(x) = \sum_{j=1}^n \alpha_j \varphi_j(x)$, where $\{\varphi_1, \dots, \varphi_n\}$ is a fixed basis.
+    \item \textbf{Evaluation Functionals:} For any point $t \in [0,1]$, the map $\ell_t(f) = f(t)$ is a linear functional on $X$.
+    \item \textbf{Linear Independence of Evaluation Maps:} If $X$ is $n$-dimensional, we can find $n$ distinct points $x_1, \dots, x_n$ such that knowing the values $f(x_1), \dots, f(x_n)$ completely determines the function $f$.
 \end{itemize}
 
 \textbf{Steps:}\\[2ex]
-1. Let $n = \dim X$ and pick a basis $\{e_1, \dots, e_n\}$ for $X$. Any function $f_k \in X$ is determined by its coefficients $\mathbf{c}_k = (c_{1,k}, \dots, c_{n,k})$.\\[2ex]
-2. We can choose $n$ points $x_1, \dots, x_n$ in $[0,1]$ such that the evaluation matrix $M_{ij} = e_j(x_i)$ is invertible. This is possible because the functions $e_j$ are linearly independent.\\[2ex]
-3. The pointwise convergence of $f_k$ means that for each of these fixed points $x_i$, the sequence of values $f_k(x_i)$ converges to some value $L_i$. In matrix form, this is $M \mathbf{c}_k \to \mathbf{L}$, where $\mathbf{L} = (L_1, \dots, L_n)^T$.\\[2ex]
-4. Since $M$ is a constant invertible matrix, we can multiply by its inverse to find that $\mathbf{c}_k \to M^{-1} \mathbf{L}$. This means the coefficients of the functions are converging as numbers.\\[2ex]
-5. Let $\mathbf{c}$ be the limit of these coefficients. The sequence $f_k$ then converges to $f = \sum c_i e_i$ in the "coefficient norm" (defined as the maximum absolute value of the coefficients).\\[2ex]
-6. By the principle of norm equivalence in finite-dimensional spaces, convergence in the coefficient norm implies convergence in the uniform norm $\|f\|_\infty = \max_{x \in [0,1]} |f(x)|$.\\[2ex]
-7. Thus, the sequence converges uniformly.
+1. Let $n = \dim X$ and pick a basis $\{\varphi_1, \dots, \varphi_n\}$ for $X$.\\[2ex]
+2. Consider the evaluation functionals $\ell_t: X \to \mathbb{R}$ given by $\ell_t(f) = f(t)$. Since a function in $X$ that is zero everywhere must be the zero function, the intersection of the kernels of all these functionals is trivial: $\bigcap_{t \in [0,1]} \ker(\ell_t) = \{0\}$.\\[2ex]
+3. Because $X$ is finite-dimensional, there must exist a finite set of $n$ points $x_1, x_2, \dots, x_n \in [0,1]$ such that $\bigcap_{i=1}^n \ker(\ell_{x_i}) = \{0\}$. This means the evaluation matrix $A = (\varphi_j(x_i))$ has a non-zero determinant and is invertible.\\[2ex]
+4. We can write each function $f_k$ in terms of our basis as $f_k(x) = \sum_{j=1}^n \alpha_j^{(k)} \varphi_j(x)$.\\[2ex]
+5. Evaluating this at our chosen points gives a system of equations: the vector of values $(f_k(x_1), \dots, f_k(x_n))^T$ is equal to the matrix $A$ multiplied by the coefficient vector $(\alpha_1^{(k)}, \dots, \alpha_n^{(k)})^T$.\\[2ex]
+6. Since $A$ is invertible, we can multiply by $A^{-1}$ to express the coefficients $\alpha_j^{(k)}$ directly in terms of the point evaluations $f_k(x_i)$.\\[2ex]
+7. We are given that $\{f_k\}$ converges pointwise, so it converges at the points $x_1, \dots, x_n$. Therefore, the vector of evaluations converges, which implies the coefficient vector $(\alpha_1^{(k)}, \dots, \alpha_n^{(k)})^T$ converges to some limit $(\alpha_1, \dots, \alpha_n)^T$.\\[2ex]
+8. The sequence $\{f_k\}$ thus converges uniformly to the function $\alpha_1 \varphi_1 + \dots + \alpha_n \varphi_n$.
 
 \textbf{Intuition:}
-Think of a finite-dimensional space as being very "stiff" or "rigid." For example, a straight line is a 2D space of functions ($f(x) = ax+b$). A line is perfectly determined by just two points. if you have a sequence of lines and you know they converge at two different points, the entire line has no choice but to settle down everywhere. Because our space $X$ is finite-dimensional, it behaves like this: a few points "pin down" the whole function, so convergence at points forces convergence everywhere uniformly.
+Think of a finite-dimensional space of functions as being very "stiff" or "rigid." For example, a straight line is a 2D space of functions ($f(x) = ax+b$), which is perfectly determined by just two points. Because our space $X$ is finite-dimensional, a specific finite number of points entirely "pins down" the whole function. If a sequence of functions converges at these pinning points, their entire underlying structure (their coefficients) must stabilize, forcing convergence everywhere uniformly.
 \end{solution}
 
 \begin{exercise}
@@ -68,30 +69,34 @@ contains an open neighborhood of $\mathbf{0}\in\mathbb{R}^n$.
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Hölder's Inequality:} For convolution, $|(f*g)(x)| \leq \|f\|_1 \|g\|_\infty$. This ensures the integral defining the convolution doesn't "blow up."
-    \item \textbf{Continuity of Translation in $L^1$:} For any $f \in L^1$, the "shifted" version of $f$ gets closer and closer to $f$ in the $L^1$ sense as the shift $h \to 0$. Formally, $\lim_{h \to 0} \int |f(x+h) - f(x)| dx = 0$.
-    \item \textbf{Characteristic Functions:} The function $\chi_E(x)$ is $1$ if $x \in E$ and $0$ otherwise. The integral $\int \chi_E(y) \chi_E(y-z) dy$ calculates the measure of the overlap $m(E \cap (E+z))$.
+    \item \textbf{Hölder's Inequality:} For convolution, $|(f*g)(x)| \leq \|f\|_1 \|g\|_\infty$. This ensures the integral doesn't "blow up" and is well-defined.
+    \item \textbf{Continuity of Translation in $L^1$:} For any $f \in L^1$, the "shifted" version of $f$ gets closer to $f$ in the $L^1$ sense as the shift $x \to 0$. Formally, $\lim_{x \to 0} \int |f(x_0+x-y) - f(x_0-y)| dy = 0$.
+    \item \textbf{Indicator Functions:} The function $\mathbf{1}_E(x)$ is $1$ if $x \in E$ and $0$ otherwise. The convolution of indicator functions can be used to measure the overlap of translated sets.
 \end{itemize}
 
 \textbf{Steps:}\\[2ex]
 \textbf{Part (a):}\\[2ex]
-1. Define the convolution $(f*g)(x) = \int_{\mathbb{R}^n} f(x-y)g(y)dy$. By Hölder's inequality, $|(f*g)(x)| \leq \|f\|_1 \|g\|_\infty < \infty$, so it is well-defined.\\[2ex]
-2. To prove continuity, we look at the difference $|(f*g)(x+h) - (f*g)(x)|$.\\[2ex]
-3. This difference is $|\int (f(x+h-y) - f(x-y))g(y) dy|$. We can pull the $g(y)$ out as a constant $\|g\|_\infty$.\\[2ex]
-4. The remaining integral is $\int |f(x+h-y) - f(x-y)| dy$, which is exactly the $L^1$ distance between $f$ and its translation by $h$.\\[2ex]
-5. Since translation is continuous in $L^1$, this integral goes to zero as $h \to 0$, proving that $f*g$ is continuous.\\[2ex]
+1. Define the convolution $(f*g)(x) = \int_{\mathbb{R}^n} f(x-y)g(y)dy$. By Hölder's inequality, we have $\|f*g\|_\infty \leq \|f\|_1 \|g\|_\infty < \infty$, so it is well-defined.\\[2ex]
+2. To prove continuity, we examine the difference $|(f*g)(x_0+x) - (f*g)(x_0)|$.\\[2ex]
+3. Writing out the integrals, we can bound this difference:
+   \[
+   \left| \int_{\mathbb{R}^n} (f(x_0+x-y) - f(x_0-y))g(y) dy \right| \leq \|g\|_\infty \int_{\mathbb{R}^n} |f(x_0+x-y) - f(x_0-y)| dy
+   \]
+4. By the continuity of translation in $L^1$, as $x \to 0$, the integral of the shifted difference converges to $0$. Thus, $f*g$ is continuous.\\[2ex]
 
 \textbf{Part (b):}\\[2ex]
-1. Let $f = \chi_E * \chi_{-E}$, where $-E = \{-x \mid x \in E\}$. Since $m(E) > 0$, $\chi_E$ is in $L^1$ and $\chi_{-E}$ is in $L^\infty$.\\[2ex]
-2. From part (a), we know $f(z)$ is a continuous function. Specifically, $f(z) = \int \chi_E(y) \chi_E(y-z) dy = m(E \cap (E+z))$.\\[2ex]
-3. Evaluate at zero: $f(0) = m(E \cap E) = m(E)$, which we are told is greater than zero.\\[2ex]
-4. Because $f$ is continuous and $f(0) > 0$, there must be a small window (neighborhood) $V$ around zero where $f(z) > 0$ for all $z \in V$.\\[2ex]
-5. If $f(z) > 0$, it means the set $E \cap (E+z)$ is not empty. There exists some $x \in E$ such that $x = y+z$ for some $y \in E$.\\[2ex]
-6. Rearranging gives $z = x-y$, so $z \in E-E$. Thus, the whole neighborhood $V$ is contained in $E-E$.
+1. It suffices to consider the case where $m(E) < \infty$ (if it's infinite, just take a subset of finite positive measure).\\[2ex]
+2. Let $f = \mathbf{1}_E$ and $g = \mathbf{1}_{-E}$. Since $m(E) < \infty$, $f \in L^1(\mathbb{R}^n)$ and clearly $g \in L^\infty(\mathbb{R}^n)$.\\[2ex]
+3. From part (a), the function $h(x) = (f * g)(x)$ is a continuous function.\\[2ex]
+4. Let's evaluate $h$ at $x=0$: $h(0) = \int \mathbf{1}_E(-y)\mathbf{1}_{-E}(y) dy = \int \mathbf{1}_E(y) dy = m(E)$, which is strictly greater than $0$.\\[2ex]
+5. Because $h$ is continuous and $h(0) > 0$, there must exist an open set $U$ around the origin and a constant $\delta > 0$ such that $h(x) > \delta > 0$ for all $x \in U$.\\[2ex]
+6. For any $x \in U$, by definition $h(x) = \int \mathbf{1}_E(x-y)\mathbf{1}_{-E}(y) dy > 0$. This implies the integrand is positive for some $y$.\\[2ex]
+7. Therefore, there must be some $y \in -E$ such that $x-y \in E$. Since $y \in -E$, we can write $y = -y'$ for some $y' \in E$. Thus $x + y' \in E$, meaning $x \in E - y'$.\\[2ex]
+8. This implies $x \in E - E$. Hence, the open neighborhood $U$ is entirely contained within $E-E$.
 
 \textbf{Intuition:}
-(a) Convolution is like a "smearing" process. When you take a potentially rough function $g$ and smear it with $f$, the resulting function inherits the smoothness of the translation process. Even if $g$ is just a jumpy step function, the "averaging" effect of $f$ makes the output continuous.\\[2ex]
-(b) This is known as Steinhaus's Theorem. It says that if a set has a positive size, it can't be "too scattered." If you shift the set by a tiny amount, it \textit{must} still overlap with its original self. That overlap proves that the tiny shift can be represented as a difference of two points in the set.
+(a) Convolution is a "smearing" process. When you take a rough function $g$ and smear it with $f$, the output inherits the smooth translation properties of $f$. Even if $g$ is a step function, the "averaging" effect makes the output continuous.\\[2ex]
+(b) This is known as Steinhaus's Theorem. It says that if a set has a positive size, it can't be "infinitely scattered" everywhere without any bulk. If you shift the set by a tiny microscopic amount, it \textit{must} still overlap with its original self. That overlap proves that the tiny shift can be expressed as the difference between two points within the set.
 \end{solution}
 
 \begin{exercise}
@@ -104,23 +109,21 @@ e^z = P(z).
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Entire Functions:} These are complex-valued functions that are differentiable (holomorphic) at every point in the complex plane $\mathbb{C}$, like $e^z$ or polynomials.
-    \item \textbf{Hadamard Factorization Theorem:} If an entire function $f(z)$ has only finitely many zeros, it can be written in the form $f(z) = Q(z)e^{g(z)}$, where $Q(z)$ is a polynomial and $g(z)$ is another entire function.
-    \item \textbf{Order of Growth:} The order of growth $\rho$ measures how fast a function increases. For $e^z$, $\rho = 1$. For a polynomial, $\rho = 0$. The sum $e^z - P(z)$ has order $\rho = 1$. If $f(z) = Q(z)e^{g(z)}$ has order 1, then $g(z)$ must be a polynomial of degree at most 1.
+    \item \textbf{Essential Singularity at Infinity:} A function $F(z)$ has an essential singularity at $z = \infty$ if $F(1/z)$ has an essential singularity at $z = 0$. For instance, $e^z$ fluctuates wildly as $z \to \infty$.
+    \item \textbf{Big Picard's Theorem:} If a complex function has an essential singularity at a point, then in any neighborhood of that singularity, the function takes on all possible complex values, with at most one exception, infinitely often.
 \end{itemize}
 
 \textbf{Steps:}\\[2ex]
-1. Define the function $f(z) = e^z - P(z)$. We want to show that $f(z)$ has infinitely many zeros (points where $e^z = P(z)$).\\[2ex]
-2. Assume the contrary: suppose $f(z)$ has only finitely many zeros. By the Hadamard Factorization Theorem, we can write $f(z) = Q(z)e^{g(z)}$ for some polynomial $Q$ and some polynomial $g$ of degree at most 1.\\[2ex]
-3. Let $g(z) = az+b$. Then our assumption says $e^z - P(z) = Q(z)e^{az+b}$.\\[2ex]
-4. Case 1: $a = 1$. Then $e^z - P(z) = Q(z)e^{z+b} = Q(z)e^b e^z$. Rearranging this gives $e^z(1 - Q(z)e^b) = P(z)$.\\[2ex]
-   - If $1 - Q(z)e^b$ is not zero, the left side is a "transcendental" function (it grows way faster than any polynomial), while the right side is just a polynomial $P(z)$. This is impossible.\\[2ex]
-   - If $1 - Q(z)e^b = 0$, then $P(z)$ must be $0$, but the equation $e^z = 0$ has no solutions at all, which contradicts our setup.\\[2ex]
-5. Case 2: $a \neq 1$. Then we have $e^z - Q(z)e^b e^{az} = P(z)$. This equation claims that two different exponential functions ($e^z$ and $e^{az}$) can be combined to form a simple polynomial. This is impossible because $e^z$ and $e^{az}$ are "linearly independent" over the set of polynomials.\\[2ex]
-6. Since both cases lead to a contradiction, our original assumption (finitely many zeros) must be false. Thus, there are infinitely many solutions.
+1. Let's rewrite the equation as $F(z) = \frac{e^z}{P(z)} = 1$. We want to show that $F(z) = 1$ has infinitely many solutions.\\[2ex]
+2. Consider the behavior of $F(z)$ at $z = \infty$. The exponential function $e^z$ has an essential singularity at $\infty$, while $P(z)$ is a polynomial and has a pole at $\infty$.\\[2ex]
+3. The quotient of a function with an essential singularity and a function with a pole still retains an essential singularity. Thus, $F(z)$ has an essential singularity at $z = \infty$.\\[2ex]
+4. We now apply Big Picard's Theorem at $\infty$. The theorem states that in any neighborhood of infinity (which means the region $|z| > R$ for any arbitrarily large $R$), $F(z)$ will take every complex value infinitely many times, with at most one possible exception.\\[2ex]
+5. Let's check the value $0$. Since $e^z \neq 0$ for all $z \in \mathbb{C}$, the function $F(z) = \frac{e^z}{P(z)}$ never takes the value $0$. So $0$ is the one and only allowed exceptional value.\\[2ex]
+6. Because $0$ is the unique exception, $F(z)$ \textit{must} take the value $1$ infinitely many times.\\[2ex]
+7. Therefore, the equation $e^z = P(z)$ has infinitely many solutions in $\mathbb{C}$.
 
 \textbf{Intuition:}
-Polynomials are like "slow" functions—eventually, they are dominated by exponentials. The function $e^z$ is very "busy" in the complex plane; it wraps around the origin infinitely many times and takes every value (except zero) infinitely often. A polynomial $P(z)$ is just a small "distraction" for $e^z$. No matter what polynomial you pick, the exponential function will "cross" it infinitely many times as you move out further into the complex plane.
+Polynomials are relatively "tame" functions—they grow predictably as you move away from the origin. The exponential function $e^z$, however, is incredibly "wild" near infinity; it can grow massively, shrink to zero, or spiral around the complex plane depending on the direction you travel. When you pit $e^z$ against $P(z)$, the wild behavior of the exponential completely dominates. Big Picard's Theorem guarantees that this wild oscillation forces the exponential to cross paths with the polynomial infinitely many times.
 \end{solution}
 
 \begin{exercise}
@@ -137,26 +140,23 @@ Prove that for all $z\in B$, we have
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Maximum Modulus Principle:} If a holomorphic function is defined on a bounded region, its maximum value must occur on the boundary.
-    \item \textbf{Phragmén-Lindelöf Technique:} For unbounded regions like a strip, the Maximum Modulus Principle doesn't work directly because the function could grow very large "at infinity." To fix this, we multiply the function by a small "decay factor" (like $e^{\epsilon z^2}$) that forces the function to zero far away.
-    \item \textbf{Log-Convexity:} This theorem (Hadamard Three-Lines Theorem) states that the maximum of $|f|$ on the vertical line $\operatorname{Re}(z) = x$ is a log-convex function of $x$.
+    \item \textbf{Maximum Modulus Principle:} If a holomorphic function is defined on a bounded region, its maximum absolute value must occur on the boundary of that region.
+    \item \textbf{Phragmén-Lindelöf Principle:} For unbounded regions like an infinite strip, the Maximum Modulus Principle can be rescued by multiplying the function by a small "decay factor" (like $e^{\varepsilon z^2}$) that forces the function to zero far away, allowing us to safely apply the principle on a bounded subset.
 \end{itemize}
 
 \textbf{Steps:}\\[2ex]
-1. We want to prove $|f(z)| \leq A_0^{1-x} A_1^x$ where $x = \operatorname{Re}(z)$.\\[2ex]
-2. To make things easier, we construct an auxiliary function $F_\epsilon(z) = f(z) A_0^{z-1} A_1^{-z} e^{\epsilon(z^2-1)}$.\\[2ex]
-3. Why this function?
-   - The factor $A_0^{z-1} A_1^{-z}$ is designed to "neutralize" the values on the boundaries. On the line $x=0$, $|A_0^{z-1}| = A_0^{-1}$. On the line $x=1$, $|A_1^{-z}| = A_1^{-1}$.
-   - The factor $e^{\epsilon(z^2-1)}$ is the "decay factor." Since $z = x+iy$, $z^2 = x^2 - y^2 + 2ixy$. So $|e^{\epsilon z^2}| = e^{\epsilon(x^2 - y^2)}$. As $y \to \infty$ (moving up or down the strip), this factor goes to zero extremely fast.\\[2ex]
-4. Now we check the boundaries of the strip:
-   - On $\operatorname{Re}(z)=0$: $|F_\epsilon(iy)| = |f(iy)| A_0^{-1} e^{\epsilon(-y^2-1)} \leq A_0 A_0^{-1} e^{-\epsilon} < 1$.
-   - On $\operatorname{Re}(z)=1$: $|F_\epsilon(1+iy)| = |f(1+iy)| A_1^{-1} e^{\epsilon(-y^2)} \leq A_1 A_1^{-1} \cdot 1 = 1$.\\[2ex]
-5. Since $|F_\epsilon| \leq 1$ on the boundaries and $F_\epsilon \to 0$ at the top and bottom of the strip, the Maximum Modulus Principle tells us $|F_\epsilon(z)| \leq 1$ for all $z$ in the strip.\\[2ex]
-6. Finally, we let $\epsilon \to 0$. The decay factor $e^{\epsilon(z^2-1)}$ becomes $1$, and we are left with $|f(z) A_0^{x-1} A_1^{-x}| \leq 1$.\\[2ex]
-7. Rearranging this gives $|f(z)| \leq A_0^{1-x} A_1^x$, which is exactly what we wanted to prove.
+1. We construct an auxiliary function $g(z) = f(z) (A_0)^{z-1} (A_1)^{-z}$. This is a holomorphic function defined on $B$.\\[2ex]
+2. The purpose of this function is to "flatten" the boundary values. Let's check its magnitude on the boundaries. On the line $\operatorname{Re}(z) = 0$, $|g(iy)| = |f(iy)| A_0^{-1} A_1^0 \leq A_0 \cdot A_0^{-1} = 1$.\\[2ex]
+3. On the line $\operatorname{Re}(z) = 1$, $|g(1+iy)| = |f(1+iy)| A_0^0 A_1^{-1} \leq A_1 \cdot A_1^{-1} = 1$. So $g(z)$ is bounded by $1$ on both edges of the strip.\\[2ex]
+4. However, the strip is unbounded vertically ($y \to \pm\infty$). To apply the Maximum Modulus Principle, we introduce a decay factor and consider a new function $h(z) = g(z) e^{\varepsilon z^2}$ for some small $\varepsilon > 0$.\\[2ex]
+5. Notice that $|e^{\varepsilon z^2}| = |e^{\varepsilon (x^2 - y^2 + 2ixy)}| = e^{\varepsilon(x^2 - y^2)}$. Because $x \in [0,1]$, as $y \to \pm\infty$, the term $-y^2$ dominates, and the factor $e^{\varepsilon(x^2 - y^2)}$ rapidly goes to $0$.\\[2ex]
+6. Because $h(z)$ goes to $0$ as $z \to \pm i\infty$, it is bounded. We can draw a large rectangle, and on the top and bottom edges, $|h(z)|$ is extremely small. On the left and right edges, $|h(z)| \leq 1 \cdot e^{\varepsilon x^2} \leq e^\varepsilon$.\\[2ex]
+7. By the Maximum Modulus Principle, $|h(z)|$ is bounded by its maximal value on the boundary. Letting $\varepsilon \to 0$, the $e^{\varepsilon z^2}$ factor disappears, and we conclude $|g(z)| \leq 1$ for all $z \in B$.\\[2ex]
+8. Expanding $|g(z)| \leq 1$ gives $|f(z) (A_0)^{z-1} (A_1)^{-z}| \leq 1$. Taking the absolute value gives $|f(z)| A_0^{x-1} A_1^{-x} \leq 1$, where $x = \operatorname{Re}(z)$.\\[2ex]
+9. Rearranging this inequality yields $|f(z)| \leq (A_0)^{1-\operatorname{Re}(z)} (A_1)^{\operatorname{Re}(z)}$, which completes the proof.
 
 \textbf{Intuition:}
-Imagine the strip like a bridge between two mountains of heights $A_0$ and $A_1$. If a holomorphic function is bounded, its height in the middle of the bridge can't just spike up; it has to be "pulled" towards the values at the ends. Specifically, the "average" height follows a geometric progression (log-convexity). The values at $\operatorname{Re}(z)=x$ are a weighted geometric mean of the boundary values, where the weights depend on how close you are to each edge.
+Imagine the complex strip as a bridge stretched between two infinitely long walls. The walls have heights bounded by $A_0$ and $A_1$. The Phragmén-Lindelöf trick shows that a holomorphic function cannot "spike" in the middle of the bridge if it remains calm at the boundaries and doesn't explode too fast at infinity. Instead, its interior height is constrained by a weighted geometric average of the boundary heights, where the weight depends exactly on your horizontal distance to each wall.
 \end{solution}
 
 \begin{exercise}
@@ -170,42 +170,39 @@ in the sense of distributions.
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Sobolev Spaces ($H_0^1$):} These are spaces of functions that have "enough" derivatives and vanish on the boundary. This is where we look for solutions to the Poisson equation.
-    \item \textbf{Banach Fixed Point Theorem (Contraction Mapping):} If you have a map $T$ that "shrinks" the distance between any two points (i.e., $\|T(u) - T(v)\| \leq k \|u - v\|$ with $k < 1$), then there is exactly one point $u$ such that $T(u) = u$.
-    \item \textbf{Elliptic Regularity:} For the Poisson equation $-\triangle u = g$, the "size" of the solution $u$ in $H_0^1$ is bounded by the "size" of the source $g$ in $L^2$. Formally, $\|u\|_{H_0^1} \leq C \|g\|_{L^2}$.
-    \item \textbf{Poincaré Inequality:} This ensures that the $L^2$ norm of a function in $H_0^1$ is controlled by the $L^2$ norm of its derivative.
+    \item \textbf{Direct Method of Calculus of Variations:} A powerful technique to solve PDEs by reframing them as optimization problems. We construct an "energy" functional; the function that minimizes this energy is the solution to the PDE.
+    \item \textbf{Poincaré Inequality:} For functions $u \in H_0^1(\Omega)$ (functions that vanish on the boundary), the $L^2$ norm of the function is controlled by the $L^2$ norm of its gradient: $\|u\|_{L^2}^2 \leq \frac{1}{\lambda_1(\Omega)} \|\nabla u\|_{L^2}^2$, where $\lambda_1(\Omega)$ is a positive constant depending only on the domain.
 \end{itemize}
 
 \textbf{Steps:}\\[2ex]
-1. Let $L = -\triangle$ be the Laplacian with Dirichlet boundary conditions. We can rewrite the original equation $-\triangle u + \varepsilon\sin(u) = f$ as a fixed point problem:
-\[
--\triangle u = f - \varepsilon \sin(u) \implies u = L^{-1}(f - \varepsilon \sin(u)).
-\]
-2. Define the operator $T(u) = L^{-1}(f - \varepsilon \sin(u))$. We want to show that if $\varepsilon$ is small enough, $T$ is a contraction map on the space $H_0^1(\Omega)$.\\[2ex]
-3. Pick two functions $u$ and $v$ in $H_0^1$. Let's look at the distance between $T(u)$ and $T(v)$:
-\[
-\|T(u) - T(v)\|_{H_0^1} = \|L^{-1}(f - \varepsilon \sin(u)) - L^{-1}(f - \varepsilon \sin(v))\|_{H_0^1}
-\]
-By the linearity of $L^{-1}$, this is:
-\[
-\|T(u) - T(v)\|_{H_0^1} = \|L^{-1}(\varepsilon(\sin(v) - \sin(u)))\|_{H_0^1}
-\]
-4. Use Elliptic Regularity: There is a constant $C$ such that $\|L^{-1} g\|_{H_0^1} \leq C \|g\|_{L^2}$. Applying this:
-\[
-\|T(u) - T(v)\|_{H_0^1} \leq C \varepsilon \|\sin(v) - \sin(u)\|_{L^2}
-\]
-5. Use the Lipschitz property of sine: $|\sin(v) - \sin(u)| \leq |v - u|$. This means:
-\[
-\|\sin(v) - \sin(u)\|_{L^2} \leq \|v - u\|_{L^2}
-\]
-6. Use the Poincaré Inequality: $\|v - u\|_{L^2} \leq C' \|v - u\|_{H_0^1}$ for some constant $C'$. Putting it all together:
-\[
-\|T(u) - T(v)\|_{H_0^1} \leq (\varepsilon \cdot C \cdot C') \|u - v\|_{H_0^1}
-\]
-7. To make $T$ a contraction, we need the factor $(\varepsilon \cdot C \cdot C')$ to be less than 1. So we choose $\varepsilon_0 = 1/(C \cdot C')$.\\[2ex]
-8. For any $\varepsilon < \varepsilon_0$, the Banach Fixed Point Theorem guarantees that $T$ has a unique fixed point $u \in H_0^1(\Omega)$, which is the unique solution to our non-linear PDE.
+1. \textbf{Existence:} We reframe the PDE as a minimization problem. Consider the energy functional defined on $H_0^1(\Omega)$:
+   \[
+   E(u) = \int_\Omega \left( \frac{1}{2}|\nabla u|^2 - \varepsilon\cos(u) - fu \right) dx
+   \]
+   A minimizer of this functional will satisfy the Euler-Lagrange equation $-\triangle u + \varepsilon\sin(u) = f$.\\[2ex]
+2. We must show $E(u)$ is bounded below. Notice that $-\varepsilon\cos(u)$ is bounded. By Cauchy-Schwarz and the Poincaré inequality, the linear term $-fu$ grows slower than the quadratic term $\frac{1}{2}|\nabla u|^2$. Thus, the functional is bounded below and coercive. Therefore, a minimizing sequence converges weakly to a minimizer $u \in H_0^1(\Omega)$, proving existence.\\[2ex]
+3. \textbf{Uniqueness:} Suppose there are two solutions, $u_1$ and $u_2$, in $H_0^1(\Omega)$. They both satisfy the PDE, so their difference satisfies:
+   \[
+   -\triangle(u_1 - u_2) + \varepsilon(\sin(u_1) - \sin(u_2)) = 0
+   \]
+4. Multiply this equation by $(u_1 - u_2)$ and integrate by parts over the domain $\Omega$:
+   \[
+   \int_\Omega |\nabla(u_1 - u_2)|^2 dx + \varepsilon \int_\Omega (u_1 - u_2)(\sin(u_1) - \sin(u_2)) dx = 0
+   \]
+5. Rearranging this leads to the inequality:
+   \[
+   \|\nabla(u_1 - u_2)\|_{L^2}^2 = \varepsilon \int_\Omega (u_1 - u_2)(\sin(u_2) - \sin(u_1)) dx \leq \varepsilon \int_\Omega |u_1 - u_2||\sin(u_1) - \sin(u_2)| dx
+   \]
+6. Using the Lipschitz property of the sine function ($|\sin(u_1) - \sin(u_2)| \leq |u_1 - u_2|$), we get:
+   \[
+   \|\nabla(u_1 - u_2)\|_{L^2}^2 \leq \varepsilon \int_\Omega |u_1 - u_2|^2 dx = \varepsilon \|u_1 - u_2\|_{L^2}^2
+   \]
+7. Now, apply the Poincaré inequality to the right-hand side, $\|u_1 - u_2\|_{L^2}^2 \leq \frac{1}{\lambda_1(\Omega)} \|\nabla(u_1 - u_2)\|_{L^2}^2$:
+   \[
+   \|\nabla(u_1 - u_2)\|_{L^2}^2 \leq \frac{\varepsilon}{\lambda_1(\Omega)} \|\nabla(u_1 - u_2)\|_{L^2}^2
+   \]
+8. If we set $\varepsilon_0 = \lambda_1(\Omega)$, then for any $\varepsilon < \varepsilon_0$, the multiplier $\frac{\varepsilon}{\lambda_1(\Omega)}$ is strictly less than $1$. The only way a number can be strictly less than itself multiplied by a fraction is if the number is zero. Thus, $\|\nabla(u_1 - u_2)\|_{L^2}^2 = 0$, which means $u_1 = u_2$.
 
 \textbf{Intuition:}
-This problem is a classic example of "perturbation theory." The linear part of the equation ($-\triangle u = f$) is well-behaved and easy to solve. The non-linear part ($\varepsilon \sin(u)$) is like a small "disturbance." If the disturbance is weak enough (small $\varepsilon$), the overall system still behaves mostly like the linear one. The Fixed Point Theorem is the rigorous way of saying "if you start with a guess and keep refining it based on the linear solution, you will eventually settle on the one true solution."
+This PDE models a physical system settling into its lowest energy state. The "kinetic energy" ($\frac{1}{2}|\nabla u|^2$) pushes the system toward a smooth, flat state, while the non-linear term ($\varepsilon\cos(u)$) acts as a small, rippled potential landscape trying to trap it. Because the kinetic energy is dominant, the system is guaranteed to have a stable bottom (existence). If the ripples are "weak" enough (meaning $\varepsilon$ is small), they aren't deep enough to create multiple isolated valleys. The dominant kinetic energy ensures the landscape is strictly bowl-shaped overall, guaranteeing there is only one unique bottom.
 \end{solution}
-

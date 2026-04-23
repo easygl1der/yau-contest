@@ -41,14 +41,41 @@ Let $C_{1}, C_{2}$ be two linked circles in $\mathbb{R}^{3}$. Show that $C_{1}$ 
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} Linking is a topological property that prevents one curve from being "pulled through" another. If $C_1$ could be shrunk to a point without touching $C_2$, it would mean they weren't truly linked.
+\textbf{Prerequisites:}
+- Homotopy and fundamental groups.
+- Concept of Linking Number.
+- Degree of a continuous map.
 
-\textbf{Proof:} We use the concept of the \textbf{Linking Number} $Lk(C_1, C_2)$. For two disjoint closed curves in $\mathbb{R}^3$, the linking number is an integer invariant of their link type. One way to define it is via the Gauss linking integral, or more topologically, as the degree of the map:
-\[ \Phi: C_1 \times C_2 \to S^2, \quad \Phi(u, v) = \frac{u - v}{|u - v|} \]
-If $C_1$ is homotopic to a point in $\mathbb{R}^3 \setminus C_2$, let $H: S^1 \times [0,1] \to \mathbb{R}^3 \setminus C_2$ be the homotopy, where $H(s, 0)$ is the parameterization of $C_1$ and $H(s, 1)$ is a constant point $p \notin C_2$.
-Then the map $\Phi$ is homotopic to the map $\Psi(s, t) = \frac{p - v(t)}{|p - v(t)|}$, where $v(t)$ parameterizes $C_2$. The map $\Psi$ only depends on $v$, effectively mapping $C_1 \times C_2 \to S^2$ through a 1-dimensional intermediate space (the image of $C_2$). Such a map must have degree zero.
-Since the linking number $Lk(C_1, C_2)$ is the degree of $\Phi$, and we are given that the circles are linked ($Lk \neq 0$), $C_1$ cannot be null-homotopic in the complement of $C_2$.
-Alternatively, $\pi_1(\mathbb{R}^3 \setminus C_2) \cong \mathbb{Z}$. The curve $C_1$ represents a non-trivial element in this fundamental group (specifically, its class is $Lk(C_1, C_2)$ times the generator), so it cannot be null-homotopic.
+\textbf{Intuition:}
+Imagine two interlocking physical rings. Being "linked" is a topological property that prevents one ring from being continuously shrunk to a point or pulled far away without passing exactly through the other ring. 
+
+If you could continuously deform the first ring $C_1$ to a single point without ever touching the second ring $C_2$, it would imply that $C_1$ was never truly "wrapped around" $C_2$ to begin with. We make this mathematically rigorous using a tool called the linking number, which remains completely unchanged under continuous deformations. If $C_1$ shrinks to a point, the linking number would be zero, contradicting the fact that the rings are linked.
+
+\textbf{Steps:}
+1. We formalize the "linked" property using the \textbf{Linking Number}, denoted $Lk(C_1, C_2)$. For two disjoint closed curves in $\mathbb{R}^3$, the linking number is a topological invariant. It can be defined as the degree of the map $\Phi: C_1 \times C_2 \to S^2$ given by:
+\[ \Phi(u, v) = \frac{u - v}{|u - v|} \]
+Since the circles are linked, we know $Lk(C_1, C_2) \neq 0$.
+
+\par\vspace{1em}
+2. Now, suppose for the sake of contradiction that $C_1$ is homotopic to a point in the space $\mathbb{R}^3 \setminus C_2$. This means there is a continuous deformation (homotopy) $H: S^1 \times [0,1] \to \mathbb{R}^3 \setminus C_2$.
+
+\par\vspace{1em}
+3. In this homotopy, $H(s, 0)$ is the standard parameterization of $C_1$, and $H(s, 1)$ is a single constant point $p$ that does not lie on $C_2$. Importantly, the homotopy never intersects $C_2$ at any time.
+
+\par\vspace{1em}
+4. This homotopy $H$ induces a continuous deformation of our map $\Phi$. Specifically, $\Phi$ is homotopic to a new map $\Psi(s, t) = \frac{p - v(t)}{|p - v(t)|}$, where $v(t)$ parameterizes $C_2$. 
+
+\par\vspace{1em}
+5. Notice that the map $\Psi$ only depends on the parameter $t$ of the second curve, and is completely independent of the parameter $s$ of the first curve. This means $\Psi$ factors through a 1-dimensional space (the curve $C_2$) before mapping to the 2-dimensional sphere $S^2$.
+
+\par\vspace{1em}
+6. A map from a 2-dimensional domain ($C_1 \times C_2$) to a 2-dimensional sphere ($S^2$) that only relies on a 1-dimensional intermediate image cannot cover the sphere completely, and its degree must be exactly zero. 
+
+\par\vspace{1em}
+7. Since degree is invariant under homotopy, the original map $\Phi$ must also have degree zero. This means $Lk(C_1, C_2) = 0$, which directly contradicts our premise that the circles are linked. Thus, $C_1$ cannot be homotopic to a point in the complement of $C_2$.
+
+\par\vspace{1em}
+*(Alternative algebraic topology perspective)*: The fundamental group of the complement of a circle, $\pi_1(\mathbb{R}^3 \setminus C_2)$, is isomorphic to $\mathbb{Z}$. Because the curves are linked, the class of curve $C_1$ corresponds to a non-zero integer in this group (specifically, its linking number). An element can only be homotopic to a point if it represents the zero element in the fundamental group.
 \end{solution}
 
 \begin{exercise}
@@ -79,27 +106,73 @@ A regular curve $C$ in $\mathbb{R}^{3}$ is called a Bertrand curve if there exis
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} Bertrand curves are "parallel" in a very specific sense: they share the same principal normal lines. This rigid geometric coupling forces the distance between them and the orientation of their tangent frames to remain fixed.
+\textbf{Prerequisites:}
+- Frenet-Serret frame (Tangent $T$, Normal $N$, Binormal $B$).
+- Frenet-Serret formulas (relating derivatives of $T, N, B$ to curvature $k$ and torsion $\tau$).
+- Arc length parameterization.
 
-\textbf{Proof:}
-(a) Let $\alpha(s)$ be the parameterization of $C$ by arc length $s$. The corresponding point on $D$ is $\beta(s) = \alpha(s) + r(s) N(s)$, where $N(s)$ is the principal normal of $C$.
-The condition $N_x C = N_{f(x)} D$ implies that the normal vector $N^*(s)$ of $D$ is parallel to $N(s)$.
-Differentiating $\beta(s)$:
-\[ \beta'(s) = \alpha'(s) + r'(s) N(s) + r(s) N'(s) = T(s) + r'(s) N(s) + r(s) (-k T + \tau B) = (1 - rk) T + r' N + r\tau B \]
-Since $N(s)$ is the normal to $D$, the tangent $T^*(s)$ of $D$ (which is proportional to $\beta'(s)$) must be perpendicular to $N(s)$. Thus $\beta'(s) \cdot N(s) = 0$, which implies $r'(s) = 0$. So $r$ is constant.
-Now, the tangent of $D$ is $T^*(s) = \cos \theta T(s) + \sin \theta B(s)$ where $\cos \theta \propto (1-rk)$ and $\sin \theta \propto r\tau$.
-Differentiating $T^*(s)$ with respect to arc length $s^*$ of $D$:
-$\frac{d T^*}{d s^*} = k^* N^*$. Since $N^*$ is parallel to $N$, $\frac{d T^*}{d s}$ must be parallel to $N$.
-\[ \frac{d T^*}{d s} = -\sin \theta \theta' T + (\cos \theta k - \sin \theta \tau) N + \cos \theta \theta' B \]
-For this to be purely in the $N$ direction, the $T$ and $B$ components must vanish, so $\theta' = 0$. Thus the angle $\theta$ is constant.
+\textbf{Intuition:}
+Bertrand curves are essentially a pair of 3D curves that share the same principal normal line at corresponding points. Think of two roller coasters running side-by-side, where the struts connecting them are always perfectly perpendicular to the track's turning direction. Because the connecting struts (the normal lines) are rigidly shared, the distance between the two tracks is locked. Furthermore, this rigid connection forces the "twist" and "bend" of the two curves to be strongly coupled, restricting how their tangent directions change relative to one another.
 
-(b) From the expression for $\frac{d T^*}{d s}$, we have $\cos \theta k - \sin \theta \tau$ is the component along $N$. Also, from the $\beta'$ expression with $r' = 0$:
-$T^* = \frac{1}{\sqrt{(1-rk)^2 + (r\tau)^2}} ((1-rk) T + r\tau B)$.
-Comparing this with $T^* = \cos \theta T + \sin \theta B$, we get:
-$\frac{\sin \theta}{\cos \theta} = \tan \theta = \frac{r\tau}{1-rk}$.
-Rearranging: $(1-rk) \tan \theta = r\tau \implies \tan \theta - r \tan \theta k = r\tau \implies r \tan \theta k + r \tau = \tan \theta$.
-Dividing by $\tan \theta$: $r k + \frac{r}{\tan \theta} \tau = 1$.
-Setting $\lambda = r$ and $\mu = r \cot \theta$, we get the linear relation $\lambda k + \mu \tau = 1$.
+\textbf{Steps:}
+\textbf{Part (a): Constant distance and angle.}
+\par\vspace{1em}
+1. Let the first curve $C$ be parameterized by its arc length $s$, so $\alpha(s)$. The Frenet frame is $\{T(s), N(s), B(s)\}$. The second curve $D$ can be parameterized by mapping each point on $C$ along the shared normal vector: $\beta(s) = \alpha(s) + r(s) N(s)$, where $r(s)$ is the distance between the curves.
+
+\par\vspace{1em}
+2. The problem states that the normal lines are the same, meaning the normal vector $N^*(s)$ of $D$ is parallel to $N(s)$. 
+
+\par\vspace{1em}
+3. Let's find the tangent direction of $D$. By differentiating $\beta(s)$ with respect to $s$ and using the Frenet formulas ($N' = -k T + \tau B$), we get:
+\[ \beta'(s) = \alpha'(s) + r'(s) N(s) + r(s) N'(s) = T(s) + r'(s) N(s) + r(s) (-k(s) T(s) + \tau(s) B(s)) \]
+Grouping the terms by the frame vectors:
+\[ \beta'(s) = (1 - r(s)k(s)) T(s) + r'(s) N(s) + r(s)\tau(s) B(s) \]
+
+\par\vspace{1em}
+4. The tangent vector of $D$, let's call it $T^*(s)$, must be parallel to $\beta'(s)$. Since $N^*(s)$ is perpendicular to $T^*(s)$, and $N^*(s)$ is parallel to $N(s)$, it must be true that $\beta'(s)$ is perpendicular to $N(s)$. 
+Taking the dot product: $\beta'(s) \cdot N(s) = 0$. Looking at our grouped equation, the $N(s)$ component is just $r'(s)$. Thus, $r'(s) = 0$, which proves that the distance $r(s) = r$ is a constant!
+
+\par\vspace{1em}
+5. Because $r$ is constant, $\beta'(s)$ only has components in the $T$ and $B$ directions. So, $T^*(s)$ lies entirely in the plane spanned by $T(s)$ and $B(s)$. We can express it as:
+\[ T^*(s) = \cos \theta(s) T(s) + \sin \theta(s) B(s) \]
+where $\theta(s)$ is the angle between $T(s)$ and $T^*(s)$.
+
+\par\vspace{1em}
+6. To show $\theta$ is constant, we differentiate $T^*$ with respect to the arc length $s^*$ of curve $D$. By the chain rule, $\frac{d T^*}{d s} = \frac{d T^*}{d s^*} \frac{d s^*}{d s} = k^* N^* \frac{d s^*}{d s}$. 
+Since $N^*$ is parallel to $N$, $\frac{d T^*}{d s}$ must be purely in the $N$ direction (it has no $T$ or $B$ components).
+
+\par\vspace{1em}
+7. Now let's calculate $\frac{d T^*}{d s}$ using our angle formula and Frenet formulas ($T' = kN$, $B' = -\tau N$):
+\[ \frac{d T^*}{d s} = (-\sin \theta \cdot \theta') T + \cos \theta (kN) + (\cos \theta \cdot \theta') B + \sin \theta (-\tau N) \]
+\[ \frac{d T^*}{d s} = (-\sin \theta \cdot \theta') T + (\cos \theta \cdot k - \sin \theta \cdot \tau) N + (\cos \theta \cdot \theta') B \]
+For this vector to have no $T$ and $B$ components, the coefficients of $T$ and $B$ must be zero. This requires $\theta'(s) = 0$, proving that the angle $\theta$ is a constant.
+
+\par\vspace{1em}
+\textbf{Part (b): The linear relation.}
+\par\vspace{1em}
+1. In Part (a), step 5, we established $T^*(s)$ is a unit vector pointing in the same direction as $\beta'(s)$. From step 3, we know $\beta'(s) = (1 - rk) T + r\tau B$. 
+
+\par\vspace{1em}
+2. Comparing the two ways to write $T^*$:
+$T^* = \cos \theta T + \sin \theta B$ must be proportional to $(1 - rk) T + r\tau B$.
+
+\par\vspace{1em}
+3. This proportionality means the ratio of their coefficients must be equal:
+\[ \frac{\sin \theta}{\cos \theta} = \tan \theta = \frac{r\tau}{1 - rk} \]
+
+\par\vspace{1em}
+4. Let's rearrange this equation algebraically. Multiply both sides by $(1 - rk)$:
+\[ (1 - rk) \tan \theta = r\tau \]
+\[ \tan \theta - rk \tan \theta = r\tau \]
+
+\par\vspace{1em}
+5. Divide the entire equation by $\tan \theta$ (assuming $\theta \neq 0$, which holds if the curves are distinct and torsion is non-zero):
+\[ 1 - rk = r\tau \cot \theta \]
+\[ r \cdot k + (r \cot \theta) \cdot \tau = 1 \]
+
+\par\vspace{1em}
+6. Since we proved $r$ and $\theta$ are constants, we can define two new constants: $\lambda = r$ and $\mu = r \cot \theta$. This yields the final linear relationship:
+\[ \lambda k + \mu \tau = 1 \]
 \end{solution}
 
 \begin{exercise}

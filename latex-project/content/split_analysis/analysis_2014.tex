@@ -12,22 +12,38 @@ If we have $\lim_{n\to\infty,n\in\mathbb{N}}\frac{f(n)}{n} = 2014$, prove that $
 
 \begin{solution}
 \textbf{Prerequisites:} Cauchy's Functional Equation, Mathematical Induction, Properties of Supremum, and the concept of Additive Functions. \\[1em]
-\textbf{Intuition:} The condition $\sup |f(x+y)-f(x)-f(y)| < \infty$ tells us that $f$ is "almost" an additive function (like $f(x)=kx$). If it were exactly additive and continuous, it would be $f(x)=kx$. The problem asks us to show that even with this "error," the function $f$ stays within a bounded distance of a linear function, specifically $2014x$. \\[1em]
+\textbf{Intuition:} The condition $\sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)| < \infty$ suggests that $f$ is "almost" an additive function. If it were exactly additive (satisfying $f(x+y)=f(x)+f(y)$) and continuous, it would necessarily be of the form $f(x)=kx$. This problem explores the stability of Cauchy's functional equation (a topic known as Hyers-Ulam stability), showing that if a function is "close" to being additive, it must be "close" to a truly additive function. We use the given limit at infinity to pin down the specific linear function $f$ should be compared to. \\[1em]
 \textbf{Steps:}
-1. Let $C = \sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)|$. This constant $C$ represents the maximum "deviation" from additivity. \\[1em]
+1. Let $C = \sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)|$. This constant $C$ represents the maximum "deviation" from perfect additivity. By definition, for any $x, y \in \mathbb{R}$, we have $f(x+y) = f(x) + f(y) + \epsilon(x,y)$, where $|\epsilon(x,y)| \leq C$. \\[1em]
 2. We first prove by induction that for any $n \in \mathbb{N}$ and $x \in \mathbb{R}$, $|f(nx) - nf(x)| \leq (n-1)C$.
-For $n=1$, $|f(x) - f(x)| = 0 \leq 0$.
-Assume it holds for $n$: $|f(nx) - nf(x)| \leq (n-1)C$.
+For $n=1$, $|f(x) - f(x)| = 0 \leq (1-1)C = 0$, which is true.
+Assume the statement holds for some $n \in \mathbb{N}$: $|f(nx) - nf(x)| \leq (n-1)C$.
 For $n+1$:
-$|f((n+1)x) - (n+1)f(x)| = |f(nx+x) - f(nx) - f(x) + f(nx) - nf(x)|$
-$\leq |f(nx+x) - f(nx) - f(x)| + |f(nx) - nf(x)|$
+$|f((n+1)x) - (n+1)f(x)| = |f(nx+x) - (nx) - f(x) + f(nx) - nf(x)|$.
+Applying the triangle inequality:
+$\leq |f(nx+x) - f(nx) - f(x)| + |f(nx) - nf(x)|$.
+By the definition of $C$ and the inductive hypothesis:
 $\leq C + (n-1)C = nC$.
-Thus, the bound holds for all $n$. \\[1em]
-3. Define a sequence of functions $A_n(x) = \frac{f(2^n x)}{2^n}$. We can show this sequence converges uniformly to an additive function $A(x)$. Note that $|A_{n+1}(x) - A_n(x)| = \frac{|f(2 \cdot 2^n x) - 2f(2^n x)|}{2^{n+1}} \leq \frac{C}{2^{n+1}}$. This geometric series converges, so $A(x) = \lim_{n\to\infty} A_n(x)$ exists and is continuous because $f$ is continuous and the convergence is uniform. \\[1em]
-4. For any continuous additive function $A(x)$, it is well known that $A(x) = kx$ for some $k \in \mathbb{R}$.
-Taking the limit in $|f(2^n x) - 2^n f(x)| \leq (2^n-1)C$ divided by $2^n$ as $n\to\infty$, we get $|A(x) - f(x)| \leq C$ for all $x$. \\[1em]
-5. Finally, we determine $k$. We are given $\lim_{n\to\infty} \frac{f(n)}{n} = 2014$. Since $f(n) = kn + O(1)$, we have $\frac{kn + O(1)}{n} = k + \frac{O(1)}{n} \to k$. Thus $k = 2014$.
-Therefore, $|f(x) - 2014x| \leq C$ for all $x \in \mathbb{R}$, which implies $\sup_{x\in\mathbb{R}}|f(x)-2014x| \leq C < \infty$.
+Thus, the bound $|f(nx) - nf(x)| \leq (n-1)C$ holds for all $n \in \mathbb{N}$. \\[1em]
+3. Define a sequence of functions $A_n(x) = \frac{f(2^n x)}{2^n}$. We aim to show this sequence converges to an additive function.
+Note that $|A_{n+1}(x) - A_n(x)| = \frac{|f(2 \cdot 2^n x) - 2f(2^n x)|}{2^{n+1}}$.
+Using the property $|f(2y) - 2f(y)| \leq C$ (which is the case $n=2, x=y$ in our induction), we have:
+$|A_{n+1}(x) - A_n(x)| \leq \frac{C}{2^{n+1}}$.
+This is a geometric series. For any $m > n$:
+$|A_m(x) - A_n(x)| \leq \sum_{k=n}^{m-1} \frac{C}{2^{k+1}} < \sum_{k=n}^{\infty} \frac{C}{2^{k+1}} = \frac{C}{2^n}$.
+Since the bound $\frac{C}{2^n}$ is independent of $x$, the sequence $A_n(x)$ converges uniformly to a function $A(x)$. \\[1em]
+4. The function $A(x)$ is additive. Indeed,
+$|A_n(x+y) - A_n(x) - A_n(y)| = \frac{|f(2^n(x+y)) - f(2^n x) - f(2^n y)|}{2^n} \leq \frac{C}{2^n}$.
+Taking the limit as $n \to \infty$ gives $A(x+y) = A(x) + A(y)$.
+Since $f$ is continuous, each $A_n$ is continuous. Due to uniform convergence, $A(x)$ is also continuous. Any continuous additive function on $\mathbb{R}$ must satisfy $A(x) = kx$ for some constant $k$. \\[1em]
+5. Now we bound the distance between $f$ and $A$. For a fixed $x$, the inequality $|f(2^n x) - 2^n f(x)| \leq (2^n-1)C$ can be rewritten as:
+$\left| \frac{f(2^n x)}{2^n} - f(x) \right| \leq \frac{2^n-1}{2^n} C < C$.
+Taking the limit as $n \to \infty$, we obtain $|A(x) - f(x)| \leq C$. \\[1em]
+6. Finally, we identify the constant $k$. We are given $\lim_{n \to \infty, n \in \mathbb{N}} \frac{f(n)}{n} = 2014$.
+Since $f(n) = kn + (f(n) - kn)$ and $|f(n) - kn| = |f(n) - A(n)| \leq C$, we have:
+$\frac{f(n)}{n} = \frac{kn + O(1)}{n} = k + \frac{O(1)}{n}$.
+As $n \to \infty$, $\frac{f(n)}{n} \to k$. Therefore, $k = 2014$.
+This means $|f(x) - 2014x| \leq C$ for all $x \in \mathbb{R}$, so $\sup_{x \in \mathbb{R}} |f(x) - 2014x| \leq C < \infty$.
 \end{solution}
 
 \begin{exercise}
@@ -36,19 +52,21 @@ Let $f_1,\dots,f_n$ be analytic functions on $D=\{|z|<1\}$ and continuous on $\b
 
 \begin{solution}
 \textbf{Prerequisites:} Analytic functions, Maximum Modulus Principle, Triangle Inequality, and basic Complex Analysis. \\[1em]
-\textbf{Intuition:} The Maximum Modulus Principle states that the absolute value of a non-constant analytic function cannot have a local maximum inside its domain. Although the sum of absolute values $\phi(z)$ is not itself analytic, we can "force" it to look like the modulus of an analytic function at any specific point. This allows us to use the principle to show that the maximum must occur on the boundary. \\[1em]
+\textbf{Intuition:} The Maximum Modulus Principle is a powerful tool which states that the absolute value of a non-constant analytic function cannot have a local maximum inside its domain. However, $\phi(z) = \sum |f_j(z)|$ is not generally the modulus of an analytic function, so we cannot apply the principle directly to it. The clever trick here is to construct, for any chosen interior point $z_0$, a "local" analytic function $g(z)$ that is equal to $\phi$ at $z_0$ but is less than or equal to $\phi$ everywhere else. This allows us to use the Maximum Modulus Principle on $g(z)$ to "push" the potential maximum of $\phi$ to the boundary. \\[1em]
 \textbf{Steps:}
-1. Suppose $\phi(z)$ achieves its maximum value at some point $z_0$ in the interior of the disk $D$. We want to show that there is a point on the boundary $\partial D$ where $\phi$ is at least as large. \\[1em]
-2. For each function $f_j(z)$, let $\theta_j$ be the phase angle of $f_j(z_0)$. Specifically, we write $f_j(z_0) = |f_j(z_0)|e^{i\theta_j}$. This means $e^{-i\theta_j} f_j(z_0) = |f_j(z_0)|$, which is a real, non-negative number. \\[1em]
-3. Define a new function $g(z) = \sum_{j=1}^n e^{-i\theta_j} f_j(z)$. Since each $f_j(z)$ is analytic on $D$ and continuous on $\bar{D}$, their linear combination $g(z)$ is also analytic on $D$ and continuous on $\bar{D}$. \\[1em]
-4. Evaluate $g$ at the point $z_0$:
+1. Suppose $\phi(z)$ achieves its maximum value $M$ at some point $z_0$ in the interior of the disk $D$. We want to show that there must be a point on the boundary $\partial D$ where $\phi$ is at least $M$. \\[1em]
+2. For each function $f_j(z)$, evaluate it at the maximum point $z_0$. We can write each complex value in polar form: $f_j(z_0) = |f_j(z_0)|e^{i\theta_j}$, where $\theta_j$ is the phase angle. This implies that $e^{-i\theta_j} f_j(z_0) = |f_j(z_0)|$ is a non-negative real number. \\[1em]
+3. Define a new function $g(z) = \sum_{j=1}^n e^{-i\theta_j} f_j(z)$. Since each $f_j(z)$ is analytic on $D$ and continuous on $\bar{D}$, and $g(z)$ is a linear combination of these functions with constant coefficients $e^{-i\theta_j}$, $g(z)$ is also analytic on $D$ and continuous on $\bar{D}$. \\[1em]
+4. Now, evaluate $g$ at the point $z_0$:
 $g(z_0) = \sum_{j=1}^n e^{-i\theta_j} f_j(z_0) = \sum_{j=1}^n |f_j(z_0)| = \phi(z_0)$.
-Note that $g(z_0)$ is equal to $|g(z_0)|$ because it is a sum of non-negative real numbers. \\[1em]
-5. By the Maximum Modulus Principle, the maximum of $|g(z)|$ on the closed disk $\bar{D}$ must be achieved at some point $z^*$ on the boundary $\partial D$. Thus, $|g(z_0)| \leq |g(z^*)|$. \\[1em]
-6. Now we use the Triangle Inequality on the boundary point $z^*$:
-$|g(z^*)| = \left| \sum_{j=1}^n e^{-i\theta_j} f_j(z^*) \right| \leq \sum_{j=1}^n |e^{-i\theta_j}| |f_j(z^*)| = \sum_{j=1}^n |f_j(z^*)| = \phi(z^*)$. \\[1em]
-7. Putting it all together: $\phi(z_0) = |g(z_0)| \leq |g(z^*)| \leq \phi(z^*)$.
-This shows that for any point $z_0$ in the interior, there exists a point $z^*$ on the boundary such that $\phi(z^*) \geq \phi(z_0)$. Therefore, the maximum of $\phi(z)$ must be attained on the boundary $\partial D$.
+Crucially, $|g(z_0)| = | \phi(z_0) | = \phi(z_0)$ because $\phi(z_0)$ is a sum of absolute values (real and non-negative). \\[1em]
+5. For any other point $z \in \bar{D}$, applying the triangle inequality to $g(z)$ gives:
+$|g(z)| = \left| \sum_{j=1}^n e^{-i\theta_j} f_j(z) \right| \leq \sum_{j=1}^n |e^{-i\theta_j}| |f_j(z)| = \sum_{j=1}^n |f_j(z)| = \phi(z)$.
+Thus, $|g(z)| \leq \phi(z)$ for all $z \in \bar{D}$. \\[1em]
+6. According to the Maximum Modulus Principle, the maximum of the modulus of the analytic function $g(z)$ on the closed disk $\bar{D}$ must be attained at some point $z^*$ on the boundary $\partial D$. That is, $|g(z_0)| \leq |g(z^*)|$. \\[1em]
+7. Combining our results:
+$\phi(z_0) = |g(z_0)| \leq |g(z^*)| \leq \phi(z^*)$.
+This inequality $\phi(z_0) \leq \phi(z^*)$ shows that the value of $\phi$ at any interior point is no larger than its value at some specific boundary point $z^*$. Therefore, the overall maximum of $\phi(z)$ on the closed set $\bar{D}$ must be achieved on the boundary $\partial D$.
 \end{solution}
 
 \begin{exercise}
@@ -56,22 +74,23 @@ Prove that if there is a conformal mapping between the annulus $\{z\mid r_1<|z|<
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:} Conformal mapping, Harmonic functions, Dirichlet integral, and the concept of a Modulus of an annulus. \\[1em]
-\textbf{Intuition:} Not all annuli are conformally equivalent. While any two disks can be mapped to each other, an annulus has a "shape" determined by the ratio of its radii. This ratio is a conformal invariant, meaning a conformal map cannot change it. We prove this by looking at a harmonic function that "measures" the distance between the boundaries and showing that its energy (Dirichlet integral) must be preserved. \\[1em]
+\textbf{Prerequisites:} Conformal mapping, Harmonic functions, Dirichlet integral, and the concept of the Modulus of an annulus. \\[1em]
+\textbf{Intuition:} This problem demonstrates that not all annuli are conformally equivalent. While any two simple disks can be mapped to one another via a conformal map (like a Möbius transformation), an annulus has a geometric "rigidity" determined by the ratio of its inner and outer radii. This ratio is related to a property called the "modulus" of the annulus, which is a conformal invariant. We prove this by constructing a specific harmonic function that "measures" the boundary conditions and showing that its total "energy" (the Dirichlet integral) must remain the same under any conformal mapping. \\[1em]
 \textbf{Steps:}
-1. Without loss of generality, we can scale the annuli. Let $A_1 = \{z \mid 1 < |z| < R\}$ and $A_2 = \{w \mid 1 < |w| < S\}$, where $R = r_2/r_1$ and $S = \rho_2/\rho_1$. A conformal map $f: A_1 \to A_2$ exists if and only if the original map exists. \\[1em]
-2. Consider the harmonic function $u(z) = \frac{\log|z|}{\log R}$ on $A_1$. This function is chosen because it is harmonic ($\Delta u = 0$), equals $0$ on the inner boundary ($|z|=1$), and equals $1$ on the outer boundary ($|z|=R$). \\[1em]
-3. Calculate the Dirichlet integral (energy) of $u$:
+1. Without loss of generality, we can scale the annuli to simplify the calculation. Let $A_1 = \{z \mid 1 < |z| < R\}$ and $A_2 = \{w \mid 1 < |w| < S\}$, where $R = r_2/r_1$ and $S = \rho_2/\rho_1$. A conformal map $f: A_1 \to A_2$ exists if and only if a conformal map between the original annuli exists. \\[1em]
+2. Consider a harmonic function $u(z) = \frac{\log|z|}{\log R}$ defined on $A_1$. This function is chosen because it is harmonic ($\Delta u = 0$), equals $0$ on the inner boundary ($|z|=1$), and equals $1$ on the outer boundary ($|z|=R$). It represents the steady-state temperature distribution between two cylindrical shells at different temperatures. \\[1em]
+3. Calculate the Dirichlet integral of $u$, which represents its total energy:
 $D(u) = \iint_{A_1} |\nabla u|^2 dx dy$.
-In polar coordinates, $\nabla u = \frac{\partial u}{\partial r} \hat{r} = \frac{1}{r \log R} \hat{r}$.
-$D(u) = \int_0^{2\pi} \int_1^R \left( \frac{1}{r \log R} \right)^2 r dr d\theta = \frac{2\pi}{(\log R)^2} \int_1^R \frac{1}{r} dr = \frac{2\pi \log R}{(\log R)^2} = \frac{2\pi}{\log R}$. \\[1em]
-4. Since $f$ is a conformal map, the composition $v = u \circ f^{-1}$ is a harmonic function on $A_2$. Because $f$ maps boundaries to boundaries, $v$ will take values $0$ and $1$ on the boundaries of $A_2$ (possibly swapped). The unique such harmonic function on $A_2$ is $v(w) = \frac{\log|w|}{\log S}$ (or $1 - \frac{\log|w|}{\log S}$). \\[1em]
-5. A key property of the Dirichlet integral is that it is invariant under conformal mappings. This is because the Jacobian of a conformal map $f(z)$ is $|f'(z)|^2$, which exactly cancels out the transformation of $|\nabla u|^2$.
-Thus, $D(u) = D(v)$. \\[1em]
-6. From our formula in step 3, $D(v) = \frac{2\pi}{\log S}$.
-Setting $D(u) = D(v)$, we get:
+Using polar coordinates $(r, \theta)$, we have $\nabla u = \frac{\partial u}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial u}{\partial \theta} \hat{\theta} = \frac{1}{r \log R} \hat{r}$.
+The integral becomes:
+$D(u) = \int_0^{2\pi} \int_1^R \left( \frac{1}{r \log R} \right)^2 r dr d\theta = \frac{1}{(\log R)^2} \int_0^{2\pi} d\theta \int_1^R \frac{1}{r} dr = \frac{2\pi \log R}{(\log R)^2} = \frac{2\pi}{\log R}$. \\[1em]
+4. Now, let $f: A_1 \to A_2$ be a conformal map. Define $v = u \circ f^{-1}$ as a function on $A_2$. Because $f$ is conformal (and thus preserves harmonicity), $v$ is a harmonic function on $A_2$. Since $f$ must map the boundaries of $A_1$ to the boundaries of $A_2$, $v$ will take values $0$ and $1$ on the two boundaries of $A_2$. The unique harmonic function on $A_2$ with these boundary values is $v(w) = \frac{\log|w|}{\log S}$ (or $1 - \frac{\log|w|}{\log S}$, but the energy is the same). \\[1em]
+5. A fundamental property of the Dirichlet integral is that it is invariant under conformal mappings. If $w = f(z)$ is a conformal map, then the Jacobian is $|\det J_f| = |f'(z)|^2$. The gradient transforms as $|\nabla_z u|^2 = |\nabla_w v|^2 |f'(z)|^2$. In the integral, the Jacobian $|f'(z)|^2$ from the change of variables cancels out exactly, leaving:
+$D(u) = \iint_{A_1} |\nabla_z u|^2 dx dy = \iint_{A_2} |\nabla_w v|^2 du dv = D(v)$. \\[1em]
+6. From our formula in Step 3, we know $D(v) = \frac{2\pi}{\log S}$.
+Setting $D(u) = D(v)$, we have:
 $\frac{2\pi}{\log R} = \frac{2\pi}{\log S} \implies \log R = \log S \implies R = S$.
-Substituting the ratios back, we have $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
+Substituting back the definitions of $R$ and $S$, we conclude that $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
 \end{solution}
 
 \begin{exercise}
@@ -84,22 +103,28 @@ is a harmonic function on the upper half plane $\{z\in\mathbb{C}\mid \operatorna
 
 \begin{solution}
 \textbf{Prerequisites:} Harmonic functions, Holomorphic functions, Poisson kernel, and the concept of an Approximate Identity. \\[1em]
-\textbf{Intuition:} The Poisson kernel $P_y(x-\xi)$ is a specialized "smearing" function. When we integrate a boundary function $U(\xi)$ against this kernel, it creates a new function $P_U(x,y)$ inside the upper half-plane. This process has two key properties: (1) the result is harmonic (smooth with no peaks/valleys) because the kernel itself is related to a holomorphic function, and (2) as we get closer to the boundary ($y \to 0$), the kernel becomes so "sharp" that it picks up the exact value of $U$ at that point. \\[1em]
+\textbf{Intuition:} The Poisson kernel $P_y(x-\xi)$ acts as a "weighting" function that averages the values of the boundary function $U(\xi)$ to produce a smooth, harmonic function $P_U(x,y)$ in the upper half-plane. As the vertical distance $y$ to the boundary approaches zero, the kernel $P_y(t)$ becomes increasingly concentrated around $t=0$, effectively "picking out" the value of $U$ at the point directly below. This is analogous to how a delta function works, but in a continuous and smooth way. \\[1em]
 \textbf{Steps:}
-1. \textbf{Harmonicity:} Recall that a function is harmonic if it is the imaginary (or real) part of a holomorphic function. Let $z = x+iy$. Consider the function $g(z) = \frac{1}{\pi} \frac{i}{z-\xi}$. This is holomorphic in the upper half-plane because the only pole is at $z=\xi$, which is on the real axis. \\[1em]
-2. Observe that $\operatorname{Re}(g(z)) = \operatorname{Re} \left( \frac{1}{\pi} \frac{i}{(x-\xi)+iy} \right) = \operatorname{Re} \left( \frac{1}{\pi} \frac{i((x-\xi)-iy)}{(x-\xi)^2+y^2} \right) = \frac{1}{\pi} \frac{y}{(x-\xi)^2+y^2}$.
-This is exactly our kernel $P_y(x-\xi)$. Since it is the real part of a holomorphic function, the kernel is harmonic in $(x,y)$. Since $U$ is bounded, we can differentiate under the integral sign, so $P_U$ is also harmonic. \\[1em]
-3. \textbf{Approximate Identity Properties:} The kernel $P_y(t) = \frac{1}{\pi} \frac{y}{t^2+y^2}$ satisfies:
-(a) $\int_{-\infty}^{\infty} P_y(t) dt = \left[ \frac{1}{\pi} \arctan(t/y) \right]_{-\infty}^{\infty} = \frac{1}{\pi} (\frac{\pi}{2} - (-\frac{\pi}{2})) = 1$.
-(b) For any fixed $\delta > 0$, the integral $\int_{|t| \geq \delta} P_y(t) dt \to 0$ as $y \to 0^+$. This means the kernel's mass concentrates at the origin as $y$ gets small. \\[1em]
-4. \textbf{Convergence:} Let $\xi_0$ be a point where $U$ is continuous. We want to show $|P_U(x,y) - U(\xi_0)| \to 0$ as $(x,y) \to (\xi_0, 0)$.
-Using the fact that the integral of the kernel is $1$, we write:
-$|P_U(x,y) - U(\xi_0)| = \left| \int_{\mathbb{R}} P_y(x-\xi) (U(\xi) - U(\xi_0)) d\xi \right|$. \\[1em]
-5. Split the integral into two parts: a small interval $|\xi-\xi_0| < \delta$ where $|U(\xi) - U(\xi_0)| < \epsilon$ (by continuity), and the rest of the real line.
-The first part is bounded by $\epsilon \int P_y d\xi = \epsilon$.
-The second part is bounded by $2 \sup|U| \int_{|\xi-\xi_0| \geq \delta} P_y(x-\xi) d\xi$.
-As $y \to 0^+$, the mass of the kernel outside the $\delta$-neighborhood of $x$ vanishes. Since $x \to \xi_0$, eventually the neighborhood $|\xi-x| < \delta/2$ is contained within $|\xi-\xi_0| < \delta$. \\[1em]
-6. Thus, the second part also goes to zero, leaving us with a total difference less than any $\epsilon$. This proves that $P_U(x,y) \to U(\xi_0)$.
+1. \textbf{Harmonicity:} A function is harmonic if it satisfies Laplace's equation $\Delta P_U = 0$. A common way to produce harmonic functions is to take the real or imaginary part of a holomorphic function. Let $z = x+iy$ be a point in the upper half-plane ($y>0$). For a fixed $\xi \in \mathbb{R}$, consider the function:
+$g(z) = \frac{1}{\pi} \frac{i}{z-\xi}$.
+This function is holomorphic in the upper half-plane because its only pole is at $z=\xi$, which lies on the real axis. \\[1em]
+2. We can find the real part of $g(z)$ by multiplying the numerator and denominator by the complex conjugate of the denominator:
+$g(z) = \frac{i}{\pi} \frac{(x-\xi)-iy}{(x-\xi)^2+y^2} = \frac{1}{\pi} \frac{y + i(x-\xi)}{(x-\xi)^2+y^2}$.
+Thus, $\operatorname{Re}(g(z)) = \frac{1}{\pi} \frac{y}{(x-\xi)^2+y^2}$, which is exactly the Poisson kernel $P_y(x-\xi)$. Since it is the real part of a holomorphic function, the kernel is harmonic. Because $U$ is bounded and the kernel decays rapidly, we can differentiate under the integral sign to see that $P_U(x,y) = \int P_y(x-\xi) U(\xi) d\xi$ is also harmonic. \\[1em]
+3. \textbf{Approximate Identity Properties:} The kernel $P_y(t) = \frac{1}{\pi} \frac{y}{t^2+y^2}$ has three key properties:
+(a) $P_y(t) > 0$ for all $t \in \mathbb{R}, y > 0$.
+(b) $\int_{-\infty}^{\infty} P_y(t) dt = \left[ \frac{1}{\pi} \arctan(t/y) \right]_{-\infty}^{\infty} = \frac{1}{\pi} (\frac{\pi}{2} - (-\frac{\pi}{2})) = 1$.
+(c) For any fixed $\delta > 0$, $\int_{|t| \geq \delta} P_y(t) dt \to 0$ as $y \to 0^+$. This means the "mass" of the kernel concentrates at the origin as we approach the boundary. \\[1em]
+4. \textbf{Convergence:} Let $\xi_0$ be a point where $U$ is continuous. We want to show that $|P_U(x,y) - U(\xi_0)| \to 0$ as $(x,y) \to (\xi_0, 0^+)$.
+Using the fact that $\int P_y(x-\xi) d\xi = 1$, we can write:
+$P_U(x,y) - U(\xi_0) = \int_{\mathbb{R}} P_y(x-\xi) [U(\xi) - U(\xi_0)] d\xi$. \\[1em]
+5. For any $\epsilon > 0$, since $U$ is continuous at $\xi_0$, there exists $\delta > 0$ such that $|\xi - \xi_0| < 2\delta$ implies $|U(\xi) - U(\xi_0)| < \epsilon$.
+Now, suppose $|x - \xi_0| < \delta$. We split the integral into two regions: $I_1$ where $|\xi - x| < \delta$ (which implies $|\xi - \xi_0| < 2\delta$) and $I_2$ where $|\xi - x| \geq \delta$.
+$|I_1| \leq \int_{|\xi-x|<\delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi < \epsilon \int_{\mathbb{R}} P_y d\xi = \epsilon$. \\[1em]
+6. For $I_2$, since $U$ is bounded by some $M$, we have:
+$|I_2| \leq \int_{|\xi-x| \geq \delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi \leq 2M \int_{|t| \geq \delta} P_y(t) dt$.
+As $y \to 0^+$, this second term goes to $0$ by property (c) in Step 3. Thus, for sufficiently small $y$, $|I_2| < \epsilon$.
+Combining these, $|P_U(x,y) - U(\xi_0)| < 2\epsilon$, which proves the convergence.
 \end{solution}
 
 \begin{exercise}
@@ -113,46 +138,31 @@ under the condition that the two integrals on the left are bounded.
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is the Heisenberg Uncertainty Principle. In quantum mechanics, it states that one cannot simultaneously know the position and momentum of a particle. Mathematically, it is a consequence of the non-commutation of the position operator $X$ and the momentum operator $P$. The proof utilizes the Cauchy-Schwarz inequality and integration by parts to relate the variances.
-
-Assume the Fourier transform is defined as $\hat{f}(\xi) = \int_{-\infty}^{\infty} f(x) e^{-2\pi i x \xi} dx$. Then $\widehat{f'}(\xi) = 2\pi i \xi \hat{f}(\xi)$.
-By Plancherel's theorem, we have:
-\[
-\int_{-\infty}^{\infty} \xi^2 |\hat{f}(\xi)|^2 \, d\xi = \frac{1}{4\pi^2} \int_{-\infty}^{\infty} |f'(x)|^2 \, dx.
-\]
-The inequality we wish to prove is:
-\[
-\left( \int x^2 |f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \frac{1}{4} \left( \int |f(x)|^2 \, dx \right)^2.
-\]
-Using the Cauchy-Schwarz inequality for the $L^2$ inner product:
-\[
-\left( \int x^2 |f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \left| \int_{-\infty}^{\infty} x f(x) \overline{f'(x)} \, dx \right|^2.
-\]
-We analyze the integral on the right. Note that:
-\[
-\int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx = \int_{-\infty}^{\infty} x f(x) d\bar{f}.
-\]
-Using integration by parts (since the finiteness of the integrals implies $f(x) \to 0$ as $|x| \to \infty$):
-\[
-\int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx = [x |f(x)|^2]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} (f(x) + x f'(x)) \bar{f}(x) \, dx
-\]
-\[
-= - \int_{-\infty}^{\infty} |f(x)|^2 \, dx - \int_{-\infty}^{\infty} x f'(x) \bar{f}(x) \, dx.
-\]
-Let $I = \int_{-\infty}^{\infty} x f(x) \bar{f}'(x) \, dx$. Then $I = -\|f\|_2^2 - \bar{I}$.
-Thus $I + \bar{I} = -\|f\|_2^2$, which means $2 \operatorname{Re}(I) = -\|f\|_2^2$.
-Since $|I|^2 \geq (\operatorname{Re} I)^2$, we have:
-\[
-|I|^2 \geq \left( \frac{1}{2} \int_{-\infty}^{\infty} |f(x)|^2 \, dx \right)^2 = \frac{1}{4} \left( \int |f|^2 \right)^2.
-\]
-Substituting back into the original expression:
-\[
-\int x^2 |f(x)|^2 \, dx \cdot 4\pi^2 \int \xi^2 |\hat{f}(\xi)|^2 \, d\xi \geq \frac{1}{4} \left( \int |f|^2 \right)^2
-\]
-\[
-\int x^2 |f(x)|^2 \, dx \cdot \int \xi^2 |\hat{f}(\xi)|^2 \, d\xi \geq \frac{(\int |f|^2)^2}{16\pi^2}.
-\]
-The equality holds for Gaussian functions $f(x) = A e^{-ax^2}$.
+\textbf{Prerequisites:} Fourier Transform, Plancherel's Theorem, Cauchy-Schwarz Inequality, Integration by Parts, and the concept of Non-commuting Operators. \\[1em]
+\textbf{Intuition:} This inequality is a mathematical statement of the Heisenberg Uncertainty Principle from quantum mechanics. It states that a function and its Fourier transform cannot both be highly concentrated. If $f(x)$ is concentrated (small variance in $x$), then $\hat{f}(\xi)$ must be spread out (large variance in $\xi$). The proof hinges on the fact that the position operator (multiplying by $x$) and the momentum operator (differentiation) do not commute, and their commutator reveals a fundamental limit on their simultaneous "localization." \\[1em]
+\textbf{Steps:}
+1. We begin by adopting a convention for the Fourier transform: $\hat{f}(\xi) = \int_{-\infty}^{\infty} f(x) e^{-2\pi i x \xi} dx$. Under this convention, the derivative property is $\widehat{f'}(\xi) = 2\pi i \xi \hat{f}(\xi)$. \\[1em]
+2. By Plancherel's Theorem, which states that the Fourier transform preserves the $L^2$ norm, we can relate the integral of the transform to the integral of the derivative:
+$\int_{-\infty}^{\infty} \xi^2 |\hat{f}(\xi)|^2 \, d\xi = \int_{-\infty}^{\infty} |\xi \hat{f}(\xi)|^2 \, d\xi = \frac{1}{4\pi^2} \int_{-\infty}^{\infty} |2\pi i \xi \hat{f}(\xi)|^2 \, d\xi = \frac{1}{4\pi^2} \int_{-\infty}^{\infty} |f'(x)|^2 \, dx$.
+Thus, the inequality we wish to prove is equivalent to:
+$\left( \int x^2 |f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \frac{1}{4} \left( \int |f(x)|^2 \, dx \right)^2$. \\[1em]
+3. Use the Cauchy-Schwarz inequality for the $L^2$ inner product:
+$\left( \int |x f(x)|^2 \, dx \right) \left( \int |f'(x)|^2 \, dx \right) \geq \left| \int_{-\infty}^{\infty} x f(x) \overline{f'(x)} \, dx \right|^2$.
+Let $I = \int_{-\infty}^{\infty} x f(x) \overline{f'(x)} \, dx$. We need to estimate the magnitude of this complex number. \\[1em]
+4. We evaluate the real part of $I$ using integration by parts. Since the integrals on the left are finite, $f(x)$ must decay to $0$ as $|x| \to \infty$ (specifically $x|f(x)|^2 \to 0$):
+$I = \int_{-\infty}^{\infty} x f(x) \frac{d\overline{f}}{dx} dx = [x f(x) \overline{f}(x)]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} \overline{f}(x) \frac{d(xf)}{dx} dx$
+$I = 0 - \int_{-\infty}^{\infty} \overline{f}(x) (f(x) + x f'(x)) dx = -\int_{-\infty}^{\infty} |f(x)|^2 dx - \int_{-\infty}^{\infty} x \overline{f}(x) f'(x) dx$.
+Notice that the second term is exactly $-\overline{I}$. \\[1em]
+5. So we have the equation $I = -\|f\|_2^2 - \overline{I}$, which implies $I + \overline{I} = -\|f\|_2^2$.
+The sum of a complex number and its conjugate is twice its real part, so $2 \operatorname{Re}(I) = -\|f\|_2^2$, or $\operatorname{Re}(I) = -\frac{1}{2} \int |f|^2 dx$. \\[1em]
+6. Since the square of the magnitude of any complex number is at least the square of its real part ($|I|^2 \geq (\operatorname{Re} I)^2$), we have:
+$|I|^2 \geq \left( -\frac{1}{2} \int_{-\infty}^{\infty} |f(x)|^2 \, dx \right)^2 = \frac{1}{4} \left( \int |f|^2 dx \right)^2$. \\[1em]
+7. Substituting this back into the inequality from Step 3:
+$\int x^2 |f(x)|^2 dx \cdot \int |f'(x)|^2 dx \geq \frac{1}{4} \left( \int |f|^2 \right)^2$.
+Finally, replace the derivative integral with the Fourier transform integral using Step 2:
+$\int x^2 |f(x)|^2 dx \cdot 4\pi^2 \int \xi^2 |\hat{f}(\xi)|^2 d\xi \geq \frac{1}{4} \left( \int |f|^2 \right)^2$.
+Dividing by $4\pi^2$ yields the final result:
+$\int x^2 |f(x)|^2 dx \cdot \int \xi^2 |\hat{f}(\xi)|^2 d\xi \geq \frac{(\int |f|^2)^2}{16\pi^2}$.
 \end{solution}
 
 \begin{exercise}
@@ -178,15 +188,22 @@ converges absolutely for $(z,w)\in\Omega\times\Omega$, and is independent of the
 \end{exercise}
 
 \begin{solution}
-a) By the Mean Value Property for holomorphic functions, for any $z \in \Omega$ and $r < d(z, \partial\Omega)$, $f(z) = \frac{1}{\pi r^2} \int_{D_r(z)} f(w) dA(w)$. By Cauchy-Schwarz, $|f(z)| \leq \frac{1}{\pi r^2} \sqrt{\pi r^2} \|f\|_{L^2(D_r(z))} \leq \frac{1}{\sqrt{\pi} r} \|f\|_{L^2(\Omega)}$.
-This implies that $L^2$ convergence in $\mathbb{H}$ implies uniform convergence on compact subsets of $\Omega$. By Weierstrass's theorem, the limit of a sequence of holomorphic functions converging uniformly on compacts is holomorphic. Thus $\mathbb{H}$ is closed in $L^2(\Omega)$.
-
-b) The evaluation functional $L_z(f) = f(z)$ is bounded on $\mathbb{H}$ with $|L_z(f)| \leq \frac{1}{\sqrt{\pi} d(z, \Omega^c)} \|f\|$. By the Riesz Representation Theorem, there exists $K_z \in \mathbb{H}$ such that $f(z) = (f, K_z)$.
-Then $\|K_z\|^2 = \sum |\phi_n(z)|^2$. Also $\|K_z\| = \sup_{\|f\|=1} |f(z)| \leq \frac{1}{\sqrt{\pi} d(z, \Omega^c)}$.
-Squaring gives $\sum |\phi_n(z)|^2 \leq \frac{1}{\pi d(z, \Omega^c)^2}$. Here $c^2 = 1/\pi$.
-
-c) Absolute convergence: $\sum |\phi_n(z) \bar{\phi}_n(w)| \leq \sqrt{\sum |\phi_n(z)|^2} \sqrt{\sum |\phi_n(w)|^2} < \infty$.
-Independence: $B(z,w)$ is the reproducing kernel $K(w,z)$ (in standard notation $f(z) = \int K(z,w) f(w) dA(w)$). It is unique because if there were two such kernels $K_1, K_2$, then $(f, K_{1,z} - K_{2,z}) = 0$ for all $f$, implying $K_{1,z} = K_{2,z}$.
+\textbf{Prerequisites:} Bergman space, Reproducing Kernel Hilbert Space (RKHS), Mean Value Property for holomorphic functions, Riesz Representation Theorem, and Weierstrass Convergence Theorem. \\[1em]
+\textbf{Intuition:} The space of square-integrable holomorphic functions (Bergman space) has the remarkable property that point evaluation is a bounded linear functional. This is due to the Mean Value Property, which allows us to bound the value of a holomorphic function at any point by its average over a surrounding disk. This continuity of point evaluation ensures that the space is closed in $L^2$ and guarantees the existence of a unique reproducing kernel, which can be expressed through any orthonormal basis. \\[1em]
+\textbf{Steps:}
+1. \textbf{Proof of (a):} Let $z_0 \in \Omega$ and $r < d(z_0, \partial\Omega)$. The Mean Value Property for holomorphic functions states $f(z_0) = \frac{1}{\pi r^2} \iint_{D_r(z_0)} f(z) dx dy$. 
+Applying the Cauchy-Schwarz inequality:
+$|f(z_0)| \leq \frac{1}{\pi r^2} \left( \iint_{D_r(z_0)} 1^2 dA \right)^{1/2} \left( \iint_{D_r(z_0)} |f|^2 dA \right)^{1/2} = \frac{1}{\sqrt{\pi} r} \|f\|_{L^2(D_r(z_0))} \leq \frac{1}{\sqrt{\pi} r} \|f\|_{L^2(\Omega)}$.
+This inequality shows that point evaluation is a bounded linear functional. Consequently, $L^2$ convergence in $\mathbb{H}$ implies uniform convergence on compact subsets of $\Omega$. By Weierstrass's theorem, the limit of a sequence of holomorphic functions is holomorphic, so $\mathbb{H}$ is closed. \\[1em]
+2. \textbf{Proof of (b):} Let $L_z(f) = f(z)$ be the evaluation functional at $z \in \Omega$. From Step 1, $\|L_z\| \leq \frac{1}{\sqrt{\pi} d(z, \Omega^c)}$.
+By the Riesz Representation Theorem, there exists a unique function $K_z \in \mathbb{H}$ such that $f(z) = (f, K_z)$ and $\|L_z\| = \|K_z\|$.
+For any orthonormal basis $\{\phi_n\}$, we have $\|K_z\|^2 = \sum_{n=0}^\infty |(K_z, \phi_n)|^2 = \sum_{n=0}^\infty |\overline{\phi_n(z)}|^2 = \sum_{n=0}^\infty |\phi_n(z)|^2$.
+Thus, $\sum_{n=0}^\infty |\phi_n(z)|^2 = \|K_z\|^2 \leq \frac{1}{\pi d(z, \Omega^c)^2}$. This matches the required form with $c^2 = 1/\pi$. \\[1em]
+3. \textbf{Proof of (c):} To show absolute convergence of $B(z,w) = \sum \phi_n(z) \overline{\phi_n(w)}$, we apply Cauchy-Schwarz:
+$\sum_{n=0}^\infty |\phi_n(z) \overline{\phi_n(w)}| \leq \left( \sum |\phi_n(z)|^2 \right)^{1/2} \left( \sum |\phi_n(w)|^2 \right)^{1/2}$.
+By the result in (b), both sums on the right are finite, ensuring absolute convergence. \\[1em]
+4. The sum $B(z,w)$ is the reproducing kernel of $\mathbb{H}$. If $f \in \mathbb{H}$, then $f(z) = \sum (f, \phi_n) \phi_n(z) = \sum \left( \iint f(w) \overline{\phi_n(w)} dA(w) \right) \phi_n(z) = \iint f(w) \left( \sum \phi_n(z) \overline{\phi_n(w)} \right) dA(w)$.
+The kernel is unique because if there were two such kernels, their difference would be orthogonal to all functions in $\mathbb{H}$, implying it must be zero. Therefore, $B(z,w)$ is independent of the choice of basis.
 \end{solution}
 
 \subsection{Team}
@@ -199,12 +216,17 @@ Calculate the integral:
 \end{exercise}
 
 \begin{solution}
-Let $I = \int_0^{\infty} \frac{\log x}{1+x^2} dx$. We use the substitution $x = 1/t$, which gives $dx = -1/t^2 dt$.
-As $x \to 0$, $t \to \infty$, and as $x \to \infty$, $t \to 0$.
-\[
-I = \int_{\infty}^0 \frac{\log(1/t)}{1+(1/t)^2} \left( -\frac{1}{t^2} \right) dt = \int_0^{\infty} \frac{-\log t}{t^2+1} dt = - \int_0^{\infty} \frac{\log t}{1+t^2} dt = -I.
-\]
-Since $I = -I$, we must have $2I = 0$, which implies $I = 0$.
+\textbf{Prerequisites:} Improper integrals, integration by substitution, and properties of the logarithm. \\[1em]
+\textbf{Intuition:} The integral $\int_0^{\infty} \frac{\log x}{1+x^2} dx$ can be analyzed by considering the behavior of the integrand as $x \to 1/x$. Since $\log(1/x) = -\log x$ and the differential form $\frac{dx}{1+x^2}$ remains invariant under this transformation (after accounting for the change in limits), we expect the contributions from $x \in (0, 1)$ and $x \in (1, \infty)$ to cancel each other out exactly. \\[1em]
+\textbf{Steps:}
+1. Let $I = \int_0^{\infty} \frac{\log x}{1+x^2} dx$. We apply the substitution $x = 1/t$, which implies $dx = -\frac{1}{t^2} dt$. \\[1em]
+2. Change the limits of integration: as $x \to 0$, $t \to \infty$; as $x \to \infty$, $t \to 0$. The integral becomes:
+$I = \int_{\infty}^0 \frac{\log(1/t)}{1+(1/t)^2} \left( -\frac{1}{t^2} \right) dt = \int_0^{\infty} \frac{-\log t}{\frac{t^2+1}{t^2}} \frac{1}{t^2} dt$. \\[1em]
+3. Simplify the expression inside the integral:
+$I = \int_0^{\infty} \frac{-\log t}{t^2+1} dt$. \\[1em]
+4. Since the variable of integration is dummy, we can replace $t$ with $x$:
+$I = - \int_0^{\infty} \frac{\log x}{1+x^2} dx = -I$. \\[1em]
+5. From $I = -I$, it follows that $2I = 0$, hence $I = 0$.
 \end{solution}
 
 \begin{exercise}
@@ -212,14 +234,16 @@ Construct an increasing function on $\mathbb{R}$ whose set of discontinuities is
 \end{exercise}
 
 \begin{solution}
-The set of rational numbers $\mathbb{Q}$ is countable, so we can enumerate it as $\mathbb{Q} = \{q_1, q_2, q_3, \dots\}$.
-Define the function $f: \mathbb{R} \to \mathbb{R}$ by:
-\[
-f(x) = \sum_{q_n < x} \frac{1}{2^n}.
-\]
-1. $f$ is strictly increasing: If $x < y$, there exists a rational $q_k$ such that $x < q_k < y$. Then $f(y) - f(x) = \sum_{x \leq q_n < y} 2^{-n} \geq 2^{-k} > 0$.
-2. Discontinuities: At any $x \in \mathbb{Q}$, say $x = q_k$, the left limit is $f(x^-) = \sum_{q_n < x} 2^{-n}$ and the right limit is $f(x^+) = \sum_{q_n \leq x} 2^{-n}$. The jump is $f(x^+) - f(x^-) = 2^{-k} > 0$. Thus $f$ is discontinuous at every rational.
-3. Continuity at irrationals: If $x \notin \mathbb{Q}$, then for any $\epsilon > 0$, there exists $N$ such that $\sum_{n > N} 2^{-n} < \epsilon$. There is a neighborhood of $x$ containing no $q_n$ for $n \leq N$. In this neighborhood, $|f(y) - f(x)| \leq \sum_{n > N} 2^{-n} < \epsilon$. Thus $f$ is continuous at every irrational.
+\textbf{Prerequisites:} Countability of rational numbers, convergent series, and properties of jump discontinuities in monotone functions. \\[1em]
+\textbf{Intuition:} To construct a function that is discontinuous at every rational number but continuous at every irrational number, we can use a "sum of jumps" approach. Since the rationals are countable, we can label them and assign a specific "weight" or "jump height" to each one. By defining the function as the sum of all weights associated with rationals less than $x$, we ensure a step up at every rational. The convergence of the total weight (using a geometric series) ensures the function remains finite and continuous at points where no jump is specifically added. \\[1em]
+\textbf{Steps:}
+1. Since the set of rational numbers $\mathbb{Q}$ is countable, we can enumerate them in a sequence $\mathbb{Q} = \{q_1, q_2, q_3, \dots\}$. \\[1em]
+2. Define the function $f: \mathbb{R} \to \mathbb{R}$ as the sum of a convergent series over all rationals smaller than $x$:
+$f(x) = \sum_{q_n < x} \frac{1}{2^n}$.
+The total sum is bounded by $\sum_{n=1}^\infty 2^{-n} = 1$, so $f(x)$ is well-defined for all $x$. \\[1em]
+3. \textbf{Increasing Property:} For any $x < y$, the interval $[x, y)$ contains at least one rational number $q_k$. Thus, the sum for $f(y)$ contains at least one more positive term ($2^{-k}$) than the sum for $f(x)$, proving that $f(y) > f(x)$. \\[1em]
+4. \textbf{Discontinuity at Rationals:} Consider any rational $x = q_k$. The left limit is $f(x^-) = \sum_{q_n < x} 2^{-n}$, while the right limit is $f(x^+) = \sum_{q_n \leq x} 2^{-n}$. The difference is $f(x^+) - f(x^-) = 2^{-k} > 0$, so $f$ has a jump discontinuity at $x$. \\[1em]
+5. \textbf{Continuity at Irrationals:} If $x$ is irrational, then for any $\epsilon > 0$, choose $N$ such that $\sum_{n=N+1}^\infty 2^{-n} < \epsilon$. We can find a small neighborhood $(x-\delta, x+\delta)$ that contains none of the finitely many rationals $\{q_1, \dots, q_N\}$. For any $y$ in this neighborhood, $|f(y) - f(x)|$ only involves terms $2^{-n}$ where $n > N$. Thus, $|f(y) - f(x)| \leq \sum_{n=N+1}^\infty 2^{-n} < \epsilon$, proving continuity at $x$.
 \end{solution}
 
 \begin{exercise}
@@ -227,11 +251,14 @@ Prove that any bounded analytic function $F$ over $\{z\mid r<|z|<R\}$ can be wri
 \end{exercise}
 
 \begin{solution}
-If $F$ is analytic on the annulus $A = \{r < |z| < R\}$, it has a Laurent series expansion $F(z) = \sum_{n=-\infty}^{\infty} a_n z^n$.
-Actually, the statement as written seems to imply something about the behavior at $z=0$ or a specific form. If $r=0$ and $F$ is bounded on $\{0 < |z| < R\}$, then by Riemann's Removable Singularity Theorem, $F$ extends to an analytic function on $|z| < R$. In this case $\alpha = 0$ and $f = F$.
-If $r > 0$, the function $F$ is already bounded on the annulus (since the closure is compact). Any $F$ can be written as $F(z) = f(z) + g(1/z)$ where $f$ is analytic on $|z| < R$ and $g$ is analytic on $|z| < 1/r$.
-Wait, the common interpretation of this problem in the context of complex analysis contests is usually for non-vanishing functions where $\log F$ is considered, or for $H^\infty$ functions. However, if $F$ is a bounded analytic function on $0 < |z| < R$, then $F$ is analytic on $|z| < R$. 
-If the question meant a non-vanishing function $F$, then $F'/F$ is analytic. Let $a_{-1} = \frac{1}{2\pi i} \int_\gamma \frac{F'}{F} dz$ be the winding number $\alpha$. Then $\frac{F'}{F} - \frac{\alpha}{z}$ has a primitive $G(z)$, and $F(z) = e^\alpha e^{G(z)} = z^\alpha f(z)$.
+\textbf{Prerequisites:} Laurent series, Removable Singularity Theorem, and the theory of non-vanishing analytic functions on an annulus. \\[1em]
+\textbf{Intuition:} An analytic function on an annulus can be decomposed into a part that is analytic inside the outer circle and a part that is analytic outside the inner circle. The boundedness condition is key: if the annulus extends to the origin ($r=0$), boundedness implies the singularity is removable. If $r > 0$, the "winding" of the function around the hole can be captured by a power $z^\alpha$, leaving a well-behaved function $f(z)$ that extends to the entire disk. \\[1em]
+\textbf{Steps:}
+1. Every analytic function $F(z)$ on the annulus $r < |z| < R$ has a Laurent series expansion $F(z) = \sum_{n=-\infty}^{\infty} a_n z^n$. This can be split into $F(z) = f_{in}(z) + f_{out}(z)$, where $f_{in}(z) = \sum_{n=0}^\infty a_n z^n$ is analytic on $|z| < R$ and $f_{out}(z) = \sum_{n=1}^\infty a_{-n} z^{-n}$ is analytic on $|z| > r$. \\[1em]
+2. If $r = 0$, the condition that $F$ is bounded near $z=0$ implies, by Riemann's Removable Singularity Theorem, that all coefficients $a_n$ for $n < 0$ must be zero. In this case, $F(z)$ is already analytic on the whole disk $|z| < R$, so we can set $\alpha = 0$ and $f(z) = F(z)$. \\[1em]
+3. If $r > 0$, and assuming the problem refers to the standard decomposition for functions that may have a winding number (often required to be non-vanishing for $z^\alpha$ to be well-defined as a branch), we consider the index $\alpha = \frac{1}{2\pi i} \int_\gamma \frac{F'(z)}{F(z)} dz$. \\[1em]
+4. For a general bounded function, we can also interpret the result in terms of the behavior of the terms. If $F(z)$ is bounded, the components $f_{in}$ and $f_{out}$ are separately bounded in their respective domains of interest. Any such $F$ can be written as $z^\alpha f(z)$ where $f$ is analytic on $|z| < R$ if we allow $\alpha$ to be an integer that "absorbs" the singular part, or if the function is specifically structured as a power. \\[1em]
+5. In the most common contest interpretation, if $F$ is bounded on the punctured disk ($r=0$), then $\alpha=0$. If $r>0$ and $F$ is non-vanishing, $\alpha$ is the winding number and $f(z)$ is the remaining analytic part after removing the $z^\alpha$ factor.
 \end{solution}
 
 \begin{exercise}
@@ -244,12 +271,15 @@ Let $D\subset\mathbb{R}^n$ be a bounded open set, $f:D\to D$ is a smooth map suc
 \end{exercise}
 
 \begin{solution}
-This is the Poincaré Recurrence Theorem.
-a) Since $|\det Jf| = 1$, $f$ is a volume-preserving map. Let $V = \text{vol}(B_{\epsilon}(x))$. If $f^k(B_{\epsilon}) \cap B_{\epsilon} = \emptyset$ for all $k \geq 1$, then $f^k(B_{\epsilon}) \cap f^j(B_{\epsilon}) = \emptyset$ for all $k \neq j$ (by applying $f^{-j}$ and using injectivity/volume preservation). 
-Then $\text{vol}(\cup_{k=0}^{\infty} f^k(B_{\epsilon})) = \sum_{k=0}^{\infty} \text{vol}(f^k(B_{\epsilon})) = \sum_{k=0}^{\infty} V = \infty$.
-But $\cup f^k(B_{\epsilon}) \subset D$ and $\text{vol}(D) < \infty$, a contradiction. Thus $f^k(B_{\epsilon}) \cap B_{\epsilon} \neq \emptyset$ for some $k$.
-
-b) Let $A$ be the set of points $x \in D$ such that $x$ is recurrent, i.e., $x \in \omega(x)$. The Poincaré Recurrence Theorem states that for any volume-preserving map on a finite volume space, almost every point is recurrent. Thus the set of such $x$ has full measure, and in particular, is non-empty. For such an $x$, there exists a sequence $k_j \to \infty$ such that $f^{k_j}(x) \to x$.
+\textbf{Prerequisites:} Poincaré Recurrence Theorem, volume-preserving maps, and basic measure theory. \\[1em]
+\textbf{Intuition:} This problem is a classic application of the Poincaré Recurrence Theorem. The core idea is that a volume-preserving map in a finite container must eventually return parts of any set to itself. If the images of a set never overlapped, the total volume would eventually exceed the capacity of the container. Since the container is bounded (finite volume), overlaps are inevitable, leading to recurrence. \\[1em]
+\textbf{Steps:}
+1. \textbf{Proof of (a):} Let $V = \text{vol}(B_\epsilon(x))$. Consider the sequence of images $B_\epsilon(x), f(B_\epsilon(x)), f^2(B_\epsilon(x)), \dots$. Since $|\det Jf| = 1$, each image has the same volume $V$. \\[1em]
+2. Suppose all these images were disjoint: $f^n(B_\epsilon(x)) \cap f^m(B_\epsilon(x)) = \emptyset$ for all $n \neq m$. Then the volume of their union would be $\text{vol}(\cup_{k=0}^\infty f^k(B_\epsilon(x))) = \sum_{k=0}^\infty V = \infty$. \\[1em]
+3. However, all images are contained within the bounded set $D$, so their total volume must be $\leq \text{vol}(D) < \infty$. This contradiction shows that there must exist $n > m \geq 0$ such that $f^n(B_\epsilon(x)) \cap f^m(B_\epsilon(x)) \neq \emptyset$. \\[1em]
+4. Since $f$ is a smooth map with constant Jacobian 1, it is locally invertible and preserves volume. Applying $f^{-m}$ to the intersection, we get $f^{n-m}(B_\epsilon(x)) \cap B_\epsilon(x) \neq \emptyset$. Setting $k = n-m > 0$ proves part (a). \\[1em]
+5. \textbf{Proof of (b):} Part (a) shows that for every $\epsilon > 0$, the set of points that are not "$\epsilon$-recurrent" has measure zero. By taking a sequence of balls $B_{1/j}(x)$ and using the fact that the countable union of measure-zero sets is measure-zero, we conclude that almost every point $x \in D$ is recurrent. \\[1em]
+6. For such a recurrent point $x$, there exists a sequence $k_j \to \infty$ such that $f^{k_j}(x) \in B_{1/j}(x)$, which means $f^{k_j}(x) \to x$ as $k_j \to \infty$.
 \end{solution}
 
 \begin{exercise}
@@ -257,16 +287,22 @@ Let $u$ be a subharmonic function over a domain $\Omega\subset\mathbb{C}$, i.e.,
 \end{exercise}
 
 \begin{solution}
-This is the Strong Maximum Principle for subharmonic functions.
-A subharmonic function satisfies the mean value inequality: for any $z_0 \in \Omega$ and $r$ such that $D_r(z_0) \subset \Omega$,
+\textbf{Prerequisites:} Subharmonic functions, Mean Value Inequality, Strong Maximum Principle, and properties of connected sets. \\[2ex]
+\textbf{Intuition:} A subharmonic function can be thought of as a function that "curves upward" or is "locally below its average." Because of this property, if a subharmonic function had a maximum point in the interior, the values around it would have to be less than or equal to that maximum. However, the Mean Value Inequality requires the value at the center to be no more than the average of the surrounding values. This forces the function to be "flat" (constant) in a neighborhood of the maximum, and by connectivity, across the entire domain. \\[2ex]
+\textbf{Steps:}
+1. Recall that for a twice-differentiable subharmonic function $u$ (where $\Delta u \geq 0$), it satisfies the Mean Value Inequality: for any $z_0 \in \Omega$ and any disk $D_r(z_0) \subset \Omega$, we have:
 \[
-u(z_0) \leq \frac{1}{\pi r^2}\iint_{D_r(z_0)} u(x,y)\,dx\,dy.
+u(z_0) \leq \frac{1}{\pi r^2} \iint_{D_r(z_0)} u(x,y) \, dx dy.
+\] \\[2ex]
+2. Suppose $u$ attains a maximum value $M$ at an interior point $z_0 \in \Omega$. Then $u(z) \leq M$ for all $z \in \Omega$. In particular, $u(z_0) = M$. \\[2ex]
+3. Substituting this into the Mean Value Inequality, we get:
+\[
+M \leq \frac{1}{\pi r^2} \iint_{D_r(z_0)} u(x,y) \, dx dy.
 \]
-Suppose $u$ achieves its maximum $M$ at $z_0 \in \Omega$. Then $u(z) \leq M$ for all $z \in \Omega$.
-If $u(z_0) = M$, then $M \leq \frac{1}{\pi r^2}\iint_{D_r(z_0)} u(x,y)\,dx\,dy$.
-If there existed $z \in D_r(z_0)$ such that $u(z) < M$, then by continuity, the integral would be strictly less than $M \cdot \pi r^2$, which would imply $M < M$, a contradiction.
-Thus $u(z) = M$ for all $z \in D_r(z_0)$.
-By a standard connectivity argument, the set $\{z \in \Omega \mid u(z) = M\}$ is both open and closed in $\Omega$. Since $\Omega$ is a domain (connected), $u(z) = M$ for all $z \in \Omega$, i.e., $u$ is constant.
+Since $u(x,y) \leq M$ everywhere in the disk, the only way the average of $u$ can be greater than or equal to $M$ is if $u(x,y) = M$ for almost all $(x,y) \in D_r(z_0)$. Since $u$ is continuous (it is twice differentiable), it must be that $u(z) = M$ for all $z \in D_r(z_0)$. \\[2ex]
+4. This shows that the set $A = \{z \in \Omega \mid u(z) = M\}$ is an open set, because for every point in $A$, we found a disk around it also contained in $A$. \\[2ex]
+5. Additionally, the set $A$ is closed in $\Omega$ because it is the preimage of the singleton $\{M\}$ under the continuous function $u$. \\[2ex]
+6. Since $\Omega$ is a connected domain and $A$ is a non-empty subset that is both open and closed in $\Omega$, it must be that $A = \Omega$. Therefore, $u(z) = M$ for all $z \in \Omega$, meaning $u$ is constant.
 \end{solution}
 
 \begin{exercise}
@@ -274,21 +310,27 @@ Suppose that $\phi\in C_0^{\infty}(\mathbb{R}^n)$, $\int_{\mathbb{R}^n}\phi\,dx 
 \end{exercise}
 
 \begin{solution}
-First, $\|\phi_\epsilon\|_1 = \int \epsilon^{-n} |\phi(x/\epsilon)| dx = \int |\phi(y)| dy = \|\phi\|_1 = 1$.
-Using the property $\int \phi_\epsilon = 1$, we have:
+\textbf{Prerequisites:} Convolution, $L^p$ spaces, Minkowski's Inequality for Integrals, Continuity of translation in $L^p$, and the concept of an Approximate Identity. \\[2ex]
+\textbf{Intuition:} The family of functions $\phi_\epsilon$ forms what is known as an "approximate identity." As $\epsilon$ approaches zero, the kernel $\phi_\epsilon$ becomes more and more concentrated at the origin, while its integral remains constant at 1. Convolution with $\phi_\epsilon$ effectively takes a weighted average of the function $f$ around each point. For $p < \infty$, functions in $L^p$ are "stable" under small translations, meaning that moving the function slightly doesn't change it much in the $L^p$ sense. This stability allows the local averages to converge to the original function. For $p = \infty$, the $L^p$ norm is the essential supremum (related to uniform convergence), and a smooth average of a sharp jump (like a step function) will always differ significantly from the jump near the transition point. \\[2ex]
+\textbf{Steps:}
+1. First, verify that the $L^1$ norm of the scaled kernel $\phi_\epsilon$ is invariant. By the change of variables $y = x/\epsilon$:
 \[
-(f * \phi_\epsilon)(x) - f(x) = \int_{\mathbb{R}^n} [f(x-y) - f(x)] \phi_\epsilon(y) dy.
-\]
-By Minkowski's Inequality for Integrals:
+\|\phi_\epsilon\|_1 = \int_{\mathbb{R}^n} \epsilon^{-n} |\phi(x/\epsilon)| \, dx = \int_{\mathbb{R}^n} |\phi(y)| \, dy = \|\phi\|_1 = 1.
+\] \\[2ex]
+2. Using the fact that $\int \phi_\epsilon(y) \, dy = 1$, we can express the difference between the convolution and the original function as:
 \[
-\|f * \phi_\epsilon - f\|_p \leq \int_{\mathbb{R}^n} \|f(\cdot - y) - f(\cdot)\|_p |\phi_\epsilon(y)| dy = \int_{\mathbb{R}^n} \|\tau_y f - f\|_p |\phi_\epsilon(y)| dy.
-\]
-Let $g(y) = \|\tau_y f - f\|_p$. For $1 \leq p < \infty$, $g(y) \to 0$ as $y \to 0$ (continuity of translation in $L^p$).
-Given $\delta > 0$, choose $\eta > 0$ such that $g(y) < \delta$ for $|y| < \eta$.
-Split the integral:
+(f * \phi_\epsilon)(x) - f(x) = \int_{\mathbb{R}^n} f(x-y) \phi_\epsilon(y) \, dy - f(x) \int_{\mathbb{R}^n} \phi_\epsilon(y) \, dy = \int_{\mathbb{R}^n} [f(x-y) - f(x)] \phi_\epsilon(y) \, dy.
+\] \\[2ex]
+3. Apply Minkowski's Inequality for Integrals to the $L^p$ norm of this difference:
 \[
-\int_{|y|<\eta} g(y) |\phi_\epsilon(y)| dy + \int_{|y|\geq \eta} g(y) |\phi_\epsilon(y)| dy \leq \delta \|\phi\|_1 + 2\|f\|_p \int_{|z| \geq \eta/\epsilon} |\phi(z)| dz.
+\|f * \phi_\epsilon - f\|_p = \left\| \int_{\mathbb{R}^n} [f(\cdot - y) - f(\cdot)] \phi_\epsilon(y) \, dy \right\|_p \leq \int_{\mathbb{R}^n} \|f(\cdot - y) - f(\cdot)\|_p |\phi_\epsilon(y)| \, dy.
+\] \\[2ex]
+4. Define $g(y) = \|f(\cdot - y) - f(\cdot)\|_p$, which represents the $L^p$ continuity of translation. For $1 \leq p < \infty$, it is a standard result that $g(y) \to 0$ as $y \to 0$. \\[2ex]
+5. For any $\delta > 0$, choose $\eta > 0$ such that $g(y) < \delta$ for all $|y| < \eta$. Split the integral into two parts:
+\[
+\int_{|y|<\eta} g(y) |\phi_\epsilon(y)| \, dy + \int_{|y|\geq \eta} g(y) |\phi_\epsilon(y)| \, dy.
 \]
-The second term goes to $0$ as $\epsilon \to 0$ because $\phi \in L^1$. Thus $\limsup \|f * \phi_\epsilon - f\|_p \leq \delta \|\phi\|_1$. Since $\delta$ is arbitrary, the limit is $0$.
-For $p=\infty$, let $f = \chi_{(0, \infty)}$. Then $f * \phi_\epsilon$ is a smooth transition, but $\|f * \phi_\epsilon - f\|_\infty \geq 1/2$ (at $x=0$), so it does not converge in $L^\infty$.
+The first part is bounded by $\delta \int |\phi_\epsilon| = \delta$. For the second part, since $g(y) \leq 2\|f\|_p$, the integral is bounded by $2\|f\|_p \int_{|z| \geq \eta/\epsilon} |\phi(z)| \, dz$, which vanishes as $\epsilon \to 0$. Thus, the limit is zero for $p < \infty$. \\[2ex]
+6. For $p = \infty$, consider the step function $f = \chi_{(0, \infty)}$ on $\mathbb{R}$. The convolution $f * \phi_\epsilon$ is a smooth function that transitions from 0 to 1. At the jump point $x=0$, the value will be roughly $1/2$ (if $\phi$ is symmetric), making $\|f * \phi_\epsilon - f\|_\infty \geq 1/2$ for all $\epsilon$, preventing convergence in $L^\infty$.
 \end{solution}
+

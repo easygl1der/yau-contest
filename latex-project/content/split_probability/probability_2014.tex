@@ -8,31 +8,62 @@ Let $X$ be a real valued random variable such that for all smooth functions $f: 
 \end{exercise}
 
 \begin{solution}
-Let $p(x)$ be the probability density function of $X$. The given condition $E[Xf(X)] = E[f'(X)]$ can be written in terms of the density as:
-\[
-\int_{-\infty}^{\infty} x f(x) p(x) dx = \int_{-\infty}^{\infty} f'(x) p(x) dx
-\]
-Applying integration by parts to the right-hand side, assuming $p(x)$ is differentiable and vanishes at infinity (which is consistent with it being a density):
-\[
-\int_{-\infty}^{\infty} f'(x) p(x) dx = [f(x) p(x)]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} f(x) p'(x) dx = - \int_{-\infty}^{\infty} f(x) p'(x) dx
-\]
-where the boundary term vanishes because $f$ has compact support. Thus, we have:
-\[
-\int_{-\infty}^{\infty} f(x) [x p(x) + p'(x)] dx = 0
-\]
-Since this holds for all smooth functions $f$ with compact support, the term in the brackets must vanish almost everywhere:
-\[
-p'(x) = -x p(x)
-\]
-This is a first-order linear differential equation. Separating variables gives:
-\[
-\frac{d p}{p} = -x dx \implies \ln p(x) = -\frac{1}{2} x^2 + C \implies p(x) = A e^{-x^2/2}
-\]
-The normalization constant $A$ is determined by the condition $\int_{-\infty}^{\infty} p(x) dx = 1$:
-\[
-A \int_{-\infty}^{\infty} e^{-x^2/2} dx = A \sqrt{2\pi} = 1 \implies A = \frac{1}{\sqrt{2\pi}}
-\]
-Thus, $p(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2}$, which is the density of the standard normal distribution $N(0,1)$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Integration by Parts:} $\int_a^b u \, dv = uv|_a^b - \int_a^b v \, du$. In probability, this is often used to transfer derivatives from a test function to a probability density function.
+    \item \textbf{Compact Support:} A function has compact support if it is zero everywhere outside a closed and bounded interval. This is extremely useful because boundary terms in integration by parts will evaluate to 0 at $\pm\infty$.
+    \item \textbf{Stein's Lemma:} A famous characterization of the normal distribution which states that $Z \sim N(\mu, \sigma^2)$ if and only if $E[(Z-\mu)f(Z)] = \sigma^2 E[f'(Z)]$ for absolutely continuous functions $f$. This problem asks us to prove the standard normal case ($\mu=0, \sigma^2=1$).
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+How do we know if a random variable is perfectly normally distributed? Stein's Lemma provides a magical "litmus test" using expectations of arbitrary smooth functions. If $X$ is standard normal, then multiplying $X$ by a function $f(X)$ inside an expectation acts exactly like taking the derivative of $f(X)$! This exercise walks us through proving why this litmus test works. By assuming the test works for all functions, we can reverse-engineer the probability density function by forcing it to satisfy a specific differential equation, which turns out to be the exact formula for the bell curve.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Translate the expected values into integrals.}
+
+Let $p(x)$ be the probability density function (PDF) of the random variable $X$.
+The given condition $E[Xf(X)] = E[f'(X)]$ can be explicitly written out using the definition of expected value:
+\[ \int_{-\infty}^{\infty} x f(x) p(x) dx = \int_{-\infty}^{\infty} f'(x) p(x) dx \]
+
+\textbf{Step 2: Apply integration by parts to move the derivative.}
+
+We want to isolate $f(x)$ so we can compare the two sides. We apply integration by parts to the right-hand side.
+Let $u = p(x)$ and $dv = f'(x) dx$. Then $du = p'(x) dx$ and $v = f(x)$.
+\[ \int_{-\infty}^{\infty} f'(x) p(x) dx = \left[ f(x) p(x) \right]_{-\infty}^{\infty} - \int_{-\infty}^{\infty} f(x) p'(x) dx \]
+Because the function $f$ has compact support, it is strictly zero outside some interval $[-M, M]$. Therefore, the boundary limits as $x \to \pm \infty$ evaluate to exactly zero:
+\[ \left[ f(x) p(x) \right]_{-\infty}^{\infty} = 0 - 0 = 0 \]
+This simplifies the equation to:
+\[ \int_{-\infty}^{\infty} f'(x) p(x) dx = - \int_{-\infty}^{\infty} f(x) p'(x) dx \]
+
+\textbf{Step 3: Combine integrals and extract the differential equation.}
+
+Substitute the integrated right-hand side back into our original equation:
+\[ \int_{-\infty}^{\infty} x f(x) p(x) dx = - \int_{-\infty}^{\infty} f(x) p'(x) dx \]
+Bring everything to one side:
+\[ \int_{-\infty}^{\infty} f(x) [x p(x) + p'(x)] dx = 0 \]
+This integral must evaluate to zero for \textit{any} smooth function $f(x)$ with compact support. The only way an integral against all possible smooth functions can be exactly zero is if the term inside the brackets is identically zero almost everywhere. Thus, we obtain a first-order linear differential equation for the density $p(x)$:
+\[ p'(x) + x p(x) = 0 \implies p'(x) = -x p(x) \]
+
+\textbf{Step 4: Solve the differential equation.}
+
+We solve this using separation of variables:
+\[ \frac{dp}{p} = -x dx \]
+Integrate both sides:
+\[ \int \frac{1}{p} dp = \int -x dx \implies \ln p(x) = -\frac{1}{2} x^2 + C \]
+Exponentiating both sides yields the general form of the density:
+\[ p(x) = e^C e^{-x^2/2} = A e^{-x^2/2} \]
+
+\textbf{Step 5: Normalize to find the valid probability density.}
+
+Because $p(x)$ is a probability density function, its total integral must be exactly 1:
+\[ \int_{-\infty}^{\infty} A e^{-x^2/2} dx = 1 \]
+We know the Gaussian integral $\int_{-\infty}^{\infty} e^{-x^2/2} dx = \sqrt{2\pi}$. Therefore:
+\[ A \sqrt{2\pi} = 1 \implies A = \frac{1}{\sqrt{2\pi}} \]
+Substitute $A$ back into the density equation:
+\[ p(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \]
+This is exactly the probability density function of the standard normal distribution $N(0,1)$.
 \end{solution}
 
 \begin{exercise}
@@ -44,15 +75,50 @@ Show that $S_n = \sum_{i=1}^n X_i$ converges almost surely.
 \end{exercise}
 
 \begin{solution}
-The variables $X_n$ are uncorrelated with mean zero, so $E[X_n X_m] = 0$ for $n \neq m$, and $Var(X_n) = E|X_n|^2$. The Rademacher-Menshov theorem states that for a sequence of uncorrelated random variables $X_n$, the series $\sum X_n$ converges almost surely if:
-\[
-\sum_{n=1}^\infty Var(X_n) \log^2 n < \infty
-\]
-In this problem, we are given that $\sum_{n=1}^\infty n E|X_n|^2 < \infty$. We compare $n$ and $\log^2 n$. For sufficiently large $n$, we have $\log^2 n < n$. Specifically, the ratio $\frac{\log^2 n}{n} \to 0$ as $n \to \infty$. Thus, there exists a constant $C$ such that $\log^2 n \le C n$ for all $n \ge 1$. It follows that:
-\[
-\sum_{n=1}^\infty Var(X_n) \log^2 n \le C \sum_{n=1}^\infty n E|X_n|^2 < \infty
-\]
-By the Rademacher-Menshov theorem, $S_n = \sum_{i=1}^n X_i$ converges almost surely.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Uncorrelated Variables:} If $X_n$ are uncorrelated, their covariances are zero. The variance of their sum is the sum of their variances: $\operatorname{Var}(\sum X_i) = \sum \operatorname{Var}(X_i)$.
+    \item \textbf{Rademacher-Menshov Theorem:} A powerful convergence theorem which states that for a sequence of mutually orthogonal (or zero-mean uncorrelated) random variables $X_n$, the partial sums $S_n = \sum_{i=1}^n X_i$ converge almost surely if $\sum_{n=1}^\infty \operatorname{Var}(X_n) (\log n)^2 < \infty$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We want to know if the running sum of a sequence of random noise $S_n$ eventually settles down to a specific finite value. If the variances of $X_n$ don't shrink fast enough, the sum will oscillate wildly forever. The Rademacher-Menshov theorem provides a precise "speed limit" on the variance shrinkage: if the variances shrink faster than $1/(\log n)^2$, the sum converges. We are given a condition that looks different but actually forces the variances to shrink even faster than the theorem requires, completely guaranteeing convergence.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Identify the variance of the sequence.}
+
+We are given a sequence of random variables $(X_n)$ that have a mean of zero ($E[X_n] = 0$) and are mutually uncorrelated.
+Because the mean is zero, the variance of each $X_n$ is simply its second moment:
+\[ \operatorname{Var}(X_n) = E[X_n^2] - (E[X_n])^2 = E|X_n|^2 - 0 = E|X_n|^2 \]
+The problem states that:
+\[ \sum_{n=1}^\infty n E|X_n|^2 < \infty \]
+Substituting the variance, this means:
+\[ \sum_{n=1}^\infty n \operatorname{Var}(X_n) < \infty \]
+
+\textbf{Step 2: Connect to the Rademacher-Menshov Theorem.}
+
+The Rademacher-Menshov Theorem provides a sufficient condition for the almost sure convergence of orthogonal/uncorrelated series. Specifically, the series $S_n = \sum_{i=1}^n X_i$ converges almost surely if the following sum is finite:
+\[ \sum_{n=1}^\infty \operatorname{Var}(X_n) (\log n)^2 < \infty \]
+Our goal is to prove that our given condition implies this Rademacher-Menshov condition.
+
+\textbf{Step 3: Compare the growth rates of $n$ and $(\log n)^2$.}
+
+We need to compare the given weight $n$ to the target weight $(\log n)^2$.
+It is a standard fact from calculus that logarithmic growth is much slower than linear polynomial growth.
+Using L'Hôpital's rule or basic limits:
+\[ \lim_{n \to \infty} \frac{(\log n)^2}{n} = 0 \]
+Because the ratio goes to 0, there must exist some global finite constant $C > 0$ such that for all integers $n \geq 1$:
+\[ (\log n)^2 \leq C n \]
+
+\textbf{Step 4: Bound the Rademacher-Menshov series.}
+
+We apply the bound we just established to the Rademacher-Menshov convergence series:
+\[ \sum_{n=1}^\infty \operatorname{Var}(X_n) (\log n)^2 \leq \sum_{n=1}^\infty \operatorname{Var}(X_n) (C n) = C \sum_{n=1}^\infty n \operatorname{Var}(X_n) \]
+Since we are given that $\sum_{n=1}^\infty n \operatorname{Var}(X_n) < \infty$, and $C$ is a finite constant, the entire sum on the left must also be strictly finite:
+\[ \sum_{n=1}^\infty \operatorname{Var}(X_n) (\log n)^2 < \infty \]
+Since the condition for the Rademacher-Menshov Theorem is fully satisfied, the sequence of partial sums $S_n = \sum_{i=1}^n X_i$ is guaranteed to converge almost surely.
 \end{solution}
 
 \begin{exercise}
@@ -67,30 +133,62 @@ E_P[fX_0 | \mathcal{G}] = E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}].
 \end{exercise}
 
 \begin{solution}
-(a) Since $P$ and $Q$ are mutually absolutely continuous, $X_0 = dQ/dP$ satisfies $X_0 > 0$ $P$-a.s. and $X_0 \in L^1(P)$.
-The conditional expectation $E_P[X_0 | \mathcal{G}]$ is a $\mathcal{G}$-measurable version of the Radon-Nikodym density of $Q|_\mathcal{G}$ with respect to $P|_\mathcal{G}$. Since $Q|_\mathcal{G} \sim P|_\mathcal{G}$, its density must be strictly positive $P$-a.s. Also, $E_P[X_0 | \mathcal{G}] < \infty$ $P$-a.s. follows from $E_P[E_P[X_0 | \mathcal{G}]] = E_P[X_0] = 1 < \infty$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Radon-Nikodym Derivative:} Given two measures $P$ and $Q$, if $Q$ is absolutely continuous with respect to $P$ ($Q \ll P$), there exists a density $X_0 = \frac{dQ}{dP}$ such that for any event $A$, $Q(A) = \int_A X_0 dP$. If they are mutually absolutely continuous, $X_0 > 0$ almost surely.
+    \item \textbf{Conditional Expectation definition:} The conditional expectation $E[X \mid \mathcal{G}]$ is the unique $\mathcal{G}$-measurable random variable that satisfies $\int_G E[X \mid \mathcal{G}] dP = \int_G X dP$ for all $G \in \mathcal{G}$.
+    \item \textbf{Change of Measure (Bayes' Rule for Conditional Expectation):} A fundamental theorem linking conditional expectations under different probability measures using the Radon-Nikodym derivative.
+\end{itemize}
 
-(b) This is a standard result in change of probability measures for conditional expectations. For any $G \in \mathcal{G}$, by the definition of conditional expectation under $Q$:
-\[
-\int_G E_Q[f | \mathcal{G}] dQ = \int_G f dQ
-\]
-Using the Radon-Nikodym derivative $X_0 = dQ/dP$:
-\[
-\int_G f dQ = \int_G f X_0 dP = \int_G E_P[f X_0 | \mathcal{G}] dP
-\]
-On the other hand,
-\[
-\int_G E_Q[f | \mathcal{G}] dQ = \int_G E_Q[f | \mathcal{G}] X_0 dP = \int_G E_P[E_Q[f | \mathcal{G}] X_0 | \mathcal{G}] dP
-\]
-Since $E_Q[f | \mathcal{G}]$ is $\mathcal{G}$-measurable, we can pull it out:
-\[
-\int_G E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}] dP
-\]
-Thus, for all $G \in \mathcal{G}$:
-\[
-\int_G E_P[f X_0 | \mathcal{G}] dP = \int_G E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}] dP
-\]
-Since both $E_P[f X_0 | \mathcal{G}]$ and $E_Q[f | \mathcal{G}] E_P[X_0 | \mathcal{G}]$ are $\mathcal{G}$-measurable, they must be equal $P$-a.s.
+\textbf{Intuition / Motivation:}
+
+Imagine evaluating average rainfall in two parallel universes defined by probability measures $P$ and $Q$. The "bridge" between these universes is the density ratio $X_0 = dQ/dP$. Part (a) shows that if you restrict your observations to a coarser subset of information ($\mathcal{G}$), the "bridge" $E_P[X_0 \mid \mathcal{G}]$ still remains stable and strictly positive—you don't lose the structural equivalence of the universes. Part (b) derives the conversion formula for expectations between the universes: to calculate an expectation in universe $Q$, you can calculate it in universe $P$ weighted by the bridge $X_0$, and then divide by the expected weight of the bridge itself.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the bounds for $E_P[X_0 \mid \mathcal{G}]$ (Part a).}
+
+We are given that $P$ and $Q$ are mutually absolutely continuous. By the Radon-Nikodym theorem, $X_0 = \frac{dQ}{dP}$ exists, is $P$-integrable ($E_P[X_0] = 1 < \infty$), and is strictly positive $P$-almost surely ($P(X_0 > 0) = 1$).
+Let $Z = E_P[X_0 \mid \mathcal{G}]$. By definition, $Z$ is a $\mathcal{G}$-measurable random variable.
+First, we prove the upper bound $Z < \infty$ a.s.
+By the tower property of conditional expectation:
+\[ E_P[Z] = E_P[E_P[X_0 \mid \mathcal{G}]] = E_P[X_0] = \int_\Omega dQ = Q(\Omega) = 1 \]
+Since $Z$ is a non-negative random variable with a finite expectation ($1 < \infty$), it cannot be infinite on a set of positive measure. Thus, $Z < \infty$ $P$-a.s.
+
+Next, we prove the lower bound $Z > 0$ a.s.
+Suppose, for the sake of contradiction, that the event $A = \{Z = 0\} \in \mathcal{G}$ has positive measure, $P(A) > 0$.
+By the defining property of conditional expectation over sets in $\mathcal{G}$:
+\[ \int_A X_0 dP = \int_A E_P[X_0 \mid \mathcal{G}] dP = \int_A Z dP = 0 \]
+However, we know $X_0 > 0$ almost everywhere. The integral of a strictly positive function over a set $A$ can only be zero if the set $A$ has measure zero ($P(A) = 0$). This contradicts our assumption.
+Therefore, the measure of $\{Z = 0\}$ must be zero, proving that $Z > 0$ $P$-a.s.
+Combining these, $0 < E_P[X_0 \mid \mathcal{G}] < +\infty$ $P$-a.s.
+
+\textbf{Step 2: Set up the integral equivalence for the Change of Measure (Part b).}
+
+We want to prove $E_P[fX_0 \mid \mathcal{G}] = E_Q[f \mid \mathcal{G}] E_P[X_0 \mid \mathcal{G}]$.
+To prove two $\mathcal{G}$-measurable random variables are equal under $P$, we must show that their integrals over any arbitrary test set $G \in \mathcal{G}$ are identical.
+Let's evaluate the integral of the left-hand side over $G \in \mathcal{G}$:
+\[ \int_G E_P[fX_0 \mid \mathcal{G}] dP = \int_G fX_0 dP \]
+(This follows directly from the definition of conditional expectation under $P$).
+Next, we translate this integral from measure $P$ to measure $Q$ using the Radon-Nikodym derivative $X_0 = \frac{dQ}{dP}$:
+\[ \int_G fX_0 dP = \int_G f \left(\frac{dQ}{dP}\right) dP = \int_G f dQ \]
+
+\textbf{Step 3: Evaluate the right-hand side.}
+
+Now, we evaluate the integral of $f$ under $Q$ using the definition of conditional expectation \textit{under} $Q$:
+\[ \int_G f dQ = \int_G E_Q[f \mid \mathcal{G}] dQ \]
+Translate this back to measure $P$ using the density $X_0$:
+\[ \int_G E_Q[f \mid \mathcal{G}] dQ = \int_G E_Q[f \mid \mathcal{G}] X_0 dP \]
+Because $E_Q[f \mid \mathcal{G}]$ is explicitly $\mathcal{G}$-measurable, we can use the "pull out what you know" property of conditional expectations under $P$. We wrap the inside of the integral in a conditional expectation given $\mathcal{G}$:
+\[ \int_G E_Q[f \mid \mathcal{G}] X_0 dP = \int_G E_P[ E_Q[f \mid \mathcal{G}] X_0 \mid \mathcal{G} ] dP = \int_G E_Q[f \mid \mathcal{G}] E_P[X_0 \mid \mathcal{G}] dP \]
+
+\textbf{Step 4: Final Equality.}
+
+We have shown that for any $G \in \mathcal{G}$:
+\[ \int_G E_P[fX_0 \mid \mathcal{G}] dP = \int_G E_Q[f \mid \mathcal{G}] E_P[X_0 \mid \mathcal{G}] dP \]
+Since this holds for every measurable subset $G$, the integrands must be identical almost surely:
+\[ E_P[fX_0 \mid \mathcal{G}] = E_Q[f \mid \mathcal{G}] E_P[X_0 \mid \mathcal{G}] \quad P\text{-a.s.} \]
+(This is exactly the generalized Bayes' formula, which is usually written as $E_Q[f \mid \mathcal{G}] = \frac{E_P[fX_0 \mid \mathcal{G}]}{E_P[X_0 \mid \mathcal{G}]}$).
 \end{solution}
 
 \begin{exercise}
@@ -106,32 +204,63 @@ Give good reasoning to justify your answers.
 \end{exercise}
 
 \begin{solution}
-(a) The "best guess" in terms of minimizing mean squared error is the conditional expectation $E[X_1 | Y_n]$. By symmetry, $E[X_1 | Y_n] = E[X_i | Y_n]$ for all $i=1, \dots, n$. Summing over $i$:
-\[
-\sum_{i=1}^n E[X_i | Y_n] = E[\sum_{i=1}^n X_i | Y_n]
-\]
-However, it is easier to use the fact that $X_1$ is either the maximum $Y_n$ (with probability $1/n$) or one of the other $n-1$ values which are distributed as $U(0, Y_n)$ given $Y_n$ and the event that they are not the maximum. Thus:
-\[
-E[X_1 | Y_n] = P(X_1 = Y_n | Y_n) Y_n + P(X_1 < Y_n | Y_n) E[X_1 | X_1 < Y_n, Y_n]
-\]
-\[
-E[X_1 | Y_n] = \frac{1}{n} Y_n + \frac{n-1}{n} \frac{Y_n}{2} = \frac{2 + n - 1}{2n} Y_n = \frac{n+1}{2n} Y_n
-\]
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Order Statistics of Uniform:} If $X_1, \dots, X_n \sim U(0,1)$, the maximum $Y_n = X_{(n)}$ has density $f(y) = n y^{n-1}$ on $(0,1)$. Given $Y_n$, the remaining $n-1$ variables are uniformly distributed on $(0, Y_n)$.
+    \item \textbf{Mean Squared Error (MSE):} To find the "best guess" of a random variable given some observation, we want an estimator that minimizes the MSE. The optimal estimator is always the conditional expectation $E[X_1 \mid \text{Observation}]$.
+    \item \textbf{Variance of Conditional Expectation:} Comparing the variance of two unbiased estimators determines which one is "better" (more efficient). The one with lower variance has a smaller MSE.
+\end{itemize}
 
-(b) For $Z_n = \frac{1}{n} \sum X_i$, by symmetry $E[X_1 | Z_n] = E[X_i | Z_n]$ for all $i$. Thus:
-\[
-n E[X_1 | Z_n] = E[\sum X_i | Z_n] = E[n Z_n | Z_n] = n Z_n \implies E[X_1 | Z_n] = Z_n
-\]
+\textbf{Intuition / Motivation:}
 
-(c) We compare the two estimators $\hat{X}_Y = \frac{n+1}{2n} Y_n$ and $\hat{X}_Z = Z_n$. Both are unbiased since $E[E[X_1 | \cdot]] = E[X_1] = 1/2$. The better estimator is the one with smaller variance.
-The variance of $Z_n$ is $Var(\bar{X}) = \frac{Var(X_1)}{n} = \frac{1}{12n}$.
-The variance of $Y_n$ is $\frac{n}{(n+1)^2(n+2)}$. Thus:
-\[
-Var(\hat{X}_Y) = \left(\frac{n+1}{2n}\right)^2 \frac{n}{(n+1)^2(n+2)} = \frac{1}{4n(n+2)}
-\]
-Comparing the denominators: $12n$ vs $4n(n+2) = 4n^2 + 8n$.
-For $n=1$, $12 = 12$. For $n=2$, $24 < 32$. For $n \ge 2$, $12n < 4n^2 + 8n$, which implies $\frac{1}{12n} > \frac{1}{4n(n+2)}$.
-Thus, $Var(\hat{X}_Y) < Var(\hat{X}_Z)$ for $n > 1$. This means $\hat{X}_Y$ is a better estimator in the sense of having a smaller mean squared error. Intuitively, the maximum $Y_n$ provides more information about the location of the sample in $U(0,1)$ than the sample mean $Z_n$.
+Imagine drawing numbers between 0 and 1. You want to guess the very first number you drew ($X_1$). You are given two choices of hints: either the maximum of all $n$ numbers drawn ($Y_n$), or the average of all $n$ numbers drawn ($Z_n$). Which hint gives you more precise information about $X_1$? The maximum tightly constrains the possible range of $X_1$ (it must be $\leq Y_n$), effectively scaling the uncertainty down. The average, on the other hand, just blends $X_1$ into a noisy sum. This exercise mathematically proves that knowing the boundary (maximum) is vastly superior to knowing the center (mean) when dealing with uniform distributions.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Find the best guess given $Y_n$ (Part a).}
+
+The best guess that minimizes mean squared error is the conditional expectation $E[X_1 \mid Y_n]$.
+Because the samples are independent and identically distributed, the maximum $Y_n$ is equally likely to be any of the $n$ variables.
+With probability $1/n$, $X_1$ itself is the maximum, so $X_1 = Y_n$.
+With probability $(n-1)/n$, $X_1$ is not the maximum. If we know the maximum is $Y_n$, the remaining $n-1$ variables are uniformly distributed on the interval $(0, Y_n)$. The expected value of a uniform variable on this interval is exactly half of the upper bound, $Y_n/2$.
+Using the law of total expectation conditioned on $Y_n$:
+\[ E[X_1 \mid Y_n] = P(X_1 = Y_n \mid Y_n) Y_n + P(X_1 < Y_n \mid Y_n) E[X_1 \mid X_1 < Y_n, Y_n] \]
+\[ E[X_1 \mid Y_n] = \frac{1}{n} Y_n + \frac{n-1}{n} \left( \frac{Y_n}{2} \right) \]
+Combine the fractions:
+\[ E[X_1 \mid Y_n] = \frac{2}{2n} Y_n + \frac{n-1}{2n} Y_n = \frac{n+1}{2n} Y_n \]
+Let this estimator be $\hat{X}_Y = \frac{n+1}{2n} Y_n$.
+
+\textbf{Step 2: Find the best guess given $Z_n$ (Part b).}
+
+We want $E[X_1 \mid Z_n]$.
+The average is $Z_n = \frac{1}{n} \sum_{i=1}^n X_i$.
+By symmetry, the conditional expectation of any single variable given the sum of all variables is identical:
+\[ E[X_1 \mid Z_n] = E[X_2 \mid Z_n] = \dots = E[X_n \mid Z_n] \]
+The sum of these $n$ conditional expectations must equal the conditional expectation of the total sum:
+\[ \sum_{i=1}^n E[X_i \mid Z_n] = E\left[ \left. \sum_{i=1}^n X_i \right| Z_n \right] \]
+Substitute $n Z_n$ for the total sum:
+\[ n E[X_1 \mid Z_n] = E[n Z_n \mid Z_n] = n Z_n \]
+Divide by $n$:
+\[ E[X_1 \mid Z_n] = Z_n \]
+Let this estimator be $\hat{X}_Z = Z_n$.
+
+\textbf{Step 3: Compare the two estimators (Part c).}
+
+To find which estimator is "better," we evaluate their Mean Squared Error (MSE). Because both are conditional expectations, they are inherently unbiased ($E[\hat{X}_Y] = E[\hat{X}_Z] = E[X_1] = 1/2$). Thus, MSE is simply their variance. The one with smaller variance is better.
+First, compute the variance of $\hat{X}_Z$:
+\[ \operatorname{Var}(\hat{X}_Z) = \operatorname{Var}(Z_n) = \frac{\operatorname{Var}(X_1)}{n} = \frac{1/12}{n} = \frac{1}{12n} \]
+Next, compute the variance of $\hat{X}_Y$. We need the variance of the maximum $Y_n$.
+The density of $Y_n$ is $f(y) = n y^{n-1}$.
+$E[Y_n] = \int_0^1 y \cdot n y^{n-1} dy = \frac{n}{n+1}$.
+$E[Y_n^2] = \int_0^1 y^2 \cdot n y^{n-1} dy = \frac{n}{n+2}$.
+\[ \operatorname{Var}(Y_n) = \frac{n}{n+2} - \left(\frac{n}{n+1}\right)^2 = \frac{n(n+1)^2 - n^2(n+2)}{(n+2)(n+1)^2} = \frac{n}{(n+1)^2(n+2)} \]
+Now, scale this variance by the square of the constant factor $\frac{n+1}{2n}$:
+\[ \operatorname{Var}(\hat{X}_Y) = \left( \frac{n+1}{2n} \right)^2 \frac{n}{(n+1)^2(n+2)} = \frac{1}{4n^2} \frac{n}{n+2} = \frac{1}{4n(n+2)} \]
+Finally, compare the two variances for $n \geq 2$:
+\[ \operatorname{Var}(\hat{X}_Y) = \frac{1}{4n^2 + 8n} \quad \text{vs} \quad \operatorname{Var}(\hat{X}_Z) = \frac{1}{12n} \]
+For any $n \geq 2$, the denominator $4n^2 + 8n > 12n$, which implies:
+\[ \operatorname{Var}(\hat{X}_Y) < \operatorname{Var}(\hat{X}_Z) \]
+Therefore, $\hat{X}_Y$ is the definitively better guess because it has a strictly smaller variance (lower mean squared error).
 \end{solution}
 
 \begin{exercise}
@@ -143,28 +272,58 @@ Suppose we take a random sample of size $n$ from a bag of colored balls (red, bl
 \end{exercise}
 
 \begin{solution}
-The probabilities are $p_1, p_2, p_3$ with $p_3 = 3p_1$. Since $p_1 + p_2 + p_3 = 1$, we have $4p_1 + p_2 = 1$, so $p_1 = (1-p_2)/4$.
-The likelihood function is:
-\[
-L(p_2) \propto p_1^{X_1} p_2^{X_2} (3p_1)^{X_3} = \left(\frac{1-p_2}{4}\right)^{X_1} p_2^{X_2} \left(\frac{3(1-p_2)}{4}\right)^{X_3} \propto (1-p_2)^{X_1+X_3} p_2^{X_2}
-\]
-The log-likelihood is $\ell(p_2) = (X_1+X_3) \ln(1-p_2) + X_2 \ln p_2 + \text{const}$.
-Taking the derivative:
-\[
-\ell'(p_2) = -\frac{X_1+X_3}{1-p_2} + \frac{X_2}{p_2} = 0 \implies p_2(X_1+X_3) = X_2(1-p_2) \implies p_2(n-X_2) = X_2 - p_2 X_2 \implies \hat{p}_2 = \frac{X_2}{n}
-\]
-1. The Fisher Information is $I(p_2) = -E[\ell''(p_2)]$. $\ell''(p_2) = -\frac{X_1+X_3}{(1-p_2)^2} - \frac{X_2}{p_2^2}$.
-\[
-I(p_2) = \frac{n(1-p_2)}{(1-p_2)^2} + \frac{n p_2}{p_2^2} = \frac{n}{1-p_2} + \frac{n}{p_2} = \frac{n}{p_2(1-p_2)}
-\]
-The asymptotic distribution of the MLE is $\sqrt{n}(\hat{p}_2 - p_2) \xrightarrow{d} N(0, p_2(1-p_2))$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Multinomial Distribution:} The distribution of counts for categorical outcomes. The joint PMF is proportional to $\prod p_i^{X_i}$.
+    \item \textbf{Fisher Information and Asymptotic Normality of MLE:} The maximum likelihood estimator $\hat{\theta}$ is asymptotically normal: $\sqrt{n}(\hat{\theta} - \theta_0) \xrightarrow{d} N(0, I(\theta_0)^{-1})$, where $I(\theta)$ is the Fisher Information evaluated at a single observation.
+    \item \textbf{Likelihood Ratio Test (LRT):} A statistical test comparing the likelihood under the null hypothesis to the unrestricted maximum likelihood. The test statistic $-2 \ln \Lambda \xrightarrow{d} \chi^2_k$, where $k$ is the difference in degrees of freedom between the unrestricted and null models.
+\end{itemize}
 
-2. The null hypothesis $p_1 = p_2 = p_3/3$ implies $p_1 = p_2$. Combined with $4p_1 + p_2 = 1$, we get $5p_2 = 1 \implies p_2^0 = 0.2$.
-The likelihood ratio statistic is $\Lambda = \frac{L(0.2)}{L(\hat{p}_2)}$. The test statistic is:
-\[
--2 \ln \Lambda = 2 [ \ell(\hat{p}_2) - \ell(0.2) ] = 2 \left[ (X_1+X_3) \ln\left(\frac{1-\hat{p}_2}{0.8}\right) + X_2 \ln\left(\frac{\hat{p}_2}{0.2}\right) \right]
-\]
-Under $H_0$, this statistic follows an asymptotic $\chi^2$ distribution with degrees of freedom $df = \text{dim}(\Theta) - \text{dim}(\Theta_0) = 1 - 0 = 1$.
+\textbf{Intuition / Motivation:}
+
+Imagine drawing balls from a bag where you already know yellow is exactly three times as common as red. Because of this rigid constraint, you don't actually have three unknown probabilities; you only have one degree of freedom (say, the blue probability $p_2$). Part 1 asks us to find the "best guess" (MLE) for this single variable and determine its confidence bounds using Fisher Information. Part 2 asks us to formally test a specific claim ("all basic proportions are equal") by comparing how well that specific claim explains the data versus our flexible MLE, using the standard $\chi^2$ likelihood ratio framework.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Simplify the likelihood function (Part 1).}
+
+We are given probabilities $p_1, p_2, p_3$ with the strict constraint $p_3 = 3p_1$.
+Because probabilities must sum to 1, we have:
+\[ p_1 + p_2 + 3p_1 = 1 \implies 4p_1 + p_2 = 1 \implies p_1 = \frac{1-p_2}{4} \]
+The likelihood function $L$ for observing $X_1$ red, $X_2$ blue, and $X_3$ yellow balls in $n$ draws is the multinomial probability mass function. We drop the combinatoric constants since they don't depend on parameters:
+\[ L(p_2) \propto p_1^{X_1} p_2^{X_2} p_3^{X_3} = \left(\frac{1-p_2}{4}\right)^{X_1} p_2^{X_2} \left(\frac{3(1-p_2)}{4}\right)^{X_3} \]
+Grouping the terms containing $(1-p_2)$:
+\[ L(p_2) \propto (1-p_2)^{X_1+X_3} p_2^{X_2} \]
+
+\textbf{Step 2: Find the MLE and Fisher Information.}
+
+Take the log-likelihood $\ell(p_2)$:
+\[ \ell(p_2) = (X_1+X_3) \ln(1-p_2) + X_2 \ln p_2 \]
+To find the maximum, set the first derivative to 0:
+\[ \ell'(p_2) = -\frac{X_1+X_3}{1-p_2} + \frac{X_2}{p_2} = 0 \implies p_2(X_1+X_3) = X_2(1-p_2) \]
+Since $X_1+X_2+X_3 = n$, we substitute $X_1+X_3 = n - X_2$:
+\[ p_2(n - X_2) = X_2 - p_2 X_2 \implies n p_2 = X_2 \implies \hat{p}_2 = \frac{X_2}{n} \]
+Next, calculate the Fisher Information $I(p_2) = -E[\ell''(p_2)]$. Take the second derivative:
+\[ \ell''(p_2) = -\frac{X_1+X_3}{(1-p_2)^2} - \frac{X_2}{p_2^2} \]
+Take the expected value (note $E[X_2] = n p_2$ and $E[X_1+X_3] = n(1-p_2)$):
+\[ I_n(p_2) = \frac{n(1-p_2)}{(1-p_2)^2} + \frac{n p_2}{p_2^2} = \frac{n}{1-p_2} + \frac{n}{p_2} = \frac{n}{p_2(1-p_2)} \]
+By the asymptotic properties of MLE, $\sqrt{n}(\hat{p}_2 - p_2)$ converges in distribution to a normal with variance $n / I_n(p_2)$:
+\[ \sqrt{n}(\hat{p}_2 - p_2) \xrightarrow{d} N(0, p_2(1-p_2)) \]
+
+\textbf{Step 3: Construct the Likelihood Ratio Test (Part 2).}
+
+The null hypothesis is $H_0: p_1 = p_2 = p_3/3$.
+From our constraint $p_3 = 3p_1$, the condition $p_1 = p_3/3$ is automatically satisfied. The meaningful constraint is $p_1 = p_2$.
+Substitute this into our normalization constraint $4p_1 + p_2 = 1$:
+\[ 4p_2 + p_2 = 1 \implies 5p_2 = 1 \implies p_2^{(0)} = 0.2 \]
+The unrestricted maximum likelihood is evaluated at $\hat{p}_2 = X_2/n$. The restricted maximum likelihood is evaluated at $p_2 = 0.2$.
+The Likelihood Ratio Test statistic is $\Lambda = \frac{L(0.2)}{L(\hat{p}_2)}$. We construct the standard test statistic $-2 \ln \Lambda$:
+\[ -2 \ln \Lambda = 2 \left[ \ell(\hat{p}_2) - \ell(0.2) \right] \]
+Substitute the log-likelihood formulas:
+\[ -2 \ln \Lambda = 2 \left[ (X_1+X_3) \ln\left(\frac{1-\hat{p}_2}{0.8}\right) + X_2 \ln\left(\frac{\hat{p}_2}{0.2}\right) \right] \]
+By Wilks' Theorem, under the null hypothesis, this statistic asymptotically follows a $\chi^2$ distribution. The degrees of freedom is the difference in free parameters between the unrestricted parameter space $\Theta$ and the null hypothesis space $\Theta_0$.
+The unrestricted space has 1 free parameter ($p_2$), and the null space has 0 free parameters (everything is fixed to 0.2).
+Thus, $df = 1 - 0 = 1$. The asymptotic distribution is $\chi^2_1$.
 \end{solution}
 
 \subsection{Team}
@@ -179,16 +338,46 @@ Suppose that $X_n$ converges to $X$ in distribution and $Y_n$ converges to a con
 \end{exercise}
 
 \begin{solution}
-(a) To show $Y_n \xrightarrow{p} c$, we need to show $P(|Y_n - c| > \epsilon) \to 0$ for any $\epsilon > 0$.
-Since $Y_n \xrightarrow{d} c$, the distribution function $F_{Y_n}(y) \to F_c(y) = \mathbb{I}(y \ge c)$ at all continuity points of $F_c$, which are all $y \neq c$.
-$P(|Y_n - c| > \epsilon) = P(Y_n < c-\epsilon) + P(Y_n > c+\epsilon)$.
-As $n \to \infty$, $P(Y_n < c-\epsilon) \le F_{Y_n}(c-\epsilon) \to F_c(c-\epsilon) = 0$.
-And $P(Y_n > c+\epsilon) = 1 - P(Y_n \le c+\epsilon) \le 1 - F_{Y_n}(c+\epsilon) \to 1 - F_c(c+\epsilon) = 1 - 1 = 0$.
-Thus $P(|Y_n - c| > \epsilon) \to 0$, so $Y_n \xrightarrow{p} c$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Convergence in Probability to a Constant:} If a sequence of random variables converges in distribution to a constant $c$, it also converges in probability to $c$.
+    \item \textbf{Slutsky's Theorem:} If $X_n \xrightarrow{d} X$ and $Y_n \xrightarrow{p} c$ (a constant), then $X_n Y_n \xrightarrow{d} cX$.
+    \item \textbf{Continuous Mapping Theorem:} Continuous functions preserve convergence in distribution.
+\end{itemize}
 
-(b) This is Slutsky's Theorem. Let $X_n \xrightarrow{d} X$ and $Y_n \xrightarrow{p} c$. To show $X_n Y_n \xrightarrow{d} cX$:
-By the property of convergence in distribution, it suffices to show that for any bounded continuous function $f$: $E[f(X_n Y_n)] \to E[f(cX)]$.
-Alternatively, we can use the fact that $(X_n, Y_n) \xrightarrow{d} (X, c)$ (since $Y_n$ converges to a constant). Then by the Continuous Mapping Theorem, any continuous function $g(x,y) = xy$ applied to the sequence will converge in distribution: $g(X_n, Y_n) \xrightarrow{d} g(X, c)$, i.e., $X_n Y_n \xrightarrow{d} Xc$.
+\textbf{Intuition / Motivation:}
+
+When dealing with sequences of random variables, convergence in distribution is a "weak" form of convergence—it only guarantees the shape of the histogram settles down. Convergence in probability is "stronger"—it guarantees the actual random values lock onto a target. Part (a) shows that when the target is just a single rigid number $c$, these two concepts become identical because a histogram shaped like a single spike means the value itself is locked. Part (b) builds on this: if you multiply a "shape-converging" variable $X_n$ by a "locked" variable $Y_n$, the limit is just the limit shape $X$ stretched by the locked constant $c$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove $Y_n \xrightarrow{p} c$ (Part a).}
+
+We are given that $Y_n \xrightarrow{d} c$. By definition of convergence in distribution, the cumulative distribution function (CDF) $F_{Y_n}(y)$ converges to the CDF of a constant $c$.
+The CDF of a constant $c$ is a step function: $F_c(y) = 0$ for $y < c$, and $F_c(y) = 1$ for $y \geq c$.
+Convergence in distribution requires $F_{Y_n}(y) \to F_c(y)$ at all points where $F_c$ is continuous. The only point of discontinuity is exactly at $y = c$. Therefore, for any $\epsilon > 0$, the points $c - \epsilon$ and $c + \epsilon$ are points of continuity.
+To prove convergence in probability, we must show that $P(|Y_n - c| > \epsilon) \to 0$ as $n \to \infty$.
+We split the absolute value inequality:
+\[ P(|Y_n - c| > \epsilon) = P(Y_n < c - \epsilon) + P(Y_n > c + \epsilon) \]
+Evaluate the limit of the first term using the CDF:
+\[ \lim_{n \to \infty} P(Y_n < c - \epsilon) \leq \lim_{n \to \infty} F_{Y_n}(c - \epsilon) = F_c(c - \epsilon) = 0 \]
+Evaluate the limit of the second term using the complement of the CDF:
+\[ \lim_{n \to \infty} P(Y_n > c + \epsilon) = \lim_{n \to \infty} (1 - P(Y_n \leq c + \epsilon)) = 1 - \lim_{n \to \infty} F_{Y_n}(c + \epsilon) = 1 - 1 = 0 \]
+Since both terms converge to 0, their sum converges to 0. Thus, $Y_n \xrightarrow{p} c$.
+
+\textbf{Step 2: Prove $X_n Y_n \xrightarrow{d} cX$ (Part b).}
+
+We are given $X_n \xrightarrow{d} X$. From Part (a), we know $Y_n \xrightarrow{p} c$.
+A standard property of convergence is that if one sequence converges in distribution and another converges in probability to a constant, they jointly converge in distribution to the joint vector:
+\[ (X_n, Y_n) \xrightarrow{d} (X, c) \]
+Define a mapping function $g: \mathbb{R}^2 \to \mathbb{R}$ such that $g(x, y) = xy$.
+The multiplication function $g(x,y)$ is continuous everywhere on $\mathbb{R}^2$.
+By the Continuous Mapping Theorem (CMT), if a sequence of random vectors converges in distribution, applying a continuous function to that sequence preserves the convergence in distribution to the mapped limit.
+Applying $g$ to our sequence:
+\[ g(X_n, Y_n) \xrightarrow{d} g(X, c) \]
+Substituting the definition of $g$:
+\[ X_n Y_n \xrightarrow{d} X c = cX \]
+This formally completes the proof of Slutsky's Theorem for multiplication.
 \end{solution}
 
 \begin{exercise}
@@ -200,25 +389,59 @@ Let $X$ and $Y$ be two random variables with $|Y| > 0$, a.s. Let $Z = X/Y$.
 \end{exercise}
 
 \begin{solution}
-(a) The cumulative distribution function of $Z$ is $F_Z(z) = P(X/Y \le z)$.
-\[
-F_Z(z) = \iint_{x/y \le z} p(x,y) dx dy = \int_{0}^{\infty} \int_{-\infty}^{zy} p(x,y) dx dy + \int_{-\infty}^{0} \int_{zy}^{\infty} p(x,y) dx dy
-\]
-Differentiating with respect to $z$ using Leibniz rule:
-\[
-f_Z(z) = \frac{d}{dz} F_Z(z) = \int_{0}^{\infty} y p(zy, y) dy + \int_{-\infty}^{0} (-y) p(zy, y) dy = \int_{-\infty}^{\infty} |y| p(zy, y) dy
-\]
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Ratio Distribution:} The probability distribution constructed as the ratio of two random variables $Z = X/Y$.
+    \item \textbf{Cumulative Distribution Function (CDF) Method:} To find the density of a transformed variable, first find its CDF by integrating the joint density over the valid region, then differentiate the CDF using Leibniz's rule.
+\end{itemize}
 
-(b) Since $X \perp Y$, $p(x,y) = \phi(x) f_Y(y) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \cdot \mathbb{I}(0 < y < 1)$.
-Using the formula from part (a):
-\[
-f_Z(z) = \int_{0}^{1} y \frac{1}{\sqrt{2\pi}} e^{-(zy)^2/2} dy = \frac{1}{\sqrt{2\pi}} \int_{0}^{1} y e^{-z^2 y^2 / 2} dy
-\]
-Let $u = z^2 y^2 / 2$, then $du = z^2 y dy$.
-\[
-f_Z(z) = \frac{1}{\sqrt{2\pi} z^2} \int_{0}^{z^2/2} e^{-u} du = \frac{1}{\sqrt{2\pi} z^2} [ -e^{-u} ]_{0}^{z^2/2} = \frac{1 - e^{-z^2/2}}{\sqrt{2\pi} z^2}
-\]
-For $z=0$, the limit is $\frac{1}{2\sqrt{2\pi}}$ (by L'Hopital's rule).
+\textbf{Intuition / Motivation:}
+
+Finding the distribution of a ratio $Z = X/Y$ is a geometric problem. In the $(x, y)$ plane, the equation $x/y = z$ defines a straight line through the origin with slope $1/z$. The event $X/Y \leq z$ corresponds to a wedge-shaped region of the plane. By integrating the joint probability density over this wedge to get the total probability (CDF), and then taking the derivative with respect to the slope parameter $z$, we can cleanly extract the 1D probability density function of the ratio.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Set up the CDF integral for $Z = X/Y$ (Part a).}
+
+Let $F_Z(z) = P(Z \leq z) = P(X/Y \leq z)$.
+Because $Y$ can be positive or negative, we must be careful when multiplying both sides of an inequality by $Y$. We split the integration region into two cases based on the sign of $y$:
+1. If $y > 0$, the inequality is $x \leq zy$.
+2. If $y < 0$, the inequality flips to $x \geq zy$.
+Thus, the total probability is the sum of integrals over these two regions:
+\[ F_Z(z) = \int_{0}^{\infty} \left( \int_{-\infty}^{zy} p(x,y) dx \right) dy + \int_{-\infty}^{0} \left( \int_{zy}^{\infty} p(x,y) dx \right) dy \]
+
+\textbf{Step 2: Differentiate the CDF to find the density $f_Z(z)$.}
+
+To find the probability density function $f_Z(z)$, we take the derivative of $F_Z(z)$ with respect to $z$.
+We use Leibniz's rule for differentiating under the integral sign. The variable $z$ only appears in the integration limits of the inner integrals.
+For the first integral: $\frac{d}{dz} \int_{-\infty}^{zy} p(x,y) dx = p(zy, y) \cdot \frac{d}{dz}(zy) = y p(zy, y)$.
+For the second integral: $\frac{d}{dz} \int_{zy}^{\infty} p(x,y) dx = -p(zy, y) \cdot \frac{d}{dz}(zy) = -y p(zy, y)$.
+Substituting these derivatives back into the outer integrals:
+\[ f_Z(z) = \int_{0}^{\infty} y p(zy, y) dy + \int_{-\infty}^{0} (-y) p(zy, y) dy \]
+Notice that when $y > 0$, $y = |y|$, and when $y < 0$, $-y = |y|$. Therefore, we can beautifully combine these two integrals into one global integral over all $\mathbb{R}$:
+\[ f_Z(z) = \int_{-\infty}^{\infty} |y| p(zy, y) dy \]
+
+\textbf{Step 3: Apply the formula to the specific case (Part b).}
+
+We are given $X \sim N(0,1)$ and $Y \sim U(0,1)$ are independent.
+The joint density is the product of their marginal densities:
+\[ p(x,y) = f_X(x) f_Y(y) = \left( \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \right) \cdot \mathbb{I}(0 < y < 1) \]
+Substitute this specific joint density into our general formula from Part (a):
+\[ f_Z(z) = \int_{-\infty}^{\infty} |y| \left( \frac{1}{\sqrt{2\pi}} e^{-(zy)^2/2} \mathbb{I}(0 < y < 1) \right) dy \]
+Because the indicator function restricts $y$ to the interval $(0, 1)$, $|y|$ simplifies to $y$, and the bounds of integration become 0 and 1:
+\[ f_Z(z) = \frac{1}{\sqrt{2\pi}} \int_{0}^{1} y e^{-\frac{1}{2} z^2 y^2} dy \]
+
+\textbf{Step 4: Evaluate the integral.}
+
+We evaluate this integral using $u$-substitution. Let $u = \frac{1}{2} z^2 y^2$.
+Then $du = z^2 y dy$, which means $y dy = \frac{1}{z^2} du$.
+The limits of integration change from $y \in [0, 1]$ to $u \in [0, z^2/2]$.
+\[ f_Z(z) = \frac{1}{\sqrt{2\pi}} \int_{0}^{z^2/2} e^{-u} \frac{1}{z^2} du = \frac{1}{\sqrt{2\pi} z^2} \int_{0}^{z^2/2} e^{-u} du \]
+The integral of $e^{-u}$ is $-e^{-u}$. Evaluating at the bounds:
+\[ \int_{0}^{z^2/2} e^{-u} du = \left[ -e^{-u} \right]_0^{z^2/2} = 1 - e^{-z^2/2} \]
+Substitute this back to get the final density:
+\[ f_Z(z) = \frac{1 - e^{-z^2/2}}{\sqrt{2\pi} z^2} \]
+(Note: For $z=0$, taking the limit using L'Hôpital's rule gives $f_Z(0) = \frac{1}{2\sqrt{2\pi}}$, so the density is well-behaved everywhere).
 \end{solution}
 
 \begin{exercise}
@@ -234,17 +457,57 @@ Let $(\Omega, \mathcal{F}, P)$ be a probability space.
 \end{exercise}
 
 \begin{solution}
-(a) (i) $\implies$ (ii): Let $X_0 = dQ/dP$ be $\mathcal{G}$-measurable. Then $Q(\Gamma) = E_P[\mathbb{I}_\Gamma X_0]$. Since $X_0$ is $\mathcal{G}$-measurable and $\Gamma$ is independent of $\mathcal{G}$, we have:
-\[
-E_P[\mathbb{I}_\Gamma X_0] = E_P[\mathbb{I}_\Gamma] E_P[X_0] = P(\Gamma) \cdot 1 = P(\Gamma)
-\]
-(ii) $\implies$ (i): Assume (ii) holds for all $Q$ with $\mathcal{G}$-measurable density. Let $A \in \mathcal{G}$ with $P(A) > 0$. Define $X_0 = \frac{\mathbb{I}_A}{P(A)}$. This $X_0$ is $\mathcal{G}$-measurable and $E_P[X_0] = 1$. Although it's not strictly positive, any such density can be approximated by equivalent ones. By (ii), $E_P[\mathbb{I}_\Gamma \frac{\mathbb{I}_A}{P(A)}] = P(\Gamma) \implies P(\Gamma \cap A) = P(\Gamma) P(A)$. This shows $\Gamma$ is independent of every set in $\mathcal{G}$, hence independent of $\mathcal{G}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Equivalent Measures:} Two probability measures $P$ and $Q$ are equivalent if they agree on which events have zero probability. By the Radon-Nikodym theorem, this implies $dQ/dP$ exists and is strictly positive almost surely.
+    \item \textbf{Independence of an Event and a $\sigma$-algebra:} An event $\Gamma$ is independent of $\mathcal{G}$ if for any event $G \in \mathcal{G}$, $P(\Gamma \cap G) = P(\Gamma)P(G)$.
+    \item \textbf{Conditional Expectation definition:} $E[X \mid \mathcal{G}]$ satisfies $\int_G E[X \mid \mathcal{G}] dP = \int_G X dP$ for all $G \in \mathcal{G}$.
+\end{itemize}
 
-(b) To show $E[Y | X, Z] = E[Y | X]$, we verify the definition of conditional expectation. Let $g(X)$ and $h(Z)$ be bounded measurable functions.
-$E[ E[Y | X] g(X) h(Z) ] = E[ E[Y | X] g(X) ] E[h(Z)]$ (since $X$ and $Z$ are independent).
-$E[ E[Y | X] g(X) ] E[h(Z)] = E[ Y g(X) ] E[h(Z)]$.
-Since $(X,Y)$ and $Z$ are independent, $E[ Y g(X) h(Z) ] = E[ Y g(X) ] E[h(Z)]$.
-Thus $E[ Y g(X) h(Z) ] = E[ E[Y | X] g(X) h(Z) ]$. Since the sets of the form $\{X \in A, Z \in B\}$ generate $\sigma(X, Z)$, the equality holds for all $\sigma(X, Z)$-measurable functions.
+\textbf{Intuition / Motivation:}
+
+Part (a) establishes a clever equivalence: saying an event $\Gamma$ is completely independent of a sub-system of information $\mathcal{G}$ is mathematically identical to saying that no matter how you re-weight the probabilities based \textit{only} on information in $\mathcal{G}$, the overall probability of $\Gamma$ will never change. Part (b) explores "conditional independence": if $Y$ is independent of $Z$, does adding a "bystander" variable $X$ mess things up? If $(X,Y)$ jointly are independent of $Z$, then $Z$ contains no information about $Y$ even when $X$ is already known. Thus, $Z$ can be safely dropped from the conditional expectation.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove (i) implies (ii) in Part (a).}
+
+Assume $\Gamma$ is independent of $\mathcal{G}$ under $P$. Let $Q$ be any equivalent measure with a Radon-Nikodym derivative $X_0 = \frac{dQ}{dP}$ that is $\mathcal{G}$-measurable.
+We want to evaluate $Q(\Gamma)$. By the definition of the Radon-Nikodym derivative:
+\[ Q(\Gamma) = \int_\Gamma dQ = \int_\Gamma X_0 dP = E_P[\mathbb{I}_\Gamma X_0] \]
+Because $X_0$ is entirely $\mathcal{G}$-measurable, it acts as a function of the events in $\mathcal{G}$. Since we assumed $\Gamma$ is independent of $\mathcal{G}$, the indicator variable $\mathbb{I}_\Gamma$ is independent of $X_0$.
+For independent random variables, the expectation of their product is the product of their expectations:
+\[ E_P[\mathbb{I}_\Gamma X_0] = E_P[\mathbb{I}_\Gamma] E_P[X_0] \]
+We know $E_P[\mathbb{I}_\Gamma] = P(\Gamma)$. Furthermore, because $X_0$ is a density of a valid probability measure $Q$, its total integral must be 1 ($E_P[X_0] = Q(\Omega) = 1$).
+Thus:
+\[ Q(\Gamma) = P(\Gamma) \cdot 1 = P(\Gamma) \]
+
+\textbf{Step 2: Prove (ii) implies (i) in Part (a).}
+
+Assume that for every equivalent $Q$ with a $\mathcal{G}$-measurable density, $Q(\Gamma) = P(\Gamma)$. We must prove $\Gamma$ is independent of $\mathcal{G}$.
+Take any arbitrary event $A \in \mathcal{G}$ with $P(A) > 0$. We want to construct a density $X_0$ that heavily weights this event $A$.
+Define the random variable $X_0 = \frac{\mathbb{I}_A}{P(A)}$. Since $A \in \mathcal{G}$, $X_0$ is strictly $\mathcal{G}$-measurable. Also, $E_P[X_0] = \frac{P(A)}{P(A)} = 1$.
+Technically, this $X_0$ might be zero outside of $A$, meaning it doesn't form a strictly \textit{equivalent} measure $Q$. However, we can approximate it arbitrarily well with strictly positive densities (e.g., $X_\epsilon = (1-\epsilon)X_0 + \epsilon$). By a standard limit argument, the property holds for $X_0$ as well.
+Let's apply the condition $Q(\Gamma) = P(\Gamma)$ using our constructed density $X_0$:
+\[ P(\Gamma) = Q(\Gamma) = E_P[\mathbb{I}_\Gamma X_0] = E_P\left[\mathbb{I}_\Gamma \frac{\mathbb{I}_A}{P(A)}\right] \]
+Because $\mathbb{I}_\Gamma \mathbb{I}_A = \mathbb{I}_{\Gamma \cap A}$, the expectation evaluates to:
+\[ P(\Gamma) = \frac{P(\Gamma \cap A)}{P(A)} \implies P(\Gamma \cap A) = P(\Gamma) P(A) \]
+Since this holds for any arbitrary $A \in \mathcal{G}$, the event $\Gamma$ is, by definition, independent of the $\sigma$-algebra $\mathcal{G}$.
+
+\textbf{Step 3: Prove $E[Y \mid X, Z] = E[Y \mid X]$ (Part b).}
+
+We are given that the joint vector $(X,Y)$ is entirely independent of $Z$.
+To prove that $E[Y \mid X]$ satisfies the definition of $E[Y \mid X, Z]$, we must show it is $\sigma(X,Z)$-measurable (which it trivially is, being $\sigma(X)$-measurable) and that its integral over any set in $\sigma(X,Z)$ matches the integral of $Y$.
+Instead of sets, it is mathematically equivalent to show that for any bounded measurable functions $g(X)$ and $h(Z)$:
+\[ E\Big[ E[Y \mid X] g(X) h(Z) \Big] = E\Big[ Y g(X) h(Z) \Big] \]
+Let's evaluate the left-hand side. Because $X$ and $Z$ are independent (a consequence of $(X,Y)$ being independent of $Z$), any function of $X$ is independent of any function of $Z$. The term $E[Y \mid X] g(X)$ is strictly a function of $X$. Thus:
+\[ E\Big[ \big(E[Y \mid X] g(X)\big) h(Z) \Big] = E\Big[ E[Y \mid X] g(X) \Big] E[h(Z)] \]
+By the fundamental definition of conditional expectation $E[Y \mid X]$, we can drop the inner expectation because $g(X)$ is $X$-measurable:
+\[ E\Big[ E[Y \mid X] g(X) \Big] E[h(Z)] = E[ Y g(X) ] E[h(Z)] \]
+Now, let's look at the right-hand side of our target equation. We are given that the joint pair $(X, Y)$ is independent of $Z$. This means the random variable $Y g(X)$ is independent of $h(Z)$.
+Therefore, the expectation of their product factors perfectly:
+\[ E\Big[ Y g(X) h(Z) \Big] = E[ Y g(X) ] E[ h(Z) ] \]
+Since both sides evaluate to the exact same factored product, they are equal. Thus, $E[Y \mid X]$ perfectly satisfies the definition of $E[Y \mid X, Z]$.
 \end{solution}
 
 \begin{exercise}
@@ -260,23 +523,75 @@ Let $X_1, ..., X_n$ be i.i.d. $N(0, \sigma^2)$, and let $M$ be the mean of $|X_1
 \end{exercise}
 
 \begin{solution}
-1. For $X \sim N(0, \sigma^2)$, we have $E|X| = \sigma \sqrt{2/\pi}$.
-By the Weak Law of Large Numbers, $M = \frac{1}{n} \sum |X_i| \xrightarrow{p} E|X_1| = \sigma \sqrt{2/\pi}$.
-To have $\hat{\sigma} = cM \xrightarrow{p} \sigma$, we must have $c \sigma \sqrt{2/\pi} = \sigma \implies c = \sqrt{\pi/2}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Weak Law of Large Numbers (WLLN):} For i.i.d. samples, the sample mean converges in probability to the expected value of the distribution.
+    \item \textbf{Central Limit Theorem (CLT):} For i.i.d. samples with finite variance, $\sqrt{n}(\bar{X} - \mu) \xrightarrow{d} N(0, \sigma^2)$.
+    \item \textbf{Delta Method:} A tool to find the asymptotic distribution of a function of a random variable. If $\sqrt{n}(T_n - \theta) \xrightarrow{d} N(0, \sigma^2)$, then $\sqrt{n}(g(T_n) - g(\theta)) \xrightarrow{d} N(0, [g'(\theta)]^2 \sigma^2)$. In our case, the transformation is just a linear scalar $c$.
+    \item \textbf{Cramér-Rao Lower Bound (CRLB):} The theoretical minimum variance for an unbiased estimator, equal to $1/I(\theta)$, where $I(\theta)$ is the Fisher Information. An estimator is "asymptotically efficient" if its asymptotic variance matches the CRLB.
+\end{itemize}
 
-2. By the Central Limit Theorem, $\sqrt{n}(M - E|X|) \xrightarrow{d} N(0, Var(|X|))$.
-$Var(|X|) = E[X^2] - (E|X|)^2 = \sigma^2 - \frac{2}{\pi} \sigma^2 = \sigma^2 \frac{\pi-2}{\pi}$.
-Then $\sqrt{n}(\hat{\sigma} - \sigma) = \sqrt{n}(cM - cE|X|) \xrightarrow{d} N(0, c^2 Var(|X|))$.
-The asymptotic variance is $c^2 Var(|X|) = \frac{\pi}{2} \sigma^2 \frac{\pi-2}{\pi} = \frac{\pi-2}{2} \sigma^2$.
-So $\sqrt{n}(\hat{\sigma} - \sigma) \xrightarrow{d} N(0, \frac{\pi-2}{2} \sigma^2)$.
+\textbf{Intuition / Motivation:}
 
-3. An approximate $(1-\alpha)$ confidence interval is $\hat{\sigma} \pm z_{\alpha/2} \text{se}(\hat{\sigma})$, where $z_{\alpha/2}$ is the upper $\alpha/2$ quantile of $N(0,1)$ and $\text{se}(\hat{\sigma}) = \hat{\sigma} \sqrt{\frac{\pi-2}{2n}}$.
-CI: $\left[ \hat{\sigma} \left(1 - z_{\alpha/2} \sqrt{\frac{\pi-2}{2n}}\right), \hat{\sigma} \left(1 + z_{\alpha/2} \sqrt{\frac{\pi-2}{2n}}\right) \right]$.
+Usually, we estimate the standard deviation $\sigma$ of a normal distribution by calculating the sample variance (the average of the squared values). This exercise asks: what if we just take the average of the \textit{absolute} values instead? Is this simpler "mean absolute deviation" a good estimator? We find that we can easily scale it to be consistent (Part 1). By using the Central Limit Theorem, we find it is asymptotically normal (Part 2), which allows us to build confidence intervals (Part 3). However, when we compare its variance against the theoretical minimum limit set by Fisher Information, we find that we lose a bit of efficiency (about 14\% worse). Averaging squares is mathematically better than averaging absolute values for a normal distribution!
 
-4. The Fisher Information for $\sigma$ in a $N(0, \sigma^2)$ model is $I(\sigma) = 2n/\sigma^2$. The Cram\'er-Rao lower bound for the asymptotic variance of an unbiased estimator is $1/I(\sigma) = \sigma^2/2n$.
-Our estimator's asymptotic variance is $\frac{\pi-2}{2} \frac{\sigma^2}{n}$.
-Comparing the coefficients: $\frac{\pi-2}{2} \approx \frac{3.1416 - 2}{2} = 0.5708$, whereas the bound is $0.5$.
-Since $0.5708 > 0.5$, the estimator $\hat{\sigma} = cM$ is not asymptotically efficient. The MLE $\sqrt{\frac{1}{n} \sum X_i^2}$ achieves the bound.
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Find the scaling constant $c$ for consistency (Part 1).}
+
+We are given $X_i \sim N(0, \sigma^2)$. The estimator is based on the absolute values $|X_i|$.
+First, calculate the expected value $E|X_i|$.
+\[ E|X_i| = \int_{-\infty}^\infty |x| \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{x^2}{2\sigma^2}} dx = 2 \int_{0}^\infty x \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{x^2}{2\sigma^2}} dx \]
+Let $u = x^2 / (2\sigma^2)$, then $du = (x / \sigma^2) dx \implies x dx = \sigma^2 du$.
+\[ E|X_i| = 2 \int_{0}^\infty \frac{\sigma^2}{\sqrt{2\pi}\sigma} e^{-u} du = \sigma \sqrt{\frac{2}{\pi}} \int_{0}^\infty e^{-u} du = \sigma \sqrt{\frac{2}{\pi}} \]
+The sample mean is $M = \frac{1}{n} \sum_{i=1}^n |X_i|$.
+By the Weak Law of Large Numbers, the sample mean converges in probability to the true expected value:
+\[ M \xrightarrow{p} E|X_1| = \sigma \sqrt{\frac{2}{\pi}} \]
+We want our estimator $\hat{\sigma} = cM$ to converge to $\sigma$.
+\[ \hat{\sigma} = cM \xrightarrow{p} c \sigma \sqrt{\frac{2}{\pi}} \]
+For consistency, we need $c \sigma \sqrt{2/\pi} = \sigma$, which implies:
+\[ c = \sqrt{\frac{\pi}{2}} \]
+
+\textbf{Step 2: Determine the limiting distribution (Part 2).}
+
+By the Central Limit Theorem, the normalized sum of i.i.d. variables converges to a normal distribution:
+\[ \sqrt{n}(M - E|X_1|) \xrightarrow{d} N(0, \operatorname{Var}(|X_1|)) \]
+We need to calculate the variance of $|X_1|$.
+\[ \operatorname{Var}(|X_1|) = E[|X_1|^2] - (E|X_1|)^2 = E[X_1^2] - \left(\sigma \sqrt{\frac{2}{\pi}}\right)^2 \]
+Since $X_1 \sim N(0, \sigma^2)$, its second moment $E[X_1^2]$ is exactly its variance $\sigma^2$.
+\[ \operatorname{Var}(|X_1|) = \sigma^2 - \frac{2\sigma^2}{\pi} = \sigma^2 \left( \frac{\pi - 2}{\pi} \right) \]
+Our estimator is $\hat{\sigma} = cM$. Multiplying by a constant $c$ scales the standard deviation by $c$, and the variance by $c^2$.
+\[ \sqrt{n}(\hat{\sigma} - \sigma) = \sqrt{n}(cM - cE|X_1|) \xrightarrow{d} N(0, c^2 \operatorname{Var}(|X_1|)) \]
+Substitute $c^2 = \pi/2$:
+\[ c^2 \operatorname{Var}(|X_1|) = \frac{\pi}{2} \cdot \sigma^2 \left( \frac{\pi - 2}{\pi} \right) = \frac{\pi - 2}{2} \sigma^2 \]
+Thus, the limiting distribution is:
+\[ \sqrt{n}(\hat{\sigma} - \sigma) \xrightarrow{d} N\left(0, \frac{\pi - 2}{2} \sigma^2 \right) \]
+
+\textbf{Step 3: Construct a confidence interval (Part 3).}
+
+From the limiting distribution, the standard error of $\hat{\sigma}$ is approximately:
+\[ \text{SE}(\hat{\sigma}) \approx \frac{1}{\sqrt{n}} \sqrt{\frac{\pi - 2}{2}} \sigma \]
+In practice, since we don't know $\sigma$, we substitute our consistent estimator $\hat{\sigma}$ into the standard error formula (by Slutsky's Theorem, this preserves the asymptotic distribution).
+Let $z_{\alpha/2}$ be the $1 - \alpha/2$ quantile of the standard normal distribution $N(0,1)$.
+The approximate $(1-\alpha)$ confidence interval is:
+\[ \hat{\sigma} \pm z_{\alpha/2} \text{SE}(\hat{\sigma}) \implies \left[ \hat{\sigma} - z_{\alpha/2} \hat{\sigma} \sqrt{\frac{\pi - 2}{2n}}, \;\; \hat{\sigma} + z_{\alpha/2} \hat{\sigma} \sqrt{\frac{\pi - 2}{2n}} \right] \]
+Factoring out $\hat{\sigma}$:
+\[ \hat{\sigma} \left[ 1 - z_{\alpha/2} \sqrt{\frac{\pi - 2}{2n}}, \;\; 1 + z_{\alpha/2} \sqrt{\frac{\pi - 2}{2n}} \right] \]
+
+\textbf{Step 4: Check for asymptotic efficiency (Part 4).}
+
+An estimator is asymptotically efficient if its asymptotic variance equals the Cramér-Rao Lower Bound (CRLB).
+First, find the Fisher Information $I(\sigma)$ for a single observation $X \sim N(0, \sigma^2)$.
+The log-likelihood is $\ell(\sigma) = -\ln(\sqrt{2\pi}) - \ln\sigma - \frac{X^2}{2\sigma^2}$.
+The first derivative is $\ell'(\sigma) = -\frac{1}{\sigma} + \frac{X^2}{\sigma^3}$.
+The second derivative is $\ell''(\sigma) = \frac{1}{\sigma^2} - \frac{3X^2}{\sigma^4}$.
+Taking the expectation (since $E[X^2] = \sigma^2$):
+\[ I(\sigma) = -E[\ell''(\sigma)] = -\left( \frac{1}{\sigma^2} - \frac{3\sigma^2}{\sigma^4} \right) = \frac{2}{\sigma^2} \]
+The CRLB for the asymptotic variance of $\sqrt{n}(\hat{\sigma} - \sigma)$ is $1/I(\sigma) = \frac{\sigma^2}{2} = 0.5 \sigma^2$.
+Our estimator's asymptotic variance is:
+\[ \frac{\pi - 2}{2} \sigma^2 \approx \frac{3.14159 - 2}{2} \sigma^2 = 0.5708 \sigma^2 \]
+Since $0.5708 \sigma^2 > 0.5 \sigma^2$, the variance of our estimator strictly exceeds the Cramér-Rao Lower Bound.
+Therefore, $\hat{\sigma} = cM$ is \textbf{not asymptotically efficient}. (The standard sample standard deviation based on squared values is the efficient MLE).
 \end{solution}
 
 \begin{exercise}
@@ -294,27 +609,68 @@ E_{(r)} \stackrel{D}{=} \sum_{j=1}^r \frac{E_j}{n+1-j}, \qquad r = 1, \ldots, n.
 \end{exercise}
 
 \begin{solution}
-The likelihood function is:
-\[
-L(\phi, \theta) = \theta^{-n} \exp\left\{ - \frac{1}{\theta} \sum_{i=1}^n (Y_i - \phi) \right\} \mathbb{I}(Y_{(1)} \ge \phi)
-\]
-For any fixed $\theta$, $L$ is an increasing function of $\phi$ for $\phi \le Y_{(1)}$. Thus $\hat{\phi} = Y_{(1)}$.
-Substituting $\hat{\phi}$ into the log-likelihood:
-\[
-\ell(\theta) = -n \ln \theta - \frac{1}{\theta} \sum (Y_i - Y_{(1)})
-\]
-Differentiating with respect to $\theta$ and setting to 0:
-\[
--\frac{n}{\theta} + \frac{1}{\theta^2} \sum (Y_i - Y_{(1)}) = 0 \implies \hat{\theta} = \bar{Y} - Y_{(1)}
-\]
-Using the R\'enyi representation, let $Y_i = \phi + \theta E_i$. Then $Y_{(1)} = \phi + \theta E_{(1)}$.
-$E_{(1)} \stackrel{D}{=} \frac{E_1}{n}$, so $Y_{(1)} = \phi + \frac{\theta E_1}{n}$.
-This implies $n(Y_{(1)} - \phi) \xrightarrow{d} \text{Exp}(1/\theta)$, or $P(n(Y_{(1)} - \phi) > z) = e^{-z/\theta}$.
-For $\hat{\theta}$, note $\sum (Y_i - Y_{(1)}) = \theta \sum (E_i - E_{(1)}) = \theta \sum_{i=2}^n (n+1-i) (E_{(i)} - E_{(i-1)})$.
-By R\'enyi representation, these gaps are independent and distributed as $E_j / (n+1-j)$.
-So $\sum (Y_i - Y_{(1)}) \stackrel{D}{=} \theta \sum_{j=2}^n E_j$.
-This is a Gamma distribution $\Gamma(n-1, \theta)$.
-$\hat{\theta} = \frac{\theta}{n} \sum_{j=2}^n E_j \implies E[\hat{\theta}] = \frac{n-1}{n} \theta$.
-By CLT, $\sqrt{n}(\hat{\theta} - \theta) \xrightarrow{d} N(0, \theta^2)$.
-The MLEs $\hat{\phi}$ and $\hat{\theta}$ are asymptotically independent.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Shifted Exponential Distribution:} A standard exponential distribution translated to the right by $\phi$. Values below $\phi$ have zero probability.
+    \item \textbf{Maximum Likelihood Estimation (MLE) with boundaries:} When the parameter restricts the support (domain) of the distribution, the MLE often hits the boundary of the allowed region (e.g., the minimum order statistic).
+    \item \textbf{Rényi Representation of Order Statistics:} A powerful decomposition for standard exponential order statistics $E_{(r)}$. It states that the gaps between successive order statistics are independent and exponentially distributed, allowing us to represent any order statistic as a sum of independent exponentials.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine predicting the exact launch time of a product ($\phi$) and its decay rate ($\theta$) based on when people start dropping the product. Because nobody drops it before it launches, the absolute earliest drop time ($Y_{(1)}$) is our best, most aggressive guess for the launch time $\phi$. For the decay rate $\theta$, the standard MLE is the average wait time relative to the launch time. The Rényi representation acts as a magical "coordinate transform" that untangles the heavily correlated ordered wait times into perfectly independent, memoryless building blocks, making it dramatically easier to calculate exact distributions and variances.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Construct the Likelihood Function and find $\hat{\phi}$.}
+
+The probability density function is $f(y; \phi, \theta) = \frac{1}{\theta} \exp\left(-\frac{y-\phi}{\theta}\right)$ for $y > \phi$.
+The joint likelihood for an i.i.d. sample of size $n$ is the product of individual densities. Crucially, we must include the indicator function to enforce the domain boundary ($Y_i \geq \phi$ for all $i$):
+\[ L(\phi, \theta) = \prod_{i=1}^n \frac{1}{\theta} e^{-(Y_i - \phi)/\theta} \mathbb{I}(Y_i \ge \phi) \]
+\[ L(\phi, \theta) = \theta^{-n} \exp\left( -\frac{1}{\theta} \sum_{i=1}^n (Y_i - \phi) \right) \mathbb{I}(Y_{(1)} \ge \phi) \]
+Where $Y_{(1)} = \min(Y_1, \dots, Y_n)$ is the first order statistic.
+For any fixed $\theta > 0$, the exponential term $\exp\left(\frac{n\phi}{\theta}\right)$ is strictly increasing with respect to $\phi$.
+Therefore, to maximize $L$, we want to push $\phi$ as large as possible. However, the indicator function violently forces $L = 0$ if $\phi$ crosses $Y_{(1)}$. Thus, the maximum is achieved exactly at the boundary:
+\[ \hat{\phi} = Y_{(1)} \]
+
+\textbf{Step 2: Find the MLE for $\theta$.}
+
+Substitute $\hat{\phi} = Y_{(1)}$ into the log-likelihood $\ell(\theta) = \ln L(Y_{(1)}, \theta)$:
+\[ \ell(\theta) = -n \ln \theta - \frac{1}{\theta} \sum_{i=1}^n (Y_i - Y_{(1)}) \]
+Take the derivative with respect to $\theta$ and set it to 0 to find the maximum:
+\[ \frac{d\ell}{d\theta} = -\frac{n}{\theta} + \frac{1}{\theta^2} \sum_{i=1}^n (Y_i - Y_{(1)}) = 0 \]
+Multiply by $\theta^2$ and solve for $\hat{\theta}$:
+\[ n \hat{\theta} = \sum_{i=1}^n (Y_i - Y_{(1)}) \implies \hat{\theta} = \bar{Y} - Y_{(1)} \]
+
+\textbf{Step 3: Determine the limiting distribution of $\hat{\phi}$.}
+
+We use the Rényi representation. Any sample $Y_i$ from a shifted exponential can be written as $Y_i = \phi + \theta E_i$, where $E_i \sim \text{Exp}(1)$ is a standard exponential.
+Because shifting and scaling preserve ordering, the minimums map directly:
+\[ \hat{\phi} = Y_{(1)} = \phi + \theta E_{(1)} \]
+By the Rényi representation formula for $r=1$:
+\[ E_{(1)} \stackrel{D}{=} \frac{E_1}{n} \]
+Where $E_1 \sim \text{Exp}(1)$. Therefore:
+\[ \hat{\phi} - \phi = \theta \frac{E_1}{n} \implies \frac{n}{\theta} (\hat{\phi} - \phi) \stackrel{D}{=} E_1 \]
+The exact distribution is scaled exponential. Because it doesn't scale with $\sqrt{n}$, we write the limiting distribution explicitly as:
+\[ n(\hat{\phi} - \phi) \xrightarrow{d} \text{Exp}(1/\theta) \]
+
+\textbf{Step 4: Determine the limiting distribution of $\hat{\theta}$.}
+
+We express $\hat{\theta}$ using the $E_i$ variables:
+\[ \hat{\theta} = \frac{1}{n} \sum_{i=1}^n (Y_i - Y_{(1)}) = \frac{\theta}{n} \sum_{i=1}^n (E_i - E_{(1)}) \]
+This sum is taken over the unsorted variables $E_i$. Because summation is commutative, the sum of unsorted variables is identical to the sum of sorted variables $E_{(i)}$:
+\[ \hat{\theta} = \frac{\theta}{n} \sum_{i=1}^n (E_{(i)} - E_{(1)}) = \frac{\theta}{n} \sum_{i=2}^n (E_{(i)} - E_{(1)}) \]
+We can express the difference from the minimum as a telescoping sum of consecutive gaps: $E_{(i)} - E_{(1)} = \sum_{j=2}^i (E_{(j)} - E_{(j-1)})$.
+Swapping the order of summation (counting how many times each gap appears):
+\[ \sum_{i=2}^n \sum_{j=2}^i (E_{(j)} - E_{(j-1)}) = \sum_{j=2}^n (n - j + 1) (E_{(j)} - E_{(j-1)}) \]
+The Rényi representation tells us the distribution of these consecutive gaps!
+\[ E_{(j)} - E_{(j-1)} \stackrel{D}{=} \frac{E_j}{n - j + 1} \]
+Where $E_j$ are perfectly independent standard exponentials. Substitute this back:
+\[ \hat{\theta} \stackrel{D}{=} \frac{\theta}{n} \sum_{j=2}^n (n - j + 1) \left( \frac{E_j}{n - j + 1} \right) = \frac{\theta}{n} \sum_{j=2}^n E_j \]
+This is a beautiful result. The sum $\sum_{j=2}^n E_j$ is the sum of $(n-1)$ independent standard exponentials, which is a Gamma distribution $\Gamma(n-1, 1)$.
+The expected value of this Gamma is $n-1$, and its variance is $n-1$.
+Thus, the expected value of $\hat{\theta}$ is $\theta \frac{n-1}{n}$ (it's slightly biased, but asymptotically unbiased).
+By the standard Central Limit Theorem applied to the sum of the $n-1$ independent $E_j$ variables:
+\[ \sqrt{n}(\hat{\theta} - \theta) \xrightarrow{d} N(0, \theta^2) \]
+(Note that $\hat{\phi}$ depends only on $E_1$, and $\hat{\theta}$ depends only on $E_2, \dots, E_n$. Since all $E_k$ are mutually independent in the Rényi representation, the estimators $\hat{\phi}$ and $\hat{\theta}$ are completely independent for any sample size $n$).
 \end{solution}

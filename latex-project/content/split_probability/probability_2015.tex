@@ -13,38 +13,57 @@ Please solve the following 5 problems.
 \end{exercise}
 
 \begin{solution}
-(a) We use the identity $\max\{a, b\} = \frac{a+b+|a-b|}{2}$. Thus,
-\[
-\mathbb{E}[\max\{X^2, Y^2\}] = \frac{\mathbb{E}[X^2] + \mathbb{E}[Y^2] + \mathbb{E}[|X^2 - Y^2|]}{2} = 1 + \frac{1}{2}\mathbb{E}[|X^2 - Y^2|].
-\]
-Since $X^2 - Y^2 = (X-Y)(X+Y)$, by the Cauchy-Schwarz inequality, we have
-\[
-\mathbb{E}[|X^2 - Y^2|] \leq \sqrt{\mathbb{E}[(X-Y)^2] \mathbb{E}[(X+Y)^2]}.
-\]
-Given that $\mathbb{E}[X] = \mathbb{E}[Y] = 0$, $\text{Var}(X) = \text{Var}(Y) = 1$, and $\text{Corr}(X, Y) = \rho$, we find
-\[
-\mathbb{E}[(X-Y)^2] = \text{Var}(X-Y) = \text{Var}(X) + \text{Var}(Y) - 2\text{Cov}(X, Y) = 1 + 1 - 2\rho = 2(1-\rho),
-\]
-\[
-\mathbb{E}[(X+Y)^2] = \text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\text{Cov}(X, Y) = 1 + 1 + 2\rho = 2(1+\rho).
-\]
-Therefore,
-\[
-\mathbb{E}[|X^2 - Y^2|] \leq \sqrt{2(1-\rho) \cdot 2(1+\rho)} = 2\sqrt{1-\rho^2}.
-\]
-Plugging this back into the expression for the expectation:
-\[
-\mathbb{E}[\max\{X^2, Y^2\}] \leq 1 + \frac{1}{2} \cdot 2\sqrt{1-\rho^2} = 1 + \sqrt{1-\rho^2}.
-\]
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Maximum Function Identity:} For any two real numbers $a$ and $b$, $\max\{a, b\} = \frac{a+b+|a-b|}{2}$. This linearizes the max operator, moving the complexity into an absolute value.
+    \item \textbf{Cauchy-Schwarz Inequality for Expectations:} $(\mathbb{E}[|UV|])^2 \leq \mathbb{E}[U^2]\mathbb{E}[V^2]$. This is widely used to bound the expectation of a product.
+    \item \textbf{Bivariate Normal Conditional Expectation:} If $(X,Y)$ are jointly normal, the conditional expectation $\mathbb{E}[X|Y]$ is exactly the linear regression of $X$ on $Y$: $\mathbb{E}[X|Y] = \mu_X + \rho \frac{\sigma_X}{\sigma_Y}(Y - \mu_Y)$.
+\end{itemize}
 
-(b) For a bivariate normal distribution $(X, Y) \sim N\left(\begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} \sigma^2 & \rho\sigma\tau \\ \rho\sigma\tau & \tau^2 \end{pmatrix}\right)$, the conditional distribution of $X$ given $Y=y$ is normal with mean
-\[
-\mathbb{E}[X|Y=y] = \mu_X + \frac{\text{Cov}(X, Y)}{\text{Var}(Y)}(y - \mu_Y).
-\]
-Substituting the given parameters:
-\[
-\mathbb{E}[X|Y] = 0 + \frac{\rho\sigma\tau}{\tau^2}(Y - 0) = \rho \frac{\sigma}{\tau} Y.
-\]
+\textbf{Intuition / Motivation:}
+
+Part (a) asks us to bound the expected maximum of two squared variables. Bounding maximums directly is notoriously difficult because "max" is a non-linear kink. The mathematical trick is to rewrite the max using an absolute value. Then, we can crack open the absolute value of a difference of squares using the difference-of-squares formula, and smoothly bound the pieces using the Cauchy-Schwarz inequality.
+Part (b) is a standard property of the bivariate normal distribution. When two variables are jointly normal, knowing one gives you linearly proportional information about the other. The formula perfectly matches a simple 1D linear regression line.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Rewrite the maximum using the identity (Part a).}
+
+We want to bound $\mathbb{E}[\max\{X^2, Y^2\}]$. We use the algebraic identity $\max\{a, b\} = \frac{a+b+|a-b|}{2}$:
+\[ \max\{X^2, Y^2\} = \frac{X^2 + Y^2 + |X^2 - Y^2|}{2} \]
+Taking the expectation of both sides (by linearity of expectation):
+\[ \mathbb{E}[\max\{X^2, Y^2\}] = \frac{1}{2}\left( \mathbb{E}[X^2] + \mathbb{E}[Y^2] + \mathbb{E}[|X^2 - Y^2|] \right) \]
+We are given that $X$ and $Y$ have mean 0 and variance 1. Therefore, $\mathbb{E}[X^2] = \text{Var}(X) + (\mathbb{E}[X])^2 = 1 + 0 = 1$. Similarly, $\mathbb{E}[Y^2] = 1$.
+Substitute these in:
+\[ \mathbb{E}[\max\{X^2, Y^2\}] = \frac{1 + 1 + \mathbb{E}[|X^2 - Y^2|]}{2} = 1 + \frac{1}{2}\mathbb{E}[|X^2 - Y^2|] \]
+
+\textbf{Step 2: Bound the absolute difference using Cauchy-Schwarz.}
+
+We factor the difference of squares: $|X^2 - Y^2| = |X-Y| \cdot |X+Y|$.
+Apply the Cauchy-Schwarz inequality to the product of these two random variables:
+\[ \mathbb{E}[|X-Y| \cdot |X+Y|] \leq \sqrt{\mathbb{E}[(X-Y)^2] \cdot \mathbb{E}[(X+Y)^2]} \]
+
+\textbf{Step 3: Calculate the variances of the sum and difference.}
+
+Since $\mathbb{E}[X] = \mathbb{E}[Y] = 0$, the expectations of the squared sums are simply their variances. We are given the correlation is $\rho$, so $\text{Cov}(X,Y) = \rho \cdot \sigma_X \cdot \sigma_Y = \rho$.
+\[ \mathbb{E}[(X-Y)^2] = \text{Var}(X-Y) = \text{Var}(X) + \text{Var}(Y) - 2\text{Cov}(X, Y) = 1 + 1 - 2\rho = 2(1-\rho) \]
+\[ \mathbb{E}[(X+Y)^2] = \text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\text{Cov}(X, Y) = 1 + 1 + 2\rho = 2(1+\rho) \]
+
+\textbf{Step 4: Combine the bounds.}
+
+Substitute these variances back into the Cauchy-Schwarz bound:
+\[ \mathbb{E}[|X^2 - Y^2|] \leq \sqrt{ 2(1-\rho) \cdot 2(1+\rho) } = \sqrt{4(1-\rho^2)} = 2\sqrt{1-\rho^2} \]
+Finally, plug this upper bound back into our max equation from Step 1:
+\[ \mathbb{E}[\max\{X^2, Y^2\}] \leq 1 + \frac{1}{2} \left( 2\sqrt{1-\rho^2} \right) = 1 + \sqrt{1-\rho^2} \]
+
+\textbf{Step 5: Conditional expectation of Bivariate Normal (Part b).}
+
+We are given a bivariate normal vector $(X,Y)^T$ with means $\mu_X = \mu_Y = 0$, variances $\sigma_X^2 = \sigma^2$, $\sigma_Y^2 = \tau^2$, and correlation $\rho$.
+The conditional distribution of $X$ given $Y=y$ for a bivariate normal is always a univariate normal. The conditional mean is given by the standard formula:
+\[ \mathbb{E}[X|Y=y] = \mu_X + \frac{\text{Cov}(X, Y)}{\text{Var}(Y)}(y - \mu_Y) \]
+We know $\text{Cov}(X, Y) = \rho \sigma \tau$.
+Substitute all known parameters:
+\[ \mathbb{E}[X|Y] = 0 + \frac{\rho \sigma \tau}{\tau^2}(Y - 0) = \rho \frac{\sigma}{\tau} Y \]
 \end{solution}
 
 \begin{exercise}
@@ -52,26 +71,63 @@ We flip a fair coin until heads turns out twice consecutively. What is the expec
 \end{exercise}
 
 \begin{solution}
-Let $E$ be the expected number of additional flips needed to see two consecutive heads, starting from the beginning.
-Let $E_0$ be the expected number of additional flips when we need two more heads.
-Let $E_1$ be the expected number of additional flips when we have just flipped one head and need one more.
-In the initial state (state 0), we flip the coin:
-- With probability $1/2$, we get tails (T) and stay in state 0.
-- With probability $1/2$, we get heads (H) and move to state 1.
-Thus, $E_0 = 1 + \frac{1}{2}E_0 + \frac{1}{2}E_1 \implies \frac{1}{2}E_0 = 1 + \frac{1}{2}E_1 \implies E_0 = 2 + E_1$.
-In state 1:
-- With probability $1/2$, we get tails (T) and go back to state 0.
-- With probability $1/2$, we get heads (H) and are done (0 more flips needed).
-Thus, $E_1 = 1 + \frac{1}{2}E_0 + \frac{1}{2}(0) = 1 + \frac{1}{2}E_0$.
-Substituting $E_1$ into the equation for $E_0$:
-\[
-E_0 = 2 + (1 + \frac{1}{2}E_0) = 3 + \frac{1}{2}E_0.
-\]
-Solving for $E_0$:
-\[
-\frac{1}{2}E_0 = 3 \implies E_0 = 6.
-\]
-The expected number of flips is 6.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Markov Chains / State Transitions:} Modeling a sequence of events as moving between distinct "states." The expected time to reach a final goal can be calculated by setting up a system of linear equations representing the expected steps from each intermediate state.
+    \item \textbf{Law of Total Expectation:} The expected value of a random variable can be found by conditioning on the first step taken, and weighting the subsequent expectations by the probability of taking that step.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+How long on average do you have to flip a coin until you see "Heads-Heads"? This is a classic "waiting time" problem. You might intuitively guess it's $2 \times 2 = 4$ flips because the probability of two heads is $1/4$. But this logic is flawed! If you flip "Heads-Tails," your progress is completely reset, punishing you for partial success. Setting up state variables—"0 heads in a row" vs "1 head in a row"—allows us to perfectly capture this reset mechanism and algebraically solve for the exact waiting time.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the states of progress.}
+
+Let $E$ be the expected number of total flips to reach two consecutive heads from the very beginning. We define two intermediate "states":
+\begin{itemize}
+    \item \textbf{State 0:} We currently have 0 consecutive heads (this is the starting state, or the state immediately following a Tails). Let $E_0$ be the expected number of \textit{additional} flips needed from this state. Note that $E = E_0$.
+    \item \textbf{State 1:} We currently have 1 consecutive head. Let $E_1$ be the expected number of \textit{additional} flips needed from this state.
+\end{itemize}
+The goal state is when we reach 2 consecutive heads, requiring 0 additional flips.
+
+\textbf{Step 2: Set up the equation for State 0.}
+
+In State 0, we flip the coin once (this costs 1 flip). There are two equally likely outcomes:
+\begin{itemize}
+    \item We flip Tails (probability $1/2$): We stay in State 0. We still need $E_0$ more flips.
+    \item We flip Heads (probability $1/2$): We move to State 1. We now need $E_1$ more flips.
+\end{itemize}
+Using the law of total expectation, we sum the cost of the first flip plus the expected future cost of each branch:
+\[ E_0 = 1 + \frac{1}{2} E_0 + \frac{1}{2} E_1 \]
+Subtract $\frac{1}{2} E_0$ from both sides:
+\[ \frac{1}{2} E_0 = 1 + \frac{1}{2} E_1 \implies E_0 = 2 + E_1 \]
+
+\textbf{Step 3: Set up the equation for State 1.}
+
+In State 1, we flip the coin once (costing 1 flip).
+\begin{itemize}
+    \item We flip Tails (probability $1/2$): We lose our streak and crash back to State 0. We need $E_0$ more flips.
+    \item We flip Heads (probability $1/2$): We achieve 2 heads in a row! The game is over, we need 0 more flips.
+\end{itemize}
+The equation is:
+\[ E_1 = 1 + \frac{1}{2} E_0 + \frac{1}{2} (0) \]
+\[ E_1 = 1 + \frac{1}{2} E_0 \]
+
+\textbf{Step 4: Solve the system of linear equations.}
+
+We have two equations:
+1) $E_0 = 2 + E_1$
+2) $E_1 = 1 + \frac{1}{2} E_0$
+Substitute the expression for $E_1$ into the first equation:
+\[ E_0 = 2 + \left( 1 + \frac{1}{2} E_0 \right) \]
+\[ E_0 = 3 + \frac{1}{2} E_0 \]
+Subtract $\frac{1}{2} E_0$ from both sides:
+\[ \frac{1}{2} E_0 = 3 \]
+Multiply by 2:
+\[ E_0 = 6 \]
+Thus, starting from the beginning (State 0), the expected number of flips required to see two consecutive heads is exactly 6.
 \end{solution}
 
 \begin{exercise}
@@ -86,14 +142,51 @@ Let $(X_n, n \geq 1)$ be a sequence of independent Gaussian variables, with resp
 \end{exercise}
 
 \begin{solution}
-(a) Let $S_N = \sum_{n=1}^N X_n^2$. Since $X_n^2 \geq 0$, $S_N$ is non-decreasing. $L^1$ convergence implies that $\mathbb{E}[\sum_n X_n^2] = \sum_n \mathbb{E}[X_n^2] = \sum_n (\mu_n^2 + \sigma_n^2) < \infty$.
-Let $S = \sum_n X_n^2$. For independent Gaussian $X_n$, $X_n^2$ has a non-central chi-squared distribution. The moment generating function of $X_n^2$ is $\mathbb{E}[e^{t X_n^2}] = \frac{1}{\sqrt{1-2t\sigma_n^2}} \exp\left(\frac{t\mu_n^2}{1-2t\sigma_n^2}\right)$ for $t < \frac{1}{2\sigma_n^2}$.
-Since $\sigma_n^2 \to 0$, for any $t > 0$, there exists $N_t$ such that $2t\sigma_n^2 < 1$ for all $n > N_t$. The MGF of $S$ is $\prod_n \mathbb{E}[e^{t X_n^2}]$. For small $t$, the logarithm of the MGF is $\sum_n \left[ -\frac{1}{2} \ln(1-2t\sigma_n^2) + \frac{t\mu_n^2}{1-2t\sigma_n^2} \right]$.
-Using $\ln(1-x) \approx -x$, the terms are approximately $t\sigma_n^2 + t\mu_n^2 = t(\sigma_n^2 + \mu_n^2)$. Since $\sum (\sigma_n^2 + \mu_n^2) < \infty$, the sum of logarithms converges for small $t > 0$. Thus, $S$ has a finite MGF in a neighborhood of 0, which implies all moments $\mathbb{E}[S^p]$ are finite for $p \in [1, \infty)$. Monotone convergence then ensures $L^p$ convergence.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Moment Generating Function (MGF):} The MGF $M_X(t) = \mathbb{E}[e^{tX}]$ characterizes the distribution and moments of a random variable. If the MGF is finite in a neighborhood of $t=0$, then all moments $\mathbb{E}[|X|^p]$ exist and are finite.
+    \item \textbf{Kolmogorov's Three-Series Theorem:} A fundamental theorem characterizing the almost sure convergence of infinite series of independent random variables.
+    \item \textbf{Convergence of Series of Non-Negative Variables:} For independent non-negative random variables, the series $\sum Y_n$ converges almost surely if and only if the sum of their truncated expectations converges.
+\end{itemize}
 
-(b) If $\mu_n = 0$, then $X_n \sim N(0, \sigma_n^2)$, so $X_n^2 = \sigma_n^2 Z_n^2$ where $Z_n^2 \sim \chi_1^2$.
-The sum $S = \sum_n X_n^2$ consists of independent non-negative random variables. By Kolmogorov's Three-Series Theorem (or a simpler version for non-negative variables), $\sum Y_n$ diverges almost surely if $\sum \mathbb{E}[Y_n \wedge c] = \infty$ for some $c > 0$.
-Here $\mathbb{E}[X_n^2 \wedge 1] = \sigma_n^2 \mathbb{E}[Z_n^2 \wedge \frac{1}{\sigma_n^2}]$. As $n \to \infty$, if $\sigma_n^2 \to 0$, $\mathbb{E}[Z_n^2 \wedge \frac{1}{\sigma_n^2}] \to \mathbb{E}[Z_n^2] = 1$. Thus $\mathbb{E}[X_n^2 \wedge 1] \sim \sigma_n^2$. Since $\sum \sigma_n^2 = \infty$, the sum of expectations of truncated variables diverges, so $\sum X_n^2 = \infty$ almost surely. If $\sigma_n^2 \not\to 0$, divergence is even more trivial.
+\textbf{Intuition / Motivation:}
+
+Part (a) is a classic trick for sums of independent Gaussians (or their squares). Because the Gaussian tails decay exponentially fast ($e^{-x^2}$), if the series doesn't blow up "on average" ($L^1$ convergence), it has such incredibly light tails that it won't blow up under any higher polynomial power ($L^p$). The MGF captures this exponential decay perfectly. Part (b) looks at what happens when the variances don't vanish fast enough. If the total variance sum is infinite, the sum of the squared random variables will inevitably "escape" to infinity, guaranteeing that the series diverges almost surely.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Relate $L^1$ convergence to the parameters (Part a).}
+
+We are given independent Gaussians $X_n \sim N(\mu_n, \sigma_n^2)$.
+The sequence $S_N = \sum_{n=1}^N X_n^2$ is a sum of non-negative random variables, so it is monotonically non-decreasing.
+Convergence in $L^1$ means that the expectation of the infinite sum is finite. Since the terms are non-negative, by the Monotone Convergence Theorem, we can swap the expectation and the sum:
+\[ \mathbb{E}\left[ \sum_{n=1}^\infty X_n^2 \right] = \sum_{n=1}^\infty \mathbb{E}[X_n^2] = \sum_{n=1}^\infty (\mu_n^2 + \sigma_n^2) < \infty \]
+This implies both $\sum \mu_n^2 < \infty$ and $\sum \sigma_n^2 < \infty$. In particular, $\sigma_n^2 \to 0$ as $n \to \infty$.
+
+\textbf{Step 2: Use the Moment Generating Function to prove $L^p$ convergence.}
+
+To prove $L^p$ convergence for all $p$, it is sufficient to show that the limiting random variable $S = \sum X_n^2$ has a finite Moment Generating Function in some neighborhood $t \in [0, \epsilon)$. If the MGF is finite, all polynomial moments $E[S^p]$ are finite.
+The MGF of a non-central chi-squared variable $X_n^2$ is:
+\[ \mathbb{E}[e^{t X_n^2}] = \frac{1}{\sqrt{1-2t\sigma_n^2}} \exp\left(\frac{t\mu_n^2}{1-2t\sigma_n^2}\right) \quad \text{for } t < \frac{1}{2\sigma_n^2} \]
+Because the $X_n$ are independent, the MGF of the sum $S$ is the product of the individual MGFs. Taking the logarithm gives the Cumulant Generating Function:
+\[ \ln \mathbb{E}[e^{tS}] = \sum_{n=1}^\infty \left[ -\frac{1}{2} \ln(1-2t\sigma_n^2) + \frac{t\mu_n^2}{1-2t\sigma_n^2} \right] \]
+Since $\sigma_n^2 \to 0$, there exists a small enough $t > 0$ such that $1-2t\sigma_n^2$ is bounded safely away from zero (e.g., $\ge 1/2$) for all $n$.
+For small $x$, the Taylor expansion gives $-\frac{1}{2} \ln(1-x) \approx \frac{1}{2}x$. Thus, the terms in the sum are bounded by a constant times $(t\sigma_n^2 + t\mu_n^2)$.
+Since we know $\sum (\sigma_n^2 + \mu_n^2) < \infty$, the infinite sum of logarithms strictly converges. Therefore, the MGF of $S$ is finite for small $t > 0$, implying $\mathbb{E}[S^p] < \infty$ for all $p \in [1, \infty)$. The monotone sequence $S_N$ bounded in $L^p$ thus converges in $L^p$.
+
+\textbf{Step 3: Prove almost sure divergence (Part b).}
+
+We assume $\mu_n = 0$, so $X_n \sim N(0, \sigma_n^2)$. This means $X_n^2 = \sigma_n^2 Z_n^2$, where $Z_n^2$ are independent standard $\chi_1^2$ random variables.
+We want to show that if $\sum \sigma_n^2 = \infty$, the sum $S = \sum X_n^2 = \infty$ almost surely.
+Since $X_n^2$ are independent and non-negative, the sum either converges almost surely or diverges to infinity almost surely. We use a truncation argument (the first series in Kolmogorov's Three-Series Theorem). The series converges a.s. only if the sum of expectations of truncated variables converges.
+Let's truncate $X_n^2$ at $c = 1$. The expectation of the truncated variable is $\mathbb{E}[X_n^2 \wedge 1] = \sigma_n^2 \mathbb{E}\left[ Z_n^2 \wedge \frac{1}{\sigma_n^2} \right]$.
+If $\sigma_n^2 \to 0$, then $1/\sigma_n^2 \to \infty$. By the Dominated Convergence Theorem, the expected value of the truncated standard $\chi_1^2$ converges to its full expected value:
+\[ \mathbb{E}\left[ Z_n^2 \wedge \frac{1}{\sigma_n^2} \right] \to \mathbb{E}[Z_n^2] = 1 \]
+Thus, for large $n$, the term behaves asymptotically like:
+\[ \mathbb{E}[X_n^2 \wedge 1] \sim \sigma_n^2 \]
+Since we are given that $\sum \sigma_n^2 = \infty$, the sum of the truncated expectations diverges: $\sum \mathbb{E}[X_n^2 \wedge 1] = \infty$.
+(If $\sigma_n^2$ does not converge to 0, the terms don't even go to zero, so divergence is guaranteed).
+Because this necessary condition for convergence fails, the sum must diverge to infinity almost surely: $\mathbb{P}(\sum X_n^2 = \infty) = 1$.
 \end{solution}
 
 \begin{exercise}
@@ -107,16 +200,57 @@ Let $X_1, \ldots, X_n$ be a random sample of size $n$ from the exponential distr
 \end{exercise}
 
 \begin{solution}
-(a) The distribution of the minimum $Y_1$ of $n$ i.i.d. $\text{Exp}(\theta)$ variables is $\text{Exp}(\theta/n)$. The expectation is $\mathbb{E}[Y_1] = \theta/n$.
-Therefore, $\mathbb{E}[nY_1] = n \mathbb{E}[Y_1] = n(\theta/n) = \theta$. The estimator is unbiased.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Order Statistics (Minimum):} For $n$ i.i.d. random variables with CDF $F(x)$, the CDF of the minimum $Y_1$ is $1 - [1 - F(y)]^n$. For the exponential distribution $\text{Exp}(\theta)$, the minimum of $n$ variables is exactly distributed as $\text{Exp}(\theta/n)$.
+    \item \textbf{Consistency:} An estimator $\hat{\theta}_n$ is consistent if it converges in probability to the true parameter $\theta$ as $n \to \infty$.
+    \item \textbf{Cramér-Rao Lower Bound (CRLB) and Efficiency:} The CRLB is the theoretical minimum variance of any unbiased estimator: $\operatorname{Var}(\hat{\theta}) \geq 1/I_n(\theta)$. An estimator is efficient if its variance exactly equals this bound.
+\end{itemize}
 
-(b) Disprove. For a consistent estimator $\hat{\theta}_n$, we require $\hat{\theta}_n \xrightarrow{P} \theta$ as $n \to \infty$.
-However, the distribution of $nY_1$ is $\text{Exp}(\theta)$ for all $n$. It does not depend on $n$ and does not degenerate to the constant $\theta$. Thus, $nY_1$ does not converge in probability to $\theta$.
+\textbf{Intuition / Motivation:}
 
-(c) Disprove. An efficient estimator achieves the Cram\'er-Rao Lower Bound (CRLB).
-The Fisher information for a sample of size $n$ from $\text{Exp}(\theta)$ is $I_n(\theta) = n/\theta^2$. The CRLB is $1/I_n(\theta) = \theta^2/n$.
-The variance of our estimator is $\text{Var}(nY_1) = n^2 \text{Var}(Y_1) = n^2 (\theta/n)^2 = \theta^2$.
-For $n > 1$, $\theta^2 > \theta^2/n$, so the estimator is not efficient.
+Suppose you are waiting for a bus, and there are $n$ independent bus lines you can take. If the wait time for one line is exponential, the time until the \textit{first} bus arrives is also exponential, but $n$ times faster! This exercise examines an estimator built purely from this first arrival time: if the first bus comes $n$ times faster, maybe we can guess the average wait time of a single bus by just multiplying the first arrival time by $n$. We will find that while this guess is correct "on average" (unbiased), it is a terrible estimator overall: it never gets more precise even if you have a million bus lines (inconsistent), and it wastes a massive amount of information (inefficient).
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the estimator is unbiased (Part a).}
+
+We are given $X_i \sim \text{Exp}(\theta)$, where the density is $f(x) = \frac{1}{\theta} e^{-x/\theta}$. (Note: Here $\theta$ is the mean parameter, so $\mathbb{E}[X_i] = \theta$).
+Let $Y_1 = \min(X_1, \dots, X_n)$. The tail probability of $Y_1$ is:
+\[ \mathbb{P}(Y_1 > y) = \mathbb{P}(X_1 > y, \dots, X_n > y) = \left[ \mathbb{P}(X_1 > y) \right]^n = \left( e^{-y/\theta} \right)^n = e^{-ny/\theta} \]
+This is the tail probability of an exponential distribution with mean $\theta/n$. Thus, $Y_1 \sim \text{Exp}(\theta/n)$.
+The expected value of the minimum is $\mathbb{E}[Y_1] = \theta/n$.
+Our estimator is $\hat{\theta} = n Y_1$. We calculate its expected value:
+\[ \mathbb{E}[\hat{\theta}] = \mathbb{E}[n Y_1] = n \mathbb{E}[Y_1] = n \left( \frac{\theta}{n} \right) = \theta \]
+Since the expected value of the estimator equals the true parameter, the estimator is \textbf{unbiased}.
+
+\textbf{Step 2: Disprove consistency (Part b).}
+
+For an estimator to be consistent, it must converge in probability to the true parameter $\theta$ as the sample size $n \to \infty$. This implies that the distribution of the estimator must increasingly concentrate around $\theta$, eventually becoming a single spike (a degenerate distribution) at $\theta$.
+Let's analyze the distribution of our estimator $\hat{\theta} = n Y_1$.
+We know $Y_1 \sim \text{Exp}(\theta/n)$. If we scale an exponential variable by a constant $n$, its mean scales by $n$.
+Therefore, $\hat{\theta} = n Y_1$ is distributed exactly as $\text{Exp}(\theta)$.
+Crucially, this distribution does not depend on the sample size $n$ at all! Even as $n \to \infty$, the estimator remains an exponential distribution spread out over $[0, \infty)$ with variance $\theta^2$. It never collapses to a single point.
+Because the distribution does not degenerate to the constant $\theta$, the estimator is \textbf{not consistent}.
+
+\textbf{Step 3: Disprove efficiency (Part c).}
+
+An unbiased estimator is efficient if its variance achieves the Cramér-Rao Lower Bound (CRLB).
+First, find the Fisher Information for a single observation $X \sim \text{Exp}(\theta)$.
+The log-likelihood is $\ell(\theta) = -\ln \theta - \frac{X}{\theta}$.
+The first derivative is $\ell'(\theta) = -\frac{1}{\theta} + \frac{X}{\theta^2}$.
+The second derivative is $\ell''(\theta) = \frac{1}{\theta^2} - \frac{2X}{\theta^3}$.
+Taking the negative expectation (since $\mathbb{E}[X] = \theta$):
+\[ I_1(\theta) = -\mathbb{E}\left[ \frac{1}{\theta^2} - \frac{2X}{\theta^3} \right] = -\left( \frac{1}{\theta^2} - \frac{2\theta}{\theta^3} \right) = -\left( -\frac{1}{\theta^2} \right) = \frac{1}{\theta^2} \]
+For a sample of size $n$, the Fisher Information is $I_n(\theta) = n I_1(\theta) = n/\theta^2$.
+The Cramér-Rao Lower Bound is:
+\[ \text{CRLB} = \frac{1}{I_n(\theta)} = \frac{\theta^2}{n} \]
+Now, calculate the variance of our estimator $\hat{\theta} = n Y_1$:
+\[ \operatorname{Var}(\hat{\theta}) = \operatorname{Var}(n Y_1) = n^2 \operatorname{Var}(Y_1) \]
+Since $Y_1 \sim \text{Exp}(\theta/n)$, its variance is $(\theta/n)^2 = \theta^2/n^2$.
+\[ \operatorname{Var}(\hat{\theta}) = n^2 \left( \frac{\theta^2}{n^2} \right) = \theta^2 \]
+Comparing the variance to the bound: $\theta^2 > \theta^2/n$ for all $n > 1$.
+Because its variance strictly exceeds the minimum possible variance, the estimator is \textbf{not efficient}.
 \end{solution}
 
 \begin{exercise}
@@ -128,20 +262,62 @@ Let the independent normal random variables $Y_1, \dots, Y_n$ have, respectively
 \end{exercise}
 
 \begin{solution}
-(a) Let $Z_i = Y_i/x_i$. Then $Z_i \sim N(\mu/x_i, \gamma^2)$. This is a linear model $Z_i = \mu w_i + \epsilon_i$ with $w_i = 1/x_i$ and $\epsilon_i \sim N(0, \gamma^2)$.
-The least squares estimator for $\mu$ is $\hat{\mu} = \frac{\sum Z_i w_i}{\sum w_i^2} = \frac{\sum Y_i/x_i^2}{\sum 1/x_i^2}$.
-The residual sum of squares is $RSS = \sum (Z_i - \hat{\mu} w_i)^2 = \sum \frac{(Y_i - \hat{\mu})^2}{x_i^2}$.
-It is a standard result that $Q = \frac{RSS}{\gamma^2} \sim \chi_{n-1}^2$.
-A $1-\alpha$ confidence interval for $\gamma^2$ is $\left[ \frac{RSS}{\chi_{n-1, \alpha/2}^2}, \frac{RSS}{\chi_{n-1, 1-\alpha/2}^2} \right]$.
-Taking the square root gives the interval for $\gamma$:
-\[
-\left[ \sqrt{\frac{\sum (Y_i - \hat{\mu})^2/x_i^2}{\chi_{n-1, \alpha/2}^2}}, \sqrt{\frac{\sum (Y_i - \hat{\mu})^2/x_i^2}{\chi_{n-1, 1-\alpha/2}^2}} \right].
-\]
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Heteroscedasticity and Weighted Least Squares:} When variance varies across observations ($Var(Y_i) \propto x_i^2$), standard regression is inefficient. Dividing the data by $x_i$ standardizes the variance (homoscedasticity), converting the problem into a standard Ordinary Least Squares (OLS) regression without intercept.
+    \item \textbf{Residual Sum of Squares (RSS) Distribution:} For a normal linear model, the normalized RSS follows a Chi-squared distribution: $RSS/\sigma^2 \sim \chi^2_{n-p}$, where $p$ is the number of estimated parameters.
+    \item \textbf{Chi-squared Confidence Interval and Testing:} The $\chi^2$ distribution provides exact pivotal quantities for constructing confidence intervals and rejection regions for variance parameters.
+\end{itemize}
 
-(b) To test $H_0: \gamma=1$ against $H_1: \gamma \neq 1$, we use the test statistic $Q_0 = \sum \frac{(Y_i - \hat{\mu})^2}{x_i^2}$.
-Under $H_0$, $Q_0 \sim \chi_{n-1}^2$.
-At significance level $\alpha$, we reject $H_0$ if $Q_0 > \chi_{n-1, \alpha/2}^2$ or $Q_0 < \chi_{n-1, 1-\alpha/2}^2$.
-This is a two-tailed test based on the chi-squared distribution.
+\textbf{Intuition / Motivation:}
+
+We are given a set of normal variables where both the mean and the "spread" (standard deviation) grow proportionally to a known covariate $x_i$. Because the spread is uneven, some observations are much noisier than others. We handle this using a clever trick: divide everything by $x_i$. This magically shrinks the noisy points and boosts the quiet points, leaving us with a beautiful, standardized set of variables that all have the exact same variance $\gamma^2$. From there, we just run a standard linear regression through the origin, calculate how far the points deviate from the line (the Residual Sum of Squares), and use that to bound or test the unknown variance factor $\gamma^2$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Standardize the variance.}
+
+We are given $Y_i \sim N(\mu, \gamma^2 x_i^2)$. Because the variance depends on $i$, the data is heteroscedastic.
+We transform the data to make the variance constant. Define a new variable:
+\[ Z_i = \frac{Y_i}{x_i} \]
+Using the linear properties of the normal distribution, the mean and variance of $Z_i$ are:
+\[ \mathbb{E}[Z_i] = \frac{\mathbb{E}[Y_i]}{x_i} = \frac{\mu}{x_i} \]
+\[ \operatorname{Var}(Z_i) = \frac{\operatorname{Var}(Y_i)}{x_i^2} = \frac{\gamma^2 x_i^2}{x_i^2} = \gamma^2 \]
+Thus, $Z_i \sim N(\mu/x_i, \gamma^2)$. This is a standard linear regression model $Z_i = \mu w_i + \epsilon_i$, where the predictor is $w_i = 1/x_i$, the unknown slope is $\mu$, and the error variance is constant at $\gamma^2$.
+
+\textbf{Step 2: Find the Least Squares Estimator and RSS.}
+
+To estimate the variance $\gamma^2$, we must first estimate the mean parameter $\mu$.
+For the regression through the origin $Z_i = \mu w_i + \epsilon_i$, the Ordinary Least Squares (OLS) estimator for $\mu$ minimizes the sum of squared errors $\sum (Z_i - \mu w_i)^2$.
+Taking the derivative and setting it to zero yields the standard formula:
+\[ \hat{\mu} = \frac{\sum Z_i w_i}{\sum w_i^2} = \frac{\sum (Y_i/x_i) (1/x_i)}{\sum (1/x_i)^2} = \frac{\sum Y_i/x_i^2}{\sum 1/x_i^2} \]
+The Residual Sum of Squares (RSS) is the sum of the squared deviations from the fitted model:
+\[ \text{RSS} = \sum_{i=1}^n (Z_i - \hat{\mu} w_i)^2 = \sum_{i=1}^n \left( \frac{Y_i}{x_i} - \hat{\mu} \frac{1}{x_i} \right)^2 = \sum_{i=1}^n \frac{(Y_i - \hat{\mu})^2}{x_i^2} \]
+
+\textbf{Step 3: Construct the confidence interval for $\gamma$ (Part a).}
+
+From standard linear regression theory with normal errors, the normalized RSS follows a Chi-squared distribution. The degrees of freedom is $n - p$, where $p$ is the number of estimated mean parameters. Here, $p=1$ (we only estimated $\mu$).
+\[ Q = \frac{\text{RSS}}{\gamma^2} \sim \chi^2_{n-1} \]
+Let $\chi^2_{n-1, \alpha/2}$ and $\chi^2_{n-1, 1-\alpha/2}$ be the critical values such that the probability of falling between them is exactly $1 - \alpha$.
+\[ \mathbb{P}\left( \chi^2_{n-1, 1-\alpha/2} \leq \frac{\text{RSS}}{\gamma^2} \leq \chi^2_{n-1, \alpha/2} \right) = 1 - \alpha \]
+Invert the inequalities to solve for $\gamma^2$:
+\[ \frac{\text{RSS}}{\chi^2_{n-1, \alpha/2}} \leq \gamma^2 \leq \frac{\text{RSS}}{\chi^2_{n-1, 1-\alpha/2}} \]
+Take the square root to find the confidence interval for $\gamma$:
+\[ \left[ \sqrt{ \frac{\sum (Y_i - \hat{\mu})^2 / x_i^2}{\chi^2_{n-1, \alpha/2}} }, \;\; \sqrt{ \frac{\sum (Y_i - \hat{\mu})^2 / x_i^2}{\chi^2_{n-1, 1-\alpha/2}} } \right] \]
+
+\textbf{Step 4: Formulate the Hypothesis Test (Part b).}
+
+We want to test the null hypothesis $H_0: \gamma = 1$ against the alternative $H_1: \gamma \neq 1$.
+Under the null hypothesis, $\gamma^2 = 1$. This means our normalized test statistic is exactly the unnormalized RSS:
+\[ Q_0 = \frac{\text{RSS}}{1^2} = \sum_{i=1}^n \frac{(Y_i - \hat{\mu})^2}{x_i^2} \]
+If $H_0$ is true, $Q_0 \sim \chi^2_{n-1}$.
+Because the alternative is two-sided ($\gamma \neq 1$), we will reject $H_0$ if the observed variance is either suspiciously too small or suspiciously too large.
+We choose a significance level $\alpha$. The rejection region is the two tails of the Chi-squared distribution.
+We \textbf{reject} $H_0$ if:
+\[ Q_0 > \chi^2_{n-1, \alpha/2} \quad \text{(variance is too large)} \]
+or
+\[ Q_0 < \chi^2_{n-1, 1-\alpha/2} \quad \text{(variance is too small)} \]
+Otherwise, we fail to reject $H_0$.
 \end{solution}
 
 \subsection{Team}
@@ -152,12 +328,49 @@ One hundred passengers board a plane with exactly 100 seats. The first passenger
 \end{exercise}
 
 \begin{solution}
-Consider the moment when a passenger is forced to choose a seat at random (either the first passenger or a subsequent one whose seat was taken). They will either choose seat 1, seat 100, or some other seat $k$.
-If they choose seat 1, then passenger 100 will eventually find seat 100 free.
-If they choose seat 100, then passenger 100 will definitely not get his own seat.
-If they choose some seat $k$ ($1 < k < 100$), then passengers $2, \dots, k-1$ will all find their own seats. Passenger $k$ will then be the one to choose a seat at random.
-Crucially, at any such choice, seat 1 and seat 100 are equally likely to be picked. The first of these two seats to be picked determines the fate of passenger 100. If seat 1 is picked first, passenger 100 gets his seat. If seat 100 is picked first, he doesn't.
-By symmetry, the probability is $1/2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Symmetry / Exchangeability:} When two distinct outcomes are governed by perfectly identical, symmetric processes, they must have the same probability. If those are the only two possible outcomes that matter, each has probability $1/2$.
+    \item \textbf{State Absorption / Irreversible Events:} In some stochastic processes, the final outcome is determined entirely by which of two "absorbing" states is hit first, rendering the exact timing or sequence of intermediate states irrelevant.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+This is the famous "Crazy Passenger" plane boarding problem. At first glance, it seems hopelessly complex—you might try to trace the tree of all possible seat displacements. But the beauty of this problem lies in ignoring the noise. Most displaced passengers just displace someone else, pushing the problem down the line. The \textit{only} seat choices that permanently end the chaos are Seat 1 and Seat 100. Because the choice among available seats is completely random, whenever a displaced passenger is forced to choose, Seat 1 and Seat 100 are equally likely to be picked. It's essentially a coin flip that decides the fate of the last passenger.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Understand the terminal conditions.}
+
+Consider the 100th passenger. When they board, exactly one seat will be left. Which seat is it?
+It must be either Seat 1 or Seat 100.
+Why? Because for any intermediate seat $k$ ($1 < k < 100$), passenger $k$ boards before passenger 100. When passenger $k$ boards, they will either take Seat $k$ (if it's free), or, if someone already took Seat $k$, passenger $k$ becomes displaced and must pick a new random seat. In either case, Seat $k$ becomes occupied \textit{no later} than when passenger $k$ boards. Thus, by the time passenger 100 boards, seats $2$ through $99$ are guaranteed to be taken.
+
+\textbf{Step 2: Trace the chain of displaced passengers.}
+
+Passenger 1 boards and takes a seat at random.
+\begin{itemize}
+    \item \textbf{Scenario A:} Passenger 1 takes Seat 1. Everyone else, including passenger 100, gets their correct seat. Passenger 100 is happy.
+    \item \textbf{Scenario B:} Passenger 1 takes Seat 100. Passengers 2 through 99 get their correct seats. Passenger 100 is forced to take Seat 1. Passenger 100 is sad.
+    \item \textbf{Scenario C:} Passenger 1 takes some intermediate Seat $k$. Passengers $2$ through $k-1$ find their correct seats. When passenger $k$ boards, they find their seat taken. Passenger $k$ is now the "crazy" passenger and must pick a random seat from the remaining available seats.
+\end{itemize}
+
+\textbf{Step 3: Apply the symmetry argument.}
+
+Whenever any displaced passenger (whether it's passenger 1, or some later passenger $k$) is forced to choose a seat at random, what seats are available to them?
+The available pool always includes Seat 1, Seat 100, and potentially some other intermediate seats $>k$.
+Because the displaced passenger chooses \textit{uniformly at random} from the available pool, the probability of them picking Seat 1 is exactly equal to the probability of them picking Seat 100.
+If they pick an intermediate seat, the buck is simply passed to another passenger, and the pool of available seats shrinks. However, in this new, smaller pool, Seat 1 and Seat 100 are \textit{still} both available, and still equally likely to be picked by the next displaced passenger.
+Eventually, someone \textit{must} pick either Seat 1 or Seat 100 (because the intermediate seats will run out).
+Since at every single decision point where Seat 1 or Seat 100 could be chosen, they are chosen with equal probability, it is a perfect 50/50 coin flip which one is chosen first.
+\begin{itemize}
+    \item If Seat 1 is chosen first, the chain of displacement ends, and passenger 100 will find Seat 100 waiting for them.
+    \item If Seat 100 is chosen first, passenger 100 will not get their seat.
+\end{itemize}
+
+\textbf{Step 4: Conclude the probability.}
+
+Because the two terminal outcomes are perfectly symmetric in the selection process, the probability that passenger 100 gets Seat 100 is exactly $\frac{1}{2}$.
 \end{solution}
 
 \begin{exercise}
@@ -165,22 +378,52 @@ Assume a sequence of random variables $X_n$ converges in distribution to a rando
 \end{exercise}
 
 \begin{solution}
-Let $F_n$ be the CDF of $X_n$ and $F$ be the CDF of $X$. We want to show $P(X_{N_t} \leq x) \to F(x)$ at all continuity points $x$ of $F$.
-By independence, $P(X_{N_t} \leq x) = \sum_{n=1}^\infty P(X_n \leq x) P(N_t = n) = \mathbb{E}[F_{N_t}(x)]$.
-Since $X_n \xrightarrow{d} X$, $F_n(x) \to F(x)$ for continuity points $x$.
-For any $\epsilon > 0$, there exists $M$ such that $|F_n(x) - F(x)| < \epsilon$ for all $n > M$.
-Then
-\[
-|\mathbb{E}[F_{N_t}(x)] - F(x)| \leq \mathbb{E}[|F_{N_t}(x) - F(x)|]
-\]
-\[
-= \sum_{n \leq M} |F_n(x) - F(x)| P(N_t = n) + \sum_{n > M} |F_n(x) - F(x)| P(N_t = n)
-\]
-\[
-\leq 1 \cdot P(N_t \leq M) + \epsilon \cdot P(N_t > M).
-\]
-As $t \to \infty$, $P(N_t \leq M) \to 0$ because $N_t \xrightarrow{P} \infty$.
-Thus $\limsup_{t \to \infty} |\mathbb{E}[F_{N_t}(x)] - F(x)| \leq \epsilon$. Since $\epsilon$ is arbitrary, the result follows.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Convergence in Distribution:} A sequence of random variables $X_n \xrightarrow{d} X$ if their cumulative distribution functions (CDFs) converge: $F_n(x) \to F(x)$ at all points $x$ where $F$ is continuous.
+    \item \textbf{Convergence in Probability:} A sequence $N_t \xrightarrow{P} \infty$ means that for any large number $M$, the probability $\mathbb{P}(N_t \leq M)$ goes to $0$ as $t \to \infty$.
+    \item \textbf{Law of Total Probability (Continuous/Infinite sum):} Used to condition the distribution of $X_{N_t}$ on the specific value of the random index $N_t$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+If a sequence of variables $X_n$ stabilizes into a specific shape $X$ as $n$ gets large, what happens if we don't pick a deterministic index $n$, but instead pick a random index $N_t$? As long as the random index $N_t$ is highly likely to be very large (it converges in probability to infinity), we will almost exclusively be sampling from the "tail" of the sequence $X_n$. Since the tail of $X_n$ looks almost identical to the limit $X$, the randomly indexed variable $X_{N_t}$ must also look like $X$. The proof simply bounds the "bad" cases (where $N_t$ is small) using the fact that $N_t \to \infty$, and bounds the "good" cases (where $N_t$ is large) using the fact that $X_n \to X$.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Express the CDF of the randomly indexed variable.}
+
+Let $F_n(x) = \mathbb{P}(X_n \leq x)$ be the CDF of $X_n$, and $F(x) = \mathbb{P}(X \leq x)$ be the CDF of the limit $X$.
+We want to prove that $X_{N_t} \xrightarrow{d} X$, which means proving that $\mathbb{P}(X_{N_t} \leq x) \to F(x)$ for all continuity points $x$ of $F$.
+Since the random index $N_t$ is independent of the sequence $(X_n)$, we can condition on the exact value of $N_t$ using the law of total probability:
+\[ \mathbb{P}(X_{N_t} \leq x) = \sum_{n=1}^\infty \mathbb{P}(X_n \leq x \mid N_t = n) \mathbb{P}(N_t = n) = \sum_{n=1}^\infty \mathbb{P}(X_n \leq x) \mathbb{P}(N_t = n) = \sum_{n=1}^\infty F_n(x) \mathbb{P}(N_t = n) \]
+Notice that this is exactly the expected value of the random variable $F_{N_t}(x)$:
+\[ \mathbb{P}(X_{N_t} \leq x) = \mathbb{E}[F_{N_t}(x)] \]
+
+\textbf{Step 2: Set up the bound using the $\epsilon-M$ definition of limits.}
+
+We want to show that the distance between $\mathbb{E}[F_{N_t}(x)]$ and $F(x)$ goes to 0.
+Let $x$ be a continuity point of $F$. Because $X_n \xrightarrow{d} X$, we know $F_n(x) \to F(x)$.
+This means that for any small positive number $\epsilon > 0$, there exists a threshold index $M$ such that for all $n > M$, the CDFs are very close:
+\[ |F_n(x) - F(x)| \leq \epsilon \quad \text{for all } n > M \]
+
+\textbf{Step 3: Split the expectation into "bad" (small index) and "good" (large index) parts.}
+
+We bound the absolute difference:
+\[ |\mathbb{P}(X_{N_t} \leq x) - F(x)| = \left| \sum_{n=1}^\infty F_n(x) \mathbb{P}(N_t = n) - \sum_{n=1}^\infty F(x) \mathbb{P}(N_t = n) \right| \leq \sum_{n=1}^\infty |F_n(x) - F(x)| \mathbb{P}(N_t = n) \]
+We split this sum at the threshold $M$:
+\[ \text{Diff} \leq \sum_{n=1}^M |F_n(x) - F(x)| \mathbb{P}(N_t = n) + \sum_{n=M+1}^\infty |F_n(x) - F(x)| \mathbb{P}(N_t = n) \]
+
+\textbf{Step 4: Bound each part and take the limit as $t \to \infty$.}
+
+For the first sum (the "bad" cases where $n \leq M$), the difference $|F_n(x) - F(x)|$ is bounded by 1 (since CDFs are bounded between 0 and 1). So the sum is at most $1 \cdot \mathbb{P}(N_t \leq M)$.
+For the second sum (the "good" cases where $n > M$), we know $|F_n(x) - F(x)| \leq \epsilon$. So the sum is at most $\epsilon \cdot \mathbb{P}(N_t > M) \leq \epsilon \cdot 1 = \epsilon$.
+Therefore:
+\[ |\mathbb{P}(X_{N_t} \leq x) - F(x)| \leq \mathbb{P}(N_t \leq M) + \epsilon \]
+Now, take the limit supremum as $t \to \infty$. Since $N_t \xrightarrow{P} \infty$, the probability of $N_t$ being less than or equal to any fixed $M$ goes to 0: $\lim_{t \to \infty} \mathbb{P}(N_t \leq M) = 0$.
+\[ \limsup_{t \to \infty} |\mathbb{P}(X_{N_t} \leq x) - F(x)| \leq 0 + \epsilon = \epsilon \]
+Since $\epsilon > 0$ was arbitrary (we can make it as small as we want), the limit of the difference must be 0.
+Thus, $\lim_{t \to \infty} \mathbb{P}(X_{N_t} \leq x) = F(x)$, which proves $X_{N_t} \xrightarrow{d} X$.
 \end{solution}
 
 \begin{exercise}
@@ -195,21 +438,62 @@ V_n = \left(\frac{T_1}{S_n}, \frac{T_2}{S_n}, \dots, \frac{T_n}{S_n}\right).
 \end{exercise}
 
 \begin{solution}
-The joint density of $(T_1, \dots, T_n)$ is $f(t_1, \dots, t_n) = e^{-\sum t_i}$ for $t_i \geq 0$.
-Consider the transformation $Y_i = T_i/S_n$ for $i=1, \dots, n-1$ and $Y_n = S_n$.
-The inverse transformation is $T_i = Y_i Y_n$ for $i < n$ and $T_n = Y_n(1 - \sum_{i=1}^{n-1} Y_i)$.
-The Jacobian matrix $J$ has elements $\frac{\partial T_i}{\partial Y_j}$.
-One can compute $|\det J| = Y_n^{n-1}$.
-The joint density of $(Y_1, \dots, Y_n)$ is
-\[
-g(y_1, \dots, y_n) = e^{-y_n} y_n^{n-1}, \quad y_n > 0, y_i > 0, \sum_{i=1}^{n-1} y_i < 1.
-\]
-The marginal density of $(Y_1, \dots, Y_{n-1})$ is
-\[
-h(y_1, \dots, y_{n-1}) = \int_0^\infty y_n^{n-1} e^{-y_n} dy_n = \Gamma(n) = (n-1)!.
-\]
-This is a constant value on the simplex $\Delta_{n-1} = \{ (y_1, \dots, y_{n-1}) : y_i > 0, \sum y_i < 1 \}$.
-Thus, $V_n$ follows the Dirichlet distribution $\text{Dir}(1, 1, \dots, 1)$, which is the uniform distribution on the $(n-1)$-dimensional unit simplex.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Multivariate Transformation of Variables:} When mapping a random vector $\mathbf{X}$ to $\mathbf{Y}$ via a differentiable bijection, the joint density transforms as $f_Y(\mathbf{y}) = f_X(\mathbf{x}(\mathbf{y})) \cdot |\det J|$, where $J$ is the Jacobian matrix of the inverse transformation.
+    \item \textbf{Dirichlet Distribution:} A family of continuous multivariate probability distributions parameterized by a vector of positive reals. It is a multivariate generalization of the Beta distribution, and its support is the standard probability simplex (vectors that sum to 1).
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine you have a stick of random length $S_n$, created by joining $n$ independent segments $T_i$ whose lengths follow an exponential distribution. What happens if you look \textit{only} at the proportions of the segments relative to the whole stick ($T_i / S_n$), ignoring the total length? These proportions must sum to 1. By systematically changing variables from absolute lengths to proportions and total length, we can isolate the distribution of the proportions. Remarkably, because the exponential distribution is memoryless and identical for all segments, the resulting proportions are distributed perfectly uniformly across all possible ways to divide the stick into $n$ pieces. This uniform distribution over a simplex is a special case of the Dirichlet distribution.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Write the joint density of the independent exponentials.}
+
+We are given $n$ i.i.d. random variables $T_1, \dots, T_n \sim \text{Exp}(1)$.
+Their joint probability density function is simply the product of their individual densities:
+\[ f(t_1, \dots, t_n) = \prod_{i=1}^n e^{-t_i} = e^{-\sum_{i=1}^n t_i} \quad \text{for all } t_i \geq 0 \]
+
+\textbf{Step 2: Define the transformation to proportions and total sum.}
+
+We want the distribution of the proportions $V_i = T_i / S_n$. However, to use the Jacobian method, we need a 1-to-1 mapping from $\mathbb{R}^n \to \mathbb{R}^n$. We define $n$ new variables:
+Let $Y_i = \frac{T_i}{S_n}$ for $i = 1, \dots, n-1$. (These are the first $n-1$ proportions).
+Let $Y_n = S_n = \sum_{i=1}^n T_i$. (This is the total sum).
+(We don't need to define $Y_n = T_n/S_n$ because the proportions must sum to 1, so the last proportion is fully determined: $T_n/S_n = 1 - \sum_{i=1}^{n-1} Y_i$).
+
+\textbf{Step 3: Find the inverse transformation and the Jacobian.}
+
+We express the old variables $T_i$ in terms of the new variables $Y_i$:
+For $i = 1, \dots, n-1$: $T_i = Y_i Y_n$.
+For the last variable: $T_n = Y_n - \sum_{i=1}^{n-1} T_i = Y_n \left( 1 - \sum_{i=1}^{n-1} Y_i \right)$.
+Now we compute the Jacobian matrix $J = \left[ \frac{\partial T_i}{\partial Y_j} \right]$.
+The matrix is mostly diagonal with respect to $Y_1 \dots Y_{n-1}$, because $\frac{\partial T_i}{\partial Y_j} = 0$ for $i \neq j$ (when $i, j < n$).
+Specifically:
+$\frac{\partial T_i}{\partial Y_i} = Y_n$ for $i < n$.
+$\frac{\partial T_n}{\partial Y_j} = -Y_n$ for $j < n$.
+The last column contains $\frac{\partial T_i}{\partial Y_n} = Y_i$ and $\frac{\partial T_n}{\partial Y_n} = 1 - \sum Y_i$.
+By adding the first $n-1$ rows to the last row, the determinant simplifies beautifully:
+\[ |\det J| = Y_n^{n-1} \]
+
+\textbf{Step 4: Find the joint density of the new variables.}
+
+Substitute the inverse transformation into the original joint density $f(t_1, \dots, t_n)$:
+Notice that the sum $\sum_{i=1}^n T_i$ is exactly $Y_n$. So the exponential term is simply $e^{-Y_n}$.
+Multiply by the absolute Jacobian determinant:
+\[ g(y_1, \dots, y_{n-1}, y_n) = f(t_1(y), \dots, t_n(y)) \cdot |\det J| = e^{-y_n} \cdot y_n^{n-1} \]
+This joint density is valid on the domain $y_n > 0$, $y_i > 0$ for $i < n$, and $\sum_{i=1}^{n-1} y_i < 1$.
+
+\textbf{Step 5: Marginalize out the total sum $Y_n$.}
+
+To find the distribution of just the proportions $Y_1, \dots, Y_{n-1}$, we integrate the joint density over all possible values of the total sum $Y_n$ (from 0 to $\infty$):
+\[ h(y_1, \dots, y_{n-1}) = \int_0^\infty g(y_1, \dots, y_n) dy_n = \int_0^\infty y_n^{n-1} e^{-y_n} dy_n \]
+This integral is exactly the definition of the Gamma function, $\Gamma(n)$. Since $n$ is an integer, $\Gamma(n) = (n-1)!$.
+\[ h(y_1, \dots, y_{n-1}) = (n-1)! \]
+This marginal density is a constant! It does not depend on the values of $y_1, \dots, y_{n-1}$. A constant density over a bounded region (the standard simplex $\Delta_{n-1}$) defines a uniform distribution.
+The uniform distribution on the $(n-1)$-dimensional simplex is formally known as the Dirichlet distribution with all concentration parameters equal to 1: $\text{Dir}(1, 1, \dots, 1)$.
+Since $V_n$ includes the deterministic last component $1 - \sum Y_i$, the vector $V_n$ is uniformly distributed over the simplex.
 \end{solution}
 
 \begin{exercise}
@@ -219,17 +503,52 @@ Hint: $Z$ can be expressed as $Z = \rho X + \varepsilon$ where $X$ and $\varepsi
 \end{exercise}
 
 \begin{solution}
-If $\text{Cov}(X, Z) = 0$, then for jointly normal variables, $X$ and $Z$ are independent. Thus $X$ and $f(Z)$ are independent, and $\text{Cov}(X, f(Z)) = 0$.
-Conversely, assume $\text{Cov}(X, f(Z)) = 0$. Let $Z = \rho X + \sqrt{1-\rho^2} W$ where $W \sim N(0,1)$ is independent of $X$.
-$\text{Cov}(X, f(Z)) = \mathbb{E}[X f(\rho X + \sqrt{1-\rho^2} W)] = 0$.
-Let $g(u) = \mathbb{E}_W[f(u + \sqrt{1-\rho^2} W)]$. Then $\mathbb{E}[X g(\rho X)] = 0$.
-If $f$ is strictly increasing, then $g$ is strictly increasing (the expectation of an increasing function of a shifted Gaussian is increasing in the shift).
-Since $\mathbb{E}[X] = 0$, $\text{Cov}(X, g(\rho X)) = \mathbb{E}[X g(\rho X)] - \mathbb{E}[X]\mathbb{E}[g(\rho X)] = \mathbb{E}[X g(\rho X)] = 0$.
-For any random variable $X$ and strictly increasing function $h$, $\text{Cov}(X, h(X)) \geq 0$, and the covariance is zero if and only if $X$ is constant or $h$ is constant.
-Here $g(\rho X)$ is strictly increasing in $X$ if $\rho > 0$ and strictly decreasing if $\rho < 0$.
-If $\rho > 0$, $\text{Cov}(X, g(\rho X)) > 0$. If $\rho < 0$, $\text{Cov}(X, g(\rho X)) < 0$.
-The only way the covariance can be zero is if $\rho = 0$.
-Thus $\text{Cov}(X, Z) = \rho = 0$. The case for strictly decreasing $f$ follows by considering $-f$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Bivariate Normal Uncorrelation vs. Independence:} For jointly normal random variables, being uncorrelated (covariance is zero) is mathematically equivalent to being completely independent. This is a special, powerful property of the Gaussian family.
+    \item \textbf{Monotonic Transformations and Covariance:} If $X$ and $Y$ are independent, any transformation $f(Y)$ is also independent of $X$. If they are positively/negatively correlated, a strictly increasing transformation preserves the sign of the covariance.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+We know that for normal variables, zero covariance means independence. If $X$ and $Z$ are independent, any function $f(Z)$ is also independent of $X$, so their covariance must be zero. That's the easy direction. The hard direction is: if $\text{Cov}(X, f(Z)) = 0$ for some strictly increasing function $f$, does that guarantee $X$ and $Z$ are uncorrelated? Yes! By explicitly writing $Z$ as a linear combination of $X$ and independent noise (using the correlation coefficient $\rho$), we can show that applying a strictly monotonic function to $Z$ preserves the "direction" of the relationship with $X$. The only way the covariance can be exactly zero after the transformation is if the original correlation $\rho$ was exactly zero to begin with.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the forward direction (Covariance is 0 $\implies$ Transformed covariance is 0).}
+
+Assume $\text{Cov}(X, Z) = 0$. Since $X$ and $Z$ are jointly normal, zero covariance implies they are completely independent.
+If $X$ and $Z$ are independent, then for any measurable function $f(\cdot)$, the random variables $X$ and $f(Z)$ are also independent.
+Because the expectation of the product of independent variables is the product of their expectations, the covariance is:
+\[ \text{Cov}(X, f(Z)) = \mathbb{E}[X f(Z)] - \mathbb{E}[X]\mathbb{E}[f(Z)] = \mathbb{E}[X]\mathbb{E}[f(Z)] - \mathbb{E}[X]\mathbb{E}[f(Z)] = 0 \]
+
+\textbf{Step 2: Set up the linear representation for the reverse direction.}
+
+Assume $\text{Cov}(X, f(Z)) = 0$ for a strictly monotonic function $f$. We want to prove $\text{Cov}(X, Z) = 0$. Let $\rho = \text{Cov}(X, Z)$.
+Because $X$ and $Z$ are standard normal ($N(0,1)$) and jointly normal, we can write $Z$ as a linear regression on $X$ plus independent normal error:
+\[ Z = \rho X + \varepsilon \]
+where $\varepsilon \sim N(0, 1-\rho^2)$ and is completely independent of $X$.
+
+\textbf{Step 3: Define a smoothed transformation function $g(X)$.}
+
+Substitute this representation into our known zero covariance:
+\[ \text{Cov}(X, f(Z)) = \mathbb{E}[X f(\rho X + \varepsilon)] \]
+Because $\mathbb{E}[X] = 0$, the covariance is just the expectation of the product.
+Since $X$ and $\varepsilon$ are independent, we can condition on $X$ and take the expectation with respect to $\varepsilon$ first. Let's define a new function $g$:
+\[ g(u) = \mathbb{E}_\varepsilon[f(u + \varepsilon)] \]
+By the Law of Iterated Expectations:
+\[ \mathbb{E}[X f(\rho X + \varepsilon)] = \mathbb{E}_X \left[ X \cdot \mathbb{E}_\varepsilon [f(\rho X + \varepsilon) \mid X] \right] = \mathbb{E}_X [X \cdot g(\rho X)] \]
+So, our assumption gives us: $\mathbb{E}[X \cdot g(\rho X)] = 0$.
+
+\textbf{Step 4: Analyze the monotonicity of $g(u)$.}
+
+Suppose $f$ is strictly increasing. Because the expectation operator is a weighted sum (integral) with positive weights (the normal density of $\varepsilon$), taking the expectation of a shifted strictly increasing function results in another strictly increasing function. Thus, $g(u)$ is strictly increasing.
+Now look at the term $X \cdot g(\rho X)$.
+If $\rho > 0$, then $g(\rho X)$ is strictly increasing with respect to $X$. For any random variable $X$ and strictly increasing function $h(X)$, $\text{Cov}(X, h(X)) > 0$ (unless $X$ is constant, which it isn't). Here $\text{Cov}(X, g(\rho X)) = \mathbb{E}[X g(\rho X)] > 0$, which contradicts our assumption that the expectation is 0.
+If $\rho < 0$, then $g(\rho X)$ is strictly decreasing with respect to $X$. By the same logic, $\text{Cov}(X, g(\rho X)) = \mathbb{E}[X g(\rho X)] < 0$, which also contradicts our assumption.
+The \textit{only} way the expectation can be exactly zero is if the slope is flat: $\rho = 0$.
+If $f$ is strictly decreasing, the same logic holds in reverse (or simply apply the proof to $-f$).
+Therefore, we must have $\rho = 0$, which means $\text{Cov}(X, Z) = 0$.
 \end{solution}
 
 \begin{exercise}
@@ -246,22 +565,66 @@ Let $\widehat{\beta}$ be a minimizer and $\Delta = \widehat{\beta} - \beta^*$ fo
 \end{exercise}
 
 \begin{solution}
-1. Let $f(\beta) = \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\beta\|^2$. By convexity, $f(\widehat{\beta}) \geq f(\beta^*) + \langle \nabla f(\beta^*), \widehat{\beta} - \beta^* \rangle$.
-$\nabla f(\beta^*) = -\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)$.
-Thus, $f(\widehat{\beta}) - f(\beta^*) \geq -\langle \mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle$.
-By H\"older's inequality, $|\langle \mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle| \leq \|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty \|\Delta\|_1$.
-Given $\lambda > 2\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty$, we have $\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty < \lambda/2$.
-Therefore, $f(\widehat{\beta}) - f(\beta^*) > -\frac{\lambda}{2} \|\Delta\|_1 > -\lambda \|\Delta\|_1$.
-Multiplying by 2 gives the result for $\|\mathbf{Y} - \mathbf{X}\beta\|^2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Lasso Regression:} A linear regression method that adds an $L_1$ penalty ($\lambda \|\beta\|_1$) to the loss function. This encourages sparsity (setting some coefficients exactly to 0).
+    \item \textbf{Convexity and Gradients:} For a convex differentiable function $f$, the tangent plane always lies below the function: $f(\mathbf{y}) \geq f(\mathbf{x}) + \langle \nabla f(\mathbf{x}), \mathbf{y} - \mathbf{x} \rangle$.
+    \item \textbf{Hölder's Inequality:} For vectors, $|\langle \mathbf{u}, \mathbf{v} \rangle| \leq \|\mathbf{u}\|_\infty \|\mathbf{v}\|_1$. This is the discrete vector equivalent of the integral inequality, pairing the maximum absolute element norm with the sum of absolute elements norm.
+\end{itemize}
 
-2. From the definition of $\widehat{\beta}$:
-$f(\widehat{\beta}) + \lambda\|\widehat{\beta}\|_1 \leq f(\beta^*) + \lambda\|\beta^*\|_1$.
-$f(\widehat{\beta}) - f(\beta^*) \leq \lambda(\|\beta^*\|_1 - \|\widehat{\beta}\|_1)$.
-Using the lower bound from part 1:
-$-\frac{\lambda}{2}\|\Delta\|_1 < \lambda(\|\beta^*\|_1 - \|\widehat{\beta}\|_1) \implies - \frac{1}{2}(\|\Delta_S\|_1 + \|\Delta_{S^c}\|_1) < \|\beta^*_S\|_1 - \|\widehat{\beta}_S\|_1 - \|\widehat{\beta}_{S^c}\|_1$.
-Since $\beta^*_{S^c} = 0$, $\|\widehat{\beta}_{S^c}\|_1 = \|\Delta_{S^c}\|_1$. Also $\|\beta^*_S\|_1 - \|\widehat{\beta}_S\|_1 \leq \|\beta^*_S - \widehat{\beta}_S\|_1 = \|\Delta_S\|_1$.
-$- \frac{1}{2}\|\Delta_S\|_1 - \frac{1}{2}\|\Delta_{S^c}\|_1 < \|\Delta_S\|_1 - \|\Delta_{S^c}\|_1$.
-Rearranging terms:
-$\frac{1}{2}\|\Delta_{S^c}\|_1 < \frac{3}{2}\|\Delta_S\|_1 \implies \|\Delta_{S^c}\|_1 < 3\|\Delta_S\|_1$.
-(Note: The non-strict inequality $\|\Delta_{S^c}\|_1 \leq 3\|\Delta_S\|_1$ is thus also proven).
+\textbf{Intuition / Motivation:}
+
+In high-dimensional statistics, we often assume the "true" parameter vector $\beta^*$ is sparse (mostly zeros). Lasso tries to find this by penalizing non-zero coefficients. But how do we know the Lasso estimate $\widehat{\beta}$ is actually close to $\beta^*$? This proof establishes two foundational inequalities for Lasso. First, by using the convexity of the least-squares loss, we show that the prediction error of the Lasso estimate is bounded by the size of the parameter error $\Delta$. Second, we prove a "cone condition": the error $\Delta$ outside the true support (where the true $\beta^*$ is zero) cannot be much larger than the error inside the support. This implies that Lasso doesn't wildly guess non-zero values where it shouldn't.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Use convexity to bound the unpenalized loss difference (Part 1).}
+
+Let the unpenalized least-squares loss be $f(\beta) = \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\beta\|^2$. This is a convex quadratic function.
+The gradient is $\nabla f(\beta) = -\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta)$.
+By the first-order condition for convexity, for any two points $\widehat{\beta}$ and $\beta^*$:
+\[ f(\widehat{\beta}) \geq f(\beta^*) + \langle \nabla f(\beta^*), \widehat{\beta} - \beta^* \rangle \]
+Let the parameter difference be $\Delta = \widehat{\beta} - \beta^*$. Substitute the gradient evaluated at the true parameter $\beta^*$:
+\[ f(\widehat{\beta}) - f(\beta^*) \geq \langle -\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle \]
+We want a lower bound. Apply Hölder's inequality ($|\langle \mathbf{u}, \mathbf{v} \rangle| \leq \|\mathbf{u}\|_\infty \|\mathbf{v}\|_1$) to the inner product:
+\[ \langle -\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*), \Delta \rangle \geq -\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty \|\Delta\|_1 \]
+We are given the condition $\lambda > 2\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty$, which implies $\|\mathbf{X}^T(\mathbf{Y} - \mathbf{X}\beta^*)\|_\infty < \frac{\lambda}{2}$.
+Substituting this into our bound:
+\[ f(\widehat{\beta}) - f(\beta^*) > -\frac{\lambda}{2} \|\Delta\|_1 \]
+Multiply the entire inequality by 2 to replace $f(\beta)$ with the full squared norms:
+\[ \|\mathbf{Y} - \mathbf{X}\widehat{\beta}\|^2 - \|\mathbf{Y} - \mathbf{X}\beta^*\|^2 > -\lambda\|\Delta\|_1 \]
+
+\textbf{Step 2: Use the Lasso optimality condition (Part 2).}
+
+Because $\widehat{\beta}$ is the global minimizer of the full Lasso objective function (loss + penalty), its objective value must be less than or equal to the objective value of the true parameter $\beta^*$:
+\[ \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\widehat{\beta}\|^2 + \lambda\|\widehat{\beta}\|_1 \leq \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\beta^*\|^2 + \lambda\|\beta^*\|_1 \]
+Rearrange to isolate the unpenalized loss difference on the left:
+\[ \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\widehat{\beta}\|^2 - \frac{1}{2}\|\mathbf{Y} - \mathbf{X}\beta^*\|^2 \leq \lambda\|\beta^*\|_1 - \lambda\|\widehat{\beta}\|_1 \]
+From Part 1, we established a strict lower bound for the left side: $-\frac{\lambda}{2}\|\Delta\|_1$.
+Chain the inequalities together and divide by $\lambda$:
+\[ -\frac{1}{2}\|\Delta\|_1 < \|\beta^*\|_1 - \|\widehat{\beta}\|_1 \]
+
+\textbf{Step 3: Decompose the $L_1$ norms into the support $S$ and its complement $S^c$.}
+
+Let $S$ be the indices where $\beta^*$ is non-zero, and $S^c$ be the indices where it is exactly zero.
+We can split the full $L_1$ norm into the sum over these two sets: $\|\Delta\|_1 = \|\Delta_S\|_1 + \|\Delta_{S^c}\|_1$.
+Substitute this into the left side of our inequality:
+\[ -\frac{1}{2}(\|\Delta_S\|_1 + \|\Delta_{S^c}\|_1) < \|\beta^*_S\|_1 + \|\beta^*_{S^c}\|_1 - (\|\widehat{\beta}_S\|_1 + \|\widehat{\beta}_{S^c}\|_1) \]
+Because $\beta^*$ is exactly zero on $S^c$, we know two things:
+1. $\|\beta^*_{S^c}\|_1 = 0$.
+2. $\Delta_{S^c} = \widehat{\beta}_{S^c} - \beta^*_{S^c} = \widehat{\beta}_{S^c} - 0 = \widehat{\beta}_{S^c}$. Therefore, $\|\widehat{\beta}_{S^c}\|_1 = \|\Delta_{S^c}\|_1$.
+Also, by the reverse triangle inequality, we can bound the difference on the support set $S$:
+$\|\beta^*_S\|_1 - \|\widehat{\beta}_S\|_1 \leq \|\beta^*_S - \widehat{\beta}_S\|_1 = \|-\Delta_S\|_1 = \|\Delta_S\|_1$.
+Substitute all these simplifications into the right side of the inequality:
+\[ -\frac{1}{2}\|\Delta_S\|_1 - \frac{1}{2}\|\Delta_{S^c}\|_1 < \|\Delta_S\|_1 - \|\Delta_{S^c}\|_1 \]
+
+\textbf{Step 4: Solve for the cone condition.}
+
+We want to bound the error outside the support ($\|\Delta_{S^c}\|_1$) by the error inside the support ($\|\Delta_S\|_1$).
+Add $\|\Delta_{S^c}\|_1$ to both sides, and add $\frac{1}{2}\|\Delta_S\|_1$ to both sides:
+\[ \frac{1}{2}\|\Delta_{S^c}\|_1 < \frac{3}{2}\|\Delta_S\|_1 \]
+Multiply by 2:
+\[ \|\Delta_{S^c}\|_1 < 3\|\Delta_S\|_1 \]
+Since a strict inequality implies a non-strict inequality, we have proven:
+\[ \|\Delta_{S^c}\|_1 \leq 3\|\Delta_S\|_1 \]
 \end{solution}

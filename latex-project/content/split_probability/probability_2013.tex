@@ -13,8 +13,55 @@ Let $(X_n)$ be a sequence of random variables.
 \end{exercise}
 
 \begin{solution}
-(1) Let $A_n$ be the event $\{|X_n| > n\}$. We are given that $\sum_{n=0}^\infty P(A_n) < \infty$. By the Borel-Cantelli Lemma, the probability that infinitely many $A_n$ occur is zero. Thus $\limsup_{n\to\infty} |X_n|/n \leq 1$ a.s.
-(2) This is a standard result: $E[d(X_n, 0)] \to 0 \iff X_n \xrightarrow{P} 0$ for a bounded metric $d$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Borel-Cantelli Lemma (First):} If the sum of probabilities of a sequence of events is finite ($\sum P(A_n) < \infty$), then the probability that infinitely many of them occur is 0.
+    \item \textbf{Convergence in Probability:} $X_n \xrightarrow{P} 0$ means for any $\epsilon > 0$, $P(|X_n| > \epsilon) \to 0$ as $n \to \infty$.
+    \item \textbf{Bounded Metrics for Convergence:} The function $f(x) = \frac{|x|^r}{1+|x|^r}$ maps $[0, \infty)$ to $[0, 1)$. Because it is bounded, continuous, and strictly increasing away from 0, its expectation serves as a metric for convergence in probability.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Part (1) asks for an upper bound on how fast a sequence of random variables can grow. If the probability of $X_n$ exceeding $n$ shrinks fast enough to be summable, then almost every realization of this sequence will eventually stay below the $y=n$ line forever.
+Part (2) is a classic trick in probability theory: replacing the "hard" event $P(|X_n|>\epsilon)$ with a "soft" expectation using a bounded function. Because expectations of unbounded variables can blow up to infinity even if the variable is mostly zero, we squash the variable into the $[0,1]$ range using $\frac{x}{1+x}$. This creates an equivalent, mathematically smooth condition for convergence.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove the limsup bound using Borel-Cantelli (Part 1).}
+
+Let $A_n$ be the event that $\{|X_n| > n\}$.
+We are given that $\sum_{n=1}^\infty P(A_n) < \infty$.
+By the First Borel-Cantelli Lemma, the probability that the events $A_n$ occur infinitely often (i.o.) is exactly 0. Mathematically:
+\[ P(|X_n| > n \text{ i.o.}) = 0 \]
+This implies that for almost every outcome $\omega$ in our sample space, there exists some finite integer $N(\omega)$ such that for all $n \geq N(\omega)$, the event $A_n$ does \textit{not} occur.
+Therefore, for all $n \geq N(\omega)$, we have $|X_n| \leq n$, which means $\frac{|X_n|}{n} \leq 1$.
+Taking the limit supremum as $n \to \infty$:
+\[ \limsup_{n\to\infty} \frac{|X_n|}{n} \leq 1 \]
+Since this holds for almost every $\omega$, the inequality is true almost surely (a.s.).
+
+\textbf{Step 2: Prove the forward implication for Part 2 ($X_n \xrightarrow{P} 0 \implies E \to 0$).}
+
+Assume $X_n \xrightarrow{P} 0$. Let $f(x) = \frac{|x|^r}{1+|x|^r}$ for some $r > 0$. Note that $0 \leq f(x) < 1$ for all $x$.
+For any arbitrary $\epsilon > 0$, we can split the expectation based on whether $|X_n|$ is larger or smaller than $\epsilon$:
+\[ E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] = E[f(X_n) I(|X_n| \leq \epsilon)] + E[f(X_n) I(|X_n| > \epsilon)] \]
+Because $f(x)$ is strictly increasing for $x \geq 0$, if $|X_n| \leq \epsilon$, then $f(X_n) \leq f(\epsilon) < \epsilon^r$.
+If $|X_n| > \epsilon$, we simply bound the function by its absolute maximum: $f(X_n) < 1$.
+Substituting these bounds:
+\[ E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \leq \epsilon^r \cdot P(|X_n| \leq \epsilon) + 1 \cdot P(|X_n| > \epsilon) \]
+Since $P(|X_n| \leq \epsilon) \leq 1$, we have:
+\[ E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \leq \epsilon^r + P(|X_n| > \epsilon) \]
+Since $X_n \xrightarrow{P} 0$, $\lim_{n \to \infty} P(|X_n| > \epsilon) = 0$.
+Taking the limit supremum of both sides gives $\limsup_{n \to \infty} E[f(X_n)] \leq \epsilon^r$.
+Since $\epsilon$ can be arbitrarily close to 0, the limit is exactly 0.
+
+\textbf{Step 3: Prove the reverse implication for Part 2 ($E \to 0 \implies X_n \xrightarrow{P} 0$).}
+
+Assume $E\left[\frac{|X_n|^r}{1+|X_n|^r}\right] \to 0$. We want to show that for any $\epsilon > 0$, $P(|X_n| > \epsilon) \to 0$.
+We use Markov's inequality on the squashed variable. Note that the event $\{|X_n| > \epsilon\}$ is logically identical to the event $\left\{ |X_n|^r > \epsilon^r \right\}$, which is identical to the event $\left\{ \frac{|X_n|^r}{1+|X_n|^r} > \frac{\epsilon^r}{1+\epsilon^r} \right\}$ because $f(x) = \frac{x}{1+x}$ is strictly increasing.
+By Markov's Inequality $P(Z > a) \leq \frac{E[Z]}{a}$ applied to the bounded variable $Z = f(X_n)$:
+\[ P(|X_n| > \epsilon) = P\left( \frac{|X_n|^r}{1+|X_n|^r} > \frac{\epsilon^r}{1+\epsilon^r} \right) \leq \frac{E\left[\frac{|X_n|^r}{1+|X_n|^r}\right]}{\frac{\epsilon^r}{1+\epsilon^r}} \]
+Since the numerator goes to 0 by our assumption, and the denominator is a strictly positive constant, the entire fraction goes to 0 as $n \to \infty$.
+Thus, $\lim_{n \to \infty} P(|X_n| > \epsilon) = 0$, which means $X_n \xrightarrow{P} 0$.
 \end{solution}
 
 \begin{exercise}
@@ -28,8 +75,66 @@ Hint: For (2), using the fact that $U = (X+Y)/\sqrt{2}$ and $V = (X-Y)/\sqrt{2}$
 \end{exercise}
 
 \begin{solution}
-(1) $E[X+Y | X\geq 0, Y\geq 0] = E[X|X\geq 0] + E[Y|Y\geq 0] = 2 \cdot \sqrt{2/\pi} = \sqrt{8/\pi}$.
-(2) $P(X+Y \leq s | X\geq 0, Y\geq 0) = (2\Phi(s/\sqrt{2}) - 1)^2$ for $s \geq 0$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Conditional Expectation of Independent Variables:} If $X$ and $Y$ are independent, conditioning on disjoint sets for $X$ and $Y$ preserves their independence.
+    \item \textbf{Half-Normal Distribution Mean:} If $X \sim N(0,1)$, then $E[X \mid X \geq 0] = \sqrt{2/\pi}$.
+    \item \textbf{Rotation of Bivariate Normal:} The sum and difference of independent standard normals $U = \frac{X+Y}{\sqrt{2}}$ and $V = \frac{X-Y}{\sqrt{2}}$ are also independent standard normals, corresponding to a 45-degree rotation of the coordinate axes.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Part (1) is straightforward because $X$ and $Y$ are independent. Knowing that $Y \geq 0$ tells us absolutely nothing new about $X$, so the conditional expectation splits neatly.
+Part (2) is trickier. We are restricting the domain to the first quadrant ($X \geq 0, Y \geq 0$) of the 2D plane. By rotating the coordinate system by 45 degrees, the boundary $X \geq 0, Y \geq 0$ transforms into a V-shaped wedge $|V| \leq U$. This allows us to calculate the conditional CDF smoothly.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Compute $E[X+Y \mid X \geq 0, Y \geq 0]$ (Part 1).}
+
+Because $X$ and $Y$ are independent, the event $\{Y \geq 0\}$ provides no information about $X$, and vice-versa. Therefore:
+\[ E[X+Y \mid X \geq 0, Y \geq 0] = E[X \mid X \geq 0] + E[Y \mid Y \geq 0] \]
+For a standard normal variable $X$, we calculate the truncated expectation. The conditional density is twice the standard normal density for $x \geq 0$:
+\[ E[X \mid X \geq 0] = \int_0^\infty x \left( 2 \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \right) dx = \sqrt{\frac{2}{\pi}} \int_0^\infty x e^{-x^2/2} dx \]
+Using the substitution $u = x^2/2$, $du = x dx$, the integral becomes:
+\[ \sqrt{\frac{2}{\pi}} \int_0^\infty e^{-u} du = \sqrt{\frac{2}{\pi}} (1) = \sqrt{\frac{2}{\pi}} \]
+Since $X$ and $Y$ are identical in distribution:
+\[ E[X+Y \mid X \geq 0, Y \geq 0] = \sqrt{\frac{2}{\pi}} + \sqrt{\frac{2}{\pi}} = 2\sqrt{\frac{2}{\pi}} = \sqrt{\frac{8}{\pi}} \]
+
+\textbf{Step 2: Set up the rotation for Part 2.}
+
+Let $U = \frac{X+Y}{\sqrt{2}}$ and $V = \frac{X-Y}{\sqrt{2}}$.
+Because the transformation matrix is orthogonal and scales by $1/\sqrt{2}$, $U$ and $V$ are independent standard normal random variables $N(0,1)$.
+We want the distribution of $X+Y = \sqrt{2} U$. Let $S = X+Y$. We want to find $P(S \leq s \mid X \geq 0, Y \geq 0)$.
+First, map the conditioning region $X \geq 0, Y \geq 0$ to $(U, V)$ space:
+\[ X = \frac{U+V}{\sqrt{2}} \geq 0 \implies U \geq -V \implies U \geq |V| \]
+\[ Y = \frac{U-V}{\sqrt{2}} \geq 0 \implies U \geq V \]
+Combining these, the first quadrant $X \geq 0, Y \geq 0$ is exactly the region $U \geq |V|$.
+
+\textbf{Step 3: Calculate the Conditional CDF.}
+
+By definition of conditional probability:
+\[ P(X+Y \leq s \mid X \geq 0, Y \geq 0) = \frac{P(X+Y \leq s \text{ and } X \geq 0, Y \geq 0)}{P(X \geq 0, Y \geq 0)} \]
+Since $X$ and $Y$ are independent standard normals, $P(X \geq 0, Y \geq 0) = P(X \geq 0)P(Y \geq 0) = (1/2)(1/2) = 1/4$.
+The numerator in $(U, V)$ space is $P(\sqrt{2}U \leq s \text{ and } U \geq |V|)$.
+Let's evaluate this probability using the joint density of $U$ and $V$. Note that if $s < 0$, the probability is 0. So assume $s \geq 0$:
+\[ P\left(0 \leq U \leq \frac{s}{\sqrt{2}} \text{ and } -U \leq V \leq U \right) = \int_0^{s/\sqrt{2}} \phi(u) \left( \int_{-u}^u \phi(v) dv \right) du \]
+where $\phi$ is the standard normal PDF, and $\Phi$ is its CDF.
+The inner integral over $v$ is exactly $\Phi(u) - \Phi(-u) = 2\Phi(u) - 1$.
+So the numerator is:
+\[ \int_0^{s/\sqrt{2}} (2\Phi(u) - 1) \phi(u) du \]
+Notice that $\phi(u)$ is the derivative of $\Phi(u)$. We can use substitution $w = \Phi(u)$, $dw = \phi(u)du$:
+When $u=0, w=\Phi(0)=1/2$. When $u=s/\sqrt{2}, w=\Phi(s/\sqrt{2})$.
+\[ \int_{1/2}^{\Phi(s/\sqrt{2})} (2w - 1) dw = \left[ w^2 - w \right]_{1/2}^{\Phi(s/\sqrt{2})} \]
+Evaluate at the bounds:
+Upper bound: $\Phi(s/\sqrt{2})^2 - \Phi(s/\sqrt{2})$.
+Lower bound: $(1/2)^2 - 1/2 = 1/4 - 1/2 = -1/4$.
+Numerator $= \Phi(s/\sqrt{2})^2 - \Phi(s/\sqrt{2}) + 1/4 = \left( \Phi(s/\sqrt{2}) - \frac{1}{2} \right)^2$.
+
+\textbf{Step 4: Combine to form the final distribution function.}
+
+Divide the numerator by the denominator ($1/4$):
+\[ P(X+Y \leq s \mid X \geq 0, Y \geq 0) = \frac{\left( \Phi(s/\sqrt{2}) - \frac{1}{2} \right)^2}{1/4} = 4 \left( \Phi(s/\sqrt{2}) - \frac{1}{2} \right)^2 = \left( 2\Phi(s/\sqrt{2}) - 1 \right)^2 \]
+For $s \geq 0$, the conditional CDF is $F_{X+Y}(s) = \left( 2\Phi(s/\sqrt{2}) - 1 \right)^2$. (For $s < 0$, it is 0).
 \end{solution}
 
 \begin{exercise}
@@ -44,8 +149,50 @@ We say that a maximum record occurs at $n$ in such an event.
 \end{exercise}
 
 \begin{solution}
-(1) $P(A_n) = 1/n$.
-(2) $EY_n = \sum_{k=1}^n 1/k = H_n$. $DY_n = \sum_{k=1}^n \frac{1}{k}(1-1/k) = H_n - \sum 1/k^2$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Exchangeability:} For an i.i.d. continuous sequence, all $n!$ possible rank orderings of the first $n$ variables are equally likely. There are no ties with probability 1.
+    \item \textbf{Indicator Variables:} A sum of counting variables $Y_n = \sum I_k$ has an expectation $E[Y_n] = \sum E[I_k]$ and a variance $D(Y_n) = \sum \operatorname{Var}(I_k)$ (provided the indicators are independent).
+    \item \textbf{Harmonic Numbers:} The sum $H_n = \sum_{k=1}^n \frac{1}{k}$ is the $n$-th harmonic number.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Record breaking is a classic probability problem. If you look at $n$ days of temperatures, what is the chance that the *last* day is the hottest? Since the $n$ days are identical in distribution, any one of them is equally likely to be the champion. So the chance is simply $1/n$. Furthermore, an amazing property of records is that whether day $n$ is a record is completely independent of whether day $k$ was a record. Thus, finding the expected number of records and its variance reduces to just adding up independent coin flips with diminishing probabilities!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Evaluate $P(A_n)$ (Part 1).}
+
+Because the random variables $X_1, X_2, \dots, X_n$ are independent and identically distributed, their joint distribution is perfectly symmetric with respect to any permutation of the indices.
+Furthermore, because they are continuous, the probability of any two variables being exactly equal is 0 (there are no ties).
+Consider the subset of the first $n$ variables. Exactly one of these $n$ variables must be the absolute maximum. Due to symmetry, each of the $n$ variables has an equal, identical chance of being this maximum.
+Therefore, the probability that the $n$-th variable is the maximum is simply 1 out of $n$:
+\[ P(A_n) = \frac{1}{n} \]
+
+\textbf{Step 2: Establish the independence of the record events.}
+
+To calculate the variance of the total number of records, we need to know if the events $A_k$ are independent.
+The event $A_k$ depends only on the relative ordering of the $k$-th item being larger than the first $k-1$ items. Knowing that $X_n$ is the maximum of the first $n$ items does not change the probability that $X_k$ was the maximum of the first $k$ items.
+More formally, there are $n!$ equally likely permutations of ranks. The event $A_n$ corresponds to the $n$-th item having rank 1 (which leaves $(n-1)!$ permutations for the rest, meaning $P(A_n) = (n-1)!/n! = 1/n$). This holds independently for all sequential prefix ranks.
+Thus, the indicator variables $I_k = \mathbb{I}(A_k)$ are mutually independent Bernoulli random variables.
+
+\textbf{Step 3: Calculate the expected value $EY_n$ (Part 2).}
+
+The total number of records up to time $n$ is the sum of the indicators:
+\[ Y_n = \sum_{k=1}^n I_k \]
+By linearity of expectation:
+\[ EY_n = E\left[ \sum_{k=1}^n I_k \right] = \sum_{k=1}^n E[I_k] = \sum_{k=1}^n P(A_k) = \sum_{k=1}^n \frac{1}{k} \]
+This sum is exactly the $n$-th Harmonic number, denoted $H_n$.
+
+\textbf{Step 4: Calculate the variance $DY_n$ (Part 2).}
+
+Because the indicators $I_k$ are mutually independent, the variance of their sum is the sum of their individual variances.
+For a Bernoulli random variable $I_k$ with success probability $p_k = 1/k$, the variance is $p_k(1-p_k)$:
+\[ \operatorname{Var}(I_k) = \frac{1}{k} \left( 1 - \frac{1}{k} \right) = \frac{1}{k} - \frac{1}{k^2} \]
+Summing these variances yields $DY_n$:
+\[ DY_n = \sum_{k=1}^n \operatorname{Var}(I_k) = \sum_{k=1}^n \left( \frac{1}{k} - \frac{1}{k^2} \right) = \sum_{k=1}^n \frac{1}{k} - \sum_{k=1}^n \frac{1}{k^2} \]
+Thus, $DY_n = H_n - \sum_{k=1}^n \frac{1}{k^2}$. (Note that as $n \to \infty$, the second term converges to $\pi^2/6$).
 \end{solution}
 
 \begin{exercise}
@@ -59,7 +206,56 @@ Let $X = (X_1, \dots, X_n)$ be an iid sample from an exponential density with me
 \end{exercise}
 
 \begin{solution}
-(a) $1/2$. (b) $\theta_0/(\theta+\theta_0)$. (c) Yes.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{p-value Definition:} The probability, under the null hypothesis, of observing a test statistic as extreme as or more extreme than the one actually observed.
+    \item \textbf{Probability Integral Transform:} If a continuous random variable $T$ has CDF $F(t)$, then $F(T) \sim \text{Uniform}(0,1)$.
+    \item \textbf{Monotone Likelihood Ratio (MLR):} A family of distributions has an MLR if the likelihood ratio $L(\theta_2)/L(\theta_1)$ is a non-decreasing function of some statistic $T(X)$ for any $\theta_2 > \theta_1$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+A p-value is a random variable because it depends on the random data sampled. Under the null hypothesis, the p-value is famously uniformly distributed between 0 and 1, meaning its expected value is simply $1/2$. If the true parameter drifts into the alternative hypothesis space, the data becomes more "extreme," the p-value tends to drop, and its expected value shrinks. This problem asks us to calculate exactly how fast it shrinks.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Calculate $E_{\theta_0}(P(X))$ (Part 1).}
+
+Let $T = \sum_{i=1}^n X_i$. For an exponential distribution with mean $\theta$, larger values of the sample mean indicate a larger $\theta$. Therefore, the appropriate test statistic for $H_1: \theta > \theta_0$ rejects $H_0$ for large values of $T$.
+The p-value $P(X)$ given an observed statistic $t$ is the probability of seeing a value that large or larger under the null:
+\[ P(X) = P_{\theta_0}(T \geq t \mid T=t) = 1 - F_{T, \theta_0}(t) \]
+where $F_{T, \theta_0}$ is the CDF of $T$ under $\theta_0$.
+Under the null hypothesis $\theta = \theta_0$, the statistic $T$ follows the distribution $F_{T, \theta_0}$. By the continuous probability integral transform, the CDF evaluated at its own random variable, $F_{T, \theta_0}(T)$, follows a Uniform(0,1) distribution.
+Since $U \sim \text{Uniform}(0,1)$, $1-U$ is also $\text{Uniform}(0,1)$.
+Thus, under $\theta_0$, the p-value $P(X) \sim \text{Uniform}(0,1)$.
+Its expected value is the mean of a standard uniform distribution:
+\[ E_{\theta_0}(P(X)) = \frac{1}{2} \]
+
+\textbf{Step 2: Calculate $E_\theta(P(X))$ for $n=1$ (Part 2).}
+
+For $n=1$, the test statistic is just $X_1 \sim \text{Exp}(1/\theta)$ (where $\theta$ is the mean, so the rate is $1/\theta$).
+The CDF under $\theta_0$ is $F_{X, \theta_0}(x) = 1 - e^{-x/\theta_0}$.
+The p-value is:
+\[ P(X) = 1 - F_{X, \theta_0}(X) = e^{-X/\theta_0} \]
+Now, assume the true mean is $\theta$. We want to find the expected value of $P(X)$ under $\theta$:
+\[ E_\theta(P(X)) = E_\theta[e^{-X/\theta_0}] = \int_0^\infty e^{-x/\theta_0} \left( \frac{1}{\theta} e^{-x/\theta} \right) dx \]
+Combine the exponents:
+\[ E_\theta(P(X)) = \frac{1}{\theta} \int_0^\infty e^{-x \left( \frac{1}{\theta_0} + \frac{1}{\theta} \right)} dx \]
+This is the integral of an exponential curve. Its value is the reciprocal of the total rate constant:
+\[ E_\theta(P(X)) = \frac{1}{\theta} \left( \frac{1}{\frac{1}{\theta_0} + \frac{1}{\theta}} \right) = \frac{1}{\theta} \left( \frac{\theta \theta_0}{\theta + \theta_0} \right) = \frac{\theta_0}{\theta + \theta_0} \]
+
+\textbf{Step 3: Analyze the behavior and generalize (Part 3).}
+
+For $n=1$, $E_\theta(P(X)) = \frac{\theta_0}{\theta+\theta_0} = \frac{1}{\theta/\theta_0 + 1}$. As $\theta$ increases, the denominator increases, so the function is strictly decreasing with respect to $\theta$.
+In general, for an arbitrary family with a Monotone Likelihood Ratio (MLR) in $T(X)$, we reject $H_0$ for large $T$.
+The p-value is $P(x) = 1 - F_{T, \theta_0}(T)$.
+The expectation is:
+\[ E_\theta[P(X)] = \int_0^1 P_\theta(P(X) > u) du \]
+Notice that $P(X) > u \iff 1 - F_{T, \theta_0}(T) > u \iff F_{T, \theta_0}(T) < 1-u \iff T < F_{T, \theta_0}^{-1}(1-u)$.
+Let $c_u = F_{T, \theta_0}^{-1}(1-u)$. Then $P_\theta(P(X) > u) = P_\theta(T < c_u)$.
+For an MLR family, a well-known theorem states that the CDF $P_\theta(T \leq c)$ is a strictly decreasing function of $\theta$ for any fixed $c$.
+Since $P_\theta(T < c_u)$ is decreasing in $\theta$ for every $u \in (0,1)$, the integral of this probability over $u$ must also be decreasing in $\theta$.
+Thus, $E_\theta[P(X)]$ is always a decreasing function of $\theta$ for any MLR family.
 \end{solution}
 
 \begin{exercise}
@@ -73,7 +269,50 @@ Let $X_1, X_2$ be i.i.d. uniform on $\theta - 1/2$ to $\theta + 1/2$.
 \end{exercise}
 
 \begin{solution}
-Ancillary statistics like $|X_2-X_1|$ can provide information about the local confidence level.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Irwin-Hall Distribution:} The sum (or average) of two independent uniform random variables follows a triangular distribution.
+    \item \textbf{Ancillary Statistic:} A statistic whose distribution does not depend on the parameter $\theta$. The range $R = |X_2 - X_1|$ is ancillary for the location parameter $\theta$.
+    \item \textbf{Conditionality Principle:} In statistical inference, if an ancillary statistic exists, inference should be performed *conditional* on the observed value of that ancillary statistic.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Imagine drawing two random numbers within a width of 1 around a secret center $\theta$. If the two numbers are very far apart (e.g., distance 0.99), they must be at the extreme opposite edges of the interval. Consequently, their average $\bar{X}$ will be almost exactly on the true center $\theta$! In this scenario, we don't need a wide confidence interval; a tiny interval gives 100\% certainty. However, the classical unconditional confidence interval ignores how far apart the samples are, assigning a blanket 95\% confidence to all samples. This exercise brilliantly illustrates why Bayesian conditioning (or Fisher's conditional frequentism) on ancillary statistics is philosophically superior.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Determine the unconditional distribution of $\bar{X}$ (Part 1).}
+
+Let $U_1, U_2$ be i.i.d. Uniform$(-1/2, 1/2)$. Then $X_i = \theta + U_i$.
+The sample mean is $\bar{X} = \theta + \bar{U}$, where $\bar{U} = (U_1+U_2)/2$.
+Since $U_1, U_2 \in [-1/2, 1/2]$, their sum $S = U_1+U_2 \in [-1, 1]$ has a triangular density: $f_S(s) = 1 - |s|$ for $|s| < 1$.
+The average $\bar{U} = S/2 \in [-1/2, 1/2]$.
+We want $P_\theta(\bar{X} - c < \theta < \bar{X} + c) = 1 - \alpha$.
+This is equivalent to $P(-c < \bar{X} - \theta < c) = P(-c < \bar{U} < c) = P(-2c < S < 2c)$.
+By integrating the triangular density symmetrically around 0:
+\[ P(-2c < S < 2c) = 2 \int_0^{2c} (1-s) ds = 2 \left[ s - \frac{s^2}{2} \right]_0^{2c} = 4c - 4c^2 \]
+Set $4c - 4c^2 = 1-\alpha$, which is a quadratic equation in $c$. Since $1-\alpha < 1$, a valid positive solution $c$ always exists.
+
+\textbf{Step 2: Determine the conditional coverage (Part 2).}
+
+Let $R = |X_2 - X_1| = |U_2 - U_1|$ be the range. Notice that $R$ is entirely independent of $\theta$.
+Suppose we observe $R \geq 1 - \epsilon$.
+The samples $X_1$ and $X_2$ are constrained to the interval $[\theta-1/2, \theta+1/2]$. The maximum possible distance between them is 1.
+If they are at least $1-\epsilon$ apart, one must be very close to the lower bound, and the other must be very close to the upper bound.
+Specifically, their midpoint $\bar{X}$ is mathematically bounded. Since both variables are in $[\theta-1/2, \theta+1/2]$ and their difference is $\geq 1-\epsilon$, the distance from the midpoint $\bar{X}$ to the true center $\theta$ cannot exceed $\epsilon/2$.
+Mathematically, $|\bar{X} - \theta| \leq \frac{1 - R}{2} \leq \frac{\epsilon}{2}$.
+If we pick $\epsilon$ to be sufficiently small (specifically, if $\epsilon/2 < c$), then whenever the condition $|X_2 - X_1| \geq 1 - \epsilon$ is met, we are strictly guaranteed that $|\bar{X} - \theta| < c$.
+Therefore, the conditional probability is:
+\[ P_\theta(\bar{X} - c < \theta < \bar{X} + c \mid |X_2 - X_1| \geq 1 - \epsilon) = 1 \]
+
+\textbf{Step 3: Analyze the philosophical contradiction (Part 3).}
+
+This does \textbf{not} logically contradict Part 1. Part 1 is an \textit{unconditional} (average) probability over all possible samples, whereas Part 2 is a \textit{conditional} probability given a specific subset of samples. A blanket 95\% average success rate is perfectly compatible with a 100\% success rate on a specific easy subset of the data, provided the success rate is lower on the remaining subsets.
+However, if we observe $X_1 = 1$ and $X_2 = 2$, their distance is $|2 - 1| = 1$.
+This means they are perfectly at the maximum theoretical distance apart! The only way this happens for a Uniform$(\theta-1/2, \theta+1/2)$ distribution is if $\theta-1/2 = 1$ and $\theta+1/2 = 2$. This perfectly pinpoints $\theta = 1.5$.
+In this scenario, using the generic confidence interval $\bar{X} \pm c$ (e.g., $1.5 \pm 0.3$) and claiming we are only "$95\%$ confident" that $\theta$ is in there is absurd, because we are actually $100\%$ certain that $\theta = 1.5$.
+We should \textbf{not} use the unconditional confidence interval in this specific case. We should use conditional inference based on the ancillary statistic $|X_2 - X_1|$, following the Conditionality Principle.
 \end{solution}
 
 \begin{exercise}
@@ -86,7 +325,55 @@ Estimate the total number of enemy tanks $N$. Serial numbers $1, \dots, N$ are i
 \end{exercise}
 
 \begin{solution}
-$T = X_{(n)}$ is complete sufficient. MVUE is $\frac{T^{n+1}-(T-1)^{n+1}}{T^n-(T-1)^n}$.
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Complete Sufficient Statistic:} A statistic $T$ is sufficient if it contains all the information in the sample about the parameter. It is complete if the only unbiased estimator of zero based on $T$ is the zero function itself.
+    \item \textbf{Lehmann-Scheffé Theorem:} If $T$ is a complete sufficient statistic, any unbiased estimator that is a function of strictly $T$ is the unique Minimum Variance Unbiased Estimator (MVUE).
+    \item \textbf{Order Statistics:} $X_{(n)}$ is the maximum value in the sample. Its distribution is crucial for uniform parameter estimation.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+This is the classic "German Tank Problem." During WWII, the Allies estimated the total number of tanks Germany produced by looking at the serial numbers of captured tanks. If you capture 5 tanks and the highest serial number is 100, you know $N$ must be at least 100. Furthermore, because you captured 5 tanks evenly spread out, the gap between the maximum observed (100) and the true maximum $N$ should be roughly equal to the average gap between your captured tanks. Part 1 formally proves that only the maximum serial number matters. Part 2 uses this to mathematically derive the perfect unbiased estimate.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Find the complete sufficient statistic (Part 1).}
+
+Let $X_1, X_2, \dots, X_n$ be an i.i.d. sample from a discrete Uniform distribution on $\{1, 2, \dots, N\}$.
+The probability mass function for a single observation is $P(X_i = x) = \frac{1}{N} I(x \in \{1, \dots, N\})$.
+The joint probability mass function of the sample is:
+\[ P(X_1=x_1, \dots, X_n=x_n) = \prod_{i=1}^n \frac{1}{N} I(1 \leq x_i \leq N) \]
+\[ = \frac{1}{N^n} I(1 \leq \min x_i) I(\max x_i \leq N) \]
+By the Fisher-Neyman Factorization Theorem, we can split this into $g(T(x), N) \cdot h(x)$.
+Here, $T(X) = \max X_i = X_{(n)}$. Thus, $T = X_{(n)}$ is a sufficient statistic.
+To prove completeness, suppose $E_N[g(T)] = 0$ for all $N$.
+For $N=1$, $P(T=1) = 1$, so $g(1) = 0$.
+For $N=2$, $E_2[g(T)] = g(1)P_2(T=1) + g(2)P_2(T=2) = 0 + g(2)P_2(T=2) = 0 \implies g(2) = 0$.
+By induction, $g(t) = 0$ for all $t$. Thus, $T = X_{(n)}$ is complete.
+
+\textbf{Step 2: Find the distribution of $T$.}
+
+To find the MVUE, we need an unbiased estimator based on $T$, i.e., a function $h(T)$ such that $E_N[h(T)] = N$.
+First, find the probability mass function of $T$.
+The CDF of $T$ is $P(T \leq t) = P(\text{all } X_i \leq t) = \left( \frac{t}{N} \right)^n$.
+The PMF is the difference in the CDF:
+\[ P_N(T = t) = P(T \leq t) - P(T \leq t-1) = \frac{t^n - (t-1)^n}{N^n} \]
+
+\textbf{Step 3: Construct the MVUE using the condition of unbiasedness (Part 2).}
+
+We want a function $h(t)$ such that for any integer $N \geq 1$:
+\[ \sum_{t=1}^N h(t) \frac{t^n - (t-1)^n}{N^n} = N \]
+Multiply both sides by $N^n$:
+\[ \sum_{t=1}^N h(t) \left[ t^n - (t-1)^n \right] = N^{n+1} \]
+This must hold for all $N$. Let's evaluate it for $N$ and $N-1$:
+Equation 1: $\sum_{t=1}^N h(t) \left[ t^n - (t-1)^n \right] = N^{n+1}$
+Equation 2: $\sum_{t=1}^{N-1} h(t) \left[ t^n - (t-1)^n \right] = (N-1)^{n+1}$
+Subtract Equation 2 from Equation 1. The summation beautifully telescopes, leaving only the $N$-th term on the left side:
+\[ h(N) \left[ N^n - (N-1)^n \right] = N^{n+1} - (N-1)^{n+1} \]
+Since this equation holds for all $N$, we can replace $N$ with our observed statistic $T$:
+\[ h(T) = \frac{T^{n+1} - (T-1)^{n+1}}{T^n - (T-1)^n} \]
+Because $h(T)$ is an unbiased estimator of $N$ and is a function of the complete sufficient statistic $T$, the Lehmann-Scheffé theorem guarantees that it is the unique Minimum Variance Unbiased Estimator (MVUE).
 \end{solution}
 
 \subsection{Team}
@@ -98,11 +385,116 @@ The characteristic function $f$ of a probability distribution function $F$ is de
 Show that $f_1(t) = (\cos t)^2$ is a characteristic function and $f_2(t) = |\cos t|$ is not a characteristic function.
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Characteristic Function (CF):} The CF of a random variable $X$ is $E[e^{itX}]$. It uniquely determines the probability distribution.
+    \item \textbf{Euler's Formula:} $\cos t = \frac{e^{it} + e^{-it}}{2}$.
+    \item \textbf{Moments from CF:} If $E[|X|^n] < \infty$, the $n$-th derivative of the CF at $t=0$ exists and equals $i^n E[X^n]$. Consequently, if a CF has a valid Taylor expansion around 0 matching another CF, their moments must match.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+A characteristic function isn't just any arbitrary wave; it represents the "fingerprint" of a valid probability distribution. For $f_1(t) = \cos^2 t$, we can easily unpack it using Euler's formula to reveal a simple discrete distribution. But $f_2(t) = |\cos t|$ has a jagged corner (non-differentiable) at $t = \pi/2$. While CFs can be non-differentiable if moments don't exist (like the Cauchy distribution), $f_2(t)$ looks exactly like $\cos t$ near 0, meaning it implies all moments exist and match a simple coin-flip distribution. But a coin flip's CF is a smooth cosine wave everywhere, exposing the contradiction of the jagged $|\cos t|$ wave.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove $f_1(t)$ is a valid characteristic function.}
+
+We can rewrite $f_1(t)$ using Euler's formula:
+\[ f_1(t) = (\cos t)^2 = \left( \frac{e^{it} + e^{-it}}{2} \right)^2 \]
+Expand the square:
+\[ f_1(t) = \frac{e^{i2t} + 2e^{i0} + e^{-i2t}}{4} = \frac{1}{4}e^{i(2)t} + \frac{1}{2}e^{i(0)t} + \frac{1}{4}e^{i(-2)t} \]
+This explicitly matches the definition of a characteristic function $E[e^{itX}]$ for a discrete random variable $X$ with the following probability mass function:
+\[ P(X = 2) = \frac{1}{4}, \quad P(X = 0) = \frac{1}{2}, \quad P(X = -2) = \frac{1}{4} \]
+Since this is a perfectly valid probability distribution, $f_1(t)$ is a valid characteristic function.
+
+\textbf{Step 2: Analyze the behavior of $f_2(t)$ near zero.}
+
+Suppose $f_2(t) = |\cos t|$ is the characteristic function of some random variable $X$.
+For $t \in (-\pi/2, \pi/2)$, $\cos t > 0$, so $f_2(t) = \cos t$.
+The Maclaurin series expansion of $\cos t$ is:
+\[ \cos t = 1 - \frac{t^2}{2!} + \frac{t^4}{4!} - \dots \]
+Because $f_2(t)$ is infinitely differentiable at $t=0$, the random variable $X$ must possess all finite moments.
+Specifically, the coefficients of the Taylor expansion of a CF are given by $\frac{i^k E[X^k]}{k!} t^k$.
+Comparing the $t^2$ term: $\frac{i^2 E[X^2]}{2} = -\frac{1}{2} \implies E[X^2] = 1$.
+Comparing the $t^4$ term: $\frac{i^4 E[X^4]}{24} = \frac{1}{24} \implies E[X^4] = 1$.
+
+\textbf{Step 3: Prove the contradiction for $f_2(t)$.}
+
+We found that $E[X^2] = 1$ and $E[X^4] = 1$.
+Let's calculate the variance of the random variable $Y = X^2$:
+\[ \operatorname{Var}(X^2) = E[X^4] - (E[X^2])^2 = 1 - 1^2 = 0 \]
+If a random variable has zero variance, it must be a constant almost surely. Thus, $X^2 = 1$ almost surely.
+This means $X$ can only take the values $+1$ or $-1$.
+If $X \in \{-1, 1\}$, its most general characteristic function is:
+\[ f_X(t) = p e^{it} + (1-p) e^{-it} \]
+Since we also know from the $t^1$ term of the Taylor expansion that $E[X] = 0$, we must have $p = 1/2$.
+Therefore, the true characteristic function for $X$ must be:
+\[ f_X(t) = \frac{1}{2}e^{it} + \frac{1}{2}e^{-it} = \cos t \]
+This must hold for \textbf{all} real numbers $t$.
+However, the proposed function is $f_2(t) = |\cos t|$, which does not equal $\cos t$ when $t \in (\pi/2, 3\pi/2)$.
+This is a fatal contradiction. Therefore, $f_2(t) = |\cos t|$ cannot be the characteristic function of any probability distribution.
+\end{solution}
+
 \begin{exercise}
 \label{probability:2013:8}
 Let $I = [0, 1]$ be the unit interval and $\mathcal{B}$ the $\sigma$-algebra of Borel sets on $I$. Let $P$ be the Lebesgue measure on $I$. Show that on the probability space $(I, \mathcal{B}, P)$ the set of points of $x$ with the following property has probability 1: for all but finitely many rational numbers $p/q \in (0, 1)$,
 \[ \left| x - \frac{p}{q} \right| \geq \frac{1}{(q \log q)^2}. \]
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{First Borel-Cantelli Lemma:} In a probability space, if an infinite sequence of events $A_n$ has summable probabilities ($\sum P(A_n) < \infty$), then the probability of infinitely many $A_n$ occurring is strictly zero.
+    \item \textbf{Lebesgue Measure as Probability:} The uniform probability of hitting a subset of $[0,1]$ is exactly the total length (measure) of that subset.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Rational numbers are dense in the real numbers; you can get arbitrarily close to any real number using a fraction $p/q$. But how "fast" can you get close relative to the denominator $q$? This is a famous topic in Diophantine approximation. If we cast a tiny "net" around every single rational number $p/q$, with the size of the net shrinking rapidly as $q$ grows (specifically proportional to $\frac{1}{q^2 \log^2 q}$), the sum of the widths of all these infinite nets is still finite. Therefore, by Borel-Cantelli, a randomly dropped point $x$ will only ever fall into a finite number of these nets!
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Define the "bad" events.}
+
+We want to prove that the inequality $|x - p/q| \geq \frac{1}{(q \log q)^2}$ holds for all but finitely many fractions.
+This is logically equivalent to saying that the reverse inequality (the "bad" event) occurs only finitely many times.
+Define the bad event $A_{p,q}$ for a specific rational number $p/q$:
+\[ A_{p,q} = \left\{ x \in [0, 1] : \left| x - \frac{p}{q} \right| < \frac{1}{(q \log q)^2} \right\} \]
+This event defines an interval centered at $p/q$ with a radius of $\frac{1}{(q \log q)^2}$.
+The probability (Lebesgue measure) of this event is simply the width of the interval:
+\[ P(A_{p,q}) \leq \frac{2}{(q \log q)^2} \]
+(It's an inequality because if the interval extends outside $[0,1]$, its measure inside $[0,1]$ is smaller).
+
+\textbf{Step 2: Group the events by the denominator $q$.}
+
+For a fixed denominator $q \geq 2$, the numerator $p$ can take values from $1$ to $q-1$ (since $p/q \in (0, 1)$).
+Let $B_q$ be the union of all bad events for a given denominator $q$:
+\[ B_q = \bigcup_{p=1}^{q-1} A_{p,q} \]
+We can bound the probability of $B_q$ using the union bound (Boole's inequality):
+\[ P(B_q) \leq \sum_{p=1}^{q-1} P(A_{p,q}) \leq \sum_{p=1}^{q-1} \frac{2}{(q \log q)^2} \]
+Since there are $q-1$ terms in the sum:
+\[ P(B_q) \leq (q-1) \frac{2}{(q \log q)^2} < q \frac{2}{q^2 (\log q)^2} = \frac{2}{q (\log q)^2} \]
+
+\textbf{Step 3: Apply the First Borel-Cantelli Lemma.}
+
+We now consider the infinite sequence of events $B_q$ for $q \geq 2$. We check if the sum of their probabilities converges:
+\[ \sum_{q=2}^\infty P(B_q) < \sum_{q=2}^\infty \frac{2}{q (\log q)^2} \]
+We can test the convergence of this series using the integral test. Let $f(y) = \frac{2}{y (\log y)^2}$:
+\[ \int_2^\infty \frac{2}{y (\log y)^2} dy = \int_{\log 2}^\infty \frac{2}{u^2} du = \left[ -\frac{2}{u} \right]_{\log 2}^\infty = \frac{2}{\log 2} < \infty \]
+Since the integral is finite, the series converges: $\sum_{q=2}^\infty P(B_q) < \infty$.
+By the First Borel-Cantelli Lemma, the probability that the events $B_q$ occur infinitely often is zero:
+\[ P(\limsup_{q \to \infty} B_q) = 0 \]
+
+\textbf{Step 4: Final Conclusion.}
+
+Since the probability of hitting infinitely many $B_q$ is 0, the probability of hitting only finitely many $B_q$ is exactly 1.
+If $x$ is in only finitely many $B_q$, it means $x$ falls into the "bad" interval for only finitely many rational numbers $p/q$.
+Therefore, for all but finitely many $p/q$, the point $x$ must lie strictly outside the bad interval, meaning:
+\[ \left| x - \frac{p}{q} \right| \geq \frac{1}{(q \log q)^2} \]
+This property holds with probability 1.
+\end{solution}
 
 \begin{exercise}
 \label{probability:2013:9}
@@ -112,6 +504,71 @@ Let $X$ be an integrable random variable, $\mathcal{G}$ a $\sigma$-algebra, and 
     \item Prove that for any pair of real numbers $a < b$, we have $\min\{\max\{X, a\}, b\} = \min\{\max\{Y, a\}, b\}$, and consequently, $X = Y$, a.s.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Conditional Expectation as Projection:} $Y = E[X \mid \mathcal{G}]$ acts as a smoothing operator (or projection) of $X$ onto the sub-algebra $\mathcal{G}$. It is always true that $E[Y] = E[X]$ and $\operatorname{Var}(Y) \leq \operatorname{Var}(X)$.
+    \item \textbf{Variance Decomposition:} $\operatorname{Var}(X) = E[\operatorname{Var}(X \mid \mathcal{G})] + \operatorname{Var}(E[X \mid \mathcal{G}])$.
+    \item \textbf{Jensen's Inequality for Conditional Expectation:} If $\phi$ is a convex function, $E[\phi(X) \mid \mathcal{G}] \geq \phi(E[X \mid \mathcal{G}])$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Because $Y$ is a "smoothed out" version of $X$, it naturally tends to have less variance (fewer extreme values) than $X$. But we are explicitly told that $X$ and $Y$ have the exact same distribution, meaning $Y$ has just as much variance as $X$. The only way a "smoothed" variable can retain 100\% of the original variable's volatility is if no smoothing actually happened—meaning $X$ was already perfectly smooth with respect to $\mathcal{G}$. Thus, $X$ and $Y$ must be exactly the same variable. Part (1) proves this algebraically for finite variance, and Part (2) uses bounding functions to generalize it to all integrable variables.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Prove $X = Y$ for square-integrable variables (Part 1).}
+
+We are given $Y = E[X \mid \mathcal{G}]$ and that $X$ and $Y$ have the same distribution.
+Since $X$ is square-integrable, $E[X^2] < \infty$. Because $X$ and $Y$ have the same distribution, $E[Y^2] = E[X^2]$.
+Let's analyze the expected squared difference between $X$ and $Y$:
+\[ E[(X-Y)^2] = E[X^2 - 2XY + Y^2] = E[X^2] - 2E[XY] + E[Y^2] \]
+We need to evaluate $E[XY]$. Because $Y$ is strictly $\mathcal{G}$-measurable, we can pull it out of the conditional expectation over $\mathcal{G}$:
+\[ E[XY] = E[E[XY \mid \mathcal{G}]] = E[Y E[X \mid \mathcal{G}]] \]
+Substitute the definition $Y = E[X \mid \mathcal{G}]$:
+\[ E[XY] = E[Y \cdot Y] = E[Y^2] \]
+Return to our squared difference equation:
+\[ E[(X-Y)^2] = E[X^2] - 2E[Y^2] + E[Y^2] = E[X^2] - E[Y^2] \]
+Since the distributions match, $E[X^2] = E[Y^2]$, making the right side 0.
+\[ E[(X-Y)^2] = 0 \]
+The expectation of a non-negative random variable being zero implies the variable is zero almost surely. Thus, $X = Y$ a.s.
+
+\textbf{Step 2: Construct bounding functions for the general case (Part 2).}
+
+Now assume $X$ is only integrable ($E|X| < \infty$). We cannot rely on $E[X^2]$.
+Let $f(x) = \min\{\max\{x, a\}, b\}$ for $a < b$. This function essentially "clips" the extreme tails of $X$, bounding it strictly within the interval $[a, b]$.
+Notice that $f(x)$ is not convex or concave overall, but it can be written as a linear combination of convex functions. Specifically, $f(x) = x - \max\{x - b, 0\} + \min\{x - a, 0\}$.
+However, there is an easier path using Jensen's inequality directly on the convex components. The function $g(x) = \max\{x, c\}$ is strictly convex.
+By Jensen's Inequality for conditional expectations:
+\[ E[\max\{X, c\} \mid \mathcal{G}] \geq \max\{E[X \mid \mathcal{G}], c\} = \max\{Y, c\} \]
+Taking the unconditional expectation of both sides:
+\[ E[ \max\{X, c\} ] \geq E[ \max\{Y, c\} ] \]
+But because $X$ and $Y$ have the identical distribution, $E[\max\{X, c\}]$ exactly equals $E[\max\{Y, c\}]$.
+The only way the expected value of an inequality can be an equality is if the original variables are equal almost surely.
+Therefore:
+\[ E[\max\{X, c\} \mid \mathcal{G}] = \max\{Y, c\} \text{ a.s.} \]
+This holds for any constant $c$. Let $c=a$ and $c=b$.
+Notice we can write our target function algebraically as:
+\[ f(x) = \min\{\max\{x, a\}, b\} = \max\{x, a\} - \max\{x, b\} + b \]
+Apply the conditional expectation to $f(X)$:
+\[ E[f(X) \mid \mathcal{G}] = E[\max\{X, a\} \mid \mathcal{G}] - E[\max\{X, b\} \mid \mathcal{G}] + b \]
+Substitute our Jensen equality results:
+\[ E[f(X) \mid \mathcal{G}] = \max\{Y, a\} - \max\{Y, b\} + b = f(Y) \text{ a.s.} \]
+
+\textbf{Step 3: Complete the proof using Part 1.}
+
+We have established that the bounded variable $f(Y)$ is the conditional expectation of $f(X)$:
+\[ f(Y) = E[f(X) \mid \mathcal{G}] \]
+Furthermore, because $X$ and $Y$ have the same distribution, $f(X)$ and $f(Y)$ must also have the identical distribution.
+Since $f(X)$ is strictly bounded between $[a, b]$, it is definitively square-integrable.
+We now have a square-integrable variable $f(X)$ whose conditional expectation is $f(Y)$, and they share the same distribution.
+By the exact logic proven in Part 1, we must conclude:
+\[ f(X) = f(Y) \text{ a.s.} \]
+This literally means $\min\{\max\{X, a\}, b\} = \min\{\max\{Y, a\}, b\}$ almost surely.
+Since this holds for any $a < b$, we can take the limits as $a \to -\infty$ and $b \to \infty$. The clipped variables converge to the original variables, yielding $X = Y$ almost surely.
+\end{solution}
 
 \begin{exercise}
 \label{probability:2013:10}
@@ -123,6 +580,54 @@ Let $X_1, \dots, X_n$ be iid $N(\theta, \sigma^2)$, $\sigma^2$ known, and let $\
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Bayesian Updating:} The posterior distribution is proportional to the product of the likelihood and the prior: $\pi(\theta \mid x) \propto L(\theta \mid x) \pi(\theta)$.
+    \item \textbf{Improper Priors:} As the scale parameter $a \to \infty$, the Laplace (double exponential) prior becomes increasingly flat, ultimately approaching a uniform distribution over the entire real line.
+    \item \textbf{p-value for Normal Mean:} For testing $H_0: \theta \leq K$ vs $H_1: \theta > K$ with a known variance, the p-value is the probability of observing a sample mean as large as $\bar{x}$ under $\theta = K$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+This problem connects Bayesian inference with Classical (Frequentist) inference. By placing a double exponential prior on the mean, we are doing Bayesian updating. But what happens if we make that prior infinitely wide ($a \to \infty$)? The prior becomes completely flat, meaning it injects zero prior bias into the equation. The Bayesian posterior is then driven entirely by the data. In this pure data-driven limit, the Bayesian probability that $\theta > K$ perfectly mirrors the Frequentist confidence, showing that an objective Bayesian approach and a classical p-value are two sides of the exact same mathematical coin.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Calculate the exact posterior probability (Part 1).}
+
+The likelihood of the sample is the product of $n$ normal densities:
+\[ L(\theta \mid x) \propto \exp\left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \theta)^2 \right) \propto \exp\left( -\frac{n}{2\sigma^2} (\bar{x} - \theta)^2 \right) \]
+The prior is $\pi(\theta) = \frac{1}{2a} e^{-|\theta|/a}$.
+The posterior density is proportional to their product:
+\[ \pi(\theta \mid x, a) \propto \exp\left( -\frac{n}{2\sigma^2} (\bar{x} - \theta)^2 - \frac{|\theta|}{a} \right) \]
+To find the probability $P(\theta > K \mid x, a)$, we must integrate this posterior from $K$ to $\infty$ and normalize it by the integral over all $\mathbb{R}$:
+\[ P(\theta > K \mid x, a) = \frac{\int_K^\infty \exp\left( -\frac{n}{2\sigma^2} (\bar{x} - \theta)^2 - \frac{|\theta|}{a} \right) d\theta}{\int_{-\infty}^\infty \exp\left( -\frac{n}{2\sigma^2} (\bar{x} - \theta)^2 - \frac{|\theta|}{a} \right) d\theta} \]
+
+\textbf{Step 2: Find the limit as $a \to \infty$ (Part 2).}
+
+As $a \to \infty$, the term $\frac{|\theta|}{a} \to 0$ for any fixed $\theta$.
+Because the normal likelihood decays exponentially fast, we can apply the Dominated Convergence Theorem to pass the limit inside the integrals.
+The prior term disappears, leaving only the normal likelihood:
+\[ \lim_{a \to \infty} \pi(\theta \mid x, a) \propto \exp\left( -\frac{n}{2\sigma^2} (\bar{x} - \theta)^2 \right) \]
+This is the kernel of a Normal distribution with mean $\bar{x}$ and variance $\sigma^2/n$.
+Therefore, the limiting posterior is exactly $\theta \mid x \sim N(\bar{x}, \sigma^2/n)$.
+The limiting probability is simply the tail of this normal distribution:
+\[ \lim_{a \to \infty} P(\theta > K \mid x, a) = P\left( N\left(\bar{x}, \frac{\sigma^2}{n}\right) > K \right) \]
+Standardize the variable by subtracting the mean and dividing by the standard deviation:
+\[ P\left( Z > \frac{K - \bar{x}}{\sigma/\sqrt{n}} \right) = 1 - \Phi\left( \frac{K - \bar{x}}{\sigma/\sqrt{n}} \right) = \Phi\left( \frac{\bar{x} - K}{\sigma/\sqrt{n}} \right) \]
+
+\textbf{Step 3: Compare to the classical p-value (Part 3).}
+
+Consider the classical one-sided hypothesis test for $H_0: \theta \leq K$ versus $H_1: \theta > K$.
+The test statistic is the sample mean $\bar{X}$. Under the boundary of the null hypothesis ($\theta = K$), the distribution of the sample mean is $\bar{X} \sim N(K, \sigma^2/n)$.
+The p-value is the probability of observing a sample mean at least as extreme as the one we actually observed ($\bar{x}$):
+\[ \text{p-value} = P_{H_0}(\bar{X} \geq \bar{x}) = P\left( Z \geq \frac{\bar{x} - K}{\sigma/\sqrt{n}} \right) = 1 - \Phi\left( \frac{\bar{x} - K}{\sigma/\sqrt{n}} \right) \]
+Comparing this to our Bayesian result:
+\[ \lim_{a \to \infty} P(\theta > K \mid x, a) = \Phi\left( \frac{\bar{x} - K}{\sigma/\sqrt{n}} \right) = 1 - \text{p-value} \]
+This beautifully demonstrates that with a flat, non-informative prior, the Bayesian posterior probability of the alternative hypothesis is exactly $1$ minus the frequentist p-value.
+\end{solution}
+
 \begin{exercise}
 \label{probability:2013:11}
 Consider linear model $Y = X\beta + \varepsilon$, $\varepsilon \sim N(0, \sigma^2 I_n)$. Minimize $\frac{1}{2} \|Y - X\beta\|_2^2 + \lambda \|\beta\|_1$.
@@ -131,6 +636,57 @@ Consider linear model $Y = X\beta + \varepsilon$, $\varepsilon \sim N(0, \sigma^
     \item If $X^T X = I_p$, show lasso estimator $\beta_{\lambda,i}^*$ is soft thresholding of $\hat{\beta}_i$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Ordinary Least Squares (OLS):} $\hat{\beta}$ is the OLS estimator, which minimizes $\|Y - X\beta\|_2^2$ and satisfies the normal equations $X^T(Y - X\hat{\beta}) = 0$.
+    \item \textbf{Pythagorean Theorem in linear models:} Due to the orthogonal projection of OLS, the total sum of squares can be decoupled into the residual sum of squares and the explained sum of squares.
+    \item \textbf{Soft Thresholding:} A function that shrinks values toward zero: $S_\lambda(x) = \text{sign}(x) \max(|x| - \lambda, 0)$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+LASSO regression attempts to balance fitting the data (OLS) with keeping the coefficients small or exactly zero ($L_1$ penalty). Part 1 proves that the LASSO objective function can be perfectly rewritten as just finding a $\beta$ that stays close to the unpenalized OLS estimate $\hat{\beta}$, plus the penalty. We completely remove $Y$ from the optimization! Part 2 shows that if the features are completely uncorrelated ($X^T X = I_p$), the multidimensional problem shatters into $p$ independent 1D problems, and the optimal solution is simply to take the OLS estimates and symmetrically "shave off" an amount $\lambda$ from them.
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Decompose the squared error term (Part 1).}
+
+Let $\hat{\beta}$ be the standard OLS estimator. By definition, the residuals $Y - X\hat{\beta}$ are orthogonal to the column space of $X$.
+We can rewrite the squared error vector by adding and subtracting $X\hat{\beta}$:
+\[ \|Y - X\beta\|_2^2 = \|(Y - X\hat{\beta}) + X(\hat{\beta} - \beta)\|_2^2 \]
+Expand the squared $L_2$ norm (which is the dot product of the vector with itself):
+\[ = \|Y - X\hat{\beta}\|_2^2 + \|X(\hat{\beta} - \beta)\|_2^2 + 2(Y - X\hat{\beta})^T X(\hat{\beta} - \beta) \]
+The cross-term is $2(Y - X\hat{\beta})^T X(\hat{\beta} - \beta)$. But from the OLS normal equations, $X^T(Y - X\hat{\beta}) = 0$.
+Therefore, the cross-term is exactly 0. The equation simplifies to:
+\[ \|Y - X\beta\|_2^2 = \|Y - X\hat{\beta}\|_2^2 + \|X(\beta - \hat{\beta})\|_2^2 \]
+Substitute this back into the full LASSO objective function (multiplied by 2 for convenience):
+\[ \|Y - X\beta\|_2^2 + 2\lambda \|\beta\|_1 = \|Y - X\hat{\beta}\|_2^2 + \|X(\beta - \hat{\beta})\|_2^2 + 2\lambda \|\beta\|_1 \]
+This completes the proof for Part 1.
+
+\textbf{Step 2: Simplify using the orthogonal design (Part 2).}
+
+Assume the design matrix is orthogonal, $X^T X = I_p$.
+Because $\|Y - X\hat{\beta}\|_2^2$ is a constant with respect to $\beta$, minimizing the full objective is equivalent to minimizing just the remaining terms:
+\[ \min_\beta \left( \|X(\beta - \hat{\beta})\|_2^2 + 2\lambda \|\beta\|_1 \right) \]
+Using $X^T X = I_p$, the first term simplifies dramatically:
+\[ \|X(\beta - \hat{\beta})\|_2^2 = (\beta - \hat{\beta})^T X^T X (\beta - \hat{\beta}) = (\beta - \hat{\beta})^T I_p (\beta - \hat{\beta}) = \|\beta - \hat{\beta}\|_2^2 \]
+So the objective function becomes entirely separable into $p$ independent 1D optimization problems:
+\[ \sum_{i=1}^p (\beta_i - \hat{\beta}_i)^2 + 2\lambda \sum_{i=1}^p |\beta_i| = \sum_{i=1}^p \left[ (\beta_i - \hat{\beta}_i)^2 + 2\lambda |\beta_i| \right] \]
+
+\textbf{Step 3: Solve the 1D optimization problem.}
+
+We can minimize each $\beta_i$ independently by minimizing $f(\beta_i) = (\beta_i - \hat{\beta}_i)^2 + 2\lambda |\beta_i|$.
+To find the minimum, take the subderivative with respect to $\beta_i$ and set it to 0:
+\[ 2(\beta_i - \hat{\beta}_i) + 2\lambda \operatorname{sign}(\beta_i) = 0 \implies \hat{\beta}_i = \beta_i + \lambda \operatorname{sign}(\beta_i) \]
+We solve this for $\beta_i$ by considering three cases:
+1. If $\hat{\beta}_i > \lambda$, then $\beta_i$ must be positive, so $\operatorname{sign}(\beta_i) = 1$. This gives $\beta_i = \hat{\beta}_i - \lambda$.
+2. If $\hat{\beta}_i < -\lambda$, then $\beta_i$ must be negative, so $\operatorname{sign}(\beta_i) = -1$. This gives $\beta_i = \hat{\beta}_i + \lambda$.
+3. If $-\lambda \leq \hat{\beta}_i \leq \lambda$, the optimal solution locks at the non-differentiable point $\beta_i = 0$.
+These three cases perfectly define the soft-thresholding operator:
+\[ \beta_{\lambda,i}^* = \operatorname{sign}(\hat{\beta}_i) \max(|\hat{\beta}_i| - \lambda, 0) \]
+\end{solution}
 
 \begin{exercise}
 \label{probability:2013:12}
@@ -141,3 +697,61 @@ Consider linear model $Y = X\beta + \varepsilon$. Let $a \neq 0$ be a vector.
     \item Show that $X$ is full rank iff $a^T \beta$ are estimable for all $a$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Estimability:} A linear combination $a^T \beta$ is estimable if and only if there exists a linear combination of the observations $c^T Y$ that is unbiased for it: $E[c^T Y] = a^T \beta$.
+    \item \textbf{Row Space Condition:} The unbiasedness condition $E[c^T Y] = c^T X \beta$ implies that $c^T X = a^T$, or $a = X^T c$. Thus, $a^T \beta$ is estimable \textbf{if and only if} the vector $a$ lies in the row space of the design matrix $X$.
+\end{itemize}
+
+\textbf{Intuition / Motivation:}
+
+Estimability asks: "Does the data I collected actually contain information about the specific combination of parameters I want to measure?" If your design matrix $X$ multiplies a parameter vector $a$ to yield completely zero ($Xa = 0$), then those parameters are effectively invisible to your data. Part 1 proves this invisibility. Part 2 asks the reverse: if a parameter is unmeasurable, must it be completely invisible? No—it could just be partially entangled with other parameters. Part 3 concludes that to measure absolutely everything, your data matrix must have no blind spots (full rank).
+
+\textbf{Logical Step-by-Step Breakdown:}
+
+\textbf{Step 1: Show $Xa = 0 \implies a^T \beta$ is not estimable (Part 1).}
+
+We are given $Xa = 0$ and $a \neq 0$.
+Assume, for the sake of contradiction, that $a^T \beta$ is estimable.
+By the definition of estimability, $a$ must lie in the row space of $X$. Therefore, there exists some vector $c$ such that:
+\[ a = X^T c \]
+Now, multiply both sides by $X$:
+\[ Xa = X X^T c \]
+We are given that $Xa = 0$, so:
+\[ X X^T c = 0 \]
+Multiply both sides on the left by $c^T$:
+\[ c^T X X^T c = 0 \implies (X^T c)^T (X^T c) = 0 \implies \|X^T c\|_2^2 = 0 \]
+If the squared norm of a vector is 0, the vector itself must be 0. Thus, $X^T c = 0$.
+But we defined $a = X^T c$, which forces $a = 0$.
+This contradicts the given premise that $a \neq 0$.
+Therefore, our assumption must be false: $a^T \beta$ is \textbf{not} estimable.
+
+\textbf{Step 2: Disprove the converse (Part 2).}
+
+The statement is: "If $a^T \beta$ is not estimable, then $Xa = 0$." We can disprove this by providing a simple counterexample.
+Consider a regression with two parameters ($\beta_1, \beta_2$) but only one observation that measures only the first parameter.
+Let $X = \begin{pmatrix} 1 & 0 \end{pmatrix}$. The row space of $X$ is simply vectors of the form $\begin{pmatrix} c \\ 0 \end{pmatrix}$.
+Let $a = \begin{pmatrix} 1 \\ 1 \end{pmatrix}$. We want to estimate $a^T \beta = \beta_1 + \beta_2$.
+Because $a$ is not in the row space of $X$ (the second element is 1, not 0), $a^T \beta$ is \textbf{not estimable}.
+However, let's calculate $Xa$:
+\[ Xa = \begin{pmatrix} 1 & 0 \end{pmatrix} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = 1 \]
+Since $Xa = 1 \neq 0$, the statement is \textbf{false}. A parameter combination can be unestimable without being in the null space of $X$; it merely needs to have some component orthogonal to the row space.
+
+\textbf{Step 3: Prove the full rank condition (Part 3).}
+
+We need to show $X$ is full rank $\iff a^T \beta$ is estimable for all $a \in \mathbb{R}^p$.
+\textbf{Forward Direction ($\implies$):}
+Assume $X$ is full column rank (rank $p$).
+The row space of $X$, which is the image of $X^T$, has dimension $p$.
+Since the ambient space is $\mathbb{R}^p$, the row space must be the entire space $\mathbb{R}^p$.
+Therefore, any arbitrary vector $a \in \mathbb{R}^p$ is guaranteed to be in the row space of $X$.
+Since $a \in \text{row}(X)$, $a^T \beta$ is estimable for all $a$.
+\textbf{Reverse Direction ($\impliedby$):}
+Assume $a^T \beta$ is estimable for all $a \in \mathbb{R}^p$.
+This means every vector $a \in \mathbb{R}^p$ lies in the row space of $X$.
+Therefore, the row space of $X$ spans the entirety of $\mathbb{R}^p$.
+The dimension of the row space is the rank of the matrix. Since the dimension is $p$, the matrix $X$ has rank $p$, meaning it is full rank.
+This completes the bidirectional proof.
+\end{solution}

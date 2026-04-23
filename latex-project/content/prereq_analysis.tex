@@ -1,0 +1,153 @@
+\chapter{Analysis \& Differential Equations}
+
+This section provides prerequisite knowledge, definitions, theorems, and examples for key topics in Analysis and Differential Equations.
+
+\section{Real Analysis and Measure Theory}
+
+\textbf{Key Topics:} Lebesgue measure, $L^p$ spaces, convergence theorems, Fubini's theorem, Radon-Nikodym theorem.
+
+\begin{definition}[Lebesgue $L^p$ Spaces]
+For $1 \leq p < \infty$, the space $L^p(X, \mu)$ consists of all measurable functions $f$ such that $\int_X |f|^p \, d\mu < \infty$. The norm is given by $\|f\|_p = \left( \int_X |f|^p \, d\mu \right)^{1/p}$. For $p = \infty$, $L^\infty(X, \mu)$ is the space of essentially bounded measurable functions.
+\end{definition}
+
+\begin{theorem}[Dominated Convergence Theorem]
+Let $\{f_n\}$ be a sequence of measurable functions on $X$ such that $f_n(x) \to f(x)$ pointwise almost everywhere. If there exists an integrable function $g$ such that $|f_n(x)| \leq g(x)$ for all $n$ and almost all $x \in X$, then $f$ is integrable and $\lim_{n \to \infty} \int_X f_n \, d\mu = \int_X f \, d\mu$.
+\end{theorem}
+
+\begin{example}
+Consider the sequence $f_n(x) = \frac{n \sin(x/n)}{x(1+x^2)}$ on $(0, \infty)$. Since $|\sin(\theta)| \leq |\theta|$, we have $|f_n(x)| \leq \frac{1}{1+x^2} = g(x)$. The function $g(x)$ is integrable on $(0, \infty)$, so by the Dominated Convergence Theorem, we can pass the limit inside the integral to evaluate $\lim_{n \to \infty} \int_0^\infty f_n(x) \, dx = \int_0^\infty \frac{1}{1+x^2} \, dx = \frac{\pi}{2}$.
+\end{example}
+
+\section{Fourier Analysis}
+
+\textbf{Key Topics:} Fourier series, $L^2$ convergence, Parseval's identity, Dirichlet and Fej\'er kernels, Fourier transform.
+
+\begin{definition}[Fourier Coefficients]
+The $n$-th Fourier coefficient of a $2\pi$-periodic integrable function $f$ is defined as $\hat{f}(n) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x) e^{-inx} \, dx$ for $n \in \mathbb{Z}$. The Fourier series of $f$ is $\sum_{n=-\infty}^{\infty} \hat{f}(n) e^{inx}$.
+\end{definition}
+
+\begin{theorem}[Parseval's Identity]
+Suppose $f \in L^2([-\pi, \pi])$. Then the sum of the squares of its Fourier coefficients is equal to the integral of the square of the function:
+\[
+\sum_{n=-\infty}^{\infty} |\hat{f}(n)|^2 = \frac{1}{2\pi} \int_{-\pi}^{\pi} |f(x)|^2 \, dx.
+\]
+\end{theorem}
+
+\begin{example}
+Let $f(x) = x$ on $(-\pi, \pi]$. Its Fourier coefficients are $\hat{f}(n) = \frac{i(-1)^n}{n}$ for $n \neq 0$ and $\hat{f}(0) = 0$. Applying Parseval's identity gives $\sum_{n \neq 0} \frac{1}{n^2} = \frac{1}{2\pi} \int_{-\pi}^{\pi} x^2 \, dx = \frac{\pi^2}{3}$, which yields the famous Basel problem result $\sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}$.
+\end{example}
+
+\section{Complex Analysis}
+
+\textbf{Key Topics:} Analytic functions, Cauchy integral formula, residue theorem, conformal mappings, maximum modulus principle.
+
+\begin{definition}[Analytic Function]
+A complex-valued function $f(z)$ is analytic on an open set $U \subseteq \mathbb{C}$ if it has a complex derivative at every point in $U$.
+\end{definition}
+
+\begin{theorem}[Cauchy's Residue Theorem]
+Let $U$ be a simply connected open subset of $\mathbb{C}$ containing a simple closed contour $\gamma$, and let $f$ be a function analytic on $U \setminus \{z_1, \dots, z_k\}$ where $z_i$ are isolated singularities inside $\gamma$. Then
+\[
+\oint_\gamma f(z) \, dz = 2\pi i \sum_{j=1}^k \text{Res}(f, z_j).
+\]
+\end{theorem}
+
+\begin{example}
+To evaluate $I = \int_{-\infty}^\infty \frac{1}{1+x^2} \, dx$, consider the contour integral of $f(z) = \frac{1}{1+z^2}$ over the upper semicircle of radius $R$. The only pole inside the contour is at $z = i$, with residue $\text{Res}(f, i) = \lim_{z \to i} \frac{z-i}{(z-i)(z+i)} = \frac{1}{2i}$. By the residue theorem, the integral is $2\pi i (\frac{1}{2i}) = \pi$.
+\end{example}
+
+\section{Functional Analysis}
+
+\textbf{Key Topics:} Hilbert spaces, Banach spaces, Hahn-Banach theorem, compact operators, spectral theory.
+
+\begin{definition}[Hilbert Space]
+A Hilbert space $\mathcal{H}$ is a real or complex inner product space that is also a complete metric space with respect to the distance function induced by the inner product.
+\end{definition}
+
+\begin{theorem}[Riesz Representation Theorem]
+Let $\mathcal{H}$ be a Hilbert space and $L: \mathcal{H} \to \mathbb{F}$ be a bounded linear functional. Then there exists a unique vector $y \in \mathcal{H}$ such that for all $x \in \mathcal{H}$, $L(x) = \langle x, y \rangle$, and $\|L\| = \|y\|$.
+\end{theorem}
+
+\begin{example}
+In the Hilbert space $L^2([0,1])$, the evaluation functional $L(f) = \int_0^1 f(t) \sin(t) \, dt$ is bounded. By the Riesz Representation Theorem, this functional is represented by the inner product with the function $g(t) = \sin(t)$, since $L(f) = \langle f, g \rangle_{L^2}$.
+\end{example}
+
+\section{Partial Differential Equations}
+
+\textbf{Key Topics:} Laplace equation, heat equation, wave equation, method of characteristics.
+
+\begin{definition}[Harmonic Function]
+A twice continuously differentiable function $u: U \to \mathbb{R}$ on an open set $U \subset \mathbb{R}^n$ is harmonic if it satisfies Laplace's equation $\Delta u = \sum_{i=1}^n \frac{\partial^2 u}{\partial x_i^2} = 0$.
+\end{definition}
+
+\begin{theorem}[Maximum Principle for Harmonic Functions]
+Let $U \subset \mathbb{R}^n$ be open, bounded, and connected. If $u \in C^2(U) \cap C(\overline{U})$ is harmonic in $U$, then $u$ attains its maximum (and minimum) value on the boundary $\partial U$.
+\end{theorem}
+
+\begin{example}
+Consider the heat equation $u_t = \Delta u$ on a bounded domain with zero boundary conditions and initial condition $u(x,0) = f(x)$. By separation of variables, the solution decays exponentially in time, demonstrating the smoothing and dissipating nature of diffusion processes.
+\end{example}
+
+\section{Harmonic Analysis and Potential Theory}
+
+\textbf{Key Topics:} Poisson kernel, Harnack inequality, Green's functions, subharmonic functions.
+
+\begin{definition}[Subharmonic Function]
+An upper semicontinuous function $u: U \to [-\infty, \infty)$ on an open set $U \subset \mathbb{R}^n$ is subharmonic if for every closed ball $\overline{B}(x, r) \subset U$, $u(x) \leq \frac{1}{| \partial B(x,r) |} \int_{\partial B(x,r)} u(y) \, dS(y)$.
+\end{definition}
+
+\begin{theorem}[Harnack's Inequality]
+Let $U \subset \mathbb{R}^n$ be open and connected. For any compact subset $K \subset U$, there exists a constant $C \geq 1$ such that for any non-negative harmonic function $u$ on $U$, we have $\sup_K u \leq C \inf_K u$.
+\end{theorem}
+
+\begin{example}
+If $u_n$ is a sequence of non-negative harmonic functions on a connected open set $U$ such that $u_n(x_0)$ is bounded at some point $x_0 \in U$, Harnack's inequality implies that $u_n$ is locally uniformly bounded, allowing extraction of a converging subsequence.
+\end{example}
+
+\section{Calculus of Variations and Convex Analysis}
+
+\textbf{Key Topics:} Euler-Lagrange equation, direct method, Legendre transform, Jensen's inequality.
+
+\begin{definition}[Convex Function]
+A function $f: \mathbb{R}^n \to \mathbb{R}$ is convex if for all $x, y \in \mathbb{R}^n$ and $t \in [0, 1]$, $f(tx + (1-t)y) \leq t f(x) + (1-t) f(y)$.
+\end{definition}
+
+\begin{theorem}[Euler-Lagrange Equation]
+If $y(x)$ is a sufficiently smooth curve that minimizes the functional $J[y] = \int_a^b L(x, y, y') \, dx$ with fixed boundary conditions, then $y$ must satisfy the differential equation $\frac{\partial L}{\partial y} - \frac{d}{dx} \left( \frac{\partial L}{\partial y'} \right) = 0$.
+\end{theorem}
+
+\begin{example}
+To find the shortest path between two points in the plane, we minimize the arc length functional $J[y] = \int_a^b \sqrt{1 + (y')^2} \, dx$. The Euler-Lagrange equation gives $-\frac{d}{dx} \left( \frac{y'}{\sqrt{1+(y')^2}} \right) = 0$, which implies $y'$ is constant, meaning the shortest path is a straight line.
+\end{example}
+
+\section{ODEs and Qualitative Analysis}
+
+\textbf{Key Topics:} Existence and uniqueness, linear ODEs, phase portraits, Lyapunov stability.
+
+\begin{definition}[Lyapunov Stability]
+An equilibrium point $x^*$ of the system $x' = f(x)$ is stable if for every $\epsilon > 0$, there exists a $\delta > 0$ such that if $\|x(0) - x^*\| < \delta$, then $\|x(t) - x^*\| < \epsilon$ for all $t \geq 0$.
+\end{definition}
+
+\begin{theorem}[Picard-Lindel\"of Theorem]
+Consider the initial value problem $y' = f(t, y)$, $y(t_0) = y_0$. If $f$ is continuous in $t$ and uniformly Lipschitz continuous in $y$ on some region containing $(t_0, y_0)$, then there exists a unique solution to the initial value problem on some interval $[t_0 - \epsilon, t_0 + \epsilon]$.
+\end{theorem}
+
+\begin{example}
+For the linear system $X' = AX$, the origin is asymptotically stable if all eigenvalues of the matrix $A$ have strictly negative real parts. The solution is given by $X(t) = e^{At}X_0$, and the matrix exponential decays as $t \to \infty$.
+\end{example}
+
+\section{Differential and Integral Calculus on Euclidean Space}
+
+\textbf{Key Topics:} Implicit function theorem, Lagrange multipliers, multiple integrals, Stokes' theorem.
+
+\begin{definition}[Differentiability]
+A function $f: \mathbb{R}^n \to \mathbb{R}^m$ is differentiable at $a \in \mathbb{R}^n$ if there exists a linear map $L: \mathbb{R}^n \to \mathbb{R}^m$ such that $\lim_{h \to 0} \frac{\|f(a+h) - f(a) - L(h)\|}{\|h\|} = 0$. The linear map $L$ is the derivative (or Jacobian) of $f$ at $a$.
+\end{definition}
+
+\begin{theorem}[Stokes' Theorem]
+Let $S$ be a smooth, oriented surface in $\mathbb{R}^3$ with a piecewise smooth, closed boundary curve $\partial S$. If $\mathbf{F}$ is a continuously differentiable vector field defined on $S$, then $\int_{\partial S} \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}$.
+\end{theorem}
+
+\begin{example}
+Let $\mathbf{F}(x,y,z) = (-y, x, 0)$ and $S$ be the upper hemisphere $x^2+y^2+z^2=1$, $z \geq 0$. The boundary $\partial S$ is the unit circle in the $xy$-plane. The curl of $\mathbf{F}$ is $(0, 0, 2)$. By Stokes' Theorem, $\int_{\partial S} \mathbf{F} \cdot d\mathbf{r} = \iint_S 2 \, dS_z = 2(\text{Area of unit circle}) = 2\pi$.
+\end{example}
