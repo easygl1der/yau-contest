@@ -4,7 +4,7 @@
 > A comprehensive collection of past exam papers from the S.-T. Yau College Student Mathematics Contest, spanning 16 years and 6 mathematical disciplines. Each subject includes official syllabi, problem statements, and solutions.
 
 [![Total PDFs](https://img.shields.io/badge/Total%20PDFs-98-blue?style=flat-square)](#)
-[![Markdown Transcripts](https://img.shields.io/badge/Transcripts-278-green?style=flat-square)](#)
+[![Markdown Transcripts](https://img.shields.io/badge/Transcripts-279-green?style=flat-square)](#)
 [![Coverage](https://img.shields.io/badge/Coverage-2010--2025-orange?style=flat-square)](#)
 
 ---
