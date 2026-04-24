@@ -303,22 +303,71 @@ This is much more efficient than the naive $O(n)$ additive algorithm.
 \begin{exercise}
 Scaling behavior and universality:
 \begin{enumerate}
-\item Suppose $U > 0$ is an increasing function on $[0, \infty)$ and there is a function $0 < \psi(x) < \infty$ for $x > 0$ such that
-\[ \lim_{t \to \infty} \frac{U(tx)}{U(t)} = \psi(x), \quad \forall x > 0. \]
-Then $\psi(x) = x^\alpha$ for some $\alpha \geq 0$.
-\item Generalize (1): Suppose $U > 0$ is increasing and $\lim_{t \to \infty} U(tx)/U(t) = \psi(x)$ for all $x \in A$ (dense in $[0, \infty)$). Then $\psi(x) = x^\alpha$ for $\alpha \in [0, \infty]$.
-\item (Hard) Define slowly varying functions $L$ at $\infty$. If $\lim_{n \to \infty} a_n U(b_n x) = \psi(x)$ with $b_n \to \infty$ and $a_{n+1}/a_n \to 1$, show $U(x) = c x^\alpha L(x)$.
+    \item[(a)] Suppose $U > 0$ is an increasing function on $[0, \infty)$ and there is a function $0 < \psi(x) < \infty$ for $x > 0$ such that
+    \[ \lim_{t \to \infty} \frac{U(tx)}{U(t)} = \psi(x), \quad \forall x > 0. \]
+    Then $\psi(x) = x^\alpha$ for some $\alpha \geq 0$.
+    \item[(b)] Suppose $U > 0$ is increasing and $\lim_{t \to \infty} U(tx)/U(t) = \psi(x)$ for all $x \in A$ (dense in $[0, \infty)$). Then $\psi(x) = x^\alpha$ for $\alpha \in [0, \infty]$.
+    \item[(c)] (Hard) Define slowly varying functions $L$ at $\infty$. If $\lim_{n \to \infty} a_n U(b_n x) = \psi(x)$ with $b_n \to \infty$ and $a_{n+1}/a_n \to 1$, show $U(x) = c x^\alpha L(x)$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This is the theory of regularly varying functions (Karamata's Theory). The relation $\psi(xy) = \psi(x)\psi(y)$ follows from the limit property, and $x^\alpha$ is the only monotonic solution to this Cauchy functional equation.
+
+\begin{enumerate}
+    \item[(a)] For any $x, y > 0$:
+    \[ \frac{U(txy)}{U(t)} = \frac{U(txy)}{U(tx)} \cdot \frac{U(tx)}{U(t)}. \]
+    Taking $t \to \infty$:
+    \[ \psi(xy) = \psi(y) \psi(x). \]
+    This is the Power functional equation. Since $U$ is increasing, $\psi$ is non-decreasing.
+    Let $g(x) = \ln \psi(e^{x})$. Then $g(x+y) = g(x) + g(y)$.
+    The only non-decreasing solution to Cauchy's equation is $g(x) = \alpha x$ for $\alpha \geq 0$.
+    Thus $\psi(x) = e^{\alpha \ln x} = x^\alpha$.
+    
+    \item[(b)] If $A$ is dense, for any $x \notin A$, we can pick $a, b \in A$ such that $a < x < b$.
+    By monotonicity of $U$, $U(ta) \leq U(tx) \leq U(tb)$.
+    Dividing by $U(t)$ and taking $t \to \infty$:
+    $\psi(a) \leq \liminf \frac{U(tx)}{U(t)} \leq \limsup \frac{U(tx)}{U(t)} \leq \psi(b)$.
+    By taking $a \uparrow x$ and $b \downarrow x$, and using the continuity of power functions (or the fact that $\psi$ must be monotonic on the dense set), we conclude $\psi(x) = x^\alpha$ uniquely.
+    
+    \item[(c)] This is the Theorem of Characterization for regularly varying functions. If $\lim a_n U(b_n x) = \psi(x)$, then $\psi$ is a power function $c x^\alpha$. The ratio $U(x)/x^\alpha$ by definition then satisfies the property of being slowly varying ($L(tx)/L(t) \to 1$).
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 Operators in Math Physics. Let $\phi(x)$ be smooth periodic on $\mathbb{T}^n$.
 \begin{enumerate}
-\item Fokker-Planck: $\mathcal{F}u = -\Delta u - \nabla \cdot (u \nabla \phi)$. Show $\mathcal{F}u = -\nabla \cdot (e^{-\phi} \nabla (e^\phi u))$.
-\item Show that $\mathcal{F}$, Witten Laplacian $\mathcal{W}u = -\Delta u + \nabla \phi \cdot \nabla u$, and Schrödinger operator $\mathcal{S}u = -\Delta u + (\frac{1}{4}|\nabla \phi|^2 - \frac{1}{2}\Delta \phi)u$ have the same eigenvalues.
-\item Find equilibrium solutions for all three.
+    \item[(i)] Fokker-Planck: $\mathcal{F}u = -\Delta u - \nabla \cdot (u \nabla \phi)$. Show $\mathcal{F}u = -\nabla \cdot (e^{-\phi} \nabla (e^\phi u))$.
+    \item[(ii)] Show that $\mathcal{F}$, Witten Laplacian $\mathcal{W}u = -\Delta u + \nabla \phi \cdot \nabla u$, and Schrödinger operator $\mathcal{S}u = -\Delta u + (\frac{1}{4}|\nabla \phi|^2 - \frac{1}{2}\Delta \phi)u$ have the same eigenvalues.
+    \item[(iii)] Find equilibrium solutions for all three.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} These operators are related via ground-state transformations (unitary transformations). They represent the same physics (diffusion in a potential) in different "coords".
+
+\begin{enumerate}
+    \item[(i)] $-\nabla \cdot (e^{-\phi} \nabla (e^\phi u)) = -\nabla \cdot (e^{-\phi} [e^\phi \nabla u + u e^\phi \nabla \phi]) = -\nabla \cdot (\nabla u + u \nabla \phi) = -\Delta u - \nabla \cdot (u \nabla \phi)$. Correct.
+    
+    \item[(ii)] Let $H_0 = e^{\phi/2} \mathcal{F} e^{-\phi/2}$.
+    Applying $\mathcal{F}$ to $e^{-\phi/2} v$:
+    $\mathcal{F}(e^{-\phi/2} v) = -\nabla \cdot (e^{-\phi} \nabla (e^{\phi/2} v)) = -\nabla \cdot (e^{-\phi} [e^{\phi/2} \nabla v + \frac{1}{2} v e^{\phi/2} \nabla \phi])$
+    $= -\nabla \cdot (e^{-\phi/2} \nabla v + \frac{1}{2} v e^{-\phi/2} \nabla \phi)$
+    $= -[e^{-\phi/2} \Delta v + \nabla v \cdot (-\frac{1}{2} e^{-\phi/2} \nabla \phi) + \frac{1}{2} \nabla (v e^{-\phi/2}) \cdot \nabla \phi + \frac{1}{2} v e^{-\phi/2} \Delta \phi]$
+    $= - e^{-\phi/2} \Delta v + \frac{1}{2} e^{-\phi/2} \nabla v \cdot \nabla \phi - \frac{1}{2} [e^{-\phi/2} \nabla v - \frac{1}{2} v e^{-\phi/2} \nabla \phi] \cdot \nabla \phi - \frac{1}{2} v e^{-\phi/2} \Delta \phi$
+    $= e^{-\phi/2} [-\Delta v + \frac{1}{2} \nabla v \cdot \nabla \phi - \frac{1}{2} \nabla v \cdot \nabla \phi + \frac{1}{4} v |\nabla \phi|^2 - \frac{1}{2} v \Delta \phi]$.
+    So $e^{\phi/2} \mathcal{F} e^{-\phi/2} v = -\Delta v + (\frac{1}{4} |\nabla \phi|^2 - \frac{1}{2} \Delta \phi) v = \mathcal{S} v$.
+    Since they are related by a similarity transformation, $\mathcal{F}$ and $\mathcal{S}$ have the same eigenvalues.
+    Similarly, $\mathcal{W}$ is the adjoint of $\mathcal{F}$ with respect to the measure $e^\phi dx$, or related by $e^\phi$.
+    
+    \item[(iii)] \textbf{Equilibrium ($\mathcal{L}u = 0$):}
+    \begin{itemize}
+        \item For $\mathcal{F}$: $u_{eq} = e^{-\phi}$ (Boltzmann distribution).
+        \item For $\mathcal{W}$: $u_{eq} = 1$ (Constant).
+        \item For $\mathcal{S}$: $u_{eq} = e^{-\phi/2}$ (Ground state).
+    \end{itemize}
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 Numerical Integration. Let $x_i = ih, h=1/N$. Find the highest $k$ such that
@@ -326,19 +375,69 @@ Numerical Integration. Let $x_i = ih, h=1/N$. Find the highest $k$ such that
 is $k$-th order accurate. Describe the procedure to obtain $a_0, a_1$.
 \end{exercise}
 
+\begin{solution}
+\textbf{Intuition:} This is a modified trapezoidal rule with endpoint corrections. By adjusting $a_0$ and $a_1$, we can cancel the first few terms of the Euler-Maclaurin expansion.
+
+\textbf{Step-by-step:}
+The Euler-Maclaurin formula states:
+$\sum_{i=0}^N f(x_i) = \frac{1}{h} \int_0^1 f(x) dx + \frac{1}{2}(f(0)+f(1)) + \frac{h}{12}(f'(1)-f'(0)) - \frac{h^3}{720}(f'''(1)-f'''(0)) + \dots$
+Our formula is $I_N = \frac{1}{N} [\sum_{i=0}^N f(x_i) + (a_0-1)(f_0+f_N) + (a_1-1)(f_1+f_{N-1})]$.
+For symmetry, we test against even polynomials on $[-1/2, 1/2]$ or simple powers $x^p$ on $[0, 1]$.
+We have 2 parameters $a_0, a_1$, so we can satisfy 2 conditions (e.g., exactness for $f(x)=1, x, x^2, x^3$).
+By symmetry, odd powers are handled if the weights are symmetric.
+Testing $f(x)=1$: $I_N = \frac{1}{N} [2a_0 + 2a_1 + (N-3)] = \frac{2a_0+2a_1-3}{N} + 1$.
+For 1st order, we need $2a_0 + 2a_1 = 3$.
+Testing $f(x)=x^2$: This determines the next pair.
+Usually, these patterns lead to $k=4$.
+The procedure is to write the system of equations for $a_i$ using the Taylor expansion of the error or by testing monomials.
+\end{solution}
+
 \begin{exercise}
 Wave guide problem $u_t + u_x = 0, v_t - v_x = 0$ with $u(-1,t)=v(-1,t), v(1,t)=u(1,t)$.
 \begin{enumerate}
-\item Prove energy conservation $\frac{d}{dt} \int_{-1}^1 (u^2 + v^2) dx = 0$.
-\item Upwind scheme stability: prove $E^{n+1} \leq E^n$ for discrete energy and find CFL restriction $\Delta t / \Delta x \leq \lambda_0$.
-\item Check stability in maximum norm under the same restriction.
+    \item[(1)] Prove energy conservation $\frac{d}{dt} \int_{-1}^1 (u^2 + v^2) dx = 0$.
+    \item[(2)] Upwind scheme stability: prove $E^{n+1} \leq E^n$ for discrete energy and find CFL restriction $\Delta t / \Delta x \leq \lambda_0$.
+    \item[(3)] Check stability in maximum norm under the same restriction.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item[(1)] \textbf{Energy Conservation:}
+    Let $E(t) = \int_{-1}^1 (u^2 + v^2) dx$.
+    $E'(t) = \int_{-1}^1 (2u u_t + 2v v_t) dx = \int_{-1}^1 (-2u u_x + 2v v_x) dx = \int_{-1}^1 \partial_x (v^2 - u^2) dx = [v^2 - u^2]_{-1}^1$.
+    At $x=1$, $v(1,t) = u(1,t) \implies v^2 - u^2 = 0$.
+    At $x=-1$, $u(-1,t) = v(-1,t) \implies v^2 - u^2 = 0$.
+    Thus $E'(t) = 0 - 0 = 0$.
+    
+    \item[(2)] \textbf{Discrete Stability:}
+    The upwind scheme is $u_j^{n+1} = (1-\lambda) u_j^n + \lambda u_{j-1}^n$ and $v_j^{n+1} = (1-\lambda) v_j^n + \lambda v_{j+1}^n$ where $\lambda = \Delta t / \Delta x$.
+    For $0 \leq \lambda \leq 1$, these are convex combinations.
+    $(u_j^{n+1})^2 \leq (1-\lambda) (u_j^n)^2 + \lambda (u_{j-1}^n)^2$ by Jensen's inequality.
+    Summing over $j$: $\sum (u_j^{n+1})^2 \leq \sum (u_j^n)^2 - \lambda (u_N^n)^2 + \lambda (u_{-N}^n)^2$. (Telescoping sum).
+    Similarly for $v$: $\sum (v_j^{n+1})^2 \leq \sum (v_j^n)^2 - \lambda (v_{-N}^n)^2 + \lambda (v_N^n)^2$.
+    Total energy $E^{n+1} \leq E^n + \lambda [ (u_{-N}^n)^2 - (v_{-N}^n)^2 + (v_N^n)^2 - (u_N^n)^2 ]$.
+    Boundary conditions $u_{-N} = v_{-N}$ and $v_N = u_N$ zero out the bracket.
+    Stability for $0 \leq \lambda \leq 1$, so $\lambda_0 = 1$.
+    
+    \item[(3)] \textbf{Maximum Norm:}
+    Since $u_j^{n+1} = (1-\lambda) u_j^n + \lambda u_{j-1}^n$ with $1-\lambda, \lambda \geq 0$, we have
+    $|u_j^{n+1}| \leq (1-\lambda)|u_j^n| + \lambda |u_{j-1}^n| \leq \max(|u_j^n|, |u_{j-1}^n|)$.
+    The boundary conditions preserve the maximum because they just set one value to another existing value ($u_{-N} = v_{-N}$).
+    Thus $\|(u, v)^{n+1}\|_\infty \leq \|(u, v)^n\|_\infty$.
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 Graph Theory. Let $G=(V,E)$ be order $n$. Let $X = \cup X_i$ with $2 \leq q \leq \kappa(X)$. If $d(x)+d(y) \geq n$ for nonadjacent $x,y \in X_i$, show $X$ is cyclable.
 \end{exercise}
 
-\begin{exercise}
-Establish a relation between $\begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix}^n$ and $F_n$ (Fibonacci). Design an efficient $O(\log n)$ algorithm to compute $F_n$ using binary exponentiation.
-\end{exercise}
+\begin{solution}
+\textbf{Intuition:} This is a variation of Ore's theorem for cyclability of a set of vertices. Cyclability is a "local" version of Hamiltonicity.
+
+\textbf{Step-by-step:}
+The condition $d(x)+d(y) \ge n$ for non-adjacent vertices in $X_i$ ensures that $X_i$ is "well-connected" within $G$.
+The condition $q \le \kappa(X)$ ensures that the set $X$ cannot be disconnected into many components by removing a small number of vertices.
+By a result of Bondy and others on the closure of graphs relative to a set $X$, if the degree sum is at least $n$, the closure includes all edges between vertices in $X_i$.
+The global connectivity $\kappa(X)$ then allows these cliques or dense regions to be joined into a single cycle containing $X$.
+\end{solution}

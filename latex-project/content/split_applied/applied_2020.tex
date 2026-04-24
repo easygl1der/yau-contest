@@ -3,98 +3,120 @@
 \subsection{Individual \& Team}
 
 \begin{exercise}
-Let $f\in C^{k+1}[-1,1]$ and $[-1,1]$ be partitioned into subintervals $I_{j}=[(j-1)h,jh]$ of width $h$. Assume $p_{j}$ is polynomial of degree $k$ approximating $f$ in $I_{j}$ with:
+Let $f \in C^{k+1}[-1, 1]$ and $[-1, 1]$ be partitioned into subintervals $I_j = [(j-1)h, jh]$ of width $h$. Assume $p_j$ is a polynomial of degree $k$ which approximates $f$ in $I_j$ with
 \[
-\max_{x\in I_{j}}|p_{j}(x)-f(x)|\leq C_{0}h^{k+1},
+\max_{x \in I_j} |p_j(x) - f(x)| \leq C_0 h^{k+1},
 \]
-where $C_{0}$ constant independent of $j$. Show there exists $C$ independent of $j$ such that:
+where $C_0$ is a constant independent of $j$. Show that there exists another constant $C$, independent of $j$, such that
 \[
-\max_{x\in I_{j\pm 1}}|p_{j}(x)-f(x)|\leq Ch^{k+1},
+\max_{x \in I_{j \pm 1}} |p_j(x) - f(x)| \leq C h^{k+1},
 \]
-as long as $I_{j\pm 1}\subset[-1,1]$.
+as long as $I_{j \pm 1} \subset [-1, 1]$.
 \end{exercise}
+
 \begin{solution}
-To bound $|p_j(x) - f(x)|$ on $I_{j \pm 1}$, we use the triangle inequality:
+We consider the case for $I_{j+1}$; the case for $I_{j-1}$ follows by symmetry. Let $x_{ji} = (j-1)h + h\xi_i$ for $i=0, \dots, k$ be $k+1$ distinct points in $I_j$, where $0 \leq \xi_0 < \xi_1 < \dots < \xi_k \leq 1$ are fixed reference points in $[0, 1]$.
+
+Let $L_{ji}(x)$ be the $i$-th Lagrange basis polynomial associated with the points $\{x_{ji}\}_{i=0}^k$:
 \[
-|f(x) - p_j(x)| \leq |f(x) - p_{j\pm 1}(x)| + |p_{j\pm 1}(x) - p_j(x)|.
+L_{ji}(x) = \prod_{l \neq i} \frac{x - x_{jl}}{x_{ji} - x_{jl}}.
 \]
-By assumption, $\max_{x \in I_{j\pm 1}} |f(x) - p_{j\pm 1}(x)| \leq C_0 h^{k+1}$. It remains to bound the difference of the two polynomials $q(x) = p_{j\pm 1}(x) - p_j(x)$ on $I_{j \pm 1}$.
-Note that $q(x)$ is a polynomial of degree $k$. On the interval $I_j$, we have:
+Note that $L_{ji}(x) = L_i(\frac{x - (j-1)h}{h})$, where $L_i(\xi) = \prod_{l \neq i} \frac{\xi - \xi_l}{\xi_i - \xi_l}$ is the Lagrange polynomial on the reference interval $[0, 1]$.
+Let $\Lambda$ be the Lebesgue constant of these points on the extended interval $[0, 2]$, defined as
 \[
-|q(x)| = |p_{j\pm 1}(x) - p_j(x)| \leq |p_{j\pm 1}(x) - f(x)| + |f(x) - p_j(x)|.
+\Lambda = \max_{\xi \in [0, 2]} \sum_{i=0}^k |L_i(\xi)|.
 \]
-By the assumption on $p_j$ and applying the same logic to $p_{j \pm 1}$ (assuming $f$ is smooth enough such that a local approximation $p_{j \pm 1}$ is also $O(h^{k+1})$ on $I_j$, which follows from Taylor's theorem), we have $|q(x)| \leq 2 C_0 h^{k+1}$ on $I_j$.
-A fundamental property of polynomials (Markov's inequality or Remez-type inequality) states that if a polynomial $q \in \mathcal{P}_k$ satisfies $|q(x)| \leq M$ on an interval $I$ of length $h$, then on a neighboring interval $I'$ of the same length, it satisfies $|q(x)| \leq M \cdot T_k(3)$, where $T_k$ is the $k$-th Chebyshev polynomial. Since $T_k(3)$ is a constant depending only on $k$, we have:
+Since $I_j \cup I_{j+1} = [(j-1)h, (j+1)h]$, for any $x \in I_{j+1}$, the rescaled variable $\xi = \frac{x - (j-1)h}{h}$ lies in $[1, 2] \subset [0, 2]$. Thus $\sum_i |L_{ji}(x)| \leq \Lambda$ for all $x \in I_{j+1}$.
+
+Let $f_j(x)$ be the interpolating polynomial of $f$ of degree $k$ at the points $x_{ji}$. Then
 \[
-\max_{x \in I_{j\pm 1}} |p_{j\pm 1}(x) - p_j(x)| \leq 2 C_0 T_k(3) h^{k+1}.
+f_j(x) = \sum_{i=0}^k f(x_{ji}) L_{ji}(x).
 \]
-Combining these, we obtain:
+Since $p_j$ is a polynomial of degree $k$, it can be represented as
 \[
-\max_{x \in I_{j\pm 1}} |f(x) - p_j(x)| \leq (C_0 + 2 C_0 T_k(3)) h^{k+1} = C h^{k+1},
+p_j(x) = \sum_{i=0}^k p_j(x_{ji}) L_{ji}(x).
 \]
-where $C = C_0(1 + 2 T_k(3))$ is independent of $j$ and $h$.
+For any $x \in I_{j+1}$, we have the decomposition:
+\[
+|p_j(x) - f(x)| \leq |p_j(x) - f_j(x)| + |f_j(x) - f(x)|.
+\]
+For the first term, using the Lagrange representation:
+\[
+|p_j(x) - f_j(x)| = \left| \sum_{i=0}^k (p_j(x_{ji}) - f(x_{ji})) L_{ji}(x) \right| \leq \max_{i} |p_j(x_{ji}) - f(x_{ji})| \sum_{i=0}^k |L_{ji}(x)| \leq C_0 h^{k+1} \Lambda.
+\]
+For the second term, by the standard error formula for Lagrange interpolation for $f \in C^{k+1}$:
+\[
+|f_j(x) - f(x)| = \left| \frac{f^{(k+1)}(\eta)}{(k+1)!} \prod_{i=0}^k (x - x_{ji}) \right|
+\]
+for some $\eta \in [(j-1)h, (j+1)h]$. Since $x \in [(j-1)h, (j+1)h]$ and $x_{ji} \in [(j-1)h, jh]$, we have $|x - x_{ji}| \leq 2h$. Thus
+\[
+|f_j(x) - f(x)| \leq \frac{\|f^{(k+1)}\|_\infty}{(k+1)!} (2h)^{k+1}.
+\]
+Combining these results, we obtain for $x \in I_{j+1}$:
+\[
+|p_j(x) - f(x)| \leq C_0 \Lambda h^{k+1} + \frac{2^{k+1} \|f^{(k+1)}\|_\infty}{(k+1)!} h^{k+1} = C h^{k+1},
+\]
+where $C = C_0 \Lambda + \frac{2^{k+1} \|f^{(k+1)}\|_\infty}{(k+1)!}$ is independent of $j$ and $h$.
 \end{solution}
 
 \begin{exercise}
-Consider the iteration:
+Consider the iteration
 \[
-x_{n+1}=x_{n}-\frac{x_{n}-x_{0}}{f(x_{n})-f(x_{0})}f(x_{n})
+x_{n+1} = x_n - \frac{x_n - x_0}{f(x_n) - f(x_0)} f(x_n)
 \]
-for finding roots of twice continuously differentiable $f(x)$. Assuming the method converges to simple root $x^{*}$, what is the rate of convergence? Justify your answer.
+for finding the roots of a twice continuously differentiable function $f(x)$. Assuming the method converges to a simple root $x^*$, what is the rate of convergence? Justify your answer.
 \end{exercise}
+
 \begin{solution}
-This iteration is a variation of the Secant method where one point is fixed at $x_0$. Let $e_n = x_n - x^*$ denote the error at step $n$. Since $x^*$ is a simple root, $f(x^*) = 0$ and $f'(x^*) \neq 0$.
+This iteration is a variant of the Secant method where one of the points is fixed at $x_0$. Let $e_n = x_n - x^*$. Since $x^*$ is a simple root, $f(x^*) = 0$ and $f'(x^*) \neq 0$.
 The iteration can be rewritten as:
 \[
-e_{n+1} = e_n - \frac{(e_n - e_0) f(x_n)}{f(x_n) - f(x_0)} = \frac{e_n f(x_n) - e_n f(x_0) - e_n f(x_n) + e_0 f(x_n)}{f(x_n) - f(x_0)} = \frac{e_0 f(x_n) - e_n f(x_0)}{f(x_n) - f(x_0)}.
+x_{n+1} = \frac{x_0 f(x_n) - x_n f(x_0)}{f(x_n) - f(x_0)}.
 \]
-Using Taylor expansion around $x^*$:
-$f(x_n) = f'(x^*) e_n + \frac{1}{2} f''(x^*) e_n^2 + O(e_n^3)$
-$f(x_0) = f'(x^*) e_0 + \frac{1}{2} f''(x^*) e_0^2 + O(e_0^3)$
-The numerator becomes:
+Subtracting $x^*$ from both sides:
 \[
-e_0 (f' e_n + \frac{1}{2} f'' e_n^2) - e_n (f' e_0 + \frac{1}{2} f'' e_0^2) + \dots = \frac{1}{2} f''(x^*) (e_0 e_n^2 - e_n e_0^2) = \frac{1}{2} f''(x^*) e_0 e_n (e_n - e_0).
+e_{n+1} = \frac{x_0 f(x_n) - x_n f(x_0)}{f(x_n) - f(x_0)} - x^* = \frac{(x_0 - x^*) f(x_n) - (x_n - x^*) f(x_0)}{f(x_n) - f(x_0)} = \frac{e_0 f(x_n) - e_n f(x_0)}{f(x_n) - f(x_0)}.
 \]
-The denominator is $f(x_n) - f(x_0) = f'(x^*) (e_n - e_0) + O(e_n^2 - e_0^2)$.
-Thus:
+By Taylor's Theorem, $f(x_n) = f'(x^*) e_n + \frac{1}{2} f''(\xi_n) e_n^2$. Since $x_n \to x^*$, for large $n$, $f(x_n) \approx f'(x^*) e_n$.
+Substituting this into the expression for $e_{n+1}$:
 \[
-e_{n+1} \approx \frac{\frac{1}{2} f''(x^*) e_0 e_n (e_n - e_0)}{f'(x^*) (e_n - e_0)} = \left( \frac{f''(x^*) e_0}{2 f'(x^*)} \right) e_n.
+e_{n+1} = \frac{e_0 f(x_n) - e_n f(x_0)}{f(x_n) - f(x_0)} = e_n \left( \frac{e_0 \frac{f(x_n)}{e_n} - f(x_0)}{f(x_n) - f(x_0)} \right).
 \]
-As $n \to \infty$, $e_n \to 0$, and the coefficient $\frac{f''(x^*) e_0}{2 f'(x^*)}$ remains constant. Therefore, the method converges \textbf{linearly} with an asymptotic error constant $C = |\frac{f''(x^*) (x_0 - x^*)}{2 f'(x^*)}|$.
+Taking the limit as $n \to \infty$:
+\[
+\lim_{n \to \infty} \frac{e_{n+1}}{e_n} = \lim_{n \to \infty} \frac{e_0 f'(x^*) - f(x_0)}{0 - f(x_0)} = \frac{f(x_0) - e_0 f'(x^*)}{f(x_0)}.
+\]
+Using Taylor expansion of $f(x_0)$ around $x^*$:
+\[
+f(x_0) = f(x^*) + f'(x^*) (x_0 - x^*) + \frac{1}{2} f''(\eta) (x_0 - x^*)^2 = f'(x^*) e_0 + \frac{1}{2} f''(\eta) e_0^2.
+\]
+Then $f(x_0) - e_0 f'(x^*) = \frac{1}{2} f''(\eta) e_0^2$. Thus:
+\[
+\lim_{n \to \infty} \frac{e_{n+1}}{e_n} = \frac{\frac{1}{2} f''(\eta) e_0^2}{f(x_0)}.
+\]
+Since this limit is a constant (generally non-zero as long as $x_0 \neq x^*$ and $f''$ is not zero at the root), the method converges \textbf{linearly}.
 \end{solution}
 
 \begin{exercise}
-Suppose $A$ is $m\times m$ matrix with complete orthonormal eigenvectors $\mathbf{q}_{1},\dots,\mathbf{q}_{m}$ and eigenvalues $\lambda_{1},\dots,\lambda_{m}$. Assume $|\lambda_{1}|>|\lambda_{2}|>|\lambda_{3}|$ and $\lambda_{j}\geq\lambda_{j+1}$ for $j=3,\dots,m$.
-
-Consider power method $\mathbf{v}^{(k)}=\mathbf{A}\mathbf{v}^{(k-1)}/\lambda_{1}$ with $\mathbf{v}^{(0)}=\alpha_{1}\mathbf{q}_{1}+\dots+\alpha_{m}\mathbf{q}_{m}$ where $\alpha_{1},\alpha_{2}\neq 0$. Show $\{\mathbf{v}^{(k)}\}_{k=0}^{\infty}$ converges linearly to $\alpha_{1}\mathbf{q}_{1}$ with asymptotic constant $C=|\lambda_{2}/\lambda_{1}|$.
+Suppose $A$ is an $m \times m$ matrix with a complete set of orthonormal eigenvectors $\mathbf{q}_1, \dots, \mathbf{q}_m$ and eigenvalues $\lambda_1, \dots, \lambda_m$. Assume $|\lambda_1| > |\lambda_2| > |\lambda_3|$ and $\lambda_j \geq \lambda_{j+1}$ for $j=3, \dots, m$. Consider the power method $\mathbf{v}^{(k)} = A \mathbf{v}^{(k-1)} / \lambda_1$ with $\mathbf{v}^{(0)} = \alpha_1 \mathbf{q}_1 + \dots + \alpha_m \mathbf{q}_m$ where $\alpha_1, \alpha_2 \neq 0$. Show that the sequence $\{\mathbf{v}^{(k)}\}_{k=0}^\infty$ converges linearly to $\alpha_1 \mathbf{q}_1$ with asymptotic constant $C = |\lambda_2 / \lambda_1|$.
 \end{exercise}
+
 \begin{solution}
-By induction, the $k$-th iterate of the power method is given by:
+Since the eigenvectors $\mathbf{q}_j$ are orthonormal and form a basis, the $k$-th iterate is:
 \[
-\mathbf{v}^{(k)} = \frac{1}{\lambda_1^k} A^k \mathbf{v}^{(0)}.
+\mathbf{v}^{(k)} = \frac{1}{\lambda_1^k} A^k \mathbf{v}^{(0)} = \frac{1}{\lambda_1^k} \sum_{j=1}^m \alpha_j \lambda_j^k \mathbf{q}_j = \alpha_1 \mathbf{q}_1 + \alpha_2 \left( \frac{\lambda_2}{\lambda_1} \right)^k \mathbf{q}_2 + \sum_{j=3}^m \alpha_j \left( \frac{\lambda_j}{\lambda_1} \right)^k \mathbf{q}_j.
 \]
-Since the eigenvectors $\mathbf{q}_j$ are orthonormal and form a basis, we can expand $A^k \mathbf{v}^{(0)}$ as:
+As $k \to \infty$, since $|\lambda_j / \lambda_1| < 1$ for all $j \geq 2$, we have $\mathbf{v}^{(k)} \to \alpha_1 \mathbf{q}_1$.
+The error vector is $\mathbf{e}^{(k)} = \mathbf{v}^{(k)} - \alpha_1 \mathbf{q}_1 = \sum_{j=2}^m \alpha_j \left( \frac{\lambda_j}{\lambda_1} \right)^k \mathbf{q}_j$.
+Using the orthonormality of $\mathbf{q}_j$, the $L_2$-norm of the error is:
 \[
-A^k \mathbf{v}^{(0)} = A^k \left( \sum_{j=1}^m \alpha_j \mathbf{q}_j \right) = \sum_{j=1}^m \alpha_j \lambda_j^k \mathbf{q}_j.
+\|\mathbf{e}^{(k)}\|^2 = \sum_{j=2}^m |\alpha_j|^2 \left| \frac{\lambda_j}{\lambda_1} \right|^{2k} = |\alpha_2|^2 \left| \frac{\lambda_2}{\lambda_1} \right|^{2k} \left[ 1 + \sum_{j=3}^m \frac{|\alpha_j|^2}{|\alpha_2|^2} \left| \frac{\lambda_j}{\lambda_2} \right|^{2k} \right].
 \]
-Substituting this into the expression for $\mathbf{v}^{(k)}$:
+The ratio of successive error norms is:
 \[
-\mathbf{v}^{(k)} = \sum_{j=1}^m \alpha_j \left( \frac{\lambda_j}{\lambda_1} \right)^k \mathbf{q}_j = \alpha_1 \mathbf{q}_1 + \alpha_2 \left( \frac{\lambda_2}{\lambda_1} \right)^k \mathbf{q}_2 + \sum_{j=3}^m \alpha_j \left( \frac{\lambda_j}{\lambda_1} \right)^k \mathbf{q}_j.
+\frac{\|\mathbf{e}^{(k+1)}\|}{\|\mathbf{e}^{(k)}\|} = \sqrt{ \frac{ |\alpha_2|^2 \left| \frac{\lambda_2}{\lambda_1} \right|^{2k+2} \left[ 1 + \sum_{j=3}^m \frac{|\alpha_j|^2}{|\alpha_2|^2} \left| \frac{\lambda_j}{\lambda_2} \right|^{2k+2} \right] }{ |\alpha_2|^2 \left| \frac{\lambda_2}{\lambda_1} \right|^{2k} \left[ 1 + \sum_{j=3}^m \frac{|\alpha_j|^2}{|\alpha_2|^2} \left| \frac{\lambda_j}{\lambda_2} \right|^{2k} \right] } } = \left| \frac{\lambda_2}{\lambda_1} \right| \sqrt{ \frac{1 + O(|\lambda_3/\lambda_2|^{2k+2})}{1 + O(|\lambda_3/\lambda_2|^{2k})} }.
 \]
-Since $|\lambda_1| > |\lambda_2| \geq |\lambda_j|$ for all $j \geq 3$, we have $|\lambda_j / \lambda_1| < 1$ for all $j \geq 2$. Thus, as $k \to \infty$, $(\lambda_j / \lambda_1)^k \to 0$, and $\mathbf{v}^{(k)} \to \alpha_1 \mathbf{q}_1$.
-The error vector is:
-\[
-\mathbf{e}^{(k)} = \mathbf{v}^{(k)} - \alpha_1 \mathbf{q}_1 = \alpha_2 \left( \frac{\lambda_2}{\lambda_1} \right)^k \mathbf{q}_2 + \sum_{j=3}^m \alpha_j \left( \frac{\lambda_j}{\lambda_1} \right)^k \mathbf{q}_j.
-\]
-Using the orthonormality of $\mathbf{q}_j$, the norm of the error is:
-\[
-\|\mathbf{e}^{(k)}\|^2 = |\alpha_2|^2 \left| \frac{\lambda_2}{\lambda_1} \right|^{2k} + \sum_{j=3}^m |\alpha_j|^2 \left| \frac{\lambda_j}{\lambda_1} \right|^{2k}.
-\]
-The ratio of successive errors is:
-\[
-\frac{\|\mathbf{e}^{(k+1)}\|}{\|\mathbf{e}^{(k)}\|} = \sqrt{\frac{|\alpha_2|^2 |\lambda_2/\lambda_1|^{2k+2} + O(|\lambda_3/\lambda_1|^{2k+2})}{|\alpha_2|^2 |\lambda_2/\lambda_1|^{2k} + O(|\lambda_3/\lambda_1|^{2k})}} = \left| \frac{\lambda_2}{\lambda_1} \right| \sqrt{\frac{1 + O(|\lambda_3/\lambda_2|^{2k+2})}{1 + O(|\lambda_3/\lambda_2|^{2k})}}.
-\]
-Since $|\lambda_3/\lambda_2| < 1$, the term inside the square root approaches 1 as $k \to \infty$. Thus:
+Since $|\lambda_3 / \lambda_2| < 1$, the term inside the square root approaches 1 as $k \to \infty$. Thus
 \[
 \lim_{k \to \infty} \frac{\|\mathbf{e}^{(k+1)}\|}{\|\mathbf{e}^{(k)}\|} = \left| \frac{\lambda_2}{\lambda_1} \right|.
 \]
@@ -102,70 +124,120 @@ This proves linear convergence with asymptotic constant $C = |\lambda_2 / \lambd
 \end{solution}
 
 \begin{exercise}
-For initial value problem $y'=f(t,y)$, $y(0)=y_{0}$ on $[0,T]$, consider implicit two-step method:
+For initial value problem $y' = f(t, y)$, $y(0) = y_0$ on $[0, T]$, consider the implicit two-step method:
 \[
-y_{n+1}=\frac{4}{3}y_{n}-\frac{1}{3}y_{n-1}+\frac{2h}{3}f(t_{n+1},y_{n+1}),
+y_{n+1} = \frac{4}{3} y_n - \frac{1}{3} y_{n-1} + \frac{2h}{3} f(t_{n+1}, y_{n+1}),
 \]
 \[
-y_{1}=y_{0}+hf(t_{1},y_{0}),
+y_1 = y_0 + h f(t_1, y_0),
 \]
-where $h$ is step size and $t_{n}=nh$.
-
+where $h$ is the step size and $t_n = nh$.
 \begin{enumerate}
-\item[(a)] What is the order of accuracy?
-\item[(b)] Check stability by analyzing stability polynomial.
-\item[(c)] Find stability region.
+    \item[(a)] What is the order of accuracy?
+    \item[(b)] Check stability by analyzing the stability polynomial.
+    \item[(c)] Find the stability region.
 \end{enumerate}
 \end{exercise}
+
 \begin{solution}
-(a) To find the order of accuracy, we check the local truncation error $LTE$. Substituting the exact solution $y(t)$ into the scheme:
-$LTE = y(t+h) - \frac{4}{3}y(t) + \frac{1}{3}y(t-h) - \frac{2h}{3}y'(t+h)$.
-Using Taylor expansions around $t$:
-$y(t+h) = y + hy' + \frac{h^2}{2}y'' + \frac{h^3}{6}y''' + O(h^4)$
-$y(t-h) = y - hy' + \frac{h^2}{2}y'' - \frac{h^3}{6}y''' + O(h^4)$
-$y'(t+h) = y' + hy'' + \frac{h^2}{2}y''' + O(h^3)$
-Substituting these:
-$LTE = (1 - \frac{4}{3} + \frac{1}{3})y + (1 + \frac{1}{3} - \frac{2}{3})hy' + (\frac{1}{2} + \frac{1}{6} - \frac{2}{3})h^2 y'' + (\frac{1}{6} - \frac{1}{18} - \frac{1}{3})h^3 y''' = 0y + 0hy' + 0h^2 y'' - \frac{2}{9}h^3 y'''$.
-Thus, $LTE = O(h^3)$, which implies the method is \textbf{second-order accurate}.
+(a) The local truncation error is defined by substituting the exact solution $y(t)$ into the scheme:
+\[
+h \tau_{n+1} = y(t_{n+1}) - \frac{4}{3} y(t_n) + \frac{1}{3} y(t_{n-1}) - \frac{2h}{3} y'(t_{n+1}).
+\]
+Expanding in Taylor series around $t_n$:
+\begin{itemize}
+    \item $y(t_{n+1}) = y_n + h y_n' + \frac{1}{2} h^2 y_n'' + \frac{1}{6} h^3 y_n''' + O(h^4)$
+    \item $y(t_{n-1}) = y_n - h y_n' + \frac{1}{2} h^2 y_n'' - \frac{1}{6} h^3 y_n''' + O(h^4)$
+    \item $y'(t_{n+1}) = y_n' + h y_n'' + \frac{1}{2} h^2 y_n''' + O(h^3)$
+\end{itemize}
+Substituting these into the expression:
+\begin{align*}
+h \tau_{n+1} &= y_n \left( 1 - \frac{4}{3} + \frac{1}{3} \right) + h y_n' \left( 1 + \frac{1}{3} - \frac{2}{3} \right) + h^2 y_n'' \left( \frac{1}{2} + \frac{1}{6} - \frac{2}{3} \right) \\
+&\quad + h^3 y_n''' \left( \frac{1}{6} - \frac{1}{18} - \frac{1}{3} \right) + O(h^4) \\
+&= 0 y_n + 0 h y_n' + 0 h^2 y_n'' - \frac{2}{9} h^3 y_n''' + O(h^4).
+\end{align*}
+The method has order of accuracy 2.
 
-(b) The stability polynomial is $\rho(z) = z^2 - \frac{4}{3}z + \frac{1}{3}$. Setting $\rho(z) = 0$:
-$3z^2 - 4z + 1 = (3z - 1)(z - 1) = 0 \implies z_1 = 1, z_2 = 1/3$.
-Both roots satisfy $|z_i| \leq 1$, and the root with magnitude 1 is simple. Thus, the method is \textbf{zero-stable}.
+(b) Stability polynomial: $\rho(z) = z^2 - \frac{4}{3}z + \frac{1}{3}$.
+Roots: $3z^2 - 4z + 1 = (3z-1)(z-1) = 0 \implies z_1 = 1, z_2 = 1/3$.
+Since all roots satisfy $|z| \leq 1$ and the root with magnitude 1 is simple, the method is \textbf{zero-stable}.
 
-(c) For the linear test equation $y' = \lambda y$, let $\bar{h} = \lambda h$. The characteristic equation is:
-$z^2 - \frac{4}{3}z + \frac{1}{3} = \frac{2}{3}\bar{h}z^2 \implies (1 - \frac{2}{3}\bar{h})z^2 - \frac{4}{3}z + \frac{1}{3} = 0$.
-The stability region is the set of $\bar{h} \in \mathbb{C}$ such that all roots $z$ satisfy $|z| \leq 1$. This corresponds to the BDF2 method, which is known to be \textbf{A-stable} (its stability region includes the entire left half-plane $Re(\bar{h}) < 0$).
+(c) For $y' = \lambda y$, let $\bar{h} = \lambda h$:
+$z^2 - \frac{4}{3}z + \frac{1}{3} = \frac{2}{3} \bar{h} z^2 \implies (3 - 2\bar{h}) z^2 - 4z + 1 = 0$.
+The roots are $z = \frac{4 \pm \sqrt{16 - 4(3-2\bar{h})}}{2(3-2\bar{h})} = \frac{4 \pm \sqrt{4+8\bar{h}}}{2(3-2\bar{h})} = \frac{2 \pm \sqrt{1+2\bar{h}}}{3-2\bar{h}}$.
+The stability region is $S = \{ \bar{h} \in \mathbb{C} : |z_1| \leq 1, |z_2| \leq 1 \}$.
+Note that for $\text{Re}(\bar{h}) \to -\infty$, $|z| \approx |\frac{\sqrt{2\bar{h}}}{2\bar{h}}| \to 0$.
+The BDF2 method is known to be \textbf{A-stable} (its stability region includes the entire left half-plane).
 \end{solution}
 
 \begin{exercise}
-Suppose difference scheme $u^{n+1}=Bu^{n}$ is stable and $C(\Delta t)$ is bounded family of operators. Show that scheme:
+Suppose the difference scheme $u^{n+1} = B u^n$ is stable, and $C(\Delta t)$ is a bounded family of operators. Show that the scheme
 \[
-u^{n+1}=(B+\Delta t C(\Delta t))u^{n}
+u^{n+1} = (B + \Delta t C(\Delta t)) u^n
 \]
 is stable.
 \end{exercise}
+
 \begin{solution}
-Stability of $u^{n+1} = Bu^n$ on $[0, T]$ means that there exists a constant $K$ such that $\|B^n\| \leq K$ for all $n$ such that $n\Delta t \leq T$.
-Let $\tilde{B} = B + \Delta t C$. We want to show $\|\tilde{B}^n\|$ is bounded.
-We can write $\tilde{B}^n$ using the discrete variation of constants formula:
-$\tilde{B}^n = B^n + \sum_{j=0}^{n-1} B^{n-1-j} (\Delta t C) \tilde{B}^j$.
-Taking norms and using $\|C(\Delta t)\| \leq M$:
-$\|\tilde{B}^n\| \leq \|B^n\| + \Delta t \sum_{j=0}^{n-1} \|B^{n-1-j}\| \|C\| \|\tilde{B}^j\| \leq K + \Delta t K M \sum_{j=0}^{n-1} \|\tilde{B}^j\|$.
-Let $S_n = \|\tilde{B}^n\|$. Then $S_n \leq K + \Delta t (KM) \sum_{j=0}^{n-1} S_j$.
-By the discrete Gronwall inequality, this implies:
-$S_n \leq K \exp(KM n\Delta t) \leq K \exp(KMT)$.
-Since $K, M, T$ are independent of $\Delta t$, the sequence of operators $\tilde{B}^n$ is uniformly bounded. Thus, the perturbed scheme is stable.
+Stability of the original scheme on an interval $[0, T]$ means that there exists a constant $K_1$ such that $\|B^n\| \leq K_1$ for all $n$ where $n \Delta t \leq T$.
+By assumption, $\|C(\Delta t)\| \leq K_2$ for some $K_2$ independent of $\Delta t$.
+Consider the perturbed operator $\tilde{B} = B + \Delta t C$. Expanding $\tilde{B}^n$:
+\[
+(B + \Delta t C)^n = \sum_{j=0}^n (\Delta t)^j \sum_{P \in \mathcal{P}_{n,j}} P(B, C),
+\]
+where $\mathcal{P}_{n,j}$ is the set of all ordered products containing $n-j$ factors of $B$ and $j$ factors of $C$. The number of such products is $\binom{n}{j}$.
+A typical product $P \in \mathcal{P}_{n,j}$ looks like $B^{n_0} C B^{n_1} C \dots C B^{n_j}$ where $\sum n_i = n-j$.
+Since $\|B^{n_i}\| \leq K_1$ for any $n_i \geq 0$ and $\|C\| \leq K_2$, the norm of any such product is bounded by:
+\[
+\|P(B, C)\| \leq \prod_{i=0}^j \|B^{n_i}\| \cdot \prod_{i=1}^j \|C\| \leq K_1^{j+1} K_2^j.
+\]
+Summing over all $\binom{n}{j}$ products for each $j$:
+\[
+\|\tilde{B}^n\| \leq \sum_{j=0}^n \binom{n}{j} (\Delta t)^j K_1^{j+1} K_2^j = K_1 \sum_{j=0}^n \binom{n}{j} (K_1 K_2 \Delta t)^j = K_1 (1 + K_1 K_2 \Delta t)^n.
+\]
+Using the inequality $1+x \leq e^x$:
+\[
+\|\tilde{B}^n\| \leq K_1 e^{n \Delta t K_1 K_2} \leq K_1 e^{T K_1 K_2}.
+\]
+Since $K_1, K_2, T$ are constants independent of $\Delta t$, the sequence of operators $\tilde{B}^n$ is uniformly bounded. Thus, the perturbed scheme is stable.
 \end{solution}
 
 \begin{exercise}
-Let $A$ be $m\times m$ nonsingular matrix. Suppose $\inf_{p_{n}\in P^{n}}\|p_{n}(A)\|=\|p^{*}(A)\|>0$ where $P^{n}$ denotes degree-$n$ monic polynomials: $P^{n}=\{p:p\text{ polynomial of degree }n,p(z)=z^{n}+\dots\}$. Prove $p^{*}$ is unique.
+Let $A$ be an $m \times m$ nonsingular matrix. Suppose $\inf_{p_n \in P^n} \|p_n(A)\| = \|p^*(A)\| > 0$ where $P^n$ denotes the set of all degree-$n$ monic polynomials:
+\[
+P^n = \{ p : p \text{ is a polynomial of degree } n, p(z) = z^n + \dots \}.
+\]
+Prove that $p^*$ is unique.
 \end{exercise}
+
 \begin{solution}
-The space of polynomials $P^n$ is a convex set since for any $p_1, p_2 \in P^n$, the convex combination $(1-\theta)p_1 + \theta p_2$ is also a monic polynomial of degree $n$. The function $\phi(p) = \|p(A)\|$ is a convex function on $P^n$ because the operator norm satisfies the triangle inequality and homogeneity.
 Suppose there are two distinct minimizers $p_1, p_2 \in P^n$. Then $\|p_1(A)\| = \|p_2(A)\| = \mu$.
-By convexity, for any $\theta \in (0, 1)$, $p_\theta = (1-\theta)p_1 + \theta p_2$ satisfy $\|p_\theta(A)\| \leq (1-\theta)\mu + \theta\mu = \mu$. Since $\mu$ is the infimum, we must have $\|p_\theta(A)\| = \mu$.
-This implies that for the operator norm, the unit ball would have to contain a line segment $[p_1(A), p_2(A)]$ on its boundary.
-In the case of a matrix $A$, if $A$ is normal, $\|p(A)\| = \max_{\lambda \in \sigma(A)} |p(\lambda)|$. The problem reduces to finding the Chebyshev polynomial of the set $\sigma(A)$. It is a standard result in approximation theory that the best uniform approximation polynomial on a finite set (or more generally any compact set with at least $n+1$ points) is unique.
-For a non-normal matrix, the problem is equivalent to finding the polynomial that minimizes the maximum of the pseudospectrum. Since $P^n$ is a finite-dimensional affine space and the norm is a continuous, coercive function, a minimizer exists. Uniqueness follows from the fact that the map $p \mapsto p(A)$ is injective (since $A$ is nonsingular and we are dealing with polynomials of degree $n <$ degree of minimal polynomial of $A$, or more simply, $A$ has at most $m$ distinct eigenvalues). If $p_1(A) = p_2(A)$, then $p_1 - p_2$ annihilates $A$, which is impossible for a non-zero polynomial of degree $< n$.
-Strict convexity of the norm in the space of matrices (or the Alternation Theorem in the scalar case) ensures that the minimizer $p^*$ is unique.
+Let $p = (p_1 + p_2)/2$. Since $p_1, p_2$ are monic of degree $n$, $p$ is also monic of degree $n$. By the triangle inequality:
+\[
+\|p(A)\| = \left\| \frac{p_1(A) + p_2(A)}{2} \right\| \leq \frac{1}{2} \|p_1(A)\| + \frac{1}{2} \|p_2(A)\| = \mu.
+\]
+Since $\mu$ is the infimum, we must have $\|p(A)\| = \mu$.
+Let the Singular Value Decomposition of $p(A)$ be $p(A) = U \Sigma V^*$, where $\Sigma = \text{diag}(\sigma_1, \dots, \sigma_m)$ with $\sigma_1 = \mu$ being the largest singular value.
+Suppose $\sigma_1$ has multiplicity $J$. Let $\{\mathbf{u}_1, \dots, \mathbf{u}_J\}$ and $\{\mathbf{v}_1, \dots, \mathbf{v}_J\}$ be the corresponding left and right singular vectors.
+For any $j \in \{1, \dots, J\}$, we have:
+\[
+\mu = \|p(A) \mathbf{v}_j\| = \left\| \frac{1}{2} (p_1(A) + p_2(A)) \mathbf{v}_j \right\| \leq \frac{1}{2} \|p_1(A) \mathbf{v}_j\| + \frac{1}{2} \|p_2(A) \mathbf{v}_j\| \leq \frac{1}{2} \mu + \frac{1}{2} \mu = \mu.
+\]
+Equality in the triangle inequality for vectors in a Euclidean space implies that $p_1(A) \mathbf{v}_j$ and $p_2(A) \mathbf{v}_j$ must be in the same direction. Since their norms are at most $\mu$ and their average has norm $\mu$, it must be that:
+\[
+p_1(A) \mathbf{v}_j = p_2(A) \mathbf{v}_j = p(A) \mathbf{v}_j = \mu \mathbf{u}_j.
+\]
+This implies $(p_1 - p_2)(A) \mathbf{v}_j = 0$ for $j=1, \dots, J$.
+Similarly, considering the adjoints, we can show that $(p_1 - p_2)(A)^* \mathbf{u}_j = 0$.
+Let $q(z) = p_1(z) - p_2(z)$. Then $q$ is a non-zero polynomial of degree at most $n-1$ (since the $z^n$ terms cancel).
+We have shown that $q(A) \mathbf{v}_j = 0$ for $j=1, \dots, J$.
+Consider the family of polynomials $p_\epsilon(z) = (1-\epsilon) p(z) + \epsilon q(z)$. Since $p$ is monic and $deg(q) < n$, $p_\epsilon$ is monic of degree $n$ for any $\epsilon$.
+For small $\epsilon$, we check the norm of $p_\epsilon(A)$.
+Note that $p_\epsilon(A) \mathbf{v}_j = (1-\epsilon) p(A) \mathbf{v}_j + \epsilon q(A) \mathbf{v}_j = (1-\epsilon) \mu \mathbf{u}_j$.
+Thus for $j=1, \dots, J$, the singular values of $p_\epsilon(A)$ associated with $\mathbf{v}_j$ are exactly $(1-\epsilon) \mu$.
+For the other singular values $\sigma_i$ ($i > J$), they are strictly less than $\mu$. By continuity of singular values, for sufficiently small $\epsilon$, the singular values of $p_\epsilon(A)$ originating from $\sigma_i$ will remain less than $\mu$.
+Specifically, $\|p_\epsilon(A) \mathbf{v}\| \leq (1-\epsilon) \mu$ for $\mathbf{v} \in \text{span}\{\mathbf{v}_1, \dots, \mathbf{v}_J\}$.
+For the orthogonal complement, the norm is bounded by $(1-\epsilon) \sigma_{J+1} + \epsilon \|q(A)\|$, which is less than $\mu$ for small $\epsilon$ since $\sigma_{J+1} < \mu$.
+This implies that for small $\epsilon > 0$, $\|p_\epsilon(A)\| < \mu$, which contradicts the assumption that $\mu$ is the infimum.
+Therefore, the minimizer $p^*$ must be unique.
 \end{solution}

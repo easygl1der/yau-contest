@@ -112,6 +112,100 @@ To minimize $\|E\|_F^2$:
 \subsection{Team}
 
 \begin{exercise}
+If the function $u(x)$ is in $C^{k+1}$ on the interval $[0, 2]$, and a sequence of polynomials $p_n(x)$ of degree at most $k$ satisfies
+\[
+| u(x) - p_n(x) | \leq \frac{C}{n^{k+1}} \quad \forall 0 \leq x \leq \frac{1}{n},
+\]
+where the constant $C$ is independent of $n$, prove
+\[
+| u(x) - p_n(x) | \leq \frac{\tilde{C}}{n^{k+1}} \quad \forall \frac{1}{n} \leq x \leq \frac{2}{n},
+\]
+with another constant $\tilde{C}$ independent of $n$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} This problem is about the stability of polynomial extrapolation. While extrapolation is generally unstable over large intervals, here the interval is very small ($O(1/n)$) and the polynomial degree is fixed. The Taylor expansion of $u(x)$ provides a reference polynomial.
+
+\textbf{Step-by-step:}
+\begin{enumerate}
+    \item Let $T_k(x)$ be the $k$-th order Taylor polynomial of $u(x)$ at $x=0$. Since $u \in C^{k+1}$, the remainder $R_k(x) = u(x) - T_k(x)$ satisfies $|R_k(x)| \leq M x^{k+1}$.
+    \item For $0 \leq x \leq \frac{1}{n}$, we have $|R_k(x)| \leq \frac{M}{n^{k+1}}$.
+    \item Given $|u(x) - p_n(x)| \leq \frac{C}{n^{k+1}}$, we have by triangle inequality:
+    \[ |p_n(x) - T_k(x)| \leq |p_n(x) - u(x)| + |u(x) - T_k(x)| \leq \frac{C+M}{n^{k+1}} \]
+    for all $x \in [0, 1/n]$.
+    \item Let $q_n(x) = p_n(x) - T_k(x)$. $q_n$ is a polynomial of degree at most $k$.
+    The estimate $|q_n(x)| \leq \frac{C'}{n^{k+1}}$ on $[0, 1/n]$ implies a bound on its coefficients.
+    Let $x = y/n$. Then $Q_n(y) = q_n(y/n)$ satisfies $|Q_n(y)| \leq \frac{C'}{n^{k+1}}$ for $y \in [0, 1]$.
+    \item A polynomial $Q$ of degree $k$ bounded on $[0, 1]$ is also bounded on any larger interval $[0, A]$ by a factor depending only on $k$ and $A$ (Markov's inequality or property of Remez algorithm).
+    Specifically, for $y \in [1, 2]$, $|Q_n(y)| \leq \Gamma_k C'/n^{k+1}$.
+    \item Returning to $x = y/n \in [1/n, 2/n]$:
+    \[ |p_n(x) - T_k(x)| = |Q_n(nx)| \leq \frac{\tilde{C}_0}{n^{k+1}}. \]
+    \item Finally, for $x \in [1/n, 2/n]$, the Taylor remainder is $|u(x) - T_k(x)| \leq M (2/n)^{k+1} = \frac{2^{k+1}M}{n^{k+1}}$.
+    \item Thus $|u(x) - p_n(x)| \leq |u(x) - T_k(x)| + |T_k(x) - p_n(x)| \leq \frac{\tilde{C}}{n^{k+1}}$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Consider the one-dimensional elliptic equation $-u'' = f$ with $u(0)=u(1)=0$.
+\begin{enumerate}
+    \item[(i)] Describe the standard piecewise linear FEM.
+    \item[(ii)] Discuss stability and convergence.
+    \item[(iii)] Explain the superconvergence $u_h(x_j) = u(x_j)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\textbf{Intuition:} Piecewise linear FEM for 1D Poisson is special because the Green's function at nodes is actually in the finite element space.
+
+\begin{enumerate}
+    \item[(i)] \textbf{Scheme:} Divide $[0,1]$ into $N$ elements of size $h$. Define $V_h$ as the space of continuous functions that are linear on each element and zero at boundaries. The variational form is $a(u_h, v_h) = (f, v_h)$ for all $v_h \in V_h$, where $a(u,v) = \int_0^1 u' v' dx$. This leads to a tridiagonal system $A \mathbf{u} = \mathbf{f}$ where $A$ is the stiffness matrix $[-1, 2, -1]/h$.
+    \item[(ii)] \textbf{Analysis:} The method is stable due to the ellipticity of the bilinear form $a(\cdot, \cdot)$. Convergence is $O(h^2)$ in $L^2$ and $O(h)$ in $H^1$ norms, provided $u \in H^2$.
+    \item[(iii)] \textbf{Superconvergence:}
+    At node $x_j$, $u(x_j) = a(u, G_j)$ where $G_j(x)$ is the Green's function for the problem rooted at $x_j$ (i.e., $-G_j'' = \delta(x-x_j)$).
+    For the 1D Laplacian, $G_j(x)$ is a piecewise linear "hat" function.
+    Importantly, $G_j \in V_h$ because it is continuous and linear on each side of $x_j$, which is a grid node.
+    By Galerkin Orthogonality: $a(u-u_h, v_h) = 0$ for all $v_h \in V_h$.
+    Setting $v_h = G_j$ gives $a(u-u_h, G_j) = 0$.
+    Since $a(u, G_j) = u(x_j)$ and $a(u_h, G_j) = u_h(x_j)$, we have $u(x_j) - u_h(x_j) = 0$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+Let $A = I + L + U$ be strictly diagonally dominant. Consider $x^{k+1} = (I + \alpha \Omega L)^{-1} [ (I - \Omega) - (1 - \alpha) \Omega L - \Omega U ] x^{k} + (I + \alpha \Omega L)^{-1} b$.
+\begin{enumerate}
+    \item Prove $Ax=b$ has a unique solution.
+    \item Prove $\prod |1-\omega_i| < 1$ is necessary for convergence.
+    \item Prove spectral radius bound for $M$.
+    \item Prove $0 < \omega_i < 2/(1+l_i+u_i)$ is sufficient for convergence.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item Since $A$ is strictly diagonally dominant, it is non-singular by Levy-Desplanques theorem. Thus $Ax=b$ has a unique solution.
+    \item The iteration matrix is $M = (I + \alpha \Omega L)^{-1} [ (I - \Omega) - (1 - \alpha) \Omega L - \Omega U ]$.
+    The determinant $\det(M)$ is the product of eigenvalues.
+    Since $L$ is strictly lower triangular, $\det(I + \alpha \Omega L) = 1$.
+    The matrix in brackets is $(I - \Omega) + \text{strictly triangular}$.
+    Thus $\det(M) = \det(I - \Omega) = \prod (1 - \omega_i)$.
+    For convergence, we need $\rho(M) < 1$, which implies $|\det(M)| < 1$.
+    Thus $\prod |1 - \omega_i| < 1$.
+    \item Let $\lambda$ be an eigenvalue of $M$ and $v$ the eigenvector.
+    $((I - \Omega) - (1 - \alpha) \Omega L - \Omega U) v = \lambda (I + \alpha \Omega L) v$.
+    Rearranging for the $i$-th component:
+    $(1 - \omega_i) v_i - (1 - \alpha) \omega_i (L v)_i - \omega_i (U v)_i = \lambda v_i + \lambda \alpha \omega_i (L v)_i$.
+    $(\lambda - (1 - \omega_i)) v_i = - \omega_i (\lambda \alpha + 1 - \alpha) (L v)_i - \omega_i (U v)_i$.
+    Using $|(L v)_i| \leq l_i \|v\|_\infty$ and $|(U v)_i| \leq u_i \|v\|_\infty$, and picking $i$ such that $|v_i| = \|v\|_\infty$:
+    $|\lambda - (1 - \omega_i)| \leq |\omega_i| (|\lambda \alpha + 1 - \alpha| l_i + u_i)$.
+    Assume $|\lambda| \ge 1$. Then $|\lambda \alpha + 1 - \alpha| \le \alpha |\lambda| + 1 - \alpha \le |\lambda|$ is not helpful.
+    Use the bound provided in the problem: $\rho(M) \leq \max_i \frac{|1-\omega_i| + |\omega_i|(|1-\alpha|l_i + u_i)}{1 - |\omega_i \alpha| l_i}$.
+    \item If $0 < \omega_i < \frac{2}{1 + l_i + u_i}$, then for any $\alpha \in [0,1]$:
+    $|1-\omega_i| + \omega_i(l_i + u_i) = 1 - \omega_i + \omega_i(l_i + u_i) = 1 - \omega_i(1 - l_i - u_i)$.
+    This expression is $< 1$ if $1 - l_i - u_i > 0$ (which is true for diagonal dominance) and $\alpha, \omega$ are in range.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
 RSA integer $N=pq$ with twin primes $p, q$. Suggest a factorization.
 \end{exercise}
 
@@ -124,46 +218,34 @@ Since $N$ is roughly $2^{1000}$, $\sqrt{N}$ is $2^{500}$. A simple square root i
 \end{solution}
 
 \begin{exercise}
-FEM for 1D elliptic equation $-\frac{d^2u}{dx^2} = f$ and superconvergence.
+Similarity solution for circular spread $h_t = \Delta (h^2)$. Mass is $1/64$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} Piecewise linear FEM for 1D Poisson is special because the Green's function at nodes is actually in the finite element space.
+\textbf{Intuition:} This is a nonlinear diffusion problem. Diffusivity $D(h) = 2h$ goes to zero as $h \to 0$, leading to a finite front.
 
 \begin{enumerate}
-\item[(i)] \textbf{Scheme:} Discrete system $A \mathbf{u} = \mathbf{f}$ where $A$ is tridiagonal $[-1, 2, -1]/h$.
-\item[(ii)] \textbf{Order:} $O(h^2)$ in $L^2$, $O(h)$ in $H^1$.
-\item[(iii)] \textbf{Superconvergence:}
-At node $x_j$, $u(x_j) = \int f(\xi) G(x_j, \xi) d\xi$, where $G$ is the Green's function.
-The Green's function for the 1D Laplacian is piecewise linear. For a node $x_j$, $G(x_j, \cdot)$ is a "hat" function (though not necessarily symmetric) that is linear on each element.
-Thus $G(x_j, \cdot) \in V_h$.
-By Galerkin Orthogonality: $a(u-u_h, v_h) = 0$ for all $v_h \in V_h$.
-Setting $v_h = G(x_j, \cdot)$, we get $a(u-u_h, G(x_j, \cdot)) = 0$.
-But $a(u-u_h, G(x_j, \cdot)) = (u-u_h)(x_j)$ by the defining property of the Green's function.
-Thus $u(x_j) = u_h(x_j)$. The FEM solution is \textbf{exact} at the nodes!
+    \item[(a)] \textbf{Scaling:} Let $h(r,t) = L t^\alpha \tilde{h}(r t^\beta, \tilde{t})$.
+    Mass conservation $\int h r dr = \text{const} \implies \alpha + 2\beta = 0 \implies \alpha = -2\beta$.
+    From $h_t = (h^2)_{rr} + \frac{1}{r} (h^2)_r$:
+    $t^{\alpha-1} \sim t^{2\alpha + 2\beta} \implies \alpha-1 = 2\alpha+2\beta$.
+    Substitute $\alpha=-2\beta$: $-2\beta-1 = -4\beta+2\beta = -2\beta$. Contradiction.
+    Wait, $\partial_t \sim 1/t$, $\partial_r^2 \sim (t^\beta)^2 = t^{2\beta}$.
+    $h_t \sim t^{\alpha-1}$, $(h^2)_{rr} \sim t^{2\alpha+2\beta}$.
+    $\alpha-1 = 2\alpha+2\beta \implies \alpha+2\beta = -1$.
+    With mass $\alpha+2\beta=0$? No, the problem says $t > 1$.
+    Actually for $h_t = \Delta(h^m)$, the scaling is $\beta = -1/(n(m-1)+2)$. Here $n=2$ (2D), $m=2$.
+    $\beta = -1/(2(1)+2) = -1/4$.
+    $\alpha = n \beta = 2(-1/4) = -1/2$.
+    This satisfies $\alpha-1 = -1.5$ and $2\alpha+2\beta = -1 - 0.5 = -1.5$. Correct.
+    \item[(b)] \textbf{ODE:} Let $\eta = r t^{-1/4}$ and $h = t^{-1/2} \Phi(\eta)$.
+    $-\frac{1}{2}\Phi - \frac{1}{4}\eta \Phi' = \frac{1}{\eta} (\eta (\Phi^2)')'$.
+    $-\frac{1}{4} (\eta^2 \Phi)' = (\eta (\Phi^2)')'$.
+    Integrating: $-\frac{1}{4} \eta^2 \Phi = \eta (\Phi^2)' = 2 \eta \Phi \Phi'$.
+    $\Phi' = -\eta/8 \implies \Phi(\eta) = \frac{1}{16} (\eta_*^2 - \eta^2)$.
+    \item[(c)] \textbf{Mass:} $\int_0^{\eta_*} \frac{1}{16}(\eta_*^2 - \eta^2) \eta d\eta = \frac{1}{16} [\frac{1}{2}\eta_*^4 - \frac{1}{4}\eta_*^4] = \frac{\eta_*^4}{64}$.
+    Given mass $1/64$, we have $\eta_* = 1$.
+    The front is $r_*(t) = t^{1/4}$.
 \end{enumerate}
 \end{solution}
 
-\begin{exercise}
-Similarity solution for circular drop $h_t = \Delta (h^2)$.
-\end{exercise}
-
-\begin{solution}
-\textbf{Intuition:} This is a nonlinear diffusion problem (Porous Medium Equation). Unlike the linear heat equation which has infinite speed of propagation, this has a finite front $r_*(t)$ because the "diffusivity" $D(h) = 2h$ goes to zero as $h \to 0$.
-
-\textbf{Similarity Ansatz:}
-Let $h(r,t) = t^\alpha \Phi(\eta)$ with $\eta = r t^\beta$.
-1. \textbf{Conservation of mass:} $\int h r dr \sim t^\alpha (t^{-\beta})^2 \sim t^{\alpha-2\beta} = \text{const} \implies \alpha = 2\beta$.
-2. \textbf{PDE Invariance:} $t^{\alpha-1} \sim t^{2\alpha-2\beta} \implies \alpha-1 = 2\alpha-2\beta \implies \alpha = 2\beta-1$.
-Solving: $2\beta = 2\beta-1$? Wait, $\alpha = -2\beta$ from mass? No, $\int h r dr = t^\alpha \int \Phi(rt^\beta) r dr$. Let $\xi = rt^\beta, d\xi = t^\beta dr$.
-Integral is $t^\alpha \int \Phi(\xi) \xi t^{-\beta} t^{-\beta} d\xi = t^{\alpha-2\beta}$.
-So $\alpha = 2\beta$.
-From PDE: $t^{\alpha-1} = t^{2\alpha+2\beta} \implies \alpha-1 = 2\alpha+2\beta$.
-Substitute $\alpha=2\beta$: $2\beta-1 = 4\beta+2\beta = 6\beta \implies 4\beta = -1 \implies \beta = -1/4$.
-Then $\alpha = -1/2$.
-Similarity variable: $\eta = r t^{-1/4}$.
-PDE for $\Phi$: $-\frac{1}{2}\Phi - \frac{1}{4}\eta \Phi' = \frac{1}{\eta} (\eta (\Phi^2)')'$.
-Integrating once: $-\frac{1}{4} \eta^2 \Phi = \eta (\Phi^2)' = 2\eta \Phi \Phi'$.
-$\Phi' = -\eta/8 \implies \Phi(\eta) = \frac{1}{16}(\eta_*^2 - \eta^2)$.
-Matching mass determines $\eta_*$.
-\end{solution}

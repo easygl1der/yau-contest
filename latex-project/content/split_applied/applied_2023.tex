@@ -1,255 +1,165 @@
 \section{2023 Applied \& Computational Mathematics}
 
 \begin{exercise}
-Consider forward and centered finite difference formulas:
-\[
-D_{h}^{+}f(x_{0})=\frac{f(x_{0}+h)-f(x_{0})}{h},\quad
-D_{h}^{0}f(x_{0})=\frac{f(x_{0}+h)-f(x_{0}-h)}{2h}.
-\]
-
+Consider the forward and the centered finite difference formulas
+\[ D_{h}^{+} f(x_{0}) = \frac{f(x_{0} + h) - f(x_{0})}{h}, \tag{1} \]
+\[ D_{h}^{0} f(x_{0}) = \frac{f(x_{0} + h) - f(x_{0} - h)}{2h}, \tag{2} \]
+to approximate the derivative of $f$ at a point $x_0$. Assume $f$ is a smooth function in a neighborhood of $x_0$.
 \begin{enumerate}
-\item[(a)] Prove $D_{h}^{+}f(x_{0})$ and $D_{h}^{0}f(x_{0})$ approximate $f'(x_{0})$ to $O(h)$ and $O(h^{2})$.
-\item[(b)] Derive $O(h^{2})$ approximation to $f'(x_{0})$ from $D_{h}^{+}f(x_{0})$ by Richardson extrapolation.
-\item[(c)] Take $f(x)=\sin x$, $x_{0}=0$. Prove both converge quadratically and produce same approximation.
+    \item[(a)] Prove that $D_h^+ f(x_0)$ and $D_h^0 f(x_0)$ approximate $f'(x_0)$ to $O(h)$ and $O(h^2)$, respectively.
+    \item[(b)] Derive an $O(h^2)$ approximation to $f'(x_0)$ from $D_h^+ f(x_0)$ by doing Richardson extrapolation.
+    \item[(c)] Take $f(x) = \sin x$ and $x_0 = 0$. Prove that both $D_h^+ f(x_0)$ and $D_h^0 f(x_0)$ converge quadratically to $f'(x_0)$ as $h \to 0$ and that they produce the same approximation to $f'(x_0)$ in this particular case.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Assume $f \in C^3$ in a neighborhood of $x_0$. By Taylor's Theorem:
-    \[ f(x_0 + h) = f(x_0) + hf'(x_0) + \frac{h^2}{2}f''(x_0) + O(h^3) \]
-    For the forward difference:
-    \[ D_h^+ f(x_0) = \frac{hf'(x_0) + \frac{h^2}{2}f''(x_0) + O(h^3)}{h} = f'(x_0) + \frac{h}{2}f''(x_0) + O(h^2) = f'(x_0) + O(h) \]
-    For the centered difference, assume $f \in C^4$:
-    \[ f(x_0 \pm h) = f(x_0) \pm hf'(x_0) + \frac{h^2}{2}f''(x_0) \pm \frac{h^3}{6}f'''(x_0) + O(h^4) \]
-    Subtracting the two expressions:
-    \[ f(x_0+h) - f(x_0-h) = 2hf'(x_0) + \frac{h^3}{3}f'''(x_0) + O(h^5) \]
-    Thus:
-    \[ D_h^0 f(x_0) = \frac{2hf'(x_0) + \frac{h^3}{3}f'''(x_0) + O(h^5)}{2h} = f'(x_0) + \frac{h^2}{6}f'''(x_0) + O(h^4) = f'(x_0) + O(h^2) \]
+\textbf{(a) Error Analysis:}
+By Taylor's expansion near $x_0$:
+\[ f(x_0 + h) = f(x_0) + h f'(x_0) + \frac{h^2}{2} f''(x_0) + \frac{h^3}{6} f'''(x_0) + O(h^4) \]
+\[ f(x_0 - h) = f(x_0) - h f'(x_0) + \frac{h^2}{2} f''(x_0) - \frac{h^3}{6} f'''(x_0) + O(h^4) \]
+For the forward difference:
+\[ D_h^+ f(x_0) = \frac{h f'(x_0) + \frac{h^2}{2} f''(x_0) + O(h^3)}{h} = f'(x_0) + \frac{h}{2} f''(x_0) + O(h^2) = f'(x_0) + O(h). \]
+For the centered difference:
+\[ D_h^0 f(x_0) = \frac{2 h f'(x_0) + \frac{h^3}{3} f'''(x_0) + O(h^5)}{2h} = f'(x_0) + \frac{h^2}{6} f'''(x_0) + O(h^4) = f'(x_0) + O(h^2). \]
 
-    \item[(b)] Richardson extrapolation assumes the error of $D_h^+ f(x_0)$ has the form:
-    \[ D_h^+ = f' + c_1 h + c_2 h^2 + \dots \]
-    Evaluating at step $2h$:
-    \[ D_{2h}^+ = f' + 2c_1 h + 4c_2 h^2 + \dots \]
-    To eliminate the $O(h)$ term, we form a linear combination:
-    \[ R(h) = 2D_h^+ f(x_0) - D_{2h}^+ f(x_0) = (2f' + 2c_1 h + 2c_2 h^2) - (f' + 2c_1 h + 4c_2 h^2) + O(h^3) = f' - 2c_2 h^2 + O(h^3) \]
-    This gives an $O(h^2)$ approximation. Explicitly:
-    \[ R(h) = 2 \frac{f(x_0+h)-f(x_0)}{h} - \frac{f(x_0+2h)-f(x_0)}{2h} = \frac{4f(x_0+h) - 4f(x_0) - f(x_0+2h) + f(x_0)}{2h} = \frac{-f(x_0+2h) + 4f(x_0+h) - 3f(x_0)}{2h} \]
+\textbf{(b) Richardson Extrapolation:}
+Let $D_h^+ = f'(x_0) + c_1 h + c_2 h^2 + \dots$. Then $D_{2h}^+ = f'(x_0) + 2 c_1 h + 4 c_2 h^2 + \dots$.
+To eliminate the $O(h)$ term, compute $2 D_h^+ - D_{2h}^+$:
+\[ R(h) = 2 D_h^+ f(x_0) - D_{2h}^+ f(x_0) = (2 f' + 2c_1 h + 2c_2 h^2) - (f' + 2c_1 h + 4c_2 h^2) + O(h^3) \]
+\[ R(h) = f' - 2c_2 h^2 + O(h^3) = f'(x_0) + O(h^2). \]
+Specifically, $R(h) = \frac{2}{h}(f(x_0+h)-f(x_0)) - \frac{1}{2h}(f(x_0+2h)-f(x_0)) = \frac{-f(x_0+2h) + 4f(x_0+h) - 3f(x_0)}{2h}$.
 
-    \item[(c)] For $f(x) = \sin x$ at $x_0 = 0$, we have $f'(0) = 1$, $f''(0) = 0$, and $f'''(0) = -1$.
-    Forward difference:
-    \[ D_h^+ \sin(0) = \frac{\sin h - \sin 0}{h} = \frac{\sin h}{h} = 1 - \frac{h^2}{6} + O(h^4) \]
-    Centered difference:
-    \[ D_h^0 \sin(0) = \frac{\sin h - \sin(-h)}{2h} = \frac{2\sin h}{2h} = \frac{\sin h}{h} = 1 - \frac{h^2}{6} + O(h^4) \]
-    Since $f''(0)=0$, the $O(h)$ term in $D_h^+$ vanishes, leading to $O(h^2)$ convergence. Both formulas yield the same approximation $\frac{\sin h}{h}$.
-\end{enumerate}
+\textbf{(c) Case $f(x) = \sin x, x_0 = 0$:}
+Here $f'(0) = \cos 0 = 1$ and $f''(0) = -\sin 0 = 0$.
+Forward difference: $D_h^+ \sin(0) = \frac{\sin h - 0}{h} = \frac{\sin h}{h}$.
+Centered difference: $D_h^0 \sin(0) = \frac{\sin h - \sin(-h)}{2h} = \frac{2\\sin h}{2h} = \frac{\sin h}{h}$.
+Since $f''(0) = 0$, the $O(h)$ term in the error of $D_h^+$ vanishes, and both yield $\frac{\sin h}{h} = 1 - \frac{h^2}{6} + O(h^4)$, which is $O(h^2)$ accurate.
 \end{solution}
 
 \begin{exercise}
-For functions on $[0,1]$, compute definite integral:
-\[
-I[f]=\int_{0}^{1}f(x)\log(1/x)\,dx.
-\]
-
-Let $P_{n}(x)$ be monic orthogonal polynomials for weight $\log(1/x)$.
-
+For functions defined on a closed interval $[0, 1]$, we want to compute the definite integral
+\[ I[f] = \int_{0}^{1} f(x) \log(1/x) dx. \]
+Let $P_n(x)$ be the monic orthogonal polynomials for the inner product $\langle f, g \rangle = \int_0^1 f(x) g(x) \log(1/x) dx$.
 \begin{enumerate}
-\item[(a)] Let $P_{0}=1$. Find $P_{1}(x)$ and node $x_{1}^{1}$ and weight $\omega_{1}^{1}$ for 1-point Gaussian quadrature.
-\item[(b)] Derive recurrence for $P_{n+1}(x)$ using $P_{n}(x)$ and $P_{n-1}(x)$.
-\item[(c)] For normalized $Q_{n}(x)=P_{n}(x)/\|P_{n}\|$, derive recurrence for $Q_{n+1}(x)$.
-\item[(d)] Show $x=\lambda$ is node of 4-point Gaussian quadrature iff it is eigenvalue of symmetric tridiagonal matrix. Write matrix explicitly.
+    \item[(a)] Let $P_0 = 1$. Find $P_1(x)$, and the corresponding node $x_1^1$ and weight $\omega_1^1$ for the 1-point Gaussian quadrature rule.
+    \item[(b)] Derive a recursive formula for $P_{n+1}(x)$ using $P_n(x)$ and $P_{n-1}(x)$.
+    \item[(c)] Consider the normalized polynomials $Q_n(x) = P_n(x) / \|P_n\|$. Derive a recursive formula for $Q_{n+1}(x)$.
+    \item[(d)] Show that $x = \lambda$ is a node of the 4-point Gaussian quadrature if and only if it is an eigenvalue of a symmetric, tridiagonal matrix. Write out the form of the matrix explicitly.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Let $w(x) = \log(1/x) = -\log x$. The inner product is $\langle f, g \rangle = \int_0^1 f(x)g(x)w(x)dx$.
-    We first compute moments $\mu_k = \int_0^1 x^k (-\log x) dx$. Let $x = e^{-t}$, $dx = -e^{-t}dt$:
-    \[ \mu_k = \int_0^\infty e^{-kt} t e^{-t} dt = \int_0^\infty t e^{-(k+1)t} dt = \frac{1}{(k+1)^2} \int_0^\infty u e^{-u} du = \frac{1}{(k+1)^2} \]
-    So $\mu_0 = 1$, $\mu_1 = 1/4$, $\mu_2 = 1/9$.
-    For monic $P_1(x) = x - c$, we require $\langle P_1, P_0 \rangle = 0$:
-    \[ \int_0^1 (x-c) w(x) dx = \mu_1 - c\mu_0 = 1/4 - c = 0 \implies c = 1/4 \]
-    Thus $P_1(x) = x - 1/4$. The node is the root: $x_1^1 = 1/4$.
-    The weight $\omega_1^1$ is determined by integrating $P_0$:
-    \[ \omega_1^1 P_0(x_1^1) = \int_0^1 P_0(x) w(x) dx = \mu_0 = 1 \implies \omega_1^1 = 1 \]
+\textbf{(a) Gaussian Quadrature:}
+Moments $\mu_k = \int_0^1 x^k \log(1/x) dx$. Let $x = e^{-t}$: $\mu_k = \int_0^\infty e^{-kt} t e^{-t} dt = \int_0^\infty t e^{-(k+1)t} dt = \frac{1}{(k+1)^2}$.
+$\mu_0 = 1, \mu_1 = 1/4$.
+Monic $P_1(x) = x - c$. Orthogonality $\langle P_1, P_0 \rangle = 0 \implies \mu_1 - c \mu_0 = 0 \implies c = 1/4$.
+$P_1(x) = x - 1/4$. Node $x_1^1 = 1/4$.
+Weight $\omega_1^1 = \mu_0/P_0(x_1^1) = 1$.
 
-    \item[(b)] Monic orthogonal polynomials satisfy the three-term recurrence:
-    \[ P_{n+1}(x) = (x - \alpha_n) P_n(x) - \beta_n P_{n-1}(x) \]
-    Using orthogonality $\langle P_{n+1}, P_n \rangle = 0$ and $\langle P_{n+1}, P_{n-1} \rangle = 0$, we find:
-    \[ \alpha_n = \frac{\langle x P_n, P_n \rangle}{\langle P_n, P_n \rangle}, \quad \beta_n = \frac{\langle P_n, P_n \rangle}{\langle P_{n-1}, P_{n-1} \rangle} \]
-    (with $P_{-1}=0$ and $\beta_0$ arbitrary).
+\textbf{(b) Recurrence for Monic Polynomials:}
+Monic orthogonal polynomials satisfy $P_{n+1}(x) = (x - \alpha_n) P_n(x) - \beta_n P_{n-1}(x)$, where:
+\[ \alpha_n = \frac{\langle x P_n, P_n \rangle}{\langle P_n, P_n \rangle}, \quad \beta_n = \frac{\langle P_n, P_n \rangle}{\langle P_{n-1}, P_{n-1} \rangle}. \]
 
-    \item[(c)] Let $Q_n = P_n / \|P_n\|$, where $\|P_n\|^2 = \langle P_n, P_n \rangle$. Then $P_n = \|P_n\| Q_n$. Substituting into (b):
-    \[ \|P_{n+1}\| Q_{n+1} = (x - \alpha_n) \|P_n\| Q_n - \beta_n \|P_{n-1}\| Q_{n-1} \]
-    Rearranging to isolate $x Q_n$:
-    \[ x Q_n = \frac{\|P_{n+1}\|}{\|P_n\|} Q_{n+1} + \alpha_n Q_n + \frac{\beta_n \|P_{n-1}\|}{\|P_n\|} Q_{n-1} \]
-    Define $b_n = \frac{\|P_n\|}{\|P_{n-1}\|}$. Note that $\frac{\beta_n \|P_{n-1}\|}{\|P_n\|} = \frac{\|P_n\|^2 / \|P_{n-1}\|^2 \cdot \|P_{n-1}\|}{\|P_n\|} = \frac{\|P_n\|}{\|P_{n-1}\|} = b_n$.
-    Thus the recurrence for normalized polynomials is:
-    \[ x Q_n = b_{n+1} Q_{n+1} + \alpha_n Q_n + b_n Q_{n-1} \]
+\textbf{(c) Recurrence for Normalized Polynomials:}
+Let $b_n = \sqrt{\beta_n} = \frac{\|P_n\|}{\|P_{n-1}\|}$. Substituting $P_n = \|P_n\| Q_n$ into (b):
+\[ \|P_{n+1}\| Q_{n+1} = (x - \alpha_n) \|P_n\| Q_n - \|P_n\|^2/\|P_{n-1}\|^2 \|P_{n-1}\| Q_{n-1} \]
+Dividing by $\|P_{n+1}\|$:
+\[ Q_{n+1} = \frac{\|P_n\|}{\|P_{n+1}\|} (x - \alpha_n) Q_n - \frac{\|P_n\|}{\|P_{n+1}\|} b_n Q_{n-1} \]
+\[ b_{n+1} Q_{n+1} = (x - \alpha_n) Q_n - b_n Q_{n-1} \implies x Q_n = b_{n+1} Q_{n+1} + \alpha_n Q_n + b_n Q_{n-1}. \]
 
-    \item[(d)] Let $J_4$ be the $4 \times 4$ Jacobi matrix:
-    \[ J_4 = \begin{pmatrix} \alpha_0 & b_1 & 0 & 0 \\ b_1 & \alpha_1 & b_2 & 0 \\ 0 & b_2 & \alpha_2 & b_3 \\ 0 & 0 & b_3 & \alpha_3 \end{pmatrix} \]
-    The recurrence in (c) for $n=0,1,2,3$ can be written as $x \mathbf{Q}(x) = J_4 \mathbf{Q}(x) + b_4 Q_4(x) \mathbf{e}_4$. At the roots $x = \lambda_j$ of $P_4$ (and thus $Q_4$), we have $\lambda_j \mathbf{Q}(\lambda_j) = J_4 \mathbf{Q}(\lambda_j)$. Since $\mathbf{Q}(\lambda_j) \neq 0$, $\lambda_j$ is an eigenvalue of $J_4$. Thus the nodes are exactly the eigenvalues of this symmetric tridiagonal matrix.
-\end{enumerate}
+\textbf{(d) Jacobi Matrix:}
+The nodes are the roots of $P_4(x)$ (and thus $Q_4(x)$). The recurrence for $n=0,1,2,3$ with $Q_{-1}=0$ in vector form is:
+\[ x \begin{pmatrix} Q_0 \\ Q_1 \\ Q_2 \\ Q_3 \end{pmatrix} = \begin{pmatrix} \alpha_0 & b_1 & 0 & 0 \\ b_1 & \alpha_1 & b_2 & 0 \\ 0 & b_2 & \alpha_2 & b_3 \\ 0 & 0 & b_3 & \alpha_3 \end{pmatrix} \begin{pmatrix} Q_0 \\ Q_1 \\ Q_2 \\ Q_3 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ 0 \\ b_4 Q_4(x) \end{pmatrix} \]
+At a root $x = \lambda_j$ of $Q_4$, $\lambda_j$ is an eigenvalue of the symmetric tridiagonal Jacobi matrix $J_4$.
 \end{solution}
 
 \begin{exercise}
-Let $A$ be real $n\times n$ matrix with distinct eigenvalues:
-\[
-|\lambda_{1}|>|\lambda_{2}|\geq|\lambda_{3}|\geq\dots\geq|\lambda_{n}|\geq 0,
-\]
-with eigenvectors $\{v_{j}\}_{j=1}^{n}$.
-
+Let $A$ be a real $n \times n$ matrix with distinct eigenvalues $|\lambda_1| > |\lambda_2| \geq \dots \geq |\lambda_n| \geq 0$, with eigenvectors $\{v_j\}_{j=1}^n$.
 \begin{enumerate}
-\item[(a)] Show power iteration:
-\[
-z_{m}=\frac{A^{m}z_{0}}{\|A^{m}z_{0}\|_{\infty}}\longrightarrow\pm\frac{v_{1}}{\|v_{1}\|_{\infty}}
-\]
-for all $z_{0}\in\mathbb{R}^{n}$.
-\item[(b)] Consider iteration with $x_{0}=y_{0}=1$:
-\[
-x_{n+1}=x_{n}+y_{n},\quad y_{n+1}=x_{n+1}+x_{n}.
-\]
-Show $y_{n}/x_{n}\to\sqrt{2}$ as $n\to\infty$.
+    \item[(a)] Show that the power iteration $z_m = \frac{A^m z_0}{\|A^m z_0\|_\infty} \to \pm \frac{v_1}{\|v_1\|_\infty}$ for all generic $z_0 \in \mathbb{R}^n$.
+    \item[(b)] Consider the iteration $x_{n+1} = x_n + y_n, y_{n+1} = x_{n+1} + x_n$ with $x_0 = y_0 = 1$. Show that $y_n/x_n \to \sqrt{2}$ as $n \to \infty$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Let $z_0 = \sum_{j=1}^n c_j v_j$. For almost all $z_0$, $c_1 \neq 0$. Applying $A^m$:
-    \[ A^m z_0 = \sum_{j=1}^n c_j \lambda_j^m v_j = \lambda_1^m \left( c_1 v_1 + \sum_{j=2}^n c_j \left(\frac{\lambda_j}{\lambda_1}\right)^m v_j \right) \]
-    Since $|\lambda_1| > |\lambda_j|$ for $j \geq 2$, we have $(\lambda_j/\lambda_1)^m \to 0$ as $m \to \infty$. Thus:
-    \[ A^m z_0 = \lambda_1^m c_1 v_1 + O(|\lambda_2/\lambda_1|^m) \]
-    The normalized vector is:
-    \[ z_m = \frac{\lambda_1^m c_1 (v_1 + \epsilon_m)}{\|\lambda_1^m c_1 (v_1 + \epsilon_m)\|_\infty} = \frac{\lambda_1^m c_1}{|\lambda_1^m c_1|} \frac{v_1 + \epsilon_m}{\|v_1 + \epsilon_m\|_\infty} = \text{sgn}(c_1 \lambda_1^m) \frac{v_1 + \epsilon_m}{\|v_1 + \epsilon_m\|_\infty} \]
-    As $m \to \infty$, $\epsilon_m \to 0$, so $z_m \to \pm \frac{v_1}{\|v_1\|_\infty}$. Note that if $\lambda_1 < 0$, the sign alternates; if $\lambda_1 > 0$, it converges to $\text{sgn}(c_1)\frac{v_1}{\|v_1\|_\infty}$.
+\textbf{(a) Power Method:}
+Let $z_0 = \sum_{j=1}^n c_j v_j$. $A^m z_0 = \lambda_1^m [c_1 v_1 + \sum_{j=2}^n c_j (\lambda_j/\lambda_1)^m v_j]$.
+Since $|\lambda_j/\lambda_1| < 1$, $(\lambda_j/\lambda_1)^m \to 0$. Thus $A^m z_0 \approx c_1 \lambda_1^m v_1$.
+Normalizing gives $z_m \to \frac{c_1 \lambda_1^m v_1}{\|c_1 \lambda_1^m v_1\|_\infty} = \text{sgn}(c_1 \lambda_1^m) \frac{v_1}{\|v_1\|_\infty}$.
 
-    \item[(b)] Substitute $x_{n+1}$ into the $y_{n+1}$ equation:
-    \[ x_{n+1} = x_n + y_n, \quad y_{n+1} = (x_n + y_n) + x_n = 2x_n + y_n \]
-    This system is $\mathbf{v}_{n+1} = A \mathbf{v}_n$ with $A = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix}$ and $\mathbf{v}_0 = \begin{pmatrix} 1 \\ 1 \end{pmatrix}$.
-    The characteristic equation is $(1-\lambda)^2 - 2 = 0 \implies \lambda = 1 \pm \sqrt{2}$.
-    The dominant eigenvalue is $\lambda_1 = 1+\sqrt{2}$. The corresponding eigenvector satisfies:
-    \[ (1 - (1+\sqrt{2}))x + y = 0 \implies -\sqrt{2}x + y = 0 \implies y = \sqrt{2}x \]
-    By the power iteration principle, the ratio $y_n/x_n$ converges to the ratio of the components of the dominant eigenvector, which is $\sqrt{2}$.
-\end{enumerate}
+\textbf{(b) Ratio Convergence:}
+The system is $\begin{pmatrix} x_{n+1} \\ y_{n+1} \end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix} \begin{pmatrix} x_n \\ y_n \end{pmatrix}$.
+Eigenvalues of $M = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix}$ are $1 \pm \sqrt{2}$.
+Dominant eigenvalue $\lambda_1 = 1+\sqrt{2}$ has eigenvector $v_1 = \begin{pmatrix} 1 \\ \sqrt{2} \end{pmatrix}$.
+By the power method, the state vector aligns with $v_1$, so $y_n/x_n \to \sqrt{2}$.
 \end{solution}
 
 \begin{exercise}
-Consider $y'=f(t,y)$, $0<t\leq T$, $y(0)=y_{0}$. Assume $f$ continuous and Lipschitz in $y$.
-
-Consider one-step method:
-\[
-y_{n+1}=y_{n}+\alpha hf(t_{n},y_{n})+\beta hf(t_{n}+\gamma h,y_{n}+\gamma hf(t_{n},y_{n})),
-\]
-with real parameters $\alpha,\beta,\gamma$.
-
+Consider $y' = f(t,y)$ with $y(0)=y_0$, $0 < t \leq T$. One-step method:
+\[ y_{n+1} = y_n + \alpha h f(t_n, y_n) + \beta h f(t_n + \gamma h, y_n + \gamma h f(t_n, y_n)). \]
 \begin{enumerate}
-\item[(a)] Prove method is consistent iff $\alpha+\beta=1$, and order cannot exceed 2.
-\item[(b)] For $f(t,y)=-\lambda y$ ($\lambda>0$), $y_{0}=1$, show $(y_{n})$ bounded iff $h\leq 2/\lambda$. For such $h$, show $|y(t_{n})-y_{n}|\leq\frac{1}{6}\lambda^{3}h^{2}t_{n}$.
+    \item[(a)] Prove the method is consistent iff $\alpha+\beta=1$, and order cannot exceed 2.
+    \item[(b)] For $f(t,y) = -\lambda y$ ($\lambda>0$), $y_0 = 1$, show $(y_n)$ is bounded iff $h \leq 2/\lambda$. Show $|y(t_n) - y_n| \leq \frac{1}{6} \lambda^3 h^2 t_n$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] The increment function is $\Phi(t,y,h) = \alpha f(t,y) + \beta f(t+\gamma h, y + \gamma h f(t,y))$.
-    Consistency requires $\Phi(t,y,0) = f(t,y) \implies \alpha f + \beta f = f \implies \alpha + \beta = 1$.
-    For order 2, compare Taylor series. Exact: $y(t+h) = y + hf + \frac{h^2}{2}(f_t + f f_y) + O(h^3)$.
-    Numerical:
-    \[ y_{n+1} = y + \alpha h f + \beta h [f + \gamma h f_t + \gamma h f f_y + O(h^2)] = y + (\alpha+\beta)h f + \beta \gamma h^2 (f_t + f f_y) + O(h^3) \]
-    Matching $h$ gives $\alpha+\beta=1$. Matching $h^2$ gives $\beta \gamma = 1/2$.
-    This is a 2-stage Runge-Kutta method. Since there are only 3 parameters and the $O(h^3)$ term in the Taylor expansion of RK methods involves terms like $f_y^2 f$ and $f_{yy} f^2$, which cannot be matched for arbitrary $f$ using just one extra stage, the order cannot exceed 2.
+\textbf{(a) Consistency and Order:}
+LHS: $y(t+h) - y(t) = h f + \frac{h^2}{2} (f_t + f f_y) + O(h^3)$.
+RHS: $(\alpha+\beta) h f + \beta \gamma h^2 (f_t + f f_y) + O(h^3)$.
+Consistency: $h f = (\alpha+\beta) h f \implies \alpha+\beta=1$.
+Order 2: $\beta \gamma = 1/2$. Order 3 would requires matching terms like $f_y^2 f$, but this is a 2-stage RK method. The maximum order of an $s$-stage RK method is $s$, so $s=2$.
 
-    \item[(b)] For $f(t,y) = -\lambda y$, the method becomes:
-    \[ y_{n+1} = y_n - \alpha h \lambda y_n + \beta h [-\lambda (y_n - \gamma h \lambda y_n)] = y_n [1 - (\alpha+\beta)h\lambda + \beta\gamma h^2\lambda^2] \]
-    Using $\alpha+\beta=1$ and $\beta\gamma=1/2$, $y_{n+1} = y_n [1 - h\lambda + \frac{1}{2}h^2\lambda^2]$.
-    Let $g(z) = 1 - z + \frac{1}{2}z^2$ with $z = h\lambda > 0$. $(y_n)$ is bounded iff $|g(z)| \leq 1$.
-    $g(z) \leq 1 \implies 1 - z + z^2/2 \leq 1 \implies z(z/2 - 1) \leq 0 \implies z \in (0, 2]$.
-    $g(z) \geq -1 \implies z^2/2 - z + 2 \geq 0$, which holds for all $z$ ($D=1-4=-3$).
-    Thus bounded iff $h\lambda \leq 2 \implies h \leq 2/\lambda$.
-    The global error $e_n = y(t_n) - y_n$ satisfies $e_{n+1} = g(z) e_n + \tau_{n+1}$.
-    Local truncation error: $\tau_{n+1} = y(t_{n+1}) - g(z)y(t_n) = (e^{-z} - (1-z+z^2/2))y(t_n)$.
-    Since $e^{-z} = 1 - z + \frac{z^2}{2} - \frac{z^3}{6} e^{-\xi}$ for $\xi \in (0, z)$, $|\tau_{n+1}| \leq \frac{z^3}{6} |y(t_n)| \leq \frac{1}{6} \lambda^3 h^3$ (since $|y(t_n)| = e^{-\lambda t_n} \leq 1$).
-    Since $|g(z)| \leq 1$, $|e_n| \leq \sum_{k=1}^n |\tau_k| \leq n \frac{1}{6} \lambda^3 h^3 = \frac{t_n}{h} \frac{1}{6} \lambda^3 h^3 = \frac{1}{6} \lambda^3 h^2 t_n$.
-\end{enumerate}
+\textbf{(b) Linear Stability:}
+$y_{n+1} = y_n [1 - h\lambda + \frac{1}{2} (h\lambda)^2] \equiv g(h\lambda) y_n$.
+Bounded iff $|1 - z + z^2/2| \leq 1$ for $z=h\lambda$. This yields $z \in [0, 2]$, so $h \leq 2/\lambda$.
+Error $e_n = |y(t_n) - y_n|$. $e_{n+1} \leq g(z) e_n + |y(t_{n+1}) - g(z)y(t_n)|$.
+$LTE \approx |e^{-z} - (1-z+z^2/2)| \leq \frac{z^3}{6}$ (Taylor remainder).
+Then $e_n \leq \sum_{k=0}^{n-1} \frac{(h\lambda)^3}{6} = n \frac{1}{6} \lambda^3 h^3 = \frac{1}{6} \lambda^3 h^2 t_n$.
 \end{solution}
 
 \begin{exercise}
-Let $u(t,x)$ solve heat equation:
-\[
-u_{t}=Du_{xx},\quad 0<x<L,\ 0<t\leq T,
-\]
-\[
-u(0,x)=f(x),\quad u(t,0)=u(t,L)=0.
-\]
-
-Consider finite difference:
-\[
-\frac{u_{j}^{n+1}-u_{j}^{n}}{\Delta t}=D\frac{u_{j+1}^{n}-2u_{j}^{n}+u_{j-1}^{n}}{(\Delta x)^{2}}.
-\]
-
+Let $u(t,x)$ solve $u_t = D u_{xx}$ on $[0, L]$ with $u(0,x)=f(x)$ and zero Dirichlet BCs.
+Finite difference: $\frac{u_j^{n+1}-u_j^n}{\Delta t} = D \frac{u_{j+1}^n - 2u_j^n + u_{j-1}^n}{(\Delta x)^2}$.
 \begin{enumerate}
-\item[(a)] Prove scheme is consistent.
-\item[(b)] Prove if $\Delta t\leq\frac{1}{2D}(\Delta x)^{2}$, scheme is stable in $l_{\infty}$ norm.
-\item[(c)] Prove convergence in $l_{\infty}$ norm under same condition.
+    \item[(a)] Prove consistency.
+    \item[(b)] Prove stability in $l^\infty$ if $\Delta t \leq \frac{1}{2D} (\Delta x)^2$.
+    \item[(c)] Prove convergence in $l^\infty$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Substitute the smooth solution $U(t,x)$ into the FD operator:
-    \[ \frac{U(t+\Delta t, x) - U(t,x)}{\Delta t} - D \frac{U(t, x+\Delta x) - 2U(t,x) + U(t, x-\Delta x)}{(\Delta x)^2} \]
-    Expanding via Taylor series:
-    \[ [U_t + \frac{\Delta t}{2} U_{tt} + O(\Delta t^2)] - D [U_{xx} + \frac{(\Delta x)^2}{12} U_{xxxx} + O(\Delta x^4)] \]
-    Using $U_t = D U_{xx}$ and $U_{tt} = D U_{txx} = D^2 U_{xxxx}$, we get:
-    \[ LTE = \Delta t (\frac{D^2}{2} U_{xxxx}) - (\Delta x)^2 (\frac{D}{12} U_{xxxx}) + \dots = O(\Delta t + \Delta x^2) \]
-    As $\Delta t, \Delta x \to 0$, $LTE \to 0$, so the scheme is consistent.
+\textbf{(a) Consistency:}
+Taylor expansion of the discrete operator applied to the exact solution $U$:
+\[ \frac{U_j^{n+1}-U_j^n}{\Delta t} - D \frac{U_{j+1}^n - 2U_j^n + U_{j-1}^n}{(\Delta x)^2} = [U_t + \frac{\Delta t}{2} U_{tt}] - D [U_{xx} + \frac{\Delta x^2}{12} U_{xxxx}] + \dots \]
+Since $U_t = D U_{xx}$, the error is $O(\Delta t + \Delta x^2)$, which vanishes as $\Delta t, \Delta x \to 0$.
 
-    \item[(b)] Let $r = \frac{D \Delta t}{(\Delta x)^2}$. The scheme is $u_j^{n+1} = (1-2r)u_j^n + r u_{j+1}^n + r u_{j-1}^n$.
-    The $l_\infty$ norm satisfies:
-    \[ |u_j^{n+1}| \leq |1-2r||u_j^n| + |r||u_{j+1}^n| + |r||u_{j-1}^n| \leq (|1-2r| + 2r) \|u^n\|_\infty \]
-    If $r \leq 1/2$, then $1-2r \geq 0$, so $|1-2r|+2r = 1-2r+2r = 1$.
-    Thus $\|u^{n+1}\|_\infty \leq \|u^n\|_\infty$. This implies stability.
+\textbf{(b) Stability:}
+$u_j^{n+1} = (1-2r) u_j^n + r u_{j+1}^n + r u_{j-1}^n$ with $r = \frac{D \Delta t}{\Delta x^2}$.
+If $r \leq 1/2$, then $1-2r \geq 0$ and all coefficients are non-negative.
+$|u_j^{n+1}| \leq (1-2r+r+r) \|u^n\|_\infty = \|u^n\|_\infty$.
 
-    \item[(c)] Let $e_j^n = U(t_n, x_j) - u_j^n$. The error satisfies:
-    \[ e_j^{n+1} = (1-2r)e_j^n + r e_{j+1}^n + r e_{j-1}^n + \Delta t \tau_j^n \]
-    where $\tau_j^n$ is the truncation error. Using the stability result:
-    \[ \|e^{n+1}\|_\infty \leq \|e^n\|_\infty + \Delta t \|\tau^n\|_\infty \]
-    By induction and $e^0 = 0$:
-    \[ \|e^n\|_\infty \leq n \Delta t \max_{k < n} \|\tau^k\|_\infty = t_n O(\Delta t + \Delta x^2) \]
-    Since $t_n \leq T$, the error vanishes as $\Delta t, \Delta x \to 0$, proving convergence.
-\end{enumerate}
+\textbf{(c) Convergence:}
+The error $e^n$ satisfies $e^{n+1} = M e^n + \Delta t \tau^n$ where $\|M\|_\infty = 1$ and $\|\tau^n\|_\infty = O(\Delta t + \Delta x^2)$.
+By induction, $\|e^n\|_\infty \leq n \Delta t \max \|\tau\| = t_n O(\Delta t + \Delta x^2)$.
 \end{solution}
 
 \begin{exercise}
-Let $\psi^{\epsilon}(t,x)$ solve Schr\"odinger equation:
-\[
-i\epsilon\frac{\partial\psi^{\epsilon}}{\partial t}=-\frac{\epsilon^{2}}{2}\nabla_{x}^{2}\psi^{\epsilon}+V(x)\psi^{\epsilon},
-\]
-with small $\epsilon>0$, $V\in C^{\infty}(\mathbb{R}^{n})$.
-
-Consider WKB expansion: $\psi^{\epsilon}(t,x)=A(t,x)e^{iS(t,x)/\epsilon}$.
-
+Let $\psi^\epsilon(t,x)$ solve $i \epsilon \psi_t = -\frac{\epsilon^2}{2} \nabla^2 \psi + V(x) \psi$.
+WKB expansion: $\psi^\epsilon = A(t,x) e^{i S(t,x)/\epsilon}$.
 \begin{enumerate}
-\item[(a)] Derive equations for $A(t,x)$ and $S(t,x)$.
-\item[(b)] Define $u(t,x)=\nabla_{x}S(t,x)\in\mathbb{R}^{n}$. Derive equation for $u(t,x)$. If $u(0,x)\in C^{\infty}(\mathbb{R}^{n})$, will $u(t,x)\in C^{\infty}(\mathbb{R}^{n})$ for all $t>0$? Explain.
+    \item[(a)] Derive equations for $A(t,x)$ and $S(t,x)$ as $\epsilon \to 0$.
+    \item[(b)] Define $u(t,x) = \nabla S$. Derive equation for $u$. Does $u \in C^\infty$ for all $t>0$ given $u(0,x) \in C^\infty$?
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Substitute $\psi = A e^{iS/\epsilon}$ into the Schr\"odinger equation:
-    LHS: $i\epsilon \psi_t = (i\epsilon A_t - A S_t) e^{iS/\epsilon}$.
-    RHS: $-\frac{\epsilon^2}{2} \nabla^2 \psi + V\psi = [-\frac{\epsilon^2}{2}\nabla^2 A - i\epsilon(\nabla A \cdot \nabla S + \frac{1}{2} A \nabla^2 S) + \frac{1}{2} A |\nabla S|^2 + VA] e^{iS/\epsilon}$.
-    Equating powers of $\epsilon$:
-    $O(1)$ (Real part): $-A S_t = \frac{1}{2} A |\nabla S|^2 + V A \implies S_t + \frac{1}{2} |\nabla S|^2 + V = 0$. This is the Hamilton-Jacobi equation.
-    $O(\epsilon)$ (Imaginary part): $i A_t = -i(\nabla A \cdot \nabla S + \frac{1}{2} A \nabla^2 S) \implies A_t + \nabla S \cdot \nabla A + \frac{1}{2} A \Delta S = 0$.
-    This can be rewritten as the transport equation for the density $\rho = A^2$: $\rho_t + \text{div}(\rho \nabla S) = 0$.
+\textbf{(a) WKB Equations:}
+Substituting $\psi = A e^{iS/\epsilon}$ and equating powers of $\epsilon$:
+$O(1)$: $-S_t = \frac{1}{2} |\nabla S|^2 + V$, which is the Hamilton-Jacobi equation.
+$O(\epsilon)$: $A_t + \nabla S \cdot \nabla A + \frac{1}{2} A \Delta S = 0$, which is the transport equation.
 
-    \item[(b)] Define $\mathbf{u} = \nabla S$. Taking the gradient of the Hamilton-Jacobi equation:
-    \[ \nabla(S_t + \frac{1}{2} |\nabla S|^2 + V) = 0 \implies \mathbf{u}_t + \nabla (\frac{1}{2} |\mathbf{u}|^2) + \nabla V = 0 \]
-    Using the identity $\nabla(\frac{1}{2} |\mathbf{u}|^2) = (\mathbf{u} \cdot \nabla)\mathbf{u} + \mathbf{u} \times (\nabla \times \mathbf{u})$ and noting $\nabla \times \mathbf{u} = \nabla \times \nabla S = 0$:
-    \[ \mathbf{u}_t + (\mathbf{u} \cdot \nabla)\mathbf{u} = -\nabla V \]
-    This is the inviscid Burgers-type equation with an external force. Even if $\mathbf{u}(0,x) \in C^\infty$, $\mathbf{u}(t,x)$ will generally not remain in $C^\infty$ for all $t > 0$.
-    Explanation: The equation describes a system of non-interacting particles moving in a potential $V$. Characteristics of this PDE are trajectories of particles. For many initial conditions (e.g., "converging" velocities), these characteristics will intersect in finite time. At the intersection point (gradient catastrophe), the velocity field $\mathbf{u}$ becomes multi-valued and its gradient blows up, forming a shock.
-\end{enumerate}
+\textbf{(b) Gradient Equation:}
+Let $u = \nabla S$. $\nabla(S_t + \frac{1}{2} |\nabla S|^2 + V) = u_t + (u \cdot \nabla)u + \nabla V = 0$.
+This is a pressureless Euler-type equation. It does not stay in $C^\infty$ as trajectories (characteristics) can cross, leading to shock formation (gradient catastrophe) in finite time.
 \end{solution}

@@ -21,67 +21,31 @@
 \end{exercise}
 
 \begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Block matrix multiplication and inversion.
+    \item Fundamental properties of upper triangular matrices (product is triangular, solving via back-substitution).
+    \item Order of complexity for matrix-vector products.
+\end{itemize}
+
+\textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Part (1):}
-    Compute $ST$:
-    \[
-    ST = \begin{bmatrix} \sigma & \mathbf{u}^T \\ 0 & S_c \end{bmatrix} \begin{bmatrix} \tau & \mathbf{v}^T \\ 0 & T_c \end{bmatrix} = \begin{bmatrix} \sigma \tau & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c \end{bmatrix}.
-    \]
-    The system $(ST - \lambda I)\mathbf{x} = \mathbf{b}$ becomes:
-    \[
-    \begin{bmatrix} \sigma \tau - \lambda & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c - \lambda I \end{bmatrix} \begin{bmatrix} \gamma \\ \mathbf{x}_c \end{bmatrix} = \begin{bmatrix} \beta \\ \mathbf{b}_c \end{bmatrix}.
-    \]
-    The second block equation is $(S_c T_c - \lambda I)\mathbf{x}_c = \mathbf{b}_c$, which is given.
-    The first block equation is:
-    \[
-    (\sigma \tau - \lambda)\gamma + (\sigma \mathbf{v}^T + \mathbf{u}^T T_c)\mathbf{x}_c = \beta.
-    \]
-    Substituting $\mathbf{w}_c = T_c \mathbf{x}_c$:
-    \[
-    (\sigma \tau - \lambda)\gamma + \sigma \mathbf{v}^T \mathbf{x}_c + \mathbf{u}^T \mathbf{w}_c = \beta.
-    \]
-    Solving for $\gamma$:
-    \[
-    \gamma = \frac{\beta - \sigma \mathbf{v}^T \mathbf{x}_c - \mathbf{u}^T \mathbf{w}_c}{\sigma \tau - \lambda}.
-    \]
-    This proves the identity.
+    \item \textbf{Identity Verification:} Compute the product $ST = \begin{bmatrix} \sigma \tau & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c \end{bmatrix}$. The system $(ST - \lambda I)\mathbf{x} = \mathbf{b}$ yields:
+    \[ \begin{bmatrix} \sigma \tau - \lambda & \sigma \mathbf{v}^T + \mathbf{u}^T T_c \\ 0 & S_c T_c - \lambda I \end{bmatrix} \begin{bmatrix} \gamma \\ \mathbf{x}_c \end{bmatrix} = \begin{bmatrix} \beta \\ \mathbf{b}_c \end{bmatrix}. \]
+    The lower block gives $(S_c T_c - \lambda I)\mathbf{x}_c = \mathbf{b}_c$. The upper block gives $(\sigma \tau - \lambda)\gamma + \sigma \mathbf{v}^T \mathbf{x}_c + \mathbf{u}^T (T_c \mathbf{x}_c) = \beta$. Solving for $\gamma$ with $\mathbf{w}_c = T_c \mathbf{x}_c$ yields the desired formula.
 
-    \item \textbf{Part (2):}
-    We use induction on the matrix size $n$.
-    For $n=1$, it's a scalar equation.
-    For $n > 1$, let $U_1, U_2$ be upper triangular. We can partition them as in Part (1), where $\sigma = (U_1)_{11}$, $\tau = (U_2)_{11}$, and $S_c, T_c$ are the $(n-1) \times (n-1)$ trailing submatrices of $U_1, U_2$ respectively.
-    The algorithm:
-    \begin{enumerate}
-        \item Base case: If $n=1$, $x = b / (u_{11} v_{11} - \lambda)$.
-        \item Recursive step:
-        \begin{enumerate}
-            \item Solve the smaller system $(S_c T_c - \lambda I) \mathbf{x}_c = \mathbf{b}_c$ to find $\mathbf{x}_c$.
-            \item Compute $\mathbf{w}_c = T_c \mathbf{x}_c$ (Matrix-vector multiplication with upper triangular matrix).
-            \item Compute $\gamma$ using the formula from Part (1).
-        \end{enumerate}
-    \end{enumerate}
-    Complexity analysis:
-    Let $C(n)$ be the cost for size $n$.
-    $C(n) = C(n-1) + \text{cost}(\text{triangular matrix-vector mult}) + \text{cost}(\text{inner products}) + O(1)$.
-    Cost of $T_c \mathbf{x}_c$ where $T_c$ is $(n-1)\times(n-1)$ triangular is $(n-1)^2/2$ multiplications and additions.
-    Cost of inner products $\mathbf{v}^T \mathbf{x}_c$ and $\mathbf{u}^T \mathbf{w}_c$ is $O(n)$.
-    $C(n) = C(n-1) + \frac{1}{2}n^2 + O(n)$.
-    Summing up: $C(n) \approx \sum_{k=1}^n \frac{1}{2}k^2 \approx O(n^3)$? Wait, if we use the triangular structure correctly, it should be $O(n^2)$.
-    Actually, to solve $(U_1 U_2 - \lambda I) \mathbf{x} = \mathbf{b}$ in $O(n^2)$, we don't recompute the whole matrix-vector product.
-    At each step $k$:
-    \[
-    w_k = (U_2)_{kk} x_k + \sum_{j=k+1}^n (U_2)_{kj} x_j
-    \]
-    This sum is only $O(n-k)$. Total work is $O(n^2)$.
+    \item \textbf{$O(n^2)$ Algorithm for $U_1 U_2$:} We use back-substitution. Let $(U_1)_{ii} = \sigma_i$ and $(U_2)_{ii} = \tau_i$. Starting from $i=n$ down to $1$:
+    \begin{itemize}
+        \item Compute $x_i = (\beta_i - \sigma_i \sum_{j=i+1}^n (U_2)_{ij} x_j - \sum_{j=i+1}^n (U_1)_{ij} w_j) / (\sigma_i \tau_i - \lambda)$.
+        \item Update $w_i = \tau_i x_i + \sum_{j=i+1}^n (U_2)_{ij} x_j$.
+    \end{itemize}
+    Each step $i$ involves $O(n-i)$ additions and multiplications. Total complexity $\sum_{i=1}^n O(n-i) = O(n^2)$.
 
-    \item \textbf{Part (3):}
-    For $p$ matrices, let $M = U_1 \cdots U_p$.
-    We can define a sequence of vectors $\mathbf{w}^{(1)}, \dots, \mathbf{w}^{(p)}$ where $\mathbf{w}^{(p)} = \mathbf{x}$, $\mathbf{w}^{(p-1)} = U_p \mathbf{w}^{(p)}$, $\mathbf{w}^{(p-2)} = U_{p-1} \mathbf{w}^{(p-1)}$, etc.
-    By induction on $p$ and $n$, we can maintain the state of all partial products.
-    For each row $i = n, n-1, \dots, 1$:
-    For each matrix $j = p, p-1, \dots, 1$, compute the $i$-th component of the partial products.
-    The complexity is $O(p n^2)$ because we do $O(n^2)$ work for each of the $p$ matrices.
+    \item \textbf{$O(pn^2)$ Algorithm for $p$ matrices:} Let $M^{(k)} = U_k \cdots U_p$. To solve $(M^{(1)} - \lambda I) \mathbf{x} = \mathbf{b}$, we define intermediate vectors $\mathbf{w}^{(k)} = M^{(k+1)} \mathbf{x}$. By solving the components backward $i=n, \dots, 1$ and for each $i$ computing the sequence of $p$ intermediate values, the logic from Part (2) repeats $p$ times per row entry. Total complexity is $O(p n^2)$.
 \end{enumerate}
+
+\textbf{Intuition:}
+The problem leverages the fact that the product of upper triangular matrices is itself upper triangular. Instead of explicitly computing the matrix product $U_1 U_2$ (which is $O(n^3)$), we can solve the system by maintaining partial products of the triangular matrices with the solution vector, essentially extending the standard back-substitution method to handle the nested structure.
 \end{solution}
 
 \begin{exercise}
@@ -96,37 +60,29 @@
 \end{exercise}
 
 \begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Spectral theorem for real symmetric matrices.
+    \item Definition and properties of orthogonal matrices.
+    \item Vector norm and induced matrix 2-norm properties.
+\end{itemize}
+
+\textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Part (1):}
-    This is the Singular Value Decomposition (SVD).
-    Consider the matrix $A^T A$. It is symmetric and positive semi-definite. Thus, it has an orthonormal basis of eigenvectors $v_1, \dots, v_n$ with eigenvalues $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_n \geq 0$.
-    Let $\sigma_i = \sqrt{\lambda_i}$. Let $r$ be the number of non-zero $\sigma_i$.
-    For $i \leq r$, define $u_i = \frac{1}{\sigma_i} A v_i$.
-    Then $\{u_1, \dots, u_r\}$ are orthonormal:
-    \[
-    u_i^T u_j = \frac{1}{\sigma_i \sigma_j} v_i^T A^T A v_j = \frac{1}{\sigma_i \sigma_j} v_i^T (\lambda_j v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij}.
-    \]
-    Extend $\{u_i\}$ to an orthonormal basis of $\mathbb{R}^m$.
-    Then $A v_i = \sigma_i u_i$ for $i \leq r$, and $A v_i = 0$ for $i > r$.
-    In matrix form, $A V = U \Sigma \implies U^T A V = \Sigma$.
+    \item \textbf{Existence of SVD:} Consider $A^T A \in \mathbb{R}^{n \times n}$. Since it is symmetric and positive semi-definite, it has orthonormal eigenvectors $v_1, \dots, v_n$ with eigenvalues $\lambda_1 \geq \dots \geq \lambda_n \geq 0$. Define $\sigma_i = \sqrt{\lambda_i}$. For $\sigma_i > 0$, let $u_i = A v_i / \sigma_i$. Orthonormality follows: $u_i^T u_j = \frac{v_i^T A^T A v_j}{\sigma_i \sigma_j} = \frac{\lambda_j \delta_{ij}}{\sigma_i \sigma_j} = \delta_{ij}$. Complete $\{u_i\}$ to an orthonormal basis of $\mathbb{R}^m$. Then $A V = U \Sigma \implies U^T A V = \Sigma$.
 
-    \item \textbf{Part (2):}
-    This is the Eckart-Young-Mirsky Theorem.
-    Let $A = \sum_{i=1}^r \sigma_i u_i v_i^T$. Let $B_k = \sum_{i=1}^k \sigma_i u_i v_i^T$.
-    Then $\| A - B_k \|_2 = \| \sum_{i=k+1}^r \sigma_i u_i v_i^T \|_2 = \sigma_{k+1}$.
-    To show this is the minimum, let $B$ be any matrix with rank $k$.
-    The null space of $B$, $\mathcal{N}(B)$, has dimension $n-k$.
-    The subspace $V_{k+1} = \text{span}\{v_1, \dots, v_{k+1}\}$ has dimension $k+1$.
-    Since $(n-k) + (k+1) = n+1 > n$, there exists a unit vector $z \in \mathcal{N}(B) \cap V_{k+1}$.
-    $z = \sum_{i=1}^{k+1} \alpha_i v_i$ with $\sum \alpha_i^2 = 1$.
-    \[
-    \| (A-B)z \|_2^2 = \| Az \|_2^2 = \| \sum_{i=1}^{k+1} \sigma_i \alpha_i u_i \|_2^2 = \sum_{i=1}^{k+1} \sigma_i^2 \alpha_i^2 \geq \sigma_{k+1}^2 \sum \alpha_i^2 = \sigma_{k+1}^2.
-    \]
-    Thus $\| A-B \|_2 \geq \sigma_{k+1}$.
+    \item \textbf{Low-Rank Approximation (Eckart-Young):}
+    \begin{itemize}
+        \item For $B_k = \sum_{i=1}^k \sigma_i u_i v_i^T$, $\| A - B_k \|_2 = \sigma_{k+1}$.
+        \item For any $B$ with $\text{rank}(B) = k$, the null space $\mathcal{N}(B)$ has dimension $n-k$. The subspace $V_{k+1} = \text{span}\{v_1, \dots, v_{k+1}\}$ has dimension $k+1$.
+        \item There exists a unit vector $z \in \mathcal{N}(B) \cap V_{k+1}$. Then $\|(A-B)z\|_2 = \|Az\|_2$.
+        \item Writing $z = \sum_{i=1}^{k+1} \alpha_i v_i$, $\|Az\|_2^2 = \sum_{i=1}^{k+1} \sigma_i^2 \alpha_i^2 \geq \sigma_{k+1}^2$. Thus $\|A-B\|_2 \geq \sigma_{k+1}$.
+    \end{itemize}
 \end{enumerate}
-\end{solution}
 
-\subsection{Team}
+\textbf{Intuition:}
+The Singular Value Decomposition (SVD) identifies the principal axes of the transformation $A$. The 2-norm of a matrix is determined by its largest singular value. When approximating with a lower rank, the "best" strategy is to remove the components corresponding to the smallest singular values, as they contribute the least to the "energy" or "variance" of the mapping.
+\end{solution}
 
 \begin{exercise}
 When considering finite difference schemes approximating partial differential equations (PDEs), for example, the scheme
@@ -147,37 +103,33 @@ for a constant $C = C(T)$ independent of the time step $\Delta t$ and the spatia
     \item Prove that the scheme (1) is stable in the sense of (3) for both the $L^2$ norm and the $L^\infty$ norm under the time step restriction $\lambda \leq 1$.
     \item Since the numerical solution $u^n$ is in a finite dimensional space, Student A argues that the stability (3), once proved for a specific norm $\|\cdot\|_a$, would also automatically hold for any other norm $\|\cdot\|_b$. His argument is based on the equivalency of all norms in a finite dimensional space, namely for any two norms $\|\cdot\|_a$ and $\|\cdot\|_b$ on a finite dimensional space $W$, there exists a constant $\delta > 0$ such that
     \[
-    \delta \|u\|_b \leq \|u\|_a \leq \frac{1}{\delta} \|u\|_b.
+    \delta \|u\|_b \le \|u\|_a \le \frac{1}{\delta} \|u\|_b.
     \]
     Do you agree with his argument? If not, please explain the mistake made by Student A.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Stability Analysis:}
-\begin{enumerate}
-    \item \textbf{$L^\infty$ norm:} If $0 \leq \lambda \leq 1$, then $u_j^{n+1} = (1-\lambda) u_j^n + \lambda u_{j-1}^n$ is a convex combination.
-    \[
-    |u_j^{n+1}| \leq (1-\lambda)|u_j^n| + \lambda |u_{j-1}^n| \leq \|u^n\|_\infty.
-    \]
-    Thus $\|u^{n+1}\|_\infty \leq \|u^n\|_\infty \leq \|u^0\|_\infty$. Stable with $C=1$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Definition of $L^2$ and $L^\infty$ norms for vectors.
+    \item Von Neumann stability analysis (Fourier analysis for finite differences).
+    \item Concept of convergence and stability in the limit $\Delta x \to 0$.
+\end{itemize}
 
-    \item \textbf{$L^2$ norm:} Use Von Neumann analysis. $u_j^n = \hat{u}^n e^{ij\theta}$.
-    \[
-    \hat{u}^{n+1} = (1 - \lambda + \lambda e^{-i\theta}) \hat{u}^n.
-    \]
-    Amplification factor $g(\theta) = 1 - \lambda + \lambda (\cos \theta - i \sin \theta)$.
-    \[
-    |g(\theta)|^2 = (1-\lambda + \lambda \cos \theta)^2 + (\lambda \sin \theta)^2 = 1 - 2\lambda(1-\lambda)(1 - \cos \theta).
-    \]
-    For stability, $|g(\theta)|^2 \leq 1 \iff 2\lambda(1-\lambda)(1-\cos \theta) \geq 0$, which requires $0 \leq \lambda \leq 1$.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Stability Analysis:}
+    \begin{itemize}
+        \item \textbf{$L^\infty$ norm:} Rewrite (1) as $u_j^{n+1} = (1-\lambda) u_j^n + \lambda u_{j-1}^n$. If $0 \le \lambda \le 1$, this is a convex combination. Thus $|u_j^{n+1}| \le \max(|u_j^n|, |u_{j-1}^n|) \le \|u^n\|_\infty$. Induction gives $\|u^n\|_\infty \le \|u^0\|_\infty$.
+        \item \textbf{$L^2$ norm:} Substitute $u_j^n = \hat{u}^n e^{ij\theta}$. The amplification factor is $g(\theta) = (1-\lambda) + \lambda e^{-i\theta}$. Then $|g(\theta)|^2 = 1 - 2\lambda(1-\lambda)(1-\cos\theta)$. Stability requires $|g(\theta)| \le 1$, which holds for $0 \le \lambda \le 1$.
+    \end{itemize}
+
+    \item \textbf{Student A's Mistake:} The equivalence of norms $\|u\|_a \le K \|u\|_b$ holds for a fixed dimension. However, stability requires the constant $C$ to be independent of $\Delta x$. As $\Delta x \to 0$, the dimension $N = 1/\Delta x$ goes to infinity. The equivalence constants often grow with $N$. For example, $\|u\|_2 \le \sqrt{N} \|u\|_\infty$. If a scheme is stable in $L^2$ with $C=1$, then $\|u^n\|_\infty \le \|u^n\|_2 \le \|u^0\|_2 \le \sqrt{N} \|u^0\|_\infty$. The factor $\sqrt{N}$ blows up as $\Delta x \to 0$, so $L^2$ stability does not imply $L^\infty$ stability.
 \end{enumerate}
 
-\textbf{Student A's Mistake:}
-The equivalence of norms $\|u\|_a \leq K \|u\|_b$ holds, but the constant $K$ depends on the dimension $J$ of the space. In numerical analysis, $J \to \infty$ as $\Delta x \to 0$. Stability requires the constant $C$ in $\|u^n\| \leq C\|u^0\|$ to be independent of $\Delta x$ (and thus $J$).
-For example, $\|u\|_\infty \leq \|u\|_2 \leq \sqrt{J} \|u\|_\infty$.
-If a scheme is stable in $L^2$ with $C=1$, we have $\|u^n\|_\infty \leq \|u^n\|_2 \leq \|u^0\|_2 \leq \sqrt{J} \|u^0\|_\infty$.
-As $\Delta x \to 0$, $J \to \infty$, so $\|u^n\|_\infty$ could potentially grow like $1/\sqrt{\Delta x}$, violating the stability definition.
+\textbf{Intuition:}
+Stability is about the uniform boundedness of the numerical operator as the mesh is refined. While all norms are equivalent in any finite-dimensional space, the ratio between norms can depend on the grid size. True stability must withstand the limit $N \to \infty$.
 \end{solution}
 
 \begin{exercise}
@@ -205,21 +157,22 @@ Here $u$ is a vector of size $m$ and $A$ and $B$ are $m \times m$ real matrices.
 \end{exercise}
 
 \begin{solution}
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Well-posedness for linear hyperbolic systems.
+    \item Matrix diagonalization and the condition number of the eigenvector matrix.
+    \item Operator splitting and the Lax Equivalence Theorem.
+\end{itemize}
+
+\textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Well-posedness:}
-    Let $A = P D P^{-1}$ where $D = \text{diag}(\lambda_1, \dots, \lambda_m)$ and $\lambda_i \in \mathbb{R}$.
-    Let $v = P^{-1}u$. Then $v_t + D v_x = 0$.
-    For each component $v_i(x, t) = v_i(x - \lambda_i t, 0)$, so $\|v_i(\cdot, t)\|_2 = \|v_i(\cdot, 0)\|_2$.
-    Then $\|u(\cdot, t)\|_2 \leq \|P\| \|v(\cdot, t)\|_2 = \|P\| \|P^{-1} u(\cdot, 0)\|_2 \leq \|P\| \|P^{-1}\| \|u(\cdot, 0)\|_2$.
-    Since $C(T) = \|P\| \|P^{-1}\|$ is independent of the initial data, it is well-posed.
+    \item \textbf{Well-posedness of (4) and (5):} Since $A$ is diagonalizable with real eigenvalues, let $A = PDP^{-1}$. The substitution $v = P^{-1}u$ gives $v_t + Dv_x = 0$, which decouples into scalar advection equations $v_{i,t} + \lambda_i v_{i,x} = 0$. Since $\|v_i(\cdot, t)\|_2 = \|v_i(\cdot, 0)\|_2$, we have $\|u(\cdot, t)\|_2 \le \|P\| \|v(\cdot, t)\|_2 = \|P\| \|P^{-1} u(\cdot, 0)\|_2$. Thus $C(T) = \kappa(P)$ makes it well-posed. The same applies to $B$.
 
-    \item \textbf{Counterexample:}
-    Let $A = \begin{bmatrix} 1 & a \\ 0 & -1 \end{bmatrix}$ and $B = \begin{bmatrix} -1 & 0 \\ b & 1 \end{bmatrix}$. Both have eigenvalues $\pm 1$.
-    $C = A + B = \begin{bmatrix} 0 & a \\ b & 0 \end{bmatrix}$.
-    The eigenvalues of $C$ are $\pm \sqrt{ab}$. If $a=1, b=-1$, eigenvalues are $\pm i$.
-    A system with complex eigenvalues $\lambda = \pm i$ has solutions that grow like $e^{|\xi| t}$ in Fourier space, which makes the problem ill-posed in $L^2$.
+    \item \textbf{Counterexample for (6):} Let $A = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}$ and $B = \begin{bmatrix} -1 & 0 \\ -2 & 1 \end{bmatrix}$. Both have real eigenvalues $\pm 1$. However, $C = A+B = \begin{bmatrix} 0 & 1 \\ -2 & 0 \end{bmatrix}$ has eigenvalues $\pm i \sqrt{2}$. For a first-order system, complex eigenvalues lead to exponential growth in Fourier space, $e^{|\xi| t \sqrt{2}}$, which is not bounded by any $C(T)$, making it ill-posed.
 
-    \item \textbf{Splitting Scheme:}
-    By the Lax Equivalence Theorem, for a consistent scheme, stability is equivalent to the well-posedness of the underlying PDE. Since the PDE (6) can be ill-posed (as shown in Part 2), the splitting scheme cannot be stable in those cases. The amplification factor will mirror the growth of the ill-posed PDE.
+    \item \textbf{Splitting Scheme Stability:} By the Lax Equivalence Theorem, for a consistent scheme, stability is equivalent to the well-posedness of the target PDE in the grid-independent limit. Since the underlying PDE (6) can be ill-posed, the splitting scheme $u^{n+1} = B_h A_h u^n$ cannot be stable in those cases.
 \end{enumerate}
+
+\textbf{Intuition:}
+The well-posedness of a linear system is determined by the eigenvalues of the coefficient matrix. Hyperbolicity (real eigenvalues) is necessary. However, the set of matrices with real eigenvalues is not closed under addition. Consequently, the combination of two stable processes can result in an unstable system.
 \end{solution}

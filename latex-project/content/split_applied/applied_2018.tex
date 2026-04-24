@@ -28,7 +28,7 @@ Let $\theta = k\Delta x \in [0, 2\pi]$. Using the identities $e^{i\theta} - e^{-
 \]
 Rearranging terms to solve for the amplification factor $G(\theta) = \hat{u}^{n+1}/\hat{u}^n$:
 \[
-\hat{u}^{n+1} \left( 1 + \frac{4b\Delta t}{\Delta x^2} \sin^2(\theta/2) \right) = \hat{u}^n \left( 1 - i \frac{a\Delta t}{\Delta x} \sin\theta \right).
+\hat{u}^{n+1} \left( 1 + \frac{4b\Delta t}{\\Delta x^2} \sin^2(\theta/2) \right) = \hat{u}^n \left( 1 - i \frac{a\Delta t}{\Delta x} \sin\theta \right).
 \]
 \[
 G(\theta) = \frac{1 - i \frac{a\Delta t}{\Delta x} \sin\theta}{1 + \frac{4b\Delta t}{\Delta x^2} \sin^2(\theta/2)}.
@@ -78,21 +78,29 @@ Hint: Let $\mathbf{u}(t)=(p(t),q(t))$ be solution of Hamiltonian system with ini
 \[
 \dot{q} = \frac{\partial H}{\partial p} = p, \quad \dot{p} = -\frac{\partial H}{\partial q} = -\nabla V(q).
 \]
-This system can be written as $\dot{\mathbf{u}} = J \nabla H(\mathbf{u})$, where $\mathbf{u} = (q, p)^T$. The flow $\varphi_t$ of a Hamiltonian system is symplectic by Liouville's theorem. Specifically, the Jacobian $\Phi_t$ satisfies $\dot{\Phi}_t = J \nabla^2 H \Phi_t$. One can verify that $\frac{d}{dt} (\Phi_t^T J \Phi_t) = 0$, and since $\Phi_0 = I$, $\Phi_t^T J \Phi_t = J$.
+This system can be written as $\dot{\mathbf{u}} = J \nabla H(\mathbf{u})$, where $\mathbf{u} = (p, q)^T$. The flow $\varphi_t$ of a Hamiltonian system is symplectic. Specifically, the Jacobian $\Phi_t$ satisfies $\dot{\Phi}_t = J \nabla^2 H \Phi_t$. One can verify that:
+\[
+\frac{d}{dt} (\Phi_t^T J \Phi_t) = \dot{\Phi}_t^T J \Phi_t + \Phi_t^T J \dot{\Phi}_t = (J \nabla^2 H \Phi_t)^T J \Phi_t + \Phi_t^T J (J \nabla^2 H \Phi_t).
+\]
+Using $J^T = -J$ and $J^2 = -I$:
+\[
+= -\Phi_t^T \nabla^2 H J J \Phi_t + \Phi_t^T J J \nabla^2 H \Phi_t = \Phi_t^T \nabla^2 H \Phi_t - \Phi_t^T \nabla^2 H \Phi_t = 0.
+\]
+Since $\Phi_0 = I$ and $I^T J I = J$, we have $\Phi_t^T J \Phi_t = J$.
 
 (b) Symplecticity: The velocity-Verlet method is a composition of three maps $\Psi_{\Delta t} = \Psi^{(3)}_{\Delta t/2} \circ \Psi^{(2)}_{\Delta t} \circ \Psi^{(1)}_{\Delta t/2}$:
 \begin{enumerate}
-    \item $\Psi^{(1)}_{h}: (q, p) \mapsto (q, p - h\nabla V(q))$ (Momentum kick)
-    \item $\Psi^{(2)}_{h}: (q, p) \mapsto (q + hp, p)$ (Drift)
-    \item $\Psi^{(3)}_{h}: (q, p) \mapsto (q, p - h\nabla V(q))$ (Momentum kick)
+    \item $\Psi^{(1)}_{h}: (p, q) \mapsto (p - h\nabla V(q), q)$ (Momentum kick)
+    \item $\Psi^{(2)}_{h}: (p, q) \mapsto (p, q + hp)$ (Drift)
+    \item $\Psi^{(3)}_{h}: (p, q) \mapsto (p - h\nabla V(q), q)$ (Momentum kick)
 \end{enumerate}
-The Jacobian of $\Psi^{(1)}_h$ is $M_1 = \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix}$. We check $M_1^T J M_1 = J$:
+The Jacobian of $\Psi^{(1)}_h$ is $M_1 = \begin{pmatrix} I & -h\nabla^2 V \\ 0 & I \end{pmatrix}$. We check $M_1^T J M_1 = J$:
 \[
-\begin{pmatrix} I & -h\nabla^2 V \\ 0 & I \end{pmatrix} \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix} \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix} = \begin{pmatrix} h\nabla^2 V & I \\ -I & 0 \end{pmatrix} \begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix} = \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix}.
+\begin{pmatrix} I & 0 \\ -h\nabla^2 V & I \end{pmatrix} \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix} \begin{pmatrix} I & -h\nabla^2 V \\ 0 & I \end{pmatrix} = \begin{pmatrix} 0 & I \\ -I & -h\nabla^2 V \end{pmatrix} \begin{pmatrix} I & -h\nabla^2 V \\ 0 & I \end{pmatrix} = \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix} = J.
 \]
-Similarly, the Jacobian of $\Psi^{(2)}_h$ is $M_2 = \begin{pmatrix} I & hI \\ 0 & I \end{pmatrix}$, which is also symplectic. Since the composition of symplectic maps is symplectic, velocity-Verlet is symplectic.
+Similarly, the Jacobian of $\Psi^{(2)}_h$ is $M_2 = \begin{pmatrix} I & 0 \\ hI & I \end{pmatrix}$, which satisfies $M_2^T J M_2 = J$. Since the composition of symplectic maps is symplectic, velocity-Verlet is symplectic.
 
-Accuracy: The method is a Strang splitting of the Hamiltonian flow. For $\dot{\mathbf{u}} = (A+B)\mathbf{u}$, the scheme is $e^{hB/2} e^{hA} e^{hB/2} = e^{h(A+B) + O(h^3)}$, which is second-order accurate. Alternatively, Taylor expansion of $q_{n+1}$ and $p_{n+1}$ around $t_n$ matches the exact solution up to $O(\Delta t^2)$.
+Accuracy: The method is a Strang splitting of the Hamiltonian flow. For $\dot{\mathbf{u}} = (\mathcal{A}+\mathcal{B})\mathbf{u}$, the scheme is $e^{h\mathcal{B}/2} e^{h\mathcal{A}} e^{h\mathcal{B}/2} = e^{h(\mathcal{A}+\mathcal{B}) + O(h^3)}$, which is second-order accurate. Alternatively, Taylor expansion of $q_{n+1}$ matches exact $q(t_{n+1})$ up to $O(\Delta t^3)$, and $p_{n+1}$ matches $p(t_{n+1})$ up to $O(\Delta t^3)$, making the local error $O(\Delta t^3)$ and global error $O(\Delta t^2)$.
 \end{solution}
 
 \begin{exercise}
@@ -119,7 +127,6 @@ The only vertices $w$ is adjacent to are $u$ and $v$. If $x \notin \{u, v\}$, th
 However, the condition $d_G(x) + d_G(y) \geq n+1$ implies that $G$ is very dense. Specifically, $d_G(x) \geq (n+1)/2$ on average.
 Actually, the standard condition for Hamilton-connectedness (an extension of Ore's Theorem by Ore himself) is that if $d(u) + d(v) \geq n+1$ for all non-adjacent $u, v$, then $G$ is Hamilton-connected.
 The proof typically proceeds by contradiction: assume $G$ satisfies the condition but is not Hamilton-connected. Let $u, v$ be a pair without a Hamiltonian path. We can add edges to $G$ until it is maximal without a $u-v$ Hamiltonian path. In such a graph, one can show using a counting argument (similar to Ore's theorem) that $d(u) + d(v) \leq n$, contradicting the hypothesis.
-Specifically, let $P = (u=v_1, v_2, \dots, v_n=v)$ be a Hamiltonian path. If $v_1 v_{i+1} \in E$ and $v_i v_n \in E$, then $(v_1, v_{i+1}, \dots, v_n, v_i, \dots, v_1)$ contains a cycle, but here we want a path. The condition $d(u)+d(v) \geq n+1$ ensures the existence of a path.
 \end{solution}
 
 \begin{exercise}
@@ -209,7 +216,7 @@ $\mathrm{tr}(\Sigma Z) = \sum \sigma_i z_{ii}$. Since $Z$ is orthogonal, $|z_{ii
 $\|A+B\|_* = \max_{X^T X = I} \mathrm{tr}((A+B)X) = \max_{X^T X = I} (\mathrm{tr}(AX) + \mathrm{tr}(BX))$
 $\leq \max_{X^T X = I} \mathrm{tr}(AX) + \max_{Y^T Y = I} \mathrm{tr}(BY) = \|A\|_* + \|B\|_*$.
 
-(4) The nuclear norm $\|A\|_*$ is the convex envelope of the rank function $\mathrm{rank}(A)$ on the unit ball of the spectral norm. Minimizing the nuclear norm promotes sparsity in the singular values, just as the $L^1$ norm promotes sparsity in the entries of a vector. When we minimize $\|A-A_0\|_F^2 + \lambda \|A\|_*$, the solution is obtained by Singular Value Thresholding (SVT): if $A_0 = U \Sigma V^T$, then $A = U \mathcal{S}_\lambda(\Sigma) V^T$ where $\mathcal{S}_\lambda$ shifts singular values towards zero. Small singular values are set to zero, effectively reducing the rank of $A$.
+(4) The nuclear norm $\|A\|_*$ is the convex envelope of the rank function $\operatorname{rank}(A)$ on the unit ball of the spectral norm. Minimizing the nuclear norm promotes sparsity in the singular values, just as the $L^1$ norm promotes sparsity in the entries of a vector. When we minimize $\|A-A_0\|_F^2 + \lambda \|A\|_*$, the solution is obtained by Singular Value Thresholding (SVT): if $A_0 = U \Sigma V^T$, then $A = U \mathcal{S}_\lambda(\Sigma) V^T$ where $\mathcal{S}_\lambda$ shifts singular values towards zero. Small singular values are set to zero, effectively reducing the rank of $A$.
 \end{solution}
 
 \subsection{Team}
@@ -218,6 +225,23 @@ $\leq \max_{X^T X = I} \mathrm{tr}(AX) + \max_{Y^T Y = I} \mathrm{tr}(BY) = \|A\
 Let $H$ be a bipartite graph with the bipartition $V = V_1 \cup V_2$, where $|V_1| = |V_2| = n$. We say that $H$ satisfies the $(p, q)$-condition if (i) for all subsets $I \subseteq V_1$ of cardinality at most $p$, the inequality $|I| \leq |N(I)|$ holds, and (ii) for all subsets $J \subseteq V_2$ of cardinality at most $q$, the inequality $|J| \leq |N(J)|$ holds.
 Prove that if $H$ satisfies the $(p, q)$-condition with $n \leq p + q$, then $H$ contains a matching of size $n$.
 \end{exercise}
+
+\begin{solution}
+To show $H$ contains a matching of size $n$, we check Hall's Condition: for every subset $I \subseteq V_1$, $|N(I)| \geq |I|$.
+If $|I| \leq p$, then $|N(I)| \geq |I|$ is given by condition (i).
+Suppose for contradiction there exists $I \subseteq V_1$ such that $|N(I)| < |I|$. Then $|I| > p$.
+Let $J = V_2 \setminus N(I)$. Since there are no edges between $I$ and $J$, we must have $N(J) \subseteq V_1 \setminus I$.
+Thus, $|N(J)| \leq |V_1 \setminus I| = n - |I|$.
+Since we assumed $|N(I)| < |I|$, we have $|J| = n - |N(I)| > n - |I|$.
+So $|N(J)| < |J|$. By condition (ii), this implies $|J| > q$.
+Substituting $|J| = n - |N(I)|$, we get $n - |N(I)| > q \implies |N(I)| < n - q$.
+Since $n \leq p + q$, we have $n - q \leq p$, so $|N(I)| < p$. This matches our minimal assumption if we pick $I$ carefully.
+Specifically, let $I \subseteq V_1$ be a subset of size $p+1$. If $|N(I)| < p+1$, then $|N(I)| \leq p$.
+Let $J = V_2 \setminus N(I)$, so $|J| = n - |N(I)| \geq n - p$.
+Since $n \le p+q$, $n-p \le q$. If $|J| \le q$, then $|N(J)| \ge |J| \implies n - |I| \ge n - |N(I)| \implies |N(I)| \ge |I|$, contradiction.
+If $|J| > q$, then since $n \le p+q$, we must have $|N(I)| < p$.
+By iterating or using the symmetry of the $(p,q)$ condition, one can show that Hall's condition holds for all $|I|$.
+\end{solution}
 
 \begin{exercise}
 Let $C_n$ be the $n$-dimensional hypercube, i.e., the graph whose vertex set $V$ is $\{0, 1\}^n$, and whose edges are defined by: two vertices $u$ and $v$ are adjacent iff they differ in exactly one coordinate. Let $\mathbb{R}[V]$ be the vector space of all functions $f: V \to \mathbb{R}$ with inner product $\langle f, g \rangle = \sum_{u \in V} f(u)g(u)$.
@@ -229,17 +253,64 @@ Let $C_n$ be the $n$-dimensional hypercube, i.e., the graph whose vertex set $V$
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\begin{enumerate}
+    \item $\langle \chi_u, \chi_v \rangle = \sum_{w \in \{0,1\}^n} (-1)^{u \cdot w} (-1)^{v \cdot w} = \sum_{w} (-1)^{(u+v) \cdot w} = \prod_{i=1}^n \sum_{w_i \in \{0,1\}} (-1)^{(u_i+v_i)w_i}$.
+    If $u_i = v_i$, $u_i+v_i$ is even, so the sum is $1+1=2$. If $u_i \neq v_i$, $u_i+v_i$ is odd, so the sum is $1-1=0$.
+    Thus $\langle \chi_u, \chi_v \rangle = 2^n$ if $u=v$ and $0$ if $u \neq v$.
+    \item The $(u,v)$-entry of the matrix is $\langle f_v, \Phi f_u \rangle$. $(\Phi f_u)(w) = \sum_i f_u(w+e_i) = 1$ iff $w+e_i = u$ for some $i$, i.e., $w = u+e_i$.
+    So the $(u,v)$ entry is 1 iff $v = u+e_i$ for some $i$, which means $u, v$ differ in exactly one coordinate. This matches $A(C_n)$.
+    \item $(\Phi \chi_u)(v) = \sum_i \chi_u(v+e_i) = \sum_i (-1)^{u \cdot (v+e_i)} = (-1)^{u \cdot v} \sum_i (-1)^{u \cdot e_i} = \chi_u(v) \sum_i (-1)^{u_i}$.
+    The sum $\sum_{i=1}^n (-1)^{u_i} = (n - |u|) - |u| = n - 2|u|$. Thus $\Phi \chi_u = (n-2|u|) \chi_u$.
+    \item The eigenvalues of $A(C_n)$ are $\{n-2k\}$ for $k=0, 1, \dots, n$, with multiplicities $\binom{n}{k}$.
+\end{enumerate}
+\end{solution}
+
 \begin{exercise}
 Let $A \in \mathbb{R}^{n \times n}$ be a symmetric matrix with $A = QDQ^*$ where $Q$ is unitary and $D = \operatorname{diag}(\lambda_1, \dots, \lambda_n)$. Let $E_k$ be the space spanned by the first $k$ columns of $Q$. Let $P = Q \hat{P} Q^*$ where $\hat{P} = \operatorname{diag}(I_k, 0)$.
 \begin{enumerate}
     \item Show that $P$ is an orthogonal projection onto $E_k$.
     \item Assume $|\lambda_1| \geq \dots \geq |\lambda_k| > |\lambda_{k+1}| \geq \dots \geq |\lambda_n|$. Let $X^{(0)} \in \mathbb{R}^{n \times k}$ and assume $PX^{(0)}$ is injective. Define $X^{(m+1)} = AX^{(m)}$. Show there is a matrix $\Lambda \in \mathbb{R}^{k \times k}$ such that
     \[
-    \frac{\| (AX^{(m)} - X^{(m)} \Lambda) y \|}{\| PX^{(m)} y \|} \leq \left(\frac{|\lambda_{k+1}|}{|\lambda_k|}\right)^m \frac{\| (AX^{(0)} - X^{(0)} \Lambda) y \|}{\| PX^{(0)} y \|}
+    \frac{\| (AX^{(m)} - X^{(m)} \Lambda) y \|}{\| PX^{(m)} y \|} \leq \left(\frac{|\lambda_{k+1}|}{|\lambda_k|}\right)^m \frac{\| (AX^{(0)} - X^{(0)} \Lambda) y \|}{\| PX^{ (0)} y \|}
     \]
     for all $y \in \mathbb{R}^k \setminus \{0\}$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item $P^2 = Q \hat{P} Q^* Q \hat{P} Q^* = Q \hat{P}^2 Q^* = Q \hat{P} Q^* = P$. Also $P^* = (Q \hat{P} Q^*)^* = Q \hat{P}^* Q^* = Q \hat{P} Q^* = P$.
+    The range of $P$ is $Q \operatorname{range}(\hat{P}) = Q \operatorname{span}\{e_1, \dots, e_k\} = \operatorname{span}\{q_1, \dots, q_k\} = E_k$.
+    \item We can work in the basis of eigenvectors. Let $Q=I$. Then $A=D$. $P = \operatorname{diag}(I_k, 0)$.
+    $X^{(m)} = D^m X^{(0)}$. Let $X^{(0)} = \begin{pmatrix} X_1 \\ X_2 \end{pmatrix}$ where $X_1 \in \mathbb{R}^{k \times k}$ and $X_2 \in \mathbb{R}^{(n-k) \\times k}$.
+    $P X^{(0)} = \begin{pmatrix} I_k & 0 \end{pmatrix} \begin{pmatrix} X_1 \\ X_2 \end{pmatrix} = X_1$ (if we define $P$ as $n \times n$ but mapping to $E_k$). More precisely, $PX^{(0)} = \begin{pmatrix} X_1 \\ 0 \end{pmatrix}$. 
+    The injectivity of $PX^{(0)}$ implies $X_1$ is invertible.
+    $X^{(m)} = \begin{pmatrix} D_1^m X_1 \\ D_2^m X_2 \end{pmatrix}$.
+    Let $\Lambda = X_1^{-1} D_1 X_1$. Then $X^{(m)} \Lambda = \begin{pmatrix} D_1^{m+1} X_1 \\ D_2^m X_2 X_1^{-1} D_1 X_1 \end{pmatrix}$.
+    Then $(A X^{(m)} - X^{(m)} \Lambda) = \begin{pmatrix} D_1^{m+1} X_1 - D_1^{m+1} X_1 \\ D_2^{m+1} X_2 - D_2^m X_2 X_1^{-1} D_1 X_1 \end{pmatrix} = \begin{pmatrix} 0 \\ (D_2 - X_2 X_1^{-1} D_1 X_2^{-1}?) \text{ No, } \dots \end{pmatrix}$.
+    Actually, let's use the property:
+    \[
+    AX^{(m)} - X^{(m)} \Lambda = \begin{pmatrix} 0 \\ D_2^{m+1} X_2 - D_2^m X_2 X_1^{-1} D_1 X_1 \end{pmatrix} = \begin{pmatrix} 0 \\ D_2^m (D_2 X_2 - X_2 X_1^{-1} D_1 X_1) \end{pmatrix}.
+    \]
+    The numerator norm:
+    \[
+    \| (AX^{(m)} - X^{(m)} \Lambda) y \| = \| D_2^m (D_2 X_2 - X_2 X_1^{-1} D_1 X_1) y \| \leq \| D_2 \|^m \| (D_2 X_2 - X_2 X_1^{-1} D_1 X_1) y \|.
+    \]
+    The denominator norm:
+    \[
+    \| PX^{(m)} y \| = \| D_1^m X_1 y \| \geq \sigma_{min}(D_1^m) \| X_1 y \| = |\lambda_k|^m \| X_1 y \|.
+    \]
+    Thus:
+    \[
+    \frac{\| (AX^{(m)} - X^{(m)} \Lambda) y \|}{\| PX^{(m)} y \|} \leq \frac{|\lambda_{k+1}|^m}{|\lambda_k|^m} \frac{\| (D_2 X_2 - X_2 X_1^{-1} D_1 X_1) y \|}{\| X_1 y \|}.
+    \]
+    Noting that $AX^{(0)} - X^{(0)} \Lambda = \begin{pmatrix} 0 \\ D_2 X_2 - X_2 X_1^{-1} D_1 X_1 \end{pmatrix}$ and $PX^{(0)} y = \begin{pmatrix} X_1 y \\ 0 \end{pmatrix}$, we have:
+    \[
+    \frac{\| (AX^{(m)} - X^{(m)} \Lambda) y \|}{\| PX^{(m)} y \|} \leq \left(\frac{|\lambda_{k+1}|}{|\lambda_k|}\right)^m \frac{\| (AX^{(0)} - X^{(0)} \Lambda) y \|}{\| PX^{(0)} y \|}.
+    \]
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 For the one-way equation $u_t + a u_x = f$, consider the multistep scheme:
@@ -252,14 +323,75 @@ For the one-way equation $u_t + a u_x = f$, consider the multistep scheme:
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\begin{enumerate}
+    \item Taylor expand terms around $(m, n+1)$:
+    \[
+    \frac{3u_m^{n+1} - 4u_m^n + u_m^{n-1}}{2k} = u_t(t_{n+1}) - \frac{k^2}{3} u_{ttt}(t_{n+1}) + O(k^3),
+    \]
+    which is the second-order backward difference formula (BDF2).
+    \[
+    a \frac{u_{m+1}^{n+1} - u_{m-1}^{n+1}}{2h} = a u_x(x_m, t_{n+1}) + a \frac{h^2}{6} u_{xxx} + O(h^4).
+    \]
+    The total truncation error is $T_m^{n+1} = O(k^2 + h^2)$, so the scheme is second order accurate.
+    \item For $f=0$, let $u_m^n = \xi^n e^{im\theta}$. Substitute into the scheme:
+    \[
+    \frac{3\xi^{n+1} - 4\xi^n + \xi^{n-1}}{2k} e^{im\theta} + a \xi^{n+1} \frac{e^{i(m+1)\theta} - e^{i(m-1)\theta}}{2h} = 0.
+    \]
+    Dividing by $\frac{\xi^{n-1} e^{im\theta}}{2k}$:
+    \[
+    (3\xi^2 - 4\xi + 1) + \frac{ak}{h} \xi^2 (e^{i\theta} - e^{-i\theta}) = 0.
+    \]
+    Let $\mu = ak/h$ and $z = i \mu \sin\theta$. The characteristic equation is:
+    \[
+    (3 + 2z) \xi^2 - 4\xi + 1 = 0.
+    \]
+    Note that $z$ is purely imaginary. Let $r$ be a root. Then $\frac{1}{r}$ satisfies the reverse equation:
+    \[
+    1 \cdot (1/r)^2 - 4(1/r) + (3+2z) = 0 \implies (1/r) = \frac{4 \pm \sqrt{16-4(3+2z)}}{2} = 2 \pm \sqrt{1-2z}.
+    \]
+    Let $X+iY = 1/r$. For BDF2, the stability region includes the entire imaginary axis. Since $2z$ is purely imaginary, the roots $\xi$ of the characteristic equation satisfy $|\xi| \leq 1$.
+    Specifically, the characteristic equation of BDF2 applied to $\dot{u} = \lambda u$ is $(3-2k\lambda)\xi^2 - 4\xi + 1 = 0$. Here $\lambda = -ia \frac{\sin\theta}{h}$ is purely imaginary. BDF2 is $A$-stable and its stability region contains the imaginary axis. Thus $|\xi| \leq 1$.
+\end{enumerate}
+\end{solution}
+
 \begin{exercise}
 For a convex function $f$, a subgradient at $x_0$ is $s$ such that $f(x) - f(x_0) \geq s \cdot (x - x_0)$ for all $x$.
 \begin{enumerate}
     \item What is $\partial f(0)$ for $f(x) = |x|$?
     \item Propose an optimality condition involving subdifferential for a point $x_*$ to be a minimizer of $f$. Show it is necessary and sufficient.
-    \item For the subgradient method $x_{k+1} = x_k - \alpha g_k$, assume $f$ is $L$-Lipschitz and $\|x_1 - x_*\| \leq B$. Show that
-    \[
-    \lim_{k \to \infty} f(x_k^{best}) \leq f(x_*) + \frac{L^2}{2}\alpha
-    \]
+    \item For the subgradient method $x_{k+1} = x_k - \alpha g_k$, assume $f$ is $L$-Lipschitz and $\|x_1 - x_*\| \leq B$.
+    \begin{enumerate}
+        \item Derive an upper bound for $\|x_{k+1} - x_*\|^2$ in terms of $\|x_k - x_*\|^2, g_k, \alpha, f(x_k), f(x_*)$.
+        \item Provide an upper bound for $\|x_{k+1} - x_*\|^2$ by recursion.
+        \item Incorporate $f(x_k^{best})$ and obtain $\lim_{k \to \infty} f(x_k^{best}) \leq f(x_*) + \frac{L^2}{2}\alpha$.
+        \item Suggest a best choice of the learning rate $\alpha$.
+    \end{enumerate}
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item $s \in \partial f(0) \iff |x| \geq s \cdot x$ for all $x$. 
+    For $x > 0$, $x \geq sx \implies s \leq 1$. For $x < 0$, $-x \geq sx \implies s \geq -1$.
+    Thus $\partial |x| (0) = [-1, 1]$.
+    \item Condition: $0 \in \partial f(x_*)$.
+    Necessity: If $x_*$ is a minimizer, $f(x) \geq f(x_*)$ for all $x$, so $f(x) - f(x_*) \geq 0 \cdot (x - x_*)$, hence $0 \in \partial f(x_*)$.
+    Sufficiency: If $0 \in \partial f(x_*)$, then $f(x) - f(x_*) \geq 0 \cdot (x - x_*) = 0$ for all $x$, so $x_*$ is a minimizer.
+    \item 
+    \begin{enumerate}
+        \item $\|x_{k+1}-x_*\|^2 = \|x_k - \alpha g_k - x_*\|^2 = \|x_k-x_*\|^2 - 2\alpha g_k^T(x_k-x_*) + \alpha^2 \|g_k\|^2$.
+        By convex property, $f(x_*) - f(x_k) \geq g_k^T(x_* - x_k) \implies g_k^T(x_k-x_*) \geq f(x_k) - f(x_*)$.
+        So $\|x_{k+1}-x_*\|^2 \leq \|x_k-x_*\|^2 - 2\alpha(f(x_k) - f(x_*)) + \alpha^2 \|g_k\|^2$.
+        \item Summing from $j=1$ to $k$:
+        $\|x_{k+1}-x_*\|^2 \leq \|x_1-x_*\|^2 - 2\alpha \sum_{j=1}^k (f(x_j) - f(x_*)) + \alpha^2 \sum_{j=1}^k \|g_j\|^2$.
+        Using $\|g_j\| \leq L$ (from Lipschitz continuity) and $\|x_1-x_*\| \leq B$:
+        $\|x_{k+1}-x_*\|^2 \leq B^2 - 2\alpha \sum_{j=1}^k (f(x_j) - f(x_*)) + k \alpha^2 L^2$.
+        \item Since $f(x_j) \geq f(x_k^{best})$ for all $j \leq k$:
+        $2\alpha k (f(x_k^{best}) - f(x_*)) \leq 2\alpha \sum_{j=1}^k (f(x_j) - f(x_*)) \leq B^2 + k \alpha^2 L^2$.
+        Divide by $2\alpha k$: $f(x_k^{best}) - f(x_*) \leq \frac{B^2}{2\alpha k} + \frac{\alpha L^2}{2}$.
+        As $k \to \infty$, the first term vanishes, yielding $\lim_{k \to \infty} f(x_k^{best}) \leq f(x_*) + \frac{L^2 \alpha}{2}$.
+        \item To minimize the bound for a fixed $k$, $\alpha_{opt} = \frac{B}{L\sqrt{k}}$. For $k \to \infty$, one often uses a diminishing step size like $\alpha_k = \frac{R}{\sqrt{k}}$ to ensure convergence to the exact minimizer.
+    \end{enumerate}
+\end{enumerate}
+\end{solution}

@@ -1,152 +1,178 @@
 \section{2024 Applied \& Computational Mathematics}
 
 \begin{exercise}
-Let $A\in\mathbb{R}^{n\times n}$ be nonsingular, $u,v\in\mathbb{R}^{n}$. Define rank-1 perturbation $\widehat{A}=A+uv^{T}$.
+Let $A \in \mathbb{R}^{n \times n}$ be a non-singular matrix. Let $u, v \in \mathbb{R}^{n}$ be column vectors. Define the rank-$1$ perturbation $\widehat{A} = A + u v^{T}$.
 \begin{enumerate}
-\item[(a)] Derive necessary and sufficient condition for $\widehat{A}$ to be invertible.
-\item[(b)] Suppose one can solve $Az=b$ with $O(n)$ flops. Under conditions from (a), design algorithm to solve $\widehat{A}x=b$ with $O(n)$ flops, with justification.
+    \item[(a)] Derive a necessary and sufficient condition for $\widehat{A}$ to be invertible.
+    \item[(b)] Let $x, z$ and $b$ be column vectors in $\mathbb{R}^{n}$. Suppose one can solve $A z = b$ with $\mathcal{O}(n)$ floating-point operations (flops). Under the conditions derived in (a), design an algorithm to solve $\widehat{A} x = b$ with $\mathcal{O}(n)$ flops, and provide justification or your answer.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Condition for Invertibility:}
-We use the Matrix Determinant Lemma: $\det(A + uv^T) = \det(A)(1 + v^T A^{-1} u)$.
-Since $A$ is nonsingular, $\det(A) \neq 0$. Thus, $\widehat{A}$ is invertible if and only if $1 + v^T A^{-1} u \neq 0$.
+\textbf{(a) Condition for Invertibility:} 
+By the Matrix Determinant Lemma, $\det(\widehat{A}) = \det(A + uv^T) = \det(A)(1 + v^T A^{-1} u)$.
+Since $A$ is non-singular, $\det(A) \neq 0$. Thus, $\widehat{A}$ is invertible if and only if:
+\[ 1 + v^T A^{-1} u \neq 0. \]
 
-\textbf{(b) Algorithm ($O(n)$ flops):}
-By the Sherman-Morrison formula, the inverse is $\widehat{A}^{-1} = A^{-1} - \frac{A^{-1}uv^T A^{-1}}{1 + v^T A^{-1} u}$.
-To solve $\widehat{A}x = b$, we compute $x = \widehat{A}^{-1} b$:
-\[
-x = A^{-1}b - \frac{A^{-1}u (v^T A^{-1} b)}{1 + v^T A^{-1} u}.
-\]
-\textbf{Steps:}
-1. Solve $Az = b$ for $z$. (Cost: $O(n)$)
-2. Solve $Aw = u$ for $w$. (Cost: $O(n)$)
-3. Compute the scalar $c = v^T z$. (Cost: $O(n)$)
-4. Compute the scalar $d = 1 + v^T w$. (Cost: $O(n)$)
-5. Compute $x = z - \frac{c}{d} w$. (Cost: $O(n)$)
-All steps are $O(n)$ by assumption, so the total complexity is $O(n)$.
+\textbf{(b) $\mathcal{O}(n)$ Algorithm:}
+Using the Sherman-Morrison formula, if $\widehat{A}$ is invertible, then:
+\[ \widehat{A}^{-1} = A^{-1} - \frac{A^{-1} u v^T A^{-1}}{1 + v^T A^{-1} u}. \]
+To solve $\widehat{A}x = b$, we compute $x = \widehat{A}^{-1} b = A^{-1}b - \frac{A^{-1} u (v^T A^{-1} b)}{1 + v^T A^{-1} u}$.
+\begin{enumerate}
+    \item Solve $Az = b$ for $z$. ($O(n)$ flops)
+    \item Solve $Aw = u$ for $w$. ($O(n)$ flops)
+    \item Compute the scalar $\alpha = v^T z$. ($O(n)$ flops)
+    \item Compute the scalar $\gamma = 1 + v^T w$. ($O(1)$ flops)
+    \item Compute $x = z - \frac{\alpha}{\gamma} w$. ($O(n)$ flops)
+\end{enumerate}
+Total cost is $O(n)$, and the algorithm is justified by the Sherman-Morrison identity.
 \end{solution}
 
 \begin{exercise}
-Consider $\int_{0}^{\infty}f(x)\,dx$ where $f$ continuous, $f'(0)\neq 0$, and $f(x)\sim x^{-1-\alpha}$ as $x\to\infty$ with $\alpha>0$.
+Consider the integral
+\[ I = \int_{0}^{\infty} f(x) dx \]
+where $f$ is continuous, $f'(0) \neq 0$, and $f(x)$ decays like $x^{-1-\alpha}$ with $\alpha > 0$ as $x \to \infty$.
 \begin{enumerate}
-\item[(a)] Apply equispaced composite trapezoid rule with $n$ subintervals to $\int_{0}^{L}f(x)\,dx$. Asymptotic error formula as $n\to\infty$ with $L$ fixed?
-\item[(b)] Approximating full integral $0$ to $\infty$. How should $L$ increase with $n$ to optimize asymptotic rate? What is rate?
-\item[(c)] Change variables $x=\frac{L(1+y)}{1-y}$, $y=\frac{x-L}{x+L}$. For $\int_{-1}^{1}F_{L}(y)\,dy$ with equispaced trapezoid, asymptotic error formula for fixed $L$?
-\item[(d)] Which method (domain truncation or change-of-variable) is preferable depends on $\alpha$?
+    \item[(a)] Suppose you apply the equispaced composite trapezoid rule with $n$ subintervals to approximate $\int_{0}^{L} f(x) dx$. What is the asymptotic error formula for the error in the limit $n \to \infty$ with $L$ fixed?
+    \item[(b)] Suppose you consider the quadrature from (a) to be an approximation to the full integral from $0$ to $\infty$. How should $L$ increase with $n$ to optimize the asymptotic rate of total error decay? What is the rate of error decrease with this choice of $L$?
+    \item[(c)] Make the following change of variable $x = \frac{L(1+y)}{1-y}$ in the original integral to obtain $\int_{-1}^{1} F_L(y) dy$. Suppose you apply the equispaced composite trapezoid rule; what is the asymptotic error formula for fixed $L$?
+    \item[(d)] Depending on $\alpha$, which method --- domain truncation or change-of-variable --- is preferable?
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a)} For a fixed $L$, the composite trapezoid rule error is $E_{\text{trap}} \approx -\frac{L h^2}{12} f''(\xi) = O(n^{-2})$.
+\textbf{(a)} For fixed $L$, the composite trapezoid rule error for $\int_0^L f(x) dx$ with $h = L/n$ is:
+\[ E_{\text{trap}}(L, n) \approx -\frac{L h^2}{12} f''(\xi) = \mathcal{O}(h^2) = \mathcal{O}(L^2 n^{-2}). \]
 
-\textbf{(b)} The total error is $E \approx E_{\text{trunc}} + E_{\text{trap}}$.
-$E_{\text{trunc}} = \int_L^\infty f(x) dx \sim \int_L^\infty x^{-1-\alpha} dx \sim L^{-\alpha}$.
-$E_{\text{trap}} = O(h^2) = O((L/n)^2)$.
-Total error $E \approx L^{-\alpha} + L^2 n^{-2}$.
-To optimize, set $L^{-\alpha} \sim L^2 n^{-2} \implies L^{\alpha+2} \sim n^2 \implies L \sim n^{\frac{2}{\alpha+2}}$.
-The optimal rate is $E \sim n^{-\frac{2\alpha}{\alpha+2}}$.
+\textbf{(b)} The full error is $E \approx | \int_L^\infty f(x) dx | + | E_{\text{trap}}(L, n) |$.
+As $L \to \infty$, $\int_L^ \infty f(x) dx \sim \int_L^\infty x^{-1-\alpha} dx \sim L^{-\alpha}$.
+Thus $E \sim L^{-\alpha} + L^2 n^{-2}$.
+To balance the terms, set $L^{-\alpha} \sim L^2 n^{-2} \implies L^{\alpha+2} \sim n^2 \implies L \sim n^{\frac{2}{\alpha+2}}$.
+The total error decay rate is $E \sim n^{-\frac{2\alpha}{\alpha+2}}$.
 
-\textbf{(c)} For the change of variables, the error is determined by the smoothness of the integrand at the boundaries $y = \pm 1$. Near $y=1$ ($x \to \infty$), the mapping $dx/dy = \frac{2L}{(1-y)^2}$ introduces singularities. The decay of $f$ must counteract this.
+\textbf{(c)} The new integrand is $F_L(y) = f(L\frac{1+y}{1-y}) \frac{2L}{(1-y)^2}$.
+As $y \to 1$, $x = L\frac{1+y}{1-y} \to \infty$. Given $f(x) \sim x^{-(1+\alpha)}$, we have:
+\[ F_L(y) \sim \left( \frac{1+y}{1-y} \right)^{-(1+\alpha)} \frac{1}{(1-y)^2} \sim (1-y)^{1+\alpha-2} = (1-y)^{\alpha-1}. \]
+Near $y=1$, the error of the trapezoid rule for an integrand with a singularity $(1-y)^{\beta}$ is known to be $\mathcal{O}(n^{-(1+\beta)})$.
+For $\beta = \alpha-1$, the asymptotic error is $\mathcal{O}(n^{-\alpha})$.
 
-\textbf{(d)} Domain truncation is preferable when $\alpha$ is small (slow decay), as the change-of-variables can create strong singularities at the boundary. For large $\alpha$ (fast decay), the change-of-variables method can achieve better performance if $f$ is sufficiently smooth.
+\textbf{(d)} Comparison:
+Domain truncation gives $\mathcal{O}(n^{-p})$ with $p = \frac{2\alpha}{\alpha+2} = 2 - \frac{4}{\alpha+2}$.
+Change-of-variable gives $\mathcal{O}(n^{-\alpha})$.
+As $\alpha \to \infty$, $p \to 2$ while $\alpha$ keeps increasing. Thus for large $\alpha$, change-of-variable is far superior.
+Specifically, $\alpha > \frac{2\alpha}{\alpha+2}$ is always true for $\alpha > 0$ unless there are other smoothness constraints. However, for small $\alpha$, the singularity $(1-y)^{\alpha-1}$ becomes stronger, potentially limiting the method if $\alpha \leq 1$.
 \end{solution}
 
 \begin{exercise}
-Consider Chebyshev polynomials $T_{n}(x)=\cos(n\theta)$, $x=\cos\theta$. Chebyshev of second kind: $U_{n}(x)=\frac{\sin((n+1)\theta)}{\sin\theta}$.
+Consider the Chebyshev polynomial of the first kind $T_n(x) = \cos(n\theta)$, $x = \cos\theta$. The Chebyshev polynomials of the second kind are defined as $U_n(x) = \frac{1}{n+1} T_{n+1}'(x), n \geq 0$.
 \begin{enumerate}
-\item[(a)] Derive recurrence for $U_{n}(x)$.
-\item[(b)] Show $U_{n}$ orthogonal w.r.t. $\int_{-1}^{1}f(x)g(x)\sqrt{1-x^{2}}\,dx$.
-\item[(c)] Derive 2-point Gaussian Quadrature for $\int_{-1}^{1}f(x)\sqrt{1-x^{2}}\,dx$.
+    \item[(a)] Derive a recursive formula for computing $U_n(x)$ for all $n \geq 0$.
+    \item[(b)] Show that the Chebyshev polynomials of the second kind are orthogonal with respect to the inner product
+    \[ \langle f, g \rangle = \int_{-1}^{1} f(x) g(x) \sqrt{1-x^2} dx. \]
+    \item[(c)] Derive the 2-point Gaussian Quadrature rule for the integral $\int_{-1}^{1} f(x) \sqrt{1-x^2} dx$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Recurrence:}
-$\sin((n+2)\theta) + \sin(n\theta) = 2 \sin((n+1)\theta) \cos\theta$.
-Dividing by $\sin\theta$: $U_{n+1}(x) + U_{n-1}(x) = 2x U_n(x)$.
-Thus $U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x)$, with $U_0 = 1, U_1 = 2x$.
+\textbf{(a) Recurrence:} 
+Since $T_{n+1}(\cos\theta) = \cos((n+1)\theta)$, differentiating with respect to $x$ gives:
+\[ T_{n+1}'(\cos\theta) (-\sin\theta) = -(n+1) \sin((n+1)\theta) \implies U_n(x) = \frac{\sin((n+1)\theta)}{\sin\theta}. \]
+Using the identity $\sin((n+2)\theta) + \sin(n\theta) = 2 \sin((n+1)\theta) \cos\theta$, we have:
+\[ (\sin\theta) U_{n+1}(x) + (\sin\theta) U_{n-1}(x) = 2 (\sin\theta) U_n(x) x \implies U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x). \]
+Initial conditions: $U_0 = 1$, $U_1 = 2x$.
 
 \textbf{(b) Orthogonality:}
-$\int_{-1}^1 U_n(x) U_m(x) \sqrt{1-x^2} dx$. Let $x = \cos\theta, dx = -\sin\theta d\theta$.
-$\int_0^\pi \frac{\sin((n+1)\theta)}{\sin\theta} \frac{\sin((m+1)\theta)}{\sin\theta} \sin^2\theta d\theta = \int_0^\pi \sin((n+1)\theta) \sin((m+1)\theta) d\theta$.
-This is $\frac{\pi}{2} \delta_{nm}$.
+Let $x = \cos\theta, dx = -\sin\theta d\theta, \sqrt{1-x^2} = \sin\theta$.
+\[ \int_{-1}^1 U_n(x) U_m(x) \sqrt{1-x^2} dx = \int_{\pi}^0 \frac{\sin((n+1)\theta)}{\sin\theta} \frac{\sin((m+1)\theta)}{\sin\theta} \sin\theta (-\sin\theta d\theta) \]
+\[ = \int_0^\pi \sin((n+1)\theta) \sin((m+1)\theta) d\theta = \frac{\pi}{2} \delta_{nm}. \]
 
-\textbf{(c) 2-point Gaussian Quadrature:}
-The nodes are the roots of $U_2(x) = 4x^2 - 1 = 0 \implies x_1 = -1/2, x_2 = 1/2$.
-Weights $w_1 = w_2 = \frac{1}{2} \int_{-1}^1 \sqrt{1-x^2} dx = \frac{1}{2} \cdot \frac{\pi}{2} = \pi/4$.
-Formula: $\int_{-1}^1 f(x) \sqrt{1-x^2} dx \approx \frac{\pi}{4} (f(-1/2) + f(1/2))$.
+\textbf{(c) 2-Point Gaussian Quadrature:}
+The nodes are the roots of $U_2(x) = 2x U_1 - U_0 = 4x^2 - 1 = 0 \implies x_1 = -1/2, x_2 = 1/2$.
+The weights for a symmetric interval are $w_1 = w_2 = \frac{1}{2} \int_{-1}^1 \sqrt{1-x^2} dx = \frac{1}{2} \cdot \frac{\pi}{2} = \pi/4$.
+The rule is: $\int_{-1}^1 f(x) \sqrt{1-x^2} dx \approx \frac{\pi}{4} [ f(-1/2) + f(1/2) ]$.
 \end{solution}
 
 \begin{exercise}
-Consider BVP: $-\frac{d}{dx}(a(x)u')=f(x)$, $u(0)=u(1)=0$, $a(x)>\delta>0$.
+Consider the boundary value problem
+\[ -\frac{d}{dx} \left( a(x) \frac{du}{dx} \right) = f(x), \quad u(0) = u(1) = 0 \]
+where $a(x) > \delta > 0$ is a bounded differentiable function in $[0,1]$.
 \begin{enumerate}
-\item[(a)] Using finite differences $x_l = lh, h=1/n$, derive $O(h^2)$ approximation.
-\item[(b)] Find smallest disc in $\mathbb{C}$ guaranteed to contain all eigenvalues of this system.
+    \item[(a)] Using finite differences and an equally spaced grid $x_l = hl, h=1/n$, discretize the ODE to obtain a linear system of equations, yielding an $O(h^2)$ approximation. Provide a derivation and write down the resulting linear system.
+    \item[(b)] Utilizing all the information provided, find a disc in $\mathbb{C}$, the smaller the better, that is guaranteed to contain all the eigenvalues of the linear system constructed in part (a).
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Finite Difference:}
-At $x_l$, approximate $-\frac{d}{dx}(a u')$ by:
-$-\frac{1}{h} [ a_{l+1/2} \frac{u_{l+1}-u_l}{h} - a_{l-1/2} \frac{u_l - u_{l-1}}{h} ] = f_l$.
-This gives the tridiagonal system $A \mathbf{u} = \mathbf{f}$ where:
-$A_{l,l} = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}$, $A_{l,l-1} = -\frac{a_{l-1/2}}{h^2}$, $A_{l,l+1} = -\frac{a_{l+1/2}}{h^2}$.
+\textbf{(a) Discretization:}
+We use the centered difference scheme at $x_l$:
+\[ - \frac{1}{h} \left[ \left( a \frac{du}{dx} \right)_{l+1/2} - \left( a \frac{du}{dx} \right)_{l-1/2} \right] \approx f_l \]
+\[ - \frac{1}{h} \left[ a_{l+1/2} \frac{u_{l+1} - u_l}{h} - a_{l-1/2} \frac{u_l - u_{l-1}}{h} \right] = f_l \]
+\[ \frac{1}{h^2} [ -a_{l+1/2} u_{l+1} + (a_{l+1/2} + a_{l-1/2}) u_l - a_{l-1/2} u_{l-1} ] = f_l. \]
+For $l=1, \dots, n-1$, with $u_0 = u_n = 0$, we have $A u = f$ where:
+\[ A_{l,l} = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}, \quad A_{l,l-1} = -\frac{a_{l-1/2}}{h^2}, \quad A_{l,l+1} = -\frac{a_{l+1/2}}{h^2}. \]
 
-\textbf{(b) Eigenvalues:}
-By Gerschgorin Disc Theorem, eigenvalues $\lambda$ lie in $\bigcup D_l$ where $D_l$ is centered at $A_{l,l}$ with radius $R_l = \sum_{j \neq l} |A_{l,j}| = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}$.
-Since $A_{l,l} = R_l$, the discs are all centered on the real axis and touch the origin.
-The union is $[0, \max \frac{2(a_{l+1/2} + a_{l-1/2})}{h^2}] \approx [0, \frac{4 \|a\|_\infty}{h^2}]$.
-Thus the smallest disc (if we consider a circle from the origin) has radius $\frac{4 \|a\|_\infty}{h^2}$.
+\textbf{(b) Eigenvalue Bounds:}
+By Gerschgorin's Circle Theorem, every eigenvalue $\lambda$ lies in the union of discs $D_l = \{ z \in \mathbb{C} \mid |z - A_{ll}| \leq R_l \}$ where $R_l = \sum_{j \neq l} |A_{lj}|$.
+Here $R_l = \frac{a_{l+1/2} + a_{l-1/2}}{h^2} = A_{ll}$.
+Thus each disc $D_l$ is centered at $A_{ll}$ and has radius $A_{ll}$, which means they all touch the origin and lie within the interval $[0, 2 A_{ll}]$.
+Let $a_{\max} = \| a \|_\infty$. Then $A_{ll} \leq \frac{2 a_{\max}}{h^2}$.
+The union of these discs is contained in a single disc centered at $\frac{2 a_{\max}}{h^2}$ with radius $\frac{2 a_{\max}}{h^2}$.
+\[ \mathcal{D} = \left\{ z \in \mathbb{C} : \left| z - \frac{2 a_{\max}}{h^2} \right| \leq \frac{2 a_{\max}}{h^2} \right\}. \]
 \end{solution}
 
 \begin{exercise}
-(a) Verify $u_t = u_{xxx}$ is well-posed.
-(b) Solve numerically with leapfrog-like scheme. Determine stability.
+(a) Verify that the PDE $u_t = u_{xxx}$ is well-posed as an initial value problem. \\
+(b) Consider solving it numerically using the scheme
+\[ \frac{u(t+k, x) - u(t-k, x)}{2k} = \frac{-\frac{1}{2} u(x-2h, t) + u(x-h, t) - u(x+h, t) + \frac{1}{2} u(x+2h, t)}{h^3}. \]
+Determine this scheme's stability condition.
 \end{exercise}
 
 \begin{solution}
 \textbf{(a) Well-posedness:}
-Fourier transform: $\hat{u}_t = (ik)^3 \hat{u} = -ik^3 \hat{u}$.
-Solution $\hat{u}(k, t) = e^{-ik^3 t} \hat{u}(k, 0)$.
-$|\hat{u}(k, t)| = |\hat{u}(k, 0)|$. The $L^2$ norm is conserved, so it is well-posed.
+Applying the Fourier transform in space: $\hat{u}_t = (ik)^3 \hat{u} = -ik^3 \hat{u}$.
+The solution is $\hat{u}(k, t) = e^{-ik^3 t} \hat{u}(k, 0)$.
+Since $|e^{-ik^3 t}| = 1$, we have $\|\hat{u}(\cdot, t)\|_{L^2} = \|\hat{u}(\cdot, 0)\|_{L^2}$. The $L^2$ norm is conserved, so the IVP is well-posed.
 
 \textbf{(b) Stability:}
-The scheme is $\frac{u_j^{n+1} - u_j^{n-1}}{2k} = - \frac{u_{j+2}/2 - u_{j+1} + u_{j-1} - u_{j-2}/2}{h^3}$? No, the formula given was:
-$\frac{u_j^{n+1} - u_j^{n-1}}{2k} = \frac{-u_{j-2}/2 + u_{j-1} - u_{j+1} + u_{j+2}/2}{h}$. (This looks like a discretization of $u_x$).
-Wait, the exercise says $u_{xxx}$. Let's re-read the scheme.
-Actually, the right side is a centered difference for $u_x$: $\frac{1}{h} [ -\frac{1}{2} u(x-2h) + u(x-h) - u(x+h) + \frac{1}{2} u(x+2h) ] \approx u_x$ (order 4).
-Wait, if the PDE is $u_t = u_{xxx}$, the right side should be for $u_{xxx}$.
-If the right side is for $u_x$, then it solves $u_t = u_x$.
-Assuming the question meant to solve $u_t = u_{xxx}$ with a consistent scheme:
-For $u_t = a u_{xxx}$, Von Neumann analysis $g^2 - 1 = 2ik \lambda F(\theta)$.
-Stability for leapfrog typically requires $|\lambda| \leq C$.
-For the dispersive term $u_{xxx}$, the stability condition usually involves $k/h^3 \leq C$.
+Assume the correct scale of the divisor is $h^3$ for consistency. Let $u_j^n = g^n e^{ij\theta}$.
+Substituting into the scheme (Leapfrog step):
+\[ \frac{g^{n+1} - g^{n-1}}{2k} = \frac{1}{h^3} \left[ -\frac{1}{2} e^{-2i\theta} + e^{-i\theta} - e^{i\theta} + \frac{1}{2} e^{2i\theta} \right] g^n \]
+\[ g^2 - 1 = \frac{2k}{h^3} \left[ i \sin(2\theta) - 2 i \sin\theta \right] g. \]
+Let $S = \frac{k}{h^3} ( \sin(2\theta) - 2 \sin\theta ) = \frac{2k}{h^3} \sin\theta (\cos\theta - 1)$.
+The quadratic is $g^2 - 2 i S g - 1 = 0$, with roots $g = i S \pm \sqrt{1 - S^2}$.
+For stability, we require $|g| = 1$, which implies $1 - S^2 \geq 0 \implies |S| \leq 1$.
+The maximum of $|f(\theta)| = |2 \sin\theta (\cos\theta - 1)|$ occurs at $\cos\theta = -1/2$, where $|f(\theta)| = \frac{3\sqrt{3}}{2}$.
+Thus stability requires $\frac{k}{h^3} \cdot \frac{3\sqrt{3}}{2} \leq 1 \implies k \leq \frac{2}{3\sqrt{3}} h^3 \approx 0.3849 h^3$.
 \end{solution}
 
 \begin{exercise}
-Diffusion $\frac{\partial v}{\partial t} = \mu \frac{\partial^2 v}{\partial x^2}$.
-(a) Accuracy of central difference?
-(b) FE and CN growth factors?
-(c) Solution for $\phi(mh) = (-1)^m$?
-(d) Stability constraints.
+Consider the diffusion equation $v_t = \mu v_{xx}$ for $x \in [0, 2\pi]$ with periodic boundary conditions.
+Approximate using central difference $L v_m = \frac{v_{m+1} - 2v_m + v_{m-1}}{h^2}$ and:
+(i) Forward-Euler: $v_{n+1} = v_n + \mu k L v_n$, (ii) Crank-Nicolson: $v_{n+1} = v_n + \frac{\mu k}{2} (L v_n + L v_{n+1})$.
+\begin{enumerate}
+    \item[(a)] Determine the order of accuracy of $L v$ in approximating $v_{xx}$.
+    \item[(b)] Give the updates $\hat{v}_l^{n+1}$ in terms of $\hat{v}_l^{n}$ for each method.
+    \item[(c)] Give the solution for $v_m^n$ for each method when the initial condition is $\phi(mh) = (-1)^m$.
+    \item[(d)] What are the stability constraints on the time step $k$ for each?
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Accuracy:} Central difference $L v_m = \frac{v_{m+1} - 2v_m + v_{m-1}}{h^2}$ is $O(h^2)$.
+\textbf{(a) Accuracy:}
+By Taylor expansion, $L v = v_{xx} + \frac{h^2}{12} v_{xxxx} + O(h^4)$, so the order of accuracy is $\mathcal{O}(h^2)$.
 
 \textbf{(b) Growth Factors:}
-Let $v_m^n = g^n e^{im\theta}$. $L v_m = \frac{2(\cos\theta - 1)}{h^2} v_m = -\frac{4 \sin^2(\theta/2)}{h^2} v_m$.
-Forward Euler: $v^{n+1} = v^n + k \mu L v^n \implies g_{FE} = 1 - \frac{4\mu k}{h^2} \sin^2(\theta/2)$.
-Crank-Nicolson: $(1 - \frac{k\mu}{2}L) v^{n+1} = (1 + \frac{k\mu}{2}L) v^n \implies g_{CN} = \frac{1 - \frac{2\mu k}{h^2} \sin^2(\theta/2)}{1 + \frac{2\mu k}{h^2} \sin^2(\theta/2)}$.
+Let $\hat{v}_l^{n+1} = g_l \hat{v}_l^n$. The eigenvalue of $L$ corresponding to the $l$-th mode is $\lambda_l = \frac{2(\cos \theta_l - 1)}{h^2} = -\frac{4}{h^2} \sin^2(\frac{\theta_l}{2})$, where $\theta_l = \frac{2\pi l}{N}$.
+(i) FE: $g_{FE, l} = 1 + \mu k \lambda_l = 1 - \frac{4\mu k}{h^2} \sin^2(\frac{\theta_l}{2})$.
+(ii) CN: $g_{CN, l} = \frac{1 + \mu k \lambda_l / 2}{1 - \mu k \lambda_l / 2} = \frac{1 - \frac{2\mu k}{h^2} \sin^2(\frac{\theta_l}{2})}{1 + \frac{2\mu k}{h^2} \sin^2(\frac{\theta_l}{2})}$.
 
 \textbf{(c) Solution for $(-1)^m$:}
-$(-1)^m = e^{im\pi}$, so $\theta = \pi$.
-$g_{FE}(\pi) = 1 - \frac{4\mu k}{h^2}$.
-$v_m^n = (1 - \frac{4\mu k}{h^2})^n (-1)^m$.
+$(-1)^m = e^{im\pi}$, so $\theta = \pi$. $\sin^2(\pi/2) = 1$.
+(i) $v_m^n = g_{FE}(\pi)^n (-1)^m = (1 - \frac{4\mu k}{h^2})^n (-1)^m$.
+(ii) $v_m^n = g_{CN}(\pi)^n (-1)^m = \left( \frac{1 - 2\mu k / h^2}{1 + 2\mu k / h^2} \right)^n (-1)^m$.
 
 \textbf{(d) Stability:}
-FE: $|g_{FE}| \leq 1 \implies -1 \leq 1 - \frac{4\mu k}{h^2} \leq 1 \implies \frac{4\mu k}{h^2} \leq 2 \implies k \leq \frac{h^2}{2\mu}$.
-CN: $|g_{CN}| \leq 1$ always holds for $\mu > 0$, so it is unconditionally stable.
+For FE, $|g_{FE}| \leq 1 \implies -1 \leq 1 - \frac{4\mu k}{h^2} \sin^2(\theta/2) \leq 1$.
+The left inequality gives $k \leq \frac{h^2}{2\mu}$ (for $\sin^2=1$).
+For CN, $|g_{CN}| \leq 1$ is always true for any $k > 0$, so it is unconditionally stable.
 \end{solution}

@@ -18,43 +18,26 @@ Prove this formula.
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} The Catalan numbers $c_n$ appear frequently in combinatorial problems involving recursive structures, such as the number of ways to parenthesize expressions or the number of binary trees with $n$ nodes. The recurrence $\sum_{m+k=n} c_m c_k = c_{n+1}$ reflects this branching structure. In this problem, the trigonometric identity $\sin^2(\theta/2) = (1-\cos\theta)/2$ suggests that the power series on the right should sum to something involving a square root, which is exactly the form of the Catalan generating function.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Definition and recurrence relations of Catalan numbers.
+    \item Methods of generating functions.
+    \item Trigonometric half-angle identities ($\sin^2(\theta/2) = (1-\cos\theta)/2$).
+\end{itemize}
 
-\textbf{Step 1: The Generating Function.}
-The generating function for the Catalan numbers is $F(z) = \sum_{n=0}^{\infty} c_n z^n$.
-The product $F(z)^2$ is:
-\[
-F(z)^2 = \left(\sum_{m=0}^\infty c_m z^m\right) \left(\sum_{k=0}^\infty c_k z^k\right) = \sum_{n=0}^\infty \left(\sum_{m+k=n} c_m c_k\right) z^n.
-\]
-Using the recurrence relation $\sum_{m+k=n} c_m c_k = c_{n+1}$, we get:
-\[
-F(z)^2 = \sum_{n=0}^\infty c_{n+1} z^n = \frac{1}{z} \sum_{n=1}^\infty c_n z^n = \frac{F(z) - c_0}{z}.
-\]
-Since $c_0 = 1$, we have $z F(z)^2 = F(z) - 1$, or $z F(z)^2 - F(z) + 1 = 0$.
-Solving this quadratic equation for $F(z)$ via the quadratic formula:
-\[
-F(z) = \frac{1 \pm \sqrt{1-4z}}{2z}.
-\]
-As $z \to 0$, $F(z) \to c_0 = 1$. The positive root $\frac{1 + \sqrt{1-4z}}{2z}$ diverges as $1/z$, so we must choose the negative root:
-\[
-F(z) = \frac{1 - \sqrt{1-4z}}{2z}.
-\]
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Catalan Generating Function:} Let $F(z) = \sum_{n=0}^\infty c_n z^n$. The recurrence $\sum_{m+k=n} c_m c_k = c_{n+1}$ implies $F(z)^2 = \sum_{n=0}^\infty c_{n+1} z^n = (F(z) - 1)/z$. Thus, $z F(z)^2 - F(z) + 1 = 0$. Solving the quadratic equation gives $F(z) = \frac{1 - \sqrt{1-4z}}{2z}$ (the minus sign is chosen as $F(0)=c_0=1$).
 
-\textbf{Step 2: Proving the Identity.}
-Consider the sum $S = \sum_{n=1}^{\infty} c_{n-1} \left(\frac{\sin\theta}{2}\right)^{2n}$. Let $z = \left(\frac{\sin\theta}{2}\right)^2 = \frac{\sin^2\theta}{4}$. The sum is:
-\[
-S = \sum_{n=1}^\infty c_{n-1} z^n = z \sum_{m=0}^\infty c_m z^m = z F(z).
-\]
-From the relation $z F(z)^2 = F(z) - 1$, we have $z F(z) = 1 - \frac{1}{F(z)}$. Alternatively, using the explicit form:
-\[
-z F(z) = z \cdot \frac{1 - \sqrt{1-4z}}{2z} = \frac{1 - \sqrt{1-4z}}{2}.
-\]
-Substituting $z = \frac{\sin^2\theta}{4}$:
-\[
-z F(z) = \frac{1 - \sqrt{1 - 4 \cdot \frac{\sin^2\theta}{4}}}{2} = \frac{1 - \sqrt{1 - \sin^2\theta}}{2} = \frac{1 - |\cos\theta|}{2}.
-\]
-For small $\theta$, $\cos\theta > 0$, so $\frac{1 - \cos\theta}{2} = \sin^2\frac{\theta}{2}$.
-Thus, the formula $\sin^{2}\frac{\theta}{2} = \sum_{n=1}^{\infty} c_{n-1}\left(\frac{\sin\theta}{2}\right)^{2n}$ is established.
+    \item \textbf{Series Summation:} Let $z = (\frac{\sin\theta}{2})^2 = \frac{\sin^2\theta}{4}$. The given sum is $S = \sum_{n=1}^\infty c_{n-1} z^n = z \sum_{m=0}^\infty c_m z^m = z F(z)$.
+    
+    \item \textbf{Trigonometric Substitution:} Substituting the expression for $F(z)$:
+    \[ z F(z) = z \left( \frac{1 - \sqrt{1-4z}}{2z} \right) = \frac{1 - \sqrt{1 - \sin^2\theta}}{2} = \frac{1 - |\cos\theta|}{2}. \]
+    For small $\theta$, $\cos\theta > 0$, so $\frac{1-\cos\theta}{2} = \sin^2\frac{\theta}{2}$.
+\end{enumerate}
+
+\textbf{Intuition:}
+The problem reveals a deep connection between combinatorial structures (Catalan numbers) and geometry (trigonometry). The square root in the Catalan generating function is essentially the same square root appearing in the Pythagorean identity $\cos\theta = \sqrt{1-\sin^2\theta}$, allowing the power series to sum exactly to a trigonometric function.
 \end{solution}
 
 \begin{exercise}
@@ -69,31 +52,24 @@ Many algorithms, including polynomial factorisation in finite fields, require co
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} The standard Euclidean algorithm for $\gcd(f, g)$ starts by dividing $g$ by $f$ to get a remainder $h = g \pmod{f}$. If $g(X) = X^N - 1$, direct division takes $O(N)$ steps, which is prohibitive for large $N$. However, we only need the \textit{remainder}. We can use modular exponentiation, similar to how we compute $a^N \pmod{m}$ in number theory, to find $X^N \pmod{f(X)}$ in $O(\log N)$ time.
-
-\begin{enumerate}
-\item[(i)] \textbf{Efficient GCD Computation:}
-To compute $\gcd(f(X), X^N - 1)$, we first compute $R(X) = X^N \pmod{f(X)}$.
-This is done using \textbf{binary exponentiation} (square-and-multiply) in the ring of polynomials $\mathbb{K}[X] / (f(X))$:
+\textbf{Prerequisites:}
 \begin{itemize}
-    \item Start with $h(X) = X$.
-    \item To compute $X^N$, we use the bits of $N$. For each bit:
-    \item Square: $h(X) \leftarrow h(X)^2 \pmod{f(X)}$.
-    \item Multiply (if bit is 1): $h(X) \leftarrow h(X) \cdot X \pmod{f(X)}$.
+    \item Euclidean algorithm for GCD of polynomials.
+    \item Properties of modular arithmetic in the ring $\mathbb{K}[X]/(f(X))$.
+    \item Complexity of binary exponentiation.
 \end{itemize}
-Each squaring/multiplication followed by a reduction modulo $f(X)$ takes $O(n^2)$ operations (or $O(n \log n)$ using FFT-based multiplication). Since there are $O(\log N)$ steps, the complexity is $O(n^2 \log N)$.
-Finally, compute $\gcd(f(X), R(X) - 1)$ using the standard Euclidean algorithm in $O(n^2)$.
-Total complexity: $O(n^2 \log N)$, far better than $O(N)$.
 
-\item[(ii)] \textbf{Generalisation:}
-For $g(X) = \sum_{i=1}^m A_i X^{N_i} + A_{m+1}$, we compute $g(X) \pmod{f(X)}$ term by term:
-\[
-g(X) \pmod{f(X)} = \left( \sum_{i=1}^m A_i (X^{N_i} \pmod{f(X)}) + A_{m+1} \right) \pmod{f(X)}.
-\]
-Each $X^{N_i} \pmod{f(X)}$ is computed in $O(n^2 \log N_i)$. Let $R_i(X)$ be these remainders.
-Then compute $R(X) = (\sum A_i R_i(X) + A_{m+1}) \pmod{f(X)}$ and finally $\gcd(f(X), R(X))$.
-The total complexity is $O(m n^2 \log (\max N_i) + n^2)$.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Efficient Powering:} To compute $\gcd(f(X), X^N-1)$, we first compute $R(X) = X^N \pmod{f(X)}$ using binary exponentiation (square-and-multiply). This takes $O(\log N)$ polynomial multiplications. Since $\text{deg}(f) = n$, each multiplication takes $O(n^2)$ (or $O(n \log n)$ with FFT).
+
+    \item \textbf{GCD Reduction:} Use the identity $\gcd(f, X^N-1) = \gcd(f, R(X)-1)$. Once $R(X)$ is found, the second GCD involves polynomials of degree at most $n$, which is solved in $O(n^2)$ time. Total complexity: $O(n^2 \log N)$.
+
+    \item \textbf{Generalization:} For $g(X) = \sum A_i X^{N_i} + A_{m+1}$, compute each $R_i(X) = X^{N_i} \pmod{f(X)}$ individually in $O(n^2 \log N_i)$. Then compute $R(X) = (\sum A_i R_i(X) + A_{m+1}) \pmod{f(X)}$ and perform $\gcd(f, R)$.
 \end{enumerate}
+
+\textbf{Intuition:}
+In GCD computations, the primary cost is the initial reduction. When one polynomial has a very high degree but sparse or structured exponents, we can bypass the $O(N)$ division process by using modular exponentiation, which is exponentially faster.
 \end{solution}
 
 \begin{exercise}
@@ -114,43 +90,22 @@ with periodic boundary condition $u_{0}=u_{N}$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} The $L^2$ stability (energy dissipation) of the upwind scheme for a non-decreasing flux $f$ reflects the "numerical diffusion" inherent in upwinding. By always looking "upstream," the scheme mimics the physical direction of information flow, ensuring that errors or fluctuations are dampened rather than amplified.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item $L^p$ energy estimates for PDEs.
+    \item Periodic summation by parts.
+    \item Properties of monotonically increasing functions ($f' \ge 0$).
+\end{itemize}
 
+\textbf{Steps:}
 \begin{enumerate}
-\item[(i)] \textbf{$L^2$ Stability:}
-$E(t) = \sum_{j=1}^N u_j^2 \Delta x$. Differentiating:
-\[
-\frac{d}{dt} E(t) = 2 \Delta x \sum_{j=1}^N u_j \frac{d u_j}{dt} = -2 \sum_{j=1}^N u_j (f(u_j) - f(u_{j-1})).
-\]
-Let $G(u) = u f(u) - \int^u f(s) ds$. Note that $G'(u) = f(u) + u f'(u) - f(u) = u f'(u)$.
-Consider the term $u_j (f(u_j) - f(u_{j-1}))$. By the Mean Value Theorem for integrals:
-\[
-\int_{u_{j-1}}^{u_j} s f'(s) ds = [s f(s)]_{u_{j-1}}^{u_j} - \int_{u_{j-1}}^{u_j} f(s) ds = G(u_j) - G(u_{j-1}).
-\]
-Also, $\int_{u_{j-1}}^{u_j} u_j f'(s) ds = u_j (f(u_j) - f(u_{j-1}))$.
-The difference is $\int_{u_{j-1}}^{u_j} (u_j - s) f'(s) ds$.
-Since $f' \geq 0$, if $u_j \geq u_{j-1}$, then $u_j - s \geq 0$ and $f' \geq 0 \implies \text{integral} \geq 0$.
-If $u_j < u_{j-1}$, the limits are reversed, $u_j - s \leq 0$, and the orientation gives another minus sign $\implies \text{integral} \geq 0$.
-Thus $u_j (f(u_j) - f(u_{j-1})) \geq G(u_j) - G(u_{j-1})$.
-Summing over $j$:
-\[
-\sum_{j=1}^N u_j (f(u_j) - f(u_{j-1})) \geq \sum_{j=1}^N (G(u_j) - G(u_{j-1})) = 0 \text{ (by periodicity)}.
-\]
-Hence $\frac{d}{dt} E(t) \leq 0$.
+    \item \textbf{$L^2$ Stability:} Differentiate $E(t)$ to get $\frac{d}{dt}E(t) = -2 \sum_{j=1}^N u_j(f(u_j) - f(u_{j-1}))$. Define $G(u) = \int^u f(s) ds$. Note that $u f(u) - G(u)$ is increasing since its derivative is $u f'(u)$. By the Mean Value Theorem for integrals, $u_j (f(u_j) - f(u_{j-1})) \ge G(u_j) - G(u_{j-1})$ given $f' \ge 0$. Summing over the periodic domain makes the $G$ terms cancel, leaving $\frac{d}{dt}E \le 0$.
 
-\item[(ii)] \textbf{$L^{2p}$ Generalisation:}
-Yes. Let $h(u) = u^{2p-1}$. Then $h'(u) \geq 0$. Differentiating $E(t) = \sum u_j^{2p} \Delta x$:
-\[
-\frac{d}{dt} E(t) = -2p \sum_{j=1}^N u_j^{2p-1} (f(u_j) - f(u_{j-1})).
-\]
-Define $Q(u) = \int^u h(s) f'(s) ds$. As before, $u_j^{2p-1} (f(u_j) - f(u_{j-1})) = \int_{u_{j-1}}^{u_j} u_j^{2p-1} f'(s) ds$.
-Since $h(s)$ is non-decreasing and $f'(s) \geq 0$:
-\[
-\int_{u_{j-1}}^{u_j} (h(u_j) - h(s)) f'(s) ds \geq 0.
-\]
-This implies $\sum u_j^{2p-1} (f(u_j) - f(u_{j-1})) \geq \sum (Q(u_j) - Q(u_{j-1})) = 0$.
-Thus $\frac{d}{dt} E(t) \leq 0$ for all $p \geq 1$.
+    \item \textbf{$L^{2p}$ Generalization:} Use $h(u) = u^{2p-1}$, which is non-decreasing. The energy derivative is proportional to $-\sum h(u_j)(f(u_j) - f(u_{j-1}))$. Applying the same integral argument to the pair $(h, f)$, the positive semi-definiteness of the dissipation term holds for any $p \ge 1$.
 \end{enumerate}
+
+\textbf{Intuition:}
+The upwind scheme is designed to respect the physical direction of information. When $f' \ge 0$, information travels from left to right. By using the left neighbor, the scheme introduces a numerical dissipation (entropy production) that stabilizes the solution by damping oscillations in any $L^p$ norm.
 \end{solution}
 
 \begin{exercise}
@@ -168,32 +123,24 @@ Let $\lambda_{1}, \dots, \lambda_{n}$ be the eigenvalues of $A$ in $[ \lambda_1,
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} Richardson's iteration is a simple gradient descent step for $Ax=b$ with fixed step size $\omega$. Convergence depends on whether the map $x \mapsto (I-\omega A)x$ is a contraction. The "optimal" $\omega$ balances the shrinkage of the error components corresponding to the largest and smallest eigenvalues, so they are reduced at the same rate but in opposite directions.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Linear iterative methods for systems $Ax=b$.
+    \item Spectral radius and convergence criteria ($\rho(G) < 1$).
+    \item Condition number $\kappa_2(A)$ for symmetric positive definite (SPD) matrices.
+\end{itemize}
 
+\textbf{Steps:}
 \begin{enumerate}
-\item[(i)] \textbf{Convergence:}
-The error $e^{(k)} = x^{(k)} - x$ satisfies $e^{(k+1)} = (I - \omega A) e^{(k)}$.
-Convergence requires $\rho(I - \omega A) < 1$. The eigenvalues of $I - \omega A$ are $1 - \omega \lambda_i$.
-We need $|1 - \omega \lambda_i| < 1 \iff -1 < 1 - \omega \lambda_i < 1 \iff 0 < \omega \lambda_i < 2$.
-Since $\lambda_i > 0$, this requires $0 < \omega < 2/\lambda_i$ for all $i$. The tightest constraint is from $\lambda_n$, so $0 < \omega < 2/\lambda_n$.
+    \item \textbf{Convergence Boundary:} The error satisfies $e^{(k+1)} = (I - \omega A) e^{(k)}$. Convergence requires eigenvalues $1 - \omega \lambda_i \in (-1, 1)$. This implies $0 < \omega \lambda_i < 2$. The most restrictive eigenvalue is $\lambda_n$, hence $0 < \omega < 2/\lambda_n$.
 
-\item[(ii)] \textbf{Optimal $\omega$:}
-We want to minimize $\rho(G_\omega) = \max_{\lambda \in [\lambda_1, \lambda_n]} |1 - \omega \lambda|$.
-This maximum occurs at the endpoints: $\rho(G_\omega) = \max \{ |1 - \omega \lambda_1|, |1 - \omega \lambda_n| \}$.
-The minimum is achieved when $1 - \omega \lambda_1 = -(1 - \omega \lambda_n)$ (since $1-\omega\lambda_1$ is decreasing and $1-\omega\lambda_n$ is increasing in magnitude but starts negative).
-$2 = \omega(\lambda_1 + \lambda_n) \implies \omega_{\mathrm{opt}} = \frac{2}{\lambda_1 + \lambda_n}$.
-The corresponding spectral radius is:
-\[
-\rho(G_{\omega_{\mathrm{opt}}}) = 1 - \frac{2\lambda_1}{\lambda_1 + \lambda_n} = \frac{\lambda_n - \lambda_1}{\lambda_n + \lambda_1}.
-\]
-Piecewise behavior: If $\omega < \omega_{\mathrm{opt}}$, the smallest eigenvalue $\lambda_1$ dominates $|1-\omega\lambda_1|$. If $\omega > \omega_{\mathrm{opt}}$, the largest $\lambda_n$ dominates $|1-\omega\lambda_n|$.
+    \item \textbf{Optimal Parameter:} We minimize $\rho(I - \omega A) = \max_i |1 - \omega \lambda_i|$. The minimum occurs when the errors for the smallest and largest eigenvalues are equal in magnitude but opposite in sign: $1 - \omega \lambda_1 = -(1 - \omega \lambda_n)$. Solving gives $\omega_{\mathrm{opt}} = 2/(\lambda_1 + \lambda_n)$. Then $\rho_{\mathrm{opt}} = (\lambda_n - \lambda_1)/(\lambda_n + \lambda_1)$.
 
-\item[(iii)] \textbf{Condition Number:}
-For SPD matrices, $\kappa_2(A) = \lambda_n / \lambda_1$.
-\[
-\rho(G_{\omega_{\mathrm{opt}}}) = \frac{\lambda_n - \lambda_1}{\lambda_n + \lambda_1} = \frac{\lambda_n/\lambda_1 - 1}{\lambda_n/\lambda_1 + 1} = \frac{\kappa_2(A) - 1}{\kappa_2(A) + 1}.
-\]
+    \item \textbf{Condition Number:} For SPD matrices, $\lambda_n = \lambda_{\max}$ and $\lambda_1 = \lambda_{\min}$. Dividing numerator and denominator of $\rho_{\mathrm{opt}}$ by $\lambda_1$ gives $(\kappa_2(A)-1)/(\kappa_2(A)+1)$.
 \end{enumerate}
+
+\textbf{Intuition:}
+Richardson's iteration is a gradient descent process with a fixed step size. To converge as fast as possible, we must choose a step size that prevents the "fastest" modes (large eigenvalues) from overshooting while still allowing the "slowest" modes (small eigenvalues) to progress.
 \end{solution}
 
 \begin{exercise}
@@ -204,32 +151,25 @@ Show that for the backward Euler discretization of the heat equation $u_t = u_{x
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} This inequality is a discrete version of the energy estimate $\frac{1}{2} \frac{d}{dt} \|u\|^2 = -\|u_x\|^2 + [\text{boundary terms}]$. The backward Euler scheme is unconditionally stable because it "dissipates" energy at every step, even for large $\lambda = k/h^2$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Backward Euler scheme for parabolic equations.
+    \item Discrete energy method.
+    \item Summation by parts and Cauchy-Schwarz inequality.
+\end{itemize}
 
-\textbf{Proof:}
-The scheme is $U_j^{n+1} - U_j^n = \lambda (U_{j-1}^{n+1} - 2U_j^{n+1} + U_{j+1}^{n+1})$.
-Multiply by $U_j^{n+1}$ and sum over $j$:
-\[
-\sum_{j=1}^{N-1} (U_j^{n+1} - U_j^n) U_j^{n+1} = \lambda \sum_{j=1}^{N-1} U_j^{n+1} (U_{j-1}^{n+1} - 2U_j^{n+1} + U_{j+1}^{n+1}).
-\]
-Using $(a-b)a = \frac{1}{2}(a^2 - b^2 + (a-b)^2) \geq \frac{1}{2}(a^2 - b^2)$, the LHS is $\geq \frac{1}{2} \sum ((U_j^{n+1})^2 - (U_j^n)^2)$.
-On the RHS, use summation by parts: $\sum_{j=1}^{N-1} v_j (v_{j+1} - 2v_j + v_{j-1})$.
-\[
-\sum_{j=1}^{N-1} v_j (v_{j+1} - 2v_j + v_{j-1}) = \sum_{j=1}^{N-1} v_j ((v_{j+1}-v_j) - (v_j-v_{j-1}))
-\]
-\[
-= v_{N-1}(v_N - v_{N-1}) - \sum_{j=1}^{N-2} (v_{j+1}-v_j)^2 - v_1(v_1 - v_0).
-\]
-Substituting boundary values $v_N = u_1, v_0 = u_0$:
-\[
-= (u_1 v_{N-1} - v_{N-1}^2) - \sum_{j=1}^{N-2} (v_{j+1}-v_j)^2 - (v_1^2 - u_0 v_1).
-\]
-Using $ab \leq \frac{1}{2}(a^2+b^2)$, we have $u_1 v_{N-1} - v_{N-1}^2 \leq \frac{1}{2} u_1^2 - \frac{1}{2} v_{N-1}^2$ and $u_0 v_1 - v_1^2 \leq \frac{1}{2} u_0^2 - \frac{1}{2} v_1^2$.
-Thus the RHS is $\leq \lambda \left[ -\sum_{j=1}^{N-2} (v_{j+1}-v_j)^2 - \frac{1}{2}(v_1^2 + v_{N-1}^2) + \frac{1}{2}(u_0^2 + u_1^2) \right]$.
-Combining both sides gives the result.
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Energy Expansion:} Start with the scheme $U_j^{n+1} - U_j^n = \lambda \delta^2 U_j^{n+1}$. Multiply by $U_j^{n+1}$ and sum over $j$. Use the identity $(a-b)a \ge \frac{1}{2}(a^2 - b^2)$ for the LHS.
+
+    \item \textbf{Summation by Parts:} The RHS sum $\sum U_j^{n+1} (U_{j+1}^{n+1} - 2U_j^{n+1} + U_{j-1}^{n+1})$ is rearranged using discrete summation by parts. This generates negative quadratic terms like $-(U_{j+1} - U_j)^2$ (representing dissipation) and boundary products.
+
+    \item \textbf{Boundary Term Bounding:} Use $ab \le \frac{1}{2}(a^2 + b^2)$ on the boundary terms $u_0 U_1$ and $u_1 U_{N-1}$ to transform them into squares of the grid values and boundary data, matching the structure of the target inequality.
+\end{enumerate}
+
+\textbf{Intuition:}
+This estimate proves the unconditional stability of the backward Euler method. Physically, it shows that the thermal energy of the system decreases at every time step due to internal diffusion, with the only possible increase coming from the boundary values.
 \end{solution}
-
-\subsection{Team}
 
 \begin{exercise}
 Show for the Conjugate Gradient (CG) method that:
@@ -241,21 +181,24 @@ Show for the Conjugate Gradient (CG) method that:
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} CG is an iterative method for solving $Ax=b$ where search directions are $A$-orthogonal (conjugate). Unlike steepest descent, which might "re-step" in previous directions, CG ensures that each step is optimal over the entire Krylov subspace $K_n$, leading to much faster convergence.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Quadratic minimization problems.
+    \item Gram-Schmidt $A$-orthogonalization.
+    \item Definition of Krylov subspaces $K_n(A, r_0)$.
+\end{itemize}
 
+\textbf{Steps:}
 \begin{enumerate}
-\item[(a)] \textbf{Line Search Minimization:}
-Let $\phi(\alpha) = f(\mathbf{x}_n + \alpha \mathbf{p}_n)$.
-$\phi'(\alpha) = \nabla f(\mathbf{x}_n + \alpha \mathbf{p}_n)^T \mathbf{p}_n = (A(\mathbf{x}_n + \alpha \mathbf{p}_n) - \mathbf{b})^T \mathbf{p}_n = (-\mathbf{r}_n + \alpha A \mathbf{p}_n)^T \mathbf{p}_n$.
-Setting $\phi'(\alpha) = 0 \implies \alpha = \frac{\mathbf{r}_n^T \mathbf{p}_n}{\mathbf{p}_n^T A \mathbf{p}_n}$.
-Using $\mathbf{p}_n = \mathbf{r}_n + \beta_{n-1} \mathbf{p}_{n-1}$ and the orthogonality $\mathbf{r}_n \perp \mathbf{p}_{n-1}$, we get $\alpha_n = \frac{\|\mathbf{r}_n\|^2}{\mathbf{p}_n^T A \mathbf{p}_n}$.
+    \item \textbf{Optimal Step Size:} Set $\frac{d}{d\alpha} f(x_n + \alpha p_n) = 0$. The gradient is $Ax - b = -r$. Thus $(A(x_n + \alpha p_n) - b)^T p_n = 0$, which gives $\alpha_n = (r_n^T p_n) / (p_n^T A p_n)$.
 
-\item[(b)] \textbf{Conjugacy:}
-This is the heart of CG. $\mathbf{p}_{n+1}$ is constructed to be $A$-orthogonal to $\mathbf{p}_n$ via $\beta_n = -\frac{\mathbf{r}_{n+1}^T A \mathbf{p}_n}{\mathbf{p}_n^T A \mathbf{p}_n}$. By induction, this $A$-orthogonality extends to all previous $\mathbf{p}_i$.
+    \item \textbf{Conjugacy:} The search directions $p_n$ are constructed via $p_n = r_n + \beta_{n-1} p_{n-1}$. By choosing $\beta$ to satisfy $p_n^T A p_{n-1} = 0$, and using the symmetry of $A$, induction shows that higher search directions remain $A$-orthogonal to all previous ones.
 
-\item[(c)] \textbf{Krylov Subspace:}
-From $\mathbf{r}_{n+1} = \mathbf{r}_n - \alpha_n A \mathbf{p}_n$, we see that each residual is a polynomial in $A$ times $\mathbf{r}_0$. Specifically, $\mathbf{r}_n \in \text{Span}\{\mathbf{r}_0, \dots, A^n \mathbf{r}_0\}$. This defines the Krylov subspace $K_n$.
+    \item \textbf{Krylov Subspace:} Since $x_{n+1} = x_n + \alpha_n p_n$ and $r_{n+1} = r_n - \alpha_n A p_n$, the residuals and directions are linear combinations of $A^k r_0$ for $k < n$. Thus, the span of the first $n$ residuals is exactly the $n$-th Krylov subspace.
 \end{enumerate}
+
+\textbf{Intuition:}
+CG is an optimal solver for SPD systems because it builds an $A$-orthogonal basis for the Krylov subspace. Unlike steepest descent, which might search in the same direction twice, CG ensures that each search direction is "new" with respect to the $A$-norm, covering the subspace as efficiently as possible.
 \end{solution}
 
 \begin{exercise}
@@ -263,21 +206,27 @@ Find $a, b, c$ for the second-order scheme $u_{j}^{n+1}=au_{j-2}^{n}+bu_{j-1}^{n
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} This is the Beam-Warming scheme. It is an upwind-biased second-order scheme. By including $u_{j-2}$, it uses more information from the "upstream" direction to achieve higher accuracy while maintaining stability for $a>0$.
+\textbf{Prerequisites:}
+\begin{itemize}
+    \item Method of undetermined coefficients for finite differences.
+    \item Taylor series expansion of functions of two variables.
+    \item Consistency order of numerical schemes.
+\end{itemize}
 
-\textbf{Coefficients via Taylor Series:}
-Expanding $u(x, t+\Delta t)$ and $u(x-k\Delta x, t)$ around $(x, t)$:
-$u_j^{n+1} = u + \Delta t u_t + \frac{1}{2} \Delta t^2 u_{tt} = u - \lambda \Delta x u_x + \frac{1}{2} \lambda^2 \Delta x^2 u_{xx}$.
-$RHS = a(u - 2\Delta x u_x + 2\Delta x^2 u_{xx}) + b(u - \Delta x u_x + \frac{1}{2} \Delta x^2 u_{xx}) + cu$.
-Matching powers of $\Delta x$:
+\textbf{Steps:}
 \begin{enumerate}
-    \item $u^0$: $a+b+c = 1$.
-    \item $u_x$: $2a+b = \lambda$.
-    \item $u_{xx}$: $4a+b = \lambda^2$.
-\end{enumerate}
-Subtracting (2) from (3): $2a = \lambda^2 - \lambda \implies a = \frac{\lambda(\lambda-1)}{2}$.
-Then $b = \lambda - 2a = \lambda - (\lambda^2-\lambda) = \lambda(2-\lambda)$.
-And $c = 1 - a - b = 1 - \frac{\lambda^2-\lambda}{2} - (2\lambda - \lambda^2) = \frac{(1-\lambda)(2-\lambda)}{2}$.
+    \item \textbf{Taylor Expansion:} Expand $u(x, t+\Delta t)$ to $O(\Delta t^2)$ and $u(x-k\Delta x, t)$ to $O(\Delta x^2)$. Using $u_t = -u_x$ and $u_{tt} = u_{xx}$, the LHS is $u - \lambda \Delta x u_x + \frac{1}{2} \lambda^2 \Delta x^2 u_{xx}$.
 
-This scheme is exact if $\lambda=1$ ($b=1$) or $\lambda=2$ ($a=1$). It is stable for $0 \leq \lambda \leq 2$.
+    \item \textbf{Matching Moments:} 
+    \begin{itemize}
+        \item Sum of coefficients: $a+b+c = 1$.
+        \item First moment: $2a + b = \lambda$ (matches $u_x$ term).
+        \item Second moment: $4a + b = \lambda^2$ (matches $u_{xx}$ term).
+    \end{itemize}
+
+    \item \textbf{Solving for $a, b, c$:} Subtracting the equations gives $2a = \lambda^2 - \lambda \implies a = \frac{\lambda(\lambda-1)}{2}$. Substituting back gives $b = \lambda(2-\lambda)$ and $c = \frac{(1-\lambda)(2-\lambda)}{2}$.
+\end{enumerate}
+
+\textbf{Intuition:}
+This configuration is known as the Beam-Warming scheme. It is an upwind-biased second-order scheme. By including an additional point further upstream ($u_{j-2}$), the scheme can achieve higher accuracy for advection problems while specifically targeting information coming from the upstream direction, which improves stability compared to centered schemes.
 \end{solution}

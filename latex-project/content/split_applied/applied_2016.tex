@@ -95,7 +95,7 @@ T=t/(k_{1}E_{0}),\quad S(T)=S_{0}s(t),\quad P(T)=S_{0}p(t),\quad E(T)=E_{0}e(t),
 \begin{exercise}
 A vector $\mathbf{u}=(u_{1},\dots,u_{n})\in\mathbb{N}^{n}$ is multiplicatively dependent if there is a nonzero vector $\mathbf{k}=(k_{1},\dots,k_{n})\in\mathbb{Z}^{n}$ for which:
 \[
-u_{1}^{k_{1}}\dots u_{n}^{k_{n}}=1.
+u_{1}^{k_{1}}\dots u_{n}^{k_{n}}=1. \tag{1}
 \]
 
 This is important in factorization and primality testing algorithms. Prove that if $\mathbf{u}=(u_{1},\dots,u_{n})\in\mathbb{N}^{n}$ is multiplicatively dependent with $\|\mathbf{u}\|_{\infty}\leq H$ where $\|\mathbf{u}\|_{\infty}=\max_{1\leq i\leq n}|u_{i}|$, then there exists a nonzero $\mathbf{k}=(k_{1},\dots,k_{n})\in\mathbb{Z}^{n}$ with:
@@ -105,7 +105,9 @@ This is important in factorization and primality testing algorithms. Prove that 
 
 Thus for fixed $n$, it can be found in polynomial time of order $(\log H)^{n(n-1)}$.
 
-Comment: Use the statement (without proof): Let $A=(a_{ij})_{i,j=1}^{m,n}$ be an $m\times n$ matrix of rank $r\leq n-1$ with integer entries of size at most $H$. Then there is a nonzero integer vector $\mathbf{x}=(x_{1},\dots,x_{n})\in\mathbb{Z}^{n}$ such that $A\mathbf{x}=\mathbf{0}$ and $\|\mathbf{x}\|_{\infty}\leq(2nH)^{n-1}$.
+Comment: To solve this problem, you can use the following statement (without proof) which informally means that if a system of homogeneous equations with integer coefficients has a nontrivial solution then it has an integer solution with reasonably small components.
+
+Let $A=(a_{ij})_{i,j=1}^{m,n}$ be an $m\times n$ matrix of rank $r\leq n-1$ with integer entries of size at most $H$. Then there is a nonzero integer vector $\mathbf{x}=(x_{1},\dots,x_{n})\in\mathbb{Z}^{n}$ such that $A\mathbf{x}=\mathbf{0}$ and $\|\mathbf{x}\|_{\infty}\leq(2nH)^{n-1}$.
 \end{exercise}
 
 \begin{solution}
@@ -203,11 +205,11 @@ f(tx+(1-t)y)\leq tf(x)+(1-t)f(y)-\frac{m}{2}t(1-t)\|x-y\|^{2}.
 \begin{exercise}
 For solving the following partial differential equation
 \begin{equation}
-u_t + u_x = 0, \quad -\infty \leq x \leq \infty
+u_t + u_x = 0, \quad -\infty \leq x \leq \infty \tag{1}
 \end{equation}
 with compactly supported initial condition, we consider the following one-step, three-point scheme on a uniform mesh $x_j = j\Delta x$ with spatial mesh size $\Delta x$:
 \begin{equation}
-u_j^{n+1} = a u_j^n + b u_{j-1}^n + c u_{j-2}^n, \quad j = \dots, -1, 0, 1, \dots
+u_j^{n+1} = a u_j^n + b u_{j-1}^n + c u_{j-2}^n, \quad j = \dots, -1, 0, 1, \dots \tag{2}
 \end{equation}
 where $a, b, c$ are constants which may depend on the mesh ratio $\lambda = \frac{\Delta t}{\Delta x}$. Here $\Delta t$ is the time step, and $u_j^n$ approximates the exact solution at $u(x_j, t^n)$ with $t^n = n\Delta t$.
 \begin{enumerate}
@@ -216,6 +218,25 @@ where $a, b, c$ are constants which may depend on the mesh ratio $\lambda = \fra
     \item If the PDE is defined on $(0, \infty)$ with an initial condition compactly supported in $(0, \infty)$ and a boundary condition $u(0, t) = g(t)$, how would you modify the scheme so that it can be applied? Can you prove the stability and accuracy of your modified scheme?
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item We determine the coefficients $a, b, c$ by Taylor expanding $u(x_j, t^{n+1})$ and comparing with the right hand side.
+    Let $x = x_j, t = t^n$. Expanding around $(x, t)$:
+    \[ u(x, t+\Delta t) = u + \Delta t u_t + \frac{\Delta t^2}{2} u_{tt} + O(\Delta t^3) = u - \lambda \Delta x u_x + \frac{\lambda^2 \Delta x^2}{2} u_{xx} + O(\Delta x^3) \]
+    since $u_t = -u_x$. The RHS is:
+    \[ a u + b(u - \Delta x u_x + \frac{\Delta x^2}{2} u_{xx}) + c(u - 2\Delta x u_x + 2\Delta x^2 u_{xx}) + O(\Delta x^3) \]
+    Matching terms in $u, u_x, u_{xx}$:
+    \begin{itemize}
+        \item $a+b+c = 1$
+        \item $b+2c = \lambda$
+        \item $b+4c = \lambda^2$
+    \end{itemize}
+    Solving this system gives $2c = \lambda^2 - \lambda \implies c = \frac{\lambda(\lambda-1)}{2}$; $b = \lambda - 2c = \lambda(2-\lambda)$; and $a = 1 - b - c = \frac{(\lambda-1)(\lambda-2)}{2}$.
+    \item This is the Beam-Warming scheme. The amplification factor is $g(\theta) = a + b e^{-i\theta} + c e^{-2i\theta}$. Analysis of $|g(\theta)|$ shows that the scheme is stable for $0 \leq \lambda \leq 2$. Thus the CFL number is $\lambda_0 = 2$.
+    \item For the problem on $(0, \infty)$, the scheme requires $u_{j-1}$ and $u_{j-2}$ which are available for $j \ge 2$. At $j=1$, $u_{-1}$ is needed, and at $j=0$, the value is given by $u(0, t) = g(t)$. We can use a different scheme (like Lax-Wendroff) at the point $j=1$ or a first-order upwind to maintain stability. To maintain second-order accuracy, a second-order boundary treatment or ghost-point extrapolation is required.
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 Inverse problem. Answer the famous Mark Kac's question: ``can you hear the shape of drum?'' for the special case.
@@ -238,6 +259,19 @@ Consider the one-dimensional oscillator $\ddot{x} = -u'(x)$ with symmetric poten
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] Total energy $E = \frac{1}{2}\dot{x}^2 + u(x)$. Taking the time derivative: $\dot{E} = \dot{x}\ddot{x} + u'(x)\dot{x} = \dot{x}(\ddot{x} + u'(x)) = 0$ since $\ddot{x} = -u'(x)$. thus $E$ is constant.
+    \item[(b)] For energy $e$, $\dot{x} = \pm\sqrt{2(e-u(x))}$. The particle moves between $\pm \phi(e)$. The time to go from $0$ to $\phi(e)$ is $T = \int_0^{\phi(e)} \frac{dx}{\sqrt{2(e-u(x))}}$. The period is $P(e) = 4T = 2\sqrt{2} \int_0^{\phi(e)} \frac{dx}{\sqrt{e - u(x)}}$.
+    \item[(c)] Change variable $u(x) = y$, so $x = \phi(y)$ and $dx = \phi'(y) dy$:
+    \[ P(e) = 2\sqrt{2} \int_0^e \frac{\phi'(y)}{\sqrt{e-y}} dy. \]
+    This is Abel's integral equation for $\phi'$. Multiplying by $(z-e)^{-1/2}$ and integrating:
+    \[ \int_0^z \frac{P(e)}{\sqrt{z-e}} de = 2\sqrt{2} \int_0^z \int_0^e \frac{\phi'(y)}{\sqrt{(z-e)(e-y)}} dy de = 2\sqrt{2} \int_0^z \phi'(y) \left( \int_y^z \frac{de}{\sqrt{(z-e)(e-y)}} \right) dy. \]
+    The inner integral is $\pi$. Thus $\int_0^z \frac{P(e)}{\sqrt{z-e}} de = 2\sqrt{2} \pi \phi(z)$, yielding $\phi(z) = \frac{1}{2\pi\sqrt{2}} \int_0^z \frac{P(e) de}{\sqrt{z-e}}$.
+    \item[(d)] If $P(e) = 2\pi$, then $\phi(z) = \frac{1}{\sqrt{2}} \int_0^z \frac{de}{\sqrt{z-e}} = [-\sqrt{2}\sqrt{z-e}]_0^z = \sqrt{2z}$. Thus $x = \sqrt{2u(x)} \implies u(x) = \frac{1}{2}x^2$.
+\end{enumerate}
+\end{solution}
+
 \begin{exercise}
 The following statement informally means that if a system of homogeneous equations with integer coefficients has a nontrivial solution then it has an integer solution with reasonably small components.
 Let $A = (a_{ij})$ be an $m \times n$ matrix of rank $r \leq n-1$ with integer entries of size at most $H$, that is, $|a_{ij}| \leq H$.
@@ -247,6 +281,10 @@ Prove that there is an integer non-zero vector $\mathbf{x} = (x_1, \ldots, x_n) 
 \]
 where $\|\mathbf{x}\|_\infty = \max_{1 \leq i \leq n} |x_i|$.
 \end{exercise}
+
+\begin{solution}
+This is a statement of Siegel's Lemma. Let $X$ be a positive integer. Consider the set of vectors $S = \{ \mathbf{x} \in \mathbb{Z}^n : 0 \le x_i \le X \}$. The size of $S$ is $(X+1)^n$. For each $\mathbf{x} \in S$, let $\mathbf{y} = A\mathbf{x}$. Since $A$ has rank $r$ and entries bounded by $H$, the components $y_j$ are bounded by $nHX$ in absolute value. The number of possible values for $\mathbf{y}$ in the $r$-dimensional image of $A$ is bounded by $(2nHX+1)^r$. By the pigeonhole principle, if $(X+1)^n > (2nHX+1)^r$, there exist $\mathbf{x}_1 \neq \mathbf{x}_2$ such that $A\mathbf{x}_1 = A\mathbf{x}_2$. Then $\mathbf{x} = \mathbf{x}_1 - \mathbf{x}_2$ is a non-zero integer solution with $\|\mathbf{x}\|_\infty \leq X$. Setting $r = n-1$ and choosing $X = (2nH)^{n-1}$ satisfies the required bound.
+\end{solution}
 
 \begin{exercise}
 This problem considers an iterative scheme $x_{k+1} = x_k + \beta_k p_k$ for the linear system $Ax = b$, where $A \in \mathbb{R}^{n \times n}$ is a given non-singular matrix and $b \in \mathbb{R}^n$. $x_k$ denotes the approximate solution at the $k$-th iteration, $\beta_k$ is a scalar and $p_k \in \mathbb{R}^n$ is a search direction. If $x_k$ is given, $x_{k+1}$ is determined such that the residual $r_{k+1} := b - Ax_{k+1}$ is minimized with respect to the 2-norm.
@@ -258,6 +296,16 @@ This problem considers an iterative scheme $x_{k+1} = x_k + \beta_k p_k$ for the
     \item Assume that $A$ is positive definite. We take the search direction $p_k = r_k$. Show that the above scheme converges for any initial guess $x_0$.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item $\beta_k$ minimizes $\|r_{k+1}\|^2 = \|r_k - \beta_k A p_k\|^2 = \|r_k\|^2 - 2\beta_k r_k^T A p_k + \beta_k^2 \|A p_k\|^2$. Setting the derivative to zero gives $\beta_k = \frac{r_k^T A p_k}{\|A p_k\|^2}$.
+    \item $r_{k+1}^T A p_k = (r_k - \beta_k A p_k)^T A p_k = r_k^T A p_k - \frac{r_k^T A p_k}{\|A p_k\|^2} \|A p_k\|^2 = 0$.
+    \item $\|r_{k+1}\|^2 = \|r_k\|^2 - \frac{(r_k^T A p_k)^2}{\|A p_k\|^2} = \|r_k\|^2 (1 - \cos^2 \alpha) = \|r_k\|^2 \sin^2 \alpha$, so $\|r_{k+1}\| = \|r_k\| |\sin \alpha|$.
+    \item It depends on the sequence $p_k$. If $p_k$ are chosen such that $\alpha$ is bounded away from $\pi/2$, then $\|r_k\| \to 0$. However, if $A p_k$ becomes orthogonal to $r_k$, the method can stall.
+    \item If $A$ is positive definite and $p_k = r_k$, then $r_k^T A r_k \geq \lambda_{min} \|r_k\|^2$ and $\|A r_k\| \leq \lambda_{max} \|r_k\|$. Thus $\cos \alpha \geq \lambda_{min} / \lambda_{max} = 1/\kappa(A) > 0$. Since $\sin^2 \alpha = 1 - \cos^2 \alpha \le 1 - 1/\kappa(A)^2 < 1$, the residual norm strictly decreases and the scheme converges.
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 Let $f: \mathbb{R}^n \to \mathbb{R}$ be convex and in $C^1$. Suppose $f$ has a local minimum $x^*$.
@@ -271,3 +319,12 @@ Let $f: \mathbb{R}^n \to \mathbb{R}$ be convex and in $C^1$. Suppose $f$ has a l
     \item Suppose $f$ is strongly convex, that is, $\exists m > 0$ such that $\langle \nabla f(x) - \nabla f(y), x-y \rangle \geq m \|x-y\|^2$. Under this additional condition, show that $\{x^k\}$ converges.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+    \item Yes. For a convex function, if $x^*$ is not a global minimum, there exists $y$ such that $f(y) < f(x^*)$. By convexity, the function values on the segment $[x^*, y]$ are strictly less than $f(x^*)$ near $x^*$, contradicting local optimality.
+    \item The scheme defines $x^k = \text{argmin}_x \{ f(x) + \frac{1}{2t} \|x - x^{k-1}\|^2 \}$. Thus $f(x^k) + \frac{1}{2t} \|x^k - x^{k-1}\|^2 \le f(x^{k-1})$. This implies $f(x^k)$ is a non-increasing sequence. Since $f$ is bounded below, it converges. No condition on $t > 0$ is needed for monotonicity.
+    \item Using strong convexity: $\langle \nabla f(x^k) - \nabla f(x^*), x^k - x^* \rangle \geq m \|x^k - x^*\|^2$. Substituting $\nabla f(x^k) = \frac{x^{k-1} - x^k}{t}$, we get $\langle x^{k-1} - x^k, x^k - x^* \rangle \geq mt \|x^k - x^*\|^2$.
+    Using $\|x^{k-1} - x^*\|^2 = \|x^{k-1} - x^k + x^k - x^*\|^2 = \|x^{k-1} - x^k\|^2 + \|x^k - x^*\|^2 + 2\langle x^{k-1} - x^k, x^k - x^* \rangle \geq \|x^k - x^*\|^2 (1 + 2mt)$. Thus $\|x^k - x^*\| \leq \frac{1}{\sqrt{1+2mt}} \|x^{k-1} - x^*\|$, which implies convergence.
+\end{enumerate}
+\end{solution}
