@@ -10,4 +10,7 @@ pdflatex -interaction=nonstopmode -synctex=1 main.tex
 echo "Compiling main.tex (pass 2/2)..."
 pdflatex -interaction=nonstopmode -synctex=1 main.tex
 
+echo "Compiling main.tex (pass 3/3)..."
+pdflatex -interaction=nonstopmode -synctex=1 main.tex
+
 echo "Compilation complete. Output: main.pdf"
