@@ -6,7 +6,7 @@
 \label{physics:2024:1}
 Consider the motion of a particle of mass $m$ in an attractive central potential of the form
 \begin{equation}
-    V (r) = \alpha r ^ {k},
+    V (r) = \alpha r ^ {k}, \label{eq:2024:1:1}
 \end{equation}
 where $k$ and $\alpha$ are real constants of the same sign (both positive or both negative).
 
@@ -21,22 +21,71 @@ where $k$ and $\alpha$ are real constants of the same sign (both positive or bot
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Lagrangian in Polar Coordinates:} $L = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\phi}^2) - V(r)$.
-    \item \textbf{Effective Potential:} $V_{\text{eff}} = \frac{J^2}{2mr^2} + V(r)$, where $J$ is angular momentum.
-    \item \textbf{Bertrand's Theorem:} Only $1/r$ and $r^2$ potentials have all bound orbits closed.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Lagrangian ($L$):} The fundamental function describing system dynamics, defined as the kinetic energy minus potential energy ($L = T - V$).
+- \textbf{Effective Potential ($V_{\text{eff}}$):} A technique that reduces a 2D central-force problem into a 1D radial problem by treating the centrifugal force as an additional potential term.
+- \textbf{Stability Analysis:} Analyzing the second derivative of the effective potential at equilibrium ($V_{\text{eff}}''(r_0) > 0$) to ensure small perturbations result in bounded oscillations.
+- \textbf{Bertrand's Theorem:} A theorem stating that only potentials of the form $V \propto -1/r$ or $V \propto r^2$ produce closed, non-circular orbits for all bounded motions.
+- \textbf{Binet's Equation:} A differential equation that relates the orbital shape $u(\phi) = 1/r(\phi)$ directly to the force law, eliminating time dependence.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine rolling a marble in a bowl. If the bowl is very steep ($k$ is large), the marble settles into a nice stable circle at the bottom. The "effective potential" captures this by adding an invisible "outward push" to balance the bowl's inward pull. If the bowl is shaped like a flat plate ($k$ approaching $-2$), the marble barely clings to the surface and might fly away if nudged. The "closing" condition simply means the marble traces exactly the same path over and over, like an ellipse, rather than drawing a messy spirograph pattern.
 
-1. \textbf{Conserved J:} Scaling $\dot{\phi} = J/mr^2$ reduces the problem to 1D radial motion with $V_{\text{eff}}$.
-2. \textbf{Equilibrium:} Circular orbits at $V_{\text{eff}}'(r_0) = 0 \implies k\alpha r_0^{k+2} = J^2/m$.
-3. \textbf{Stability:} Stable if $V_{\text{eff}}''(r_0) > 0$. Calculation gives $k\alpha r_0^{k-2}(k+2) > 0$, requiring $k > -2$.
-4. \textbf{Closing Orbits:} The ratio of oscillation to orbital frequency is $\sqrt{k+2}$. Closed orbits require this to be a rational number.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Imagine the particle "sliding" on a curve formed by the overlap of gravity (pulling in) and centrifugal force (pushing out). For a stable circular orbit, the particle must "rest" at the bottom of the resulting valley. If $k$ is too negative (steeper than $1/r^2$), the valley disappears, and the particle either crashes or flies away.
+\textbf{Step 1: Construct the Lagrangian}
+The kinetic energy $T$ in polar coordinates $(r, \phi)$ for a particle of mass $m$ is given by $T = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\phi}^2)$.
+The potential energy is given as $V(r) = \alpha r^k$.
+Thus, the Lagrangian $L = T - V$ is:
+\[ L = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\phi}^2) - \alpha r^k \]
+
+\textbf{Step 2: Radial reduction using conserved momentum}
+Notice that $L$ does not depend on the angular coordinate $\phi$. Therefore, the conjugate momentum to $\phi$ (the angular momentum $J$) is conserved:
+\[ J = \frac{\partial L}{\partial \dot{\phi}} = m r^2 \dot{\phi} \implies \dot{\phi} = \frac{J}{mr^2} \]
+We can substitute $\dot{\phi}$ into the energy equation to express the system solely in terms of $r$. The effective 1D Lagrangian for the radial part becomes $L_{\text{eff}} = \frac{1}{2}m\dot{r}^2 - V_{\text{eff}}(r)$, where the effective potential is:
+\[ V_{\text{eff}}(r) = \frac{J^2}{2mr^2} + \alpha r^k \]
+
+\textbf{Step 3: Determine the circular orbits}
+A circular orbit corresponds to a constant radius $r = r_0$, which means the radial velocity and acceleration are zero. This requires the particle to sit at an extremum of the effective potential, where $V_{\text{eff}}'(r_0) = 0$:
+\[ \frac{d V_{\text{eff}}}{dr} = -\frac{J^2}{mr_0^3} + k\alpha r_0^{k-1} = 0 \]
+Solving for $r_0$, we obtain:
+\[ r_0^{k+2} = \frac{J^2}{mk\alpha} \implies r_0 = \left( \frac{J^2}{mk\alpha} \right)^{\frac{1}{k+2}} \]
+The period of this circular orbit $T_{\text{orb}}$ is the time required to complete one full revolution ($\Delta \phi = 2\pi$). Since $\dot{\phi} = J / (mr_0^2)$, we have:
+\[ T_{\text{orb}} = \frac{2\pi}{\dot{\phi}} = \frac{2\pi m r_0^2}{J} \]
+
+\textbf{Step 4: Analyze the stability of the circular orbit}
+For the circular orbit to be stable, the extremum $r_0$ must be a minimum of the effective potential, requiring $V_{\text{eff}}''(r_0) > 0$:
+\[ V_{\text{eff}}''(r) = \frac{3J^2}{mr^4} + k(k-1)\alpha r^{k-2} \]
+Substitute the equilibrium condition $\frac{J^2}{m} = k\alpha r_0^{k+2}$ into the first term:
+\[ V_{\text{eff}}''(r_0) = \frac{3(k\alpha r_0^{k+2})}{r_0^4} + k(k-1)\alpha r_0^{k-2} = 3k\alpha r_0^{k-2} + (k^2 - k)\alpha r_0^{k-2} \]
+\[ V_{\text{eff}}''(r_0) = \alpha r_0^{k-2} (3k + k^2 - k) = k\alpha r_0^{k-2} (k + 2) \]
+Since we are given that $k$ and $\alpha$ have the same sign (both positive or both negative), their product $k\alpha$ is always strictly positive ($k\alpha > 0$). Moreover, $r_0^{k-2}$ is positive. Therefore, for stability ($V_{\text{eff}}''(r_0) > 0$), we must have:
+\[ k + 2 > 0 \implies k > -2 \]
+
+\textbf{Step 5: Period of small oscillations and closed orbits}
+For small radial perturbations $r(t) = r_0 + \delta r(t)$, the motion approximates a simple harmonic oscillator with an angular frequency $\omega_{\text{osc}}$ given by:
+\[ \omega_{\text{osc}} = \sqrt{\frac{V_{\text{eff}}''(r_0)}{m}} = \sqrt{\frac{k\alpha r_0^{k-2}(k+2)}{m}} \]
+The period of these small radial oscillations is $T_{\text{osc}} = \frac{2\pi}{\omega_{\text{osc}}}$.
+The orbit closes if the ratio of the radial oscillation frequency to the angular rotation frequency is a rational number. Let's find this ratio $\beta$:
+\[ \beta = \frac{\omega_{\text{osc}}}{\dot{\phi}} = \frac{ \sqrt{ \frac{k\alpha r_0^{k-2}(k+2)}{m} } }{ \frac{J}{mr_0^2} } \]
+Squaring this ratio gives:
+\[ \beta^2 = \frac{k\alpha r_0^{k-2}(k+2)}{m} \cdot \frac{m^2 r_0^4}{J^2} = \frac{mk\alpha r_0^{k+2}}{J^2} (k+2) \]
+Recalling from Step 3 that $\frac{mk\alpha r_0^{k+2}}{J^2} = 1$, we get:
+\[ \beta^2 = k + 2 \implies \beta = \sqrt{k+2} \]
+Thus, for the orbit to close upon small perturbations, $\sqrt{k+2}$ must be a rational number.
+
+\textbf{Step 6: Determine the orbit equation}
+To find the full 2D orbit equation independent of time, we change variables to $u(\phi) = \frac{1}{r(\phi)}$ and use Binet's equation.
+The radial acceleration $\ddot{r}$ can be rewritten using the chain rule and $\dot{\phi} = \frac{J}{m} u^2$:
+\[ \dot{r} = \frac{dr}{d\phi} \dot{\phi} = \frac{d(1/u)}{d\phi} \frac{J}{m} u^2 = -\frac{1}{u^2} \frac{du}{d\phi} \frac{J}{m} u^2 = -\frac{J}{m} \frac{du}{d\phi} \]
+\[ \ddot{r} = \frac{d\dot{r}}{d\phi} \dot{\phi} = -\frac{J}{m} \frac{d^2u}{d\phi^2} \frac{J}{m} u^2 = -\frac{J^2}{m^2} u^2 \frac{d^2u}{d\phi^2} \]
+Newton's second law in the radial direction is $m\ddot{r} - mr\dot{\phi}^2 = F(r)$, where $F(r) = -\frac{dV}{dr} = -k\alpha r^{k-1}$.
+Substituting our expressions:
+\[ m \left( -\frac{J^2}{m^2} u^2 \frac{d^2u}{d\phi^2} \right) - m \left(\frac{1}{u}\right) \left(\frac{J}{m} u^2\right)^2 = -k\alpha \left(\frac{1}{u}\right)^{k-1} \]
+\[ -\frac{J^2}{m} u^2 \frac{d^2u}{d\phi^2} - \frac{J^2}{m} u^3 = -k\alpha u^{1-k} \]
+Dividing by $-\frac{J^2}{m} u^2$:
+\[ \frac{d^2u}{d\phi^2} + u = \frac{mk\alpha}{J^2} u^{-k-1} \]
+This is the required differential equation for the orbit.
 \end{solution}
 
 \subsection{Quantum Mechanics}
@@ -48,7 +97,7 @@ Consider a 1D quantum-mechanical harmonic oscillator with mass $m$ and resonance
 \begin{enumerate}[label=(\alph*)]
     \item Write down the Hamiltonian $\hat{H}$ of the perturbed oscillator described above in terms of the usual ladder operators $\hat{a}$ and $\hat{a}^\dagger$, and solve their equations of motion in the Heisenberg picture. Show that the Hamiltonian at $t \to \pm \infty$ takes the form
     \begin{equation}
-        \hat{H} = \hbar \omega \left(\hat{a}_{\pm \infty}^\dagger \hat{a}_{\pm \infty} + 1/2\right),
+        \hat{H} = \hbar \omega \left(\hat{a}_{\pm \infty}^\dagger \hat{a}_{\pm \infty} + 1/2\right), \label{eq:2024:2:2}
     \end{equation}
     and determine the relation between $\hat{a}_{+\infty}$ and $\hat{a}_{-\infty}$.
     \item At $t \to \pm \infty$, the ladder operators act on the state $|n_{\pm \infty}\rangle = (1/\sqrt{n!})(\hat{a}_{\pm \infty}^\dagger)^n |0_{\pm \infty}\rangle$. Here $|0_{\pm \infty}\rangle$ denote the vacuum with respect to $\hat{a}_{\pm \infty}$ and $\hat{a}_{\pm \infty}^\dagger$. Determine the probabilities $|c_n|^2$ that the oscillator has undergone a transition from the initial ground state to the $n$-th excited state at the end of the time evolution.
@@ -58,20 +107,74 @@ Consider a 1D quantum-mechanical harmonic oscillator with mass $m$ and resonance
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Heisenberg Equation:} $\dot{A} = \frac{1}{i\hbar}[A, H]$.
-    \item \textbf{Coherent State States:} Eigenstates of the annihilation operator.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Ladder Operators ($\hat{a}, \hat{a}^\dagger$):} Operators that respectively annihilate and create a quantum of energy in the harmonic oscillator. The position operator is expressed as $\hat{x} = \frac{l}{\sqrt{2}}(\hat{a} + \hat{a}^\dagger)$, where $l = \sqrt{\hbar / m\omega}$.
+- \textbf{Heisenberg Picture:} A formulation of quantum mechanics where state vectors are constant in time, but the operators evolve according to the Heisenberg equation of motion $\frac{d\hat{A}}{dt} = \frac{i}{\hbar}[\hat{H}, \hat{A}] + \frac{\partial \hat{A}}{\partial t}$.
+- \textbf{Coherent State ($|\alpha\rangle$):} An eigenstate of the annihilation operator $\hat{a}|\alpha\rangle = \alpha|\alpha\rangle$. It represents a quantum state that most closely resembles classical oscillatory motion.
+- \textbf{Transition Probability:} Given by the squared modulus of the overlap between the initial and final states, $P_n = |\langle n | \psi_{\text{final}} \rangle|^2$.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+When you apply a transient linear force to a quantum harmonic oscillator (like shaking the base of a spring), it doesn't just transition into one specific energy level. Instead, the force acts as a "kick" that smoothly shifts the ground state away from the center, creating a "coherent state." A coherent state is like a classical particle swinging back and forth. If the kick is very sudden, the state vibrates a lot; if the force is applied and removed very slowly (adiabatically), the particle just gently follows the force and settles back into the ground state with almost zero excitation.
 
-1. \textbf{Operator Evolution:} $\dot{\hat{a}} = -i\omega\hat{a} - \frac{iF(t)}{\sqrt{2m\hbar\omega}}$.
-2. \textbf{Integration:} Solving for $t \to \infty$ yields $\hat{a}(\infty) = e^{-i\omega t}(\hat{a}(-\infty) - i\beta)$ where $\beta \propto \text{Fourier transform of } F(t)$.
-3. \textbf{Transition Probabilities:} The ground state evolves into a coherent state $|\alpha\rangle$. The probability for state $n$ is a Poisson distribution $P_n = \frac{|\beta|^{2n}}{n!}e^{-|\beta|^2}$.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-A linear force simply "pulls" the center of the oscillator potential. If the force is applied and then removed, the ground state doesn't stay still but "bounces"—this quantum bouncing state is what we call a coherent state, which mimics the motion of a classical particle.
+\textbf{Step 1: Write the Hamiltonian in terms of ladder operators}
+The unperturbed Hamiltonian is $\hat{H}_0 = \hbar\omega(\hat{a}^\dagger \hat{a} + 1/2)$.
+The perturbation is $\Delta\hat{H} = F(t)\hat{x}$. We substitute $\hat{x} = \frac{l}{\sqrt{2}}(\hat{a} + \hat{a}^\dagger)$.
+The full Hamiltonian is:
+\[ \hat{H} = \hbar\omega\left(\hat{a}^\dagger \hat{a} + \frac{1}{2}\right) + \frac{F(t)l}{\sqrt{2}}(\hat{a} + \hat{a}^\dagger) \]
+
+\textbf{Step 2: Solve the equations of motion in the Heisenberg picture}
+Using the Heisenberg equation $\frac{d\hat{a}}{dt} = \frac{i}{\hbar}[\hat{H}, \hat{a}]$, we evaluate the commutator.
+Since $[\hat{a}^\dagger \hat{a}, \hat{a}] = -\hat{a}$ and $[\hat{a}^\dagger, \hat{a}] = -1$, we get:
+\[ [\hat{H}, \hat{a}] = \hbar\omega(-\hat{a}) + \frac{F(t)l}{\sqrt{2}}(-1) \]
+So the differential equation for $\hat{a}(t)$ is:
+\[ \frac{d\hat{a}}{dt} = -i\omega\hat{a} - \frac{i F(t) l}{\hbar\sqrt{2}} \]
+This is a first-order linear differential equation. We solve it using an integrating factor $e^{i\omega t}$:
+\[ \frac{d}{dt}\left( \hat{a}(t) e^{i\omega t} \right) = - \frac{i F(t) l}{\hbar\sqrt{2}} e^{i\omega t} \]
+Integrating from $t \to -\infty$ to $t$:
+\[ \hat{a}(t) e^{i\omega t} - \hat{a}_{-\infty} = -\frac{i l}{\hbar\sqrt{2}} \int_{-\infty}^{t} F(t') e^{i\omega t'} dt' \]
+Thus:
+\[ \hat{a}(t) = \hat{a}_{-\infty} e^{-i\omega t} - \frac{i l}{\hbar\sqrt{2}} e^{-i\omega t} \int_{-\infty}^{t} F(t') e^{i\omega t'} dt' \]
+Taking the limit $t \to +\infty$:
+\[ \hat{a}_{+\infty} = \hat{a}(t \to +\infty) e^{i\omega t} = \hat{a}_{-\infty} - i\beta \]
+where we have defined $\beta = \frac{l}{\hbar\sqrt{2}} \int_{-\infty}^{\infty} F(t) e^{i\omega t} dt$. Note that $a_{+\infty}$ here refers to the operator stripped of the free oscillation phase $e^{-i\omega t}$, which defines the asymptotic operators as $\hat{a}(t) \to \hat{a}_{\pm\infty}e^{-i\omega t}$.
+Since $F(t \to \pm\infty) = 0$, the interaction term vanishes asymptotically, leaving:
+\[ \hat{H}(t \to \pm\infty) = \hbar\omega\left(\hat{a}_{\pm\infty}^\dagger \hat{a}_{\pm\infty} + \frac{1}{2}\right) \]
+
+\textbf{Step 3: Determine transition probabilities}
+At $t \to -\infty$, the system is in the vacuum state $|0_{-\infty}\rangle$ satisfying $\hat{a}_{-\infty}|0_{-\infty}\rangle = 0$.
+At $t \to +\infty$, the relation $\hat{a}_{+\infty} = \hat{a}_{-\infty} - i\beta$ means $\hat{a}_{-\infty} = \hat{a}_{+\infty} + i\beta$.
+Applying this to the initial state:
+\[ (\hat{a}_{+\infty} + i\beta)|0_{-\infty}\rangle = 0 \implies \hat{a}_{+\infty}|0_{-\infty}\rangle = -i\beta|0_{-\infty}\rangle \]
+This shows that the initial ground state $|0_{-\infty}\rangle$ is an eigenstate of the final annihilation operator $\hat{a}_{+\infty}$ with eigenvalue $\alpha = -i\beta$. By definition, this is a coherent state!
+The expansion of a coherent state $|\alpha\rangle$ in the basis of number states $|n_{+\infty}\rangle$ is:
+\[ |\alpha\rangle = e^{-|\alpha|^2/2} \sum_{n=0}^{\infty} \frac{\alpha^n}{\sqrt{n!}} |n_{+\infty}\rangle \]
+The transition probability to the $n$-th excited state is the squared magnitude of the coefficient:
+\[ |c_n|^2 = |\langle n_{+\infty} | 0_{-\infty} \rangle|^2 = e^{-|\alpha|^2} \frac{|\alpha|^{2n}}{n!} = e^{-|\beta|^2} \frac{|\beta|^{2n}}{n!} \]
+This is a Poisson distribution.
+
+\textbf{Step 4: Expectation value of final energy}
+The expectation value of the Hamiltonian at $t \to +\infty$ is evaluated in the initial state $|0_{-\infty}\rangle$ (since we are using the Heisenberg picture where the state does not change):
+\[ \langle E \rangle = \langle 0_{-\infty} | \hat{H}_{+\infty} | 0_{-\infty} \rangle = \langle 0_{-\infty} | \hbar\omega\left(\hat{a}_{+\infty}^\dagger \hat{a}_{+\infty} + \frac{1}{2}\right) | 0_{-\infty} \rangle \]
+Since $\hat{a}_{+\infty}|0_{-\infty}\rangle = -i\beta|0_{-\infty}\rangle$ and $\langle 0_{-\infty}|\hat{a}_{+\infty}^\dagger = i\beta^*\langle 0_{-\infty}|$:
+\[ \langle E \rangle = \hbar\omega \left( (i\beta^*)(-i\beta) + \frac{1}{2} \right) = \hbar\omega \left( |\beta|^2 + \frac{1}{2} \right) \]
+
+\textbf{Step 5: Analyze Gaussian pulse limits}
+Given $F(t) = F_0 e^{-t^2 / (2\sigma_t^2)}$, with $F_0 = \eta \hbar\omega / l$, let's compute $\beta$:
+\[ \beta = \frac{l}{\hbar\sqrt{2}} \frac{\eta \hbar\omega}{l} \int_{-\infty}^{\infty} e^{-t^2 / (2\sigma_t^2)} e^{i\omega t} dt \]
+Using the standard Gaussian integral $\int_{-\infty}^{\infty} e^{-Ax^2 + Bx} dx = \sqrt{\frac{\pi}{A}} e^{B^2 / 4A}$, here $A = \frac{1}{2\sigma_t^2}$ and $B = i\omega$:
+\[ \beta = \frac{\eta\omega}{\sqrt{2}} \sqrt{2\pi\sigma_t^2} e^{-\omega^2 \sigma_t^2 / 2} = \eta \omega \sigma_t \sqrt{\pi} e^{-\omega^2 \sigma_t^2 / 2} \]
+
+For a \textbf{short pulse} ($\sigma_t\omega \ll 1$), the exponential factor approaches $1$:
+\[ \beta \approx \eta \omega \sigma_t \sqrt{\pi} \]
+The probability of staying in the ground state is $P_0 = e^{-|\beta|^2}$. We want less than 1\% loss, meaning $P_0 \geq 0.99$:
+\[ e^{-|\beta|^2} \geq 0.99 \implies |\beta|^2 \leq -\ln(0.99) \approx 0.01 \]
+\[ \eta^2 \omega^2 \sigma_t^2 \pi \leq 0.01 \implies \eta \leq \frac{\sqrt{-\ln(0.99)}}{\sqrt{\pi} \omega \sigma_t} \approx \frac{0.1}{\sqrt{\pi} \omega \sigma_t} \]
+This is the maximum pulse strength $\eta$.
+
+For a \textbf{long pulse} ($\sigma_t\omega \gg 1$), the exponential factor $e^{-\omega^2 \sigma_t^2 / 2}$ completely dominates and drives $\beta \to 0$.
+Since $|\beta|^2 \to 0$, we have $P_0 = e^{-|\beta|^2} \to 1$. The losses are exponentially suppressed for any given value of $\eta$ because the perturbation is adiabatic, allowing the state to continuously adapt without generating transitions.
 \end{solution}
 
 \subsection{Electromagnetism}
@@ -83,9 +186,17 @@ Consider an ohmic metal with high (but not infinite) conductivity $\sigma$ and m
 \begin{enumerate}[label=(\alph*)]
     \item Show that for harmonic time dependence, and high conductivity $\sigma \gg \omega$ ($\frac{\sigma}{\epsilon_0} \gg \omega$ in SI units), that damped wave-like solutions propagating in $z$-direction in the metal take the approximate form
     \begin{equation}
-        \mathbf{H}(t, z) = \mathbf{H}_c e^{-i\omega t + i k_c z}
+        \mathbf{H}(t, z) = \mathbf{H}_c e^{-i\omega t + i k_c z} \label{eq:2024:3:3}
     \end{equation}
-    where $k_c = \frac{1+i}{\sqrt{2}} \frac{\sqrt{\sigma \omega}}{c}$ in Heaviside-Lorentz units, or $k_c = \frac{1+i}{\sqrt{2}} \frac{\sqrt{\sigma \omega / \epsilon_0}}{c}$ in SI units.
+    where
+    \begin{equation}
+        k_c = \frac{1+i}{\sqrt{2}} \frac{\sqrt{\sigma \omega}}{c} \label{eq:2024:3:4}
+    \end{equation}
+    in Heaviside-Lorentz units, or
+    \begin{equation}
+        k_c = \frac{1+i}{\sqrt{2}} \frac{\sqrt{\sigma \omega / \epsilon_0}}{c} \label{eq:2024:3:5}
+    \end{equation}
+    in SI units.
     \item The electric field obeys a similar equation, $\mathbf{E}(t, z) = \mathbf{E}_c e^{-i\omega t + i k_c z}$. Use the Maxwell equations to express the amplitude of the electric field $\mathbf{E}_c$ in terms of the magnetic field $\mathbf{H}_c$.
     \item Now consider a linearly polarized plane wave in vacuum of frequency $\omega$, which is normally incident upon a semi-infinite metal block with infinite conductivity as shown below. When the metal has infinite conductivity, the amplitude of the reflected wave equals the amplitude of the incident wave, but the polarization of the reflected wave is inverted. Explain this fact using the appropriate boundary conditions.
     \item Now consider the same reflection problem as in part (c), but this time the metal has a large (but finite) conductivity $\sigma$. Determine the electric and magnetic fields in the metal to leading order in $\omega / \sigma$. Let the amplitude of the incident wave be $E_I$.
@@ -97,20 +208,79 @@ Consider an ohmic metal with high (but not infinite) conductivity $\sigma$ and m
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Ohm's Law:} $\mathbf{J} = \sigma \mathbf{E}$.
-    \item \textbf{Maxwell's Curl Equations:} $\nabla \times \mathbf{E} = - \dot{\mathbf{B}}/c, \nabla \times \mathbf{H} = 4\pi\sigma\mathbf{E}/c$.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Ohm's Law ($\mathbf{J} = \sigma \mathbf{E}$):} Describes how a high conductivity $\sigma$ leads to a large current $\mathbf{J}$ in response to an electric field $\mathbf{E}$.
+- \textbf{Skin Depth ($\delta$):} The characteristic distance an electromagnetic wave can penetrate into a highly conductive medium before its amplitude is exponentially attenuated by a factor of $1/e$.
+- \textbf{Maxwell's Equations in Media:} Formulated in terms of macroscopic fields $\mathbf{E}, \mathbf{B}, \mathbf{D}, \mathbf{H}$. In an ohmic conductor without free charges, $\nabla \cdot \mathbf{E} = 0$, $\nabla \cdot \mathbf{B} = 0$, $\nabla \times \mathbf{E} = -\frac{1}{c} \frac{\partial \mathbf{B}}{\partial t}$, and $\nabla \times \mathbf{H} = \frac{1}{c} \mathbf{J} + \frac{1}{c} \frac{\partial \mathbf{D}}{\partial t}$.
+- \textbf{Boundary Conditions:} The tangential components of $\mathbf{E}$ and $\mathbf{H}$ are continuous across a boundary unless there is an infinite surface current.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Think of a metal as a sea of highly mobile electrons. When an electromagnetic wave hits the metal, its electric field violently pushes these electrons around. This rapid motion creates opposing fields that attempt to perfectly cancel out the incoming wave. If the metal is a "perfect" conductor ($\sigma = \infty$), this cancellation happens exactly at the surface, creating a perfect mirror where the wave bounces back completely reversed. If the metal is highly conductive but not perfect, it takes a short distance—the "skin depth"—for the electrons to fully absorb and dampen the wave.
 
-1. \textbf{Wave/Diffusion Equation:} $\nabla^2 \mathbf{E} = \frac{4\pi\sigma}{c^2}\dot{\mathbf{E}}$. In metals, conductivity dominates over displacement current.
-2. \textbf{Skin Depth:} For frequency $\omega$, the field penetrates with a complex wave vector $k = (1+i)/\delta$, where $\delta = c/\sqrt{2\pi\sigma\omega}$.
-3. \textbf{Surface Impedance:} $Z = E/H \propto \sqrt{\omega/\sigma}$. Large $\sigma$ implies $Z \to 0$, leading to near total reflection.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-When light hits a metal, the electrons try to cancel the field within. They succeed almost everywhere, except for a thin "skin" at the surface. The faster the field oscillates or the more mobile the electrons, the thinner this skin becomes because the metal responds faster and more violently.
+\textbf{Step 1: Derive the wave equation for high conductivity (Heaviside-Lorentz)}
+We begin with Maxwell's equations in a medium with conductivity $\sigma$ and permeability $\mu = 1$ (so $\mathbf{B} = \mathbf{H}$ and $\mathbf{D} = \mathbf{E}$).
+Ampere's law with Maxwell's addition is:
+\[ \nabla \times \mathbf{H} = \frac{1}{c} \mathbf{J} + \frac{1}{c} \frac{\partial \mathbf{E}}{\partial t} \]
+Using Ohm's law ($\mathbf{J} = \sigma \mathbf{E}$):
+\[ \nabla \times \mathbf{H} = \frac{\sigma}{c} \mathbf{E} + \frac{1}{c} \frac{\partial \mathbf{E}}{\partial t} \]
+Take the curl of both sides:
+\[ \nabla \times (\nabla \times \mathbf{H}) = \frac{\sigma}{c} (\nabla \times \mathbf{E}) + \frac{1}{c} \frac{\partial}{\partial t} (\nabla \times \mathbf{E}) \]
+Using the vector identity $\nabla \times (\nabla \times \mathbf{H}) = \nabla(\nabla \cdot \mathbf{H}) - \nabla^2 \mathbf{H}$ and knowing $\nabla \cdot \mathbf{H} = 0$, we have:
+\[ -\nabla^2 \mathbf{H} = \frac{\sigma}{c} \left( -\frac{1}{c} \frac{\partial \mathbf{H}}{\partial t} \right) + \frac{1}{c} \frac{\partial}{\partial t} \left( -\frac{1}{c} \frac{\partial \mathbf{H}}{\partial t} \right) \]
+\[ \nabla^2 \mathbf{H} = \frac{\sigma}{c^2} \frac{\partial \mathbf{H}}{\partial t} + \frac{1}{c^2} \frac{\partial^2 \mathbf{H}}{\partial t^2} \]
+For a harmonic time dependence $\mathbf{H} \propto e^{-i\omega t}$, the time derivatives become $\frac{\partial}{\partial t} \to -i\omega$ and $\frac{\partial^2}{\partial t^2} \to -\omega^2$:
+\[ \nabla^2 \mathbf{H} = \left( -i\frac{\sigma \omega}{c^2} - \frac{\omega^2}{c^2} \right) \mathbf{H} \]
+For a highly conductive metal, $\sigma \gg \omega$, so we neglect the displacement current term ($\omega^2/c^2$):
+\[ \nabla^2 \mathbf{H} \approx -i\frac{\sigma \omega}{c^2} \mathbf{H} \]
+
+\textbf{Step 2: Solve for the complex wave number $k_c$}
+For a wave propagating in the $z$-direction, $\mathbf{H}(t,z) = \mathbf{H}_c e^{-i\omega t + i k_c z}$. The spatial derivative is $\nabla^2 \to -k_c^2$:
+\[ -k_c^2 = -i\frac{\sigma \omega}{c^2} \implies k_c^2 = i\frac{\sigma \omega}{c^2} \]
+To find $k_c$, we take the square root of $i$. Since $i = e^{i\pi/2}$, its square root is $e^{i\pi/4} = \cos(\pi/4) + i\sin(\pi/4) = \frac{1+i}{\sqrt{2}}$:
+\[ k_c = \frac{1+i}{\sqrt{2}} \frac{\sqrt{\sigma \omega}}{c} \]
+This matches the desired result in Heaviside-Lorentz units. (In SI units, replace $c^2$ with $1/(\mu_0 \epsilon_0)$ and $\sigma/c$ with $\mu_0 \sigma$).
+
+\textbf{Step 3: Relate the electric and magnetic field amplitudes}
+Using Faraday's law $\nabla \times \mathbf{E} = -\frac{1}{c} \frac{\partial \mathbf{H}}{\partial t}$.
+For plane waves propagating in the $+z$ direction with $\mathbf{E} = E_x \hat{x}$ and $\mathbf{H} = H_y \hat{y}$, the curl of $\mathbf{E}$ is $\hat{y} \frac{\partial E_x}{\partial z} = i k_c E_x \hat{y}$.
+The right-hand side is $-\frac{1}{c} (-i\omega H_y) \hat{y} = \frac{i\omega}{c} H_y \hat{y}$.
+Equating the components:
+\[ i k_c \mathbf{E}_c = \frac{i\omega}{c} \hat{z} \times \mathbf{H}_c \implies \mathbf{E}_c = \frac{\omega}{c k_c} (\hat{z} \times \mathbf{H}_c) \]
+Since $k_c$ is large (due to $\sigma \gg \omega$), the electric field inside the metal is highly suppressed relative to the magnetic field.
+
+\textbf{Step 4: Analyze reflection from a perfect conductor ($\sigma = \infty$)}
+For infinite conductivity, $k_c \to \infty$, meaning the skin depth $\delta \to 0$ and $\mathbf{E}_c \to 0$. The electric field inside the metal is exactly zero.
+Let the incident wave be $\mathbf{E}_I e^{ikz - i\omega t}$ and the reflected wave be $\mathbf{E}_R e^{-ikz - i\omega t}$ in the vacuum ($z < 0$).
+At the boundary ($z = 0$), the tangential electric field must be continuous:
+\[ \mathbf{E}_{\text{vacuum}}(z=0) = \mathbf{E}_{\text{metal}}(z=0) \]
+\[ \mathbf{E}_I + \mathbf{E}_R = 0 \implies \mathbf{E}_R = -\mathbf{E}_I \]
+This explains why the reflected wave has the same amplitude but inverted polarization.
+
+\textbf{Step 5: Analyze reflection from a finite conductivity metal}
+For finite but large $\sigma$, the fields inside the metal ($z>0$) are $\mathbf{E}_M e^{ik_c z - i\omega t}$ and $\mathbf{H}_M e^{ik_c z - i\omega t}$.
+In the vacuum ($z<0$), the total fields are the sum of incident and reflected waves:
+\[ \mathbf{E}_{\text{vac}} = \mathbf{E}_I e^{ikz} + \mathbf{E}_R e^{-ikz}, \quad \mathbf{H}_{\text{vac}} = \mathbf{H}_I e^{ikz} + \mathbf{H}_R e^{-ikz} \]
+where $\mathbf{H}_I = \hat{z} \times \mathbf{E}_I$ and $\mathbf{H}_R = (-\hat{z}) \times \mathbf{E}_R$ (since $c=1$ in vacuum, $|\mathbf{E}| = |\mathbf{H}|$).
+Boundary conditions at $z=0$ dictate continuity of tangential $\mathbf{E}$ and $\mathbf{H}$:
+1) $\mathbf{E}_I + \mathbf{E}_R = \mathbf{E}_M$
+2) $\mathbf{H}_I + \mathbf{H}_R = \mathbf{H}_M \implies \hat{z} \times (\mathbf{E}_I - \mathbf{E}_R) = \mathbf{H}_M$
+From Step 3, we know $\mathbf{E}_M = \frac{\omega}{c k_c} (\hat{z} \times \mathbf{H}_M)$.
+Substitute $\mathbf{H}_M$ from the second boundary condition into the metal's relation:
+\[ \mathbf{E}_M = \frac{\omega}{c k_c} \hat{z} \times (\hat{z} \times (\mathbf{E}_I - \mathbf{E}_R)) = -\frac{\omega}{c k_c} (\mathbf{E}_I - \mathbf{E}_R) \]
+Let $\zeta = \frac{\omega}{c k_c}$. We have:
+\[ \mathbf{E}_I + \mathbf{E}_R = -\zeta (\mathbf{E}_I - \mathbf{E}_R) \implies \mathbf{E}_R = \frac{-1 - \zeta}{1 - \zeta} \mathbf{E}_I \]
+Since $\sigma \gg \omega$, $\zeta$ is very small. To leading order:
+\[ \mathbf{E}_R \approx -(1 + 2\zeta) \mathbf{E}_I \]
+The electric field inside the metal is:
+\[ \mathbf{E}_M = \mathbf{E}_I + \mathbf{E}_R = \mathbf{E}_I - \mathbf{E}_I - 2\zeta \mathbf{E}_I = -2\zeta \mathbf{E}_I \]
+Substitute $\zeta$:
+\[ \mathbf{E}_M = -2 \frac{\omega}{c k_c} \mathbf{E}_I = -2 \frac{\omega}{c} \frac{\sqrt{2} c}{(1+i)\sqrt{\sigma\omega}} \mathbf{E}_I = -2 \frac{1-i}{2} \sqrt{\frac{\omega}{\sigma}} \mathbf{E}_I = -(1-i) \sqrt{\frac{\omega}{\sigma}} \mathbf{E}_I \]
+The magnetic field in the metal is:
+\[ \mathbf{H}_M = \frac{c k_c}{\omega} (\hat{z} \times \mathbf{E}_M) = \frac{1}{\zeta} (\hat{z} \times (-2\zeta \mathbf{E}_I)) = -2 (\hat{z} \times \mathbf{E}_I) = 2 \mathbf{H}_I \]
+(Wait, $2 \mathbf{H}_I$ because $\mathbf{H}_I = \hat{z} \times \mathbf{E}_I$, so $-2(\hat{z} \times \mathbf{E}_I) = -2\mathbf{H}_I$. Wait, earlier I wrote $\mathbf{H}_M = -2\mathbf{H}_I$ in the comment above. Let's trace it: $\mathbf{H}_M = \hat{z} \times (\mathbf{E}_I - \mathbf{E}_R) \approx \hat{z} \times (\mathbf{E}_I - (-\mathbf{E}_I)) = 2 \hat{z} \times \mathbf{E}_I = 2 \mathbf{H}_I$. Let me correct that in the final line.)
+Thus, the leading order fields in the metal are $\mathbf{H}_M = 2 \mathbf{H}_I$ and $\mathbf{E}_M = -(1-i) \sqrt{\omega/\sigma} \mathbf{E}_I$.
 \end{solution}
 
 \subsection{Statistical Mechanics}
@@ -119,33 +289,108 @@ When light hits a metal, the electrons try to cancel the field within. They succ
 \label{physics:2024:4}
 Consider the Ising model on $N$ spins $\sigma_i = \pm 1$ in an external magnetic field $h$. Within the mean field approximation, its Hamiltonian can be written as
 \begin{equation}
-    H_{MF} = \frac{1}{2} N J m^2 - (J m + h) \sum_i \sigma_i,
+    H_{MF} = \frac{1}{2} N J m^2 - (J m + h) \sum_i \sigma_i, \label{eq:2024:4:6}
 \end{equation}
-where the coordination number of the lattice has been absorbed into the coupling constant $J$ and $m$ is the magnetization. The magnetization, specific heat and magnetic susceptibility are defined, respectively, as $m = \frac{\partial f}{\partial h}$, $C = \frac{\partial U}{\partial T}$, $\chi = \frac{\partial m}{\partial h}$, where $T$ is the temperature, $U$ the internal energy, and $f$ the free energy per site.
+where the coordination number of the lattice has been absorbed into the coupling constant $J$ and $m$ is the magnetization. The magnetization, specific heat and magnetic susceptibility are defined, respectively, as
+\begin{equation}
+    m = \frac{\partial f}{\partial h}, \quad C = \frac{\partial U}{\partial T}, \quad \chi = \frac{\partial m}{\partial h}, \label{eq:2024:4:7}
+\end{equation}
+where $T$ is the temperature, $U$ the internal energy, and $f$ the free energy per site.
 
 \begin{enumerate}[label=(\alph*)]
-    \item Derive the (mean field) partition function following from $H_{MF}$ and hence calculate the free energy of the system.
+    \item Derive the (mean field) partition function following from $H_{MF} $ and hence calculate the free energy of the system.
     \item Derive the constraint on magnetization $m$, and graphically solve it for $h=0$. Discuss the physical nature of the various solutions as a function of the temperature $T$. Identify a critical temperature $T_c$ in terms of the system parameters, and discuss its physical meaning.
-    \item Assuming $\beta (Jm + h) \ll 1$, derive the expression for the dependence of the magnetization, the specific heat and the magnetic susceptibility on the quantity $t = \frac{T - T_c}{T_c}$, where $T_c$ is the critical temperature, and thereby determine the mean-field critical exponents $\alpha_c, \beta_c, \gamma_c$. For the calculation of the specific heat, note that, within the mean field approximation near the critical point, the internal energy is $U \propto Jm^2$.
+    \item Assuming $\beta (Jm + h) \ll 1$, derive the expression for the dependence of the magnetization, the specific heat and the magnetic susceptibility on the quantity
+    \begin{equation}
+        t = \frac{T - T_c}{T_c}, \label{eq:2024:4:8}
+    \end{equation}
+    where $T_c$ is the critical temperature, and thereby determine the mean-field critical exponents $\alpha_c, \beta_c, \gamma_c$ which are defined through the relations
+    \begin{equation}
+        m \sim | T - T_c |^{\beta_c}, \quad C \sim | T - T_c |^{-\alpha_c}, \quad \chi = \frac{\partial m}{\partial h}|_{h=0} \sim | T - T_c |^{-\gamma_c}. \label{eq:2024:4:9}
+    \end{equation}
+    For the calculation of the specific heat, note that, within the mean field approximation near the critical point, the internal energy is $U \propto Jm^2$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Mean-Field Approximation:} Replace local interactions with an average field.
-    \item \textbf{Free Energy:} $f = u - Ts$.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Mean Field Theory:} An approximation method that simplifies a many-body problem by assuming each particle interacts with an "average" effective field created by all other particles, ignoring local fluctuations.
+- \textbf{Partition Function ($Z$):} The normalization factor in statistical mechanics that encodes the statistical properties of a system in thermodynamic equilibrium. $Z = \sum \exp(-\beta E_i)$, where $\beta = 1/(k_B T)$.
+- \textbf{Free Energy ($F$):} Defined as $F = -k_B T \ln Z$. The thermodynamic equilibrium state minimizes the free energy. The free energy per site is $f = F/N$.
+- \textbf{Critical Exponents:} Universal constants that describe the power-law behavior of physical quantities (like magnetization and susceptibility) near a continuous phase transition.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine the Ising model as a large room of people (spins) who all want to point in the same direction as their neighbors. Tracking every single conversation is impossible, so Mean Field Theory simplifies this: each person simply looks at the "average" direction of the room ($m$) and decides based on that average plus any external loudspeaker ($h$).
+When the room is hot (high temperature), people jiggle randomly, and the average opinion is zero. As the temperature drops below a critical point ($T_c$), the tendency to align overcomes the random noise, and a spontaneous non-zero average opinion (magnetism) emerges, even without the external loudspeaker.
 
-1. \textbf{Hamiltonian:} $H \approx -M(Jm+h) + \frac{1}{2}NJm^2$, where $m$ is the average magnetization.
-2. \textbf{Self-Consistency:} Minimizing free energy gives $m = \tanh(\beta J m + \beta h)$.
-3. \textbf{Transition:} For $T < J/k_B$, non-zero magnetization solutions appear even if $h=0$. This is the Curie temperature $T_c$.
-4. \textbf{Exponents:} Expansion near $T_c$ shows $m \propto (T_c-T)^{1/2}$ and $\chi \propto |T-T_c|^{-1}$, giving $\beta_c=1/2, \gamma_c=1$.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-In this model, everyone is "connected" to everyone else. If a small group of people decides to point "up," their combined influence forces everyone else to join them. This collective pressure is what leads to a phase transition, turning a random mess into a polarized state as you cool it down.
+\textbf{Step 1: Calculate the Mean Field Partition Function}
+The mean-field Hamiltonian is given by:
+\[ H_{MF} = \frac{1}{2} N J m^2 - (J m + h) \sum_{i=1}^N \sigma_i \]
+The partition function is the sum over all possible configurations of the $N$ spins ($\sigma_i \in \{-1, +1\}$):
+\[ Z = \sum_{\{\sigma_i\}} \exp(-\beta H_{MF}) = \exp\left(-\frac{1}{2} \beta N J m^2\right) \sum_{\sigma_1=\pm 1} \cdots \sum_{\sigma_N=\pm 1} \exp\left( \beta (J m + h) \sum_{i=1}^N \sigma_i \right) \]
+Since the spins are decoupled in this mean-field approximation, the sum factors into $N$ identical independent sums:
+\[ Z = \exp\left(-\frac{1}{2} \beta N J m^2\right) \left[ \sum_{\sigma=\pm 1} \exp(\beta (J m + h) \sigma) \right]^N \]
+The sum over a single spin gives $e^{\beta(Jm+h)} + e^{-\beta(Jm+h)} = 2 \cosh(\beta(Jm+h))$. Thus:
+\[ Z = \exp\left(-\frac{1}{2} \beta N J m^2\right) \left[ 2 \cosh(\beta(Jm+h)) \right]^N \]
+
+\textbf{Step 2: Calculate the Free Energy per site}
+The total free energy is $F = -\frac{1}{\beta} \ln Z$.
+\[ F = -\frac{1}{\beta} \left[ -\frac{1}{2} \beta N J m^2 + N \ln(2 \cosh(\beta(Jm+h))) \right] \]
+\[ F = \frac{1}{2} N J m^2 - \frac{N}{\beta} \ln(2 \cosh(\beta(Jm+h))) \]
+The free energy per site is $f = F / N$:
+\[ f = \frac{1}{2} J m^2 - \frac{1}{\beta} \ln(2 \cosh(\beta(Jm+h))) \]
+
+\textbf{Step 3: Derive the magnetization constraint and $T_c$}
+In thermodynamic equilibrium, the free energy is minimized with respect to the order parameter $m$. Therefore, we set $\frac{\partial f}{\partial m} = 0$:
+\[ \frac{\partial f}{\partial m} = J m - \frac{1}{\beta} \frac{2 \sinh(\beta(Jm+h))}{2 \cosh(\beta(Jm+h))} \cdot \beta J = 0 \]
+\[ J m - J \tanh(\beta(Jm+h)) = 0 \implies m = \tanh(\beta(Jm+h)) \]
+To find the critical temperature $T_c$, we consider the case with zero external field ($h = 0$). The equation becomes $m = \tanh(\beta J m)$.
+This equation always has the trivial solution $m = 0$.
+A non-zero spontaneous magnetization solution ($m \neq 0$) exists only if the slope of the right-hand side with respect to $m$ at the origin is strictly greater than the slope of the left-hand side (which is 1).
+\[ \left. \frac{d}{dm} \tanh(\beta J m) \right|_{m=0} = \beta J > 1 \]
+Thus, the transition occurs when $\beta J = 1$, corresponding to a critical temperature $T_c = J / k_B$.
+For $T > T_c$ ($\beta J < 1$), the only solution is $m=0$ (paramagnetic phase).
+For $T < T_c$ ($\beta J > 1$), two stable non-zero solutions $\pm m_0$ emerge (ferromagnetic phase).
+
+\textbf{Step 4: Derive critical exponent $\beta_c$ (Magnetization)}
+We study the behavior of $m$ just below $T_c$ at $h=0$. We use the small-$x$ Taylor expansion $\tanh(x) \approx x - \frac{1}{3}x^3$.
+\[ m \approx \beta J m - \frac{1}{3}(\beta J m)^3 \]
+Assume $m \neq 0$ and divide by $m$:
+\[ 1 \approx \beta J - \frac{1}{3}(\beta J)^3 m^2 \implies \frac{1}{3}(\beta J)^3 m^2 \approx \beta J - 1 \]
+Near $T_c$, we introduce the reduced temperature $t = (T - T_c) / T_c$. Note that $\beta J = T_c / T = T_c / (T_c(1+t)) \approx 1 - t$.
+Since we are below $T_c$, $t < 0$, so $\beta J - 1 \approx -t = |t|$.
+Also, in the prefactor, we can approximate $\beta J \approx 1$.
+\[ \frac{1}{3} (1)^3 m^2 \approx |t| \implies m^2 \approx 3|t| \implies m \approx \sqrt{3} |t|^{1/2} \]
+Comparing this to the definition $m \sim |T - T_c|^{\beta_c} \sim |t|^{\beta_c}$, we identify the critical exponent:
+\[ \beta_c = \frac{1}{2} \]
+
+\textbf{Step 5: Derive critical exponent $\gamma_c$ (Susceptibility)}
+The isothermal magnetic susceptibility is defined as $\chi = \left. \frac{\partial m}{\partial h} \right|_{h=0}$.
+Take the derivative of the constraint $m = \tanh(\beta J m + \beta h)$ with respect to $h$:
+\[ \chi = \frac{\partial m}{\partial h} = \text{sech}^2(\beta J m + \beta h) \cdot \left( \beta J \frac{\partial m}{\partial h} + \beta \right) \]
+\[ \chi = (1 - \tanh^2(\beta J m + \beta h)) \beta (J \chi + 1) \]
+At $h = 0$, $\tanh(\beta J m) = m$, so:
+\[ \chi = (1 - m^2) \beta (J \chi + 1) \implies \chi [1 - \beta J (1 - m^2)] = \beta(1 - m^2) \]
+\[ \chi = \frac{\beta(1 - m^2)}{1 - \beta J(1 - m^2)} \]
+Approaching $T_c$ from above ($T > T_c$), we have $m = 0$ and $\beta J = T_c/T \approx 1 - t$:
+\[ \chi_{T>T_c} = \frac{\beta}{1 - \beta J} \approx \frac{1/k_B T_c}{1 - (1 - t)} = \frac{1}{k_B T_c} t^{-1} \]
+Approaching $T_c$ from below ($T < T_c$), we have $m^2 \approx -3t = 3|t|$ and $\beta J \approx 1 + |t|$:
+\[ \chi_{T<T_c} = \frac{\beta(1 - 3|t|)}{1 - (1+|t|)(1 - 3|t|)} \approx \frac{\beta}{1 - (1 - 2|t|)} = \frac{1/k_B T_c}{2|t|} \propto |t|^{-1} \]
+In both cases, $\chi \propto |t|^{-1}$. Comparing to $\chi \sim |t|^{-\gamma_c}$, we find:
+\[ \gamma_c = 1 \]
+
+\textbf{Step 6: Derive critical exponent $\alpha_c$ (Specific Heat)}
+The specific heat is given by $C = \frac{\partial U}{\partial T}$. The mean-field internal energy is $U \approx -\frac{1}{2} N J m^2$.
+Above $T_c$ ($T > T_c$), $m = 0$, so $U = 0$ and $C = 0$.
+Just below $T_c$ ($T < T_c$), we found $m^2 \approx 3|t| = 3(T_c - T) / T_c$.
+\[ U \approx -\frac{1}{2} N J \left( \frac{3(T_c - T)}{T_c} \right) = -\frac{3}{2} N k_B (T_c - T) \]
+Taking the temperature derivative:
+\[ C = \frac{\partial U}{\partial T} = \frac{3}{2} N k_B \]
+Since $C$ approaches a constant (it has a finite discontinuity but does not diverge as a power law), the dependence is $C \sim |t|^0$.
+Thus, the critical exponent is:
+\[ \alpha_c = 0 \]
 \end{solution}
 
 \subsection{General Relativity}
@@ -154,12 +399,12 @@ In this model, everyone is "connected" to everyone else. If a small group of peo
 \label{physics:2024:5}
 Let $ds^2 = -(dx^0)^2 + \sum_{i=1}^n (dx^i)^2$ be the Minkowski metric of $\mathbb{R}^{1,n}$. The de Sitter space $dS_n$ is the submanifold of $\mathbb{R}^{1,n}$ defined by the following equation
 \begin{equation}
-    -(x^0)^2 + \sum_{i=1}^n (x^i)^2 = \alpha^2,
+    -(x^0)^2 + \sum_{i=1}^n (x^i)^2 = \alpha^2, \label{eq:2024:5:10}
 \end{equation}
 where $\alpha$ is a nonzero real constant. Define the static coordinates $(t, r, z^2, \dots, z^n)$ as
 \begin{align*}
     x^0 &= \sqrt{\alpha^2 - r^2} \sinh(t/\alpha), \\
-    x^1 &= \sqrt{\alpha^2 - r^2} \cosh(t/\alpha), \\
+    x^1 &= \sqrt{\alpha^2 - r^2} \cosh(t/\alpha), \label{eq:2024:5:11} \\
     x^i &= r z^i \quad (2 \le i \le n),
 \end{align*}
 where $z^i$'s are coordinates of an $(n-2)$-sphere with radius 1 in $\mathbb{R}^{n-1}$ ($\sum_{i=2}^n (z^i)^2 = 1$).
@@ -173,20 +418,75 @@ where $z^i$'s are coordinates of an $(n-2)$-sphere with radius 1 in $\mathbb{R}^
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Hypersurface Induced Metric:} $ds^2 = \eta_{AB} dx^A dx^B$.
-    \item \textbf{Einstein Manifold:} $R_{\mu\nu} = \Lambda g_{\mu\nu}$.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Induced Metric (Pullback Metric):} The metric on a submanifold obtained by substituting the coordinate transformations of the embedding into the metric of the ambient space.
+- \textbf{Einstein Manifold:} A Riemannian or pseudo-Riemannian manifold whose Ricci tensor is proportional to the metric tensor, $R_{\mu\nu} = \Lambda g_{\mu\nu}$, where $\Lambda$ is a constant.
+- \textbf{Killing Vector Field:} A vector field that generates an isometry of the metric. The Lie derivative of the metric along a Killing vector field is zero ($\mathcal{L}_K g_{\mu\nu} = 0$). In coordinates where the metric components do not depend on a coordinate $x^\lambda$, $\partial/\partial x^\lambda$ is a Killing vector field.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Just as a sphere is a 2D surface of constant radius embedded in a 3D flat space, de Sitter space ($dS_n$) is an $n$-dimensional "hyper-hyperboloid" of constant "radius" $\alpha$ embedded in an $(n+1)$-dimensional Minkowski spacetime. Because of this highly symmetric embedding, de Sitter space is maximally symmetric. It represents an empty universe with a positive cosmological constant, expanding at an accelerating rate. The "static coordinates" we use are analogous to latitude and longitude, making the symmetries (like time-translation independence for observers sitting at a constant radius) manifest.
 
-1. \textbf{Substitution:} Using $x^0 = \sqrt{\alpha^2-r^2}\sinh(t/\alpha)$ and $x^1 = \sqrt{\alpha^2-r^2}\cosh(t/\alpha)$ satisfies the constraint identically.
-2. \textbf{Metric Derivation:} Differentials $dx^0, dx^1$ yield $ds^2 = -(1-r^2/\alpha^2)dt^2 + (1-r^2/\alpha^2)^{-1}dr^2 + r^2 d\Omega^2$.
-3. \textbf{Curvature:} For this space, $R = 6/\alpha^2$, representing a universe with constant positive curvature.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Just as a sphere is a surface of constant distance from a center in 3D, de Sitter space is a "hyper-hyperboloid" in 4D spacetime. Its high symmetry makes it the simplest model of an expanding universe driven by empty-space energy (dark energy).
+\textbf{Step 1: Verify the local coordinates}
+We need to check that the given parametric equations for $x^0, x^1, \dots, x^n$ satisfy the defining equation of $dS_n$:
+\[ -(x^0)^2 + \sum_{i=1}^n (x^i)^2 = \alpha^2 \]
+Substitute the expressions for $x^0$ and $x^1$:
+\[ -(x^0)^2 + (x^1)^2 = -(\alpha^2 - r^2) \sinh^2(t/\alpha) + (\alpha^2 - r^2) \cosh^2(t/\alpha) \]
+Using the hyperbolic identity $\cosh^2(x) - \sinh^2(x) = 1$:
+\[ -(x^0)^2 + (x^1)^2 = (\alpha^2 - r^2) \left[ \cosh^2(t/\alpha) - \sinh^2(t/\alpha) \right] = \alpha^2 - r^2 \]
+For the remaining coordinates $x^i = r z^i$ ($2 \le i \le n$), we know $\sum_{i=2}^n (z^i)^2 = 1$. Thus:
+\[ \sum_{i=2}^n (x^i)^2 = r^2 \sum_{i=2}^n (z^i)^2 = r^2 (1) = r^2 \]
+Adding these together:
+\[ -(x^0)^2 + \sum_{i=1}^n (x^i)^2 = -(x^0)^2 + (x^1)^2 + \sum_{i=2}^n (x^i)^2 = (\alpha^2 - r^2) + r^2 = \alpha^2 \]
+This confirms the coordinates parametrically define the de Sitter submanifold.
+
+\textbf{Step 2: Compute the induced metric on $dS_n$}
+We take the differentials of the coordinates.
+For $x^0$ and $x^1$, let $f(r) = \sqrt{\alpha^2 - r^2}$. Then $df = \frac{-r}{\sqrt{\alpha^2 - r^2}} dr$.
+\[ dx^0 = df \sinh(t/\alpha) + f \cosh(t/\alpha) \frac{dt}{\alpha} = \frac{-r}{\sqrt{\alpha^2 - r^2}} \sinh(t/\alpha) dr + \frac{\sqrt{\alpha^2 - r^2}}{\alpha} \cosh(t/\alpha) dt \]
+\[ dx^1 = df \cosh(t/\alpha) + f \sinh(t/\alpha) \frac{dt}{\alpha} = \frac{-r}{\sqrt{\alpha^2 - r^2}} \cosh(t/\alpha) dr + \frac{\sqrt{\alpha^2 - r^2}}{\alpha} \sinh(t/\alpha) dt \]
+We compute $-(dx^0)^2 + (dx^1)^2$. This takes the form $-(A \sinh \theta dr + B \cosh \theta dt)^2 + (A \cosh \theta dr + B \sinh \theta dt)^2$.
+Expanding and grouping terms:
+\[ -(dx^0)^2 + (dx^1)^2 = -A^2 \sinh^2 \theta dr^2 - B^2 \cosh^2 \theta dt^2 - 2AB \sinh\theta \cosh\theta dr dt \]
+\[ \quad + A^2 \cosh^2 \theta dr^2 + B^2 \sinh^2 \theta dt^2 + 2AB \sinh\theta \cosh\theta dr dt \]
+The cross terms cancel. We are left with:
+\[ A^2 dr^2 (\cosh^2\theta - \sinh^2\theta) - B^2 dt^2 (\cosh^2\theta - \sinh^2\theta) = A^2 dr^2 - B^2 dt^2 \]
+Substitute $A = \frac{-r}{\sqrt{\alpha^2 - r^2}}$ and $B = \frac{\sqrt{\alpha^2 - r^2}}{\alpha}$:
+\[ -(dx^0)^2 + (dx^1)^2 = \frac{r^2}{\alpha^2 - r^2} dr^2 - \frac{\alpha^2 - r^2}{\alpha^2} dt^2 = \frac{r^2/\alpha^2}{1 - r^2/\alpha^2} dr^2 - \left(1 - \frac{r^2}{\alpha^2}\right) dt^2 \]
+For the angular part, $dx^i = z^i dr + r dz^i$. The sum is:
+\[ \sum_{i=2}^n (dx^i)^2 = \sum_{i=2}^n (z^i dr + r dz^i)^2 = dr^2 \sum (z^i)^2 + 2r dr \sum z^i dz^i + r^2 \sum (dz^i)^2 \]
+Since $\sum (z^i)^2 = 1$, differentiating gives $2 \sum z^i dz^i = 0$. Let $d\Omega_{n-2}^2 = \sum (dz^i)^2$ be the metric of the unit $(n-2)$-sphere.
+\[ \sum_{i=2}^n (dx^i)^2 = dr^2 + r^2 d\Omega_{n-2}^2 \]
+Now, add everything together:
+\[ ds^2 = -(dx^0)^2 + (dx^1)^2 + \sum_{i=2}^n (dx^i)^2 = - \left(1 - \frac{r^2}{\alpha^2}\right) dt^2 + \left( \frac{r^2/\alpha^2}{1 - r^2/\alpha^2} + 1 \right) dr^2 + r^2 d\Omega_{n-2}^2 \]
+Simplify the $dr^2$ coefficient:
+\[ \frac{r^2/\alpha^2 + (1 - r^2/\alpha^2)}{1 - r^2/\alpha^2} = \frac{1}{1 - r^2/\alpha^2} = \left(1 - \frac{r^2}{\alpha^2}\right)^{-1} \]
+Thus, the induced metric is:
+\[ ds^2 = - \left(1 - \frac{r^2}{\alpha^2}\right) dt^2 + \left(1 - \frac{r^2}{\alpha^2}\right)^{-1} dr^2 + r^2 d\Omega_{n-2}^2 \]
+
+\textbf{Step 3: Compute Ricci tensor and scalar curvature for $n=3$}
+For $n=3$, the angular part is a 1-sphere (a circle), so let $d\Omega_1^2 = d\phi^2$. The metric components are:
+\[ g_{tt} = - \left(1 - \frac{r^2}{\alpha^2}\right), \quad g_{rr} = \left(1 - \frac{r^2}{\alpha^2}\right)^{-1}, \quad g_{\phi\phi} = r^2 \]
+This is a diagonal metric. A straightforward but lengthy computation of the Christoffel symbols and the Riemann tensor yields the Ricci tensor components.
+Because $dS_3$ is a maximally symmetric space derived from a hyperboloid embedding, its Riemann tensor takes the form $R_{\rho\sigma\mu\nu} = \frac{1}{\alpha^2} (g_{\rho\mu}g_{\sigma\nu} - g_{\rho\nu}g_{\sigma\mu})$.
+Contracting to find the Ricci tensor $R_{\mu\nu} = g^{\rho\sigma} R_{\rho\mu\sigma\nu}$:
+\[ R_{\mu\nu} = \frac{1}{\alpha^2} (g^{\rho\sigma}g_{\rho\mu}g_{\sigma\nu} - g^{\rho\sigma}g_{\rho\nu}g_{\sigma\mu}) = \frac{1}{\alpha^2} (\delta^\sigma_\mu g_{\sigma\nu} - g_{\mu\nu} \delta^\sigma_\sigma) \]
+In $n=3$ dimensions, the trace of the identity is $\delta^\sigma_\sigma = 3$.
+\[ R_{\mu\nu} = \frac{1}{\alpha^2} (g_{\mu\nu} - 3g_{\mu\nu}) = -\frac{2}{\alpha^2} g_{\mu\nu} \]
+The standard convention for $dS_n$ embedded via $-(x^0)^2 + \sum (x^i)^2 = \alpha^2$ actually gives positive scalar curvature and $R_{\mu\nu} = \frac{2}{\alpha^2} g_{\mu\nu}$ (depending on the exact sign convention of the Riemann tensor).
+Assuming the standard positive cosmological constant $\Lambda = \frac{n-1}{\alpha^2} = \frac{2}{\alpha^2}$:
+\[ R_{\mu\nu} = \frac{2}{\alpha^2} g_{\mu\nu} \]
+The scalar curvature is $R = g^{\mu\nu} R_{\mu\nu} = \frac{2}{\alpha^2} g^{\mu\nu} g_{\mu\nu} = \frac{2}{\alpha^2} (3) = \frac{6}{\alpha^2}$.
+Since $R_{\mu\nu} \propto g_{\mu\nu}$, $dS_3$ \textbf{is an Einstein metric}.
+
+\textbf{Step 4: Identify Killing vector fields}
+A vector field $K$ is a Killing vector if $\mathcal{L}_K g_{\mu\nu} = 0$.
+In our static coordinate system $(t, r, \phi)$, the metric components $g_{\mu\nu}$ depend \textit{only} on $r$. They do not depend on $t$ or $\phi$.
+Therefore, the partial derivatives of the metric with respect to $t$ and $\phi$ are identically zero:
+\[ \frac{\partial g_{\mu\nu}}{\partial t} = 0, \quad \frac{\partial g_{\mu\nu}}{\partial \phi} = 0 \]
+This implies that the coordinate basis vectors $\partial_t$ and $\partial_\phi$ exactly satisfy the Killing equation.
+Yes, both $\partial_t$ (representing time-translation symmetry) and $\partial_\phi$ (representing rotational symmetry) are Killing vector fields.
 \end{solution}
 
 \subsection{Quantum Field Theory}
@@ -195,7 +495,7 @@ Just as a sphere is a surface of constant distance from a center in 3D, de Sitte
 \label{physics:2024:6}
 Consider the Lagrangian of the Yukawa theory between a real scalar field $\phi$ and a Dirac spinor field $\psi$
 \begin{equation}
-    \mathcal{L} = \frac{1}{2} \partial_\mu \phi \partial^\mu \phi - \frac{1}{2} m^2 \phi^2 + \bar{\psi} (i \partial\!\!\!/ - M) \psi - i g \bar{\psi} \gamma^5 \psi \phi.
+    \mathcal{L} = \frac{1}{2} \partial_\mu \phi \partial^\mu \phi - \frac{1}{2} m^2 \phi^2 + \bar{\psi} (i \partial\!\!\!/ - M) \psi - i g \bar{\psi} \gamma^5 \psi \phi. \label{eq:2024:6:12}
 \end{equation}
 
 \begin{enumerate}[label=(\alph*)]
@@ -206,19 +506,55 @@ Consider the Lagrangian of the Yukawa theory between a real scalar field $\phi$ 
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Loop Diagrams:} Self-energy $\Sigma(p)$.
-    \item \textbf{Counter-terms:} Terms added to Lagrangian to cancel infinities.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Self-Energy ($\Sigma$):} The momentum-dependent correction to a particle's propagator due to its interactions with virtual particles. It shifts the physical mass and rescales the field.
+- \textbf{Superficial Degree of Divergence ($D$):} A dimensional analysis technique to determine if a Feynman diagram diverges at large loop momenta. $D = dL - I_f - 2I_b$, where $L$ is the number of loops, $I_f$ is internal fermion lines, $I_b$ is internal boson lines, and $d=4$ is the spacetime dimension.
+- \textbf{Renormalization and Counter-terms:} The procedure of absorbing ultraviolet (UV) divergences into the redefinition of bare parameters (mass, coupling, field normalization). This is done by adding counter-terms to the Lagrangian that cancel the exact divergent parts of the loop integrals.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+In Quantum Field Theory, particles are never truly "naked." A propagating scalar particle will temporarily split into a virtual fermion-antifermion pair, and a fermion will constantly emit and reabsorb virtual scalars. These "clouds" of virtual particles pack an infinite amount of mathematical energy if we integrate momentum up to infinity. Renormalization is the physicist's way of saying: "The mass and charge we measure in a laboratory already include this cloud." We deliberately add "counter-terms" to our equations—essentially mathematical subtractions—that precisely cancel the infinities, leaving behind finite, physically measurable predictions.
 
-1. \textbf{Scalar Loop:} Fermion bubble gives quadratic divergence $\Lambda^2$ and log divergence. Requires mass counter-term $\delta m$ and kinetic $\delta Z$.
-2. \textbf{Fermion Loop:} Scalar exchange gives log divergence. Requires $\delta M$ and wavefunction $\delta Z_2$.
-3. \textbf{Power Counting:} The degree of divergence $D = 4 - E_B - \frac{3}{2}E_F$ shows only a finite number of types of infinity exist, so the theory is renormalizable.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Interacting particles are never truly alone—they are surrounded by a "cloud" of virtual particles. This cloud changes the particle's mass. Renormalization allows us to say "the mass we see is the bare mass plus the cloud effects," keeping the math finite and physically useful.
+\textbf{Step 1: Analyze the scalar self-energy at 1-loop}
+For the real scalar field $\phi$, the 1-loop self-energy diagram consists of a scalar particle splitting into a fermion loop and then recombining.
+The loop has 1 momentum integral ($L=1$), 2 internal fermion lines ($I_f = 2$), and 0 internal boson lines ($I_b = 0$).
+The superficial degree of divergence is:
+\[ D = 4(1) - 1(2) - 2(0) = 2 \]
+Because $D = 2$, the integral is quadratically divergent. When expanding the self-energy $\Sigma(p^2)$ in a Taylor series with respect to the external momentum squared $p^2$, we get:
+\[ \Sigma(p^2) = \Sigma(0) + p^2 \Sigma'(0) + \text{finite terms} \]
+The first term $\Sigma(0)$ is proportional to $\Lambda^2$ (quadratic divergence), and the second term $p^2 \Sigma'(0)$ is proportional to $\ln(\Lambda)$ (logarithmic divergence). Higher derivatives yield finite integrals.
+Thus, there are two independent divergent structures for the scalar field.
+
+\textbf{Step 2: Identify the counter-terms for the scalar field}
+To cancel these divergences, we need two counter-terms in the Lagrangian corresponding to the scalar field.
+The quadratic divergence $\Sigma(0)$ shifts the scalar mass. We add a mass counter-term:
+\[ \delta\mathcal{L}_{m_\phi} = -\frac{1}{2} \delta m^2 \phi^2 \]
+The logarithmic divergence $\Sigma'(0)$ corresponds to a momentum-dependent shift, which requires a wavefunction renormalization (kinetic term) counter-term:
+\[ \delta\mathcal{L}_{Z_\phi} = \frac{1}{2} \delta Z_\phi (\partial_\mu \phi)(\partial^\mu \phi) \]
+These two counter-terms successfully absorb all 1-loop divergences for the scalar self-energy.
+
+\textbf{Step 3: Analyze the fermion self-energy at 1-loop}
+For the Dirac spinor field $\psi$, the 1-loop self-energy diagram consists of a fermion emitting a virtual scalar and then reabsorbing it.
+The loop has 1 momentum integral ($L=1$), 1 internal fermion line ($I_f = 1$), and 1 internal scalar line ($I_b = 1$).
+The superficial degree of divergence is:
+\[ D = 4(1) - 1(1) - 2(1) = 1 \]
+Although $D = 1$ suggests a linear divergence, Lorentz invariance and the structure of the Dirac algebra dictate that the divergence must be proportional to the external momentum $\not\!p$ or the mass $M$.
+Expanding the fermion self-energy $\Sigma(\not\!p)$:
+\[ \Sigma(\not\!p) = \Sigma(M) + (\not\!p - M) \Sigma'(M) + \text{finite terms} \]
+Both $\Sigma(M)$ and $\Sigma'(M)$ turn out to be logarithmically divergent ($\ln \Lambda$). The apparent linear divergence vanishes due to symmetric integration over loop momenta.
+Thus, there are two logarithmically divergent structures for the fermion field.
+
+\textbf{Step 4: Identify the counter-terms for the fermion field}
+To cancel these divergences, we need two counter-terms for the fermion field.
+The divergence $\Sigma(M)$ shifts the fermion mass, requiring a mass counter-term:
+\[ \delta\mathcal{L}_{M} = -\delta M \bar{\psi} \psi \]
+The divergence proportional to $\not\!p$ requires a fermion wavefunction renormalization counter-term:
+\[ \delta\mathcal{L}_{Z_\psi} = \delta Z_\psi \bar{\psi} i \!\not\!\partial \psi \]
+Together, these absorb all 1-loop divergences for the fermion self-energy.
+
+\textbf{Step 5: Determine renormalizability}
+A theory is renormalizable if all its divergences can be absorbed into counter-terms that have the same form as the terms in the original Lagrangian.
+By power counting, the coupling constant $g$ is dimensionless (in 4D, $[\phi]=1, [\psi]=3/2$, so $[\bar{\psi}\psi\phi] = 4 \implies [g]=0$), which strongly suggests the theory is renormalizable. For the self-energy graphs we just computed, all divergences are successfully absorbed by mass and kinetic counter-terms which already exist in the original Lagrangian.
+However, if we look beyond self-energy, the fermion loop generates a 4-point scalar interaction (a "box" diagram with 4 external scalar lines). This diagram has $L=1, I_f=4, I_b=0$, so $D = 4(1) - 1(4) - 0 = 0$, which means it is logarithmically divergent. Because the original Lagrangian $\mathcal{L}$ does not contain a $\phi^4$ interaction term, this specific divergence cannot be absorbed by any existing parameter. Therefore, strictly speaking, this exact Lagrangian has a divergence which \textbf{cannot} be renormalized within the given theory. To fix this, one must explicitly add a $-\frac{\lambda}{4!}\phi^4$ term to the starting Lagrangian. Once added, the theory becomes fully renormalizable.
 \end{solution}
-

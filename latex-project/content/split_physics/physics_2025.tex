@@ -1,5 +1,9 @@
 \section{2025 Mathematical Physics}
 
+\textit{(6 problems)}
+
+\subsection*{Problem 1.}
+
 \begin{exercise}
 \label{physics:2025:1}
 A bead of mass $m$ is constrained to move (without friction) on a hoop of radius $R$. The hoop rotates with constant angular velocity $\omega$ around the vertical axis. The bead is subjected to the force of gravity at the surface of the Earth.
@@ -13,28 +17,91 @@ A bead of mass $m$ is constrained to move (without friction) on a hoop of radius
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Lagrangian in Rotating Frame:} $L = T - V$.
-    \item \textbf{Effective Potential:} $V_{\text{eff}} = - \frac{1}{2}m\omega^2 R^2 \sin^2\theta - mgR\cos\theta$.
+    \item \textbf{Lagrangian Mechanics in Non-Inertial Frames:} Formulating the kinetic and potential energy in a rotating frame introduces a fictitious centrifugal potential. The Lagrangian is $L = T - V$.
+    \item \textbf{Hamiltonian vs. Physical Energy:} The Hamiltonian is $H = \sum \dot{q}_i p_i - L$. If $\frac{\partial L}{\partial t} = 0$, $H$ is conserved. However, $H$ only equals the physical energy $E = T + V$ if the transformation equations from inertial to non-inertial coordinates do not explicitly depend on time.
+    \item \textbf{Effective Potential ($V_{\text{eff}}$):} A mathematical landscape combining real forces (gravity) and fictitious forces (centrifugal). Stable equilibria are found at the minima of $V_{\text{eff}}$, i.e., $V_{\text{eff}}'(\theta) = 0$ and $V_{\text{eff}}''(\theta) > 0$.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine sitting inside a spinning washing machine. When the spin is slow, gravity dominates, keeping you at the very bottom. As the machine spins faster and faster, you feel a "centrifugal force" pushing you outward. Eventually, this outward push overcomes gravity's pull towards the bottom center, and you slide up the wall to a new balance point where gravity pulling down exactly matches the spin pushing you out. We use the Lagrangian method because it allows us to automatically incorporate this rotational effect without worrying about normal forces.
 
-1. \textbf{Equation of Motion:} $\ddot{\theta} = \sin\theta(\omega^2\cos\theta - g/R)$. 
-2. \textbf{Critical Frequency:} For $\omega < \Omega = \sqrt{g/R}$, the only stable equilibrium is at the bottom ($\theta=0$).
-3. \textbf{Bifurcation:} For $\omega > \Omega$, the bottom becomes unstable ($V_{\text{eff}}'' < 0$), and a new set of stable equilibria appears at $\cos\theta_0 = g/R\omega^2$.
-4. \textbf{Oscillations:} Near the stable point $\theta_0$, small vibrations have frequency $\omega \sin\theta_0$.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Imagine sitting in a spinning laundry machine. If it spins slowly, you stay at the bottom due to gravity. If it spins fast enough, the "centrifugal push" overcomes gravity, and you get flung to the side. This sudden switch between "staying down" and "climbing up" is a classic example of symmetry breaking.
+\textbf{Step 1: Write down the Lagrangian and equation of motion}
+We define spherical coordinates for the bead on the hoop. The position of the bead is:
+\[ x = R \sin\theta \cos(\omega t), \quad y = R \sin\theta \sin(\omega t), \quad z = -R \cos\theta \]
+The velocity components are obtained by differentiating with respect to time:
+\begin{aligned}
+    \dot{x} &= R \dot{\theta} \cos\theta \cos(\omega t) - R \omega \sin\theta \sin(\omega t) \\
+    \dot{y} &= R \dot{\theta} \cos\theta \sin(\omega t) + R \omega \sin\theta \cos(\omega t) \\
+    \dot{z} &= R \dot{\theta} \sin\theta
+\end{aligned}
+Squaring these and summing yields the kinetic energy $T = \frac{1}{2}m(\dot{x}^2 + \dot{y}^2 + \dot{z}^2)$:
+\[ T = \frac{1}{2}m R^2 (\dot{\theta}^2 + \omega^2 \sin^2\theta) \]
+The potential energy from gravity is:
+\[ V = mgz = -mgR \cos\theta \]
+Thus, the Lagrangian $L = T - V$ is:
+\[ L = \frac{1}{2}m R^2 \dot{\theta}^2 + \frac{1}{2}m R^2 \omega^2 \sin^2\theta + mgR \cos\theta \]
+The Euler-Lagrange equation for the generalized coordinate $\theta$ is:
+\[ \frac{d}{dt} \left( \frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = 0 \]
+Calculating the derivatives:
+\[ \frac{\partial L}{\partial \dot{\theta}} = m R^2 \dot{\theta} \implies \frac{d}{dt} \left( \frac{\partial L}{\partial \dot{\theta}} \right) = m R^2 \ddot{\theta} \]
+\[ \frac{\partial L}{\partial \theta} = m R^2 \omega^2 \sin\theta \cos\theta - mgR \sin\theta \]
+Equating these gives the equation of motion:
+\[ m R^2 \ddot{\theta} = m R^2 \omega^2 \sin\theta \cos\theta - mgR \sin\theta \implies \ddot{\theta} = \sin\theta \left( \omega^2 \cos\theta - \frac{g}{R} \right) \]
+
+\textbf{Step 2: Construct the Hamiltonian and analyze constants of motion}
+Since the Lagrangian does not depend explicitly on time ($\frac{\partial L}{\partial t} = 0$), the Hamiltonian $H$ is a constant of motion.
+The canonical momentum conjugate to $\theta$ is $p_\theta = \frac{\partial L}{\partial \dot{\theta}} = m R^2 \dot{\theta}$.
+The Hamiltonian is:
+\begin{aligned}
+    H &= p_\theta \dot{\theta} - L \\
+      &= (m R^2 \dot{\theta}) \dot{\theta} - \left( \frac{1}{2}m R^2 \dot{\theta}^2 + \frac{1}{2}m R^2 \omega^2 \sin^2\theta + mgR \cos\theta \right) \\
+      &= \frac{1}{2}m R^2 \dot{\theta}^2 - \frac{1}{2}m R^2 \omega^2 \sin^2\theta - mgR \cos\theta
+\end{aligned}
+The physical energy in the fixed frame is $E = T + V$:
+\[ E = \frac{1}{2}m R^2 \dot{\theta}^2 + \frac{1}{2}m R^2 \omega^2 \sin^2\theta - mgR \cos\theta \]
+Notice that $H$ has a minus sign in front of the $\omega^2$ term, while $E$ has a plus sign. Thus, $H \neq E$. The physical energy $E$ is not conserved because the motor rotating the hoop must do work to maintain a constant angular velocity $\omega$ as the bead moves.
+
+\textbf{Step 3: Find the effective potential, critical angular velocity, and stable equilibria}
+The equation of motion can be written as $m R^2 \ddot{\theta} = -\frac{\partial V_{\text{eff}}}{\partial \theta}$, where the effective potential is:
+\[ V_{\text{eff}}(\theta) = - \frac{1}{2}m R^2 \omega^2 \sin^2\theta - mgR \cos\theta \]
+Equilibrium positions occur where $\frac{\partial V_{\text{eff}}}{\partial \theta} = 0$:
+\[ \frac{\partial V_{\text{eff}}}{\partial \theta} = -m R^2 \omega^2 \sin\theta \cos\theta + mgR \sin\theta = -mR \sin\theta \left( R\omega^2 \cos\theta - g \right) = 0 \]
+The roots are $\sin\theta = 0 \implies \theta = 0, \pi$ and $\cos\theta = \frac{g}{R\omega^2}$.
+To determine stability, we evaluate the second derivative:
+\[ \frac{\partial^2 V_{\text{eff}}}{\partial \theta^2} = m R^2 \omega^2 (\sin^2\theta - \cos^2\theta) + mgR \cos\theta \]
+At the bottom position $\theta = 0$:
+\[ \left. \frac{\partial^2 V_{\text{eff}}}{\partial \theta^2} \right|_{\theta=0} = -m R^2 \omega^2 + mgR = mR (g - R\omega^2) \]
+For $\theta=0$ to be a stable equilibrium, we need $V_{\text{eff}}''(0) > 0$, meaning $g - R\omega^2 > 0 \implies \omega^2 < \frac{g}{R}$.
+The critical angular velocity is $\Omega = \sqrt{\frac{g}{R}}$.
+For $\omega < \Omega$: The position $\theta = 0$ is stable.
+For $\omega > \Omega$: The position $\theta = 0$ becomes unstable because $V_{\text{eff}}''(0) < 0$. The new equilibrium is at $\theta_0 = \arccos\left(\frac{g}{R\omega^2}\right)$. Let's check its stability:
+\begin{aligned}
+    \left. \frac{\partial^2 V_{\text{eff}}}{\partial \theta^2} \right|_{\theta=\theta_0} &= m R^2 \omega^2 (\sin^2\theta_0 - \cos^2\theta_0) + mgR \cos\theta_0 \\
+    &= m R^2 \omega^2 \left( 1 - 2\left(\frac{g}{R\omega^2}\right)^2 \right) + mgR \left( \frac{g}{R\omega^2} \right) \\
+    &= m R^2 \omega^2 - 2 \frac{mg^2}{R\omega^2} + \frac{mg^2}{R\omega^2} = m R^2 \omega^2 - \frac{mg^2}{R\omega^2} = m R^2 \omega^2 \left( 1 - \left(\frac{g}{R\omega^2}\right)^2 \right)
+\end{aligned}
+Since $\omega > \Omega \implies R\omega^2 > g$, this second derivative is strictly positive, confirming $\theta_0$ is a stable equilibrium.
+
+\textbf{Step 4: Calculate the frequencies of small oscillations}
+For small oscillations around a stable equilibrium $\theta_{eq}$, the frequency is $\omega_{osc} = \sqrt{ \frac{1}{mR^2} \left. \frac{\partial^2 V_{\text{eff}}}{\partial \theta^2} \right|_{\theta=\theta_{eq}} }$.
+Case 1 ($\omega < \Omega$): The equilibrium is $\theta = 0$.
+\[ \omega_{osc} = \sqrt{\frac{mR(g - R\omega^2)}{mR^2}} = \sqrt{\frac{g}{R} - \omega^2} = \sqrt{\Omega^2 - \omega^2} \]
+Case 2 ($\omega > \Omega$): The equilibrium is $\theta = \theta_0$.
+\[ \omega_{osc} = \sqrt{\frac{m R^2 \omega^2 \sin^2\theta_0}{mR^2}} = \omega \sin\theta_0 \]
+where $\sin\theta_0 = \sqrt{1 - \left(\frac{g}{R\omega^2}\right)^2}$.
 \end{solution}
+
+\subsection*{Problem 2.}
 
 \begin{exercise}
 \label{physics:2025:2}
-Consider a wave packet with a transverse profile $E_o(x, y)$ propagating in the $z$ direction. Although the precise form of $E_o(x, y)$ is not needed below, for definiteness you may assume that the wave packet has a Gaussian profile for
+Consider a wave packet with a transverse profile $E_o(x, y)$ propagating in the $z$ direction (see eq (3) for a complete specification of $\mathbf{E}$ and $\mathbf{B}$). Although the precise form of $E_o(x, y)$ is not needed below, for definiteness you may assume that the wave packet has a Gaussian profile for
 \begin{equation}
-    E_o(x, y) = \mathcal{A} e^{-\frac{x^2 + y^2}{4 \sigma^2}}
+    E_o(x, y) = \mathcal{A} e^{-\frac{x^2 + y^2}{4 \sigma^2}} \tag{1}
 \end{equation}
 and is infinitely broad in the $z$ direction. The following integrals may be useful:
 \begin{equation*}
@@ -44,11 +111,17 @@ and is infinitely broad in the $z$ direction. The following integrals may be use
 \begin{enumerate}
     \item When all derivatives of $E_o(x, y)$ are neglected, show that in Gaussian (Heaviside-Lorentz) units
     \begin{equation}
-        \mathbf{E}^{(0)}(t, \mathbf{r}) = E_o(x, y) e^{i(kz - \omega t)} \frac{\hat{\mathbf{x}} + i \hat{\mathbf{y}}}{\sqrt{2}}, \quad \mathbf{B}^{(0)}(t, \mathbf{r}) = \hat{\mathbf{z}} \times \mathbf{E}^{(0)}
+        \mathbf{E}^{(0)}(t, \mathbf{r}) = E_o(x, y) e^{i(kz - \omega t)} \frac{\hat{\mathbf{x}} + i \hat{\mathbf{y}}}{\sqrt{2}}, \quad \mathbf{B}^{(0)}(t, \mathbf{r}) = \hat{\mathbf{z}} \times \mathbf{E}^{(0)} \tag{3}
     \end{equation}
-    is a solution to the Maxwell equations for $\omega = ck$.
+    is a solution to the Maxwell equations for $\omega = ck$. Here $\mathbf{x}$, $\mathbf{y}$ and $\mathbf{z}$ are unit vectors in $x$, $y$, $z$ directions.
     \item Calculate the time averaged energy per length in the wave packet, $\langle U \rangle$.
-    \item When the derivatives of $E_o(x, y)$ are not neglected, the above equation is not a solution to the Maxwell equations. Determine the corrections to $\mathbf{E}^{(0)}$ and $\mathbf{B}^{(0)}$ to first order in gradients for $k \sigma \gg 1$.
+    \item When the derivatives of $E_o(x, y)$ are not neglected, eq (3) is not a solution to the Maxwell equations. Determine the corrections to $\mathbf{E}^{(0)}$ and $\mathbf{B}^{(0)}$ to first order in gradients for $k \sigma \gg 1$.
+
+    \textit{Hint: try a solution for $\mathbf{E}$ (and analogously for $\mathbf{B}$) of the form}
+    \begin{equation}
+        \mathbf{E}(t, \mathbf{r}) = \mathbf{E}^{(0)} + \mathbf{E}^{(1)}(x, y) e^{i(kz - \omega t)} \hat{\mathbf{z}}, \tag{4}
+    \end{equation}
+    \textit{and determine the correction $\mathbf{E}^{(1)}(x, y)$ in terms of $E_o(x, y)$ and its derivatives.}
     \item Write the solution to the last question as a linear superposition of the plane wave solutions to the Maxwell equations. First use the superposition to qualitatively explain why there is the correction to the electric field parallel to $\hat{\mathbf{z}}$, and then use the superposition to precisely reproduce this correction.
     \item Calculate the $z$-component of the time averaged angular momentum per length in the wave packet, $\langle L^z \rangle$, to the lowest non-trivial order in $k \sigma$.
     \item Determine the ratio $\langle L^z \rangle / \langle U \rangle$. Interpret the result using photons.
@@ -56,160 +129,443 @@ and is infinitely broad in the $z$ direction. The following integrals may be use
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Gauss's Law:} $\nabla \cdot \mathbf{E} = 0$.
-    \item \textbf{Circular Polarization:} $\mathbf{E}_\perp \propto (\hat{x} \pm i\hat{y})$.
+    \item \textbf{Maxwell's Equations in Vacuum:} In Gaussian units, $\nabla \cdot \mathbf{E} = 0$, $\nabla \times \mathbf{E} = -\frac{1}{c}\frac{\partial \mathbf{B}}{\partial t}$, $\nabla \cdot \mathbf{B} = 0$, and $\nabla \times \mathbf{B} = \frac{1}{c}\frac{\partial \mathbf{E}}{\partial t}$.
+    \item \textbf{Energy and Angular Momentum Density:} Electromagnetic energy density is $u = \frac{1}{8\pi}(|\mathbf{E}|^2 + |\mathbf{B}|^2)$. The momentum density is $\mathbf{g} = \frac{1}{4\pi c}(\mathbf{E} \times \mathbf{B})$. The angular momentum density is $\mathbf{l} = \mathbf{r} \times \mathbf{g}$.
+    \item \textbf{Plane Wave Expansion:} Any field configuration can be constructed by superposing plane waves $e^{i(\mathbf{k} \cdot \mathbf{r} - \omega t)}$ with appropriate wave vectors $\mathbf{k}$ such that $|\mathbf{k}| = \omega/c$.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+When we consider light as an infinitely wide plane wave, all the energy flows straight forward, and the electric and magnetic fields are perfectly perpendicular to the direction of motion. However, real laser beams (like a Gaussian beam) are concentrated in a narrow cylinder. Because the field strength drops off at the edges of the beam, the field lines must curve to close on themselves (satisfying Maxwell's equation that says field lines have no ends). This slight curving introduces a tiny component of the electric field pointing *along* the direction of travel. This forward-pointing field creates a microscopic "swirl" in the energy flow, which gives the light beam an intrinsic angular momentum (or "spin"), exactly matching what we would expect from quantum photons.
 
-1. \textbf{Constraint:} $\partial_x E_x + \partial_y E_y + \partial_z E_z = 0$.
-2. \textbf{Emergence:} If the beam has a finite width (e.g. Gaussian profile), $\partial_x E_x \neq 0$. To satisfy Gauss's law, there MUST be a longitudinal field $E_z \approx \frac{i}{k} (\nabla \cdot \mathbf{E}_\perp)$.
-3. \textbf{Significance:} This small $E_z$ field is necessary to give the photon its expected spin and orbital angular momentum along the beam axis.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Light is usually described as being purely transverse. However, if you "squeeze" a beam to a finite size, the field lines have to curve back. This curving creates a tiny component of the electric field pointing in the direction the light is traveling. You can't have a localized beam without this longitudinal "swirl."
+\textbf{Step 1: Verify the zero-order solution}
+Given $\mathbf{E}^{(0)} = E_o(x,y) e^{i(kz - \omega t)} \frac{\hat{\mathbf{x}} + i\hat{\mathbf{y}}}{\sqrt{2}}$ and assuming derivatives of $E_o(x,y)$ are zero (i.e., $E_o$ is uniform).
+Then $\nabla \cdot \mathbf{E}^{(0)} = \frac{\partial E^{(0)}_z}{\partial z} = 0$ since $E^{(0)}_z = 0$.
+From Faraday's law: $\nabla \times \mathbf{E}^{(0)} = -\frac{1}{c} \frac{\partial \mathbf{B}^{(0)}}{\partial t} = i\frac{\omega}{c} \mathbf{B}^{(0)}$.
+Taking the curl of $\mathbf{E}^{(0)}$:
+\[ \nabla \times \mathbf{E}^{(0)} = \nabla \left( E_o e^{i(kz - \omega t)} \right) \times \frac{\hat{\mathbf{x}} + i\hat{\mathbf{y}}}{\sqrt{2}} \]
+Since $\nabla (E_o e^{i(kz - \omega t)}) = E_o (\hat{\mathbf{z}} \frac{\partial}{\partial z} e^{i(kz - \omega t)}) = i k \mathbf{E}^{(0)}$, the curl is:
+\[ \nabla \times \mathbf{E}^{(0)} = i k \hat{\mathbf{z}} \times \mathbf{E}^{(0)} \]
+Equating this to $i\frac{\omega}{c} \mathbf{B}^{(0)}$, and knowing $\omega = ck$, we get:
+\[ i k \hat{\mathbf{z}} \times \mathbf{E}^{(0)} = i k \mathbf{B}^{(0)} \implies \mathbf{B}^{(0)} = \hat{\mathbf{z}} \times \mathbf{E}^{(0)} \]
+This solves Maxwell's equations under the assumption of negligible transverse derivatives.
+
+\textbf{Step 2: Calculate the time-averaged energy per length}
+The time-averaged energy density is $\langle u \rangle = \frac{1}{16\pi} (\mathbf{E}^{(0)} \cdot \mathbf{E}^{(0)*} + \mathbf{B}^{(0)} \cdot \mathbf{B}^{(0)*})$.
+Since $\mathbf{B}^{(0)} = \hat{\mathbf{z}} \times \mathbf{E}^{(0)}$, we have $\mathbf{B}^{(0)} \cdot \mathbf{B}^{(0)*} = (\hat{\mathbf{z}} \times \mathbf{E}^{(0)}) \cdot (\hat{\mathbf{z}} \times \mathbf{E}^{(0)*}) = \mathbf{E}^{(0)} \cdot \mathbf{E}^{(0)*} - (\hat{\mathbf{z}} \cdot \mathbf{E}^{(0)})(\hat{\mathbf{z}} \cdot \mathbf{E}^{(0)*}) = \mathbf{E}^{(0)} \cdot \mathbf{E}^{(0)*}$.
+Thus, $\langle u \rangle = \frac{1}{8\pi} |\mathbf{E}^{(0)}|^2 = \frac{1}{8\pi} E_o^2$.
+For a Gaussian profile, $E_o^2(x,y) = \mathcal{A}^2 e^{-\frac{x^2+y^2}{2\sigma^2}}$.
+To find the energy per unit length $\langle U \rangle$, we integrate over the $xy$ plane:
+\[ \langle U \rangle = \int \langle u \rangle dx dy = \frac{\mathcal{A}^2}{8\pi} \int_{-\infty}^\infty e^{-\frac{x^2}{2\sigma^2}} dx \int_{-\infty}^\infty e^{-\frac{y^2}{2\sigma^2}} dy \]
+Using the given integral formula with $\alpha = \frac{1}{2\sigma^2}$:
+\[ \int_{-\infty}^\infty e^{-\frac{x^2}{2\sigma^2}} dx = \sqrt{2\pi\sigma^2} = \sqrt{2\pi} \sigma \]
+So, $\langle U \rangle = \frac{\mathcal{A}^2}{8\pi} (\sqrt{2\pi}\sigma)^2 = \frac{\mathcal{A}^2 \sigma^2}{4}$.
+
+\textbf{Step 3: Determine the first-order corrections}
+When derivatives of $E_o$ are not neglected, $\nabla \cdot \mathbf{E}^{(0)} \neq 0$:
+\[ \nabla \cdot \mathbf{E}^{(0)} = \left( \frac{\partial E_o}{\partial x} \frac{1}{\sqrt{2}} + \frac{\partial E_o}{\partial y} \frac{i}{\sqrt{2}} \right) e^{i(kz-\omega t)} \]
+To restore $\nabla \cdot \mathbf{E} = 0$, we introduce a longitudinal component $E_z = E^{(1)}(x,y) e^{i(kz-\omega t)}$.
+Now, $\nabla \cdot \mathbf{E} = \nabla \cdot \mathbf{E}^{(0)} + \frac{\partial E_z}{\partial z} = \left( \frac{1}{\sqrt{2}} \partial_x E_o + \frac{i}{\sqrt{2}} \partial_y E_o + i k E^{(1)} \right) e^{i(kz-\omega t)} = 0$.
+Solving for $E^{(1)}$:
+\[ E^{(1)}(x,y) = \frac{i}{k\sqrt{2}} (\partial_x E_o + i \partial_y E_o) \]
+We find $\mathbf{B}^{(1)}$ from Faraday's law $\nabla \times \mathbf{E} = i k \mathbf{B}$. The $z$-component $B_z$ evaluates to $B^{(1)} = -i E^{(1)}$.
+
+\textbf{Step 4: Plane wave superposition}
+We can Fourier transform the transverse profile:
+\[ E_o(x,y) = \int \frac{dk_x dk_y}{(2\pi)^2} \tilde{E}_o(k_x, k_y) e^{i(k_x x + k_y y)} \]
+A plane wave must satisfy $\mathbf{k} \cdot \mathbf{E} = 0$, meaning $k_x E_x + k_y E_y + k_z E_z = 0$.
+For a well-collimated beam, $k_x, k_y \ll k$, so $k_z \approx k$. Thus $E_z = -\frac{k_x E_x + k_y E_y}{k} = -\frac{k_x + i k_y}{k\sqrt{2}} \tilde{E}_o e^{i(k_x x + k_y y + k z - \omega t)}$.
+Applying the inverse Fourier transform ($i k_x \to \partial_x \implies k_x \to -i \partial_x$):
+\[ E_z = -\frac{-i \partial_x - \partial_y}{k\sqrt{2}} E_o = \frac{i}{k\sqrt{2}}(\partial_x E_o + i\partial_y E_o) \]
+This precisely matches $E^{(1)}$. Qualitatively, a finite beam is composed of plane waves with small transverse wavevectors $\mathbf{k}_\perp$. Since the electric field must be exactly perpendicular to the total $\mathbf{k}$, giving $\mathbf{k}$ a slight transverse tilt forces the electric field to develop a small longitudinal $z$-component.
+
+\textbf{Step 5: Calculate the time-averaged angular momentum}
+The time-averaged momentum density is $\langle \mathbf{g} \rangle = \frac{1}{8\pi c} \text{Re}(\mathbf{E} \times \mathbf{B}^*)$. We need the transverse part to compute $L^z$:
+\[ (\mathbf{E} \times \mathbf{B}^*)_\perp \approx \mathbf{E}^{(0)} \times B_z^* \hat{\mathbf{z}} + E_z \hat{\mathbf{z}} \times \mathbf{B}^{(0)*} = - B_z^* \mathbf{B}^{(0)} - E_z \mathbf{E}^{(0)*} \]
+Using $\mathbf{B}^{(0)} = -i \mathbf{E}^{(0)}$ and $B_z = -i E_z$, we have $B_z^* = i E_z^*$, so:
+\[ (\mathbf{E} \times \mathbf{B}^*)_\perp = - (i E_z^*) (-i \mathbf{E}^{(0)}) - E_z \mathbf{E}^{(0)*} = - E_z^* \mathbf{E}^{(0)} - E_z \mathbf{E}^{(0)*} = -2 \text{Re}(E_z^* \mathbf{E}^{(0)}) \]
+Plugging in $E_z^* = \frac{-i}{k\sqrt{2}} (\partial_x E_o - i \partial_y E_o)$ and $\mathbf{E}^{(0)} = E_o \frac{\hat{\mathbf{x}} + i\hat{\mathbf{y}}}{\sqrt{2}}$, we find:
+\[ \text{Re}(E_z^* \mathbf{E}^{(0)}) = \frac{1}{2k} E_o [ -(\partial_y E_o) \hat{\mathbf{x}} + (\partial_x E_o) \hat{\mathbf{y}} ] \]
+Thus $\langle \mathbf{g}_\perp \rangle = \frac{1}{8\pi \omega} [ E_o (\partial_y E_o) \hat{\mathbf{x}} - E_o (\partial_x E_o) \hat{\mathbf{y}} ]$.
+The $z$-angular momentum density is $\langle l_z \rangle = x \langle g_y \rangle - y \langle g_x \rangle$:
+\[ \langle l_z \rangle = \frac{1}{8\pi\omega} \left[ -x E_o \partial_x E_o - y E_o \partial_y E_o \right] = -\frac{1}{16\pi\omega} \left[ x \partial_x (E_o^2) + y \partial_y (E_o^2) \right] \]
+Integrating over $x$ and $y$ using integration by parts ($\int x \partial_x (E_o^2) dx = - \int E_o^2 dx$):
+\[ \langle L^z \rangle = \int dx dy \langle l_z \rangle = \frac{1}{8\pi\omega} \int E_o^2 dx dy \]
+Since $\langle U \rangle = \frac{1}{8\pi} \int E_o^2 dx dy$, we have $\langle L^z \rangle = \frac{1}{\omega} \langle U \rangle$.
+
+\textbf{Step 6: Interpret the ratio}
+We found $\frac{\langle L^z \rangle}{\langle U \rangle} = \frac{1}{\omega}$.
+In quantum mechanics, a beam of circularly polarized light is made of photons, each carrying an energy of $E = \hbar \omega$. For circularly polarized photons, each also carries an intrinsic angular momentum (spin) of $L_z = \hbar$. The ratio for a single photon is exactly $\frac{\hbar}{\hbar \omega} = \frac{1}{\omega}$. The classical electromagnetic calculation thus perfectly reproduces the quantum mechanical spin-to-energy ratio of photons.
 \end{solution}
+
+\subsection*{Problem 3.}
 
 \begin{exercise}
 \label{physics:2025:3}
 A particle of mass $m$ and electric charge $q$ moves in 1-dimension under the effects of a harmonic potential and a homogeneous electrostatic field $\mathcal{E}$. The Hamiltonian for the system is
 \begin{equation}
-    H = \frac{p^2}{2m} + \frac{1}{2}m\omega^2 x^2 - q \mathcal{E} x = H_0 - q \mathcal{E} x
+    H = \frac{p^2}{2m} + \frac{1}{2}m\omega^2 x^2 - q \mathcal{E} x = H_0 - q \mathcal{E} x \tag{5}
 \end{equation}
 
 \begin{enumerate}
-    \item Show that $H$ can be written as $H = e^{-A} H_0 e^A + B$ with $A$ being an operator and $B$ being a constant. Explicitly determine $A$ and $B$. Use this to solve the eigenvalue problem for $H$.
+    \item Show that $H$ can be written as $H = e^{-A} H_0 e^A + B$ with $A$ being an operator and $B$ being a constant (c-number). Explicitly determine $A$ and $B$. Use this to show that the spectrum of $H$ follows from that of $H_0$ by a shift operator. Use this observation to solve the eigenvalue problem for $H$.
     \item Express $A$ in terms of the annihilation operator $a$ and creation operator $a^\dagger$ of $H_0$. Use this to evaluate the probability to find the system in the ground state of $H$ at time $t$ if at time $t=0$ it is in the ground state of $H_0$.
     \item What is the probability for the system to start at $t=0$ in the ground state of $H_0$ and remain in this state at time $t$? For what time this probability is 1?
     \item What is the probability for the system to start at $t=0$ in the ground state of $H_0$ and be found in the first excited state of $H_0$ at time $t$?
-    \item Express the dipole moment $d = qx$ in terms of $a, a^\dagger$. Calculate the mean value of the dipole moment at time $t$, assuming that at $t=0$ the system is in the ground state of $H_0$.
+    \item Express the dipole moment $d = qx$ in terms of $a, a^\dagger$. Use this to calculate the mean value of the dipole moment at time $t$, assuming that at $t=0$ the system is again in the ground state of $H_0$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Completing the Square:} Transforming potential energy forms.
-    \item \textbf{Displacement Operator:} $D(\alpha) = e^{\alpha a^\dagger - \alpha^* a}$.
+    \item \textbf{Quantum Harmonic Oscillator:} The unperturbed Hamiltonian is $H_0 = \frac{p^2}{2m} + \frac{1}{2}m\omega^2 x^2$. We use creation and annihilation operators $a = \sqrt{\frac{m\omega}{2\hbar}} \left( x + \frac{i p}{m\omega} \right)$ and $a^\dagger = \sqrt{\frac{m\omega}{2\hbar}} \left( x - \frac{i p}{m\omega} \right)$.
+    \item \textbf{Displacement Operator:} The operator $D(\alpha) = \exp(\alpha a^\dagger - \alpha^* a)$ shifts the position and momentum operators: $D^\dagger(\alpha) a D(\alpha) = a + \alpha$. Here, $A = \alpha(a^\dagger - a)$ acts as a displacement operator.
+    \item \textbf{Baker-Campbell-Hausdorff (BCH) Formula:} For operators $X, Y$ where $[X, Y]$ commutes with $X$ and $Y$, $e^X Y e^{-X} = Y + [X, Y]$.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine a mass on a spring. When you apply a constant force (like turning on gravity or a uniform electric field), the spring stretches to a new equilibrium point, but it still bounces back and forth with the same stiffness (same frequency $\omega$). In quantum mechanics, this "shift" is represented by a unitary transformation $e^A$ that perfectly translates the old ground state into the new ground state. If the field is turned on suddenly at $t=0$, the system doesn't instantly stop at the new equilibrium; instead, the old ground state finds itself out of balance and starts oscillating like a swinging pendulum. The probabilities in this problem describe the quantum overlapping of these oscillating states.
 
-1. \textbf{Shift:} $V(x) = \frac{1}{2}m\omega^2 (x - x_0)^2 + \Delta E$, where $x_0 = q\mathcal{E}/m\omega^2$.
-2. \textbf{Eigenvalues:} The energies are $E_n = \hbar\omega(n+1/2) - q^2\mathcal{E}^2/2m\omega^2$. The field just lowers all levels uniformly.
-3. \textbf{Overlap:} The new ground state is a shifted version of the old one. The probability of staying in the old ground state is $|\langle 0 | 0' \rangle|^2 = \exp(-x_0^2/2l^2)$.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Applying an electric field to an oscillator is like pulling the end of the spring. The spring doesn't get "softer" or "harder" (frequency stays the same), it just has a new natural resting point. In the quantum world, this shift means you are "partially" in many of the old energy levels at once.
+\textbf{Step 1: Transforming the Hamiltonian}
+We want to show $H = e^{-A} H_0 e^A + B$. We look for an anti-Hermitian operator $A = \alpha(a^\dagger - a)$ that generates a translation in $x$.
+Using the BCH formula, $e^{-A} a e^A = a - [A, a] = a - [\alpha a^\dagger, a] = a + \alpha$.
+Similarly, $e^{-A} a^\dagger e^A = a^\dagger + \alpha$.
+Since $x = \sqrt{\frac{\hbar}{2m\omega}}(a + a^\dagger)$, we have $e^{-A} x e^A = x + 2\alpha \sqrt{\frac{\hbar}{2m\omega}} \equiv x + x_0$.
+Substitute this shifted $x$ into $H_0$:
+\begin{aligned}
+    e^{-A} H_0 e^A &= \frac{p^2}{2m} + \frac{1}{2}m\omega^2 (x + x_0)^2 \\
+                   &= H_0 + m\omega^2 x_0 x + \frac{1}{2}m\omega^2 x_0^2
+\end{aligned}
+We want this to equal $H - B = H_0 - q\mathcal{E}x - B$.
+Equating the linear terms in $x$: $m\omega^2 x_0 = -q\mathcal{E} \implies x_0 = -\frac{q\mathcal{E}}{m\omega^2}$.
+Equating the constant terms: $\frac{1}{2}m\omega^2 x_0^2 = -B \implies B = -\frac{1}{2}m\omega^2 \left( -\frac{q\mathcal{E}}{m\omega^2} \right)^2 = -\frac{q^2\mathcal{E}^2}{2m\omega^2}$.
+To find $\alpha$, we set $2\alpha \sqrt{\frac{\hbar}{2m\omega}} = x_0 = -\frac{q\mathcal{E}}{m\omega^2}$, which gives $\alpha = -\frac{q\mathcal{E}}{\sqrt{2m\hbar\omega^3}}$.
+Let $|n\rangle$ be the eigenstates of $H_0$ with $H_0|n\rangle = E_n|n\rangle = \hbar\omega(n+1/2)|n\rangle$.
+Defining the shifted states $|\tilde{n}\rangle = e^{-A}|n\rangle$, we find:
+\[ H |\tilde{n}\rangle = (e^{-A} H_0 e^A + B) e^{-A} |n\rangle = e^{-A} H_0 |n\rangle + B |\tilde{n}\rangle = (E_n + B) |\tilde{n}\rangle \]
+So the eigenvalues of $H$ are $\tilde{E}_n = \hbar\omega(n+1/2) - \frac{q^2\mathcal{E}^2}{2m\omega^2}$.
+
+\textbf{Step 2: Expressing A and probability of the new ground state}
+From Step 1, $A = \alpha(a^\dagger - a)$ where $\alpha = -\frac{q\mathcal{E}}{\sqrt{2m\hbar\omega^3}}$.
+At $t=0$, the system is in $|0\rangle$, the ground state of $H_0$. The ground state of $H$ is $|\tilde{0}\rangle = e^{-A}|0\rangle$.
+Since $|\tilde{0}\rangle$ is an eigenstate of $H$, its time evolution only picks up a phase: $e^{-iHt/\hbar}|\tilde{0}\rangle = e^{-i\tilde{E}_0 t/\hbar}|\tilde{0}\rangle$.
+The probability to find the system in $|\tilde{0}\rangle$ at time $t$ is:
+\[ P(t) = | \langle \tilde{0} | e^{-iHt/\hbar} | 0 \rangle |^2 = | e^{-i\tilde{E}_0 t/\hbar} \langle \tilde{0} | 0 \rangle |^2 = | \langle 0 | e^A | 0 \rangle |^2 \]
+Using the disentangling theorem $e^{\alpha(a^\dagger - a)} = e^{\alpha a^\dagger} e^{-\alpha a} e^{-\alpha^2/2}$:
+\[ e^A |0\rangle = e^{-\alpha^2/2} e^{\alpha a^\dagger} |0\rangle \implies \langle 0 | e^A | 0 \rangle = e^{-\alpha^2/2} \]
+Thus, the probability is constant: $P = e^{-\alpha^2} = \exp\left( - \frac{q^2\mathcal{E}^2}{2m\hbar\omega^3} \right)$.
+
+\textbf{Step 3: Probability to remain in the ground state of $H_0$}
+We want to calculate $P_{0 \to 0}(t) = | \langle 0 | e^{-iHt/\hbar} | 0 \rangle |^2$.
+Using $H = e^{-A} H_0 e^A + B$, we write the evolution operator as $e^{-iHt/\hbar} = e^{-iBt/\hbar} e^{-A} e^{-iH_0t/\hbar} e^A$.
+The amplitude is $c_0(t) = e^{-iBt/\hbar} \langle 0 | e^{-A} e^{-iH_0t/\hbar} e^A | 0 \rangle$.
+Notice that $e^A = D(\alpha)$, so $e^A |0\rangle = |\alpha\rangle$, which is a coherent state.
+Time evolution under $H_0$ rotates the coherent state amplitude: $e^{-iH_0t/\hbar} |\alpha\rangle = e^{-i\omega t/2} |\alpha e^{-i\omega t}\rangle$.
+Also, $\langle 0 | e^{-A} = \langle 0 | D(-\alpha) = \langle -\alpha |$.
+So $c_0(t) = e^{-iBt/\hbar} e^{-i\omega t/2} \langle -\alpha | \alpha e^{-i\omega t} \rangle$.
+Using the coherent state inner product $\langle \alpha_1 | \alpha_2 \rangle = \exp\left( -\frac{1}{2}|\alpha_1|^2 - \frac{1}{2}|\alpha_2|^2 + \alpha_1^* \alpha_2 \right)$:
+\[ \langle -\alpha | \alpha e^{-i\omega t} \rangle = \exp\left( -\alpha^2 - \alpha^2 e^{-i\omega t} \right) \]
+So the probability is $P_{0\to 0}(t) = |c_0(t)|^2 = \left| \exp\left( -\alpha^2 (1 + \cos\omega t - i \sin\omega t) \right) \right|^2 = \exp\left( -2\alpha^2 (1 + \cos\omega t) \right)$.
+Wait, there's a sign flip. Since $A = \alpha(a^\dagger - a)$, $e^{-A} = D(-\alpha)$, so $\langle 0 | e^{-A} = \langle -\alpha |$ is correct.
+The probability is 1 when $-2\alpha^2(1 + \cos\omega t) = 0 \implies \cos\omega t = -1$, which occurs at $t = \frac{(2k+1)\pi}{\omega}$.
+
+\textbf{Step 4: Probability to be in the first excited state of $H_0$}
+We need $P_{0 \to 1}(t) = | \langle 1 | e^{-iHt/\hbar} | 0 \rangle |^2$.
+Using the same logic, the amplitude involves $\langle 1 | D(-\alpha) | \alpha e^{-i\omega t} \rangle$.
+Using the composition rule $D(\beta)D(\gamma) = D(\beta+\gamma) e^{(\beta\gamma^* - \beta^*\gamma)/2}$, with $\beta = -\alpha$ and $\gamma = \alpha e^{-i\omega t}$:
+\[ D(-\alpha) |\alpha e^{-i\omega t}\rangle = D(\alpha(e^{-i\omega t}-1)) \exp( i\alpha^2 \sin\omega t ) | 0 \rangle \]
+Thus, this is a coherent state $|\gamma'\rangle$ with $\gamma' = \alpha(e^{-i\omega t}-1)$, multiplied by a phase.
+The inner product with $|1\rangle$ is $\langle 1 | \gamma' \rangle = \gamma' e^{-|\gamma'|^2/2}$.
+The probability is $P_{0\to 1}(t) = |\gamma'|^2 e^{-|\gamma'|^2}$.
+Here $|\gamma'|^2 = |\alpha(e^{-i\omega t}-1)|^2 = \alpha^2 ( (\cos\omega t - 1)^2 + \sin^2\omega t ) = 2\alpha^2 (1 - \cos\omega t)$.
+Thus $P_{0\to 1}(t) = 2\alpha^2 (1 - \cos\omega t) \exp\left( -2\alpha^2 (1 - \cos\omega t) \right)$.
+
+\textbf{Step 5: Mean value of the dipole moment}
+The dipole moment is $d = qx = q \sqrt{\frac{\hbar}{2m\omega}} (a + a^\dagger)$.
+We want $\langle d \rangle(t) = \langle \psi(t) | d | \psi(t) \rangle$.
+From Step 4, $|\psi(t)\rangle$ is exactly the coherent state $|\gamma'\rangle = |\alpha(e^{-i\omega t}-1)\rangle$ (up to an overall global phase).
+For a coherent state $|\gamma'\rangle$, the expectation values are $\langle a \rangle = \gamma'$ and $\langle a^\dagger \rangle = \gamma'^*$.
+Thus $\langle d \rangle(t) = q \sqrt{\frac{\hbar}{2m\omega}} (\gamma' + \gamma'^*) = q \sqrt{\frac{\hbar}{2m\omega}} 2 \text{Re}(\gamma')$.
+Since $\gamma' = \alpha(\cos\omega t - 1 - i\sin\omega t)$, we have $\text{Re}(\gamma') = \alpha(\cos\omega t - 1)$.
+Recall $\alpha = -\frac{q\mathcal{E}}{\sqrt{2m\hbar\omega^3}}$.
+Then $\langle d \rangle(t) = q \sqrt{\frac{\hbar}{2m\omega}} 2 \left( -\frac{q\mathcal{E}}{\sqrt{2m\hbar\omega^3}} \right) (\cos\omega t - 1) = \frac{q^2\mathcal{E}}{m\omega^2} (1 - \cos\omega t)$.
+This perfectly matches the classical trajectory of a particle released from rest at $x=0$ in the shifted potential.
 \end{solution}
+
+\subsection*{Problem 4.}
 
 \begin{exercise}
 \label{physics:2025:4}
 The Ising model on a triangle is described by the energy:
 \begin{equation}
-    E = - J (\sigma_1 \sigma_2 + \sigma_2 \sigma_3 + \sigma_3 \sigma_1) - h (\sigma_1 + \sigma_2 + \sigma_3)
+    E = - J (\sigma_1 \sigma_2 + \sigma_2 \sigma_3 + \sigma_3 \sigma_1) - h (\sigma_1 + \sigma_2 + \sigma_3) \tag{6}
 \end{equation}
-where $J$ and $h$ are exchange energy and external magnetic field. The Ising spins $\sigma_{1,2,3}$ take values $\pm 1$.
+where $J$ and $h$ are known parameters: exchange energy and external magnetic field, respectively. The Ising spins $\sigma_{1,2,3}$ are the only degrees of freedom in the problem and they are taking values $\pm 1$. Assume that the temperature of the system is $T$.
 
 \begin{enumerate}
     \item Compute the partition function of the model.
     \item Compute the free energy and the entropy of the model.
     \item Compute the specific heat at temperature $T$ and $h = 0$. What does the specific heat look like when $T \ll J$ and $T \gg J$.
-    \item Compute the magnetization $M = \langle \sigma_1 + \sigma_2 + \sigma_3 \rangle$ at given $h$ and $T \ll J$. What is the behavior of the magnetic susceptibility $\chi = \frac{\partial M}{\partial h}|_{h=0}$ at low temperature?
+    \item Compute the magnetization $M = \langle \sigma \rangle \equiv \langle \sigma_1 + \sigma_2 + \sigma_3 \rangle$ at given $h$ and $T \ll J$. What is the behavior of the magnetic susceptibility $\chi = \frac{\partial M}{\partial h}|_{h=0}$ at low temperature ($T \ll J$)?
     \item Find the fluctuation of magnetization $\langle (\sigma - M)^2 \rangle$ at $T \ll J$.
 \end{enumerate}
+
+\textit{You may work in the units such that $k_B = 1$.}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Partition Function:} $Z = \sum e^{-\beta E}$.
-    \item \textbf{Frustration:} Inability to satisfy all bond interactions simultaneously.
+    \item \textbf{Partition Function ($Z$):} The sum over all possible states of the Boltzmann factor $e^{-\beta E}$, where $\beta = 1/T$ (setting $k_B=1$). It encodes all thermodynamic properties of a system.
+    \item \textbf{Free Energy, Entropy, and Specific Heat:} The free energy is $F = -T \ln Z$. The entropy is $S = -\frac{\partial F}{\partial T}$. The specific heat is $C = T \frac{\partial S}{\partial T}$.
+    \item \textbf{Magnetization and Susceptibility:} Magnetization is the average spin sum $M = \langle \sigma \rangle = \frac{1}{\beta} \frac{\partial \ln Z}{\partial h}$. Magnetic susceptibility $\chi$ measures how $M$ changes with an applied field $h$, defined as $\chi = \frac{\partial M}{\partial h}$. Fluctuations are given by $\langle (\Delta \sigma)^2 \rangle = T \chi$.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+With only three spins on a triangle, we can manually list all 8 possible arrangements. If $J > 0$ (ferromagnetic), the spins want to align with each other. The applied field $h$ acts as a "tiebreaker" telling them which way to point. At very low temperatures, the system gets locked into the lowest energy state, causing specific heat to plummet (because the system is frozen) and magnetization to saturate. We calculate these directly from the partition function to see how thermal jitters compete with the energetic preference for alignment.
 
-1. \textbf{Enumeration:} $2^3 = 8$ states. $E = -J \sum \sigma_i \sigma_j$.
-2. \textbf{Z Calculation:} $Z = 2e^{3\beta J} \cosh(3\beta h) + 6e^{-\beta J} \cosh(\beta h)$.
-3. \textbf{Heat Capacity:} From $U = -\partial_\beta \ln Z$, $C_v$ shows a peak but no phase transition (since it is a finite system).
-4. \textbf{Antiferromagnetism:} If $J < 0$, the system cannot make all pairs happy, leading to a degenerate "frustrated" ground state.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Imagine three people who all want to disagree with each other. Person A disagrees with B, B disagrees with C... but now C is forced to either agree with A or B! This "social deadlock" in a triangle of interactions is why frustrated magnets behave so strangely compared to regular ones.
+\textbf{Step 1: Compute the partition function}
+There are $2^3 = 8$ configurations for the three spins $\sigma_i \in \{+1, -1\}$.
+The energy is $E = -J(\sigma_1\sigma_2 + \sigma_2\sigma_3 + \sigma_3\sigma_1) - h(\sigma_1+\sigma_2+\sigma_3)$. Let's group the states by the number of up spins ($N_\uparrow$):
+- $N_\uparrow = 3$: All spins $+1$. (1 state)
+  $\sigma_1\sigma_2 + \sigma_2\sigma_3 + \sigma_3\sigma_1 = 3$, $\sigma_1+\sigma_2+\sigma_3 = 3$.
+  $E = -3J - 3h$.
+- $N_\uparrow = 2$: Two $+1$, one $-1$. (3 states)
+  $\sigma_1\sigma_2 + \sigma_2\sigma_3 + \sigma_3\sigma_1 = 1 - 1 - 1 = -1$, $\sigma_1+\sigma_2+\sigma_3 = 1$.
+  $E = J - h$.
+- $N_\uparrow = 1$: One $+1$, two $-1$. (3 states)
+  $\sigma_1\sigma_2 + \sigma_2\sigma_3 + \sigma_3\sigma_1 = -1$, $\sigma_1+\sigma_2+\sigma_3 = -1$.
+  $E = J + h$.
+- $N_\uparrow = 0$: All spins $-1$. (1 state)
+  $\sigma_1\sigma_2 + \sigma_2\sigma_3 + \sigma_3\sigma_1 = 3$, $\sigma_1+\sigma_2+\sigma_3 = -3$.
+  $E = -3J + 3h$.
+The partition function is $Z = \sum e^{-\beta E}$:
+\begin{aligned}
+    Z &= e^{\beta(3J + 3h)} + 3e^{-\beta(J - h)} + 3e^{-\beta(J + h)} + e^{\beta(3J - 3h)} \\
+      &= e^{3\beta J} (e^{3\beta h} + e^{-3\beta h}) + 3e^{-\beta J} (e^{\beta h} + e^{-\beta h}) \\
+      &= 2e^{3\beta J} \cosh(3\beta h) + 6e^{-\beta J} \cosh(\beta h)
+\end{aligned}
+
+\textbf{Step 2: Compute free energy and entropy}
+The free energy is $F = -T \ln Z$:
+\[ F = -T \ln\left( 2e^{3J/T} \cosh\left(\frac{3h}{T}\right) + 6e^{-J/T} \cosh\left(\frac{h}{T}\right) \right) \]
+The entropy is $S = -\frac{\partial F}{\partial T} = \ln Z + T \frac{\partial \ln Z}{\partial T}$.
+Using $\frac{\partial}{\partial T} = -\frac{1}{T^2} \frac{\partial}{\partial \beta}$, the average energy is $E_{avg} = -\frac{\partial \ln Z}{\partial \beta}$. Thus $S = \ln Z + \frac{E_{avg}}{T}$, where:
+\[ E_{avg} = - \frac{ 2e^{3\beta J} (3J\cosh 3\beta h + 3h\sinh 3\beta h) + 6e^{-\beta J} (-J\cosh \beta h + h\sinh \beta h) }{ 2e^{3\beta J} \cosh(3\beta h) + 6e^{-\beta J} \cosh(\beta h) } \]
+
+\textbf{Step 3: Compute specific heat at $h=0$}
+At $h=0$, the partition function simplifies to:
+\[ Z_0 = 2e^{3\beta J} + 6e^{-\beta J} = 2e^{-\beta J} (e^{4\beta J} + 3) \]
+The internal energy at $h=0$ is $E_0 = -\frac{\partial \ln Z_0}{\partial \beta} = - \frac{\partial}{\partial \beta} [-\beta J + \ln(e^{4\beta J} + 3)] = J - \frac{4J e^{4\beta J}}{e^{4\beta J} + 3} = 3J \frac{1 - e^{4\beta J}}{e^{4\beta J} + 3}$.
+The specific heat is $C = \frac{\partial E_0}{\partial T} = -\frac{1}{T^2} \frac{\partial E_0}{\partial \beta}$:
+\[ \frac{\partial E_0}{\partial \beta} = 3J \frac{(-4J e^{4\beta J})(e^{4\beta J} + 3) - (1 - e^{4\beta J})(4J e^{4\beta J})}{(e^{4\beta J} + 3)^2} = \frac{-48 J^2 e^{4\beta J}}{(e^{4\beta J} + 3)^2} \]
+Thus, $C = \frac{48 J^2 e^{4J/T}}{T^2 (e^{4J/T} + 3)^2}$.
+Assuming $J > 0$ (ferromagnetic):
+When $T \ll J$ (low temperature), $e^{4J/T} \gg 3$, so $C \approx \frac{48 J^2}{T^2} e^{-4J/T}$, showing exponential decay typical of a gapped system.
+When $T \gg J$ (high temperature), $e^{4J/T} \approx 1$, so $C \approx \frac{48 J^2}{T^2 (1+3)^2} = \frac{3 J^2}{T^2}$.
+
+\textbf{Step 4: Magnetization and susceptibility at low temperature ($J>0$)}
+The magnetization is $M = \frac{1}{\beta} \frac{\partial \ln Z}{\partial h}$:
+\[ M = \frac{ 6e^{3\beta J}\sinh(3\beta h) + 6e^{-\beta J}\sinh(\beta h) }{ 2e^{3\beta J}\cosh(3\beta h) + 6e^{-\beta J}\cosh(\beta h) } = 3 \frac{ e^{3\beta J}\sinh(3\beta h) + e^{-\beta J}\sinh(\beta h) }{ e^{3\beta J}\cosh(3\beta h) + 3e^{-\beta J}\cosh(\beta h) } \]
+For $T \ll J$, $e^{3\beta J} \gg e^{-\beta J}$, so the first terms dominate:
+\[ M \approx 3 \frac{e^{3\beta J}\sinh(3\beta h)}{e^{3\beta J}\cosh(3\beta h)} = 3 \tanh(3\beta h) \]
+To find the susceptibility $\chi = \left. \frac{\partial M}{\partial h} \right|_{h=0}$, we expand $M$ for small $h$ ($\sinh x \approx x$, $\cosh x \approx 1$):
+\[ M \approx 3 \frac{ e^{3\beta J}(3\beta h) + e^{-\beta J}(\beta h) }{ e^{3\beta J} + 3e^{-\beta J} } = 3\beta h \frac{ 3e^{3\beta J} + e^{-\beta J} }{ e^{3\beta J} + 3e^{-\beta J} } \]
+So $\chi = 3\beta \frac{ 3e^{3\beta J} + e^{-\beta J} }{ e^{3\beta J} + 3e^{-\beta J} }$.
+At low temperature ($T \ll J$, $\beta \to \infty$), $e^{3\beta J}$ dominates both numerator and denominator:
+\[ \chi \approx 3\beta \frac{3e^{3\beta J}}{e^{3\beta J}} = \frac{9}{T} \]
+This means the susceptibility diverges as $1/T$, following Curie's Law for a rigid macro-spin of size 3.
+
+\textbf{Step 5: Fluctuation of magnetization at $T \ll J$}
+The fluctuation $\langle (\sigma - M)^2 \rangle$ is related to the susceptibility by the fluctuation-dissipation theorem:
+\[ \langle (\Delta \sigma)^2 \rangle = \frac{1}{\beta} \frac{\partial^2 \ln Z}{\partial h^2} = T \chi \]
+At $h=0$, $M=0$, so the fluctuation is simply $\langle \sigma^2 \rangle$.
+From our low-temperature expansion, $\chi \approx 9/T$.
+Thus, $\langle \sigma^2 \rangle = T \left( \frac{9}{T} \right) = 9$.
+This makes perfect sense physically: at $T \ll J$ and $h=0$, the system is found only in the two perfectly aligned states (all $+1$ or all $-1$). In both states, the total spin $\sigma_1+\sigma_2+\sigma_3$ is either $+3$ or $-3$, so the squared fluctuation is exactly $(\pm 3)^2 = 9$.
 \end{solution}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.5\textwidth]{images/physics/02b171f128b1e34c6f21743014ca7914117f5d1bf05fd4a1be7d8d02cb5a2669.jpg}
 \end{figure}
 
+\subsection*{Problem 5.}
+
 \begin{exercise}
-In this problem, we study the gravitational waves emitted from a binary system of two black holes treated as point masses.
+\label{physics:2025:5}
+In this problem, we study the gravitational waves emitted from a binary system of two black holes. As a simplifying assumption, we treat black holes as point masses. For all parts except (5), please give your answers in analytical expressions in terms of quantities provided in the problem and fundamental constants such as the speed of light $c$ and Newton’s constant $G$.
 
 \begin{enumerate}
-    \item For a point mass $m$ moving in the $(x, y)$ plane, general relativity predicts:
+    \item For a point mass $m$ moving near the origin in the $(x, y)$ plane along a trajectory $x = x(t)$, $y = y(t)$, general relativity predicts that the gravitational waves emitted by $m$ have the following amplitudes $h$ at distance $L$ from the origin with inclination angle $\theta$:
     \begin{equation}
-        h_+ = \frac{G m}{2 L c^4} (1 + \cos^2 \theta) \frac{d^2}{dt^2} (x^2 - y^2), \quad h_\times = \frac{G m}{L c^4} \cos \theta \frac{d^2}{dt^2} (2xy)
+        h_+ = \frac{1}{L} \frac{G}{c^4} \frac{1 + \cos^2 \theta}{2} m \left(\frac{d^2}{dt^2} (x^2 - y^2)\right), \qquad h_\times = \frac{1}{L} \frac{G}{c^4} (\cos \theta) m \left(\frac{d^2}{dt^2} (2xy)\right), \tag{7}
     \end{equation}
-    \item For two black holes with masses $m_1$ and $m_2$ separated by $r$, forming a circular orbit under Newtonian gravity with their center-of-mass at the origin, derive $h_+$ and $h_\times$. What is the gravitational wave frequency $f$?
-
-    \item Find the average power $P$ radiated by the binary over all directions and averaged over one orbital period.
-    \item The binary orbit changes slowly due to radiation. Let the frequency be $f_0$ at $t = t_0$. Determine $f(t)$.
-    \item Find the coalescence time $T_C$ starting from initial separation $r_0$.
-    \item For $m_1 = m_2 = 10 M_\odot$, estimate the maximum initial separation $r_0$ (in au) allowing coalescence within the age of the universe ($T \simeq 10^{10}$ years).
+    where $h_+$ and $h_\times$ represent the two independent polarization modes. For two black holes with masses $m_1$ and $m_2$ separated by $r$, forming a circular orbit under Newtonian gravity with their center-of-mass at the origin (figure 1), please derive $h_+$ and $h_\times$. What is the gravitational wave frequency $f$?
+    \item Gravitational waves carry energy. The power per solid angle radiated outward at distance $L$ is given by:
+    \begin{equation}
+        p = \frac{c^3 L^2}{16 \pi G} \left[ \left(\frac{\partial h_+}{\partial t}\right)^2 + \left(\frac{\partial h_\times}{\partial t}\right)^2 \right]. \tag{8}
+    \end{equation}
+    Please find the average power $P$ radiated by the above black hole binary over all directions and averaged over one orbital period.
+    \item The binary orbit changes slowly due to the gravitational wave radiation. Let the gravitational wave frequency be $f_0$ at the initial time $t = t_0$. Please determine $f(t)$.
+    \item Eventually, the black holes merge as the orbital radius shrinks. Let the initial separation be $r_0$. Please find the coalescence time $T_C$.
+    \item For $m_1 = m_2 = 10 M_\odot$ (where $M_\odot$ is solar mass), please estimate the maximum initial separation $r_0$ (in astronomical unit (au), namely the mean distance between the sun and the earth) allowing coalescence within the age of the universe ($T \simeq 10^{10}$ years). Order-of-magnitude estimation suffices.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Quadrupole Formula:} $h \sim \ddot{Q}/r$.
-    \item \textbf{Kepler's Law:} $r \Omega^2 \sim 1/r^2$.
+    \item \textbf{Quadrupole Radiation:} Gravitational waves are generated not by a changing dipole (which is forbidden by momentum conservation) but by a changing quadrupole moment—the "stretching and squeezing" shape of the mass distribution.
+    \item \textbf{Chirp Signal:} As the binary system loses energy, the orbit shrinks, causing the black holes to spin faster. This results in a gravitational wave signal that increases in both frequency and amplitude over time (a "chirp").
+    \item \textbf{Kepler's Third Law:} The relation between the orbital angular velocity $\omega$ and the separation $r$ in Newtonian gravity is $\omega^2 = GM/r^3$, where $M$ is the total mass.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine two massive black holes orbiting each other like a giant cosmic dumbbell. As they spin, they stir the "fabric" of spacetime, radiating energy outward in the form of gravitational ripples. Because the dumbbell looks identical after half a turn, the ripples are produced at exactly twice the orbital frequency. This radiation carries away orbital energy, forcing the black holes to fall closer together. As they get closer, they must orbit even faster, which in turn causes them to radiate energy even more violently. This creates a runaway "death spiral" that ends in a spectacular collision.
 
-1. \textbf{Moment:} $Q_{jk} = \sum m x_j x_k$. For circular motion, $Q \propto \cos(2\Omega t)$.
-2. \textbf{Power radiated:} $P \propto \dddot{Q}^2 \propto \Omega^6 r^4$. Using Kepler's law, $P \propto 1/r^5$.
-3. \textbf{Chirp:} As the system loses energy, $r$ shrinks, forcing $\Omega$ to increase to stay in orbit. This leads to the characteristic "chirp" frequency rise.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-A binary black hole is like a massive mixer stirring the fabric of space itself. The ripples it sends out carry away energy. To compensate for the loss, the black holes must fall closer together, which makes them whirl even faster, sending out waves even more violently until they finally collide.
+\textbf{Step 1: Deriving the wave amplitudes and frequency}
+For two masses $m_1, m_2$ in circular orbit, their center of mass is the origin. The coordinates are $x_1 = r_1 \cos\omega t$, $y_1 = r_1 \sin\omega t$ and $x_2 = -r_2 \cos\omega t$, $y_2 = -r_2 \sin\omega t$, with $r_1+r_2=r$, $m_1 r_1 = m_2 r_2$, and $\omega = \sqrt{GM/r^3}$ where $M = m_1+m_2$.
+The sum $\sum_i m_i (x_i^2 - y_i^2) = (m_1 r_1^2 + m_2 r_2^2) (\cos^2\omega t - \sin^2\omega t) = \mu r^2 \cos(2\omega t)$, where $\mu = \frac{m_1 m_2}{M}$ is the reduced mass.
+Similarly, $\sum_i m_i (2 x_i y_i) = 2 \mu r^2 \sin\omega t \cos\omega t = \mu r^2 \sin(2\omega t)$.
+Taking the second derivatives:
+\[ \frac{d^2}{dt^2} \mu r^2 \cos(2\omega t) = -4\omega^2 \mu r^2 \cos(2\omega t), \quad \frac{d^2}{dt^2} \mu r^2 \sin(2\omega t) = -4\omega^2 \mu r^2 \sin(2\omega t) \]
+Substituting into the given equations for $h$:
+\[ h_+ = -\frac{2G\mu\omega^2 r^2}{L c^4} (1 + \cos^2\theta) \cos(2\omega t), \quad h_\times = -\frac{4G\mu\omega^2 r^2}{L c^4} (\cos\theta) \sin(2\omega t) \]
+The time dependence is $2\omega t$, so the gravitational wave frequency is $f = \frac{2\omega}{2\pi} = \frac{\omega}{\pi}$.
+
+\textbf{Step 2: Calculating the total radiated power}
+The power per solid angle is $p = \frac{c^3 L^2}{16\pi G} \left[ \left(\frac{\partial h_+}{\partial t}\right)^2 + \left(\frac{\partial h_\times}{\partial t}\right)^2 \right]$.
+Taking the time derivatives:
+\[ \frac{\partial h_+}{\partial t} = \frac{4G\mu\omega^3 r^2}{L c^4} (1+\cos^2\theta) \sin(2\omega t), \quad \frac{\partial h_\times}{\partial t} = -\frac{8G\mu\omega^3 r^2}{L c^4} \cos\theta \cos(2\omega t) \]
+Squaring and taking the time average over one period ($\langle\sin^2(2\omega t)\rangle = \langle\cos^2(2\omega t)\rangle = 1/2$):
+\[ \langle p \rangle = \frac{c^3 L^2}{32\pi G} \frac{16 G^2 \mu^2 \omega^6 r^4}{L^2 c^8} \left[ (1+\cos^2\theta)^2 + 4\cos^2\theta \right] = \frac{G\mu^2\omega^6 r^4}{2\pi c^5} (1 + 6\cos^2\theta + \cos^4\theta) \]
+Integrating over all directions $d\Omega = \sin\theta d\theta d\phi$:
+\[ P = 2\pi \int_{-1}^1 \langle p \rangle d(\cos\theta) = \frac{G\mu^2\omega^6 r^4}{c^5} \left[ 2 + 6\left(\frac{2}{3}\right) + \frac{2}{5} \right] = \frac{32}{5} \frac{G\mu^2\omega^6 r^4}{c^5} \]
+Using $\omega^2 = GM/r^3$, this becomes $P = \frac{32}{5} \frac{G^4 \mu^2 M^3}{c^5 r^5}$.
+
+\textbf{Step 3: Determining the frequency evolution $f(t)$}
+The total orbital energy is $E = -\frac{G\mu M}{2r}$. From Kepler's law, $r = (GM/\omega^2)^{1/3}$, so $E = -\frac{1}{2} \mu (GM)^{2/3} \omega^{2/3}$.
+By conservation of energy, $\frac{dE}{dt} = -P$:
+\[ \frac{dE}{dt} = -\frac{1}{3} \mu (GM)^{2/3} \omega^{-1/3} \dot{\omega} = -\frac{32}{5} \frac{G^4 \mu^2 M^3}{c^5} \frac{\omega^{10/3}}{(GM)^{5/3}} \]
+Solving for $\dot{\omega}$:
+\[ \dot{\omega} = \frac{96}{5} \frac{G^{5/3} \mu M^{2/3}}{c^5} \omega^{11/3} \]
+Substitute $\omega = \pi f$: $\dot{f} = \frac{96}{5} \pi^{8/3} \frac{G^{5/3} \mu M^{2/3}}{c^5} f^{11/3}$.
+Integrate from $t_0$ to $t$: $\int_{f_0}^{f} f'^{-11/3} df' = K \int_{t_0}^t dt$, where $K = \frac{96}{5} \pi^{8/3} \frac{G^{5/3} \mu M^{2/3}}{c^5}$.
+\[ -\frac{3}{8} \left( f^{-8/3} - f_0^{-8/3} \right) = K (t - t_0) \]
+\[ f(t) = \left[ f_0^{-8/3} - \frac{256}{5} \pi^{8/3} \frac{G^{5/3} \mu M^{2/3}}{c^5} (t - t_0) \right]^{-3/8} \]
+
+\textbf{Step 4: Finding the coalescence time $T_C$}
+Coalescence occurs when the separation shrinks to zero, meaning $f \to \infty$. This happens when the term inside the bracket reaches zero:
+\[ T_C = t - t_0 = \frac{5}{256} \frac{c^5}{G^{5/3} \mu M^{2/3} \pi^{8/3}} f_0^{-8/3} \]
+Substitute $f_0^{-8/3} = \pi^{8/3} \omega_0^{-8/3} = \pi^{8/3} (r_0^3/GM)^{4/3}$:
+\[ T_C = \frac{5}{256} \frac{c^5}{G^{5/3} \mu M^{2/3}} \frac{r_0^4}{G^{4/3} M^{4/3}} = \frac{5}{256} \frac{c^5 r_0^4}{G^3 \mu M^2} \]
+
+\textbf{Step 5: Estimating maximum initial separation $r_0$}
+Given $m_1 = m_2 = 10 M_\odot$, we have $M = 20 M_\odot$ and $\mu = 5 M_\odot$.
+For $T_C \approx 10^{10} \text{ years} \approx 3 \times 10^{17} \text{ s}$.
+We use $c \approx 3 \times 10^8 \text{ m/s}$, $G \approx 6.67 \times 10^{-11} \text{ N}\cdot\text{m}^2/\text{kg}^2$, and $M_\odot \approx 2 \times 10^{30} \text{ kg}$.
+\[ r_0 = \left( \frac{256}{5} \frac{G^3 \mu M^2 T_C}{c^5} \right)^{1/4} = \left( \frac{256}{5} \frac{G^3 (5 M_\odot) (400 M_\odot^2) T_C}{c^5} \right)^{1/4} = \left( 102400 \frac{(G M_\odot)^3 T_C}{c^5} \right)^{1/4} \]
+Using $G M_\odot \approx 1.33 \times 10^{20} \text{ m}^3/\text{s}^2$, $c^5 \approx 2.4 \times 10^{42}$:
+\[ r_0^4 \approx 10^5 \frac{(2.3 \times 10^{60}) (3 \times 10^{17})}{2.4 \times 10^{42}} \approx 3 \times 10^{40} \text{ m}^4 \]
+\[ r_0 \approx (3 \times 10^{40})^{1/4} \approx 1.3 \times 10^{10} \text{ m} \]
+Since $1 \text{ au} \approx 1.5 \times 10^{11} \text{ m}$, the maximum initial separation is roughly $r_0 \approx 0.1 \text{ au}$.
 \end{solution}
+
+\subsection*{Problem 6.}
 
 \begin{exercise}
 \label{physics:2025:6}
-In this problem, we explore some physical properties of a conformal scalar field.
+In this problem, we explore some physical properties of a conformal scalar field. We use natural units $c = \hbar = 1$.
 
 \begin{enumerate}
-    \item Consider a massless scalar field $\phi$ in Minkowski spacetime with action $S = -\frac{1}{2} \int \mathrm{d}^4 x (\partial_\mu \phi)^2$. Show that the action is invariant under rescaling $g_{\mu\nu} \to \Omega^2 g_{\mu\nu}$ and $\phi \to \Omega^\Delta \phi$ for constant $\Omega$. Determine $\Delta$.
-    \item For a local rescaling $g_{\mu\nu}(x) \to \Omega^2(x) g_{\mu\nu}(x)$, determine the transformation of the action. Can $S$ be made invariant by choosing $\Delta$?
-    \item Suppose the Ricci scalar transforms as $R \to \tilde{R}$. Determine $\tilde{R}$.
-    \item Show that invariance can be restored if we add a new term:
+    \item Consider a massless scalar field $\phi$ in Minkowski spacetime with the action $S = - \frac{1}{2} \int \mathrm{d}^4 x (\partial_\mu \phi)^2$. Show that the action is invariant under a rigid rescaling of the metric, namely $\eta_{\mu\nu} \to \tilde{\eta}_{\mu\nu} = \Omega^2 \eta_{\mu\nu}$ with $\Omega$ constant, if one rescales simultaneously $\phi$ according to $\phi \to \tilde{\phi} = \Omega^\Delta \phi$. Determine $\Delta$.
+    \item Consider a local rescaling of an arbitrary metric $g_{\mu\nu}(x) \to \tilde{g}_{\mu\nu}(x) = \Omega^2(x) g_{\mu\nu}(x)$, and also $\phi(x) \to \Omega^\Delta(x) \phi(x)$. Determine the transformation of the action $S = - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} g^{\mu\nu} (\partial_\mu \phi) (\partial_\nu \phi)$ under the local rescaling. Can $S$ be made invariant by appropriately choosing the value of $\Delta$?
+    \item Suppose the Ricci scalar transforms as $R \to \tilde{R}$ under the local rescaling $g_{\mu\nu}(x) \to \Omega^2(x) g_{\mu\nu}(x)$. Please determine $\tilde{R}$.
+    \item Show that the invariance of the scalar action under the local rescaling can be restored if we add a new term to the action:
     \begin{equation}
-        S = \int \mathrm{d}^4 x \sqrt{-g} \left[ \frac{1}{2} (\partial_\mu \phi)^2 - \frac{1}{2} \xi R \phi^2 \right]
+        S = \int \mathrm{d}^4 x \sqrt{-g} \left[ \frac{1}{2} (\partial_\mu \phi)^2 - \frac{1}{2} \xi R \phi^2 \right] \tag{9}
     \end{equation}
-    Determine $\xi$ such that the action is invariant.
-    \item Consider a spacetime with metric $ds^2 = \frac{-d\tau^2 + d\mathbf{x}^2}{(H\tau)^2}$. Show that a conformal scalar $\phi$ has an action identical to a scalar field with nonzero mass $m$. Determine $m$.
+    where $\xi$ is a coupling constant. Determine the value of $\xi$ such that the action is invariant under the local rescaling. A scalar field $\phi$ with the above action is called a conformal scalar.
+    \item Consider a spacetime with the following metric:
+    \begin{equation}
+        \mathrm{d} s^2 = \frac{-\mathrm{d} \tau^2 + \mathrm{d} \mathbf{x}^2}{(H \tau)^2} \tag{10}
+    \end{equation}
+    where $\mathbf{x} \in \mathbb{R}^3$, $\tau \in (-\infty, 0)$, and $H$ is a constant. Please show that a conformal scalar $\phi$ in this spacetime has an action identical to a scalar field with nonzero mass $m$. Please determine $m$.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
-    \item \textbf{Conformal Transformation:} $g \to \Omega^2 g$.
-    \item \textbf{Ricci Scalar Change:} $\bar{R} = R/\Omega^2 + \dots$
+    \item \textbf{Conformal Transformation:} A local rescaling of the spacetime metric $g_{\mu\nu}(x) \to \Omega^2(x) g_{\mu\nu}(x)$, which preserves angles between curves but changes distances.
+    \item \textbf{Conformal Coupling ($\xi$):} An extra term $\xi R \phi^2$ added to the scalar field action to cancel out "noise" generated when taking derivatives of the locally stretched field.
+    \item \textbf{Ricci Scalar ($R$):} A geometric quantity measuring the intrinsic curvature of spacetime. In a flat expanding universe (like de Sitter space), $R$ is a non-zero constant.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine drawing physics diagrams on a rubber sheet. A "rigid rescaling" is like stretching the whole sheet uniformly—if you scale the fields correctly, the overall physics (the action) looks identical. However, a "local rescaling" is like stretching different parts of the sheet by different amounts. When the field $\phi$ tries to adapt to this uneven stretching, its derivatives pick up extra leftover terms because the stretch factor $\Omega(x)$ varies from place to place. To fix this and keep the physics invariant, we must couple the field directly to the curvature of the sheet (the Ricci scalar). Surprisingly, in an expanding universe, this curvature-coupling acts exactly like a mass, making a massless field behave as if it's heavy!
 
-1. \textbf{Invariance:} Kinetic term $\partial \phi^2$ isn't conformally invariant on its own in curved space.
-2. \textbf{Coupling:} Setting $\xi = (d-2)/4(d-1)$ (which is $1/6$ in 4D) exactly cancels the curvature terms generated during the transformation.
-3. \textbf{Effective Mass:} In de Sitter space ($R=12H^2$), the coupling $\xi R \phi^2$ looks like a mass term $m^2 = \xi R = 2H^2$.
+\textbf{Logical Step-by-Step Breakdown:}
 
-\textbf{Intuition:}
-Usually, being "massless" means you travel at the speed of light and your physics is the same regardless of scale. In a curved universe, the stretching of space normally breaks this. By adding a specific interaction between the field and the curvature, we "re-balance" the scales so the field remains truly scale-less.
+\textbf{Step 1: Rigid Rescaling and finding $\Delta$}
+The covariant action is $S = - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} g^{\mu\nu} (\partial_\mu \phi) (\partial_\nu \phi)$.
+Under a rigid rescaling $\tilde{g}_{\mu\nu} = \Omega^2 g_{\mu\nu}$ with a constant $\Omega$, the inverse metric is $\tilde{g}^{\mu\nu} = \Omega^{-2} g^{\mu\nu}$, and the determinant is $\sqrt{-\tilde{g}} = \sqrt{\Omega^8 (-g)} = \Omega^4 \sqrt{-g}$.
+The field rescales as $\tilde{\phi} = \Omega^\Delta \phi$. Since $\Omega$ is constant, $\partial_\mu \tilde{\phi} = \Omega^\Delta \partial_\mu \phi$.
+Substitute these into the action:
+\begin{aligned}
+    \tilde{S} &= - \frac{1}{2} \int \mathrm{d}^4 x (\Omega^4 \sqrt{-g}) (\Omega^{-2} g^{\mu\nu}) (\Omega^\Delta \partial_\mu \phi) (\Omega^\Delta \partial_\nu \phi) \\
+              &= \Omega^{2 + 2\Delta} \left( - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} g^{\mu\nu} (\partial_\mu \phi) (\partial_\nu \phi) \right) = \Omega^{2 + 2\Delta} S
+\end{aligned}
+For the action to remain invariant ($\tilde{S} = S$), we must have $2 + 2\Delta = 0$, which yields $\Delta = -1$.
+
+\textbf{Step 2: Local Rescaling}
+Now let $\Omega(x)$ be a function of spacetime. We have $\tilde{\phi} = \Omega^{-1} \phi$.
+By the product rule, $\partial_\mu \tilde{\phi} = \Omega^{-1} \partial_\mu \phi - \Omega^{-2} \phi \partial_\mu \Omega$.
+Expanding the kinetic term:
+\begin{aligned}
+    \tilde{g}^{\mu\nu} (\partial_\mu \tilde{\phi}) (\partial_\nu \tilde{\phi}) &= \Omega^{-2} g^{\mu\nu} (\Omega^{-1} \partial_\mu \phi - \Omega^{-2} \phi \partial_\mu \Omega) (\Omega^{-1} \partial_\nu \phi - \Omega^{-2} \phi \partial_\nu \Omega) \\
+    &= \Omega^{-4} (\partial \phi)^2 - 2\Omega^{-5} \phi (\partial_\mu \phi)(\partial^\mu \Omega) + \Omega^{-6} \phi^2 (\partial \Omega)^2
+\end{aligned}
+Multiplying by $\sqrt{-\tilde{g}} = \Omega^4 \sqrt{-g}$:
+\[ \sqrt{-\tilde{g}} \tilde{g}^{\mu\nu} (\partial_\mu \tilde{\phi}) (\partial_\nu \tilde{\phi}) = \sqrt{-g} \left[ (\partial \phi)^2 - 2\Omega^{-1} \phi (\partial_\mu \phi)(\partial^\mu \Omega) + \Omega^{-2} \phi^2 (\partial \Omega)^2 \right] \]
+Notice that $-2\Omega^{-1} \phi \partial_\mu \phi \partial^\mu \Omega = -\Omega^{-1} \partial_\mu(\phi^2) \partial^\mu \Omega$.
+Integrating this term by parts gives $\int \sqrt{-g} \phi^2 \nabla_\mu (\Omega^{-1} \nabla^\mu \Omega) = \int \sqrt{-g} \phi^2 \left( \Omega^{-1} \Box \Omega - \Omega^{-2} (\partial \Omega)^2 \right)$.
+Substituting this back, the $\Omega^{-2} \phi^2 (\partial \Omega)^2$ terms cancel!
+We are left with:
+\[ \tilde{S} = S - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \phi^2 \left( \Omega^{-1} \Box \Omega \right) \]
+Because of the extra $\Box \Omega$ term, $S$ cannot be made invariant just by choosing a value for $\Delta$.
+
+\textbf{Step 3: Ricci scalar transformation}
+Under a conformal transformation $\tilde{g}_{\mu\nu} = \Omega^2 g_{\mu\nu}$ in 4 dimensions, it is a standard result of differential geometry that the Ricci scalar transforms as:
+\[ \tilde{R} = \Omega^{-2} R - 6 \Omega^{-3} \Box \Omega \]
+
+\textbf{Step 4: Restoring conformal invariance}
+Consider the modified action $S_{\text{new}} = S - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \xi R \phi^2$.
+Under the local rescaling:
+\begin{aligned}
+    \tilde{S}_{\text{new}} &= \tilde{S} - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-\tilde{g}} \xi \tilde{R} \tilde{\phi}^2 \\
+                           &= \left( S - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \phi^2 \Omega^{-1} \Box \Omega \right) - \frac{1}{2} \int \mathrm{d}^4 x (\Omega^4 \sqrt{-g}) \xi (\Omega^{-2} R - 6 \Omega^{-3} \Box \Omega) (\Omega^{-2} \phi^2) \\
+                           &= S - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \phi^2 \Omega^{-1} \Box \Omega - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \xi (R - 6 \Omega^{-1} \Box \Omega) \phi^2 \\
+                           &= S_{\text{new}} - \frac{1}{2} \int \mathrm{d}^4 x \sqrt{-g} \phi^2 \Omega^{-1} \Box \Omega (1 - 6\xi)
+\end{aligned}
+To make the action invariant ($\tilde{S}_{\text{new}} = S_{\text{new}}$), the extra term must vanish, which strictly requires $1 - 6\xi = 0 \implies \xi = 1/6$.
+
+\textbf{Step 5: Effective mass in an expanding universe}
+The given metric $\mathrm{d}s^2 = \frac{-\mathrm{d}\tau^2 + \mathrm{d}\mathbf{x}^2}{(H\tau)^2}$ describes de Sitter space in conformal time. This is a spacetime with a constant positive curvature.
+The Ricci scalar for de Sitter space is $R = 12H^2$.
+Substitute this into the conformal coupling term of the action:
+\[ - \frac{1}{2} \xi R \phi^2 = - \frac{1}{2} \left(\frac{1}{6}\right) (12H^2) \phi^2 = - \frac{1}{2} (2H^2) \phi^2 \]
+In a standard scalar field action, a mass term appears as $- \frac{1}{2} m^2 \phi^2$.
+Comparing the two, we see the conformal scalar acts exactly like a massive scalar field with an effective mass squared $m^2 = 2H^2$, giving $m = \sqrt{2} H$.
 \end{solution}
-

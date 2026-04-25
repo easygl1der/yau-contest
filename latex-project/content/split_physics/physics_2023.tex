@@ -1,18 +1,20 @@
 \section{2023 Mathematical Physics}
 
+\textit{Solve every problem.}
+
 \subsection{Classical Mechanics}
 
 \begin{exercise}
 \label{physics:2023:1}
 Consider the Lagrangian
 \begin{equation}
-    L (x, y, \dot {x}, \dot {y}) = \frac {1}{2} \frac {\dot {x} ^ {2} + \dot {y} ^ {2} + 2 (x \dot {y} - y \dot {x})}{x ^ {2} + y ^ {2}}
+    L (x, y, \dot {x}, \dot {y}) = \frac {1}{2} \frac {\dot {x} ^ {2} + \dot {y} ^ {2} + 2 (x \dot {y} - y \dot {x})}{x ^ {2} + y ^ {2}} \label{eq:2023:1:1}
 \end{equation}
 
 \begin{enumerate}[label=(\alph*)]
     \item Compute the Hamiltonian $H ( x , y , p _ { x } , p _ { y } )$ , and show the final form can be written as
     \begin{equation}
-        \frac {1}{2} f (x, y) \left[ \left(p _ {x} - A _ {x} (x, y)\right) ^ {2} + \left(p _ {y} - A _ {y} (x, y)\right) ^ {2} \right]
+        \frac {1}{2} f (x, y) \left[ \left(p _ {x} - A _ {x} (x, y)\right) ^ {2} + \left(p _ {y} - A _ {y} (x, y)\right) ^ {2} \right] \label{eq:2023:1:2}
     \end{equation}
     for some $f , A _ { x } , A _ { y }$. Find the vector potential $\vec { A }$ and then compute the corresponding magnetic field away from the origin. (Hint: recall that $\vec { B } = \mathrm { curl } \vec { A } = \nabla \times \vec { A }$ ).
     \item Prove that the Lagrangian $L ( x , y , \dot { x } , \dot { y } )$ is invariant under two symmetries: rotations and scale transformations.
@@ -22,21 +24,98 @@ Consider the Lagrangian
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Legendre Transformation:} $H = \sum p \dot{q} - L$.
-    \item \textbf{Noether's Theorem:} Symmetries lead to conserved charges.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Legendre Transformation:} The process of switching from $(q, \dot{q})$ to $(q, p)$, defined by $H = \sum p_i \dot{q}_i - L$.
+- \textbf{Canonical Momentum:} $p_i = \frac{\partial L}{\partial \dot{q}_i}$.
+- \textbf{Noether's Theorem:} A principle stating that every continuous symmetry of the action corresponds to a conserved quantity.
+- \textbf{Vector Potential:} A vector field $\vec{A}$ whose curl gives the magnetic field $\vec{B} = \nabla \times \vec{A}$.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+This system describes a particle moving in a space that feels like a "vortex" centered at the origin. Even though there is no physical magnetic field away from the center, the presence of the vector potential $\vec{A}$ (the "swirl") acts like an unseen force that makes the particle keep a constant angular speed. Meanwhile, because the "stiffness" of the system drops as you move further away exactly as fast as your speed increases, the particle naturally expands outwards in a perfect geometric logarithmic spiral.
 
-1. \textbf{Momenta:} $p_x = \frac{\dot{x}-y}{x^2+y^2}$, $p_y = \frac{\dot{y}+x}{x^2+y^2}$.
-2. \textbf{Hamiltonian Form:} $H = \frac{1}{2}(x^2+y^2)[(p_x - \frac{-y}{x^2+y^2})^2 + (p_y - \frac{x}{x^2+y^2})^2]$.
-3. \textbf{Magnetic Field:} The vector potential $\vec{A} = \frac{-y\hat{i} + x\hat{j}}{x^2+y^2}$ gives $B_z = \nabla \times \vec{A} = 0$ everywhere except the origin. This is the Aharonov-Bohm flux.
-4. \textbf{Symmetries:} The Lagrangian is invariant under rotation (manifest in the $x\dot{y}-y\dot{x}$ term) and scaling (both numerator and denominator scale as $\lambda^2$).
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Compute the canonical momenta and invert for velocities.}
+First, we find the canonical momenta by taking the partial derivatives of the Lagrangian $L$ with respect to the velocities $\dot{x}$ and $\dot{y}$:
+\begin{align*}
+    p_x &= \frac{\partial L}{\partial \dot{x}} = \frac{\dot{x} - y}{x^2+y^2} \\
+    p_y &= \frac{\partial L}{\partial \dot{y}} = \frac{\dot{y} + x}{x^2+y^2}
+\end{align*}
+Next, we invert these relations to express the velocities $\dot{x}$ and $\dot{y}$ in terms of the momenta $p_x$ and $p_y$:
+\begin{align*}
+    \dot{x} &= (x^2+y^2)p_x + y \\
+    \dot{y} &= (x^2+y^2)p_y - x
+\end{align*}
 
-\textbf{Intuition:}
-This system behaves like a particle in a plane with a magnetic "vortex" at the center. Even though the magnetic field is zero of the origin, the potential still affects the particle's phase and conservation laws, a classical precursor to the Aharonov-Bohm effect.
+\textbf{Step 2: Construct the Hamiltonian.}
+Using the Legendre transformation $H = p_x \dot{x} + p_y \dot{y} - L$, we substitute the expressions for $\dot{x}$ and $\dot{y}$.
+First, note that the Lagrangian is a homogeneous quadratic plus a linear term in velocities:
+\begin{align*}
+    L &= \frac{\dot{x}^2 + \dot{y}^2}{2(x^2+y^2)} + \frac{x\dot{y} - y\dot{x}}{x^2+y^2}
+\end{align*}
+By Euler's theorem on homogeneous functions, $p_x \dot{x} + p_y \dot{y} = 2 \left( \frac{\dot{x}^2 + \dot{y}^2}{2(x^2+y^2)} \right) + \frac{x\dot{y} - y\dot{x}}{x^2+y^2}$.
+Thus, subtracting $L$:
+\begin{equation*}
+    H = p_x \dot{x} + p_y \dot{y} - L = \frac{\dot{x}^2 + \dot{y}^2}{2(x^2+y^2)}
+\end{equation*}
+Now we express this entirely in terms of momenta:
+\begin{align*}
+    H &= \frac{1}{2(x^2+y^2)} \left[ \left( (x^2+y^2)p_x + y \right)^2 + \left( (x^2+y^2)p_y - x \right)^2 \right] \\
+      &= \frac{1}{2}(x^2+y^2) \left[ \left( p_x + \frac{y}{x^2+y^2} \right)^2 + \left( p_y - \frac{x}{x^2+y^2} \right)^2 \right]
+\end{align*}
+Comparing this to the standard form $\frac{1}{2} f(x, y) \left[ (p_x - A_x)^2 + (p_y - A_y)^2 \right]$, we identify $f(x, y) = x^2+y^2$ and the vector potential $\vec{A} = (A_x, A_y) = \left( \frac{-y}{x^2+y^2}, \frac{x}{x^2+y^2} \right)$.
+
+\textbf{Step 3: Calculate the magnetic field.}
+The magnetic field is the curl of the vector potential $\vec{A}$. In 2D, this is the $z$-component:
+\begin{align*}
+    B_z &= \partial_x A_y - \partial_y A_x \\
+        &= \frac{\partial}{\partial x} \left( \frac{x}{x^2+y^2} \right) - \frac{\partial}{\partial y} \left( \frac{-y}{x^2+y^2} \right) \\
+        &= \frac{1 \cdot (x^2+y^2) - x \cdot 2x}{(x^2+y^2)^2} - \frac{-1 \cdot (x^2+y^2) - (-y) \cdot 2y}{(x^2+y^2)^2} \\
+        &= \frac{y^2-x^2}{(x^2+y^2)^2} - \frac{y^2-x^2}{(x^2+y^2)^2} = 0
+\end{align*}
+The magnetic field is zero everywhere except at the origin (where it is singular).
+
+\textbf{Step 4: Prove rotational and scale invariance.}
+For rotational invariance, we note that $x^2+y^2 = r^2$ and $\dot{x}^2+\dot{y}^2 = v^2$ are both strictly invariant under rotations. The term $x\dot{y} - y\dot{x}$ represents the $z$-component of angular momentum, which is also rotationally invariant. Thus, all parts of $L$ are invariant under rotations.
+For scale invariance, apply the spatial transformation $x \to \lambda x$ and $y \to \lambda y$. This inherently implies $\dot{x} \to \lambda \dot{x}$ and $\dot{y} \to \lambda \dot{y}$.
+The numerator of the Lagrangian scales as:
+\begin{equation*}
+    (\lambda \dot{x})^2 + (\lambda \dot{y})^2 + 2(\lambda x \lambda \dot{y} - \lambda y \lambda \dot{x}) = \lambda^2 \left( \dot{x}^2 + \dot{y}^2 + 2(x\dot{y}-y\dot{x}) \right)
+\end{equation*}
+The denominator scales as:
+\begin{equation*}
+    (\lambda x)^2 + (\lambda y)^2 = \lambda^2 (x^2+y^2)
+\end{equation*}
+The $\lambda^2$ factors cancel out completely, making the overall Lagrangian $L$ invariant under scale transformations.
+
+\textbf{Step 5: Derive the conserved quantities.}
+Using Noether's theorem, we find the conserved quantity associated with each symmetry.
+For rotations (parameterized by angle $\theta$), the infinitesimal transformations are $\delta x = -y \delta\theta$ and $\delta y = x \delta\theta$. The conserved quantity is the angular momentum:
+\begin{equation*}
+    J = p_x \frac{\delta x}{\delta \theta} + p_y \frac{\delta y}{\delta \theta} = p_x (-y) + p_y (x) = x p_y - y p_x
+\end{equation*}
+For scale invariance (parameterized by $\lambda = e^s \approx 1+s$), the infinitesimal transformations are $\delta x = x \delta s$ and $\delta y = y \delta s$. The conserved quantity is the dilatation charge:
+\begin{equation*}
+    D = p_x \frac{\delta x}{\delta s} + p_y \frac{\delta y}{\delta s} = x p_x + y p_y
+\end{equation*}
+
+\textbf{Step 6: Rewrite the Lagrangian in polar coordinates and solve the equations of motion.}
+Substitute the polar transformation $x = r\cos\phi$ and $y = r\sin\phi$. This gives $x^2+y^2 = r^2$, $\dot{x}^2+\dot{y}^2 = \dot{r}^2 + r^2\dot{\phi}^2$, and $x\dot{y} - y\dot{x} = r^2\dot{\phi}$.
+Substituting these into the Lagrangian:
+\begin{equation*}
+    L = \frac{1}{2} \frac{\dot{r}^2 + r^2\dot{\phi}^2 + 2r^2\dot{\phi}}{r^2} = \frac{1}{2} \left( \frac{\dot{r}}{r} \right)^2 + \frac{1}{2} \dot{\phi}^2 + \dot{\phi}
+\end{equation*}
+The Euler-Lagrange equation for the angular coordinate $\phi$ is:
+\begin{equation*}
+    \frac{d}{dt} \left( \frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = 0 \implies \frac{d}{dt} (\dot{\phi} + 1) = 0
+\end{equation*}
+This means $\dot{\phi} + 1$ is a constant. Let $\dot{\phi} = \omega$, where $\omega$ is a constant angular velocity.
+To solve for $r$, let us introduce the substitution $u = \ln r$. Then $\dot{u} = \frac{\dot{r}}{r}$. The Lagrangian becomes $L = \frac{1}{2}\dot{u}^2 + \frac{1}{2}\dot{\phi}^2 + \dot{\phi}$.
+The Euler-Lagrange equation for $u$ is:
+\begin{equation*}
+    \frac{d}{dt} \left( \frac{\partial L}{\partial \dot{u}} \right) - \frac{\partial L}{\partial u} = 0 \implies \frac{d}{dt} (\dot{u}) = 0 \implies \ddot{u} = 0
+\end{equation*}
+Integrating this yields $u(t) = vt + c$, which translates back to $r$ as $r(t) = e^{vt+c} = r_0 e^{vt}$.
+The full trajectory in polar coordinates is therefore $r(t) = r_0 e^{vt}$ and $\phi(t) = \omega t + \phi_0$, which geometrically describes a logarithmic spiral.
 \end{solution}
 
 \subsection{Quantum Mechanics}
@@ -45,32 +124,108 @@ This system behaves like a particle in a plane with a magnetic "vortex" at the c
 \label{physics:2023:2}
 A particle of mass $m$ in 2 dimensions is confined by an isotropic harmonic oscillator potential of frequency $\omega$ , while subject to a weak and anisotropic perturbation of strength $\alpha \ll 1$ . The total Hamiltonian of the particle is
 \begin{equation}
-    H = H _ {0} + V = \frac {p _ {x} ^ {2}}{2 m} + \frac {p _ {y} ^ {2}}{2 m} + \frac {1}{2} m \omega^ {2} \left(x ^ {2} + y ^ {2}\right) + \alpha m \omega^ {2} x y
+    H = H _ {0} + V = \frac {p _ {x} ^ {2}}{2 m} + \frac {p _ {y} ^ {2}}{2 m} + \frac {1}{2} m \omega^ {2} \left(x ^ {2} + y ^ {2}\right) + \alpha m \omega^ {2} x y \label{eq:2023:2:3}
 \end{equation}
 
 \begin{enumerate}[label=(\alph*)]
     \item When $\alpha = 0$ , what are the energies and degeneracies of the three lowest-lying unperturbed states?
     \item Use perturbation theory to correct the energies of the above three states to the first order in $\alpha$ .
     \item Find the exact spectrum of $H$ . (Hint: you may want to rotate $x$ and $y$ into a new coordinates)
-    \item Check that the perturbative results in part (b) are recovered from the exact spectrum.
+    \item Check that the perturbative results in part b. are recovered from the exact spectrum.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Matrix Diagonalization:} For degenerate perturbation theory.
-    \item \textbf{Coordinate Rotation:} To decouple quadratic forms.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{2D Harmonic Oscillator:} The energy levels of a 2D isotropic harmonic oscillator are $E = (n_x + n_y + 1)\hbar\omega$, characterized by quantum numbers $n_x, n_y \ge 0$.
+- \textbf{Degenerate Perturbation Theory:} When energy levels are shared by multiple states, we must diagonalize the perturbation matrix within that degenerate subspace to find the true energy shifts.
+- \textbf{Normal Modes:} Rotating the coordinate system to decouple interacting variables into independent 1D harmonic oscillators.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine two identical pendulums or bells. When completely unconnected ($\alpha = 0$), they oscillate at exactly the same pitch (degenerate energy levels). If you add a weak spring connecting them (the $\alpha x y$ perturbation term), they can no longer vibrate entirely independently. The single pitch splits into two distinct modes: one where they swing together in sync, and one where they swing in opposite directions. In quantum mechanics, this "mode splitting" lifts the degeneracy, shifting one energy level up and the other down. By rotating our coordinates $45^\circ$, we find the true independent directions of these collective swings.
 
-1. \textbf{First Order:} For $|1,0\rangle, |0,1\rangle$, the perturbation matrix has off-diagonal $V_{12} = \alpha m \omega^2 (\hbar/2m\omega) = \frac{1}{2}\alpha\hbar\omega$. Eigenvalues are $\pm \alpha\hbar\omega / 2$.
-2. \textbf{Exact Solution:} Define $u, v = \frac{x \pm y}{\sqrt{2}}$. The Hamiltonian becomes $\frac{p_u^2}{2m} + \frac{1}{2}m\omega^2(1+\alpha)u^2 + \frac{p_v^2}{2m} + \frac{1}{2}m\omega^2(1-\alpha)v^2$.
-3. \textbf{Spectrum:} $E = (n_u + 1/2)\hbar\omega\sqrt{1+\alpha} + (n_v + 1/2)\hbar\omega\sqrt{1-\alpha}$. Expanding for small $\alpha$ recovers the perturbative result.
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Identify the unperturbed spectrum and degeneracies.}
+The unperturbed Hamiltonian is exactly a 2D isotropic harmonic oscillator:
+\begin{equation*}
+    H_0 = \frac{p_x^2}{2m} + \frac{p_y^2}{2m} + \frac{1}{2}m\omega^2 (x^2 + y^2)
+\end{equation*}
+Its energy levels are $E_{n_x, n_y}^{(0)} = \left(n_x + n_y + 1\right) \hbar\omega$, with states $|n_x, n_y\rangle$.
+For the lowest three energy levels:
+- \textbf{Ground State ($n_x+n_y=0$):} The only state is $|0, 0\rangle$. The energy is $E_0^{(0)} = \hbar\omega$. The degeneracy is $g = 1$.
+- \textbf{First Excited State ($n_x+n_y=1$):} The states are $|1, 0\rangle$ and $|0, 1\rangle$. The energy is $E_1^{(0)} = 2\hbar\omega$. The degeneracy is $g = 2$.
+- \textbf{Second Excited State ($n_x+n_y=2$):} The states are $|2, 0\rangle$, $|1, 1\rangle$, and $|0, 2\rangle$. The energy is $E_2^{(0)} = 3\hbar\omega$. The degeneracy is $g = 3$.
 
-\textbf{Intuition:}
-Two coupled oscillators can always be viewed as two independent "normal modes." Here, the perturbation "mixes" the $x$ and $y$ motions. By rotating our perspective by 45 degrees, we find that the particle is simply vibrating in two new directions with slightly different "stiffnesses."
+\textbf{Step 2: Calculate first-order perturbative corrections to the lowest three states.}
+The perturbation is $V = \alpha m\omega^2 x y$. Let us rewrite $x$ and $y$ in terms of raising and lowering operators:
+\begin{equation*}
+    x = \sqrt{\frac{\hbar}{2m\omega}} (a_x + a_x^\dagger), \quad y = \sqrt{\frac{\hbar}{2m\omega}} (a_y + a_y^\dagger)
+\end{equation*}
+So the perturbation becomes:
+\begin{equation*}
+    V = \frac{1}{2} \alpha \hbar\omega (a_x + a_x^\dagger)(a_y + a_y^\dagger)
+\end{equation*}
+- \textbf{Ground State ($g=1$):} The first-order correction is $\Delta E_0 = \langle 0, 0 | V | 0, 0 \rangle = 0$, since $a_x|0\rangle = 0$ and $\langle 0|a_x^\dagger = 0$.
+- \textbf{First Excited State ($g=2$):} We form the $2 \times 2$ perturbation matrix in the basis $\{|1, 0\rangle, |0, 1\rangle\}$.
+The diagonal elements are $\langle 1, 0 | V | 1, 0 \rangle = 0$ and $\langle 0, 1 | V | 0, 1 \rangle = 0$.
+The off-diagonal elements are evaluated using $a_i^\dagger|0\rangle_i = |1\rangle_i$ and $a_i|1\rangle_i = |0\rangle_i$:
+\begin{align*}
+    \langle 1, 0 | V | 0, 1 \rangle &= \frac{1}{2} \alpha \hbar\omega \langle 1|_x \langle 0|_y (a_x + a_x^\dagger)(a_y + a_y^\dagger) |0\rangle_x |1\rangle_y \\
+    &= \frac{1}{2} \alpha \hbar\omega \langle 1|_x a_x^\dagger |0\rangle_x \langle 0|_y a_y |1\rangle_y = \frac{1}{2} \alpha \hbar\omega (1)(1) = \frac{1}{2} \alpha \hbar\omega
+\end{align*}
+Thus, the perturbation matrix is:
+\begin{equation*}
+    V = \frac{1}{2} \alpha \hbar\omega \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+\end{equation*}
+The eigenvalues of this matrix are $\pm \frac{1}{2} \alpha \hbar\omega$. The corrected energies for the first excited states are $E_1 \approx 2\hbar\omega \pm \frac{1}{2}\alpha\hbar\omega$.
+- \textbf{Second Excited State ($g=3$):} We construct the $3 \times 3$ matrix in the basis $\{|2, 0\rangle, |1, 1\rangle, |0, 2\rangle\}$.
+Using $a^\dagger |n\rangle = \sqrt{n+1} |n+1\rangle$ and $a |n\rangle = \sqrt{n} |n-1\rangle$:
+\begin{align*}
+    \langle 2, 0 | V | 1, 1 \rangle &= \frac{1}{2}\alpha\hbar\omega \langle 2|a_x^\dagger|1\rangle \langle 0|a_y|1\rangle = \frac{1}{2}\alpha\hbar\omega (\sqrt{2})(1) = \frac{\sqrt{2}}{2}\alpha\hbar\omega \\
+    \langle 0, 2 | V | 1, 1 \rangle &= \frac{1}{2}\alpha\hbar\omega \langle 0|a_x|1\rangle \langle 2|a_y^\dagger|1\rangle = \frac{1}{2}\alpha\hbar\omega (1)(\sqrt{2}) = \frac{\sqrt{2}}{2}\alpha\hbar\omega
+\end{align*}
+All diagonal elements and the $\langle 2,0|V|0,2\rangle$ element are rigorously zero. The full matrix is:
+\begin{equation*}
+    V = \frac{1}{2} \alpha \hbar\omega \begin{pmatrix} 0 & \sqrt{2} & 0 \\ \sqrt{2} & 0 & \sqrt{2} \\ 0 & \sqrt{2} & 0 \end{pmatrix}
+\end{equation*}
+To find the eigenvalues $\lambda$, we solve $\det(V - \lambda I) = 0$:
+\begin{equation*}
+    -\lambda (\lambda^2 - 2) - \sqrt{2}(-\lambda\sqrt{2}) = -\lambda^3 + 4\lambda = 0
+\end{equation*}
+The roots are $\lambda = 0, \pm 2$. Thus, the corrections are $0$, $\alpha\hbar\omega$, and $-\alpha\hbar\omega$. The corrected energies are $3\hbar\omega$, $3\hbar\omega + \alpha\hbar\omega$, and $3\hbar\omega - \alpha\hbar\omega$.
+
+\textbf{Step 3: Find the exact spectrum by rotating coordinates.}
+Let us perform a $45^\circ$ coordinate rotation to fully decouple the $x$ and $y$ variables:
+\begin{equation*}
+    u = \frac{x + y}{\sqrt{2}}, \quad v = \frac{x - y}{\sqrt{2}}
+\end{equation*}
+The inverse transformation is $x = \frac{u+v}{\sqrt{2}}$ and $y = \frac{u-v}{\sqrt{2}}$.
+The kinetic energy transforms unchanged: $p_x^2 + p_y^2 = p_u^2 + p_v^2$.
+The potential energy terms become:
+\begin{align*}
+    \frac{1}{2}m\omega^2(x^2+y^2) + \alpha m\omega^2 xy &= \frac{1}{2}m\omega^2 (u^2+v^2) + \alpha m\omega^2 \left( \frac{u^2-v^2}{2} \right) \\
+    &= \frac{1}{2}m\omega^2 (1+\alpha) u^2 + \frac{1}{2}m\omega^2 (1-\alpha) v^2
+\end{align*}
+The exact Hamiltonian completely separates into two independent 1D harmonic oscillators:
+\begin{equation*}
+    H = \left[ \frac{p_u^2}{2m} + \frac{1}{2}m\omega_u^2 u^2 \right] + \left[ \frac{p_v^2}{2m} + \frac{1}{2}m\omega_v^2 v^2 \right]
+\end{equation*}
+where the new distinct frequencies are $\omega_u = \omega\sqrt{1+\alpha}$ and $\omega_v = \omega\sqrt{1-\alpha}$.
+The exact energy spectrum is therefore:
+\begin{equation*}
+    E_{n_u, n_v} = \left( n_u + \frac{1}{2} \right) \hbar\omega\sqrt{1+\alpha} + \left( n_v + \frac{1}{2} \right) \hbar\omega\sqrt{1-\alpha}
+\end{equation*}
+
+\textbf{Step 4: Check that the perturbative results match the exact spectrum in the small $\alpha$ limit.}
+We expand the exact energies using the Taylor series $\sqrt{1 \pm \alpha} \approx 1 \pm \frac{1}{2}\alpha - \frac{1}{8}\alpha^2 + \dots$:
+\begin{align*}
+    E_{n_u, n_v} &\approx \left( n_u + \frac{1}{2} \right) \hbar\omega \left( 1 + \frac{1}{2}\alpha \right) + \left( n_v + \frac{1}{2} \right) \hbar\omega \left( 1 - \frac{1}{2}\alpha \right) \\
+    &= (n_u + n_v + 1)\hbar\omega + \frac{1}{2}\alpha\hbar\omega (n_u - n_v)
+\end{align*}
+Comparing this with our perturbative results:
+\par For the ground state ($n_u=0, n_v=0$): $E \approx \hbar\omega$, perfectly matching $\Delta E = 0$.
+\par For the first excited state ($n_u+n_v=1$): The states are $(n_u=1, n_v=0)$ and $(n_u=0, n_v=1)$. Their energies evaluate to $2\hbar\omega \pm \frac{1}{2}\alpha\hbar\omega$, which aligns completely with part (b).
+\par For the second excited state ($n_u+n_v=2$): The pairs $(2,0), (1,1), (0,2)$ yield energies $3\hbar\omega + \alpha\hbar\omega$, $3\hbar\omega$, and $3\hbar\omega - \alpha\hbar\omega$, exactly reflecting the eigenvalues $0, \pm\alpha\hbar\omega$ calculated from the $3\times3$ perturbation matrix.
 \end{solution}
 
 \subsection{Electromagnetism}
@@ -82,75 +237,208 @@ One can express the electric fields $\vec { E }$ and magnetic fields $\vec { B }
 \begin{enumerate}[label=(\alph*)]
     \item Write down the expression of $\vec { E }$ and $\vec { B }$ in terms of $( \phi , { \vec { A } } )$ and show that the result is unchanged under gauge transformation
     \begin{equation}
-        \phi \rightarrow \phi + \frac {\partial}{\partial t} f, \quad \vec {A} \rightarrow \vec {A} - \nabla f,
+        \phi \rightarrow \phi + \frac{\partial}{\partial t} f, \quad \vec {A} \rightarrow \vec {A} - \nabla f, \label{eq:2023:3:4}
     \end{equation}
-    where $f = f ( \vec { x } , t )$ is a scalar function.
+    where $f = f(\vec{x}, t)$ is a scalar function.
     \item Show that two of the 4 Maxwell equations of $\vec { E }$ and $\vec { B }$ are satisfied automatically in terms of $A ^ { \mu } = \left( \phi , { \vec { A } } \right)$ .
-    \item Derive the equations for the scalar and vector potentials from the remaining Maxwell equations in Lorentz gauge
+    \item Derive the equations for the scalar and vector potentials from the remaining Maxwell equations in Lorentz gauge.
     \begin{equation}
-        \frac {1}{c} \partial_ {t} \phi + \nabla \cdot \vec {A} = 0.
+        \frac{1}{c} \partial_t \phi + \nabla \cdot \vec{A} = 0, \label{eq:2023:3:5}
     \end{equation}
     \item Recall that the Green's function of the wave equation
     \begin{equation}
-        \left(\frac {1}{c ^ {2}} \partial_ {t} ^ {2} - \nabla^ {2}\right) G (t, \vec {r}) = \delta (t) \delta^ {3} (\vec {r})
+        \left(\frac{1}{c^2} \partial_t^2 - \nabla^2\right) G(t, \vec{r}) = \delta(t) \delta^3(\vec{r}) \label{eq:2023:3:6}
     \end{equation}
     is
     \begin{equation}
-        G (t - t _ {0}, \vec {r} - \vec {r} _ {0}) = \frac {\theta (t - t _ {0})}{4 \pi | \vec {r} - \vec {r} _ {0} |} \delta \left(t - t _ {0} - \frac {| \vec {r} - \vec {r} _ {0} |}{c}\right).
+        G (t - t _ {0}, \vec {r} - \vec {r} _ {0}) = \frac {\theta (t - t _ {0})}{4 \pi | \vec {r} - \vec {r} _ {0} |} \delta \left(t - t _ {0} - \frac {| \vec {r} - \vec {r} _ {0} |}{c}\right). \label{eq:2023:3:7}
     \end{equation}
-    Assume a particle of electric charge $e$ moves with trajectory $\vec { R } ( t )$ with ${ \vec { v } } ( t ) = d \vec { R } ( t ) / d t$. Use the Green's function to derive the potential $\phi ( \vec { r } , t )$ and $\vec { A } ( \vec { r } , t )$ of this particle at $( \vec { r } , t )$. You may assume that $| \vec { R } ( t ) | \ll | \vec { r } |$ , $| \vec { R } ( t ) | \ll c t$ and $| \vec { v } ( t ) | \ll c$ and expand your result up to the order $\mathcal { O } ( 1 / | \vec { r } | )$ and $\mathcal { O } ( | \vec { v } ( t ) | / c )$. This is also called non-relativistic and far-field approximations.
+    Assume a particle of electric charge $e$ moves with trajectory $\vec { R } ( t )$ with ${ \vec { v } } ( t ) = d \vec { R } ( t ) / d t$ . Use the Green's function to derive the potential $\phi ( \vec { r } , t )$ and $\vec { A } ( \vec { r } , t )$ of this particle at $( \vec { r } , t )$. You may assume that $|\vec{R}(t)| \ll |\vec{r}|$, $|\vec{R}(t)| \ll ct$ and $|\vec{v}(t)| \ll c$ and expand your result up to the order $\mathcal{O}(1/|\vec{r}|)$ and $\mathcal{O}(|\vec{v}(t)|/c)$. This is also called non-relativistic and far-field approximations.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Gauge Transformation:} $\phi \to \phi + \dot{f}, \vec{A} \to \vec{A} - \nabla f$.
-    \item \textbf{Retarded Potential:} $t_{ret} = t - |\vec{r} - \vec{R}|/c$.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Maxwell's Equations:} The fundamental differential equations that describe how electric and magnetic fields are generated and altered by each other and by charges and currents.
+- \textbf{Electromagnetic Potentials:} Scalar potential $\phi$ and vector potential $\vec{A}$, which are auxiliary fields from which physical fields ($\vec{E}$ and $\vec{B}$) are derived.
+- \textbf{Gauge Transformation:} A mathematical shift in the potentials that leaves the physical observables ($\vec{E}$ and $\vec{B}$) completely unaffected.
+- \textbf{Lorentz Gauge:} A specific condition chosen to decouple and simplify the wave equations for the potentials, revealing relativity naturally.
+- \textbf{Retarded Potentials:} Solutions indicating that changes in potentials propagate outward at the speed of light, meaning the field depends on the history of the source.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Think of the scalar and vector potentials as the hidden "blueprints" for the electric and magnetic fields. Just as there are many different ways to write a computer program to achieve the exact same user interface, there are infinitely many valid potentials (a "gauge choice") that produce the exact same physical fields. By carefully choosing our gauge (the Lorentz gauge), we can transform Maxwell's complicated coupled equations into simple, independent wave equations. The Green's function then tells us something very intuitive: if a charge moves, the "news" of that movement ripples outward precisely at the speed of light, so the field we feel here right now depends on what the charge was doing some time ago.
 
-1. \textbf{Invariance:} Since $\vec{E} = -\nabla\phi - \dot{\vec{A}}/c$, the $\nabla\dot{f}$ and $\dot{\nabla}f$ terms cancel precisely.
-2. \textbf{Lorentz Gauge:} Imposing $\dot{\phi}/c + \nabla \cdot \vec{A} = 0$ decouples Maxwell's equations into two wave equations.
-3. \textbf{Approximation:} For $v \ll c$ and large $r$, $\phi \approx \frac{e}{r} + \frac{e \vec{n} \cdot \vec{v}}{rc}$. This is the start of the multipole expansion for a moving charge.
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Define physical fields in terms of potentials and prove gauge invariance.}
+The electric and magnetic fields are defined by the potentials $A^\mu = (\phi, \vec{A})$ as:
+\begin{align*}
+    \vec{B} &= \nabla \times \vec{A} \\
+    \vec{E} &= -\nabla \phi - \frac{1}{c}\frac{\partial \vec{A}}{\partial t}
+\end{align*}
+Under a gauge transformation with a scalar function $f(t, \vec{r})$, the new potentials are:
+\begin{equation*}
+    \phi' = \phi + \frac{1}{c}\frac{\partial f}{\partial t}, \quad \vec{A}' = \vec{A} - \nabla f
+\end{equation*}
+Let us compute the new magnetic field:
+\begin{equation*}
+    \vec{B}' = \nabla \times \vec{A}' = \nabla \times (\vec{A} - \nabla f) = \nabla \times \vec{A} - \nabla \times (\nabla f) = \vec{B} - 0 = \vec{B}
+\end{equation*}
+And the new electric field:
+\begin{align*}
+    \vec{E}' &= -\nabla \phi' - \frac{1}{c}\frac{\partial \vec{A}'}{\partial t} = -\nabla \left( \phi + \frac{1}{c}\frac{\partial f}{\partial t} \right) - \frac{1}{c}\frac{\partial}{\partial t} \left( \vec{A} - \nabla f \right) \\
+    &= -\nabla \phi - \frac{1}{c}\nabla\left(\frac{\partial f}{\partial t}\right) - \frac{1}{c}\frac{\partial \vec{A}}{\partial t} + \frac{1}{c}\frac{\partial}{\partial t}(\nabla f) \\
+    &= \left( -\nabla \phi - \frac{1}{c}\frac{\partial \vec{A}}{\partial t} \right) - \frac{1}{c}\nabla\left(\frac{\partial f}{\partial t}\right) + \frac{1}{c}\nabla\left(\frac{\partial f}{\partial t}\right) \\
+    &= \vec{E}
+\end{align*}
+Thus, the physical fields remain perfectly unchanged.
 
-\textbf{Intuition:}
-Potentials are mathematical tools that make Maxwell's equations easier to solve. However, they aren't unique—we can change them (gauge transformation) without affecting the physical electric and magnetic fields. The retarded potential tells us that "news" of the charge's motion travels at the speed of light.
+\textbf{Step 2: Show that the homogeneous Maxwell equations are automatically satisfied.}
+The two homogeneous Maxwell equations are Gauss's Law for magnetism and Faraday's Law of induction.
+For Gauss's law for magnetism, we use the vector identity that the divergence of a curl is always zero:
+\begin{equation*}
+    \nabla \cdot \vec{B} = \nabla \cdot (\nabla \times \vec{A}) = 0
+\end{equation*}
+For Faraday's law, we take the curl of the electric field. We use the identity that the curl of a gradient is always zero:
+\begin{align*}
+    \nabla \times \vec{E} &= \nabla \times \left( -\nabla \phi - \frac{1}{c}\frac{\partial \vec{A}}{\partial t} \right) \\
+    &= -\nabla \times (\nabla \phi) - \frac{1}{c}\frac{\partial}{\partial t} (\nabla \times \vec{A}) \\
+    &= 0 - \frac{1}{c}\frac{\partial \vec{B}}{\partial t} = -\frac{1}{c}\frac{\partial \vec{B}}{\partial t}
+\end{align*}
+Both equations are satisfied completely by the mathematical definition of the potentials.
+
+\textbf{Step 3: Derive wave equations using the Lorentz gauge.}
+The remaining inhomogeneous Maxwell equations are Gauss's Law and Ampere-Maxwell's Law:
+\begin{equation*}
+    \nabla \cdot \vec{E} = 4\pi\rho, \quad \nabla \times \vec{B} - \frac{1}{c}\frac{\partial \vec{E}}{\partial t} = \frac{4\pi}{c}\vec{j}
+\end{equation*}
+Substituting the potentials into Gauss's Law:
+\begin{equation*}
+    \nabla \cdot \left( -\nabla \phi - \frac{1}{c}\frac{\partial \vec{A}}{\partial t} \right) = -\nabla^2 \phi - \frac{1}{c}\frac{\partial}{\partial t} (\nabla \cdot \vec{A}) = 4\pi\rho
+\end{equation*}
+Substituting into Ampere-Maxwell's Law, using $\nabla \times (\nabla \times \vec{A}) = \nabla(\nabla \cdot \vec{A}) - \nabla^2 \vec{A}$:
+\begin{align*}
+    \nabla \times (\nabla \times \vec{A}) - \frac{1}{c}\frac{\partial}{\partial t} \left( -\nabla \phi - \frac{1}{c}\frac{\partial \vec{A}}{\partial t} \right) &= \frac{4\pi}{c}\vec{j} \\
+    \nabla(\nabla \cdot \vec{A}) - \nabla^2 \vec{A} + \frac{1}{c}\nabla\left(\frac{\partial \phi}{\partial t}\right) + \frac{1}{c^2}\frac{\partial^2 \vec{A}}{\partial t^2} &= \frac{4\pi}{c}\vec{j} \\
+    \left( \frac{1}{c^2}\frac{\partial^2}{\partial t^2} - \nabla^2 \right) \vec{A} + \nabla \left( \nabla \cdot \vec{A} + \frac{1}{c}\frac{\partial \phi}{\partial t} \right) &= \frac{4\pi}{c}\vec{j}
+\end{align*}
+We now apply the Lorentz gauge condition: $\frac{1}{c}\partial_t \phi + \nabla \cdot \vec{A} = 0$.
+The term in the parenthesis vanishes completely. Similarly, substituting $\nabla \cdot \vec{A} = -\frac{1}{c}\partial_t \phi$ into the scalar equation yields:
+\begin{equation*}
+    -\nabla^2 \phi + \frac{1}{c^2}\frac{\partial^2 \phi}{\partial t^2} = 4\pi\rho
+\end{equation*}
+Thus, both equations decouple entirely into standard wave equations:
+\begin{equation*}
+    \Box \phi = 4\pi\rho, \quad \Box \vec{A} = \frac{4\pi}{c}\vec{j}
+\end{equation*}
+
+\textbf{Step 4: Use the Green's function to compute potentials for a moving charge.}
+For a point particle with charge $e$ at trajectory $\vec{R}(t)$, the charge and current densities are:
+\begin{equation*}
+    \rho(t', \vec{r}') = e \delta^3(\vec{r}' - \vec{R}(t')), \quad \vec{j}(t', \vec{r}') = e \vec{v}(t') \delta^3(\vec{r}' - \vec{R}(t'))
+\end{equation*}
+The solution using the Green's function is the convolution over all space and past times:
+\begin{equation*}
+    \phi(t, \vec{r}) = \int dt' d^3\vec{r}' G(t-t', \vec{r}-\vec{r}') (4\pi \rho(t', \vec{r}'))
+\end{equation*}
+Substituting the given Green's function $G = \frac{\theta(t-t')}{4\pi|\vec{r}-\vec{r}'|} \delta\left(t-t' - \frac{|\vec{r}-\vec{r}'|}{c}\right)$:
+\begin{align*}
+    \phi(t, \vec{r}) &= \int dt' d^3\vec{r}' \frac{\delta\left(t-t' - \frac{|\vec{r}-\vec{r}'|}{c}\right)}{|\vec{r}-\vec{r}'|} e \delta^3(\vec{r}' - \vec{R}(t')) \\
+    &= \int dt' \frac{e}{|\vec{r}-\vec{R}(t')|} \delta\left(t-t' - \frac{|\vec{r}-\vec{R}(t')|}{c}\right)
+\end{align*}
+Under the far-field non-relativistic approximation, $|\vec{R}(t')| \ll |\vec{r}|$ and $|\vec{v}| \ll c$. We can approximate the distance as simply $|\vec{r}-\vec{R}(t')| \approx |\vec{r}| = r$.
+Thus, evaluating the delta function sets $t' = t - r/c$:
+\begin{equation*}
+    \phi(t, \vec{r}) \approx \frac{e}{r}
+\end{equation*}
+Similarly, for the vector potential:
+\begin{align*}
+    \vec{A}(t, \vec{r}) &= \frac{1}{c} \int dt' d^3\vec{r}' \frac{\delta\left(t-t' - \frac{|\vec{r}-\vec{r}'|}{c}\right)}{|\vec{r}-\vec{r}'|} e \vec{v}(t') \delta^3(\vec{r}' - \vec{R}(t')) \\
+    &= \frac{e}{c} \int dt' \frac{\vec{v}(t')}{|\vec{r}-\vec{R}(t')|} \delta\left(t-t' - \frac{|\vec{r}-\vec{R}(t')|}{c}\right)
+\end{align*}
+Using the exact same far-field approximation, we pull out $1/r$ and evaluate at the retarded time $t_{ret} = t - r/c$:
+\begin{equation*}
+    \vec{A}(t, \vec{r}) \approx \frac{e}{cr} \vec{v}(t - r/c)
+\end{equation*}
+These represent the leading-order Liénard-Wiechert potentials for a slowly moving charge viewed from far away.
 \end{solution}
 
 \subsection{Statistical Mechanics}
 
 \begin{exercise}
 \label{physics:2023:4}
-Consider a one-dimensional system of free massless bosons with one polarization, and the dispersion relation $E _ { k } = \hbar v | k |$ , where $v$ is the particle velocity, $k$ wavevector, $E _ { k }$ energy. The particles are not interacting either among themselves or with external scattering potentials. If the system is in equilibrium at temperature $T$ ,
+Consider a one-dimensional system of free massless bosons with one polarization, and the dispersion relation $E _ { k } = \hbar v | k |$, where $v$ is the particle velocity, $k$ wavevector, $E_k$ energy. The particles are not interacting either among themselves or with external scattering potentials. If the system is in equilibrium at temperature $T$,
 
 \begin{enumerate}[label=(\alph*)]
     \item Assume that the chemical potential $\mu$ is $0$ , calculate the heat capacity $C$ per unit length.
-    \item Repeat the calculations for massive fermions, for which $E _ { k } = \hbar ^ { 2 } k ^ { 2 } / 2 m$ and the chemical potential $\mu$ is far above the bottom of the energy spectrum: $\mu \gg k _ { B } T$ . (Consider one spin direction for the fermions, and you may make reasonable approximations.)
+    \item Repeat the calculations for massive fermions, for which $E _ { k } = \hbar ^ { 2 } k ^ { 2 } / 2 m$ and the chemical potential $\mu$ is far above the bottom of the energy spectrum: $\mu \gg k_B T$. (Consider one spin direction for the fermions, and you may make reasonable approximations.)
 \end{enumerate}
 
 Hint: you might find the following formulae useful to evaluate some integrals needed
 \begin{equation}
-    \sum_ {k = 1} ^ {\infty} \frac {1}{k ^ {2}} = \frac {\pi^ {2}}{6}, \quad \sum_ {k = 1} ^ {\infty} \frac {(- 1) ^ {k + 1}}{k ^ {2}} = \frac {\pi^ {2}}{1 2}.
+    \sum_{k=1}^\infty \frac{1}{k^2} = \frac{\pi^2}{6}, \quad \sum_{k=1}^\infty \frac{(-1)^{k+1}}{k^2} = \frac{\pi^2}{12}. \label{eq:2023:4:8}
 \end{equation}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Density of States:} $g(k) = L/\pi$ for 1D.
-    \item \textbf{Sommerfeld Expansion:} For degenerate fermions.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Internal Energy:} The total energy of a system, found by summing the energy of each state multiplied by its average occupation number: $U = \int E g(E) n(E) dE$.
+- \textbf{Bose-Einstein Statistics:} The distribution function for identical bosons: $n_B(E) = \frac{1}{e^{(E-\mu)/(k_B T)} - 1}$.
+- \textbf{Fermi-Dirac Statistics:} The distribution function for identical fermions: $n_F(E) = \frac{1}{e^{(E-\mu)/(k_B T)} + 1}$.
+- \textbf{Density of States:} The number of available quantum states per unit energy $g(E)$, defined as $g(E) = \frac{L}{2\pi} \frac{dk}{dE}$ per dimension, multiplied by degeneracy factors.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Think of a stadium with seats arranged by height (energy). For bosons, everyone can crowd into the lowest seats. At low temperatures, only a few get bumped up slightly. For fermions, only one person can sit in each seat, so they stack up high. At low temperatures, only the few people right at the top surface can jump higher. The heat capacity measures how much energy it takes to "bump" people up. Because the stadium is 1D (a narrow aisle), the number of available seats at a given height behaves differently for massless particles (constant seats) versus massive ones (fewer seats as you go up), which directly dictates how the heat capacity scales with temperature.
 
-1. \textbf{Massless Bosons:} $U \propto \int \frac{k dk}{e^{\beta \hbar v k}-1} \propto T^2$. Thus $C = dU/dT \propto T$.
-2. \textbf{Massive Fermions:} $g(E) \propto E^{-1/2}$. For $\mu \gg T$, the heat capacity is $C = \frac{\pi^2}{3} k_B^2 T g(\mu)$.
-3. \textbf{Conclusion:} In 1D, both systems show a linear temperature dependence of heat capacity at low $T$, but for different physical reasons (massless nature vs. Pauli exclusion).
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Calculate the internal energy for 1D massless bosons.}
+We are given a 1D system of length $L$. The wavevectors are quantized as $k = \frac{2\pi n}{L}$. The sum over states converts to an integral: $\sum_k \to \frac{L}{2\pi} \int_{-\infty}^{\infty} dk$. Since the energy $E_k = \hbar v |k|$ depends only on the magnitude $|k|$, we can integrate from $0$ to $\infty$ and multiply by 2 (to account for $+k$ and $-k$).
+The average occupation number for bosons with $\mu = 0$ is $n_B(k) = \frac{1}{e^{\beta \hbar v k} - 1}$, where $\beta = \frac{1}{k_B T}$.
+The total internal energy $U$ is:
+\begin{equation*}
+    U = 2 \int_0^\infty \frac{L}{2\pi} dk \, E_k n_B(k) = \frac{L}{\pi} \int_0^\infty dk \frac{\hbar v k}{e^{\beta \hbar v k} - 1}
+\end{equation*}
 
-\textbf{Intuition:}
-At low temperatures, only the states near the lowest energy (for bosons) or the Fermi surface (for fermions) contribute to the heat capacity. In 1D, the restricted space makes these excitations behave very predictably, leading to a simple linear relationship between energy and temperature.
+\textbf{Step 2: Evaluate the integral and heat capacity for bosons.}
+To solve the integral, we introduce the dimensionless variable $x = \beta \hbar v k$. Then $dk = \frac{k_B T}{\hbar v} dx$ and $k = \frac{k_B T}{\hbar v} x$.
+Substituting this into the integral:
+\begin{equation*}
+    U = \frac{L \hbar v}{\pi} \int_0^\infty \left( \frac{k_B T}{\hbar v} dx \right) \left( \frac{k_B T}{\hbar v} x \right) \frac{1}{e^x - 1} = \frac{L (k_B T)^2}{\pi \hbar v} \int_0^\infty \frac{x}{e^x - 1} dx
+\end{equation*}
+We are given the standard integral result $\int_0^\infty \frac{x}{e^x - 1} dx = \frac{\pi^2}{6}$. Thus:
+\begin{equation*}
+    U = \frac{L (k_B T)^2}{\pi \hbar v} \left( \frac{\pi^2}{6} \right) = \frac{\pi L k_B^2 T^2}{6 \hbar v}
+\end{equation*}
+The heat capacity per unit length $C/L$ is the derivative of the internal energy with respect to temperature:
+\begin{equation*}
+    \frac{C}{L} = \frac{1}{L} \frac{\partial U}{\partial T} = \frac{\pi k_B^2}{6 \hbar v} (2T) = \frac{\pi k_B^2 T}{3 \hbar v}
+\end{equation*}
+
+\textbf{Step 3: Calculate the density of states for 1D massive fermions.}
+For massive fermions, the dispersion relation is $E_k = \frac{\hbar^2 k^2}{2m}$. We only consider $k \ge 0$ with a factor of 2 for $\pm k$. The density of states (considering only one spin direction, so no spin degeneracy factor) is:
+\begin{equation*}
+    g(E) dE = 2 \frac{L}{2\pi} dk = \frac{L}{\pi} \frac{dk}{dE} dE
+\end{equation*}
+From $E = \frac{\hbar^2 k^2}{2m}$, we have $k = \frac{\sqrt{2mE}}{\hbar}$, so $\frac{dk}{dE} = \frac{\sqrt{2m}}{\hbar} \frac{1}{2\sqrt{E}} = \sqrt{\frac{m}{2\hbar^2 E}}$.
+Thus, the density of states is:
+\begin{equation*}
+    g(E) = \frac{L}{\pi \hbar} \sqrt{\frac{m}{2E}}
+\end{equation*}
+
+\textbf{Step 4: Use the Sommerfeld expansion for the fermion heat capacity.}
+For a highly degenerate Fermi gas where $\mu \gg k_B T$, the chemical potential $\mu$ is approximately the Fermi energy $E_F$. Only fermions within a narrow energy shell of width $\sim k_B T$ around the Fermi surface can be thermally excited.
+The Sommerfeld expansion gives a general formula for the low-temperature heat capacity of a Fermi gas:
+\begin{equation*}
+    C = \frac{\pi^2}{3} k_B^2 T g(\mu)
+\end{equation*}
+Substituting our density of states evaluated at the chemical potential $\mu$:
+\begin{equation*}
+    C = \frac{\pi^2}{3} k_B^2 T \left( \frac{L}{\pi \hbar} \sqrt{\frac{m}{2\mu}} \right) = \frac{\pi L k_B^2 T}{3\hbar} \sqrt{\frac{m}{2\mu}}
+\end{equation*}
+Therefore, the heat capacity per unit length is:
+\begin{equation*}
+    \frac{C}{L} = \frac{\pi k_B^2 T}{3\hbar} \sqrt{\frac{m}{2\mu}}
+\end{equation*}
+In both cases (massless bosons and massive fermions), we see that the heat capacity per unit length in 1D is strictly proportional to the temperature $T$.
 \end{solution}
 
 \subsection{General Relativity}
@@ -159,37 +447,100 @@ At low temperatures, only the states near the lowest energy (for bosons) or the 
 \label{physics:2023:5}
 Consider the vacuum Einstein's equation in four dimensional spacetime with a cosmological constant
 \begin{equation}
-    R _ {\mu \nu} - \frac {1}{2} g _ {\mu \nu} R + g _ {\mu \nu} \Lambda = 0.
+    R_{\mu\nu} - \frac{1}{2} g_{\mu\nu} R + g_{\mu\nu} \Lambda = 0. \label{eq:2023:5:9}
 \end{equation}
 
 \begin{enumerate}[label=(\alph*)]
     \item Prove that $R _ { \mu \nu } = k g _ { \mu \nu }$ and find out the value of $k$ .
     \item Now start with an ansatz of a metric in the following form
     \begin{equation}
-        d s ^ {2} = - f (r) d t ^ {2} + \frac {1}{f (r)} d r ^ {2} + r ^ {2} \left(d \theta^ {2} + \sin^ {2} \theta d \phi^ {2}\right),
+        ds^2 = -f(r) dt^2 + \frac{1}{f(r)} dr^2 + r^2 (d\theta^2 + \sin^2\theta d\phi^2), \label{eq:2023:5:10}
     \end{equation}
-    where $f ( r )$ is a polynomial in $r$ . Compute non-zero components of the Ricci tensor $R _ { \mu \nu }$ and scalar curvature $R$ of this metric.
-    \item Assuming that the above ansatz is a solution of the vacuum Einstein equation with cosmological constant $\Lambda$ , solve $f ( r )$ .
+    where $f(r)$ is a polynomial in $r$. Compute non zero components of the Ricci tensor $R_{\mu\nu}$ and scalar curvature $R$ of this metric.
+    \item Assuming that the above ansatz is a solution of the vacuum Einstein equation with cosmological constant $\Lambda$, solve $f(r)$.
     \item Prove that $\partial _ { t }$ and $\partial _ { \phi }$ are Killing vector fields.
 \end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Einstein Equation:} $G_{\mu\nu} + \Lambda g_{\mu\nu} = 0$.
-    \item \textbf{Static Metric Ansatz:} $ds^2 = -f dt^2 + f^{-1} dr^2 + r^2 d\Omega^2$.
-\end{itemize}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Einstein Field Equations:} The equations relating the geometry of spacetime to the energy within it: $R_{\mu\nu} - \frac{1}{2} R g_{\mu\nu} + \Lambda g_{\mu\nu} = 0$.
+- \textbf{Trace of a Tensor:} Contracting a tensor with the metric, e.g., taking the trace of the field equations by multiplying by $g^{\mu\nu}$. In 4D spacetime, the trace of the metric is $g^{\mu\nu} g_{\mu\nu} = 4$.
+- \textbf{Spherically Symmetric Ansatz:} A guessed form for a non-rotating, symmetric spacetime metric: $ds^2 = -f(r) dt^2 + f(r)^{-1} dr^2 + r^2 d\Omega^2$.
+- \textbf{Killing Vector Field:} A vector field that points in the direction of a continuous symmetry of the spacetime metric.
 
-\textbf{Steps:}
+\textbf{Intuition / Motivation:}
+Imagine spacetime as a rubber sheet. A star places a heavy bowling ball in the middle, curving the sheet inward (gravity). The cosmological constant, however, acts like an invisible, uniform outward stretching of the rubber sheet everywhere. By assuming the shape of the dent is perfectly round and unmoving (our ansatz), we can solve Einstein's equations to see exactly how these two competing effects—the inward pull of the mass and the outward stretch of the cosmological constant—balance each other out to determine the final shape of the "dent."
 
-1. \textbf{Einstein Tensor:} The trace of the equation in 4D gives $R = 4\Lambda$.
-2. \textbf{Ricci Tensor:} For the given ansatz, $R_{\theta\theta} = 1 - f - rf' = \Lambda r^2$.
-3. \textbf{Solving $f$:} Integrating $1 - rf' - f = \Lambda r^2$ leads to $rf = r - \Lambda r^3/3 - 2M$.
-4. \textbf{Result:} $f(r) = 1 - \frac{2M}{r} - \frac{\Lambda r^2}{3}$, the Schwarzschild-de Sitter metric.
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Relate the Ricci tensor directly to the metric.}
+The vacuum Einstein field equations with a cosmological constant are:
+\begin{equation*}
+    R_{\mu\nu} - \frac{1}{2} g_{\mu\nu} R + g_{\mu\nu} \Lambda = 0
+\end{equation*}
+To simplify this, we take the trace by contracting both sides with the inverse metric $g^{\mu\nu}$:
+\begin{equation*}
+    g^{\mu\nu} R_{\mu\nu} - \frac{1}{2} g^{\mu\nu} g_{\mu\nu} R + g^{\mu\nu} g_{\mu\nu} \Lambda = 0
+\end{equation*}
+By definition, $g^{\mu\nu} R_{\mu\nu} = R$ (the Ricci scalar). In a 4-dimensional spacetime, the trace of the metric is $g^{\mu\nu} g_{\mu\nu} = \delta^\mu_\mu = 4$. Substituting this in:
+\begin{align*}
+    R - \frac{1}{2} (4) R + 4\Lambda &= 0 \\
+    R - 2R + 4\Lambda &= 0 \\
+    -R + 4\Lambda &= 0 \implies R = 4\Lambda
+\end{align*}
+Now, substitute $R = 4\Lambda$ back into the original Einstein equation:
+\begin{align*}
+    R_{\mu\nu} - \frac{1}{2} g_{\mu\nu} (4\Lambda) + g_{\mu\nu} \Lambda &= 0 \\
+    R_{\mu\nu} - 2\Lambda g_{\mu\nu} + \Lambda g_{\mu\nu} &= 0 \\
+    R_{\mu\nu} - \Lambda g_{\mu\nu} &= 0 \implies R_{\mu\nu} = \Lambda g_{\mu\nu}
+\end{align*}
+This proves that $R_{\mu\nu} = k g_{\mu\nu}$, where the constant of proportionality is precisely $k = \Lambda$.
 
-\textbf{Intuition:}
-The cosmological constant $\Lambda$ acts like a "pressure" everywhere in space. It modifies the gravity of a point mass ($2M/r$) by adding a term that grows with distance ($\Lambda r^2$), eventually dominating the geometry of the universe at large scales.
+\textbf{Step 2: Compute the Ricci tensor components for the given metric.}
+We are given the metric ansatz:
+\begin{equation*}
+    ds^2 = -f(r) dt^2 + \frac{1}{f(r)} dr^2 + r^2 d\theta^2 + r^2 \sin^2\theta d\phi^2
+\end{equation*}
+The non-zero metric components are $g_{tt} = -f$, $g_{rr} = f^{-1}$, $g_{\theta\theta} = r^2$, and $g_{\phi\phi} = r^2 \sin^2\theta$.
+The standard calculation of the Ricci tensor for this spherically symmetric metric yields the non-zero diagonal components. Let us look specifically at the $\theta\theta$ component, which is straightforward to evaluate:
+\begin{equation*}
+    R_{\theta\theta} = 1 - f(r) - r f'(r)
+\end{equation*}
+This can be elegantly rewritten as:
+\begin{equation*}
+    R_{\theta\theta} = 1 - \frac{d}{dr} \left( r f(r) \right)
+\end{equation*}
+
+\textbf{Step 3: Solve for the function $f(r)$.}
+From Step 1, we know that $R_{\theta\theta} = \Lambda g_{\theta\theta}$. Since $g_{\theta\theta} = r^2$, we have:
+\begin{equation*}
+    R_{\theta\theta} = \Lambda r^2
+\end{equation*}
+Equating our two expressions for $R_{\theta\theta}$:
+\begin{equation*}
+    1 - \frac{d}{dr} \left( r f(r) \right) = \Lambda r^2
+\end{equation*}
+Now we integrate this simple ordinary differential equation with respect to $r$:
+\begin{align*}
+    \frac{d}{dr} \left( r f(r) \right) &= 1 - \Lambda r^2 \\
+    \int d \left( r f(r) \right) &= \int (1 - \Lambda r^2) dr \\
+    r f(r) &= r - \frac{\Lambda r^3}{3} + C
+\end{align*}
+Here, $C$ is a constant of integration. By convention in general relativity, we set $C = -2M$, where $M$ relates to the mass of the central object.
+Dividing by $r$:
+\begin{equation*}
+    f(r) = 1 - \frac{2M}{r} - \frac{\Lambda r^2}{3}
+\end{equation*}
+This is the famous Schwarzschild-de Sitter (or Schwarzschild-Anti-de Sitter) solution.
+
+\textbf{Step 4: Prove that $\partial_t$ and $\partial_\phi$ are Killing vector fields.}
+A vector field $K^\mu$ is a Killing vector field if it satisfies Killing's equation, which equivalently means that the metric components do not change along the flow of $K^\mu$. More simply, if the metric $g_{\mu\nu}$ is independent of a coordinate $x^\alpha$, then the coordinate basis vector $\partial_\alpha$ is a Killing vector field.
+Looking at our metric:
+\begin{equation*}
+    ds^2 = -f(r) dt^2 + \frac{1}{f(r)} dr^2 + r^2 d\theta^2 + r^2 \sin^2\theta d\phi^2
+\end{equation*}
+We can explicitly see that none of the metric components ($g_{tt}, g_{rr}, g_{\theta\theta}, g_{\phi\phi}$) depend on the time coordinate $t$. Therefore, $\partial_t \left( g_{\mu\nu} \right) = 0$, meaning $\partial_t$ is a Killing vector field (representing time-translation symmetry or stationarity).
+Similarly, none of the metric components depend on the azimuthal angle $\phi$. Therefore, $\partial_\phi \left( g_{\mu\nu} \right) = 0$, meaning $\partial_\phi$ is a Killing vector field (representing rotational symmetry around the z-axis, or axisymmetry).
 \end{solution}
 
 \subsection{Quantum Field Theory}
@@ -198,7 +549,7 @@ The cosmological constant $\Lambda$ acts like a "pressure" everywhere in space. 
 \label{physics:2023:6}
 Consider the $\phi ^ { 3 }$ model with a real scalar field $\phi ( x )$ in $3 + 1$ dimensional Minkowski spacetime with metric $( - , + , + , + )$. Its Lagrangian density is
 \begin{equation}
-    \mathcal {L} = - \frac {1}{2} \partial_ {\mu} \phi \partial^ {\mu} \phi - \frac {1}{2} m ^ {2} \phi^ {2} - \frac {1}{6} g \phi^ {3},
+    \mathcal {L} = - \frac {1}{2} \partial_ {\mu} \phi \partial^ {\mu} \phi - \frac {1}{2} m ^ {2} \phi^ {2} - \frac {1}{6} g \phi^ {3}, \label{eq:2023:6:11}
 \end{equation}
 where $g$ is a coupling with dimensions of mass.
 
@@ -210,27 +561,91 @@ where $g$ is a coupling with dimensions of mass.
 
 You may find the following formula useful:
 \begin{align}
-    (A B) ^ {- 1} &= \int_ {0} ^ {1} d x [ x A + (1 - x) B ] ^ {- 2}, \\
-    \int d ^ {d} k \frac {1}{(- k ^ {2} - 2 p \cdot k - M ^ {2} + i \epsilon) ^ {s}} &= (- 1) ^ {s} i \pi^ {d / 2} \frac {\Gamma (s - d / 2)}{\Gamma (s)} (- p ^ {2} + M ^ {2} - i \epsilon) ^ {d / 2 - s},
+    (A B) ^ {- 1} &= \int_ {0} ^ {1} d x [ x A + (1 - x) B ] ^ {- 2}, \label{eq:2023:6:12} \\
+    \int d ^ {d} k \frac {1}{(- k ^ {2} - 2 p \cdot k - M ^ {2} + i \epsilon) ^ {s}} &= (- 1) ^ {s} i \pi^ {d / 2} \frac {\Gamma (s - d / 2)}{\Gamma (s)} (- p ^ {2} + M ^ {2} - i \epsilon) ^ {d / 2 - s}, \label{eq:2023:6:13}
 \end{align}
-where $\Gamma ( z )$ is the Gamma function which has a simple pole at the origin: $\Gamma (z) = \frac {1}{z} - \gamma + \mathcal {O} (z)$, where $\gamma$ is the Euler constant.
+where $\Gamma ( z )$ is the Gamma function which has a simple pole at the origin:
+\begin{equation}
+    \Gamma(z) = \frac{1}{z} - \gamma + \mathcal{O}(z), \label{eq:2023:6:14}
+\end{equation}
+where $\gamma$ is the Euler constant.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites / Core Concepts:}
+- \textbf{Feynman Rules:} A systematic recipe for translating pictorial Feynman diagrams into mathematical integrals for scattering amplitudes.
+- \textbf{Self-Energy ($\Pi$):} The momentum-dependent correction to a particle's mass arising from its interactions with its own field (virtual particle emission and reabsorption).
+- \textbf{Dimensional Regularization:} A mathematical trick to tame infinite integrals by analytically continuing the number of spacetime dimensions to $d = 4 - \epsilon$, turning the infinity into a simple pole $1/\epsilon$.
+- \textbf{Renormalization:} The procedure of absorbing infinite corrections into unobservable "bare" parameters (like $\delta m^2$) to yield finite, measurable physical predictions.
+
+\textbf{Intuition / Motivation:}
+In the quantum world, a moving particle is never truly alone. A scalar particle can momentarily split into two virtual particles, which then quickly recombine. This bubbling "cloud" of virtual interactions effectively changes the particle's inertia (its mass). When we try to calculate this mass shift, the answer is mathematically infinite. We handle this by splitting the total mass into a "bare" mass and a "counterterm". We then tune the counterterm to perfectly cancel out the infinity, leaving behind a finite, physically sensible mass that matches what we actually measure in a laboratory.
+
+\textbf{Logical Step-by-Step Breakdown:}
+\textbf{Step 1: Write down the Feynman rules for the $\phi^3$ model.}
+The Lagrangian density is:
+\begin{equation*}
+    \mathcal{L} = - \frac{1}{2} \partial_\mu \phi \partial^\mu \phi - \frac{1}{2} m^2 \phi^2 - \frac{1}{6} g \phi^3
+\end{equation*}
+From this, we extract the Feynman rules in momentum space:
+- \textbf{Propagator:} The inverse of the kinetic operator yields the scalar propagator: $\Delta(p) = \frac{-i}{p^2 + m^2}$.
+- \textbf{Interaction Vertex:} The interaction term is $-\frac{1}{3!} g \phi^3$. The vertex factor, obtained by removing the fields and the symmetry factor $3!$, is simply $-ig$.
+
+\textbf{Step 2: Set up the one-loop self-energy integral.}
+The one-loop self-energy diagram consists of two vertices connected by two internal propagators carrying momenta $k$ and $p-k$, where $p$ is the external momentum.
+Because the two internal lines are identical bosons, there is a symmetry factor of $S = 1/2$.
+The integral for the self-energy $-i\Pi(p^2)$ in $d$ dimensions is:
+\begin{equation*}
+    -i\Pi(p^2) = \frac{1}{2} (-ig)^2 \int \frac{d^d k}{(2\pi)^d} \left( \frac{-i}{k^2 + m^2} \right) \left( \frac{-i}{(p-k)^2 + m^2} \right)
+\end{equation*}
+Simplifying the constants:
+\begin{equation*}
+    \Pi(p^2) = \frac{i g^2}{2} \int \frac{d^d k}{(2\pi)^d} \frac{1}{[k^2 + m^2] [(p-k)^2 + m^2]}
+\end{equation*}
+
+\textbf{Step 3: Combine denominators using Feynman parameters.}
+We use the provided identity $(AB)^{-1} = \int_0^1 dx [xA + (1-x)B]^{-2}$.
+Let $A = (p-k)^2 + m^2$ and $B = k^2 + m^2$. The combined denominator $D$ inside the squared bracket is:
+\begin{align*}
+    D &= x[(p-k)^2 + m^2] + (1-x)[k^2 + m^2] \\
+      &= x(p^2 - 2p \cdot k + k^2 + m^2) + (1-x)(k^2 + m^2) \\
+      &= k^2 - 2xp \cdot k + xp^2 + m^2
+\end{align*}
+So the integral is now:
+\begin{equation*}
+    \Pi(p^2) = \frac{i g^2}{2} \int_0^1 dx \int \frac{d^d k}{(2\pi)^d} \frac{1}{[k^2 - 2xp \cdot k + xp^2 + m^2]^2}
+\end{equation*}
+
+\textbf{Step 4: Evaluate the momentum integral using dimensional regularization.}
+We manipulate the denominator to match the provided master formula:
+\begin{equation*}
+    \frac{1}{[k^2 - 2xp \cdot k + xp^2 + m^2]^2} = \frac{1}{[-(-k^2 - 2(xp) \cdot k - (xp^2 + m^2))]^2}
+\end{equation*}
+Matching this with the formula $\int d^d k \frac{1}{(-k^2 - 2q \cdot k - M^2)^s}$, we identify $s = 2$, $q = -xp$, and $M^2 = xp^2 + m^2$.
+The evaluation yields:
+\begin{equation*}
+    (-1)^2 i \pi^{d/2} \frac{\Gamma(2 - d/2)}{\Gamma(2)} (-q^2 + M^2)^{d/2 - 2}
+\end{equation*}
+We compute $-q^2 + M^2 = -(-xp)^2 + xp^2 + m^2 = -x^2p^2 + xp^2 + m^2 = x(1-x)p^2 + m^2$.
+Let $d = 4 - \epsilon$. As $\epsilon \to 0$:
 \begin{itemize}
-    \item \textbf{Feynman Rules:} Vertex $-ig$, Propagator $-i/(k^2+m^2)$.
-    \item \textbf{Dimensional Regularization:} Using $d=4-\epsilon$.
+    \item $\Gamma(2) = 1$.
+    \item $\Gamma(2 - d/2) = \Gamma(\epsilon/2) = \frac{2}{\epsilon} - \gamma + \mathcal{O}(\epsilon)$.
+    \item $\pi^{d/2} = \pi^{2-\epsilon/2} \approx \pi^2$.
 \end{itemize}
+The dimensionful term $(-q^2 + M^2)^{-\epsilon/2} \approx 1 - \frac{\epsilon}{2} \ln(x(1-x)p^2 + m^2) = 1 + \mathcal{O}(\epsilon)$.
+The leading divergent piece of the momentum integral is simply $\frac{2i\pi^2}{\epsilon}$.
+Substituting this back into $\Pi(p^2)$ and including the $(2\pi)^{-d}$ factor, which gives $(2\pi)^{-4} = \frac{1}{16\pi^4}$:
+\begin{equation*}
+    \Pi(p^2) \approx \frac{i g^2}{2} \int_0^1 dx \frac{1}{16\pi^4} \left( \frac{2i\pi^2}{\epsilon} \right) = \frac{i g^2}{2} \frac{2i\pi^2}{16\pi^4} \frac{1}{\epsilon} = -\frac{g^2}{16\pi^2 \epsilon}
+\end{equation*}
 
-\textbf{Steps:}
-
-1. \textbf{Diagram:} A bubble with two vertices. Symmetric factor $1/2$.
-2. \textbf{Integral:} $\Pi(p^2) \propto g^2 \int \frac{d^d k}{(k^2+m^2)((p-k)^2+m^2)}$.
-3. \textbf{Divergence:} The integral contains a $1/\epsilon$ pole.
-4. \textbf{Counter-term:} A mass shift $\delta m^2 = - \frac{g^2}{16\pi^2\epsilon}$ is required to cancel the infinity.
-
-\textbf{Intuition:}
-Virtual particles flashing in and out of existence (loops) modify the properties of real particles. This "cloud" of virtual interactions makes the particle appear heavier. Renormalization is the process of defining our starting parameters to account for this constant background interference.
+\textbf{Step 5: Determine the mass counterterm.}
+The total physical (renormalized) mass squared is defined by modifying the Lagrangian with a counterterm $\delta m^2$.
+For the total one-loop mass correction to be finite, the counterterm $\delta m^2$ must exactly cancel the divergent $1/\epsilon$ pole of the self-energy.
+Therefore, the required counterterm value is:
+\begin{equation*}
+    \delta m^2 = \text{Divergent part of } \Pi(p^2) = - \frac{g^2}{16\pi^2 \epsilon}
+\end{equation*}
+This choice safely absorbs the infinity into the unobservable bare mass.
 \end{solution}
-
