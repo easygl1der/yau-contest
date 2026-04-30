@@ -5,7 +5,7 @@ This section provides prerequisite knowledge, definitions, theorems, and example
 
 \section{Classical Mechanics}
 
-\textbf{Key Topics:} Lagrangian and Hamiltonian formalisms, central potentials, orbital stability, constrained motion, and Noether's theorem.
+\textbf{Key Topics:} Lagrangian and Hamiltonian formalisms, central potentials, orbital stability, Binet's equation, Noether's theorem, and rotating frames.
 
 \begin{definition}[Lagrangian and Hamiltonian]
 The \emph{Lagrangian} $L$ of a classical system is defined as $L = T - V$, where $T$ is the kinetic energy and $V$ is the potential energy. The \emph{Hamiltonian} $H$ is obtained via a Legendre transformation: $H(q, p, t) = \sum_i p_i \dot{q}_i - L(q, \dot{q}, t)$, where $p_i = \frac{\partial L}{\partial \dot{q}_i}$ are the canonical momenta.
@@ -15,68 +15,105 @@ The \emph{Lagrangian} $L$ of a classical system is defined as $L = T - V$, where
 Every differentiable symmetry of the action of a physical system has a corresponding conservation law. For example, spatial translation invariance implies conservation of momentum, and time translation invariance implies conservation of energy.
 \end{theorem}
 
-\begin{example}[Central Potential]
-Consider a particle of mass $m$ in a central potential $V(r)$. The Lagrangian in polar coordinates $(r, \theta)$ is $L = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\theta}^2) - V(r)$. Since $\theta$ is cyclic, the angular momentum $l = mr^2\dot{\theta}$ is conserved. The radial equation of motion reduces to a 1D problem with an effective potential $V_{\text{eff}}(r) = V(r) + \frac{l^2}{2mr^2}$.
+\begin{definition}[Effective Potential and Stability]
+In a central potential $V(r)$, the radial motion is governed by the effective potential $V_{\text{eff}}(r) = \frac{J^2}{2mr^2} + V(r)$, where $J = mr^2\dot{\phi}$ is the conserved angular momentum. A circular orbit exists at $r_0$ if $V_{\text{eff}}'(r_0) = 0$. The orbit is stable if $V_{\text{eff}}''(r_0) > 0$. Small oscillations around a stable orbit have frequency $\omega_{\text{osc}} = \sqrt{V_{\text{eff}}''(r_0)/m}$.
+\end{definition}
+
+\begin{definition}[Binet's Equation]
+The orbit $u(\phi) = 1/r(\phi)$ of a particle in a central force $F(r)$ satisfies:
+\[ \frac{d^2u}{d\phi^2} + u = -\frac{m}{J^2 u^2} F(1/u) \]
+This equation is useful for determining the shape of the orbit without solving for time dependence.
+\end{definition}
+
+\begin{example}[Rotating Frame: Bead on a Hoop]
+For a bead on a vertical hoop of radius $R$ rotating with angular velocity $\omega$, the Lagrangian in terms of the polar angle $\theta$ (from the bottom) is:
+\[ L = \frac{1}{2}mR^2 \dot{\theta}^2 + \frac{1}{2}mR^2 \omega^2 \sin^2 \theta + mgR \cos \theta \]
+The term $\frac{1}{2}mR^2 \omega^2 \sin^2 \theta$ represents the centrifugal potential. A pitchfork bifurcation occurs at $\omega = \sqrt{g/R}$, where the stable equilibrium shifts from the bottom ($\theta=0$) to a non-zero angle.
 \end{example}
 
 \section{Quantum Mechanics}
 
-\textbf{Key Topics:} Harmonic oscillator, ladder operators, perturbation theory, quantum scattering, and coherent states.
+\textbf{Key Topics:} Harmonic oscillator, ladder operators, perturbation theory, coherent states, time reversal symmetry, and $su(2)$ representations.
 
-\begin{definition}[Ladder Operators]
-For a 1D quantum harmonic oscillator with Hamiltonian $\hat{H} = \frac{\hat{p}^2}{2m} + \frac{1}{2}m\omega^2 \hat{x}^2$, the annihilation operator is $\hat{a} = \sqrt{\frac{m\omega}{2\hbar}} \left(\hat{x} + \frac{i}{m\omega}\hat{p}\right)$ and the creation operator is $\hat{a}^\dagger$. They satisfy the commutation relation $[\hat{a}, \hat{a}^\dagger] = 1$. The Hamiltonian is $\hat{H} = \hbar\omega \left(\hat{a}^\dagger \hat{a} + \frac{1}{2}\right)$.
+\begin{definition}[Ladder Operators and Coherent States]
+For a 1D harmonic oscillator, $\hat{a} = \sqrt{\frac{m\omega}{2\hbar}} \hat{x} + \frac{i}{\sqrt{2m\hbar\omega}} \hat{p}$. A \emph{coherent state} $|\alpha\rangle$ is an eigenstate of $\hat{a}$ with $\hat{a}|\alpha\rangle = \alpha|\alpha\rangle$. It can be expressed as $|\alpha\rangle = e^{-|\alpha|^2/2} \sum_{n=0}^\infty \frac{\alpha^n}{\sqrt{n!}} |n\rangle$.
 \end{definition}
 
-\begin{theorem}[First-Order Perturbation Theory]
-Let $\hat{H} = \hat{H}_0 + \lambda \hat{V}$, where $\hat{H}_0$ has known non-degenerate eigenstates $|n^{(0)}\rangle$ and energies $E_n^{(0)}$. The first-order correction to the energy is given by $E_n^{(1)} = \langle n^{(0)} | \hat{V} | n^{(0)} \rangle$.
+\begin{definition}[Anti-unitary Operators and Time Reversal]
+An operator $\Theta$ is \emph{anti-unitary} if it is anti-linear ($\Theta(c|\psi\rangle) = c^* \Theta|\psi\rangle$) and satisfies $\langle \Theta \psi | \Theta \phi \rangle = \langle \phi | \psi \rangle$. The time reversal operator $\Theta$ is anti-unitary. If $[H, \Theta] = 0$ and an energy eigenstate is non-degenerate, its wavefunction can be chosen to be real.
+\end{definition}
+
+\begin{theorem}[Schwinger Boson Representation of $su(2)$]
+Given two independent oscillators with ladder operators $a_i, a_i^\dagger$ ($i=1,2$), the operators
+\[ J_+ = a_1^\dagger a_2, \quad J_- = a_2^\dagger a_1, \quad J_z = \frac{1}{2}(a_1^\dagger a_1 - a_2^\dagger a_2) \]
+satisfy the $su(2)$ commutation relations: $[J_z, J_\pm] = \pm J_\pm$ and $[J_+, J_-] = 2J_z$. For a fixed total number of quanta $n = n_1 + n_2$, these states form an irreducible representation with spin $j = n/2$.
 \end{theorem}
 
-\begin{example}[Quantum Scattering at a Step Potential]
-Consider a particle of mass $m$ and energy $E > V_0$ encountering a potential step $V(x) = V_0 \Theta(x)$. By matching wavefunctions and their derivatives at $x=0$, the reflection coefficient is found to be $\mathcal{R} = \left(\frac{k-k'}{k+k'}\right)^2$, where $k = \sqrt{2mE}/\hbar$ and $k' = \sqrt{2m(E-V_0)}/\hbar$.
+\begin{example}[Degenerate Perturbation Theory]
+Consider a 2D isotropic harmonic oscillator $H_0 = \hbar\omega(n_x + n_y + 1)$ with perturbation $V = \alpha m \omega^2 x y$. For the first excited states $\{|1,0\rangle, |0,1\rangle\}$, the perturbation matrix is $V = \frac{1}{2}\alpha \hbar \omega \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$, leading to energy shifts $\Delta E = \pm \frac{1}{2}\alpha \hbar \omega$.
 \end{example}
 
 \section{Electromagnetism}
 
-\textbf{Key Topics:} Maxwell equations, wave propagation in media, retarded potentials, and the Lorentz gauge.
+\textbf{Key Topics:} Maxwell equations, wave propagation in conductors, gauge transformations, retarded potentials, and the Lorentz gauge.
 
 \begin{definition}[Maxwell Equations]
-Maxwell's equations are a set of coupled partial differential equations that describe electromagnetism:
+In vacuum (Gaussian units), Maxwell's equations are:
 \begin{enumerate}
-    \item $\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}$ (Gauss's law)
-    \item $\nabla \cdot \mathbf{B} = 0$ (Gauss's law for magnetism)
-    \item $\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}$ (Faraday's law)
-    \item $\nabla \times \mathbf{B} = \mu_0 \mathbf{J} + \mu_0 \varepsilon_0 \frac{\partial \mathbf{E}}{\partial t}$ (Amp\`ere-Maxwell law)
+    \item $\nabla \cdot \mathbf{E} = 0$, $\nabla \cdot \mathbf{B} = 0$
+    \item $\nabla \times \mathbf{E} = -\frac{1}{c}\frac{\partial \mathbf{B}}{\partial t}$, $\nabla \times \mathbf{B} = \frac{1}{c}\frac{\partial \mathbf{E}}{\partial t}$
 \end{enumerate}
 \end{definition}
 
-\begin{theorem}[Skin Effect]
-An electromagnetic wave penetrating a good conductor with conductivity $\sigma$ is exponentially attenuated. The amplitude decays as $e^{-z/\delta}$, where $\delta = \sqrt{\frac{2}{\mu_0\omega\sigma}}$ is the skin depth and $\omega$ is the angular frequency.
+\begin{definition}[Electromagnetic Potentials and Gauge Invariance]
+Physical fields are derived from potentials $\mathbf{E} = -\nabla \phi - \frac{1}{c} \frac{\partial \mathbf{A}}{\partial t}$ and $\mathbf{B} = \nabla \times \mathbf{A}$. A \emph{gauge transformation} $\mathbf{A} \to \mathbf{A} + \nabla \Lambda$, $\phi \to \phi - \frac{1}{c} \frac{\partial \Lambda}{\partial t}$ leaves $\mathbf{E}$ and $\mathbf{B}$ invariant. The \emph{Lorentz gauge} $\nabla \cdot \mathbf{A} + \frac{1}{c} \frac{\partial \phi}{\partial t} = 0$ simplifies the wave equations for potentials.
+\end{definition}
+
+\begin{theorem}[Retarded Potentials]
+The solutions to the inhomogeneous wave equations in the Lorentz gauge are:
+\[ \phi(\mathbf{r}, t) = \int \frac{\rho(\mathbf{r}', t_r)}{|\mathbf{r} - \mathbf{r}'|} d^3 r', \quad \mathbf{A}(\mathbf{r}, t) = \frac{1}{c} \int \frac{\mathbf{J}(\mathbf{r}', t_r)}{|\mathbf{r} - \mathbf{r}'|} d^3 r' \]
+where $t_r = t - |\mathbf{r} - \mathbf{r}'|/c$ is the retarded time.
 \end{theorem}
 
-\begin{example}[Retarded Potentials]
-In the Lorentz gauge $\nabla \cdot \mathbf{A} + \frac{1}{c^2}\frac{\partial V}{\partial t} = 0$, the scalar potential $V$ satisfies a wave equation with the solution $V(\mathbf{r}, t) = \frac{1}{4\pi\varepsilon_0} \int \frac{\rho(\mathbf{r}', t_r)}{|\mathbf{r} - \mathbf{r}'|} d^3r'$, where $t_r = t - \frac{|\mathbf{r} - \mathbf{r}'|}{c}$ is the retarded time.
+\begin{theorem}[Propagation in Conductors]
+In a medium with high conductivity $\sigma \gg \omega$, the wave vector $k$ is complex: $k \approx \frac{1+i}{\sqrt{2}} \frac{\sqrt{4\pi \sigma \omega}}{c}$. The real part describes propagation, and the imaginary part describes attenuation with a characteristic \emph{skin depth} $\delta = c/\sqrt{2\pi \sigma \omega}$.
+\end{theorem}
+
+\begin{example}[Finite Beams and Longitudinal Components]
+For a wave packet with transverse profile $E_0(x,y)$ propagating in $z$, the transversal field $\mathbf{E}_\perp = E_0(x,y) e^{i(kz-\omega t)} \frac{\hat{\mathbf{x}}+i\hat{\mathbf{y}}}{\sqrt{2}}$ is not a complete solution. Gauss's law $\nabla \cdot \mathbf{E} = 0$ requires a longitudinal component $E_z$:
+\[ E_z = \frac{i}{k\sqrt{2}}(\partial_x E_0 + i \partial_y E_0) e^{i(kz-\omega t)} \]
+This component contributes to the beam's orbital angular momentum.
 \end{example}
+
+\begin{definition}[Energy and Momentum]
+The time-averaged energy density is $\langle u \rangle = \frac{1}{16\pi}(|\mathbf{E}|^2 + |\mathbf{B}|^2)$ and the momentum density is $\langle \mathbf{g} \rangle = \frac{1}{8\pi c} \text{Re}(\mathbf{E} \times \mathbf{B}^*)$. For a circularly polarized Gaussian beam, the ratio of total angular momentum $\langle L_z \rangle$ to total energy $\langle U \rangle$ is $1/\omega$.
+\end{definition}
 
 \section{Statistical Mechanics and General Relativity}
 
-\textbf{Key Topics:} Ising model, Fermi-Dirac statistics, Schwarzschild metric, Killing vectors, and gravitational waves.
+\textbf{Key Topics:} Partition function, Fermi gas, Bose-Einstein statistics, density of states, Schwarzschild metric, Einstein field equations, and conformal coupling.
 
-\begin{definition}[Partition Function]
-In statistical mechanics, the canonical partition function for a system in thermal equilibrium is $Z = \sum_s e^{-\beta E_s}$, where the sum is over all microstates $s$, $E_s$ is the state's energy, and $\beta = \frac{1}{k_B T}$. The free energy is $F = -k_B T \ln Z$.
+\begin{definition}[Partition Function and Distribution Functions]
+The canonical partition function is $Z = \sum_s e^{-\beta E_s}$, with $\beta = 1/k_B T$. The average occupation number for particles in state $i$ with energy $E_i$ and chemical potential $\mu$ is:
+\begin{enumerate}
+    \item $n_B(E_i) = \frac{1}{e^{\beta(E_i-\mu)} - 1}$ (Bose-Einstein statistics)
+    \item $n_F(E_i) = \frac{1}{e^{\beta(E_i-\mu)} + 1}$ (Fermi-Dirac statistics)
+\end{enumerate}
 \end{definition}
 
-\begin{definition}[Schwarzschild Metric]
-The Schwarzschild metric is the spherically symmetric vacuum solution to the Einstein field equations. In geometric units ($G=c=1$), it is:
-\[ ds^2 = -\left(1 - \frac{2M}{r}\right) dt^2 + \left(1 - \frac{2M}{r}\right)^{-1} dr^2 + r^2 (d\theta^2 + \sin^2\theta d\phi^2) \]
+\begin{definition}[Density of States]
+The density of states $g(E)$ represents the number of states per unit energy. For a 1D system of length $L$, $g(E) = \frac{L}{2\pi} \frac{dk}{dE}$. For massless particles ($E = \hbar c k$), $g(E) = \frac{L}{2\pi \hbar c}$. For massive particles ($E = \hbar^2 k^2 / 2m$), $g(E) = \frac{L}{2\pi} \sqrt{\frac{2m}{\hbar^2 E}}$.
 \end{definition}
 
-\begin{theorem}[Killing Vectors and Conserved Quantities]
-If a spacetime has a symmetry generated by a Killing vector field $K^\mu$, then for a freely falling particle with four-momentum $p^\mu$, the quantity $Q = K_\mu p^\mu$ is conserved along its geodesic.
-\end{theorem}
+\begin{definition}[Einstein Field Equations and Metrics]
+The Einstein field equations relate spacetime geometry to energy-momentum: $R_{\mu\nu} - \frac{1}{2} R g_{\mu\nu} = 8\pi G T_{\mu\nu}$. In vacuum, $R_{\mu\nu} = 0$. The Schwarzschild metric is the unique spherically symmetric vacuum solution:
+\[ ds^2 = -\left(1 - \frac{2M}{r}\right) dt^2 + \left(1 - \frac{2M}{r}\right)^{-1} dr^2 + r^2 d\Omega^2 \]
+A Killing vector $K^\mu$ generates a symmetry of the metric, $\nabla_{(\mu} K_{\nu)} = 0$.
+\end{definition}
 
-\begin{example}[Fermi Gas at Zero Temperature]
-For a gas of non-interacting fermions at absolute zero ($T=0$), particles fill the lowest available energy states up to the Fermi energy $E_F = \frac{\hbar^2 k_F^2}{2m}$. This yields a degeneracy pressure that stabilizes white dwarf stars.
-\end{example}
+\begin{definition}[Conformal Transformations and Coupling]
+A \emph{conformal transformation} is a local rescaling of the metric $g_{\mu\nu} \to \Omega^2(x) g_{\mu\nu}$. A scalar field action $\int d^4x \sqrt{-g} [\frac{1}{2}(\partial \phi)^2 + \frac{1}{2} \xi R \phi^2]$ is conformally invariant if $\xi = 1/6$ in 4D. In de Sitter space (constant $R$), this coupling introduces an effective mass $m^2 = \xi R$.
+\end{definition}
 
 \section{Quantum Field Theory}
 

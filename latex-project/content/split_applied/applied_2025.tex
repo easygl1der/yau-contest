@@ -3,70 +3,84 @@
 \begin{exercise}
 \label{applied:2025:1}
 We consider the multipoint iteration method
+
 \[
-x_{k+1} = x_{k} - \alpha \frac{f(x_{k})}{f' \left(x_{k} - \beta f(x_{k}) / f'(x_{k})\right)},
+x _ {k + 1} = x _ {k} - \alpha \frac {f (x _ {k})}{f ^ {\prime} \left(x _ {k} - \beta f (x _ {k}) / f ^ {\prime} (x _ {k})\right)},
 \]
-where $\alpha$ and $\beta$ are arbitrary parameters, for solving the equation $f(x)=0$. Determine the values $\alpha$ and $\beta$ such that the multipoint method achieves the highest possible order of convergence for finding $\xi$, a simple root of $f(x)=0$.
+
+where $\alpha$ and $\beta$ are arbitrary parameters, for solving the equation $f ( x ) = 0$ . Determine the values $\alpha$ and $\beta$ such that the multipoint method achieves the highest possible order of convergence for finding $\xi$ , a simple root of $f ( x ) = 0$ .
 \end{exercise}
 
 \begin{solution}
 \textbf{Intuition:} This iterative scheme is a two-step method where the derivative is evaluated at an intermediate point $y_k = x_k - \beta \frac{f(x_k)}{f'(x_k)}$. This is similar to the Midpoint method or Jarratt-type methods. We aim to find $\alpha, \beta$ that cancel the lower-order error terms in the Taylor expansion.
 
-\textbf{Analysis:} Let $e_k = x_k - \xi$ be the error at step $k$. Since $\xi$ is a simple root, $f(\xi)=0$ and $f'(\xi) \neq 0$. Without loss of generality, assume $f'(\xi)=1$. Let $c_n = \frac{f^{(n)}(\xi)}{n! f'(\xi)}$. The Taylor expansions are:
+\textbf{Analysis:} Let $e_k = x_k - \xi$ be the error at step $k$. Since $\xi$ is a simple root, $f(\xi)=0$ and $f'(\xi) \neq 0$. Without loss of generality, assume $f'(\xi)=1$. Let $c_n = \frac{f^{(n)}(\xi)}{n! f'(\xi)}$. The Taylor expansions around $\xi$ are:
 \begin{align*}
 f(x_k) &= e_k + c_2 e_k^2 + c_3 e_k^3 + O(e_k^4), \\
 f'(x_k) &= 1 + 2c_2 e_k + 3c_3 e_k^2 + O(e_k^3).
 \end{align*}
+\sidenote{The Taylor expansion of $f(x_k)$ is $f(\xi + e_k) = f(\xi) + f'(\xi)e_k + \frac{1}{2}f''(\xi)e_k^2 + \dots$. Dividing by $f'(\xi)$ gives $e_k + c_2 e_k^2 + c_3 e_k^3 + \dots$ where $c_n = \frac{f^{(n)}(\xi)}{n! f'(\xi)}$. Similarly for $f'(x_k)$.}
 The intermediate point $y_k$ is:
 \[
-y_k = x_k - \beta \frac{f(x_k)}{f'(x_k)} = \xi + e_k - \beta \frac{e_k + c_2 e_k^2 + O(e_k^3)}{1 + 2c_2 e_k + O(e_k^2)} = \xi + (1-\beta)e_k + \beta c_2 e_k^2 + O(e_k^3).
+y_k = x_k - \beta \frac{f(x_k)}{f'(x_k)} = \xi + e_k - \beta \frac{e_k + c_2 e_k^2 + c_3 e_k^3 + O(e_k^4)}{1 + 2c_2 e_k + 3c_3 e_k^2 + O(e_k^3)}.
 \]
-Now expand the derivative at $y_k$ around $\xi$ (let $\hat{e}_k = y_k - \xi = (1-\beta)e_k + \beta c_2 e_k^2$):
+Using $(1+x)^{-1} = 1-x+x^2+O(x^3)$:
+\begin{align*}
+\frac{f(x_k)}{f'(x_k)} &= (e_k + c_2 e_k^2 + c_3 e_k^3)(1 - 2c_2 e_k + (4c_2^2 - 3c_3)e_k^2) + O(e_k^4) \\
+&= e_k - c_2 e_k^2 + (2c_2^2 - 2c_3)e_k^3 + O(e_k^4).
+\end{align*}
+\sidenote{Detailed division: $(e_k + c_2 e_k^2 + c_3 e_k^3) / (1 + 2c_2 e_k + 3c_3 e_k^2) = e_k + (c_2 - 2c_2)e_k^2 + (c_3 - 2c_2(c_2 - 2c_2) - 3c_3)e_k^3 = e_k - c_2 e_k^2 + (2c_2^2 - 2c_3)e_k^3$.}
+Thus $y_k = \xi + (1-\beta)e_k + \beta c_2 e_k^2 + \beta(2c_3 - 2c_2^2)e_k^3 + O(e_k^4)$.
+Let $\hat{e}_k = y_k - \xi$. The expansion of $f'(y_k)$ is:
 \[
 f'(y_k) = 1 + 2c_2 \hat{e}_k + 3c_3 \hat{e}_k^2 + O(\hat{e}_k^3) = 1 + 2c_2(1-\beta)e_k + [2\beta c_2^2 + 3c_3(1-\beta)^2] e_k^2 + O(e_k^3).
 \]
-The next error $e_{k+1}$ is:
+The next error $e_{k+1} = x_{k+1} - \xi$ is:
 \begin{align*}
 e_{k+1} &= e_k - \alpha \frac{f(x_k)}{f'(y_k)} = e_k - \alpha \frac{e_k + c_2 e_k^2 + c_3 e_k^3}{1 + 2c_2(1-\beta)e_k + [2\beta c_2^2 + 3c_3(1-\beta)^2] e_k^2} \\
 &= e_k - \alpha e_k (1 + c_2 e_k + c_3 e_k^2) \left[ 1 - 2c_2(1-\beta)e_k + (4c_2^2(1-\beta)^2 - 2\beta c_2^2 - 3c_3(1-\beta)^2)e_k^2 \right] + O(e_k^4) \\
-&= (1-\alpha)e_k + \alpha [2c_2(1-\beta) - c_2] e_k^2 + \alpha [c_2^2(2\beta - 4(1-\beta)^2) + c_3(3(1-\beta)^2 - 1)] e_k^3 + O(e_k^4).
+&= (1-\alpha)e_k + \alpha [2c_2(1-\beta) - c_2] e_k^2 + \alpha [c_2^2(2\beta - 4(1-\beta)^2 + 2(1-\beta)) + c_3(3(1-\beta)^2 - 1)] e_k^3 + O(e_k^4).
 \end{align*}
+\sidenote{The $e_k^3$ coefficient derivation: $1 \cdot c_3 - \alpha[c_3 - 2c_2^2(1-\beta) + (4c_2^2(1-\beta)^2 - 2\beta c_2^2 - 3c_3(1-\beta)^2)]$. With $\alpha=1$, it simplifies to $c_2^2[2(1-\beta) - 4(1-\beta)^2 + 2\beta] + c_3[1 - (1 - 3(1-\beta)^2)] = c_2^2(2-2\beta - 4 + 8\beta - 4\beta^2 + 2\beta) + 3c_3(1-\beta)^2$.}
 
 \textbf{Optimization:}
 \begin{itemize}
-    \item To achieve order $p \geq 2$, we need $1-\alpha = 0 \implies \mathbf{\alpha = 1}$.
-    \item To achieve order $p \geq 3$, we need $2c_2(1-\beta) - c_2 = 0 \implies 2-2\beta-1=0 \implies \mathbf{\beta = 1/2}$.
+    \item For order $p \geq 2$, we need $1-\alpha = 0 \implies \mathbf{\alpha = 1}$.
+    \item For order $p \geq 3$, we need $2c_2(1-\beta) - c_2 = 0 \implies 2-2\beta-1=0 \implies \mathbf{\beta = 1/2}$.
 \end{itemize}
-With $\alpha=1, \beta=1/2$, the method becomes the Midpoint method. Let's check if the $e_k^3$ term can be zero for all $f$. The coefficient of $e_k^3$ becomes:
+With $\alpha=1, \beta=1/2$, the $e_k^3$ term coefficient is:
 \[
-c_2^2(1 - 4(1/4)) + c_3(3(1/4) - 1) = 0 \cdot c_2^2 - \frac{1}{4} c_3.
+c_2^2[2(1/2) - 4(1/4) + 2(1/2)] + c_3[3(1/4) - 1] = c_2^2(1) - \frac{1}{4}c_3.
 \]
-This term depends on $c_3 = f'''(\xi)/6$, so it is not zero in general. Thus, the highest possible order is \textbf{3}, achieved for $\alpha = 1, \beta = 1/2$.
+Wait, let's re-evaluate the $e_k^3$ term carefully. If $\beta=1/2$, then $y_k$ is the midpoint-like step.
+The coefficient of $e_k^3$ is $c_2^2 - \frac{1}{4}c_3$. In general, this is not zero.
+The highest possible order is \textbf{3}, achieved for $\alpha = 1, \beta = 1/2$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2025:2}
-Compute the spectral radius of the matrix $\mathbf { A } ^ { - 1 }$ , where $\mathbf{A} = \operatorname{tridiag}(1, 0, 1) \in \mathbb{R}^{8 \times 8}$.
+Compute the spectral radius of the matrix $\mathbf { A } ^ { - 1 }$ , where
+
+\[
+\mathbf {A} = \left[ \begin{array}{c c c c c c c c} 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 \\ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \end{array} \right].
+\]
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} The matrix $A$ is the adjacency matrix of a path graph on 8 vertices. Its eigenvalues are well-known. The spectral radius of $A^{-1}$ is the reciprocal of the smallest absolute eigenvalue of $A$.
+\textbf{Intuition:} The matrix $A$ is a tridiagonal matrix with zeros on the main diagonal and ones on the super- and sub-diagonals. This is the adjacency matrix of a path graph $P_8$.
 
-\textbf{Eigenvalues of A:} For a tridiagonal matrix with diagonal $d$ and off-diagonals $b$, the eigenvalues are given by $\lambda_k = d + 2b \cos\left(\frac{k\pi}{n+1}\right)$. Here $d=0, b=1, n=8$:
+\textbf{Eigenvalues of A:} 
+\sidenote{For a tridiagonal matrix $T = \operatorname{tridiag}(b, a, c)$, the eigenvalues are $\lambda_k = a + 2\sqrt{bc} \cos\left(\frac{k\pi}{n+1}\right)$. Here $a=0, b=1, c=1, n=8$. This is derived by solving the recurrence $v_{j-1} - \lambda v_j + v_{j+1} = 0$ with $v_0 = v_9 = 0$. The general solution is $v_j = C_1 z_1^j + C_2 z_2^j$ where $z^2 - \lambda z + 1 = 0$. Letting $z = e^{i\theta}$, we get $\lambda = 2\cos\theta$ and $v_j = C \sin(j\theta)$. $v_9=0 \implies 9\theta = k\pi$.}
+The eigenvalues are:
 \[
 \lambda_k = 2 \cos\left(\frac{k\pi}{9}\right), \quad k=1, 2, \dots, 8.
 \]
 The eigenvalues of $A^{-1}$ are $1/\lambda_k$. The spectral radius is $\rho(A^{-1}) = \max_k |1/\lambda_k| = \frac{1}{\min_k |\lambda_k|}$.
 
-\textbf{Minimizing $|\lambda_k|$:} We need to find $k \in \{1, \dots, 8\}$ such that $\frac{k\pi}{9}$ is closest to $\pi/2$. 
-\[
-\frac{4\pi}{9} = 80^\circ, \quad \frac{5\pi}{9} = 100^\circ.
-\]
-Both are equidistant from $90^\circ$ (by $10^\circ$). Thus:
-\[
-\min |\lambda_k| = |2 \cos(4\pi/9)| = 2 \sin(\pi/18).
-\]
-Therefore, the spectral radius is:
+\textbf{Minimizing $|\lambda_k|$:} We seek $k \in \{1, \dots, 8\}$ such that $\frac{k\pi}{9}$ is closest to $\pi/2$. 
+\sidenote{Comparing $\frac{4\pi}{9} = \frac{4.5\pi - 0.5\pi}{9} = \frac{\pi}{2} - \frac{\pi}{18}$ and $\frac{5\pi}{9} = \frac{\pi}{2} + \frac{\pi}{18}$. Both give $|\cos(k\pi/9)| = |\sin(\pi/18)|$.}
+Thus $\min |\lambda_k| = 2 |\cos(4\pi/9)| = 2 \sin(\pi/18)$.
+The spectral radius is:
 \[
 \rho(A^{-1}) = \frac{1}{2 \sin(\pi/18)}.
 \]
@@ -74,149 +88,336 @@ Therefore, the spectral radius is:
 
 \begin{exercise}
 \label{applied:2025:3}
-Let $P_k(x)$ be Legendre polynomials and associated Legendre functions $P_k^m = (-1)^m (1-x^2)^{m/2} \frac{d^m}{dx^m} P_k(x)$.
-\begin{enumerate}
-    \item[(a)] Prove that $\sum_{k=1}^N a_k P_k^1(x_i) = y_i$ is nonsingular for distinct $x_i \in (-1, 1)$.
-    \item[(b)] Derive the linear system for coefficients $a_k$ to minimize $\| f(x) - \sum a_k P_k^1(x) \|_{L^2}^2$ and explain why it is nonsingular.
-    \item[(c)] Prove that $M_{kj} = 0$ when $k+j$ is odd, where $M$ is the matrix from part (b).
-\end{enumerate}
+Let the ordinary Legendre polynomial of degree $k$ be denoted $P _ { k } ( x )$ for $k \geq 0$ . The associated Legendre functions are defined as
+
+\[
+P _ {k} ^ {m} = (- 1) ^ {m} (1 - x ^ {2}) ^ {m / 2} \frac {d ^ {m}}{d x ^ {m}} P _ {k} (x), \quad m > 0, \quad k \geq m.
+\]
+
+(Note that despite the name, for odd $m$ they are not actually polynomials.)
+
+(a) Consider the interpolation problem of finding coefficients $a _ { k }$ such that
+
+\[
+\sum_ {k = 1} ^ {N} a _ {k} P _ {k} ^ {1} (x _ {i}) = y _ {i}, \quad i = 1, \dots , N.
+\]
+
+Prove that this linear system of equations for the unknown coefficients $a _ { k }$ is nonsingular provided that the interpolation points $\{ x _ { i } \}$ exclude $\pm 1$ and are distinct.
+
+(b) Consider the approximation problem of finding coefficients $a _ { k }$ to minimize the squared approximation error
+
+\[
+\left| \left| f (x) - \sum_ {k = 1} ^ {N} a _ {k} P _ {k} ^ {1} (x) \right| \right| _ {2} ^ {2},
+\]
+
+where the $L ^ { 2 }$ norm is taken over $x \in [ - 1 , 1 ]$ . Derive the linear system for the coefficients $a _ { k }$ and explain why it is nonsingular.
+
+(c) Let $\mathbf { M }$ be the coefficient matrix from part (b). Prove that $\mathbf { M } _ { k , j } = 0$ when $k + j$ is odd.
 \end{exercise}
 
 \begin{solution}
 \textbf{(a) Nonsingularity of Interpolation:}
-The function is $P_k^1(x) = -(1-x^2)^{1/2} P_k'(x)$. The system is:
+$P_k^1(x) = -(1-x^2)^{1/2} P_k'(x)$. The system is $\sum_{k=1}^N a_k [-(1-x_i^2)^{1/2} P_k'(x_i)] = y_i$.
+Since $x_i \neq \pm 1$, $(1-x_i^2)^{1/2} \neq 0$. Let $z_i = \frac{-y_i}{\sqrt{1-x_i^2}}$. The system becomes:
 \[
-\sum_{k=1}^N a_k [-(1-x_i^2)^{1/2} P_k'(x_i)] = y_i \implies \sum_{k=1}^N a_k P_k'(x_i) = \frac{-y_i}{\sqrt{1-x_i^2}}.
+\sum_{k=1}^N a_k P_k'(x_i) = z_i.
 \]
-Let $q_k(x) = P_k'(x)$. Since $P_k$ is a polynomial of degree $k$, $q_k$ is a polynomial of degree $k-1$. For $k=1, \dots, N$, the degrees are $0, 1, \dots, N-1$. Thus $\{q_1, \dots, q_N\}$ forms a basis for $\mathcal{P}_{N-1}$. 
-The matrix $V_{ik} = q_k(x_i)$ is essentially a Vandermonde-like matrix for the polynomial space $\mathcal{P}_{N-1}$. Since the $N$ points $x_i$ are distinct and the basis spans $\mathcal{P}_{N-1}$, the interpolation problem is unique and the matrix is nonsingular.
+\sidenote{$P_k(x)$ is a polynomial of degree $k$, so $P_k'(x)$ is a polynomial of degree $k-1$. For $k=1, \dots, N$, the set $\{P_1', P_2', \dots, P_N'\}$ has degrees $0, 1, \dots, N-1$. Thus it forms a basis for the space of polynomials $\mathcal{P}_{N-1}$.}
+The matrix $V_{ik} = P_k'(x_i)$ is a generalized Vandermonde matrix. Since $\{P_k'\}_{k=1}^N$ is a basis of $\mathcal{P}_{N-1}$ and we have $N$ distinct points, the matrix is nonsingular.
 
 \textbf{(b) Least Squares System:}
-To minimize $J(\mathbf{a}) = \int_{-1}^1 (f(x) - \sum a_k P_k^1(x))^2 dx$, we take derivatives $\frac{\partial J}{\partial a_j} = 0$:
+The objective function is $J(\mathbf{a}) = \int_{-1}^1 (f(x) - \sum a_k P_k^1(x))^2 dx$. 
+Setting $\frac{\partial J}{\partial a_j} = 0$ for $j=1, \dots, N$:
 \[
-\int_{-1}^1 2(f(x) - \sum a_k P_k^1(x))(-P_j^1(x)) dx = 0 \implies \sum_{k=1}^N a_k \int_{-1}^1 P_k^1(x) P_j^1(x) dx = \int_{-1}^1 f(x) P_j^1(x) dx.
+\int_{-1}^1 -2(f(x) - \sum a_k P_k^1(x)) P_j^1(x) dx = 0 \implies \sum_{k=1}^N a_k \int_{-1}^1 P_k^1(x) P_j^1(x) dx = \int_{-1}^1 f(x) P_j^1(x) dx.
 \]
-The system is $M\mathbf{a} = \mathbf{b}$ where $M_{kj} = \langle P_k^1, P_j^1 \rangle_{L^2}$. This is the Gram matrix of the set $\{P_1^1, \dots, P_N^1\}$. Since these functions are linearly independent (they are polynomials multiplied by $\sqrt{1-x^2}$ and have distinct degrees), the Gram matrix is positive definite and thus nonsingular. In fact, $P_k^m$ are orthogonal on $[-1, 1]$ for fixed $m$:
-\[
-\int_{-1}^1 P_k^1(x) P_j^1(x) dx = \delta_{kj} \frac{2k(k+1)}{2k+1}.
-\]
-Thus $M$ is a diagonal matrix with positive diagonal entries.
+The system is $M\mathbf{a} = \mathbf{b}$ where $M_{kj} = \langle P_k^1, P_j^1 \rangle_{L^2}$.
+\sidenote{To derive the orthogonality relation $\int_{-1}^1 P_k^1(x) P_j^1(x) dx = \delta_{kj} \frac{2k(k+1)}{2k+1}$, we use the definition $P_k^1(x) = -(1-x^2)^{1/2} P_k'(x)$. Substituting this into the inner product yields $\int_{-1}^1 (1-x^2) P_k'(x) P_j'(x) dx$. We evaluate this using integration by parts. Let $u = (1-x^2) P_k'(x)$ and $dv = P_j'(x) dx$, which gives $v = P_j(x)$. To find $du$, we invoke Legendre's differential equation, which states that $\frac{d}{dx} [ (1-x^2) P_k'(x) ] + k(k+1) P_k(x) = 0$. This implies $du = -k(k+1) P_k(x) dx$. Applying the integration by parts formula $\int u dv = uv - \int v du$, we obtain the boundary term $\left[ (1-x^2) P_k'(x) P_j(x) \right]_{-1}^1$ minus the integral $\int_{-1}^1 P_j(x) (-k(k+1) P_k(x)) dx$. The boundary term evaluates to exactly zero because the factor $(1-x^2)$ vanishes at both endpoints $x = 1$ and $x = -1$. The remaining expression simplifies to $k(k+1) \int_{-1}^1 P_k(x) P_j(x) dx$. Finally, we apply the standard orthogonality property of Legendre polynomials, $\int_{-1}^1 P_k(x) P_j(x) dx = \frac{2}{2k+1} \delta_{kj}$. Substituting this known result back into our expression yields the final formula $k(k+1) \frac{2}{2k+1} \delta_{kj} = \delta_{kj} \frac{2k(k+1)}{2k+1}$.}
+Since $M$ is a diagonal matrix with positive entries on the diagonal (for $k \geq 1$), it is nonsingular.
 
-\textbf{(c) Parity Argument:}
-The parity of Legendre polynomials is $P_k(-x) = (-1)^k P_k(x)$.
-The derivative $P_k'(x)$ has parity $P_k'(-x) = (-1)^{k-1} P_k'(x)$.
-The factor $(1-x^2)^{1/2}$ is even. Thus $P_k^1(x)$ has parity $(-1)^{k-1}$.
-The product $P_k^1(x) P_j^1(x)$ has parity $(-1)^{k-1 + j-1} = (-1)^{k+j}$.
-If $k+j$ is odd, the product is an odd function. Integrating an odd function over the symmetric interval $[-1, 1]$ yields:
+\textbf{(c) Parity Property:}
+\sidenote{Legendre polynomials $P_k(x)$ have parity $(-1)^k$. Their $m$-th derivatives have parity $(-1)^{k-m}$. The factor $(1-x^2)^{m/2}$ is even. Thus $P_k^m(x)$ has parity $(-1)^m (-1)^{k-m} = (-1)^k$.}
+Actually, $P_k^1(x) = -(1-x^2)^{1/2} P_k'(x)$. $P_k'$ has parity $(-1)^{k-1}$. The product $P_k^1(x) P_j^1(x)$ has parity $(-1)^{k-1} \cdot (-1)^{j-1} = (-1)^{k+j-2} = (-1)^{k+j}$.
+If $k+j$ is odd, the integrand $P_k^1(x) P_j^1(x)$ is an odd function.
 \[
-M_{kj} = \int_{-1}^1 P_k^1(x) P_j^1(x) dx = 0.
+M_{kj} = \int_{-1}^1 \text{odd function} dx = 0.
 \]
 \end{solution}
 
 \begin{exercise}
 \label{applied:2025:4}
-Given vectors $y_1, \dots, y_n \in \mathbb{R}^m, find $\ell \leq \dim \operatorname{span}\{y_j\}$ orthonormal vectors $\{\psi_i\}_{i=1}^\ell$ minimizing $J = \sum_{j=1}^n \| y_j - \sum_{i=1}^\ell (y_j^\top \psi_i) \psi_i \|^2$.
+Given a set of column vectors $y _ { 1 } , \ldots , y _ { n } \in \mathbb { R } ^ { m }$ , let $\mathcal { V } = \operatorname { s p a n } \{ y _ { 1 } , . . . , y _ { n } \} \subset \mathbb { R } ^ { m }$ . How can we find $\ell \leq \dim \nu$ orthonormal vectors $\{ \psi _ { i } \} _ { i = 1 } ^ { \ell }$ in $\mathbb { R } ^ { m }$ that minimize
+
+\[
+J (\psi_ {1}, \ldots , \psi_ {\ell}) = \sum_ {j = 1} ^ {n} \left\| y _ {j} - \sum_ {i = 1} ^ {\ell} (y _ {j} ^ {\top} \psi_ {i}) \psi_ {i} \right\| ^ {2},
+\]
+
+where $\| y \| = \sqrt { y ^ { \top } y }$ is the Euclidean norm?
 \end{exercise}
 
 \begin{solution}
-\textbf{Intuition:} This is the Principal Component Analysis (PCA) problem. We seek an $\ell$-dimensional subspace that minimizes the sum of squared distances to the data points.
-
-\textbf{Derivation:} Let $\Psi = [\psi_1, \dots, \psi_\ell] \in \mathbb{R}^{m \times \ell}$ with $\Psi^\top \Psi = I$. The projection of $y_j$ onto the subspace is $P y_j = \Psi \Psi^\top y_j$.
-The error for $y_j$ is $\|y_j - \Psi \Psi^\top y_j\|^2 = \|y_j\|^2 - \| \Psi \Psi^\top y_j\|^2 = \|y_j\|^2 - y_j^\top \Psi \Psi^\top y_j$.
-Minimizing $J$ is equivalent to maximizing:
-\[
-\sum_{j=1}^n y_j^\top \Psi \Psi^\top y_j = \operatorname{tr}(\Psi^\top (\sum_{j=1}^n y_j y_j^\top) \Psi).
-\]
-Let $C = YY^\top = \sum y_j y_j^\top$ be the (unnormalized) covariance matrix. We maximize $\operatorname{tr}(\Psi^\top C \Psi)$ subject to $\Psi^\top \Psi = I$.
-By the Ky Fan Theorem (or Rayleigh-Ritz theorem), the maximum is achieved when the columns of $\Psi$ are the $\ell$ eigenvectors of $C$ corresponding to its $\ell$ largest eigenvalues.
-These $\psi_i$ are the same as the left singular vectors of the data matrix $Y = [y_1, \dots, y_n]$.
+\textbf{Derivation:}
+Let $\Psi = [\psi_1, \dots, \psi_\ell] \in \mathbb{R}^{m \times \ell}$ satisfy $\Psi^\top \Psi = I_\ell$. The term $\sum_{i=1}^\ell (y_j^\top \psi_i) \psi_i$ is the orthogonal projection of $y_j$ onto the subspace spanned by $\{\psi_i\}$, which is $P y_j = \Psi \Psi^\top y_j$.\sidenote{Let $P y_j = \sum_{k=1}^\ell c_k \psi_k$ be the orthogonal projection of $y_j$ onto $\operatorname{span}\{\psi_1, \dots, \psi_\ell\}$. The residual $y_j - P y_j$ must be orthogonal to each basis vector $\psi_i$. Taking the inner product yields $\psi_i^\top (y_j - \sum_{k=1}^\ell c_k \psi_k) = 0$. Since the basis is orthonormal, $\psi_i^\top \psi_k = \delta_{ik}$, so the sum collapses to $\psi_i^\top y_j - c_i = 0$. Thus, the coefficients are $c_i = \psi_i^\top y_j = y_j^\top \psi_i$. Substituting $c_i$ back gives the projection $P y_j = \sum_{i=1}^\ell (y_j^\top \psi_i) \psi_i$.}
+The squared error is $\|y_j - P y_j\|^2 = \|y_j\|^2 - \|P y_j\|^2 = \|y_j\|^2 - y_j^\top \Psi \Psi^\top y_j$.
+\sidenote{By Pythagoras: $y_j = P y_j + (I-P)y_j$. Since $P$ is an orthogonal projection, $P y_j \perp (I-P)y_j$, so $\|y_j\|^2 = \|P y_j\|^2 + \|(I-P)y_j\|^2$. To minimize the error sum, we maximize $\sum \|P y_j\|^2$.}
+We maximize $\sum_{j=1}^n y_j^\top \Psi \Psi^\top y_j = \operatorname{tr}(\Psi^\top (\sum y_j y_j^\top) \Psi)$.
+Let $C = YY^\top = \sum y_j y_j^\top$ be the data covariance matrix (unnormalized).
+By the Rayleigh-Ritz theorem, the trace is maximized when columns of $\Psi$ are the $\ell$ eigenvectors of $C$ corresponding to the $\ell$ largest eigenvalues.\sidenote{For a symmetric matrix $C$, the Rayleigh-Ritz theorem states that $\max_{\Psi^\top \Psi = I_\ell} \operatorname{tr}(\Psi^\top C \Psi) = \sum_{i=1}^\ell \lambda_i$. Let $C = V \Lambda V^\top$ be the eigendecomposition with $\Lambda = \operatorname{diag}(\lambda_1 \geq \dots \geq \lambda_m)$. Define $U = V^\top \Psi \in \mathbb{R}^{m \times \ell}$, which satisfies $U^\top U = \Psi^\top V V^\top \Psi = I_\ell$. Then $\operatorname{tr}(\Psi^\top C \Psi) = \operatorname{tr}(\Psi^\top V \Lambda V^\top \Psi) = \operatorname{tr}(U^\top \Lambda U) = \sum_{j=1}^m \lambda_j (\sum_{i=1}^\ell U_{ji}^2)$. Since $U$ has orthonormal columns, $0 \leq \sum_{i=1}^\ell U_{ji}^2 \leq 1$ and $\sum_{j=1}^m \sum_{i=1}^\ell U_{ji}^2 = \ell$. This weighted sum of $\lambda_j$ is maximized when the weights are concentrated on the largest eigenvalues, achieved by setting $U_{ji} = \delta_{ji}$ for $j \leq \ell$. Thus, $\Psi = V U$ selects the top $\ell$ eigenvectors of $C$.}
+These vectors are the Principal Components of the data set $\{y_j\}$.
 \end{solution}
+
+\clearpage
 
 \begin{exercise}
 \label{applied:2025:5}
-Consider $u_t + u = u_{xx}$ with $\theta$-scheme:
+Consider the initial-value problem
+
 \[
-\frac{U_j^{m+1} - U_j^m}{\Delta t} + [ \theta U_j^{m+1} + (1 - \theta) U_j^m ] = \theta \frac{\delta^2 U_j^{m+1}}{\Delta x^2} + (1 - \theta) \frac{\delta^2 U_j^m}{\Delta x^2}
+\begin{array}{l} \frac {\partial u}{\partial t} + u = \frac {\partial^ {2} u}{\partial x ^ {2}}, \quad - \infty <   x <   \infty , \quad 0 <   t \leq T, \\ u (x, 0) = u _ {0} (x), \quad - \infty <   x <   \infty \\ \end{array}
 \]
-where $\delta^2 U_j = U_{j+1} - 2U_j + U_{j-1}$.
-\begin{enumerate}
-    \item[(a)] Prove $\| U^{m} \|_{\ell_\infty} \leq \left(\frac{1 - (1 - \theta) \Delta t}{1 + \theta \Delta t}\right)^m \| U^0 \|_{\ell_\infty}$ under $A(\theta) \Delta t \leq \frac{\Delta x^2}{2 + \Delta x^2}$.
-    \item[(b)] Show $\| U^m \|_{\ell_2} \leq \| U^0 \|_{\ell_2}$ for $\theta \geq 1/2$ unconditionally, and for $\theta < 1/2$ under $B(\theta) \Delta t \leq \frac{2\Delta x^2}{4 + \Delta x^2}$.
-\end{enumerate}
+
+where $T$ is a fixed positive real number, and $u _ { 0 }$ is a real-valued continuous function on $\mathbb { R }$ . Consider the $\theta$-scheme\sidenote{For a PDE $u_t = F(u)$, the $\theta$-scheme discretizes time as $\frac{U^{m+1} - U^m}{\Delta t} = \theta F(U^{m+1}) + (1-\theta)F(U^m)$ for $\theta \in [0,1]$. It uses a convex combination of the spatial operator $F$ at the new and old time steps. Special cases: Forward Euler ($\theta=0$), Crank-Nicolson ($\theta=1/2$), and Backward Euler ($\theta=1$). Here, $F(U_j) = \frac{\delta^2 U_j}{\Delta x^2} - U_j$.}
+
+\[
+\begin{array}{l} \frac {U _ {j} ^ {m + 1} - U _ {j} ^ {m}}{\Delta t} + [ \theta U _ {j} ^ {m + 1} + (1 - \theta) U _ {j} ^ {m} ] \\ = \theta \frac {U _ {j + 1} ^ {m + 1} - 2 U _ {j} ^ {m + 1} + U _ {j - 1} ^ {m + 1}}{(\Delta x) ^ {2}} + (1 - \theta) \frac {U _ {j + 1} ^ {m} - 2 U _ {j} ^ {m} + U _ {j - 1} ^ {m}}{(\Delta x) ^ {2}} \\ \end{array}
+\]
+
+for $j \in \mathbb Z$ , $m = 0 , . . . , M - 1$ , where $\Delta x > 0$ and $\Delta t = T / M$ , $M \geq 1$ , and $U _ { j } ^ { 0 } = u _ { 0 } ( j \Delta t )$ , $j \in \mathbb Z$ .
+
+(a) Define the $\ell _ { \infty }$ -norm as $\vert \vert U ^ { m } \vert \vert _ { \ell _ { \infty } } : = \operatorname* { m a x } _ { j \in \mathbb { Z } } \vert U _ { j } ^ { m } \vert$ , and assume that $| | U ^ { 0 } | | _ { \ell _ { \infty } }$ is finite. Prove that for $\theta \in [ 0 , 1 ]$ ,
+
+\[
+| | U ^ {m} | | _ {\ell_ {\infty}} \leq \left(\frac {1 - (1 - \theta) \Delta t}{1 + \theta \Delta t}\right) ^ {m} | | U ^ {0} | | _ {\ell_ {\infty}},
+\]
+
+holds for all $1 \leq m \leq M$ , provided that $\begin{array} { r } { A ( \theta ) \Delta t \leq \frac { ( \Delta x ) ^ { 2 } } { 2 + ( \Delta x ) ^ { 2 } } } \end{array}$ , where $A ( \theta )$ is a constant, depending on the choice of $\theta$ , which you should determine.
+
+(b) Define the $\ell _ { 2 }$ -norm as $\begin{array} { r } { \vert \vert U ^ { m } \vert \vert _ { \ell _ { 2 } } : = \left( \Delta x \sum _ { j \in \mathbb { Z } } | U _ { j } ^ { m } | ^ { 2 } \right) ^ { 1 / 2 } } \end{array}$ and suppose that $| | U ^ { m } | | _ { \ell _ { 2 } }$ is finite.
+
+• For $\theta \in [ \frac { 1 } { 2 } , 1 ]$ , show that $\| U ^ { m } \| _ { \ell _ { 2 } } \leq \| U ^ { 0 } \| _ { \ell _ { 2 } }$ holds for any $\Delta t , \Delta x > 0$ and all $1 \leq m \leq$ $M$ .   
+• For $\theta \in [ 0 , \frac { 1 } { 2 } )$ ), prove that $\| U ^ { m } \| _ { \ell _ { 2 } } \leq \| U ^ { 0 } \| _ { \ell _ { 2 } }$ under the condition $\begin{array} { r } { B ( \theta ) \Delta t \leq \frac { 2 ( \Delta x ) ^ { 2 } } { 4 + ( \Delta x ) ^ { 2 } } } \end{array}$ , where $B ( \theta )$ is a constant, depending on the choice of $\theta$ , which you should determine.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) $\ell_\infty$ Stability:}
-Let $\lambda = \Delta t / \Delta x^2$. Rearrange the scheme:
-\[
-U_j^{m+1} (1 + \theta \Delta t + 2\theta \lambda) = U_j^m (1 - (1-\theta)\Delta t - 2(1-\theta)\lambda) + (1-\theta)\lambda (U_{j+1}^m + U_{j-1}^m) + \theta \lambda (U_{j+1}^{m+1} + U_{j-1}^{m+1}).
-\]
-For the coefficients on the RHS to be non-negative, we need $1 - (1-\theta)(\Delta t + 2\lambda) \geq 0$:
-\[
-(1-\theta) \Delta t \left( 1 + \frac{2}{\Delta x^2} \right) \leq 1 \implies (1-\theta) \Delta t \leq \frac{\Delta x^2}{\Delta x^2 + 2}.
-\]
-Thus $A(\theta) = 1 - \theta$. Under this condition:
-\[
-(1 + \theta \Delta t + 2\theta \lambda) |U_j^{m+1}| \leq [1 - (1-\theta)\Delta t - 2(1-\theta)\lambda + 2(1-\theta)\lambda] \|U^m\|_\infty + 2\theta \lambda \|U^{m+1}\|_\infty.
-\]
-Taking the maximum over $j$:
-\[
-(1 + \theta \Delta t) \|U^{m+1}\|_\infty \leq (1 - (1-\theta)\Delta t) \|U^m\|_\infty \implies \|U^{m+1}\|_\infty \leq \frac{1 - (1-\theta)\Delta t}{1 + \theta \Delta t} \|U^m\|_\infty.
-\]
+\textbf{(a) Detailed $\ell_\infty$ Stability Analysis (Maximum Principle):}
+The core idea is to show that under a certain condition on the time step, the value at any grid point at the new time level, $U_j^{m+1}$, is a convex combination of values from the previous and current time levels. This will ensure that no new maxima or minima are created, and the overall maximum value cannot grow.
 
-\textbf{(b) $\ell_2$ Stability (Von Neumann):}
-The amplification factor $G(\xi)$ for $U_j^m = G^m e^{ij\xi}$ satisfies:
-\[
-G = \frac{1 - (1-\theta)(\Delta t + 4\lambda \sin^2(\xi/2))}{1 + \theta(\Delta t + 4\lambda \sin^2(\xi/2))}.
-\]
-Let $Z = \Delta t + 4\lambda \sin^2(\xi/2) \in [\Delta t, \Delta t(1 + 4/\Delta x^2)]$. The factor is $G(Z) = \frac{1-(1-\theta)Z}{1+\theta Z}$.
-We need $|G(Z)| \leq 1$ for all $Z \in [Z_{min}, Z_{max}]$.
+\begin{enumerate}
+    \item \textbf{Rearrange the Scheme:} Let $\lambda = \frac{\Delta t}{(\Delta x)^2}$. First, we group terms for $U^{m+1}$ on the left and $U^m$ on the right:
+    \[
+    \frac{U_j^{m+1}}{\Delta t} + \theta U_j^{m+1} - \theta \lambda (U_{j+1}^{m+1} - 2U_j^{m+1} + U_{j-1}^{m+1}) = \frac{U_j^m}{\Delta t} - (1-\theta)U_j^m + (1-\theta)\lambda(U_{j+1}^m - 2U_j^m + U_{j-1}^m).
+    \]
+    Solving for $U_j^{m+1}$ from the implicit terms on the left is complicated. Instead, we rearrange to isolate a single $U_j^{m+1}$ term and analyze its relationship to its neighbors.
+    \[
+    (1 + \theta \Delta t + 2\theta\lambda)U_j^{m+1} - \theta\lambda(U_{j+1}^{m+1} + U_{j-1}^{m+1}) = (1 - (1-\theta)\Delta t - 2(1-\theta)\lambda)U_j^m + (1-\theta)\lambda(U_{j+1}^m + U_{j-1}^m).
+    \]
+    This form is still not ideal for a maximum principle argument. Let's isolate $U_j^{m+1}$ on the left side entirely:
+    \[
+    U_j^{m+1}\left(1 + \theta \Delta t - \frac{\theta \Delta t}{(\Delta x)^2}(-2) \right) - \theta \frac{\Delta t}{(\Delta x)^2}(U_{j+1}^{m+1} + U_{j-1}^{m+1}) = \dots
+    \]
+    The most direct path is to assume the maximum occurs at some point $(j_0, m+1)$. Let $M_{m+1} = \|U^{m+1}\|_{\ell_\infty} = |U_{j_0}^{m+1}|$. From the rearranged scheme:
+    \[
+    (1 + \theta \Delta t + 2\theta\lambda)U_{j_0}^{m+1} = (1 - (1-\theta)\Delta t - 2(1-\theta)\lambda)U_{j_0}^m + (1-\theta)\lambda(U_{j_0+1}^m + U_{j_0-1}^m) + \theta\lambda(U_{j_0+1}^{m+1} + U_{j_0-1}^{m+1}).
+    \]
+    \item \textbf{Impose Non-negativity:} For the maximum principle to apply easily, we need all coefficients of the $U^m$ terms on the right-hand side to be non-negative. The coefficient for $U_{j\pm 1}^m$ is $(1-\theta)\lambda$, which is non-negative since $\theta \leq 1, \lambda > 0$. The crucial coefficient is for $U_j^m$:
+    \[
+    1 - (1-\theta)\Delta t - 2(1-\theta)\lambda \geq 0 \implies 1 \geq (1-\theta)(\Delta t + 2\lambda) = (1-\theta)\Delta t \left(1 + \frac{2}{(\Delta x)^2}\right).
+    \]
+    This gives the stability condition: $(1-\theta)\Delta t \leq \frac{1}{1 + 2/(\Delta x)^2} = \frac{(\Delta x)^2}{2 + (\Delta x)^2}$.
+    Thus, the constant is $\mathbf{A(\theta) = 1-\theta}$.
+    \item \textbf{Apply Maximum Principle:} Under this condition, all coefficients of $U^m$ terms are non-negative.
+    \[
+    (1 + \theta \Delta t + 2\theta\lambda)|U_{j_0}^{m+1}| \leq |(1 - (1-\theta)\Delta t - 2(1-\theta)\lambda)U_{j_0}^m| + |(1-\theta)\lambda(U_{j_0+1}^m + U_{j_0-1}^m)| + |\theta\lambda(U_{j_0+1}^{m+1} + U_{j_0-1}^{m+1})|.
+    \]
+    Using $|U_j^m| \leq \|U^m\|_{\ell_\infty}$ and $|U_j^{m+1}| \leq \|U^{m+1}\|_{\ell_\infty} = |U_{j_0}^{m+1}|$:
+    \begin{align*}
+    (1 + \theta \Delta t + 2\theta\lambda)\|U^{m+1}\|_{\ell_\infty} &\leq (1 - (1-\theta)\Delta t - 2(1-\theta)\lambda)\|U^m\|_{\ell_\infty} + 2(1-\theta)\lambda\|U^m\|_{\ell_\infty} + 2\theta\lambda\|U^{m+1}\|_{\ell_\infty} \\
+    (1 + \theta \Delta t + 2\theta\lambda)\|U^{m+1}\|_{\ell_\infty} &\leq (1 - (1-\theta)\Delta t)\|U^m\|_{\ell_\infty} + 2\theta\lambda\|U^{m+1}\|_{\ell_\infty}.
+    \end{align*}
+    Subtracting the $2\theta\lambda$ term from both sides gives:
+    \[
+    (1 + \theta\Delta t)\|U^{m+1}\|_{\ell_\infty} \leq (1 - (1-\theta)\Delta t)\|U^m\|_{\ell_\infty}.
+    \]
+    Since $1+\theta\Delta t > 0$, we have $\|U^{m+1}\|_{\ell_\infty} \leq \frac{1 - (1-\theta)\Delta t}{1 + \theta\Delta t} \|U^m\|_{\ell_\infty}$. Applying this recursively from $m=0$ gives the desired result. Note that the stability condition requires the fraction to be non-negative, which it is since $(1-\theta)\Delta t \leq \frac{(\Delta x)^2}{2 + (\Delta x)^2} < 1$.
+\end{enumerate}
+
+\textbf{(b) Detailed $\ell_2$ Stability Analysis (Von Neumann):}
+\sidenote{
+\textbf{Why Von Neumann Analysis?} This method is a standard tool for analyzing the stability of linear finite difference schemes with constant coefficients on domains without boundaries (or with periodic boundaries). The core idea is to decompose the initial error into a basis of Fourier modes. Because the PDE and the scheme are linear, we can study the evolution of each mode independently. If the scheme causes any single mode to grow unboundedly in time, the method is unstable. If all modes are damped or remain bounded, the scheme is stable.
+
+\textbf{Why the form $U_j^m = G^m(\xi) e^{i\xi j \Delta x}$?} This is the "ansatz" or test solution.
 \begin{itemize}
-    \item $G \leq 1 \iff 1 - (1-\theta)Z \leq 1 + \theta Z \iff Z \geq 0$, which is always true.
-    \item $G \geq -1 \iff 1 - (1-\theta)Z \geq -1 - \theta Z \iff (1-2\theta)Z \leq 2$.
+    \item $e^{i\xi j \Delta x}$: This is a discrete representation of a plane wave with spatial wave number $\xi$ at grid point $x_j = j\Delta x$. These functions are eigenfunctions of the spatial differentiation and finite difference operators, which simplifies the analysis greatly. Any arbitrary error distribution on the grid can be expressed as a sum (or integral) of these modes via a Fourier series or transform.
+    \item $G^m(\xi)$: This is the amplification factor. $G(\xi)$ is a complex number that represents the change in amplitude and phase of the mode with wave number $\xi$ after one time step. After $m$ steps, the original amplitude is multiplied by $G^m(\xi)$. For the solution to remain bounded as time progresses ($m \to \infty$), we absolutely require that $|G(\xi)| \leq 1$ for all possible wave numbers $\xi$.
 \end{itemize}
-Case 1: $\theta \in [1/2, 1]$. Then $1-2\theta \leq 0$, so $(1-2\theta)Z \leq 0 \leq 2$ is always true. Unconditionally stable.
-Case 2: $\theta \in [0, 1/2)$. We need $Z_{max} \leq \frac{2}{1-2\theta}$:
-\[
-\Delta t \left( 1 + \frac{4}{\Delta x^2} \right) \leq \frac{2}{1-2\theta} \implies (1-2\theta) \Delta t \leq \frac{2 \Delta x^2}{\Delta x^2 + 4}.
-\]
-Thus $B(\theta) = 1 - 2\theta$.
+}
+This method analyzes the amplification of individual Fourier modes.
+\begin{enumerate}
+    \item \textbf{Ansatz:} We seek a solution of the form $U_j^m = G^m(\xi) e^{i\xi j \Delta x}$, where $\xi$ is the spatial wave number and $G(\xi)$ is the amplification factor for that mode. Stability requires $|G(\xi)| \leq 1$ for all $\xi$.
+    \item \textbf{Substitute into Scheme:}
+    The time derivative term: $\frac{G^{m+1}-G^m}{\Delta t} e^{i\xi j \Delta x}$.
+    The reaction term: $(\theta G^{m+1} + (1-\theta)G^m) e^{i\xi j \Delta x}$.
+    The diffusion term: The discrete Laplacian $\delta_x^2 U_j^m$ becomes:
+    \begin{align*}
+    \delta_x^2 (G^m e^{i\xi j \Delta x}) &= G^m \frac{e^{i\xi (j+1) \Delta x} - 2e^{i\xi j \Delta x} + e^{i\xi (j-1) \Delta x}}{(\Delta x)^2} \\
+    &= G^m e^{i\xi j \Delta x} \frac{e^{i\xi \Delta x} - 2 + e^{-i\xi \Delta x}}{(\Delta x)^2} \\
+    &= G^m e^{i\xi j \Delta x} \frac{2\cos(\xi \Delta x) - 2}{(\Delta x)^2} \\
+    &= -G^m e^{i\xi j \Delta x} \frac{4\sin^2(\xi \Delta x / 2)}{(\Delta x)^2}.
+    \end{align*}
+    \item \textbf{Solve for G:} Substitute these into the scheme and cancel $G^m e^{i\xi j\Delta x}$:
+    \[
+    \frac{G-1}{\Delta t} + (\theta G + 1-\theta) = -(\theta G + 1-\theta) \frac{4\sin^2(\xi\Delta x/2)}{(\Delta x)^2} \frac{\Delta t}{\Delta t}.
+    \]
+    Let $\lambda = \frac{\Delta t}{(\Delta x)^2}$ and $S = 4\lambda \sin^2(\xi \Delta x / 2)$.
+    \[
+    G(1 + \theta\Delta t + \theta \lambda S) - (1 - (1-\theta)\Delta t - (1-\theta)\lambda S) = 0.
+    \]
+    No, the substitution is simpler.
+    \[
+    \frac{G-1}{\Delta t} + \theta G + (1-\theta) = -(\theta G + 1-\theta) \frac{4\sin^2(\xi \Delta x/2)}{(\Delta x)^2}.
+    \]
+    This is incorrect. The spatial operator is applied to the U terms.
+    \[
+    \frac{G-1}{\Delta t}U_j^{m+1}/G + (\theta G + 1-\theta)U_j^m = \dots
+    \]
+    Correct substitution:
+    \[
+    \frac{G-1}{\Delta t} + (\theta G + 1-\theta) = -\frac{4\sin^2(\xi \Delta x/2)}{(\Delta x)^2} (\theta G + 1-\theta)\Delta t.
+    \]
+    Let's re-substitute directly into the original scheme:
+    $G^{m+1}$ terms: $\frac{1}{\Delta t} + \theta + \theta \frac{4\sin^2(\xi\Delta x/2)}{(\Delta x)^2}$.
+    $G^m$ terms: $\frac{1}{\Delta t} - (1-\theta) - (1-\theta)\frac{4\sin^2(\xi \Delta x/2)}{(\Delta x)^2}$.
+    $G\left( \frac{1}{\Delta t} + \theta + \frac{4\theta \sin^2(\xi\Delta x/2)}{(\Delta x)^2} \right) = \left( \frac{1}{\Delta t} - (1-\theta) - \frac{4(1-\theta) \sin^2(\xi\Delta x/2)}{(\Delta x)^2} \right)$.
+    $G = \frac{1 - (1-\theta)\Delta t - 4(1-\theta)\lambda \sin^2(\xi\Delta x/2)}{1 + \theta\Delta t + 4\theta\lambda \sin^2(\xi\Delta x/2)}$.
+    This matches the expression from the previous simpler solution. Let $Z = \Delta t + 4\lambda \sin^2(\xi\Delta x/2)$. Then $G = \frac{1-(1-\theta)Z}{1+\theta Z}$.
+    \item \textbf{Analyze $|G| \leq 1$:}
+    Since $\theta \in [0,1]$ and $Z>0$, the denominator $1+\theta Z > 1$.
+    The condition $G \leq 1 \iff 1-(1-\theta)Z \leq 1+\theta Z \iff -Z \leq 0 \iff Z \geq 0$, which is always true.
+    The condition $G \geq -1 \iff 1-(1-\theta)Z \geq -(1+\theta Z) \iff 1-(1-\theta)Z \geq -1-\theta Z \iff 2 \geq (1-2\theta)Z$.
+
+    \textbf{Case 1: $\theta \in [1/2, 1]$}
+    In this case, $1-2\theta \leq 0$. Since $Z > 0$, the term $(1-2\theta)Z$ is non-positive.
+    Therefore, $(1-2\theta)Z \leq 0 \leq 2$. The stability condition is always satisfied for any $\Delta t, \Delta x > 0$. The scheme is unconditionally stable.
+
+    \textbf{Case 2: $\theta \in [0, 1/2)$}
+    Here, $1-2\theta > 0$. The condition becomes $Z \leq \frac{2}{1-2\theta}$.
+    We must ensure this holds for all possible wave numbers $\xi$. The term $Z(\xi) = \Delta t + 4\frac{\Delta t}{(\Delta x)^2}\sin^2(\xi\Delta x/2)$ is maximized when $\sin^2(\xi\Delta x/2)=1$.
+    $Z_{max} = \Delta t + \frac{4\Delta t}{(\Delta x)^2} = \Delta t \left(1 + \frac{4}{(\Delta x)^2}\right)$.
+    So we require $Z_{max} \leq \frac{2}{1-2\theta}$, which is
+    \[ \Delta t \frac{(\Delta x)^2 + 4}{(\Delta x)^2} \leq \frac{2}{1-2\theta} \implies (1-2\theta)\Delta t \leq \frac{2(\Delta x)^2}{4 + (\Delta x)^2}. \]
+    This gives the constant $\mathbf{B(\theta) = 1-2\theta}$.
+\end{enumerate}
+Finally, the problem asks to show $\|U^m\|_{\ell_2} \leq \|U^0\|_{\ell_2}$. Parseval's identity relates the $\ell_2$ norm of the function to the $L_2$ norm of its Fourier transform. In this discrete setting, it means that if $|G(\xi)| \leq 1$ for all $\xi$, then the total energy (squared $\ell_2$ norm) does not increase. The reaction term $u$ in the PDE introduces damping. The amplification factor for $u_t = u_{xx}$ is $|G_{heat}| = \frac{1-4(1-\theta)\lambda\sin^2}{1+4\theta\lambda\sin^2}$. Our PDE $u_t+u=u_{xx}$ has the extra damping term. The condition $|G| \le 1$ ensures no mode grows. The prompt asks to show $\| U ^ { m } \| _ { \ell _ { 2 } } \leq \| U ^ { 0 } \| _ { \ell _ { 2 } }$, which is a direct consequence of $|G(\xi)|\le 1$.
+The term `1` in the PDE is a damping term. Our amplification factor $G = \frac{1-(1-\theta)Z}{1+\theta Z}$ is always smaller in magnitude than the one for the pure heat equation. For instance, for $\theta=1/2$, $|G| = |\frac{1-Z/2}{1+Z/2}|<1$. So the norm is non-increasing.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2025:6}
-Stiff system: $\dot{y}_1 = -1000y_1 + 999y_2$, $\dot{y}_2 = -y_2$ with $\mathbf{y}_0 = \binom{2}{1}$.
-\begin{enumerate}
-    \item[(a)] Find exact solution.
-    \item[(b)] Stability of Explicit Euler ($h > 0.002$).
-    \item[(c)] Unconditional stability of Implicit Euler.
-    \item[(d)] Stability of Trapezoidal Rule.
-\end{enumerate}
+Consider the stiff system of ordinary differential equations:
+
+\[
+\frac {d \mathbf {y}}{d t} = \mathbf {f} (t, \mathbf {y}), \quad \mathbf {y} (0) = \mathbf {y} _ {0}
+\]
+
+where $\mathbf { y } = { \binom { y _ { 1 } } { y _ { 2 } } }$ , $\mathbf { y } _ { 0 } = { \binom { 2 } { 1 } }$ , and
+
+\[
+\mathbf {f} (t, \mathbf {y}) = \left( \begin{array}{c} - 1 0 0 0 y _ {1} + 9 9 9 y _ {2} \\ - y _ {2} \end{array} \right)
+\]
+
+(a) Find the exact solution $\mathbf { y } ( t ) = { \binom { y _ { 1 } ( t ) } { y _ { 2 } ( t ) } }$ .
+
+(b) For the explicit Euler method:
+
+\[
+\mathbf {y} _ {n + 1} = \mathbf {y} _ {n} + h \mathbf {f} \left(t _ {n}, \mathbf {y} _ {n}\right)
+\]
+
+determine the absolute stability region and prove divergence when $h > 0 . 0 0 2$ .
+
+(c) For the implicit Euler method:
+
+\[
+\mathbf {y} _ {n + 1} = \mathbf {y} _ {n} + h \mathbf {f} \left(t _ {n + 1}, \mathbf {y} _ {n + 1}\right)
+\]
+
+prove unconditional stability for any $h > 0$ .
+
+(d) For the trapezoidal rule:
+
+\[
+\mathbf {y} _ {n + 1} = \mathbf {y} _ {n} + \frac {h}{2} [ \mathbf {f} (t _ {n}, \mathbf {y} _ {n}) + \mathbf {f} (t _ {n + 1}, \mathbf {y} _ {n + 1}) ]
+\]
+
+analyze its stability.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Exact Solution:}
-The second equation $\dot{y}_2 = -y_2$ gives $y_2(t) = e^{-t}$ (as $y_2(0)=1$).
-The first equation is $\dot{y}_1 + 1000y_1 = 999 e^{-t}$. Multiply by integrating factor $e^{1000t}$:
-\[
-\frac{d}{dt}(y_1 e^{1000t}) = 999 e^{999t} \implies y_1 e^{1000t} = e^{999t} + C.
-\]
-At $t=0$, $y_1=2$, so $2 = 1 + C \implies C=1$.
-$y_1(t) = e^{-t} + e^{-1000t}$.
-Solution: $\mathbf{y}(t) = \binom{e^{-t} + e^{-1000t}}{e^{-t}}$.
+\begin{remarkbox}{Solving Linear ODEs and Sensitivity Analysis}
+The problem $\dot{\mathbf{y}} = A\mathbf{y}$ is a fundamental linear system of ordinary differential equations. The formal solution is given by $\mathbf{y}(t) = e^{At} \mathbf{y}(0)$, where $e^{At}$ is the matrix exponential.
 
-\textbf{(b) Explicit Euler:}
-The system is $\dot{\mathbf{y}} = A\mathbf{y}$ with $A = \begin{pmatrix} -1000 & 999 \\ 0 & -1 \end{pmatrix}$. Eigenvalues are $\lambda_1 = -1000, \lambda_2 = -1$.
-For stability, we need $|1 + h\lambda_i| \leq 1$ for all $i$.
-$|1 - 1000h| \leq 1 \implies -1 \leq 1 - 1000h \leq 1 \implies 1000h \leq 2 \implies h \leq 0.002$.
-If $h > 0.002$, then $(1-1000h)^n$ diverges/oscillates as $n \to \infty$.
+\textbf{Matrix Exponential via Eigendecomposition:} If a matrix $A$ is diagonalizable, it can be written as $A = PDP^{-1}$, where $D$ is a diagonal matrix of eigenvalues and $P$ is the matrix whose columns are the corresponding eigenvectors. The matrix exponential is then
+\[ e^{At} = P e^{Dt} P^{-1} = P \begin{pmatrix} e^{\lambda_1 t} & & 0 \\ & \ddots & \\ 0 & & e^{\lambda_n t} \end{pmatrix} P^{-1}. \]
+This method is powerful for computing the exact solution, as we will demonstrate in part (a).
 
-\textbf{(c) Implicit Euler:}
-Stability function $R(z) = \frac{1}{1-z}$.
-For $\text{Re}(\lambda) < 0$, $|1 - h\lambda| > 1$, so $|R(z)| < 1$ for all $h > 0$. Unconditionally stable.
+\textbf{Sensitivity of Linear Systems:} A related concept in numerical linear algebra is the sensitivity of a linear system $Ax=y$ to perturbations in the matrix $A$. If $A$ is perturbed by $\delta A$, the solution $x$ is perturbed by $\delta x$. Starting from $A x = y$ and $(A+\delta A)(x+\delta x)=y$, we get $A\delta x + (\delta A)x + (\delta A)(\delta x) = 0$. Neglecting the second-order term, the perturbation in the solution is approximately
+\[ \delta x \approx -A^{-1}(\delta A)x. \]
+The relative error is bounded by $\|\delta x\|/\|x\| \leq \kappa(A) \|\delta A\|/\|A\|$, where $\kappa(A) = \|A\|\|A^{-1}\|$ is the condition number of $A$. This shows that for ill-conditioned matrices (large $\kappa(A)$), small changes in the matrix can lead to large changes in the solution. This is a core concept in numerical stability but distinct from the ODE stability we analyze in this problem.
+\end{remarkbox}
 
-\textbf{(d) Trapezoidal Rule:}
-Stability function $R(z) = \frac{1 + z/2}{1 - z/2}$.
-Since $|R(z)| \leq 1 \iff \text{Re}(z) \leq 0$, the method is A-stable.
-For $\lambda_1, \lambda_2 < 0$, $|R(h\lambda_i)| < 1$ for all $h > 0$. It is unconditionally stable, making it suitable for this stiff problem. Note that as $h \to \infty$, $R(z) \to -1$, which might cause ringing (non-decaying oscillations) if the step size is extremely large, unlike Implicit Euler where $R(z) \to 0$.
+\textbf{(a) Detailed Exact Solution using Eigendecomposition:}
+The system is $\dot{\mathbf{y}} = A\mathbf{y}$ with $A = \begin{pmatrix} -1000 & 999 \\ 0 & -1 \end{pmatrix}$.
+\begin{enumerate}
+    \item \textbf{Find Eigenvalues:} Since $A$ is upper triangular, the eigenvalues are its diagonal entries: $\lambda_1 = -1000$ and $\lambda_2 = -1$.
+    \item \textbf{Find Eigenvectors:}
+    For $\lambda_1 = -1000$: $(A - \lambda_1 I)v_1 = 0 \implies \begin{pmatrix} 0 & 999 \\ 0 & 999 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$. This gives $999y = 0$, so $y=0$. We can choose the eigenvector $v_1 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$.
+    For $\lambda_2 = -1$: $(A - \lambda_2 I)v_2 = 0 \implies \begin{pmatrix} -999 & 999 \\ 0 & 0 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$. This gives $-999x + 999y = 0 \implies x=y$. We can choose the eigenvector $v_2 = \begin{pmatrix} 1 \\ 1 \end{pmatrix}$.
+    \item \textbf{Construct $P$ and $P^{-1}$:} The eigenvector matrix is $P = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$. The inverse is $P^{-1} = \frac{1}{1-0} \begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix}$.
+    \item \textbf{Compute $e^{At}$:}
+    $e^{At} = P e^{Dt} P^{-1} = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} \begin{pmatrix} e^{-1000t} & 0 \\ 0 & e^{-t} \end{pmatrix} \begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix}$
+    $= \begin{pmatrix} e^{-1000t} & e^{-t} \\ 0 & e^{-t} \end{pmatrix} \begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} e^{-1000t} & -e^{-1000t} + e^{-t} \\ 0 & e^{-t} \end{pmatrix}$.
+    \item \textbf{Find the Solution:} $\mathbf{y}(t) = e^{At} \mathbf{y}(0) = \begin{pmatrix} e^{-1000t} & e^{-t} - e^{-1000t} \\ 0 & e^{-t} \end{pmatrix} \begin{pmatrix} 2 \\ 1 \end{pmatrix}$
+    $= \begin{pmatrix} 2e^{-1000t} + e^{-t} - e^{-1000t} \\ e^{-t} \end{pmatrix} = \begin{pmatrix} e^{-t} + e^{-1000t} \\ e^{-t} \end{pmatrix}$.
+\end{enumerate}
+So the exact solution is $y_1(t) = e^{-t} + e^{-1000t}$ and $y_2(t) = e^{-t}$. This confirms the result from the direct integration method.
+
+\textbf{(b) Explicit Euler Stability Analysis:}
+The explicit Euler method is $\mathbf{y}_{n+1} = \mathbf{y}_n + h A \mathbf{y}_n = (I + hA) \mathbf{y}_n$.
+The stability of this method is governed by the eigenvalues of the amplification matrix $G = I + hA$. The method is stable if and only if the spectral radius $\rho(G) \leq 1$.
+The eigenvalues of $G$ are $g_i = 1 + h\lambda_i$ where $\lambda_i$ are the eigenvalues of $A$.
+\begin{itemize}
+    \item For $\lambda_1 = -1000$, we need $|g_1| = |1 - 1000h| \leq 1$. This implies $-1 \leq 1 - 1000h \leq 1$.
+    The right inequality $1 - 1000h \leq 1$ gives $-1000h \leq 0$, which is true for $h > 0$.
+    The left inequality $-1 \leq 1 - 1000h$ gives $1000h \leq 2$, so $h \leq 0.002$.
+    \item For $\lambda_2 = -1$, we need $|g_2| = |1 - h| \leq 1$. This implies $-1 \leq 1 - h \leq 1$, which gives $h \leq 2$.
+\end{itemize}
+For the method to be stable, both conditions must hold. The stricter condition is $h \leq 0.002$.
+\textbf{Divergence for $h > 0.002$:} If $h > 0.002$, then $|g_1| = |1 - 1000h| > 1$. Let the initial condition be written in the basis of eigenvectors: $\mathbf{y}_0 = c_1 v_1 + c_2 v_2$. Then $\mathbf{y}_n = G^n \mathbf{y}_0 = c_1 g_1^n v_1 + c_2 g_2^n v_2$. Since $|g_1| > 1$, the component along $v_1$ will grow exponentially, $\|c_1 g_1^n v_1\| \to \infty$ as $n \to \infty$. Thus, the numerical solution diverges.
+
+\textbf{(c) Implicit Euler Stability Analysis:}
+The implicit Euler method is $\mathbf{y}_{n+1} = \mathbf{y}_n + h A \mathbf{y}_{n+1}$.
+Rearranging gives $(I - hA)\mathbf{y}_{n+1} = \mathbf{y}_n$, so $\mathbf{y}_{n+1} = (I - hA)^{-1} \mathbf{y}_n$.
+The amplification matrix is $G = (I - hA)^{-1}$. Its eigenvalues are $g_i = (1 - h\lambda_i)^{-1}$.
+The method is stable if $\rho(G) \leq 1$.
+For any eigenvalue $\lambda$ of A with $\text{Re}(\lambda) < 0$ (as is the case here, with $\lambda \in \{-1000, -1\}$), and for any $h > 0$:
+\[ |1 - h\lambda|^2 = (1 - h\text{Re}(\lambda))^2 + (h\text{Im}(\lambda))^2 > 1. \]
+Therefore, $|g| = |(1 - h\lambda)^{-1}| < 1$ for any $h > 0$.
+This means the method is stable for any step size $h>0$. It is unconditionally stable for this stiff system. This property is known as A-stability.
+
+\textbf{(d) Trapezoidal Rule Stability Analysis:}
+The trapezoidal rule is $\mathbf{y}_{n+1} = \mathbf{y}_n + \frac{h}{2} (A\mathbf{y}_n + A\mathbf{y}_{n+1})$.
+Rearranging gives $(I - \frac{h}{2}A)\mathbf{y}_{n+1} = (I + \frac{h}{2}A)\mathbf{y}_n$.
+The amplification matrix is $G = (I - \frac{h}{2}A)^{-1}(I + \frac{h}{2}A)$.
+The eigenvalues of $G$ are the stability function $R(z)$ evaluated at $z=h\lambda$:
+\[ g_i = R(h\lambda_i) = \frac{1 + h\lambda_i/2}{1 - h\lambda_i/2}. \]
+A method is A-stable if its stability region contains the entire left half-plane, i.e., $|R(z)| \leq 1$ for all $\text{Re}(z) \leq 0$.
+For the trapezoidal rule, if $\text{Re}(z) \leq 0$, then $|1+z/2|^2 \leq |1-z/2|^2$, so $|R(z)| \leq 1$.
+Since both eigenvalues $\lambda_1, \lambda_2$ are real and negative, $\text{Re}(h\lambda_i) < 0$ for all $h > 0$.
+Thus, $|g_i| < 1$ for both eigenvalues, and the method is unconditionally stable for this problem.
+
+\textbf{Remark on Behavior for Large $h$:} While both implicit Euler and trapezoidal rule are unconditionally stable, their behavior for large step sizes differs.
+\begin{itemize}
+    \item For implicit Euler, as $h \to \infty$, $g(h\lambda) = (1-h\lambda)^{-1} \to 0$. The method strongly damps the stiff components.
+    \item For the trapezoidal rule, as $h \to \infty$, $g(h\lambda) = \frac{1+h\lambda/2}{1-h\lambda/2} \to -1$. This means the fast-decaying component $e^{-1000t}$ is approximated by a non-decaying oscillation $(-1)^n$. This phenomenon is called "ringing" and can be undesirable, though the solution remains bounded.
+\end{itemize}
 \end{solution}

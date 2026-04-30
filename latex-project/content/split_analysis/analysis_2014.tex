@@ -15,36 +15,43 @@ If we have $\lim_{n\to\infty,n\in\mathbb{N}}\frac{f(n)}{n} = 2014$, prove that $
 \textbf{Prerequisites:} Cauchy's Functional Equation, Mathematical Induction, Properties of Supremum, and the concept of Additive Functions. \\[1em]
 \textbf{Intuition:} The condition $\sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)| < \infty$ suggests that $f$ is "almost" an additive function. If it were exactly additive (satisfying $f(x+y)=f(x)+f(y)$) and continuous, it would necessarily be of the form $f(x)=kx$. This problem explores the stability of Cauchy's functional equation (a topic known as Hyers-Ulam stability), showing that if a function is "close" to being additive, it must be "close" to a truly additive function. We use the given limit at infinity to pin down the specific linear function $f$ should be compared to. \\[1em]
 \textbf{Steps:}
-1. Let $C = \sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)|$. This constant $C$ represents the maximum "deviation" from perfect additivity. By definition, for any $x, y \in \mathbb{R}$, we have $f(x+y) = f(x) + f(y) + \epsilon(x,y)$, where $|\epsilon(x,y)| \leq C$. \\[1em]
-2. We first prove by induction that for any $n \in \mathbb{N}$ and $x \in \mathbb{R}$, $|f(nx) - nf(x)| \leq (n-1)C$.
-For $n=1$, $|f(x) - f(x)| = 0 \leq (1-1)C = 0$, which is true.
-Assume the statement holds for some $n \in \mathbb{N}$: $|f(nx) - nf(x)| \leq (n-1)C$.
-For $n+1$:
-$|f((n+1)x) - (n+1)f(x)| = |f(nx+x) - (nx) - f(x) + f(nx) - nf(x)|$.
-Applying the triangle inequality:
-$\leq |f(nx+x) - f(nx) - f(x)| + |f(nx) - nf(x)|$.
-By the definition of $C$ and the inductive hypothesis:
-$\leq C + (n-1)C = nC$.
-Thus, the bound $|f(nx) - nf(x)| \leq (n-1)C$ holds for all $n \in \mathbb{N}$. \\[1em]
-3. Define a sequence of functions $A_n(x) = \frac{f(2^n x)}{2^n}$. We aim to show this sequence converges to an additive function.
-Note that $|A_{n+1}(x) - A_n(x)| = \frac{|f(2 \cdot 2^n x) - 2f(2^n x)|}{2^{n+1}}$.
-Using the property $|f(2y) - 2f(y)| \leq C$ (which is the case $n=2, x=y$ in our induction), we have:
-$|A_{n+1}(x) - A_n(x)| \leq \frac{C}{2^{n+1}}$.
-This is a geometric series. For any $m > n$:
-$|A_m(x) - A_n(x)| \leq \sum_{k=n}^{m-1} \frac{C}{2^{k+1}} < \sum_{k=n}^{\infty} \frac{C}{2^{k+1}} = \frac{C}{2^n}$.
-Since the bound $\frac{C}{2^n}$ is independent of $x$, the sequence $A_n(x)$ converges uniformly to a function $A(x)$. \\[1em]
-4. The function $A(x)$ is additive. Indeed,
-$|A_n(x+y) - A_n(x) - A_n(y)| = \frac{|f(2^n(x+y)) - f(2^n x) - f(2^n y)|}{2^n} \leq \frac{C}{2^n}$.
-Taking the limit as $n \to \infty$ gives $A(x+y) = A(x) + A(y)$.
-Since $f$ is continuous, each $A_n$ is continuous. Due to uniform convergence, $A(x)$ is also continuous. Any continuous additive function on $\mathbb{R}$ must satisfy $A(x) = kx$ for some constant $k$. \\[1em]
-5. Now we bound the distance between $f$ and $A$. For a fixed $x$, the inequality $|f(2^n x) - 2^n f(x)| \leq (2^n-1)C$ can be rewritten as:
-$\left| \frac{f(2^n x)}{2^n} - f(x) \right| \leq \frac{2^n-1}{2^n} C < C$.
-Taking the limit as $n \to \infty$, we obtain $|A(x) - f(x)| \leq C$. \\[1em]
-6. Finally, we identify the constant $k$. We are given $\lim_{n \to \infty, n \in \mathbb{N}} \frac{f(n)}{n} = 2014$.
-Since $f(n) = kn + (f(n) - kn)$ and $|f(n) - kn| = |f(n) - A(n)| \leq C$, we have:
-$\frac{f(n)}{n} = \frac{kn + O(1)}{n} = k + \frac{O(1)}{n}$.
-As $n \to \infty$, $\frac{f(n)}{n} \to k$. Therefore, $k = 2014$.
-This means $|f(x) - 2014x| \leq C$ for all $x \in \mathbb{R}$, so $\sup_{x \in \mathbb{R}} |f(x) - 2014x| \leq C < \infty$.
+\begin{enumerate}
+    \item Let $C = \sup_{x,y\in\mathbb{R}}|f(x+y)-f(x)-f(y)|$. This constant $C$ represents the maximum "deviation" from perfect additivity. By definition, for any $x, y \in \mathbb{R}$, we have $f(x+y) = f(x) + f(y) + \epsilon(x,y)$, where $|\epsilon(x,y)| \leq C$.
+
+    \item We first prove by induction that for any $n \in \mathbb{N}$ and $x \in \mathbb{R}$, $|f(nx) - nf(x)| \leq (n-1)C$.
+    For $n=1$, $|f(x) - f(x)| = 0 \leq (1-1)C = 0$, which is true.
+    Assume the statement holds for some $n \in \mathbb{N}$: $|f(nx) - nf(x)| \leq (n-1)C$.
+    For $n+1$:
+    $|f((n+1)x) - (n+1)f(x)| = |f(nx+x) - (nx) - f(x) + f(nx) - nf(x)|$.
+    Applying the triangle inequality:
+    $\leq |f(nx+x) - f(nx) - f(x)| + |f(nx) - nf(x)|$.
+    By the definition of $C$ and the inductive hypothesis:
+    $\leq C + (n-1)C = nC$.
+    Thus, the bound $|f(nx) - nf(x)| \leq (n-1)C$ holds for all $n \in \mathbb{N}$.
+
+    \item Define a sequence of functions $A_n(x) = \frac{f(2^n x)}{2^n}$. We aim to show this sequence converges to an additive function.
+    Note that $|A_{n+1}(x) - A_n(x)| = \frac{|f(2 \cdot 2^n x) - 2f(2^n x)|}{2^{n+1}}$.
+    Using the property $|f(2y) - 2f(y)| \leq C$ (which is the case $n=2, x=y$ in our induction), we have:
+    $|A_{n+1}(x) - A_n(x)| \leq \frac{C}{2^{n+1}}$.
+    This is a geometric series. For any $m > n$:
+    $|A_m(x) - A_n(x)| \leq \sum_{k=n}^{m-1} \frac{C}{2^{k+1}} < \sum_{k=n}^{\infty} \frac{C}{2^{k+1}} = \frac{C}{2^n}$.
+    Since the bound $\frac{C}{2^n}$ is independent of $x$, the sequence $A_n(x)$ converges uniformly to a function $A(x)$.
+
+    \item The function $A(x)$ is additive. Indeed,
+    $|A_n(x+y) - A_n(x) - A_n(y)| = \frac{|f(2^n(x+y)) - f(2^n x) - f(2^n y)|}{2^n} \leq \frac{C}{2^n}$.
+    Taking the limit as $n \to \infty$ gives $A(x+y) = A(x) + A(y)$.
+    Since $f$ is continuous, each $A_n$ is continuous. Due to uniform convergence, $A(x)$ is also continuous. Any continuous additive function on $\mathbb{R}$ must satisfy $A(x) = kx$ for some constant $k$.
+
+    \item Now we bound the distance between $f$ and $A$. For a fixed $x$, the inequality $|f(2^n x) - 2^n f(x)| \leq (2^n-1)C$ can be rewritten as:
+    $\left| \frac{f(2^n x)}{2^n} - f(x) \right| \leq \frac{2^n-1}{2^n} C < C$.
+    Taking the limit as $n \to \infty$, we obtain $|A(x) - f(x)| \leq C$.
+
+    \item Finally, we identify the constant $k$. We are given $\lim_{n \to \infty, n \in \mathbb{N}} \frac{f(n)}{n} = 2014$.
+    Since $f(n) = kn + (f(n) - kn)$ and $|f(n) - kn| = |f(n) - A(n)| \leq C$, we have:
+    $\frac{f(n)}{n} = \frac{kn + O(1)}{n} = k + \frac{O(1)}{n}$.
+    As $n \to \infty$, $\frac{f(n)}{n} \to k$. Therefore, $k = 2014$.
+    This means $|f(x) - 2014x| \leq C$ for all $x \in \mathbb{R}$, so $\sup_{x \in \mathbb{R}} |f(x) - 2014x| \leq C < \infty$.
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}
@@ -56,19 +63,27 @@ Let $f_1,\dots,f_n$ be analytic functions on $D=\{|z|<1\}$ and continuous on $\b
 \textbf{Prerequisites:} Analytic functions, Maximum Modulus Principle, Triangle Inequality, and basic Complex Analysis. \\[1em]
 \textbf{Intuition:} The Maximum Modulus Principle is a powerful tool which states that the absolute value of a non-constant analytic function cannot have a local maximum inside its domain. However, $\phi(z) = \sum |f_j(z)|$ is not generally the modulus of an analytic function, so we cannot apply the principle directly to it. The clever trick here is to construct, for any chosen interior point $z_0$, a "local" analytic function $g(z)$ that is equal to $\phi$ at $z_0$ but is less than or equal to $\phi$ everywhere else. This allows us to use the Maximum Modulus Principle on $g(z)$ to "push" the potential maximum of $\phi$ to the boundary. \\[1em]
 \textbf{Steps:}
-1. Suppose $\phi(z)$ achieves its maximum value $M$ at some point $z_0$ in the interior of the disk $D$. We want to show that there must be a point on the boundary $\partial D$ where $\phi$ is at least $M$. \\[1em]
-2. For each function $f_j(z)$, evaluate it at the maximum point $z_0$. We can write each complex value in polar form: $f_j(z_0) = |f_j(z_0)|e^{i\theta_j}$, where $\theta_j$ is the phase angle. This implies that $e^{-i\theta_j} f_j(z_0) = |f_j(z_0)|$ is a non-negative real number. \\[1em]
-3. Define a new function $g(z) = \sum_{j=1}^n e^{-i\theta_j} f_j(z)$. Since each $f_j(z)$ is analytic on $D$ and continuous on $\bar{D}$, and $g(z)$ is a linear combination of these functions with constant coefficients $e^{-i\theta_j}$, $g(z)$ is also analytic on $D$ and continuous on $\bar{D}$. \\[1em]
-4. Now, evaluate $g$ at the point $z_0$:
-$g(z_0) = \sum_{j=1}^n e^{-i\theta_j} f_j(z_0) = \sum_{j=1}^n |f_j(z_0)| = \phi(z_0)$.
-Crucially, $|g(z_0)| = | \phi(z_0) | = \phi(z_0)$ because $\phi(z_0)$ is a sum of absolute values (real and non-negative). \\[1em]
-5. For any other point $z \in \bar{D}$, applying the triangle inequality to $g(z)$ gives:
-$|g(z)| = \left| \sum_{j=1}^n e^{-i\theta_j} f_j(z) \right| \leq \sum_{j=1}^n |e^{-i\theta_j}| |f_j(z)| = \sum_{j=1}^n |f_j(z)| = \phi(z)$.
-Thus, $|g(z)| \leq \phi(z)$ for all $z \in \bar{D}$. \\[1em]
-6. According to the Maximum Modulus Principle, the maximum of the modulus of the analytic function $g(z)$ on the closed disk $\bar{D}$ must be attained at some point $z^*$ on the boundary $\partial D$. That is, $|g(z_0)| \leq |g(z^*)|$. \\[1em]
-7. Combining our results:
-$\phi(z_0) = |g(z_0)| \leq |g(z^*)| \leq \phi(z^*)$.
-This inequality $\phi(z_0) \leq \phi(z^*)$ shows that the value of $\phi$ at any interior point is no larger than its value at some specific boundary point $z^*$. Therefore, the overall maximum of $\phi(z)$ on the closed set $\bar{D}$ must be achieved on the boundary $\partial D$.
+\begin{enumerate}
+    \item Suppose $\phi(z)$ achieves its maximum value $M$ at some point $z_0$ in the interior of the disk $D$. We want to show that there must be a point on the boundary $\partial D$ where $\phi$ is at least $M$.
+
+    \item For each function $f_j(z)$, evaluate it at the maximum point $z_0$. We can write each complex value in polar form: $f_j(z_0) = |f_j(z_0)|e^{i\theta_j}$, where $\theta_j$ is the phase angle. This implies that $e^{-i\theta_j} f_j(z_0) = |f_j(z_0)|$ is a non-negative real number.
+
+    \item Define a new function $g(z) = \sum_{j=1}^n e^{-i\theta_j} f_j(z)$. Since each $f_j(z)$ is analytic on $D$ and continuous on $\bar{D}$, and $g(z)$ is a linear combination of these functions with constant coefficients $e^{-i\theta_j}$, $g(z)$ is also analytic on $D$ and continuous on $\bar{D}$.
+
+    \item Now, evaluate $g$ at the point $z_0$:
+    $g(z_0) = \sum_{j=1}^n e^{-i\theta_j} f_j(z_0) = \sum_{j=1}^n |f_j(z_0)| = \phi(z_0)$.
+    Crucially, $|g(z_0)| = | \phi(z_0) | = \phi(z_0)$ because $\phi(z_0)$ is a sum of absolute values (real and non-negative).
+
+    \item For any other point $z \in \bar{D}$, applying the triangle inequality to $g(z)$ gives:
+    $|g(z)| = \left| \sum_{j=1}^n e^{-i\theta_j} f_j(z) \right| \leq \sum_{j=1}^n |e^{-i\theta_j}| |f_j(z)| = \sum_{j=1}^n |f_j(z)| = \phi(z)$.
+    Thus, $|g(z)| \leq \phi(z)$ for all $z \in \bar{D}$.
+
+    \item According to the Maximum Modulus Principle, the maximum of the modulus of the analytic function $g(z)$ on the closed disk $\bar{D}$ must be attained at some point $z^*$ on the boundary $\partial D$. That is, $|g(z_0)| \leq |g(z^*)|$.
+
+    \item Combining our results:
+    $\phi(z_0) = |g(z_0)| \leq |g(z^*)| \leq \phi(z^*)$.
+    This inequality $\phi(z_0) \leq \phi(z^*)$ shows that the value of $\phi$ at any interior point is no larger than its value at some specific boundary point $z^*$. Therefore, the overall maximum of $\phi(z)$ on the closed set $\bar{D}$ must be achieved on the boundary $\partial D$.
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}
@@ -80,20 +95,27 @@ Prove that if there is a conformal mapping between the annulus $\{z\mid r_1<|z|<
 \textbf{Prerequisites:} Conformal mapping, Harmonic functions, Dirichlet integral, and the concept of the Modulus of an annulus. \\[1em]
 \textbf{Intuition:} This problem demonstrates that not all annuli are conformally equivalent. While any two simple disks can be mapped to one another via a conformal map (like a Möbius transformation), an annulus has a geometric "rigidity" determined by the ratio of its inner and outer radii. This ratio is related to a property called the "modulus" of the annulus, which is a conformal invariant. We prove this by constructing a specific harmonic function that "measures" the boundary conditions and showing that its total "energy" (the Dirichlet integral) must remain the same under any conformal mapping. \\[1em]
 \textbf{Steps:}
-1. Without loss of generality, we can scale the annuli to simplify the calculation. Let $A_1 = \{z \mid 1 < |z| < R\}$ and $A_2 = \{w \mid 1 < |w| < S\}$, where $R = r_2/r_1$ and $S = \rho_2/\rho_1$. A conformal map $f: A_1 \to A_2$ exists if and only if a conformal map between the original annuli exists. \\[1em]
-2. Consider a harmonic function $u(z) = \frac{\log|z|}{\log R}$ defined on $A_1$. This function is chosen because it is harmonic ($\Delta u = 0$), equals $0$ on the inner boundary ($|z|=1$), and equals $1$ on the outer boundary ($|z|=R$). It represents the steady-state temperature distribution between two cylindrical shells at different temperatures. \\[1em]
-3. Calculate the Dirichlet integral of $u$, which represents its total energy:
-$D(u) = \iint_{A_1} |\nabla u|^2 dx dy$.
-Using polar coordinates $(r, \theta)$, we have $\nabla u = \frac{\partial u}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial u}{\partial \theta} \hat{\theta} = \frac{1}{r \log R} \hat{r}$.
-The integral becomes:
-$D(u) = \int_0^{2\pi} \int_1^R \left( \frac{1}{r \log R} \right)^2 r dr d\theta = \frac{1}{(\log R)^2} \int_0^{2\pi} d\theta \int_1^R \frac{1}{r} dr = \frac{2\pi \log R}{(\log R)^2} = \frac{2\pi}{\log R}$. \\[1em]
-4. Now, let $f: A_1 \to A_2$ be a conformal map. Define $v = u \circ f^{-1}$ as a function on $A_2$. Because $f$ is conformal (and thus preserves harmonicity), $v$ is a harmonic function on $A_2$. Since $f$ must map the boundaries of $A_1$ to the boundaries of $A_2$, $v$ will take values $0$ and $1$ on the two boundaries of $A_2$. The unique harmonic function on $A_2$ with these boundary values is $v(w) = \frac{\log|w|}{\log S}$ (or $1 - \frac{\log|w|}{\log S}$, but the energy is the same). \\[1em]
-5. A fundamental property of the Dirichlet integral is that it is invariant under conformal mappings. If $w = f(z)$ is a conformal map, then the Jacobian is $|\det J_f| = |f'(z)|^2$. The gradient transforms as $|\nabla_z u|^2 = |\nabla_w v|^2 |f'(z)|^2$. In the integral, the Jacobian $|f'(z)|^2$ from the change of variables cancels out exactly, leaving:
-$D(u) = \iint_{A_1} |\nabla_z u|^2 dx dy = \iint_{A_2} |\nabla_w v|^2 du dv = D(v)$. \\[1em]
-6. From our formula in Step 3, we know $D(v) = \frac{2\pi}{\log S}$.
-Setting $D(u) = D(v)$, we have:
-$\frac{2\pi}{\log R} = \frac{2\pi}{\log S} \implies \log R = \log S \implies R = S$.
-Substituting back the definitions of $R$ and $S$, we conclude that $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
+\begin{enumerate}
+    \item Without loss of generality, we can scale the annuli to simplify the calculation. Let $A_1 = \{z \mid 1 < |z| < R\}$ and $A_2 = \{w \mid 1 < |w| < S\}$, where $R = r_2/r_1$ and $S = \rho_2/\rho_1$. A conformal map $f: A_1 \to A_2$ exists if and only if a conformal map between the original annuli exists.
+
+    \item Consider a harmonic function $u(z) = \frac{\log|z|}{\log R}$ defined on $A_1$. This function is chosen because it is harmonic ($\Delta u = 0$), equals $0$ on the inner boundary ($|z|=1$), and equals $1$ on the outer boundary ($|z|=R$). It represents the steady-state temperature distribution between two cylindrical shells at different temperatures.
+
+    \item Calculate the Dirichlet integral of $u$, which represents its total energy:
+    $D(u) = \iint_{A_1} |\nabla u|^2 dx dy$.
+    Using polar coordinates $(r, \theta)$, we have $\nabla u = \frac{\partial u}{\partial r} \hat{r} + \frac{1}{r} \frac{\partial u}{\partial \theta} \hat{\theta} = \frac{1}{r \log R} \hat{r}$.
+    The integral becomes:
+    $D(u) = \int_0^{2\pi} \int_1^R \left( \frac{1}{r \log R} \right)^2 r dr d\theta = \frac{1}{(\log R)^2} \int_0^{2\pi} d\theta \int_1^R \frac{1}{r} dr = \frac{2\pi \log R}{(\log R)^2} = \frac{2\pi}{\log R}$.
+
+    \item Now, let $f: A_1 \to A_2$ be a conformal map. Define $v = u \circ f^{-1}$ as a function on $A_2$. Because $f$ is conformal (and thus preserves harmonicity), $v$ is a harmonic function on $A_2$. Since $f$ must map the boundaries of $A_1$ to the boundaries of $A_2$, $v$ will take values $0$ and $1$ on the two boundaries of $A_2$. The unique harmonic function on $A_2$ with these boundary values is $v(w) = \frac{\log|w|}{\log S}$ (or $1 - \frac{\log|w|}{\log S}$, but the energy is the same).
+
+    \item A fundamental property of the Dirichlet integral is that it is invariant under conformal mappings. If $w = f(z)$ is a conformal map, then the Jacobian is $|\det J_f| = |f'(z)|^2$. The gradient transforms as $|\nabla_z u|^2 = |\nabla_w v|^2 |f'(z)|^2$. In the integral, the Jacobian $|f'(z)|^2$ from the change of variables cancels out exactly, leaving:
+    $D(u) = \iint_{A_1} |\nabla_z u|^2 dx dy = \iint_{A_2} |\nabla_w v|^2 du dv = D(v)$.
+
+    \item From our formula in Step 3, we know $D(v) = \frac{2\pi}{\log S}$.
+    Setting $D(u) = D(v)$, we have:
+    $\frac{2\pi}{\log R} = \frac{2\pi}{\log S} \implies \log R = \log S \implies R = S$.
+    Substituting back the definitions of $R$ and $S$, we conclude that $\frac{r_2}{r_1} = \frac{\rho_2}{\rho_1}$.
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}
@@ -109,26 +131,35 @@ is a harmonic function on the upper half plane $\{z\in\mathbb{C}\mid \operatorna
 \textbf{Prerequisites:} Harmonic functions, Holomorphic functions, Poisson kernel, and the concept of an Approximate Identity. \\[1em]
 \textbf{Intuition:} The Poisson kernel $P_y(x-\xi)$ acts as a "weighting" function that averages the values of the boundary function $U(\xi)$ to produce a smooth, harmonic function $P_U(x,y)$ in the upper half-plane. As the vertical distance $y$ to the boundary approaches zero, the kernel $P_y(t)$ becomes increasingly concentrated around $t=0$, effectively "picking out" the value of $U$ at the point directly below. This is analogous to how a delta function works, but in a continuous and smooth way. \\[1em]
 \textbf{Steps:}
-1. \textbf{Harmonicity:} A function is harmonic if it satisfies Laplace's equation $\Delta P_U = 0$. A common way to produce harmonic functions is to take the real or imaginary part of a holomorphic function. Let $z = x+iy$ be a point in the upper half-plane ($y>0$). For a fixed $\xi \in \mathbb{R}$, consider the function:
-$g(z) = \frac{1}{\pi} \frac{i}{z-\xi}$.
-This function is holomorphic in the upper half-plane because its only pole is at $z=\xi$, which lies on the real axis. \\[1em]
-2. We can find the real part of $g(z)$ by multiplying the numerator and denominator by the complex conjugate of the denominator:
-$g(z) = \frac{i}{\pi} \frac{(x-\xi)-iy}{(x-\xi)^2+y^2} = \frac{1}{\pi} \frac{y + i(x-\xi)}{(x-\xi)^2+y^2}$.
-Thus, $\operatorname{Re}(g(z)) = \frac{1}{\pi} \frac{y}{(x-\xi)^2+y^2}$, which is exactly the Poisson kernel $P_y(x-\xi)$. Since it is the real part of a holomorphic function, the kernel is harmonic. Because $U$ is bounded and the kernel decays rapidly, we can differentiate under the integral sign to see that $P_U(x,y) = \int P_y(x-\xi) U(\xi) d\xi$ is also harmonic. \\[1em]
-3. \textbf{Approximate Identity Properties:} The kernel $P_y(t) = \frac{1}{\pi} \frac{y}{t^2+y^2}$ has three key properties:
-(a) $P_y(t) > 0$ for all $t \in \mathbb{R}, y > 0$.
-(b) $\int_{-\infty}^{\infty} P_y(t) dt = \left[ \frac{1}{\pi} \arctan(t/y) \right]_{-\infty}^{\infty} = \frac{1}{\pi} (\frac{\pi}{2} - (-\frac{\pi}{2})) = 1$.
-(c) For any fixed $\delta > 0$, $\int_{|t| \geq \delta} P_y(t) dt \to 0$ as $y \to 0^+$. This means the "mass" of the kernel concentrates at the origin as we approach the boundary. \\[1em]
-4. \textbf{Convergence:} Let $\xi_0$ be a point where $U$ is continuous. We want to show that $|P_U(x,y) - U(\xi_0)| \to 0$ as $(x,y) \to (\xi_0, 0^+)$.
-Using the fact that $\int P_y(x-\xi) d\xi = 1$, we can write:
-$P_U(x,y) - U(\xi_0) = \int_{\mathbb{R}} P_y(x-\xi) [U(\xi) - U(\xi_0)] d\xi$. \\[1em]
-5. For any $\epsilon > 0$, since $U$ is continuous at $\xi_0$, there exists $\delta > 0$ such that $|\xi - \xi_0| < 2\delta$ implies $|U(\xi) - U(\xi_0)| < \epsilon$.
-Now, suppose $|x - \xi_0| < \delta$. We split the integral into two regions: $I_1$ where $|\xi - x| < \delta$ (which implies $|\xi - \xi_0| < 2\delta$) and $I_2$ where $|\xi - x| \geq \delta$.
-$|I_1| \leq \int_{|\xi-x|<\delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi < \epsilon \int_{\mathbb{R}} P_y d\xi = \epsilon$. \\[1em]
-6. For $I_2$, since $U$ is bounded by some $M$, we have:
-$|I_2| \leq \int_{|\xi-x| \geq \delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi \leq 2M \int_{|t| \geq \delta} P_y(t) dt$.
-As $y \to 0^+$, this second term goes to $0$ by property (c) in Step 3. Thus, for sufficiently small $y$, $|I_2| < \epsilon$.
-Combining these, $|P_U(x,y) - U(\xi_0)| < 2\epsilon$, which proves the convergence.
+\begin{enumerate}
+    \item \textbf{Harmonicity:} A function is harmonic if it satisfies Laplace's equation $\Delta P_U = 0$. A common way to produce harmonic functions is to take the real or imaginary part of a holomorphic function. Let $z = x+iy$ be a point in the upper half-plane ($y>0$). For a fixed $\xi \in \mathbb{R}$, consider the function:
+    $g(z) = \frac{1}{\pi} \frac{i}{z-\xi}$.
+    This function is holomorphic in the upper half-plane because its only pole is at $z=\xi$, which lies on the real axis.
+
+    \item We can find the real part of $g(z)$ by multiplying the numerator and denominator by the complex conjugate of the denominator:
+    $g(z) = \frac{i}{\pi} \frac{(x-\xi)-iy}{(x-\xi)^2+y^2} = \frac{1}{\pi} \frac{y + i(x-\xi)}{(x-\xi)^2+y^2}$.
+    Thus, $\operatorname{Re}(g(z)) = \frac{1}{\pi} \frac{y}{(x-\xi)^2+y^2}$, which is exactly the Poisson kernel $P_y(x-\xi)$. Since it is the real part of a holomorphic function, the kernel is harmonic. Because $U$ is bounded and the kernel decays rapidly, we can differentiate under the integral sign to see that $P_U(x,y) = \int P_y(x-\xi) U(\xi) d\xi$ is also harmonic.
+
+    \item \textbf{Approximate Identity Properties:} The kernel $P_y(t) = \frac{1}{\pi} \frac{y}{t^2+y^2}$ has three key properties:
+       \begin{itemize}
+           \item[(a)] $P_y(t) > 0$ for all $t \in \mathbb{R}, y > 0$.
+           \item[(b)] $\int_{-\infty}^{\infty} P_y(t) dt = \left[ \frac{1}{\pi} \arctan(t/y) \right]_{-\infty}^{\infty} = \frac{1}{\pi} (\frac{\pi}{2} - (-\frac{\pi}{2})) = 1$.
+           \item[(c)] For any fixed $\delta > 0$, $\int_{|t| \geq \delta} P_y(t) dt \to 0$ as $y \to 0^+$. This means the "mass" of the kernel concentrates at the origin as we approach the boundary.
+       \end{itemize}
+
+    \item \textbf{Convergence:} Let $\xi_0$ be a point where $U$ is continuous. We want to show that $|P_U(x,y) - U(\xi_0)| \to 0$ as $(x,y) \to (\xi_0, 0^+)$.
+    Using the fact that $\int P_y(x-\xi) d\xi = 1$, we can write:
+    $P_U(x,y) - U(\xi_0) = \int_{\mathbb{R}} P_y(x-\xi) [U(\xi) - U(\xi_0)] d\xi$.
+
+    \item For any $\epsilon > 0$, since $U$ is continuous at $\xi_0$, there exists $\delta > 0$ such that $|\xi - \xi_0| < 2\delta$ implies $|U(\xi) - U(\xi_0)| < \epsilon$.
+    Now, suppose $|x - \xi_0| < \delta$. We split the integral into two regions: $I_1$ where $|\xi - x| < \delta$ (which implies $|\xi - \xi_0| < 2\delta$) and $I_2$ where $|\xi - x| \geq \delta$.
+    $|I_1| \leq \int_{|\xi-x|<\delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi < \epsilon \int_{\mathbb{R}} P_y d\xi = \epsilon$.
+
+    \item For $I_2$, since $U$ is bounded by some $M$, we have:
+    $|I_2| \leq \int_{|\xi-x| \geq \delta} P_y(x-\xi) |U(\xi) - U(\xi_0)| d\xi \leq 2M \int_{|t| \geq \delta} P_y(t) dt$.
+    As $y \to 0^+$, this second term goes to $0$ by property (c) in Step 3. Thus, for sufficiently small $y$, $|I_2| < \epsilon$.
+    Combining these, $|P_U(x,y) - U(\xi_0)| < 2\epsilon$, which proves the convergence.
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}

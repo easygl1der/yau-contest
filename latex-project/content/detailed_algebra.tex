@@ -1,0 +1,615 @@
+\chapter{Algebra \& Number Theory: Detailed Guide}
+
+This chapter provides comprehensive, beginner-friendly explanations of the concepts required for the Algebra \& Number Theory track of the Yau Contest.
+
+\section{Group Theory and Representations}
+
+\section{Group Actions}
+
+\subsection{Intuition}
+Imagine you have a set of objects (like the corners of a square) and a group of transformations (like rotations and reflections). A \textbf{group action} is a formal mathematical way of describing how each transformation in the group moves each object in the set. It bridges the abstract algebraic structure of a group with concrete, geometric transformations of a space.
+
+\begin{definition}[Group Action]
+Let $G$ be a group and $X$ be a set. A \textbf{group action} of $G$ on $X$ is a rule that assigns to each pair $(g, x)$ with $g \in G$ and $x \in X$ an element $g \cdot x \in X$ such that:
+\begin{enumerate}
+    \item $e \cdot x = x$ for all $x \in X$, where $e$ is the identity of $G$.
+    \item $(g_1 g_2) \cdot x = g_1 \cdot (g_2 \cdot x)$ for all $g_1, g_2 \in G$ and $x \in X$.
+\end{enumerate}
+\end{definition}
+
+\begin{example}
+Let $G = S_3$ (the symmetric group of degree 3) act on the set $X = \{1, 2, 3\}$ by permutation. 
+\begin{itemize}
+    \item The identity $id$ fixes every element: $id \cdot 1 = 1, id \cdot 2 = 2, id \cdot 3 = 3$.
+    \item The transposition $(12)$ swaps 1 and 2: $(12) \cdot 1 = 2$, $(12) \cdot 2 = 1$, and fixes 3.
+    \item The 3-cycle $(123)$ shifts elements: $(123) \cdot 1 = 2$, $(123) \cdot 2 = 3$, $(123) \cdot 3 = 1$.
+\end{itemize}
+This action is intuitive: group elements are instructions on how to shuffle the set.
+\end{example}
+
+\section{Orbits and Stabilizers}
+
+\subsection{Orbits: Where an element can go}
+The orbit of a point $x$ is the set of all elements in $X$ that $x$ can be moved to by the group $G$.
+
+\begin{definition}[Orbit]
+Let $G$ act on $X$. The \textbf{orbit} of an element $x \in X$ is the set:
+\[ Orb(x) = \{ g \cdot x \mid g \in G \}. \]
+\end{definition}
+
+\subsection{Stabilizers: What keeps an element fixed}
+The stabilizer of a point $x$ consists of all group elements that do not move $x$.
+
+\begin{definition}[Stabilizer]
+Let $G$ act on $X$. The \textbf{stabilizer} of an element $x \in X$ is the subgroup:
+\[ Stab(x) = \{ g \in G \mid g \cdot x = x \}. \]
+\end{definition}
+
+\subsection{The Orbit-Stabilizer Theorem}
+This fundamental theorem relates the size of the orbit and the stabilizer to the size of the group.
+
+\begin{theorem}[Orbit-Stabilizer Theorem]
+Let $G$ be a finite group acting on a set $X$. For any $x \in X$:
+\[ |G| = |Orb(x)| \cdot |Stab(x)|. \]
+\end{theorem}
+
+\begin{example}
+Consider $G = S_3$ acting on $X = \{1, 2, 3\}$. Let's find the orbit and stabilizer of $x = 1$.
+\begin{itemize}
+    \item \textbf{Orbit}: By applying different permutations, $1$ can be sent to $1, 2,$ or $3$. Thus $Orb(1) = \{1, 2, 3\}$, and $|Orb(1)| = 3$.
+    \item \textbf{Stabilizer}: Which permutations fix $1$? The identity $id$ and the transposition $(23)$ which only swaps 2 and 3. Thus $Stab(1) = \{id, (23)\}$, and $|Stab(1)| = 2$.
+    \item \textbf{Check}: $|Orb(1)| \cdot |Stab(1)| = 3 \cdot 2 = 6$, which is exactly $|S_3|$.
+\end{itemize}
+\end{example}
+
+\section{Conjugacy Classes}
+
+Conjugacy classes arise when a group $G$ acts on itself using a specific operation called conjugation.
+
+\begin{definition}[Conjugacy Class]
+Two elements $a, b \in G$ are conjugate if there exists $g \in G$ such that $b = gag^{-1}$. The \textbf{conjugacy class} of $a$ is the set of all elements conjugate to $a$:
+\[ Cl(a) = \{ gag^{-1} \mid g \in G \}. \]
+\end{definition}
+
+\begin{theorem}[The Class Equation]
+For a finite group $G$, the sum of the sizes of the conjugacy classes equals the size of the group:
+\[ |G| = \sum |Cl(x_i)|. \]
+\end{theorem}
+
+\begin{example}
+Let's find the conjugacy classes of $G = S_3$.
+\begin{itemize}
+    \item $Cl(id) = \{id\}$ (The identity is always in its own class).
+    \item $Cl((12)) = \{(12), (13), (23)\}$ (All transpositions are conjugate).
+    \item $Cl((123)) = \{(123), (132)\}$ (All 3-cycles are conjugate).
+\end{itemize}
+The sizes are 1, 3, and 2. Summing them: $1 + 3 + 2 = 6 = |S_3|$.
+\end{example}
+
+\section{Sylow Theorems}
+
+\subsection{Intuition and Motivation}
+In basic group theory, Lagrange's Theorem tells us that if $H$ is a subgroup of $G$, then the order of $H$ must divide the order of $G$. However, the converse is not always true: if a number $d$ divides $|G|$, there isn't necessarily a subgroup of order $d$. The Sylow Theorems are "life-savers" because they provide a powerful partial converse, guaranteeing the existence of subgroups for any prime-power divisor of the group's order.
+
+\subsection{The First Sylow Theorem: Existence}
+The first theorem guarantees that if a prime power divides the order of the group, a subgroup of that size \textit{must} exist.
+
+\begin{definition}
+Let $G$ be a finite group and $p$ be a prime. If $|G| = p^n \cdot m$ where $p$ does not divide $m$, then any subgroup of $G$ with order $p^n$ is called a \textbf{Sylow $p$-subgroup}.
+\end{definition}
+
+\begin{theorem}[First Sylow Theorem]
+Let $G$ be a finite group and $p$ be a prime. If $p^k$ divides $|G|$, then $G$ has at least one subgroup of order $p^k$. In particular, $G$ contains at least one Sylow $p$-subgroup (of order $p^n$, where $p^n$ is the highest power of $p$ dividing $|G|$).
+\end{theorem}
+
+\begin{example}
+Consider a group $G$ of order $12$. Since $12 = 2^2 \times 3^1$:
+\begin{itemize}
+    \item \textbf{Sylow 2-subgroups:} The highest power of 2 dividing 12 is $2^2 = 4$. Thus, $G$ must contain at least one subgroup of order 4.
+    \item \textbf{Sylow 3-subgroups:} The highest power of 3 dividing 12 is $3^1 = 3$. Thus, $G$ must contain at least one subgroup of order 3.
+\end{itemize}
+\end{example}
+
+\subsection{The Second Sylow Theorem: Conjugacy}
+The second theorem tells us that for a given prime $p$, all Sylow $p$-subgroups are essentially "structurally identical" and relate to each other through conjugation.
+
+\begin{theorem}[Second Sylow Theorem]
+All Sylow $p$-subgroups of a group $G$ are \textbf{conjugate} to one another. That is, if $P$ and $Q$ are two Sylow $p$-subgroups, there exists some element $g \in G$ such that $Q = gPg^{-1}$.
+\end{theorem}
+
+\begin{example}
+In the symmetric group $S_3$ (order 6), the Sylow 2-subgroups are the three subgroups of order 2 generated by transpositions: $H_1 = \langle(12)\rangle$, $H_2 = \langle(13)\rangle$, and $H_3 = \langle(23)\rangle$. 
+You can transition between them using conjugation: for instance, $(23)H_1(23)^{-1} = H_2$.
+\end{example}
+
+\subsection{The Third Sylow Theorem: Counting}
+This is the most useful theorem for solving exam problems, as it restricts the possible number of Sylow subgroups.
+
+\begin{theorem}[Third Sylow Theorem]
+Let $n_p$ be the number of Sylow $p$-subgroups of $G$. Let $|G| = p^n \cdot m$ with $\gcd(p, m) = 1$. Then:
+\begin{enumerate}
+    \item $n_p$ must divide $m$.
+    \item $n_p \equiv 1 \pmod{p}$ (i.e., $n_p$ can be $1, 1+p, 1+2p, \dots$).
+\end{enumerate}
+\textbf{Crucial Fact:} A Sylow $p$-subgroup $P$ is a \textbf{normal subgroup} if and only if $n_p = 1$.
+\end{theorem}
+
+\begin{example}
+Let $|G| = 15 = 3 \times 5$. 
+\begin{itemize}
+    \item For $p=5$: $n_5$ must divide 3 and $n_5 \equiv 1 \pmod{5}$. The only divisor of 3 that is $1 \pmod{5}$ is \textbf{1}. Thus, $n_5=1$.
+    \item For $p=3$: $n_3$ must divide 5 and $n_3 \equiv 1 \pmod{3}$. The divisors of 5 are 1 and 5. Only \textbf{1} satisfies $1 \equiv 1 \pmod{3}$. Thus, $n_3=1$.
+\end{itemize}
+Since $n_5=1$ and $n_3=1$, both Sylow subgroups are normal, which eventually proves $G \cong \mathbb{Z}_{15}$.
+\end{example}
+
+\section{Simple Groups}
+
+\begin{definition}
+A group $G$ is called \textbf{simple} if it has no normal subgroups other than the trivial group $\{e\}$ and $G$ itself. Simple groups are the "atoms" of group theory; they cannot be simplified further using normal subgroups.
+\end{definition}
+
+\begin{theorem}[The Index Theorem]
+If $G$ is a finite simple group and $H$ is a proper subgroup with index $k = |G|/|H|$, then $|G|$ must divide $k!$ (the order of the symmetric group $S_k$).
+\end{theorem}
+
+\begin{example}
+The alternating group $A_5$ (order 60) is the smallest non-abelian simple group. If you find a normal subgroup of order, say, 5 in a group of order 20, that group is \textbf{not simple}.
+\end{example}
+
+\section{Proof: A Group of Order 150 is Not Simple}
+
+\begin{theorem}
+Any group $G$ of order 150 is not simple.
+\end{theorem}
+
+\begin{example}
+To prove $G$ is not simple, we aim to find a non-trivial normal subgroup.
+
+\textbf{Step 1: Factor the order of the group.}
+$|G| = 150 = 2 \times 3 \times 5^2$.
+The Sylow 5-subgroups have order $5^2 = 25$.
+
+\textbf{Step 2: Apply the Third Sylow Theorem for $p=5$.}
+Let $n_5$ be the number of Sylow 5-subgroups.
+\begin{itemize}
+    \item $n_5$ must divide $150 / 25 = 6$. So $n_5 \in \{1, 2, 3, 6\}$.
+    \item $n_5 \equiv 1 \pmod{5}$.
+\end{itemize}
+The only values from $\{1, 2, 3, 6\}$ that satisfy $n_5 \equiv 1 \pmod{5}$ are \textbf{1} and \textbf{6}.
+
+\textbf{Step 3: Analyze Case 1 ($n_5 = 1$).}
+If $n_5 = 1$, then the unique Sylow 5-subgroup of order 25 is \textbf{normal} in $G$. Since $G$ has a proper non-trivial normal subgroup, $G$ is \textbf{not simple}.
+
+\textbf{Step 4: Analyze Case 2 ($n_5 = 6$) using the Index Theorem.}
+Assume $n_5 = 6$. The group $G$ acts on these 6 Sylow 5-subgroups by conjugation, which creates a homomorphism $\phi: G \to S_6$.
+If $G$ were simple, $\phi$ would be an injection, meaning $G$ would be isomorphic to a subgroup of $S_6$.
+By Lagrange's Theorem, this would require $|G|$ to divide $|S_6|$:
+\begin{itemize}
+    \item $|G| = 150 = 2 \times 3 \times 5^2$.
+    \item $|S_6| = 6! = 720 = 2^4 \times 3^2 \times 5^1$.
+\end{itemize}
+Note the power of 5: $|G|$ contains $5^2$ (25), but $|S_6|$ only contains $5^1$ (5). 
+Since $25$ does not divide $720$, it is impossible for $G$ to be a subgroup of $S_6$.
+This contradiction shows that $G$ cannot be simple even if $n_5 = 6$.
+
+\textbf{Conclusion:} In all possible cases, $G$ must have a non-trivial normal subgroup. Therefore, no group of order 150 is simple.
+\end{example}
+
+\section{Representations of $SL_2(\mathbb{C})$ and Symmetric Powers}
+
+\subsection{Intuition}
+In the study of symmetry, we want to know how groups like $SL_2(\mathbb{C})$ (the group of $2 \times 2$ complex matrices with determinant 1) act on different vector spaces. The simplest space is $\mathbb{C}^2$ itself. However, we can also look at how these matrices act on \textbf{homogeneous polynomials}. For example, if a matrix moves points $(z_1, z_2)$, it also moves polynomials like $z_1^2 + z_2^2$. The set of all homogeneous polynomials of degree $n$ forms a vector space $V_n$, which is a fundamental building block of representation theory.
+
+\begin{definition}[Symmetric Powers $V_n$]
+Let $V = \mathbb{C}^2$ be the standard representation of $SL_2(\mathbb{C})$. The \textbf{$n$-th symmetric power}, denoted $V_n$, is the vector space of homogeneous polynomials of degree $n$ in two variables $z_1, z_2$. 
+A basis for $V_n$ is given by the $n+1$ monomials:
+\[ \{z_1^n, z_1^{n-1}z_2, z_1^{n-2}z_2^2, \dots, z_2^n\}. \]
+If $g = \begin{pmatrix} a & b \\ c & d \end{pmatrix} \in SL_2(\mathbb{C})$, its action on a polynomial $f(z_1, z_2) \in V_n$ is defined by:
+\[ (g \cdot f)(z_1, z_2) = f(d z_1 - b z_2, -c z_1 + a z_2). \]
+This definition ensures that the group property $g_1 \cdot (g_2 \cdot f) = (g_1 g_2) \cdot f$ is satisfied, making $V_n$ a valid representation.
+\end{definition}
+
+\begin{theorem}[Classification and Dimension]
+For every non-negative integer $n \in \{0, 1, 2, \dots\}$, the representation $V_n$ is an \textbf{irreducible} representation of $SL_2(\mathbb{C})$. 
+\begin{itemize}
+    \item The dimension of $V_n$ is $\dim(V_n) = n+1$.
+    \item Every finite-dimensional irreducible representation of $SL_2(\mathbb{C})$ is isomorphic to exactly one $V_n$.
+\end{itemize}
+\end{theorem}
+
+\begin{example}
+Let's analyze the first few representations to see how the complexity grows:
+\begin{itemize}
+    \item \textbf{$V_0$ (Trivial Representation)}: Polynomials of degree 0 are just constants. Matrices act by doing nothing. Dimension is $0+1=1$.
+    \item \textbf{$V_1$ (Standard Representation)}: Homogeneous polynomials of degree 1 are $f(z_1, z_2) = \alpha z_1 + \beta z_2$. This space is isomorphic to the original $\mathbb{C}^2$. Dimension is $1+1=2$.
+    \item \textbf{$V_2$ (Adjoint Representation)}: Homogeneous polynomials of degree 2 are $f(z_1, z_2) = \alpha z_1^2 + \beta z_1 z_2 + \gamma z_2^2$. This 3-dimensional representation is isomorphic to the Lie algebra $\mathfrak{sl}_2(\mathbb{C})$ acting on itself.
+\end{itemize}
+\end{example}
+
+\section{Clebsch--Gordan Decomposition for $SL_2(\mathbb{C})$}
+
+\subsection{Intuition}
+When we have two independent systems (represented by representations $V_n$ and $V_m$), their combined state is described by the \textbf{tensor product} $V_n \otimes V_m$. A natural question in physics and math is: how does this combined system break down into our "atomic" irreducible building blocks $V_k$? The Clebsch--Gordan decomposition provides the explicit formula for this breakdown.
+
+\begin{definition}[Tensor Product Decomposition]
+The \textbf{Clebsch--Gordan decomposition} is the process of expressing the tensor product of two irreducible representations as a direct sum of irreducible representations:
+\[ V_n \otimes V_m \cong \bigoplus_{k} V_k. \]
+\end{definition}
+
+\begin{theorem}[The Clebsch--Gordan Formula]
+For any two irreducible representations $V_n$ and $V_m$ of $SL_2(\mathbb{C})$ (assuming $n \geq m$), the tensor product decomposes as follows:
+\[ V_n \otimes V_m \cong V_{n+m} \oplus V_{n+m-2} \oplus V_{n+m-4} \oplus \dots \oplus V_{n-m}. \]
+The components start at the sum of the indices and decrease by 2 until they reach the difference of the indices. Each component appears with multiplicity 1.
+\end{theorem}
+
+\begin{example}
+Consider the tensor product $V_1 \otimes V_1$. In quantum mechanics, this represents combining two "spin-1/2" particles.
+\begin{itemize}
+    \item Here $n=1$ and $m=1$.
+    \item The series starts at $n+m = 1+1 = 2$.
+    \item The series ends at $n-m = 1-1 = 0$.
+    \item The indices jump by 2, so we only have $k=2$ and $k=0$.
+    \item Thus: $V_1 \otimes V_1 \cong V_2 \oplus V_0$.
+\end{itemize}
+\textbf{Validation}: The dimensions match: $\dim(V_1) \cdot \dim(V_1) = 2 \times 2 = 4$, and $\dim(V_2) + \dim(V_0) = 3 + 1 = 4$. Geometrically, this means the 4D space of pairs of vectors splits into a 3D "symmetric" part and a 1D "anti-symmetric" part.
+\end{example}
+
+\section{The Modular Group $SL_2(\mathbb{Z})$ and its Generators}
+
+\subsection{Intuition}
+The modular group $SL_2(\mathbb{Z})$ consists of $2 \times 2$ matrices with \textbf{integer} entries and determinant 1. It is a discrete subgroup of $SL_2(\mathbb{R})$ and plays a central role in number theory. Despite being an infinite group, it has a simple geometric structure: every element can be generated by just two fundamental operations on the complex plane: a shift and a flip.
+
+\begin{definition}[Generators $S$ and $T$]
+The group $SL_2(\mathbb{Z})$ is generated by the following two matrices:
+\[ S = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}. \]
+When acting on the upper half-plane $\mathcal{H} = \{z \in \mathbb{C} \mid \text{Im}(z) > 0\}$ via Mobius transformations $z \mapsto \frac{az+b}{cz+d}$:
+\begin{itemize}
+    \item $S(z) = -1/z$ (this is an inversion followed by a reflection).
+    \item $T(z) = z+1$ (this is a unit translation to the right).
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Generation and Relations]
+The matrices $S$ and $T$ generate $SL_2(\mathbb{Z})$. Any element $A \in SL_2(\mathbb{Z})$ can be written as a finite product of $S, T$ and their inverses. The defining relations are:
+\[ S^2 = (ST)^3 = -I. \]
+Note that $-I = \begin{pmatrix} -1 & 0 \\ 0 & -1 \end{pmatrix}$ acts as the identity on the upper half-plane, as $z \mapsto \frac{-z+0}{0-1} = z. \]
+\end{theorem}
+
+\begin{example}
+Let's express the matrix $A = \begin{pmatrix} 0 & -1 \\ 1 & 1 \end{pmatrix}$ in terms of the generators $S$ and $T$.
+\begin{enumerate}
+    \item First, observe the matrix multiplication:
+    \[ ST = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 0 & -1 \\ 1 & 1 \end{pmatrix}. \]
+    \item So, $A = ST$.
+    \item \textbf{Geometric Check}: The transformation $A(z)$ is $\frac{0z - 1}{1z + 1} = \frac{-1}{z+1}$. 
+    \item If we apply $T$ first ($z \mapsto z+1$) and then $S$ ($w \mapsto -1/w$), we get exactly $S(T(z)) = -1/(z+1)$.
+\end{enumerate}
+This demonstrates how a matrix that might look complicated at first glance is just the result of a single shift followed by a single flip.
+\end{example}
+
+\section{Irreducible Representations of $S_4$ (Classification)}
+
+\begin{definition}[Irreducible Representation]
+A representation $\rho: G \to GL(V)$ is called \textbf{irreducible} if the only $G$-invariant subspaces of $V$ are the zero subspace $\{0\}$ and $V$ itself. Intuitively, these are the "prime numbers" of representation theory; every representation of a finite group can be broken down into a sum of these fundamental, indivisible building blocks.
+\end{definition}
+
+\begin{theorem}[Classification of $S_4$ Irreps]
+The symmetric group $S_4$ (order $|S_4| = 24$) has exactly 5 irreducible representations. Their dimensions $d_i$ must satisfy the sum of squares formula:
+\[ \sum_{i=1}^5 d_i^2 = d_1^2 + d_2^2 + d_3^2 + d_4^2 + d_5^2 = 24 \]
+The only solution in positive integers is $\{1, 1, 2, 3, 3\}$. Thus, $S_4$ has two 1-dimensional, one 2-dimensional, and two 3-dimensional irreducible representations.
+\end{theorem}
+
+\begin{example}[Description of the 5 Irreps]
+For the exam, you should be able to identify these 5 representations:
+\begin{enumerate}
+    \item \textbf{Trivial Representation ($U$):} Every element acts as the number 1. (Dim 1)
+    \item \textbf{Sign Representation ($U'$):} Even permutations act as 1, odd permutations as -1. (Dim 1)
+    \item \textbf{Standard Representation ($V$):} $S_4$ permutes the vectors of a 4D space. Removing the invariant "sum of coordinates" subspace leaves a 3D irrep. (Dim 3)
+    \item \textbf{Alternating Standard Representation ($V \otimes U'$):} The tensor product of the Standard and Sign representations. (Dim 3)
+    \item \textbf{2D Representation ($W$):} Lifted from the 2D representation of $S_3$ via the quotient $S_4/V_4 \cong $3$. (Dim 2)
+\end{enumerate}
+\end{example}
+
+\section{Character Table Construction: The Case of $S_4$}
+
+\begin{definition}[Character and Character Table]
+The \textbf{character} $\chi$ of a representation $\rho$ is the trace function $\chi(g) = \text{Tr}(\rho(g))$. Because the trace is invariant under conjugation, $\chi$ is constant on each conjugacy class. A \textbf{character table} lists these values for every irreducible representation across all conjugacy classes.
+\end{definition}
+
+\begin{theorem}[Row Orthogonality]
+In a character table, the rows are orthonormal under the inner product:
+\[ \langle \chi_i, \chi_j \rangle = \frac{1}{|G|} \sum_{g \in G} \chi_i(g) \overline{\chi_j(g)} = \delta_{ij} \]
+This means if you square the entries of a row (weighted by class size) and sum them, you get $|G|$. If you do the same for two different rows, you get 0.
+\end{theorem}
+
+\begin{example}[Step-by-Step Character Table for $S_4$]
+To construct the table, first list the 5 conjugacy classes (labeled by cycle type) and their sizes:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Class & $(1)$ & $(12)$ & $(123)$ & $(1234)$ & $(12)(34)$ \\ \hline
+Size & 1 & 6 & 8 & 6 & 3 \\ \hline
+\end{tabular}
+\end{center}
+
+Now fill the table using the Irreps found earlier:
+\begin{enumerate}
+    \item \textbf{Trivial ($\chi_1$):} All entries are 1.
+    \item \textbf{Sign ($\chi_2$):} $1$ for even cycles ($1, 123, (12)(34)$) and $-1$ for odd ones ($12, 1234$).
+    \item \textbf{Standard ($\chi_4$):} For a permutation matrix $P$, $\text{Tr}(P)$ is the number of fixed points. For $S_4$ on $\mathbb{C}^4$, fixed points are $(4, 2, 1, 0, 0)$. Subtract the trivial character $(1, 1, 1, 1, 1)$ to get $\chi_4 = (3, 1, 0, -1, -1)$.
+    \item \textbf{Alt. Standard ($\chi_5$):} Multiply $\chi_4$ by $\chi_2$ to get $(3, -1, 0, 1, -1)$.
+    \item \textbf{2D ($\chi_3$):} Use orthogonality or the "sum of squares" column property ($\sum d_i^2 = |G|$) to find $\chi_3 = (2, 0, -1, 0, 2)$.
+\end{enumerate}
+
+\textbf{Final Table for $S_4$:}\newline
+\begin{center}
+\begin{tabular}{c|ccccc}
+ & (1) & (12) & (123) & (1234) & (12)(34) \\ \hline
+$\chi_{triv}$ & 1 & 1 & 1 & 1 & 1 \\
+$\chi_{sgn}$ & 1 & -1 & 1 & -1 & 1 \\
+$\chi_{2D}$ & 2 & 0 & -1 & 0 & 2 \\
+$\chi_{std}$ & 3 & 1 & 0 & -1 & -1 \\
+$\chi_{alt}$ & 3 & -1 & 0 & 1 & -1 \\
+\end{tabular}
+\end{center}
+\end{example}
+
+\section{Molien Series for Invariant Rings}
+
+\begin{definition}[Invariant Ring and Molien Series]
+Let $G$ act on a vector space $V$ (and thus on the polynomial ring $\mathbb{C}[V]$). A polynomial $f$ is \textbf{invariant} if $f(g \cdot v) = f(v)$ for all $g \in G$. The \textbf{Molien Series} is a generating function $P(t) = \sum_{d=0}^\infty a_d t^d$, where $a_d$ is the dimension of the space of invariant homogeneous polynomials of degree $d$.
+\end{definition}
+
+\begin{theorem}[Molien's Formula]
+If $\rho: G \to GL(V)$ is a representation of a finite group $G$, the Molien series is given by:
+\[ P(t) = \frac{1}{|G|} \sum_{g \in G} \frac{1}{\det(I - t \rho(g))} \]
+This formula is the "cheat code" for counting invariants without having to find the actual polynomials.
+\end{theorem}
+
+\begin{example}[The "Invariants of $S_2$" Problem]
+Consider $G = S_2 = \{e, \sigma\}$ acting on $\mathbb{C}[x, y]$ by swapping $x$ and $y$. 
+\begin{enumerate}
+    \item \textbf{Matrix for $e$:} $\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \implies \det(I - tI) = (1-t)^2$.
+    \item \textbf{Matrix for $\sigma$:} $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \implies \det(I - t\sigma) = \det \begin{pmatrix} 1 & -t \\ -t & 1 \end{pmatrix} = 1 - t^2$.
+    \item \textbf{Calculation:} $P(t) = \frac{1}{2} \left[ \frac{1}{(1-t)^2} + \frac{1}{1-t^2} \right] = \frac{1}{(1-t)(1-t^2)}$.
+\end{enumerate}
+\textbf{Interpretation:} The denominator tells us the invariant ring is generated by one polynomial of degree 1 (e.g., $x+y$) and one of degree 2 (e.g., $xy$). Every other invariant is a combination of these two.
+\end{example}
+
+\section{Tensor Invariants and $O(V)$-Invariants}
+
+\subsection{Intuition}
+Invariant theory asks: "What stays the same when we change our perspective?" For the orthogonal group $O(V)$, the perspective is defined by transformations that preserve distance and angles (the inner product). Naturally, any tensor that is "invariant" under $O(V)$ must be built from the fundamental building block that $O(V)$ protects: the inner product, represented by the metric tensor $\delta_{ij}$.
+
+\begin{definition}[$O(V)$-Invariant Tensor]
+Let $V$ be a vector space equipped with an inner product. A tensor $T \in V^{\\otimes k} \otimes (V^*)^{\\otimes l}$ is said to be \textbf{$O(V)$-invariant} if for every orthogonal transformation $g \in O(V)$, we have:
+\[ g \cdot T = T \]
+where $g$ acts on the tensor components by the standard transformation law for tensor products.
+\end{definition}
+
+\begin{theorem}[Fundamental Theorem of Invariant Theory for $O(V)$]
+Every $O(V)$-invariant tensor can be expressed as a linear combination of tensors formed by taking tensor products of the metric $\delta_{ij}$ (or its inverse $\delta^{ij}$) and contracting indices. In other words, all invariants are "contractions of the metric."
+\end{theorem}
+
+\begin{example}
+Consider the space of 2-tensors $V \otimes V$ where $V = \mathbb{R}^n$. Let's find all $O(V)$-invariant tensors.
+\begin{enumerate}
+    \item A general 2-tensor can be viewed as an $n \times n$ matrix $M$. The action of $g \in O(V)$ is $M \mapsto g M g^T$.
+    \item We seek $M$ such that $g M g^T = M$ for all orthogonal matrices $g$. Since $g^T = g^{-1}$, this is equivalent to $g M = M g$.
+    \item The only matrices that commute with all orthogonal matrices are scalar multiples of the identity matrix $I$.
+    \item In tensor notation, this means $T = c \sum_i e_i \otimes e_j \delta_{ij}$, or $T_{ij} = c \delta_{ij}$.
+    \item \textbf{Intuition}: In physics, if a physical property (like stress or strain) is "isotropic" (looks the same regardless of how you rotate the coordinate system), it must be a simple pressure or scaling, represented by the identity tensor.
+\end{enumerate}
+\end{example}
+
+\section{$\mathbb{C}[\mathrm{End}(V)]^{SL_2 \times SL_2}$ Invariants}
+
+\subsection{Intuition}
+The space $\mathrm{End}(V)$ is the space of $n \times n$ matrices. The group $SL_2 \times SL_2$ acts on these matrices by "sandwiching" them: one $SL_2$ matrix multiplies from the left, and another (independent) $SL_2$ matrix multiplies from the right. We want to find polynomials of the matrix entries that do not change under these transformations.
+
+\begin{definition}[$SL_2 \times SL_2$ Action]
+Let $V = \mathbb{C}^2$. The group $G = SL_2(\mathbb{C}) \times SL_2(\mathbb{C})$ acts on a matrix $M \in \mathrm{End}(V)$ by:
+\[ (g, h) \cdot M = g M h^{-1} \]
+where $g$ and $h$ are both $2 \times 2$ matrices with determinant 1.
+\end{definition}
+
+\begin{theorem}[Ring of Invariants]
+For $V = \mathbb{C}^2$, the ring of polynomial invariants $\mathbb{C}[\mathrm{End}(V)]^{SL_2 \times SL_2}$ is generated by the determinant function:
+\[ f(M) = \det(M). \]
+Any other polynomial that is invariant under this action must be a polynomial in $\det(M)$.
+\end{theorem}
+
+\begin{example}
+Verify that $f(M) = \det(M)$ is an invariant under the action of $(g, h) \in SL_2 \times SL_2$.
+\begin{enumerate}
+    \item Let $M$ be a $2 \times 2$ matrix. The action transforms $M$ into $M' = g M h^{-1}$.
+    \item Using the multiplicative property of the determinant:
+    \[ \det(M') = \det(g M h^{-1}) = \det(g) \cdot \det(M) \cdot \det(h^{-1}). \]
+    \item Since $g, h \in SL_2$, we have $\det(g) = 1$ and $\det(h) = 1$. This implies $\det(h^{-1}) = 1$.
+    \item Substituting these values:
+    \[ \det(M') = 1 \cdot \det(M) \cdot 1 = \det(M). \]
+    \item Thus, the determinant is invariant. Since it is a polynomial in the matrix entries ($ad-bc$), it is a valid polynomial invariant.
+\end{enumerate}
+\end{example}
+
+\section{Faithful Representations}
+
+\subsection{Intuition}
+A representation is a way of "visualizing" a group using matrices. A representation is \textbf{faithful} if it is a "perfect" visualization—it doesn't lose any information about the group's structure. If a representation is faithful, every distinct group element is mapped to a distinct matrix. If it's not faithful, different elements might "blur" into the same matrix, hiding the group's true complexity.
+
+\begin{definition}[Faithful Representation]
+A representation $\rho: G \to GL(V)$ is said to be \textbf{faithful} if the homomorphism $\rho$ is injective. This means:
+\[ \rho(g_1) = \rho(g_2) \implies g_1 = g_2 \]
+Equivalently, the kernel of $\rho$ must be the trivial subgroup $\{e\}$.
+\end{definition}
+
+\begin{theorem}[Regular Representation]
+For any finite group $G$, the \textbf{regular representation} (where $G$ acts on the vector space spanned by its own elements) is always faithful. This ensures that every group can be embedded into a matrix group.
+\end{theorem}
+
+\begin{example}[Cyclic Group $C_n$]
+Consider the cyclic group $C_n = \{e, a, a^2, \dots, a^{n-1}\}$ where $a^n = e$.
+\begin{enumerate}
+    \item \textbf{Faithful Example}: Define a 1D representation $\rho_1$ by $\rho_1(a) = e^{2\pi i / n} = \omega$.
+    \begin{itemize}
+        \item Here, $\rho_1(a^k) = \omega^k$. Since $\omega$ is a primitive $n$-th root of unity, $\omega^k = 1$ if and only if $k$ is a multiple of $n$.
+        \item Thus, each element $a^0, a^1, \dots, a^{n-1}$ is sent to a distinct complex number. This is faithful.
+    \end{itemize}
+    \item \textbf{Non-Faithful Example}: Define $\rho_2(a) = 1$ (the trivial representation).
+    \begin{itemize}
+        \item Here, $\rho_2(e) = 1, \rho_2(a) = 1, \dots$. Every element is mapped to the identity matrix $[1]$.
+        \item The representation "cannot see" the difference between $e$ and $a$. This is NOT faithful.
+    \end{itemize}
+\end{enumerate}
+\end{example}
+
+\section{Representation Theory of $SU(2)$ and $SU(3)$}
+
+\subsection{Intuition}
+$SU(2)$ and $SU(3)$ are the math behind "spin" and "color/flavor" in particle physics. Because these groups are continuous, they have infinitely many representations. \textbf{Young Tableaux} provide a visual bookkeeping system to organize these representations using boxes. Each box $\Box$ represents the "fundamental" building block (like one electron or one quark).
+
+\begin{definition}[Young Tableau Basics]
+A \textbf{Young Diagram} is a set of boxes where row lengths are non-increasing.
+\begin{itemize}
+    \item \textbf{Rows}: Boxes in a row represent \textbf{symmetrization} (like $x \otimes y + y \otimes x$).
+    \item \textbf{Columns}: Boxes in a column represent \textbf{anti-symmetrization} (like $x \otimes y - y \otimes x$).
+\end{itemize}
+For $SU(n)$, a column of $n$ boxes is invariant (a "singlet") and can be ignored/removed.
+\end{definition}
+
+\begin{theorem}[Irreps of $SU(n)$]
+The irreducible representations (irreps) of $SU(n)$ are in one-to-one correspondence with Young diagrams having at most $n-1$ rows.
+\end{theorem}
+
+\begin{example}[Comparison of $SU(2)$ and $SU(3)$]
+Let's look at the "two-box" combinations ($\Box \otimes \Box$):
+\begin{enumerate}
+    \item \textbf{Symmetric} ($\Box\Box$):
+    \begin{itemize}
+        \item \textbf{$SU(2)$}: This is the triplet representation (dimension 3, spin 1).
+        \item \textbf{$SU(3)$}: This is the $\mathbf{6}$ representation (sextet).
+    \end{itemize}
+    \item \textbf{Anti-symmetric} ($\begin{matrix} \Box \\ \Box \end{matrix}$):
+    \begin{itemize}
+        \item \textbf{$SU(2)$}: A column of 2 boxes is the singlet (dimension 1, spin 0).
+        \item \textbf{$SU(3)$}: A column of 2 boxes is the $\bar{\mathbf{3}}$ representation (anti-fundamental/anti-quark).
+    \end{itemize}
+    \item \textbf{Step-by-step Construction}: To find the representation of 3 quarks in $SU(3)$, you can have 3 boxes in a row ($\Box\Box\Box$). This is the \textbf{decuplet} ($\mathbf{10}$), which contains the famous $\Delta^{++}$ particle!
+\end{enumerate}
+\end{example}
+
+\section{Galois Theory and Field Extensions}
+
+\section{Field Embeddings: Definitions and Properties}
+
+In field theory, we often want to "place" one field inside another. A field embedding is the formal way to describe how a smaller field fits into a larger one without losing its algebraic structure.
+
+\begin{definition}[Field Embedding]
+Let $K$ and $L$ be fields. A \textbf{field embedding} is a ring homomorphism $\sigma: K \to L$. 
+Because a field has no non-trivial ideals (other than $\{0\}$ and itself), any ring homomorphism from a field is automatically \textbf{injective} (one-to-one). This means that $\sigma$ effectively identifies $K$ with a copy of itself inside $L$.
+To be a valid embedding, the map must satisfy:
+\begin{enumerate}
+    \item $\sigma(a + b) = \sigma(a) + \sigma(b)$ for all $a, b \in K$.
+    \item $\sigma(ab) = \sigma(a)\sigma(b)$ for all $a, b \in K$.
+    \item $\sigma(1_K) = 1_L$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Basic Properties]
+Let $\sigma: K \hookrightarrow L$ be a field embedding.
+\begin{enumerate}
+    \item \textbf{Injectivity:} $\sigma$ is always injective. If $\sigma(a) = \sigma(b)$, then $a = b$.
+    \item \textbf{Algebraic Structure:} $\sigma$ preserves all field operations, including subtraction and division (for non-zero elements).
+    \item \textbf{Prime Field Preservation:} Every field embedding fixes the "prime subfield" of $K$. For example, if $K = \mathbb{Q}$, then $\sigma(q) = q$ for every rational number $q \in \mathbb{Q}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{example}
+Consider the field $K = \mathbb{Q}(\sqrt{2}) = \{ a + b\sqrt{2} \mid a, b \in \mathbb{Q} \}$. We want to find all possible embeddings of $K$ into the complex numbers $\mathbb{C}$.
+
+\textbf{Solution:}\newline
+Any embedding $\sigma: \mathbb{Q}(\sqrt{2}) \to \mathbb{C}$ must fix $\mathbb{Q}$. Thus, $\sigma(a + b\sqrt{2}) = \sigma(a) + \sigma(b)\sigma(\sqrt{2}) = a + b\sigma(\sqrt{2})$. 
+Since $(\sqrt{2})^2 = 2$, we must have $\sigma(\sqrt{2})^2 = \sigma(2) = 2$.
+The complex numbers whose square is $2$ are $\pm \sqrt{2}$. This gives exactly two possible embeddings:
+\begin{itemize}
+    \item \textbf{Identity:} $\sigma_1(a + b\sqrt{2}) = a + b\sqrt{2}$.
+    \item \textbf{Conjugation:} $\sigma_2(a + b\sqrt{2}) = a - b\sqrt{2}$.
+\end{itemize}
+\end{example}
+
+\section{The Embedding $\mathbb{C} \hookrightarrow M_2(\mathbb{R})$}
+
+A powerful way to think about field embeddings is to map a field into a ring of matrices. A classic example is representing complex numbers as $2 \times 2$ real matrices.
+
+\begin{definition}[Matrix Representation of $\mathbb{C}$]
+The map $\phi: \mathbb{C} \hookrightarrow M_2(\mathbb{R})$ is a field embedding defined by:
+\[ \phi(a + bi) = \begin{pmatrix} a & -b \\ b & a \end{pmatrix} \]
+where $a, b \in \mathbb{R}$.
+\end{definition}
+
+\begin{theorem}[Properties of the Embedding]
+The map $\phi$ is an injective ring homomorphism. It translates complex arithmetic into matrix arithmetic:
+\begin{itemize}
+    \item \textbf{Unity:} $\phi(1) = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = I$ (the identity matrix).
+    \item \textbf{Imaginary Unit:} $\phi(i) = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$. Note that $\phi(i)^2 = -I$, mirroring $i^2 = -1$.
+    \item \textbf{Linearity:} $\phi(z+w) = \phi(z) + \phi(w)$ and $\phi(zw) = \phi(z)\phi(w)$ for all $z, w \in \mathbb{C}$.
+    \item \textbf{Norm and Determinant:} The squared norm $|z|^2 = a^2+b^2$ is exactly the determinant of the matrix $\phi(z)$.
+\end{itemize}
+\end{theorem}
+
+\begin{example}
+Compute $(1+i)^2$ using the matrix embedding $\phi$.
+
+\textbf{Solution:}\newline
+\begin{enumerate}
+    \item Map $1+i$ to a matrix:
+    \[ \phi(1+i) = \begin{pmatrix} 1 & -1 \\ 1 & 1 \end{pmatrix} \]
+    \item Square the matrix:
+    \[ \begin{pmatrix} 1 & -1 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} 1 & -1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 0 & -2 \\ 2 & 0 \end{pmatrix} \]
+    \item Translate back:
+    The matrix $\begin{pmatrix} 0 & -2 \\ 2 & 0 \end{pmatrix}$ represents $0 + 2i = 2i$.
+\end{enumerate}
+This matches the complex calculation: $(1+i)^2 = 1 + 2i + i^2 = 1 + 2i - 1 = 2i$.
+\end{example}
+
+\section{Cayley--Hamilton Theorem and Field Extensions}
+
+Every element $\alpha$ in a field extension $L/K$ can be viewed as a linear operator on the vector space $L$. This allows us to use tools from linear algebra, like the Cayley--Hamilton theorem, to understand the relationship between an element and the extension degree.
+
+\begin{definition}[Multiplication Operator]
+Let $L/K$ be a finite field extension of degree $n = [L:K]$. For any $\alpha \in L$, the \textbf{multiplication-by-$\alpha$ map} is:
+\[ m_\alpha: L \to L, \quad x \mapsto \alpha x \]
+If we choose a basis $\{e_1, \dots, e_n\}$ for $L$ over $K$, $m_\alpha$ can be represented by an $n \times n$ matrix $M_\alpha$ with entries in $K$.
+\end{definition}
+
+\begin{theorem}[Relation to Extension Degree]
+Let $P_\alpha(x) = \det(xI - M_\alpha)$ be the characteristic polynomial of the matrix $M_\alpha$.
+\begin{enumerate}
+    \item \textbf{Degree Matching:} The degree of $P_\alpha(x)$ is exactly the degree of the field extension, $n = [L:K]$.
+    \item \textbf{Relation to Minimal Polynomial:} $P_\alpha(x) = (f_\alpha(x))^d$, where $f_\alpha(x)$ is the minimal polynomial of $\alpha$ over $K$, and $d = [L : K(\alpha)]$.
+    \item \textbf{Cayley--Hamilton Application:} $\alpha$ satisfies its own characteristic polynomial: $P_\alpha(\alpha) = 0$.
+\end{enumerate}
+\end{theorem}
+
+\begin{example}
+Let $L = \mathbb{C}$ and $K = \mathbb{R}$. The degree $[L:K] = 2$. For $\alpha = i$, find the characteristic polynomial and verify it using Cayley--Hamilton.
+
+\textbf{Solution:}
+\begin{enumerate}
+    \item \textbf{Basis:} Use the basis $\{1, i\}$ for $\mathbb{C}$ over $\mathbb{R}$.
+    \item \textbf{Matrix $M_i$:}
+    \begin{itemize}
+        \item $i \cdot 1 = 0 \cdot 1 + 1 \cdot i \implies$ first column is $\begin{pmatrix} 0 \\ 1 \end{pmatrix}$.
+        \item $i \cdot i = -1 \cdot 1 + 0 \cdot i \implies$ second column is $\begin{pmatrix} -1 \\ 0 \end{pmatrix}$.
+    \end{itemize}
+    \[ M_i = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \]
+    \item \textbf{Characteristic Polynomial:}
+    \[ P_i(x) = \det(xI - M_i) = \det \begin{pmatrix} x & 1 \\ -1 & x \end{pmatrix} = x^2 + 1 \]
+    The degree is $2$, which is $[ \mathbb{C} : \mathbb{R} ]$.
+    \item \textbf{Cayley--Hamilton:}
+    The theorem states $M_i^2 + I = 0$. 
+    Checking: $\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}^2 + \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} -1 & 0 \\ 0 & -1 \end{pmatrix} + \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = 0$.
+\end{enumerate}
+   In terms of the field element, $i^2 + 1 = 0$.
+\end{example}

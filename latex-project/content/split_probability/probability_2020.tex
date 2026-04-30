@@ -168,8 +168,10 @@ How do we find $h_1$? We look at the very first bet. If they lose the first bet 
 
 Let $q = 1-p$. Let $h_a = \mathbb{P}_a(\tau_0 < \infty)$ be the probability of eventually hitting state $0$ given that the walk starts at state $a \geq 1$.
 We condition on the outcome of the first step $X_1$:
-- With probability $p$, the walk moves to $a+1$. From there, the probability of hitting 0 is $h_{a+1}$.
-- With probability $q$, the walk moves to $a-1$. From there, the probability of hitting 0 is $h_{a-1}$.
+\begin{itemize}
+    \item With probability $p$, the walk moves to $a+1$. From there, the probability of hitting 0 is $h_{a+1}$.
+    \item With probability $q$, the walk moves to $a-1$. From there, the probability of hitting 0 is $h_{a-1}$.
+\end{itemize}
 By the Law of Total Probability:
 \[ h_a = p h_{a+1} + q h_{a-1} \]
 The boundary condition is naturally $h_0 = 1$ (if we start at 0, we have already hit 0).
@@ -198,8 +200,10 @@ The two roots are $r_1 = \frac{1 + (1-2p)}{2p} = \frac{2(1-p)}{2p} = \frac{q}{p}
 \textbf{Step 4: Select the correct root based on $p$.}
 
 A fundamental theorem of random walks (and branching processes) states that the hitting probability is always the *smallest non-negative root* of this characteristic equation.
-- \textbf{Case 1 ($p \leq 1/2$):} The probability of moving left is greater than or equal to moving right (drift is negative or zero). Then $q \geq p$, meaning the ratio $q/p \geq 1$. The smallest root in the valid probability range $[0, 1]$ is $h_1 = 1$. The walk is guaranteed to eventually move left.
-- \textbf{Case 2 ($p > 1/2$):} The probability of moving right is strictly greater than moving left (drift is positive). Then $q < p$, meaning the ratio $q/p < 1$. The smallest root is $h_1 = q/p$. There is a chance the walk drifts to $+\infty$ and never returns.
+\begin{itemize}
+    \item \textbf{Case 1 ($p \leq 1/2$):} The probability of moving left is greater than or equal to moving right (drift is negative or zero). Then $q \geq p$, meaning the ratio $q/p \geq 1$. The smallest root in the valid probability range $[0, 1]$ is $h_1 = 1$. The walk is guaranteed to eventually move left.
+    \item \textbf{Case 2 ($p > 1/2$):} The probability of moving right is strictly greater than moving left (drift is positive). Then $q < p$, meaning the ratio $q/p < 1$. The smallest root is $h_1 = q/p$. There is a chance the walk drifts to $+\infty$ and never returns.
+\end{itemize}
 
 \textbf{Step 5: Finalize the formula for $h_a$.}
 
@@ -366,18 +370,22 @@ Because we lose this mirror-image symmetry, it is entirely possible that our re-
 Let $N = 3$. We want to assign $N_1 = 1$ unit to the treatment group and $N_0 = 2$ units to the control group.
 Assume each unit has a single scalar covariate $X_i$. Let $X_1 = 1, X_2 = 2, X_3 = 3$.
 There are exactly $\binom{3}{1} = 3$ possible assignments $\mathbf{W} = (W_1, W_2, W_3)$:
-- Assignment A: $\mathbf{W} = (1, 0, 0)$. Unit 1 treated.
-- Assignment B: $\mathbf{W} = (0, 1, 0)$. Unit 2 treated.
-- Assignment C: $\mathbf{W} = (0, 0, 1)$. Unit 3 treated.
+\begin{itemize}
+    \item Assignment A: $\mathbf{W} = (1, 0, 0)$. Unit 1 treated.
+    \item Assignment B: $\mathbf{W} = (0, 1, 0)$. Unit 2 treated.
+    \item Assignment C: $\mathbf{W} = (0, 0, 1)$. Unit 3 treated.
+\end{itemize}
 
 \textbf{Step 2: Apply a re-randomization criterion.}
 
 Let our balance criterion be that the difference in covariate means between the treated and control groups must be small:
 \[ |\bar{X}_1 - \bar{X}_0| \leq 0.5 \]
 Let's calculate this difference for the three possible assignments:
-- For Assignment A: Treated mean is $X_1 = 1$. Control mean is $(X_2 + X_3)/2 = (2+3)/2 = 2.5$. Difference is $|1 - 2.5| = 1.5$. (Rejected)
-- For Assignment B: Treated mean is $X_2 = 2$. Control mean is $(X_1 + X_3)/2 = (1+3)/2 = 2.0$. Difference is $|2 - 2| = 0$. (Accepted)
-- For Assignment C: Treated mean is $X_3 = 3$. Control mean is $(X_1 + X_2)/2 = (1+2)/2 = 1.5$. Difference is $|3 - 1.5| = 1.5$. (Rejected)
+\begin{itemize}
+    \item For Assignment A: Treated mean is $X_1 = 1$. Control mean is $(X_2 + X_3)/2 = (2+3)/2 = 2.5$. Difference is $|1 - 2.5| = 1.5$. (Rejected)
+    \item For Assignment B: Treated mean is $X_2 = 2$. Control mean is $(X_1 + X_3)/2 = (1+3)/2 = 2.0$. Difference is $|2 - 2| = 0$. (Accepted)
+    \item For Assignment C: Treated mean is $X_3 = 3$. Control mean is $(X_1 + X_2)/2 = (1+2)/2 = 1.5$. Difference is $|3 - 1.5| = 1.5$. (Rejected)
+\end{itemize}
 
 \textbf{Step 3: Analyze the bias in the resulting design.}
 
@@ -394,8 +402,10 @@ The true Average Treatment Effect is:
 \[ \tau_{ATE} = \frac{1}{3} \sum_{i=1}^3 (Y_i(1) - Y_i(0)) = \frac{Y_1(1) + Y_2(1) + Y_3(1)}{3} - \frac{Y_1(0) + Y_2(0) + Y_3(0)}{3} \]
 We can easily define potential outcomes where $\mathbb{E}[\hat{\tau}] \neq \tau_{ATE}$.
 For example, let the potential outcomes equal the squared covariate for treatment and 0 for control:
-- $Y_i(1) = X_i^2 \implies Y_1(1)=1, Y_2(1)=4, Y_3(1)=9$
-- $Y_i(0) = 0 \implies Y_1(0)=0, Y_2(0)=0, Y_3(0)=0$
+\begin{itemize}
+    \item $Y_i(1) = X_i^2 \implies Y_1(1)=1, Y_2(1)=4, Y_3(1)=9$
+    \item $Y_i(0) = 0 \implies Y_1(0)=0, Y_2(0)=0, Y_3(0)=0$
+\end{itemize}
 
 The true ATE is:
 \[ \tau_{ATE} = \frac{1+4+9}{3} - 0 = \frac{14}{3} \approx 4.67 \]

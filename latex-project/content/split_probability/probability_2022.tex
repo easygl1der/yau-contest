@@ -108,8 +108,10 @@ We are looking at $M = \sup_{n \ge 1} (S_n/n)$, the highest "average score" the 
 \textbf{Step 1: Analyze the conditions for $M=0$.}
 
 For $M = \sup (S_n/n)$ to be exactly 0, two things must happen:
-1. $S_n/n \leq 0$ for all $n \geq 1$. (It never goes positive).
-2. $S_n/n = 0$ for some $n \geq 1$. (It actually achieves 0).
+\begin{enumerate}
+    \item $S_n/n \leq 0$ for all $n \geq 1$. (It never goes positive).
+    \item $S_n/n = 0$ for some $n \geq 1$. (It actually achieves 0).
+\end{enumerate}
 
 Because $S_1 = X_1 \in \{1, -1\}$, if $X_1 = 1$, then $M \geq S_1/1 = 1 > 0$. Therefore, for $M=0$ to occur, we *must* have $X_1 = -1$.
 If $X_1 = -1$, the walk starts at $-1$. For it to hit an average of 0 later, the sum $S_n$ must reach 0. So the walk must eventually move from $-1$ to $0$. But to satisfy condition 1, it must *never* reach $1$.
@@ -117,8 +119,10 @@ If $X_1 = -1$, the walk starts at $-1$. For it to hit an average of 0 later, the
 \textbf{Step 2: Calculate probabilities using Gambler's Ruin.}
 
 Let $\rho$ be the probability that a random walk starting at 0 eventually hits 1. From standard random walk theory:
-- If $p \geq q$ (drift is $\ge 0$), $\rho = 1$. The walk is guaranteed to reach any positive integer.
-- If $p < q$ (drift is negative), $\rho = p/q < 1$.
+\begin{itemize}
+    \item If $p \geq q$ (drift is $\ge 0$), $\rho = 1$. The walk is guaranteed to reach any positive integer.
+    \item If $p < q$ (drift is negative), $\rho = p/q < 1$.
+\end{itemize}
 
 If $p \ge q$, the walk almost surely hits 1 eventually. This means $S_n$ will be positive, so $S_n/n$ will be positive, meaning $M > 0$ almost surely. Thus, $\mathbb{P}(M=0) = 0$.
 Now assume $p < q$. We want the probability of the exact event $\{M=0\}$.
@@ -144,8 +148,10 @@ Therefore, $M > p-q$ almost surely. Combining bounds gives $\mathbb{P}(p-q < M \
 
 Let $x = k/m$ where $k, m$ are integers and $k \leq m$. We want to find a specific scenario that forces the absolute maximum average to be exactly $k/m$.
 Scenario:
-1. In the first $m$ steps, the walk perfectly hits $S_m = k$ such that it never exceeded $k/m$ along the way. For example, if we need $S_3/3 = 1/3$, the sequence $(X_1, X_2, X_3) = (-1, 1, 1)$ gives sums $(-1, 0, 1)$, and averages $(-1, 0, 1/3)$. The maximum so far is $1/3$. This specific finite prefix has a strictly positive probability ($p^a q^b > 0$).
-2. After step $m$, we need the walk to *stay away* from the line $y = (k/m)n$. We require $S_n/n < k/m$ for all $n > m$.
+\begin{enumerate}
+    \item In the first $m$ steps, the walk perfectly hits $S_m = k$ such that it never exceeded $k/m$ along the way. For example, if we need $S_3/3 = 1/3$, the sequence $(X_1, X_2, X_3) = (-1, 1, 1)$ gives sums $(-1, 0, 1)$, and averages $(-1, 0, 1/3)$. The maximum so far is $1/3$. This specific finite prefix has a strictly positive probability ($p^a q^b > 0$).
+    \item After step $m$, we need the walk to *stay away* from the line $y = (k/m)n$. We require $S_n/n < k/m$ for all $n > m$.
+\end{enumerate}
 This is equivalent to a new random walk starting at $S_m=k$ staying below a line with slope $k/m$.
 Since the true drift of the walk is $p-q$, and we chose $x = k/m > p-q$, the line we must stay below is growing *faster* than the expected path of the random walk.
 Because the random walk drifts away from the bounding line, the probability of never crossing it is strictly greater than 0.
@@ -172,8 +178,10 @@ Let $X$ have a uniform distribution on $[0,1]$ and let $N_{m,k}$ be the digit in
 
 We are picking a random number $X$ between 0 and 1, raising it to the power $m$, and looking at the $m$-th decimal digit.
 There are two completely different "regimes" for $X$:
-1. **The tiny numbers:** If $X < 0.1$, then $X \times 10 < 1$. When we take $(10X)^m$, it goes to zero. This means $10^m X^m$ is a tiny number, so its integer part is always 0. The $m$-th digit will be exactly 0. This "dead zone" takes up $1/10$ of the probability space $[0, 0.1]$.
-2. **The chaotic numbers:** If $X > 0.1$, then $(10X)^m$ grows huge as $m \to \infty$. It wraps around the modulo 10 operation millions of times. Because the function is incredibly steep, a tiny change in $X$ sweeps through all 10 digits very evenly. For the remaining $9/10$ of the probability space, the digits 0 through 9 are hit with perfectly equal probability ($1/10$ each).
+\begin{enumerate}
+    \item \textbf{The tiny numbers:} If $X < 0.1$, then $X \times 10 < 1$. When we take $(10X)^m$, it goes to zero. This means $10^m X^m$ is a tiny number, so its integer part is always 0. The $m$-th digit will be exactly 0. This "dead zone" takes up $1/10$ of the probability space $[0, 0.1]$.
+    \item \textbf{The chaotic numbers:} If $X > 0.1$, then $(10X)^m$ grows huge as $m \to \infty$. It wraps around the modulo 10 operation millions of times. Because the function is incredibly steep, a tiny change in $X$ sweeps through all 10 digits very evenly. For the remaining $9/10$ of the probability space, the digits 0 through 9 are hit with perfectly equal probability ($1/10$ each).
+\end{enumerate}
 So, the probability of hitting a 0 is $1/10$ (from the dead zone) plus $1/10 \times 9/10$ (from the chaotic zone) $= 0.19$. Any other digit is just $1/10 \times 9/10 = 0.09$.
 To make the digits perfectly uniform, we need to shrink the "dead zone" to zero probability, which requires the power $k(m)$ to grow much slower than $m$. But we also need $k(m)$ to go to infinity so the chaotic zone wraps around fast enough.
 
@@ -205,8 +213,10 @@ Because $m \to \infty$, this sum becomes indistinguishable from an integral. Ins
 More formally, the density of the modulo operation uniformizes. The total length contributed to any digit $i$ in $[1, 10]$ is exactly $1/10$ of the total length of the interval $(1, 10)$.
 \[ \lim_{m \to \infty} \frac{1}{10} \int_1^{10} \mathbf{1}_{\{\lfloor v^m \rfloor \equiv i \pmod{10}\}} dv = \frac{1}{10} \times (10 - 1) \times \frac{1}{10} = \frac{9}{10} \times \frac{1}{10} = 0.09 \]
 Adding the dead zone contribution:
-- For $i=0$: $0.10 + 0.09 = 0.19$.
-- For $i \neq 0$: $0 + 0.09 = 0.09$.
+\begin{itemize}
+    \item For $i=0$: $0.10 + 0.09 = 0.19$.
+    \item For $i \neq 0$: $0 + 0.09 = 0.09$.
+\end{itemize}
 
 \textbf{Step 4: Find conditions for uniformity with a general $k(m)$.}
 

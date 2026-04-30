@@ -1,0 +1,40 @@
+\documentclass[fontsize=11pt, twoside=true]{kaobook}
+\usepackage{xeCJK}
+
+% 设置页面布局，确保有边栏
+\usepackage{geometry}
+\geometry{
+    paperwidth=210mm,
+    paperheight=297mm,
+    left=20mm,
+    textwidth=110mm,
+    marginparsep=10mm,
+    marginparwidth=50mm,
+    top=25mm,
+    bottom=25mm,
+}
+
+\title{Modified Kaobook Sidenote Test}
+\author{Gemini CLI}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\chapter{底层的智能对齐测试}
+
+\section{重叠消除验证}
+
+在修改后的 \texttt{kaobook} 模板中，我们已经将 \texttt{sidenote} 的底层实现从 \texttt{marginnote} 切换到了支持浮动的 \texttt{marginpar}。
+
+% 测试：在同一行连续插入 4 个长 sidenote
+这里是一段测试文本\sidenote{这是第 1 个 sidenote。它非常长，目的是占据大量的边栏空间，迫使后面的笔记必须向下排队。}。
+在这句话还没结束的时候，我们立刻插入第 2 个\sidenote{这是第 2 个 sidenote。由于底层使用了 \texttt{marginpar} 和 \texttt{marginfix}，它现在会乖乖地排在第一个笔记的下面，而不是重叠在一起。}。
+甚至是第 3 个\sidenote{这是第 3 个 sidenote。你会发现它们像积木一样整齐地堆叠在右侧。}
+和第 4 个\sidenote{这是第 4 个 sidenote。这种排版方式非常适合包含大量公式或长解释的数学竞赛题解。}。
+
+\section{结论}
+这种“从模板底层修复”的方案比在 \texttt{config.tex} 里打补丁更稳定，因为它直接修正了类文件的布局行为。
+
+\end{document}

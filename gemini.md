@@ -1,0 +1,6 @@
+# Writing Guidelines
+
+- **Exercise Questions**: Always use the original text from the transcript for the question part of an exercise. Do not rewrite, summarize, or "refine" the question text. Keep all original notation and quirks.
+- **Detailed Footnotes**: Remember to write your footnotes in detail. Your footnotes should not be side notes; side notes are exclusively for showing the derivation of formulas.
+- **Concise but Critical Sidenotes**: When writing side notes to show the derivation of formulas, they must capture the critical mathematical steps directly. Avoid verbose, redundant conversational explanations. Show the exact substitutions, application of conditions, simplification, and final formulas in a standard mathematical writing style (e.g., "Let $P y_j = \sum...$ The residual must be orthogonal... Taking the inner product yields..."). Do not write overly long prose; get straight to the math.
+- **Writing Style**: You need to follow a very standard and detailed writing style. The current writing is way too simple and difficult to understand. Ensure comprehensive and clear explanations.

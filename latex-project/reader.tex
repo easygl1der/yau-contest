@@ -1,0 +1,161 @@
+
+% Load the kaobook class
+\documentclass[
+    fontsize=11pt, % Base font size
+    twoside=false, % Use different layouts for even and odd pages
+    secnumdepth=2, % How deep to number headings
+    parskip=full-, % How much space to put between paragraphs
+    fontmethod=tex, % Use tex font method (avoids Libertinus font requirement)
+]{kaobook}
+
+% Lower spacing between paragraphs
+\RedeclareSectionCommand[
+    beforeskip=0.3em
+]{paragraph}
+
+% Choose the language
+\usepackage[english]{babel} % Load characters and hyphenation
+\usepackage{xeCJK} % 支持中文
+\usepackage[english=british]{csquotes} % English quotes
+
+% PDF metadata
+\usepackage{hyperref}
+
+\input{config}
+
+% TikZ for fancy cover
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,calc,shapes.geometric}
+
+% Colors for fancy cover
+\definecolor{myDColor}{HTML}{101010}
+\definecolor{myLColor}{HTML}{1a5276}  % Deep blue matching exampaper color
+\definecolor{myAccent}{HTML}{c0392b}  % Red accent
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	BOOK INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Geometry \& Topology — 2012}
+\subtitle{S.-T. Yau College Student Mathematics Contest}
+\author{Yue Yihua\\Sun Yat-sen University}
+\date{\the\year}
+
+%----------------------------------------------------------------------------------------
+%	FRONT MATTER
+%----------------------------------------------------------------------------------------
+
+\frontmatter % Denotes the start of the pre-document content, uses roman numerals
+
+% === Fancy Title Page ===
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture, overlay, x=1cm, y=1cm]
+    % White background
+    \fill[white] (current page.south west) rectangle (current page.north east);
+
+    % Top-right: decorative hexagons cluster
+    \foreach \i in {3,6,...,24}{%
+        \node[
+            myLColor!8,
+            regular polygon,
+            regular polygon sides=6,
+            rounded corners,
+            minimum size=\i cm,
+            very thick,
+            draw,
+        ] at ($(current page.north east)+(-1,-1)$) {};
+    }
+
+    % Top-right accent hexagon with year
+    \node[
+        myLColor,
+        regular polygon,
+        regular polygon sides=6,
+        rounded corners,
+        minimum size=4cm,
+        ultra thick,
+        fill=myLColor,
+        text=white,
+    ] at ($(current page.north east)+(-4,4)$) {%
+        \fontsize{48}{56}\selectfont\bfseries 2012%
+    };
+
+    % Bottom-left: decorative hexagons
+    \foreach \i/\j in {4/1,6/1,5/2,7/2,6/3,8/3}{%
+        \node[
+            myLColor!\j0,
+            regular polygon,
+            regular polygon sides=6,
+            rounded corners,
+            minimum size=\i cm,
+            thick,
+            draw,
+        ] at ($(current page.south west)+(\i+1,\i*0.5-2)$) {};
+    }
+
+    % Left vertical accent bars
+    \draw[myLColor, very thick] ($(current page.north west)+(0.8,0)$) -- ($(current page.south west)+(0.8,-25)$);
+    \draw[myLColor!40, thick] ($(current page.north west)+(1.2,0)$) -- ($(current page.south west)+(1.2,-25)$);
+
+    % Main title
+    \node[right, text=myDColor!80, anchor=north west] (T) at ($(current page.north west)+(2,-4.5)$){%
+        \parbox{0.8\paperwidth}{%
+            \fontsize{44}{52}\selectfont\bfseries Geometry\\[-3pt]
+            \fontsize{36}{44}\selectfont\bfseries Topology\\[-3pt]
+            \fontsize{28}{36}\selectfont\bfseries \& Topology 2012%
+        }%
+    };
+
+    % Subtitle
+    \node[right, text=myDColor, anchor=north west] at ($(T.south west)+(0,-2)$){%
+        \parbox{0.8\paperwidth}{%
+            \Large\textit{S.-T. Yau College Student Mathematics Contest}%
+        }%
+    };
+
+    % Divider line
+    \draw[myLColor, ultra thick] ($(T.south west)+(0,-3.2)$) -- ($(T.south west)+(0.75\paperwidth,-3.2)$);
+
+    % Author info
+    \node[right, text=myDColor!70, anchor=north west] at ($(T.south west)+(0,-4.8)$){%
+        \parbox{0.8\paperwidth}{%
+            \large\textsc{Yue Yihua}\\[6pt]
+            \normalsize Sun Yat-sen University%
+        }%
+    };
+
+    % Bottom decorative line
+    \draw[myLColor!30, very thick] ($(current page.south west)+(2,2)$) -- ($(current page.south east)+(-4,2)$);
+
+    % Subject tags
+    \node[right, text=myLColor!70, anchor=north west] at ($(current page.south west)+(2,1)$){%
+        \footnotesize Geometry $\cdot$ Topology%
+    };
+\end{tikzpicture}
+\vfill
+% === End Fancy Title Page ===
+
+\newpage
+\thispagestyle{empty}
+~
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	MAIN BODY
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
+
+% Only Geometry 2012
+\part{Geometry \& Topology — 2012}
+\input{content/split_geometry/geometry_2012}
+
+%----------------------------------------------------------------------------------------
+%	BACK MATTER
+%----------------------------------------------------------------------------------------
+
+\backmatter % Denotes the end of the main document content
+
+\end{document}
