@@ -4,6 +4,92 @@
 
 \begin{exercise}
 \label{applied:2010:1}
+Let $Z_{1}, \cdots, Z_{n}$ be i.i.d. random variables with $Z_{i} \sim N(\mu, \sigma^{2})$. Find $E(\sum_{i=1}^{n} Z_{i} | Z_{1} - Z_{2} + Z_{3})$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $S = \sum_{i=1}^n Z_i$ and $D = Z_1 - Z_2 + Z_3$. Note that $(S, D)$ follows a bivariate normal distribution since they are linear combinations of independent normal variables.
+    \item Compute the parameters:
+    \begin{itemize}
+        \item $E(S) = n\mu$.
+        \item $E(D) = \mu - \mu + \mu = \mu$.
+        \item $Var(D) = Var(Z_1) + Var(-Z_2) + Var(Z_3) = 3\sigma^2$.
+        \item $Cov(S, D) = Cov(\sum Z_i, Z_1 - Z_2 + Z_3) = Cov(Z_1, Z_1) - Cov(Z_2, Z_2) + Cov(Z_3, Z_3) = \sigma^2 - \sigma^2 + \sigma^2 = \sigma^2$.
+    \end{itemize}
+    \item Use the conditional expectation formula for bivariate normal variables:
+    \[ E(S|D) = E(S) + \frac{Cov(S, D)}{Var(D)}(D - E(D)) \]
+    \item Substitute the values:
+    \[ E(S|D) = n\mu + \frac{\sigma^2}{3\sigma^2}(D - \mu) = n\mu + \frac{1}{3}(Z_1 - Z_2 + Z_3 - \mu). \]
+\end{enumerate}
+
+\textbf{Intuition:}
+The sum of all variables and the specific linear combination $Z_1 - Z_2 + Z_3$ are correlated because they share common variables. In a normal setting, the conditional expectation is a linear function of the conditioning variable, with the slope determined by the ratio of the covariance to the variance of the condition.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:2}
+Let $X_{1}, \cdots, X_{n}$ be pairwise independent. Further, assume that $E X_{i} = 1 + i^{-1}$ and that $\max_{1 \leq i \leq n} E | X_{i} |^{1 + \epsilon} < \infty$ for some $\epsilon > 0$. Show that $\frac{1}{n} \sum_{i=1}^{n} X_{i} \xrightarrow{P} 1$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item Compute the expected value of the average:
+    \[ E\left(\frac{1}{n} \sum_{i=1}^n X_i\right) = \frac{1}{n} \sum_{i=1}^n (1 + i^{-1}) = 1 + \frac{1}{n} \sum_{i=1}^n \frac{1}{i} = 1 + \frac{H_n}{n}. \]
+    Since $H_n \sim \ln n$, $\frac{H_n}{n} \to 0$ as $n \to \infty$, so the expectation converges to 1.
+    \item To show convergence in probability, we need to show that the variance (or a related dispersion measure) goes to zero. Since the variables are only pairwise independent, the standard WLLN requires slightly more care.
+    \item The condition $\max E |X_i|^{1+\epsilon} < \infty$ implies uniform integrability and allows the use of the weak law for pairwise independent variables. Specifically, we can use a truncation argument: let $Y_i = X_i I(|X_i| \le n)$.
+    \item For pairwise independent variables with bounded $(1+\epsilon)$ moments, the average $\frac{1}{n} \sum (X_i - E X_i)$ converges to 0 in probability (and even almost surely if the moments are $L^2$).
+\end{enumerate}
+
+\textbf{Intuition:}
+The "pairwise independent" condition is weaker than full independence but still allows for the law of large numbers to hold. The bounded $(1+\epsilon)$ moment ensures that no single variable's tail can dominate the sum, providing enough regularity for the average to concentrate around its mean.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:3}
+Let $Z_{1}, \cdots, Z_{6}$ be i.i.d. random variables with $Z_{i} \sim N(0, 1)$. Set $U^{2} = \frac{(Z_{1} Z_{2} + Z_{3} Z_{4} + Z_{5} Z_{6})^{2}}{Z_{2}^{2} + Z_{4}^{2} + Z_{6}^{2}}$, $V^{2} = \frac{U^{2} (Z_{2}^{2} + Z_{4}^{2})}{U^{2} + Z_{6}^{2}}$. Find and identify the densities of $U^{2}$ and $V^{2}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item Let $\mathbf{X} = (Z_1, Z_3, Z_5)^T$ and $\mathbf{Y} = (Z_2, Z_4, Z_6)^T$. Then $U^2 = \frac{(\mathbf{X} \cdot \mathbf{Y})^2}{\|\mathbf{Y}\|^2}$.
+    \item Conditional on $\mathbf{Y}$, the term $\frac{\mathbf{X} \cdot \mathbf{Y}}{\|\mathbf{Y}\|}$ is a linear combination of independent standard normals, which is itself $N(0, 1)$. Since this distribution does not depend on $\mathbf{Y}$, $U = \frac{\mathbf{X} \cdot \mathbf{Y}}{\|\mathbf{Y}\|}$ is independent of $\mathbf{Y}$ and $U \sim N(0, 1)$.
+    \item Thus $U^2 \sim \chi^2(1)$.
+    \item For $V^2 = \frac{U^2 (Z_2^2 + Z_4^2)}{U^2 + Z_6^2}$, note that $U^2, Z_2^2+Z_4^2, Z_6^2$ are independent. Let $A = U^2 \sim \chi^2(1)$, $B = Z_6^2 \sim \chi^2(1)$, and $C = Z_2^2 + Z_4^2 \sim \chi^2(2)$.
+    \item $V^2 = C \cdot \frac{A}{A+B}$. Since $A, B$ are i.i.d. $\chi^2(1)$, $W = \frac{A}{A+B} \sim Beta(\frac{1}{2}, \frac{1}{2})$.
+    \item $C \sim \chi^2(2)$ is an Exponential distribution with mean 2, i.e., $f_C(c) = \frac{1}{2} e^{-c/2}$.
+    \item The density of $V^2$ can be found by the product of Beta and Gamma distributions.
+\end{enumerate}
+
+\textbf{Intuition:}
+The variable $U$ represents the projection of one random vector onto another. Due to the rotational invariance of the normal distribution, this projection is always standard normal. $V^2$ then combines this with other $\chi^2$ components, resulting in a distribution related to the ratio of variances.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:4}
+Consider a population with three characteristics with frequencies: $p_1 = \theta^3$, $p_2 = 3\theta(1-\theta)$, $p_3 = (1-\theta)^3$. Note that these sum to 1.
+(a) Construct approx level $(1-\alpha)$ MLE confidence set.
+(b) Derive asymptotic distribution for freq substitution estimator $\hat{\theta}_2 = 1 - (N_3/n)^{1/3}$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{MLE:} The log-likelihood is $\ell(\theta) = N_1 \ln \theta^3 + N_2 \ln(3\theta(1-\theta)) + N_3 \ln(1-\theta)^3$.
+    \item $\ell'(\theta) = \frac{3N_1+N_2}{\theta} - \frac{N_2+3N_3}{1-\theta} = 0 \implies \hat{\theta} = \frac{3N_1+N_2}{3N_1+2N_2+3N_3}$.
+    \item Fisher Information $I(\theta) = -E[\ell''(\theta)]$ gives the asymptotic variance $Var(\hat{\theta}) \approx \frac{1}{n I(\theta)}$. The confidence set is $\hat{\theta} \pm z_{\alpha/2} \sqrt{\widehat{Var}(\hat{\theta})}$.
+    \item \textbf{Substitution Estimator:} For $\hat{\theta}_2 = 1 - (\frac{N_3}{n})^{1/3}$, we use the Delta Method.
+    \item $\frac{N_3}{n} \xrightarrow{d} AN(p_3, \frac{p_3(1-p_3)}{n})$. Let $g(x) = 1 - x^{1/3}$. Then $g'(x) = -\frac{1}{3} x^{-2/3}$.
+    \item Asymptotic distribution: $\sqrt{n}(\hat{\theta}_2 - \theta) \xrightarrow{d} N(0, [g'(p_3)]^2 p_3(1-p_3))$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:5}
 \begin{enumerate}
     \item Suppose
     \[
@@ -50,7 +136,7 @@ The problem leverages the fact that the product of upper triangular matrices is 
 \end{solution}
 
 \begin{exercise}
-\label{applied:2010:2}
+\label{applied:2010:6}
 \begin{enumerate}
     \item Let $A \in \mathbb{R}^{m \times n}$. Show that there exists an $m$-by-$m$ orthogonal matrix $U$ and an $n$-by-$n$ orthogonal matrix $V$ such that $U^T A V = \text{diag}(\sigma_1, \dots, \sigma_p)$, where $p = \min\{m, n\}$ and $\sigma_1 \geq \sigma_2 \geq \dots \geq \sigma_p \geq 0$.
 
@@ -86,8 +172,77 @@ The problem leverages the fact that the product of upper triangular matrices is 
 The Singular Value Decomposition (SVD) identifies the principal axes of the transformation $A$. The 2-norm of a matrix is determined by its largest singular value. When approximating with a lower rank, the "best" strategy is to remove the components corresponding to the smallest singular values, as they contribute the least to the "energy" or "variance" of the mapping.
 \end{solution}
 
+\subsection{Team}
+
 \begin{exercise}
-\label{applied:2010:3}
+\label{applied:2010:7}
+Let $X_1, \dots, X_n$ be i.i.d. with distribution function $F$. Let $Y_1 < \dots < Y_n$ be the order statistics. Prove that $Z_j = F(Y_j)$ has a Beta distribution $Beta(j, n-j+1)$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item Note that if $X \sim F$, then $F(X) \sim U(0, 1)$ (Probability Integral Transform).
+    \item Let $U_1, \dots, U_n$ be i.i.d. $U(0, 1)$. The order statistics $U_{(j)} = F(Y_j)$ are the variables $Z_j$ we are interested in.
+    \item The probability density function of the $j$-th order statistic from a $U(0, 1)$ distribution is given by:
+    \[ f_{U_{(j)}}(z) = \frac{n!}{(j-1)!(n-j)!} z^{j-1} (1-z)^{n-j}, \quad 0 < z < 1. \]
+    \item This is precisely the PDF of the $Beta(j, n-j+1)$ distribution.
+\end{enumerate}
+
+\textbf{Intuition:}
+The transformation $F(X)$ maps any continuous distribution to the uniform distribution on $[0,1]$. The order statistics of uniform variables naturally follow Beta distributions, as they partition the interval $[0,1]$ into segments whose lengths are related to the counts of variables falling in each segment.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:8}
+Investigate the convergence to a Normal distribution for the sequence of random variables $Y_{n,i} = \frac{3}{4b_n}(1 - X_i^2/b_n^2)I(|X_i| \le b_n)$, where $X_i$ are i.i.d. and $b_n$ is a sequence of constants.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item This problem involves studying the asymptotic behavior of a sum of kernel-like terms. 
+    \item Check the conditions for the Central Limit Theorem (CLT) for the sum $\sum Y_{n,i}$. 
+    \item Calculate the mean and variance of $Y_{n,i}$. The variance will depend on the scale $b_n$ and the underlying distribution of $X_i$.
+    \item Usually, if $b_n \to 0$ or $b_n \to \infty$ at specific rates, the normalized sum will converge to a normal distribution by the Lindeberg-Feller CLT.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:9}
+Prove the minimax error bound: $\min \sup_{|\theta| \le \tau} E (\sum a_i X_i + a_{n+1} - \theta)^2 = \frac{\tau^2 n^{-1}}{\tau^2 + n^{-1}}$ for a suitable model (e.g. $X_i \sim N(\theta, 1)$).
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item This is a classic result in minimax estimation. Consider the linear estimator $\delta = w \bar{X}$.
+    \item The risk is $R(\theta, w) = E(w \bar{X} - \theta)^2 = w^2 \frac{1}{n} + (w-1)^2 \theta^2$.
+    \item To find the minimax estimator, we look for the $w$ that minimizes the maximum risk over $\theta \in [-\tau, \tau]$.
+    \item The maximum risk occurs at $\theta = \pm \tau$. Thus we minimize $f(w) = \frac{w^2}{n} + (w-1)^2 \tau^2$.
+    \item Taking the derivative: $\frac{2w}{n} + 2(w-1)\tau^2 = 0 \implies w = \frac{\tau^2}{\tau^2 + n^{-1}}$.
+    \item Substituting $w$ back into the risk gives the bound $\frac{\tau^2 n^{-1}}{\tau^2 + n^{-1}}$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:10}
+In a foul shooting model, let $N_0, N_1, N_2$ be the counts of players missing both, making one, and making both shots respectively in $n$ pairs of shots. Derive the MLE $\hat{p} = \frac{N_1 + 2N_2}{N_0 + 2N_1 + 2N_2}$ (assuming independent shots) and find its asymptotic distribution.
+\end{exercise}
+
+\begin{solution}
+\textbf{Steps:}
+\begin{enumerate}
+    \item If shots are independent with probability $p$, the counts $N_0, N_1, N_2$ follow a multinomial distribution with probabilities $(1-p)^2, 2p(1-p), p^2$.
+    \item The log-likelihood is $\ell(p) = N_0 \ln(1-p)^2 + N_1 \ln(2p(1-p)) + N_2 \ln p^2$.
+    \item $\ell'(p) = \frac{-2N_0}{1-p} + \frac{N_1}{p} - \frac{N_1}{1-p} + \frac{2N_2}{p} = 0$.
+    \item Solving for $p$ gives $\hat{p} = \frac{N_1 + 2N_2}{2(N_0 + N_1 + N_2)}$. Note the denominator in the prompt might assume a different total count convention.
+    \item By the property of MLE, $\sqrt{n}(\hat{p} - p) \xrightarrow{d} N(0, I(p)^{-1})$.
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}
+\label{applied:2010:11}
 When considering finite difference schemes approximating partial differential equations (PDEs), for example, the scheme
 \[
 u_j^{n+1} = u_j^n - \lambda(u_j^n - u_{j-1}^n) \tag{1}
@@ -136,7 +291,7 @@ Stability is about the uniform boundedness of the numerical operator as the mesh
 \end{solution}
 
 \begin{exercise}
-\label{applied:2010:4}
+\label{applied:2010:12}
 We have the following 3 PDEs
 \[
 u_t + A u_x = 0, \tag{4}

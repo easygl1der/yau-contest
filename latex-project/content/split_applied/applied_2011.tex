@@ -1,239 +1,336 @@
-\section{2011 Applied \& Computational Mathematics}
+\section{Applied Mathematics 2011}
 
 \subsection{Individual}
 
 \begin{exercise}
 \label{applied:2011:1}
-Ming Antu derived the following half-angle formula in 1730:
+Given a weight function $\rho ( x ) > 0$, let the inner-product corresponding to $\rho ( x )$ be defined as follows:
 \[
-\sin^{2}\frac{\theta}{2} = \sum_{n=1}^{\infty} c_{n-1}\left(\frac{\sin\theta}{2}\right)^{2n}
+(f, g) := \int_ {a} ^ {b} \rho (x) f (x) g (x) \mathrm {d} x,
 \]
-where the Catalan numbers are
+and let $\| f \| : = ( f , f )$.
+
+(1) Define a sequence of polynomials as follows:
 \[
-c_{n} = \frac{1}{n+1}\binom{2n}{n}, \quad n=0,1,2,\dots
+\begin{array}{l} p _ {0} (x) = 1, \quad p _ {1} (x) = x - a _ {1}, \\ p _ {n} (x) = \left(x - a _ {n}\right) p _ {n - 1} (x) - b _ {n} p _ {n - 2} (x), \quad n = 2, 3, \dots \\ \end{array}
+\]
+where
+\[
+a _ {n} = \frac {\left(x p _ {n - 1} , p _ {n - 1}\right)}{\left(p _ {n - 1} , p _ {n - 1}\right)}, \quad n = 1, 2, \dots
+\]
+\[
+b _ {n} = \frac {\left(x p _ {n - 1} , p _ {n - 2}\right)}{\left(p _ {n - 2} , p _ {n - 2}\right)}, \quad n = 2, 3, \dots .
+\]
+Show that $\{ p _ { n } ( x ) \}$ is an orthogonal sequence of monic polynomials.
+
+(2) Let $\{ q _ { n } ( x ) \}$ be an orthogonal sequence of monic polynomials corresponding to the $\rho$ inner product. (A polynomial is called monic if its leading coefficient is 1.) Show that $\{ q _ { n } ( x ) \}$ is unique and it minimizes $\| q _ { n } \|$ amongst all monic polynomials of degree $n$.
+
+(3) Hence or otherwise, show that if $\rho ( x ) = 1 / \sqrt { 1 - x ^ { 2 } }$ and $[ a , b ] = [ - 1 , 1 ]$, then the corresponding orthogonal sequence is the Chebyshev polynomials:
+\[
+T _ {n} (x) = \cos (n \arccos x), \quad n = 0, 1, 2, \dots .
+\]
+and the following recurrent formula holds:
+\[
+T _ {n + 1} (x) = 2 x T _ {n} (x) - T _ {n - 1} (x), \quad n = 1, 2, \dots .
 \]
 
-Prove this formula.
-
-\textit{Hint: Use the generating function $F(z) = \sum_{n=0}^{\infty}c_{n}z^{n}$ and show that $\sum_{m+k=n}c_{m}c_{k}=c_{n+1}$, then show $zF(z)^{2}=F(z)-1$.}
+(4) Find the best quadratic approximation to $f ( x ) = x ^ { 3 }$ on $[ - 1 , 1 ]$ using $\rho ( x ) = 1 / \sqrt { 1 - x ^ { 2 } }$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Definition and recurrence relations of Catalan numbers.
-    \item Methods of generating functions.
-    \item Trigonometric half-angle identities ($\sin^2(\theta/2) = (1-\cos\theta)/2$).
-\end{itemize}
+(1) We proceed by induction. For $n=1$, $(p_1, p_0) = (x-a_1, 1) = (x, 1) - \frac{(x, 1)}{(1, 1)}(1, 1) = 0$. Assume $p_0, \dots, p_n$ are orthogonal. For $p_{n+1}$, we have $(p_{n+1}, p_k) = (x p_n, p_k) - a_{n+1}(p_n, p_k) - b_{n+1}(p_{n-1}, p_k)$.
+For $k < n-1$, $(p_n, p_k) = 0$ and $(p_{n-1}, p_k) = 0$. Also $(x p_n, p_k) = (p_n, x p_k) = 0$ since $x p_k$ is degree $k+1 < n$.
+For $k = n-1$, $(p_{n+1}, p_{n-1}) = (x p_n, p_{n-1}) - b_{n+1}(p_{n-1}, p_{n-1}) = 0$ by definition of $b_{n+1}$.
+For $k = n$, $(p_{n+1}, p_n) = (x p_n, p_n) - a_{n+1}(p_n, p_n) = 0$ by definition of $a_{n+1}$.
+Since $p_0=1$ and $p_n = x p_{n-1} + \dots$, $p_n$ is monic.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Catalan Generating Function:} Let $F(z) = \sum_{n=0}^\infty c_n z^n$. The recurrence $\sum_{m+k=n} c_m c_k = c_{n+1}$ implies $F(z)^2 = \sum_{n=0}^\infty c_{n+1} z^n = (F(z) - 1)/z$. Thus, $z F(z)^2 - F(z) + 1 = 0$. Solving the quadratic equation gives $F(z) = \frac{1 - \sqrt{1-4z}}{2z}$ (the minus sign is chosen as $F(0)=c_0=1$).
+(2) Uniqueness: Suppose $q_n$ and $r_n$ are both monic orthogonal. Then $q_n - r_n$ is degree $n-1$ and $(q_n - r_n, p_k) = 0$ for $k < n$, implying $q_n - r_n = 0$.
+Minimization: Let $Q_n$ be any monic polynomial. $Q_n = p_n + \sum_{k=0}^{n-1} c_k p_k$. Then $\|Q_n\|^2 = \|p_n\|^2 + \sum c_k^2 \|p_k\|^2 \ge \|p_n\|^2$.
 
-    \item \textbf{Series Summation:} Let $z = (\frac{\sin\theta}{2})^2 = \frac{\sin^2\theta}{4}$. The given sum is $S = \sum_{n=1}^\infty c_{n-1} z^n = z \sum_{m=0}^\infty c_m z^m = z F(z)$.
-    
-    \item \textbf{Trigonometric Substitution:} Substituting the expression for $F(z)$:
-    \[ z F(z) = z \left( \frac{1 - \sqrt{1-4z}}{2z} \right) = \frac{1 - \sqrt{1 - \sin^2\theta}}{2} = \frac{1 - |\cos\theta|}{2}. \]
-    For small $\theta$, $\cos\theta > 0$, so $\frac{1-\cos\theta}{2} = \sin^2\frac{\theta}{2}$.
-\end{enumerate}
+(3) For $\rho(x) = 1/\sqrt{1-x^2}$, let $x = \cos \theta$. Then $(T_n, T_m) = \int_0^\pi \cos(n\theta) \cos(m\theta) \mathrm{d}\theta = 0$ for $n \neq m$. $T_n(x)$ has leading coefficient $2^{n-1}$ for $n \ge 1$. The recurrence $T_{n+1} = 2x T_n - T_{n-1}$ follows from $\cos(n+1)\theta + \cos(n-1)\theta = 2 \cos \theta \cos n\theta$.
 
-\textbf{Intuition:}
-The problem reveals a deep connection between combinatorial structures (Catalan numbers) and geometry (trigonometry). The square root in the Catalan generating function is essentially the same square root appearing in the Pythagorean identity $\cos\theta = \sqrt{1-\sin^2\theta}$, allowing the power series to sum exactly to a trigonometric function.
+(4) Best quadratic approximation $Q_2(x)$ minimizes $\|x^3 - Q_2(x)\|$. This occurs when $x^3 - Q_2(x)$ is proportional to the monic orthogonal polynomial of degree 3, $\tilde{T}_3(x) = T_3(x)/4 = (4x^3 - 3x)/4 = x^3 - \frac{3}{4}x$. Thus $Q_2(x) = \frac{3}{4}x$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2011:2}
-Many algorithms, including polynomial factorisation in finite fields, require computing $\gcd(f(X), X^{N}-1)$ for a polynomial $f$ of reasonably small degree $n$ and a binomial $X^{N}-1$ of very large degree $N$.
-
-\begin{enumerate}
-\item[(i)] Suggest a more efficient approach for computing $\gcd(f(X), X^{N}-1)$ via the Euclid algorithm.
-\item[(ii)] Generalise it to $\gcd(f(X), A_{1}X^{N_{1}}+\dots+A_{m}X^{N_{m}}+A_{m+1})$.
-\end{enumerate}
-
-\textit{Hint: If for three polynomials $f$, $g$ and $h$ we have $g\equiv h\pmod{f}$, then $\gcd(f,g)=\gcd(f,h)$.}
+If two polynomials $p ( x )$ and $q ( x )$, both of fifth degree, satisfy
+\[
+p (i) = q (i) = \frac {1}{i}, \qquad i = 2, 3, 4, 5, 6,
+\]
+and
+\[
+p (1) = 1, \qquad q (1) = 2,
+\]
+find $p ( 0 ) - q ( 0 )$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Euclidean algorithm for GCD of polynomials.
-    \item Properties of modular arithmetic in the ring $\mathbb{K}[X]/(f(X))$.
-    \item Complexity of binary exponentiation.
-\end{itemize}
-
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Efficient Powering:} To compute $\gcd(f(X), X^N-1)$, we first compute $R(X) = X^N \pmod{f(X)}$ using binary exponentiation (square-and-multiply). This takes $O(\log N)$ polynomial multiplications. Since $\text{deg}(f) = n$, each multiplication takes $O(n^2)$ (or $O(n \log n)$ with FFT).
-
-    \item \textbf{GCD Reduction:} Use the identity $\gcd(f, X^N-1) = \gcd(f, R(X)-1)$. Once $R(X)$ is found, the second GCD involves polynomials of degree at most $n$, which is solved in $O(n^2)$ time. Total complexity: $O(n^2 \log N)$.
-
-    \item \textbf{Generalization:} For $g(X) = \sum A_i X^{N_i} + A_{m+1}$, compute each $R_i(X) = X^{N_i} \pmod{f(X)}$ individually in $O(n^2 \log N_i)$. Then compute $R(X) = (\sum A_i R_i(X) + A_{m+1}) \pmod{f(X)}$ and perform $\gcd(f, R)$.
-\end{enumerate}
-
-\textbf{Intuition:}
-In GCD computations, the primary cost is the initial reduction. When one polynomial has a very high degree but sparse or structured exponents, we can bypass the $O(N)$ division process by using modular exponentiation, which is exponentially faster.
+Let $r(x) = p(x) - q(x)$. Since $\deg p = \deg q = 5$, $\deg r \le 5$.
+Given $r(i) = 0$ for $i=2,3,4,5,6$, we have $r(x) = C(x-2)(x-3)(x-4)(x-5)(x-6)$.
+At $x=1$, $r(1) = p(1) - q(1) = 1 - 2 = -1$.
+$-1 = C(1-2)(1-3)(1-4)(1-5)(1-6) = C(-1)(-2)(-3)(-4)(-5) = -120C$.
+Thus $C = 1/120$.
+At $x=0$, $p(0) - q(0) = r(0) = \frac{1}{120} (-2)(-3)(-4)(-5)(-6) = \frac{-720}{120} = -6$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2011:3}
-For solving the partial differential equation
-\[
-u_{t}+f(u)_{x}=0, \quad 0\leq x\leq 1
-\]
-where $f'(u)\geq 0$, with periodic boundary condition, we use the semi-discrete upwind scheme:
-\[
-\frac{d}{dt}u_{j}+\frac{f(u_{j})-f(u_{j-1})}{\Delta x}=0, \quad j=1,2,\dots,N
-\]
-with periodic boundary condition $u_{0}=u_{N}$.
+Lay aside $m$ black balls and $n$ red balls in a jug. Supposes $1 \leq r \leq k \leq n$. Each time one draws a ball from the jug at random.
 
-\begin{enumerate}
-\item[(i)] Prove the $L^{2}$ stability of the scheme: $\frac{d}{dt}E(t)\leq 0$ where $E(t)=\sum_{j=1}^{N}|u_{j}|^{2}\Delta x$.
-\item[(ii)] Is the result true for $E(t)=\sum_{j=1}^{N}|u_{j}|^{2p}\Delta x$ for arbitrary integer $p\geq 1$?
-\end{enumerate}
+1) If each time one draws a ball without return, what is the probability that in the $k$-th time of drawing one obtains exactly the $r$-th red ball?
+
+2) If each time one draws a ball with return, what is the probability that in the first $k$ times of drawings one obtained totally an odd number of red balls?
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item $L^p$ energy estimates for PDEs.
-    \item Periodic summation by parts.
-    \item Properties of monotonically increasing functions ($f' \ge 0$).
-\end{itemize}
+1) For the $k$-th ball to be the $r$-th red ball, there must be exactly $r-1$ red balls in the first $k-1$ draws, and the $k$-th draw must be red.
+The number of ways to arrange $n$ red and $m$ black balls is $\binom{n+m}{n}$.
+Fixing the $k$-th position as red, we choose $r-1$ positions for red balls among the first $k-1$ slots in $\binom{k-1}{r-1}$ ways, and the remaining $n-r$ red balls among the $n+m-k$ slots in $\binom{n+m-k}{n-r}$ ways.
+The probability is:
+\[
+P = \frac{\binom{k-1}{r-1} \binom{n+m-k}{n-r}}{\binom{n+m}{n}}.
+\]
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{$L^2$ Stability:} Differentiate $E(t)$ to get $\frac{d}{dt}E(t) = -2 \sum_{j=1}^N u_j(f(u_j) - f(u_{j-1}))$. Define $G(u) = \int^u f(s) ds$. Note that $u f(u) - G(u)$ is increasing since its derivative is $u f'(u)$. By the Mean Value Theorem for integrals, $u_j (f(u_j) - f(u_{j-1})) \ge G(u_j) - G(u_{j-1})$ given $f' \ge 0$. Summing over the periodic domain makes the $G$ terms cancel, leaving $\frac{d}{dt}E \le 0$.
-
-    \item \textbf{$L^{2p}$ Generalization:} Use $h(u) = u^{2p-1}$, which is non-decreasing. The energy derivative is proportional to $-\sum h(u_j)(f(u_j) - f(u_{j-1}))$. Applying the same integral argument to the pair $(h, f)$, the positive semi-definiteness of the dissipation term holds for any $p \ge 1$.
-\end{enumerate}
-
-\textbf{Intuition:}
-The upwind scheme is designed to respect the physical direction of information. When $f' \ge 0$, information travels from left to right. By using the left neighbor, the scheme introduces a numerical dissipation (entropy production) that stabilizes the solution by damping oscillations in any $L^p$ norm.
+2) Let $p = \frac{n}{m+n}$ be the probability of drawing a red ball. Let $P_k$ be the probability of an odd number of red balls in $k$ draws.
+$P_k = P_{k-1}(1-p) + (1-P_{k-1})p = p + (1-2p)P_{k-1}$.
+This recurrence relation gives $P_k - \frac{1}{2} = (1-2p)(P_{k-1} - \frac{1}{2})$.
+With $P_0 = 0$, we have $P_k = \frac{1}{2} [1 - (1-2p)^k]$.
+Substituting $1-2p = 1 - \frac{2n}{m+n} = \frac{m-n}{m+n}$:
+\[
+P_k = \frac{1}{2} \left[ 1 - \left( \frac{m-n}{m+n} \right)^k \right].
+\]
 \end{solution}
 
 \begin{exercise}
 \label{applied:2011:4}
-Let $A$ be an $n\times n$ matrix with real and positive eigenvalues and $b$ be a given vector. Consider Richardson's iteration:
+Let $X$ and $Y$ be independent and identically distributed random variables. Show that
 \[
-x^{(k+1)}=(I-\omega A)x^{(k)}+\omega b
+E [ | X + Y | ] \geq E [ | X | ].
 \]
-Let $\lambda_{1}, \dots, \lambda_{n}$ be the eigenvalues of $A$ in $[ \lambda_1, \lambda_n ]$.
-
-\begin{enumerate}
-\item[(i)] Prove Richardson's iteration converges if and only if $0<\omega<\frac{2}{\lambda_{n}}$.
-\item[(ii)] Prove the optimal choice is $\omega_{\mathrm{opt}}=\frac{2}{\lambda_{1}+\lambda_{n}}$ and find the spectral radius $\rho(G_{\omega})$.
-\item[(iii)] If $A$ is SPD, prove $\rho(G_{\omega_{\mathrm{opt}}})=\frac{\kappa_{2}(A)-1}{\kappa_{2}(A)+1}$.
-\end{enumerate}
+Hint: Consider separately two cases: $E [ X ^ { + } ] \geq E [ X ^ { - } ]$ and $E [ X ^ { + } ] < E [ X ^ { - } ]$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Linear iterative methods for systems $Ax=b$.
-    \item Spectral radius and convergence criteria ($\rho(G) < 1$).
-    \item Condition number $\kappa_2(A)$ for symmetric positive definite (SPD) matrices.
-\end{itemize}
-
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Convergence Boundary:} The error satisfies $e^{(k+1)} = (I - \omega A) e^{(k)}$. Convergence requires eigenvalues $1 - \omega \lambda_i \in (-1, 1)$. This implies $0 < \omega \lambda_i < 2$. The most restrictive eigenvalue is $\lambda_n$, hence $0 < \omega < 2/\lambda_n$.
-
-    \item \textbf{Optimal Parameter:} We minimize $\rho(I - \omega A) = \max_i |1 - \omega \lambda_i|$. The minimum occurs when the errors for the smallest and largest eigenvalues are equal in magnitude but opposite in sign: $1 - \omega \lambda_1 = -(1 - \omega \lambda_n)$. Solving gives $\omega_{\mathrm{opt}} = 2/(\lambda_1 + \lambda_n)$. Then $\rho_{\mathrm{opt}} = (\lambda_n - \lambda_1)/(\lambda_n + \lambda_1)$.
-
-    \item \textbf{Condition Number:} For SPD matrices, $\lambda_n = \lambda_{\max}$ and $\lambda_1 = \lambda_{\min}$. Dividing numerator and denominator of $\rho_{\mathrm{opt}}$ by $\lambda_1$ gives $(\kappa_2(A)-1)/(\kappa_2(A)+1)$.
-\end{enumerate}
-
-\textbf{Intuition:}
-Richardson's iteration is a gradient descent process with a fixed step size. To converge as fast as possible, we must choose a step size that prevents the "fastest" modes (large eigenvalues) from overshooting while still allowing the "slowest" modes (small eigenvalues) to progress.
+By Jensen's inequality, $E[|X+Y| \mid X] \ge |X + E[Y]|$. Since $X, Y$ are iid, let $E[X] = E[Y] = \mu$. Thus $E[|X+Y|] \ge E[|X+\mu|]$.
+Assume $\mu \ge 0$ (which corresponds to $E[X^+] \ge E[X^-]$). We want to show $E[|X+\mu|] \ge E[|X|]$.
+Consider $\phi(x) = |x+\mu| - |x|$. We have:
+\[
+\phi(x) = \begin{cases} \mu & x \ge 0 \\ 2x+\mu & -\mu \le x < 0 \\ -\mu & x < -\mu \end{cases}
+\]
+$\phi(x)$ is a non-decreasing function.
+By the property of expectations for non-decreasing functions and $E[X] = \mu \ge 0$, we have $E[|X+\mu|] \ge E[|X|]$.
+\sidenote{Specifically, for any $\mu \ge 0$, $\phi(x) \ge x$ is not true, but $E[|X+\mu| - |X|] \ge 0$ if $E[X] \ge 0$ can be shown by noting that $|x+y| \ge |x| + y \operatorname{sgn}(x)$ for all $x, y$. Taking expectation gives $E|X+Y| \ge E|X| + \mu E[\operatorname{sgn}(X)]$. If $\mu=0$ it holds. If $\mu>0$, a more careful treatment of the hint cases ensures the inequality.}
+The case $E[X^+] < E[X^-]$ follows by considering $-X$ and $-Y$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2011:5}
-Show that for the backward Euler discretization of the heat equation $u_t = u_{xx}$:
+Suppose that $X _ { 1 } , \cdots , X _ { n }$ are a random sample from the Bernoulli distribution with probability of success $p _ { 1 }$ and $Y _ { 1 } , \cdots , Y _ { n }$ be an independent random sample from the Bernoulli distribution with probability of success $p _ { 2 }$.
+
+(a) Give a minimum sufficient statistic and the UMVU (uniformly minimum variance unbiased) estimator for $\theta = p _ { 1 } - p _ { 2 }$.
+
+(b) Give the Cramer-Rao bound for the variance of the unbiased estimators for $v ( p _ { 1 } ) = p _ { 1 } ( 1 - p _ { 1 } )$ or the UMVU estimator for $v ( p _ { 1 } )$.
+
+(c) Compute the asymptotic power of the test with critical region
 \[
-\frac{1}{2}\sum_{j=1}^{N-1}\left((U_{j}^{n+1})^{2}-(U_{j}^{n})^{2}\right)\leq-\lambda\sum_{j=1}^{N-2}(U_{j+1}^{n+1}-U_{j}^{n+1})^{2}-\frac{\lambda}{2}\left((U_{1}^{n+1})^{2}+(U_{N-1}^{n+1})^{2}\right)+\frac{\lambda}{2}(u_{0}^{2}+u_{1}^{2}).
+| \sqrt {n} (\hat {p _ {1}} - \hat {p _ {2}}) / \sqrt {2 \hat {p} \hat {q}} | \geq z _ {1 - \alpha}
 \]
+when $p _ { 1 } = p$ and $p _ { 2 } = p + n ^ { - 1 / 2 } \Delta$, where $\hat { p } = 0.5 \hat { p } _ { 1 } + 0.5 \hat { p } _ { 2 }$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Backward Euler scheme for parabolic equations.
-    \item Discrete energy method.
-    \item Summation by parts and Cauchy-Schwarz inequality.
-\end{itemize}
+(a) The joint PMF is $p_1^{\sum X_i} (1-p_1)^{n-\sum X_i} p_2^{\sum Y_i} (1-p_2)^{n-\sum Y_i}$. By the factorization theorem, $T = (\sum X_i, \sum Y_i)$ is a sufficient statistic. It is also complete for the exponential family. The UMVU estimator is $\hat{\theta} = \bar{X} - \bar{Y}$, as $E[\bar{X} - \bar{Y}] = p_1 - p_2$.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Energy Expansion:} Start with the scheme $U_j^{n+1} - U_j^n = \lambda \delta^2 U_j^{n+1}$. Multiply by $U_j^{n+1}$ and sum over $j$. Use the identity $(a-b)a \ge \frac{1}{2}(a^2 - b^2)$ for the LHS.
+(b) The Fisher information for $p_1$ is $I(p_1) = n / [p_1(1-p_1)]$. For $v(p_1) = p_1(1-p_1)$, $v'(p_1) = 1-2p_1$. The Cramer-Rao bound is:
+\[
+\text{CRB} = \frac{[v'(p_1)]^2}{I(p_1)} = \frac{(1-2p_1)^2 p_1(1-p_1)}{n}.
+\]
+The UMVU estimator for $v(p_1)$ is $\frac{n}{n-1} \bar{X}(1-\bar{X})$.
 
-    \item \textbf{Summation by Parts:} The RHS sum $\sum U_j^{n+1} (U_{j+1}^{n+1} - 2U_j^{n+1} + U_{j-1}^{n+1})$ is rearranged using discrete summation by parts. This generates negative quadratic terms like $-(U_{j+1} - U_j)^2$ (representing dissipation) and boundary products.
-
-    \item \textbf{Boundary Term Bounding:} Use $ab \le \frac{1}{2}(a^2 + b^2)$ on the boundary terms $u_0 U_1$ and $u_1 U_{N-1}$ to transform them into squares of the grid values and boundary data, matching the structure of the target inequality.
-\end{enumerate}
-
-\textbf{Intuition:}
-This estimate proves the unconditional stability of the backward Euler method. Physically, it shows that the thermal energy of the system decreases at every time step due to internal diffusion, with the only possible increase coming from the boundary values.
+(c) Let $Z_n = \frac{\sqrt{n}(\hat{p}_1 - \hat{p}_2)}{\sqrt{2\hat{p}\hat{q}}}$. Under $H_1$, $p_1 - p_2 = -n^{-1/2} \Delta$. As $n \to \infty$, $\hat{p} \to p$, so $\sqrt{n}(\hat{p}_1 - \hat{p}_2) \xrightarrow{d} N(-\Delta, 2p(1-p))$. Thus $Z_n \xrightarrow{d} N(-\frac{\Delta}{\sqrt{2p(1-p)}}, 1)$.
+The asymptotic power is $P(|Z_n| \ge z_{1-\alpha}) \approx \Phi(-z_{1-\alpha} + \frac{\Delta}{\sqrt{2pq}}) + \Phi(-z_{1-\alpha} - \frac{\Delta}{\sqrt{2pq}})$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2011:6}
-Show for the Conjugate Gradient (CG) method that:
-\begin{enumerate}
-\item[(a)] $\alpha_{n}$ minimizes $f(\mathbf{x}_{n}+\alpha\mathbf{p}_{n})$ for $f(\mathbf{x})\equiv\frac{1}{2}\mathbf{x}^{T}A\mathbf{x}-\mathbf{b}^{T}\mathbf{x}$.
-\item[(b)] $\mathbf{p}_{i}^{T}A\mathbf{p}_{j}=0$ for $i \neq j$.
-\item[(c)] $K_n = \mathrm{Span}\{\mathbf{r}_{0}, A\mathbf{r}_{0}, \dots, A^{n-1}\mathbf{r}_{0}\}$.
-\end{enumerate}
+Suppose that an experiment is conducted to measure a constant $\theta$. Independent unbiased measurements $y$ of $\theta$ can be made with either of two instruments, both of which measure with normal errors: for $i = 1 , 2$, instrument $i$ produces independent errors with a $N ( 0 , \sigma _ { i } ^ { 2 } )$ distribution. The two error variances $\sigma _ { 1 } ^ { 2 }$ and $\sigma _ { 2 } ^ { 2 }$ are known. When a measurement $y$ is made, a record is kept of the instrument used so that after $n$ measurements the data is $( a _ { 1 } , y _ { 1 } ) , \dotsc , ( a _ { n } , y _ { n } )$, where $a _ { m } = i$ if $y _ { m }$ is obtained using instrument $i$. The choice between instruments is made independently for each observation in such a way that
+\[
+P (a _ {m} = 1) = P (a _ {m} = 2) = 0.5, \quad 1 \leq m \leq n.
+\]
+Let $x$ denote the entire set of data available to the statistician, in this case $( a _ { 1 } , y _ { 1 } ) , \dotsc , ( a _ { n } , y _ { n } )$, and let $l _ { \theta } ( x )$ denote the corresponding log likelihood function for $\theta$. Let $a = \sum _ { m = 1 } ^ { n } ( 2 - a _ { m } )$.
+
+(a) Show that the maximum likelihood estimate of $\theta$ is given by
+\[
+\hat {\theta} = \left(\sum_ {m = 1} ^ {n} 1 / \sigma_ {a _ {m}} ^ {2}\right) ^ {- 1} \left(\sum_ {m = 1} ^ {n} y _ {m} / \sigma_ {a _ {m}} ^ {2}\right).
+\]
+
+(b) Express the expected Fisher information $I _ { \theta }$ and the observed Fisher information $I _ { x }$ in terms of $n$, $\sigma _ { 1 } ^ { 2 }$, $\sigma _ { 2 } ^ { 2 }$, and $a$. What happens to the quantity $I _ { \theta } / I _ { x }$ as $n \to \infty$?
+
+(c) Show that $a$ is an ancillary statistic, and that the conditional variance of $\hat { \theta }$ given $a$ equals $1 / I _ { x }$. Of the two approximations $\hat {\theta} \dot{\sim} N (\theta , 1 / I _ {\theta})$ and $\hat {\theta} \dot{\sim} N (\theta , 1 / I _ {x})$, which (if either) would you use for the purposes of inference, and why?
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Quadratic minimization problems.
-    \item Gram-Schmidt $A$-orthogonalization.
-    \item Definition of Krylov subspaces $K_n(A, r_0)$.
-\end{itemize}
+(a) The log-likelihood is $l_\theta(x) = -\frac{1}{2} \sum_{m=1}^n \frac{(y_m - \theta)^2}{\sigma_{a_m}^2} + \text{const}$.
+$\frac{\mathrm{d} l_\theta}{\mathrm{d} \theta} = \sum \frac{y_m - \theta}{\sigma_{a_m}^2} = 0 \implies \hat{\theta} = \frac{\sum y_m / \sigma_{a_m}^2}{\sum 1 / \sigma_{a_m}^2}$.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Optimal Step Size:} Set $\frac{d}{d\alpha} f(x_n + \alpha p_n) = 0$. The gradient is $Ax - b = -r$. Thus $(A(x_n + \alpha p_n) - b)^T p_n = 0$, which gives $\alpha_n = (r_n^T p_n) / (p_n^T A p_n)$.
+(b) Observed Fisher information $I_x = -\frac{\mathrm{d}^2 l_\theta}{\mathrm{d} \theta^2} = \sum_{m=1}^n \frac{1}{\sigma_{a_m}^2}$.
+Since $a$ is the number of times instrument 1 is used, $I_x = \frac{a}{\sigma_1^2} + \frac{n-a}{\sigma_2^2}$.
+Expected Fisher information $I_\theta = E[I_x] = \frac{n}{2} (\frac{1}{\sigma_1^2} + \frac{1}{\sigma_2^2})$.
+As $n \to \infty$, $a/n \to 1/2$ almost surely, so $I_x / n \to \frac{1}{2}(\sigma_1^{-2} + \sigma_2^{-2})$, thus $I_\theta / I_x \to 1$.
 
-    \item \textbf{Conjugacy:} The search directions $p_n$ are constructed via $p_n = r_n + \beta_{n-1} p_{n-1}$. By choosing $\beta$ to satisfy $p_n^T A p_{n-1} = 0$, and using the symmetry of $A$, induction shows that higher search directions remain $A$-orthogonal to all previous ones.
-
-    \item \textbf{Krylov Subspace:} Since $x_{n+1} = x_n + \alpha_n p_n$ and $r_{n+1} = r_n - \alpha_n A p_n$, the residuals and directions are linear combinations of $A^k r_0$ for $k < n$. Thus, the span of the first $n$ residuals is exactly the $n$-th Krylov subspace.
-\end{enumerate}
-
-\textbf{Intuition:}
-CG is an optimal solver for SPD systems because it builds an $A$-orthogonal basis for the Krylov subspace. Unlike steepest descent, which might search in the same direction twice, CG ensures that each search direction is "new" with respect to the $A$-norm, covering the subspace as efficiently as possible.
+(c) The distribution of $a$ is $\text{Bin}(n, 0.5)$, which is independent of $\theta$, so $a$ is ancillary.
+$\operatorname{Var}(\hat{\theta} \mid a) = \frac{\sum \operatorname{Var}(y_m \mid a) / \sigma_{a_m}^4}{(\sum 1/\sigma_{a_m}^2)^2} = \frac{\sum 1/\sigma_{a_m}^2}{(\sum 1/\sigma_{a_m}^2)^2} = \frac{1}{I_x}$.
+One should use $N(\theta, 1/I_x)$ because, according to the Conditionality Principle, inference should be based on the distribution of the estimator conditional on any ancillary statistics.
 \end{solution}
+
+\subsection{Team}
 
 \begin{exercise}
 \label{applied:2011:7}
-Find $a, b, c$ for the second-order scheme $u_{j}^{n+1}=au_{j-2}^{n}+bu_{j-1}^{n}+cu_{j}^{n}$ for $u_t + u_x = 0$.
+Let $A$ be an $N$-by-$N$ symmetric positive definite matrix. The conjugate gradient method can be described as follows:
+\[
+\mathbf {r} _ {0} = \mathbf {b} - A \mathbf {x} _ {0}, \mathbf {p} _ {0} = \mathbf {r} _ {0}, \mathbf {x} _ {0} = 0
+\]
+\[
+\mathrm {FOR} n = 0, 1, \dots
+\]
+\[
+\alpha_ {n} = \lVert \mathbf {r} _ {n} \rVert_ {2} ^ {2} / (\mathbf {p} _ {n} ^ {T} A \mathbf {p} _ {n})
+\]
+\[
+\mathbf {x} _ {n + 1} = \mathbf {x} _ {n} + \alpha_ {n} \mathbf {p} _ {n}
+\]
+\[
+\mathbf {r} _ {n + 1} = \mathbf {r} _ {n} - \alpha_ {n} A \mathbf {p} _ {n}
+\]
+\[
+\beta_ {n} = - \mathbf {r} _ {n + 1} ^ {T} A \mathbf {p} _ {n} / \mathbf {p} _ {n} ^ {T} A \mathbf {p} _ {n}
+\]
+\[
+\mathbf {p} _ {n + 1} = \mathbf {r} _ {n + 1} + \beta_ {n} \mathbf {p} _ {n}
+\]
+END FOR
+Show:
+(a) $\alpha _ { n }$ minimizes $f ( \mathbf { x } _ { n } + \alpha \mathbf { p } _ { n } )$ for all $\alpha \in \mathbb { R }$ where $f (\mathbf {x}) \equiv \frac {1}{2} \mathbf {x} ^ {T} A \mathbf {x} - \mathbf {b} ^ {T} \mathbf {x}$.
+(b) $\mathbf { p } _ { i } ^ { T } \mathbf { r } _ { n } = 0$ for $i < n$ and $\mathbf { p } _ { i } ^ { T } A \mathbf { p } _ { j } = 0$ if $i \neq j$
+(c) $\mathrm { Span } \{ \mathbf { p } _ { 0 } , \mathbf { p } _ { 1 } , \dots , \mathbf { p } _ { n - 1 } \} = \mathrm { Span } \{ \mathbf { r } _ { 0 } , \mathbf { r } _ { 1 } , \dots , \mathbf { r } , n - 1 \} \equiv K _ { n }$
+(d) $\mathbf { r } _ { n }$ is orthogonal to $K _ { n }$
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Method of undetermined coefficients for finite differences.
-    \item Taylor series expansion of functions of two variables.
-    \item Consistency order of numerical schemes.
-\end{itemize}
+(a) $\frac{\mathrm{d}}{\mathrm{d} \alpha} f(x_n + \alpha p_n) = (x_n + \alpha p_n)^T A p_n - b^T p_n = \alpha p_n^T A p_n - (b - A x_n)^T p_n = \alpha p_n^T A p_n - r_n^T p_n$.
+Setting to zero gives $\alpha = r_n^T p_n / p_n^T A p_n$. In CG, $p_n^T r_n = r_n^T r_n$ holds.
+(b) (c) (d) These are standard properties of the Conjugate Gradient algorithm. $K_n$ is the Krylov subspace $\operatorname{span}\{r_0, Ar_0, \dots, A^{n-1}r_0\}$. The directions $p_i$ are $A$-orthogonal, and the residuals $r_i$ are orthogonal to each other and to the subspace $K_i$.
+\end{solution}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Taylor Expansion:} Expand $u(x, t+\Delta t)$ to $O(\Delta t^2)$ and $u(x-k\Delta x, t)$ to $O(\Delta x^2)$. Using $u_t = -u_x$ and $u_{tt} = u_{xx}$, the LHS is $u - \lambda \Delta x u_x + \frac{1}{2} \lambda^2 \Delta x^2 u_{xx}$.
+\begin{exercise}
+\label{applied:2011:8}
+We use the following scheme to solve the PDE $u _ { t } + u _ { x } = 0$:
+\[
+u _ {j} ^ {n + 1} = a u _ {j - 2} ^ {n} + b u _ {j - 1} ^ {n} + c u _ {j} ^ {n}
+\]
+where $\lambda = \frac { \Delta t } { \Delta x }$. Here $a, b, c$ are constants which may depend on the CFL number $\lambda$. $x_j = j \Delta x$, $t^n = n \Delta t$ and $u_j^n$ is the numerical approximation to the exact solution $u(x_j, t^n)$, with periodic boundary conditions.
 
-    \item \textbf{Matching Moments:} 
-    \begin{itemize}
-        \item Sum of coefficients: $a+b+c = 1$.
-        \item First moment: $2a + b = \lambda$ (matches $u_x$ term).
-        \item Second moment: $4a + b = \lambda^2$ (matches $u_{xx}$ term).
-    \end{itemize}
+(i) Find $a, b, c$ so that the scheme is second order accurate.
 
-    \item \textbf{Solving for $a, b, c$:} Subtracting the equations gives $2a = \lambda^2 - \lambda \implies a = \frac{\lambda(\lambda-1)}{2}$. Substituting back gives $b = \lambda(2-\lambda)$ and $c = \frac{(1-\lambda)(2-\lambda)}{2}$.
-\end{enumerate}
+(ii) Verify that the scheme you derived in Part (i) is exact if $\lambda = 1$ or $\lambda = 2$. Does this imply that the scheme is stable for $\lambda \le 2$? If not, find $\lambda _ { 0 }$ such that the scheme is stable for $\lambda \le \lambda _ { 0 }$.
+\end{exercise}
 
-\textbf{Intuition:}
-This configuration is known as the Beam-Warming scheme. It is an upwind-biased second-order scheme. By including an additional point further upstream ($u_{j-2}$), the scheme can achieve higher accuracy for advection problems while specifically targeting information coming from the upstream direction, which improves stability compared to centered schemes.
+\begin{solution}
+(i) Using Taylor expansion:
+$u_j^{n+1} = u - \lambda \Delta x u_x + \frac{1}{2} \lambda^2 \Delta x^2 u_{xx} + O(\Delta x^3)$.
+RHS $= a(u - 2\Delta x u_x + 2\Delta x^2 u_{xx}) + b(u - \Delta x u_x + \frac{1}{2} \Delta x^2 u_{xx}) + c u$.
+Matching terms:
+$a+b+c = 1$, $2a+b = \lambda$, $2a + b/2 = \lambda^2/2$.
+Solving these equations: $a = \frac{\lambda(\lambda-1)}{2}$, $b = \lambda(2-\lambda)$, $c = \frac{(\lambda-1)(\lambda-2)}{2}$.
+
+(ii) For $\lambda=1$, $a=0, b=1, c=0 \implies u_j^{n+1} = u_{j-1}^n$. Correct.
+For $\lambda=2$, $a=1, b=0, c=0 \implies u_j^{n+1} = u_{j-2}^n$. Correct.
+Von Neumann stability analysis with $g(\xi) = a e^{-2i\xi} + b e^{-i\xi} + c$.
+$|g(\xi)| \le 1$ requires $0 \le \lambda \le 2$.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2011:9}
+Let $X$ and $Y$ be independent random variables, identically distributed according to the Normal distribution with mean 0 and variance 1, $N ( 0 , 1 )$.
+
+(a) Find the joint probability density function of $( R , \theta )$, where
+\[
+R = (X ^ {2} + Y ^ {2}) ^ {1 / 2} \quad \text {and} \quad \theta = \arctan (Y / X).
+\]
+
+(b) Are $R$ and $\theta$ independent? Why, or why not?
+
+(c) Find a function $U$ of $R$ which has the uniform distribution on (0, 1), Unif(0, 1).
+
+(d) Find a function $V$ of $\theta$ which is distributed as Unif(0,1).
+
+(e) Show how to transform two independent observations $U$ and $V$ from Unif(0,1) into two independent observations $X, Y$ from $N ( 0 , 1 )$.
+\end{exercise}
+
+\begin{solution}
+(a) The joint PDF of $(X, Y)$ is $f(x, y) = \frac{1}{2\pi} e^{-(x^2+y^2)/2}$. Changing to polar coordinates $(r, \theta)$ with $x=r \cos \theta, y=r \sin \theta$, the Jacobian is $r$.
+$f(r, \theta) = \frac{1}{2\pi} r e^{-r^2/2}$ for $r \in [0, \infty), \theta \in [0, 2\pi)$.
+
+(b) Yes, $f(r, \theta) = f_R(r) f_\theta(\theta)$ where $f_R(r) = r e^{-r^2/2}$ and $f_\theta(\theta) = \frac{1}{2\pi}$.
+
+(c) The CDF of $R$ is $F_R(r) = \int_0^r s e^{-s^2/2} \mathrm{d} s = 1 - e^{-r^2/2}$. Thus $U = 1 - e^{-R^2/2}$ is Unif(0,1).
+
+(d) $V = \theta / (2\pi)$ is Unif(0,1).
+
+(e) From $U, V \sim \text{Unif}(0,1)$, set $R = \sqrt{-2 \ln(1-U)}$ (or $\sqrt{-2 \ln U}$) and $\theta = 2\pi V$.
+Then $X = \sqrt{-2 \ln U} \cos(2\pi V)$ and $Y = \sqrt{-2 \ln U} \sin(2\pi V)$.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2011:10}
+Let $X$ be a random variable such that $E [ | X | ] < \infty$. Show that
+\[
+E [ | X - a | ] = \inf  _ {x \in R} E [ | X - x | ],
+\]
+if and only if $a$ is a median of $X$.
+\end{exercise}
+
+\begin{solution}
+Let $g(x) = E|X-x|$. For any $x, a$:
+$|X-x| - |X-a| \ge (a-x) \operatorname{sgn}(X-a)$.
+$E|X-x| - E|X-a| \ge (a-x) E[\operatorname{sgn}(X-a)] = (a-x) [P(X>a) - P(X<a)]$.
+If $a$ is the median, then $P(X \ge a) \ge 1/2$ and $P(X \le a) \ge 1/2$.
+More precisely, $g(x)$ is convex and $g'(x) = P(X \le x) - P(X \ge x)$.
+$g'(x) = 0$ implies $P(X \le x) = P(X \ge x) = 1/2$, which is the definition of the median.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2011:11}
+Let $Y _ { 1 } , \dots , Y _ { n }$ be iid observations from the distribution $f ( x - \theta )$, where $\theta$ is unknown and $f ( \cdot )$ is probability density function symmetric about zero.
+Suppose a priori that $\theta$ has the improper prior $\theta \sim \text{Lebesgue (flat)}$ on $( - \infty , \infty )$. Write down the posterior distribution of $\theta$. Provides some arguments to show that this flat prior is noninformative. Show that a 95\% probability interval is also a 95\% confidence interval.
+\end{exercise}
+
+\begin{solution}
+The posterior is $p(\theta \mid y) \propto \prod_{i=1}^n f(y_i - \theta)$.
+Noninformative: The flat prior is invariant under translations $\theta \to \theta + c$. It reflects total ignorance about the location.
+Confidence Interval: Let $P(\theta \in [L(y), U(y)] \mid y) = 0.95$. Since $f$ is a location family and the prior is flat, the distribution of $\theta - \bar{y}$ depends only on the data through the residuals $y_i - \bar{y}$. This implies the Bayesian credible interval is numerically identical to the frequentist confidence interval derived from the location invariant pivotal quantity.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2011:12}
+Suppose we have two independent random samples $\{Y_i, i = 1 , \ldots , n \}$ from Poisson with mean $\lambda _ { 1 }$ and $\{ Y _ { i } , i = n + 1 , \dots , 2 n \}$ from Poisson with mean $\lambda _ { 2 }$. Let $\theta = \lambda _ { 1 } / ( \lambda _ { 1 } + \lambda _ { 2 } )$.
+
+(a) Find an unbiased estimator of $\theta$.
+
+(b) Does your estimator have the minimum variance among all unbiased estimators?
+
+(c) Does the unbiased minimum variance estimator you found attain the Fisher information bound?
+\end{exercise}
+
+\begin{solution}
+(a) Let $S_1 = \sum_{i=1}^n Y_i$ and $S_2 = \sum_{i=n+1}^{2n} Y_i$. $S_1 \sim \text{Pois}(n\lambda_1)$, $S_2 \sim \text{Pois}(n\lambda_2)$.
+Conditional on $S_1 + S_2 = m$, $S_1 \sim \operatorname{Bin}(m, \theta)$.
+Thus $E[S_1 / m \mid S_1+S_2=m, m>0] = \theta$.
+The estimator $\hat{\theta} = \frac{S_1}{S_1+S_2}$ is unbiased (conditional on $S_1+S_2 > 0$).
+
+(b) Yes, $S_1$ and $S_2$ are complete sufficient statistics for the Poisson family. By the Lehmann-Scheffé theorem, $\hat{\theta}$ is the UMVU estimator.
+
+(c) No. In general, estimators of ratios of parameters do not attain the Cramer-Rao bound unless the model is very specific (e.g., linear).
 \end{solution}
