@@ -86,6 +86,33 @@ u(0) = 0, \quad u'(0) = 0.
 \]
 \end{exercise}
 
+\begin{remarkbox}{Advanced Perspectives: Operator Decomposition and Matrix Exponentials}
+你的直觉非常敏锐！在泛函分析和常微分方程组理论中，使用 $e^{At}$（矩阵指数或算子半群）确实是求解线性非齐次方程最 general（普适）的方法。
+
+对于这个具体的二阶标量方程，如果你想用类似 $e^{At}$ 的算子思想，并且追求\textbf{简单且普适}的求解过程，有两种视角的等价操作。我们将展示最简洁的\textbf{微分算子分解法}（这本质上就是 $e^{At}$ 思想在标量方程上的体现），然后再简要点破它与真正矩阵指数的联系。
+
+\textbf{1. 算子分解法求解（强烈推荐）}
+
+设微分算子 $D = \frac{d}{dx}$。原方程可以重写为算子形式：
+\[ (D^2 - 1)u = 4e^{-x} \implies (D-1)(D+1)u = 4e^{-x} \]
+我们可以将算子因式分解为 $(D-1)(D+1)$。这使得我们可以将一个二阶方程拆解为两个一阶方程嵌套求解，而求解一阶方程所用的\textbf{积分因子（Integrating Factor）正是 $e^{-x}$ 和 $e^x$ 算符}。
+
+\begin{itemize}
+    \item \textbf{降阶：} 令 $v = (D+1)u = u' + u$，原方程变为 $(D-1)v = 4e^{-x} \implies v' - v = 4e^{-x}$。
+    \item \textbf{求解 $v$：} 方程两边同乘积分因子 $e^{-x}$，得 $\frac{d}{dx}(e^{-x}v) = 4e^{-2x}$。积分得 $e^{-x}v = -2e^{-2x} + C_1$，即 $v(x) = -2e^{-x} + C_1 e^x$。
+    \item \textbf{求解 $u$：} 将 $v$ 代回 $u' + u = v$，同乘 $e^x$ 得 $\frac{d}{dx}(e^x u) = -2 + C_1 e^{2x}$。两边从 $0$ 到 $x$ 积分并代入初值 $u(0)=0$，即可直接得到特解。
+\end{itemize}
+
+\textbf{2. 进阶视角：真正的矩阵指数 $e^{At}$}
+
+如果你想严格贯彻这一形式，需要将原方程转化为一阶方程组 $\mathbf{Y}' = A\mathbf{Y} + \mathbf{F}(x)$，其中 $A = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \mathbf{F}(x) = \begin{pmatrix} 0 \\ 4e^{-x} \end{pmatrix}$。利用常数变易公式的矩阵形式：
+\[ \mathbf{Y}(x) = e^{Ax}\mathbf{Y}(0) + \int_0^x e^{A(x-s)}\mathbf{F}(s) ds \]
+因为初始条件 $\mathbf{Y}(0) = \mathbf{0}$，解直接就是卷积积分。计算 $e^{At} = \cosh(t)I + \sinh(t)A$ 后，第一行即给出 $u(x) = \int_0^x 4\sinh(x-s)e^{-s} ds$。
+
+\textbf{3. 数学基础：算子代数与交换律}
+这种方法的严谨性建立在常系数线性微分算子环与多项式环 $\mathbb{R}[\lambda]$ 是代数同构的。其核心前提是常系数算子的\textbf{交换律}：$(D - a)(D - b) = (D - b)(D - a)$。如果系数随 $x$ 变化（如 $x u'' + u = 0$），微分算子与乘法算子不满足交换律（$D(xf) \neq xDf$），此法就会失效。
+\end{remarkbox}
+
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{enumerate}

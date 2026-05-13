@@ -18,6 +18,104 @@ Let $\{f_n\}$ be a sequence of measurable functions on $X$ such that $f_n(x) \to
 Consider the sequence $f_n(x) = \frac{n \sin(x/n)}{x(1+x^2)}$ on $(0, \infty)$. Since $|\sin(\theta)| \leq |\theta|$, we have $|f_n(x)| \leq \frac{1}{1+x^2} = g(x)$. The function $g(x)$ is integrable on $(0, \infty)$, so by the Dominated Convergence Theorem, we can pass the limit inside the integral to evaluate $\lim_{n \to \infty} \int_0^\infty f_n(x) \, dx = \int_0^\infty \frac{1}{1+x^2} \, dx = \frac{\pi}{2}$.
 \end{example}
 
+\subsection{Convergence Theorems}
+
+\begin{theorem}[Monotone Convergence Theorem]
+Let $\{f_n\}$ be a sequence of measurable functions on $X$ such that $0 \leq f_1 \leq f_2 \leq \cdots$ pointwise almost everywhere. If $f_n \to f$ pointwise almost everywhere, then $f$ is measurable and
+\[
+\lim_{n \to \infty} \int_X f_n \, d\mu = \int_X f \, d\mu.
+\]
+\end{theorem}
+
+\begin{example}[Monotone Convergence Application]
+Consider $f_n(x) = \frac{x^n}{1+x^n}$ on $[0,1]$. The sequence is increasing: $f_1 \leq f_2 \leq \cdots$, and $f_n(x) \to f(x)$ where $f(x) = 0$ for $x \in [0,1)$ and $f(1) = 1$. By the Monotone Convergence Theorem,
+\[
+\lim_{n \to \infty} \int_0^1 \frac{x^n}{1+x^n} \, dx = \int_0^1 f(x) \, dx = 0.
+\]
+\end{example}
+
+\begin{theorem}[Fatou's Lemma]
+Let $\{f_n\}$ be a sequence of non-negative measurable functions on $X$. Then
+\[
+\int_X \liminf_{n \to \infty} f_n \, d\mu \leq \liminf_{n \to \infty} \int_X f_n \, d\mu.
+\]
+\end{theorem}
+
+\begin{example}[Fatou's Lemma Inequality]
+Let $f_n(x) = \chi_{[n, n+1]}(x)$ on $\mathbb{R}$. Each $f_n$ is non-negative and measurable, and $\liminf_{n \to \infty} f_n(x) = 0$ for all $x$. Thus $\int_{\mathbb{R}} \liminf f_n \, d\mu = 0$, while $\liminf_{n \to \infty} \int_{\mathbb{R}} f_n \, d\mu = \liminf_{n \to \infty} 1 = 1$. The inequality $0 \leq 1$ holds strictly.
+\end{example}
+
+\begin{theorem}[Egorov's Theorem]
+Let $\{f_n\}$ be a sequence of measurable functions on a set $E$ of finite measure such that $f_n \to f$ pointwise almost everywhere on $E$. Then for every $\epsilon > 0$, there exists a subset $A \subseteq E$ with $\mu(E \setminus A) < \epsilon$ such that $f_n \to f$ uniformly on $A$.
+\end{theorem}
+
+\begin{example}[Egorov's Theorem Application]
+On $[0,1]$ with Lebesgue measure, consider $f_n(x) = x^n$. We have $f_n \to f(x)$ where $f(x) = 0$ for $x \in [0,1)$ and $f(1) = 1$. Given $\epsilon > 0$, choose $\delta = \epsilon/2$. On $A = [0, 1-\delta]$, the convergence is uniform since $\sup_{x \in [0,1-\delta]} |x^n - 0| = (1-\delta)^n \to 0$, and $\mu([0,1] \setminus A) = \delta < \epsilon$.
+\end{example}
+
+\subsection{Lebesgue Measure and Integration}
+
+\begin{definition}[Lebesgue Outer Measure]
+Let $E \subseteq \mathbb{R}^n$. The Lebesgue outer measure is defined as
+\[
+m^*(E) = \inf\left\{ \sum_{j=1}^\infty \ell(Q_j) : E \subseteq \bigcup_{j=1}^\infty Q_j \right\},
+\]
+where the infimum is taken over all countable collections of boxes $Q_j$ covering $E$, and $\ell(Q_j)$ denotes the volume of the box $Q_j$.
+\end{definition}
+
+\begin{definition}[Lebesgue Measurable Set]
+A set $E \subseteq \mathbb{R}^n$ is Lebesgue measurable if for every $\epsilon > 0$, there exists an open set $O \supseteq E$ such that $m^*(O \setminus E) < \epsilon$. Equivalently, $E$ is measurable if
+\[
+m^*(A) = m^*(A \cap E) + m^*(A \setminus E) \quad \text{for all } A \subseteq \mathbb{R}^n.
+\]
+\end{definition}
+
+\begin{example}[Vitali Non-Measurable Set]
+In $\mathbb{R}$, there exist sets that are not Lebesgue measurable (Vitali sets). Define an equivalence relation $x \sim y$ if $x - y \in \mathbb{Q}$. Selecting one representative from each equivalence class yields a non-measurable set. This demonstrates that the Lebesgue measure is not complete on $\mathcal{P}(\mathbb{R})$.
+\end{example}
+
+\begin{example}[Cantor Set]
+The classical Cantor set $C \subseteq [0,1]$ has Lebesgue measure zero but uncountably many points. The middle-thirds Cantor set is perfect, totally disconnected, and has Hausdorff dimension $\log 2 / \log 3$.
+\end{example}
+
+\subsection{Fubini and Radon-Nikodym}
+
+\begin{theorem}[Fubini's Theorem]
+Let $f \in L^1(X \times Y, \mu \times \nu)$. Then
+\[
+\int_{X \times Y} f \, d(\mu \times \nu) = \int_X \left( \int_Y f(x,y) \, d\nu(y) \right) d\mu(x) = \int_Y \left( \int_X f(x,y) \, d\mu(x) \right) d\nu(y).
+\]
+The iterated integrals exist and are equal.
+\end{theorem}
+
+\begin{example}[Failure of Fubini without $L^1$]
+Consider $f(x,y) = \frac{x^2 - y^2}{(x^2 + y^2)^2}$ on $[0,1] \times [0,1]$. We have
+\[
+\int_0^1 \left( \int_0^1 f(x,y) \, dy \right) dx = \frac{\pi}{4}, \quad
+\int_0^1 \left( \int_0^1 f(x,y) \, dx \right) dy = -\frac{\pi}{4},
+\]
+showing that iterated integrals can differ when $f \notin L^1$.
+\end{example}
+
+\begin{definition}[Absolute Continuity]
+If $\nu$ and $\mu$ are measures on $(X, \mathcal{M})$, we say $\nu \ll \mu$ if $\mu(E) = 0$ implies $\nu(E) = 0$ for all $E \in \mathcal{M}$.
+\end{definition}
+
+\begin{theorem}[Radon-Nikodym Theorem]
+Let $\mu$ be a $\sigma$-finite positive measure and $\nu$ a $\sigma$-finite signed measure on $(X, \mathcal{M})$. If $\nu \ll \mu$, then there exists a unique measurable function $f: X \to \mathbb{R}$ such that
+\[
+\frac{d\nu}{d\mu} = f \quad \text{and} \quad \nu(E) = \int_E f \, d\mu \quad \text{for all } E \in \mathcal{M}.
+\]
+The function $f$ is called the Radon-Nikodym derivative of $\nu$ with respect to $\mu$.
+\end{theorem}
+
+\begin{example}[Radon-Nikodym Derivative]
+If $f \in L^1(\mathbb{R}^n, m)$ and $d\nu = f \, dm$, then $\frac{d\nu}{dm} = f$. Conversely, if $d\nu = f \, d\mu$, then $f = \frac{d\nu}{d\mu}$. The chain rule gives: if $\nu \ll \mu \ll \lambda$, then
+\[
+\frac{d\nu}{d\lambda} = \frac{d\nu}{d\mu} \cdot \frac{d\mu}{d\lambda}.
+\]
+\end{example}
+
 \section{Fourier Analysis}
 
 \textbf{Key Topics:} Fourier series, $L^2$ convergence, Parseval's identity, Dirichlet and Fej\'er kernels, Fourier transform.
@@ -35,6 +133,43 @@ Suppose $f \in L^2([-\pi, \pi])$. Then the sum of the squares of its Fourier coe
 
 \begin{example}
 Let $f(x) = x$ on $(-\pi, \pi]$. Its Fourier coefficients are $\hat{f}(n) = \frac{i(-1)^n}{n}$ for $n \neq 0$ and $\hat{f}(0) = 0$. Applying Parseval's identity gives $\sum_{n \neq 0} \frac{1}{n^2} = \frac{1}{2\pi} \int_{-\pi}^{\pi} x^2 \, dx = \frac{\pi^2}{3}$, which yields the famous Basel problem result $\sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}$.
+\end{example}
+
+\begin{definition}[Fourier Transform on $\mathbb{R}^n$]
+For $f \in L^1(\mathbb{R}^n)$, the Fourier transform of $f$ is defined by
+\[
+\hat{f}(\xi) = \int_{\mathbb{R}^n} f(x) e^{-2\pi i x \cdot \xi} \, dx,
+\qquad \xi \in \mathbb{R}^n,
+\]
+where $x \cdot \xi = x_1 \xi_1 + \cdots + x_n \xi_n$ denotes the Euclidean dot product.
+\end{definition}
+
+\begin{definition}[Inverse Fourier Transform]
+For $f \in L^1(\mathbb{R}^n)$ such that $\hat{f} \in L^1(\mathbb{R}^n)$, the inverse Fourier transform is given by
+\[
+f(x) = \int_{\mathbb{R}^n} \hat{f}(\xi) e^{2\pi i x \cdot \xi} \, d\xi,
+\qquad x \in \mathbb{R}^n.
+\]
+\end{definition}
+
+\begin{theorem}[Fourier Inversion Theorem]
+If $f \in L^1(\mathbb{R}^n)$ and $\hat{f} \in L^1(\mathbb{R}^n)$, then $f$ can be reconstructed almost everywhere from its Fourier transform via the inverse transform formula:
+\[
+f(x) = \int_{\mathbb{R}^n} \hat{f}(\xi) e^{2\pi i x \cdot \xi} \, d\xi.
+\]
+Moreover, if $f$ is continuous at $x$, the formula holds at that point.
+\end{theorem}
+
+\begin{theorem}[Plancherel Theorem]
+The Fourier transform extends uniquely to an isometry from $L^2(\mathbb{R}^n)$ onto itself. For all $f, g \in L^2(\mathbb{R}^n)$,
+\[
+\int_{\mathbb{R}^n} f(x) \overline{g(x)} \, dx = \int_{\mathbb{R}^n} \hat{f}(\xi) \overline{\hat{g}(\xi)} \, d\xi,
+\]
+and in particular $\|f\|_{L^2} = \|\hat{f}\|_{L^2}$.
+\end{theorem}
+
+\begin{example}
+Let $f(x) = e^{-\pi |x|^2}$ be the Gaussian on $\mathbb{R}^n$. Its Fourier transform is $\hat{f}(\xi) = e^{-\pi |\xi|^2}$; the Gaussian is its own Fourier transform. This illustrates the smoothing and self-similarity properties of the Gaussian under the Fourier transform.
 \end{example}
 
 \section{Complex Analysis}
@@ -56,6 +191,62 @@ Let $U$ be a simply connected open subset of $\mathbb{C}$ containing a simple cl
 To evaluate $I = \int_{-\infty}^\infty \frac{1}{1+x^2} \, dx$, consider the contour integral of $f(z) = \frac{1}{1+z^2}$ over the upper semicircle of radius $R$. The only pole inside the contour is at $z = i$, with residue $\text{Res}(f, i) = \lim_{z \to i} \frac{z-i}{(z-i)(z+i)} = \frac{1}{2i}$. By the residue theorem, the integral is $2\pi i (\frac{1}{2i}) = \pi$.
 \end{example}
 
+\begin{definition}[Cauchy-Riemann Equations]
+Let $f(z) = u(x,y) + iv(x,y)$ be a complex-valued function on an open set $U \subseteq \mathbb{C}$, where $z = x + iy$. If $f$ is analytic at $z_0 = x_0 + iy_0$, then the partial derivatives of $u$ and $v$ exist and satisfy
+\[
+\frac{\partial u}{\partial x}(x_0, y_0) = \frac{\partial v}{\partial y}(x_0, y_0), \qquad
+\frac{\partial u}{\partial y}(x_0, y_0) = -\frac{\partial v}{\partial x}(x_0, y_0).
+\]
+Equivalently, $f'(z_0)$ exists and equals $\frac{\partial u}{\partial x} + i\frac{\partial v}{\partial x}$.
+\end{definition}
+
+\begin{example}[CR Equations Application]
+For $f(z) = z^2 = (x+iy)^2 = (x^2 - y^2) + 2ixy$, we have $u(x,y) = x^2 - y^2$ and $v(x,y) = 2xy$. Computing: $\frac{\partial u}{\partial x} = 2x = \frac{\partial v}{\partial y}$, and $\frac{\partial u}{\partial y} = -2y = -\frac{\partial v}{\partial x}$. The Cauchy-Riemann equations hold everywhere, confirming $f$ is entire with $f'(z) = 2z$.
+\end{example}
+
+\begin{theorem}[Cauchy's Integral Formula]
+Let $f$ be analytic on an open set containing the closed disk $\overline{D}(z_0, r) = \{z : |z - z_0| \leq r\}$. If $\gamma$ denotes the positively oriented circle $|z - z_0| = r$, then for any point $w$ inside the disk,
+\[
+f(w) = \frac{1}{2\pi i} \oint_\gamma \frac{f(z)}{z - w} \, dz.
+\]
+Moreover, $f$ has derivatives of all orders, and
+\[
+f^{(n)}(w) = \frac{n!}{2\pi i} \oint_\gamma \frac{f(z)}{(z - w)^{n+1}} \, dz, \quad n = 0, 1, 2, \ldots
+\]
+\end{theorem}
+
+\begin{example}[Cauchy's Integral Formula Application]
+For $f(z) = e^z$ and $\gamma$ the unit circle, Cauchy's integral formula for the first derivative at $w = 0$ gives $f'(0) = \frac{1}{2\pi i} \oint_\gamma \frac{e^z}{z} \, dz = 1$. Since $e^z = \sum_{n=0}^\infty z^n/n!$ converges everywhere, the formula recovers the correct Taylor coefficients.
+\end{example}
+
+\begin{theorem}[Morera's Theorem]
+If $f$ is continuous on an open connected set $U \subseteq \mathbb{C}$ and satisfies
+\[
+\oint_\gamma f(z) \, dz = 0
+\]
+for every closed piecewise smooth curve $\gamma$ in $U$, then $f$ is analytic on $U$.
+\end{theorem}
+
+\begin{theorem}[Liouville's Theorem]
+If $f$ is entire (analytic on all of $\mathbb{C}$) and bounded, that is $|f(z)| \leq M$ for all $z \in \mathbb{C}$, then $f$ is constant.
+\end{theorem}
+
+\begin{example}[Liouville's Theorem Application]
+Consider $f(z) = \sin z$. Since $|\sin z| \leq \cosh(\operatorname{Im}z)$, the function is unbounded on $\mathbb{C}$, so Liouville's theorem does not apply. In contrast, $f(z) = \frac{1}{1+z^2}$ is bounded ($|f(z)| \leq 1$) but has poles at $z = \pm i$, so it is not entire.
+\end{example}
+
+\begin{theorem}[Maximum Modulus Principle]
+Let $f$ be analytic on a bounded connected open set $U \subseteq \mathbb{C}$ and continuous on $\overline{U}$. If $f$ is non-constant, then $|f|$ attains its maximum value only on the boundary $\partial U$; that is,
+\[
+\max_{z \in \overline{U}} |f(z)| = \max_{z \in \partial U} |f(z)|.
+\]
+Equivalently, if $|f|$ has a local maximum at an interior point, then $f$ is constant.
+\end{theorem}
+
+\begin{example}[Maximum Modulus Principle]
+For $f(z) = e^z$ on the unit disk $\mathbb{D}$, $|f(z)| = e^{\operatorname{Re}z}$ achieves its maximum at $z = 1$ on the boundary $\partial \mathbb{D}$, where $|f(1)| = e$. The interior maximum is never attained since $e^{\operatorname{Re}z} < e$ for $|z| < 1$.
+\end{example}
+
 \section{Functional Analysis}
 
 \textbf{Key Topics:} Hilbert spaces, Banach spaces, Hahn-Banach theorem, compact operators, spectral theory.
@@ -70,6 +261,42 @@ Let $\mathcal{H}$ be a Hilbert space and $L: \mathcal{H} \to \mathbb{F}$ be a bo
 
 \begin{example}
 In the Hilbert space $L^2([0,1])$, the evaluation functional $L(f) = \int_0^1 f(t) \sin(t) \, dt$ is bounded. By the Riesz Representation Theorem, this functional is represented by the inner product with the function $g(t) = \sin(t)$, since $L(f) = \langle f, g \rangle_{L^2}$.
+\end{example}
+
+\begin{definition}[Banach Space]
+A Banach space $\mathcal{B}$ is a complete normed vector space. That is, $\mathcal{B}$ is a normed space such that every Cauchy sequence $(x_n)$ in $\mathcal{B}$ converges to some limit $x \in \mathcal{B}$ with respect to the metric induced by the norm.
+\end{definition}
+
+\begin{example}[$L^p$ as Banach Space]
+For $1 \leq p \leq \infty$, the space $L^p(X, \mu)$ is a Banach space. In particular, $L^1$ is complete with respect to $\|\cdot\|_1$, $L^2$ is complete with respect to $\|\cdot\|_2$, and $L^\infty$ is complete with respect to $\|\cdot\|_\infty$.
+\end{example}
+
+\begin{theorem}[Hahn-Banach Theorem — Separation Form]
+Let $\mathcal{B}$ be a normed space, $M \subset \mathcal{B}$ a subspace, and $p: \mathcal{B} \to \mathbb{R}$ a sublinear functional with $p(x) \geq 0$ for all $x \in M$. If $f: M \to \mathbb{R}$ is a linear functional satisfying $f(x) \leq p(x)$ for all $x \in M$, then there exists a linear functional $\tilde{f}: \mathcal{B} \to \mathbb{R}$ extending $f$ such that $\tilde{f}(x) \leq p(x)$ for all $x \in \mathcal{B}$ and $\|\tilde{f}\| = \sup\{f(x) : x \in M, \|x\| \leq 1\}$.
+\end{theorem}
+
+\begin{example}[Hahn-Banach Application]
+In $C([0,1])$ with sup norm, the functional $L(f) = f(0)$ has norm 1. Hahn-Banach guarantees an extension $\tilde{L}$ to $L^\infty([0,1])$ with the same norm, though no explicit formula is given by the theorem.
+\end{example}
+
+\begin{theorem}[Open Mapping Theorem]
+Let $\mathcal{B}_1$ and $\mathcal{B}_2$ be Banach spaces, and let $T: \mathcal{B}_1 \to \mathcal{B}_2$ be a bounded surjective linear operator. Then $T$ maps open sets in $\mathcal{B}_1$ to open sets in $\mathcal{B}_2$. Equivalently, there exists a constant $c > 0$ such that $T(B_{\mathcal{B}_1}(0,1))$ contains $B_{\mathcal{B}_2}(0,c)$.
+\end{theorem}
+
+\begin{theorem}[Closed Graph Theorem]
+Let $\mathcal{B}_1$ and $\mathcal{B}_2$ be Banach spaces, and let $T: \mathcal{B}_1 \to \mathcal{B}_2$ be a linear operator. Then $T$ is bounded if and only if its graph $G(T) = \{(x, Tx) : x \in \mathcal{B}_1\} \subset \mathcal{B}_1 \times \mathcal{B}_2$ is closed in the product topology.
+\end{theorem}
+
+\begin{theorem}[Uniform Boundedness Principle (Banach-Steinhaus)]
+Let $\mathcal{B}$ be a Banach space and $\mathcal{X}$ a normed space. If $\{T_\alpha : \alpha \in A\} \subset \mathcal{L}(\mathcal{B}, \mathcal{X})$ is a collection of bounded linear operators such that for every $x \in \mathcal{B}$, $\sup_\alpha \|T_\alpha x\| < \infty$, then $\sup_\alpha \|T_\alpha\| < \infty$. Equivalently, pointwise boundedness implies uniform boundedness in the operator norm.
+\end{theorem}
+
+\begin{example}[Compact Operator on Hilbert Space]
+Let $\mathcal{H}$ be a Hilbert space. A bounded linear operator $T: \mathcal{H} \to \mathcal{H}$ is called compact if for every bounded sequence $\{x_n\}$ in $\mathcal{H}$, the sequence $\{Tx_n\}$ has a convergent subsequence. The Volterra operator $V: L^2[0,1] \to L^2[0,1]$, $(Vf)(x) = \int_0^x f(t)\,dt$, is compact.
+\end{example}
+
+\begin{example}[Spectrum of Compact Operators]
+For a compact operator $T$ on an infinite-dimensional Hilbert space, the spectrum $\sigma(T)$ consists of at most countably many eigenvalues accumulating only at $0$, and $0$ is always in $\sigma(T)$. For the Volterra operator $V$, we have $\sigma(V) = \{0\}$.
 \end{example}
 
 \section{Partial Differential Equations}
@@ -88,6 +315,65 @@ Let $U \subset \mathbb{R}^n$ be open, bounded, and connected. If $u \in C^2(U) \
 Consider the heat equation $u_t = \Delta u$ on a bounded domain with zero boundary conditions and initial condition $u(x,0) = f(x)$. By separation of variables, the solution decays exponentially in time, demonstrating the smoothing and dissipating nature of diffusion processes.
 \end{example}
 
+\begin{definition}[Heat Equation (Linear Diffusion)]
+The heat equation (also called the diffusion equation) on a domain $U \times (0,T)$ is
+\[
+u_t - \Delta u = 0 \quad \text{in } U \times (0,T),
+\]
+or equivalently $u_t = \Delta u$, where $u: U \times [0,T) \to \mathbb{R}$ represents temperature and $\Delta$ acts on the spatial variables.
+\end{definition}
+
+\begin{example}[Gaussian Kernel as Fundamental Solution]
+For the Cauchy problem $u_t = \Delta u$ on $\mathbb{R}^n$ with initial condition $u(0,x) = f(x)$, the solution has the probabilistic representation (Feynman-Kac):
+\[
+u(t,x) = \int_{\mathbb{R}^n} f(y) \, \Gamma(t,x,y) \, dy,
+\]
+where $\Gamma(t,x,y) = \frac{1}{(4\pi t)^{n/2}} e^{-\frac{|x-y|^2}{4t}}$ is the heat kernel (fundamental solution of the heat operator).
+\end{example}
+
+\begin{example}[d'Alembert's Formula for Wave Equation ($n=1$)]
+For the 1D wave equation $u_{tt} = u_{xx}$ on $\mathbb{R} \times [0,\infty)$ with initial data $u(0,x) = f(x)$, $u_t(0,x) = g(x)$, d'Alembert's formula gives
+\[
+u(t,x) = \frac{1}{2}\bigl[f(x+t) + f(x-t)\bigr] + \frac{1}{2}\int_{x-t}^{x+t} g(s)\,ds.
+\]
+This exhibits finite speed of propagation: the domain of influence is the interval $[x-t, x+t]$.
+\end{example}
+
+\begin{example}[Finite Speed of Propagation]
+For the wave equation $u_{tt} = \Delta u$ on $\mathbb{R}^n$ with initial data $(f,g)$ supported in $|x| \leq R$, the support of $u(t,\cdot)$ is contained in $|x| \leq R + t$. Energy travels at unit speed.
+\end{example}
+
+\begin{example}[Fundamental Solution of Laplace Operator]
+The fundamental solution $\Phi_n(x)$ of the Laplacian in $\mathbb{R}^n$ ($n \geq 3$) satisfies $-\Delta \Phi_n = \delta$ and is given by
+\[
+\Phi_n(x) = \frac{1}{(n-2)n\omega_n} |x|^{2-n},
+\]
+where $\omega_n = |\mathbb{S}^{n-1}|$ is the surface area of the unit sphere in $\mathbb{R}^n$. For $n=2$, $\Phi_2(x) = \frac{1}{2\pi}\log\frac{1}{|x|}$.
+\end{example}
+
+\begin{example}[Newtonian Potential]
+For a bounded domain $\Omega \subset \mathbb{R}^n$, $n \geq 3$, the Newtonian potential of a density $\rho \in C_c^\infty(\Omega)$ is
+\[
+u(x) = \int_\Omega \Phi_n(x-y) \rho(y)\,dy.
+\]
+Then $-\Delta u = \rho$ in $\mathbb{R}^n$, showing that convolution with $\Phi_n$ gives a particular solution to Poisson's equation.
+\end{example}
+
+\begin{definition}[Method of Characteristics]
+The method of characteristics reduces the problem of solving a first-order PDE to solving a system of ODEs along characteristic curves. For a first-order PDE of the form
+\[
+a(x,y,u)\,u_x + b(x,y,u)\,u_y = c(x,y,u),
+\]
+the characteristic curves $(x(s), y(s))$ satisfy the characteristic equations:
+\[
+\frac{dx}{ds} = a(x,y,u), \quad \frac{dy}{ds} = b(x,y,u), \quad \frac{du}{ds} = c(x,y,u).
+\]
+\end{definition}
+
+\begin{example}[Transport Equation]
+Solve $u_x + u_y = 0$ with initial condition $u(x,0) = f(x)$. The characteristic equations are $\frac{dx}{dt} = 1$, $\frac{dy}{dt} = 1$, $\frac{du}{dt} = 0$. Along characteristics $x - y = C$, $u$ is constant. Since $u(x,0) = f(x)$ and $y = 0$ implies $x = C$, the solution is $u(x,y) = f(x-y)$.
+\end{example}
+
 \section{Harmonic Analysis and Potential Theory}
 
 \textbf{Key Topics:} Poisson kernel, Harnack inequality, Green's functions, subharmonic functions.
@@ -102,6 +388,58 @@ Let $U \subset \mathbb{R}^n$ be open and connected. For any compact subset $K \s
 
 \begin{example}
 If $u_n$ is a sequence of non-negative harmonic functions on a connected open set $U$ such that $u_n(x_0)$ is bounded at some point $x_0 \in U$, Harnack's inequality implies that $u_n$ is locally uniformly bounded, allowing extraction of a converging subsequence.
+\end{example}
+
+\begin{definition}[Poisson Kernel for the Ball]
+For the unit ball $B(0,1) \subset \mathbb{R}^n$, the Poisson kernel is
+\[
+P(x,\xi) = \frac{1-|x|^2}{|x-\xi|^n}, \quad x \in B(0,1), \ \xi \in \partial B(0,1).
+\]
+For a ball $B(0,R)$, the kernel is $P_R(x,\xi) = \frac{R^2-|x|^2}{R|x-\xi|^n}$.
+\end{definition}
+
+\begin{example}[Poisson Integral Formula]
+If $f$ is continuous on $\overline{B(0,R)}$ and harmonic in $B(0,R)$, then for $x \in B(0,R)$,
+\[
+u(x) = \frac{1}{\omega_{n-1}R^{n-1}} \int_{\partial B(0,R)} \frac{R^2-|x|^2}{|x-\xi|^n} f(\xi) \, dS(\xi).
+\]
+This gives the solution to the Dirichlet problem on the ball.
+\end{example}
+
+\begin{definition}[Green's Function]
+For a bounded domain $\Omega \subset \mathbb{R}^n$, the Green's function $G(x,y)$ is defined as:
+\[
+G(x,y) = \Gamma(x,y) - \Phi(x,y),
+\]
+where $\Gamma(x,y)$ is the fundamental solution of Laplace's equation, and $\Phi(x,y)$ is a harmonic function in $\Omega$ chosen so that $G(x,y) = 0$ for $x \in \partial \Omega$.
+\end{definition}
+
+\begin{example}[Green's Function for the Ball]
+For the ball $B(0,R) \subset \mathbb{R}^n$ ($n \geq 3$),
+\[
+G(x,y) = \frac{1}{(n-2)\omega_n} \left( \frac{1}{|x-y|^{n-2}} - \frac{R^{n-2}}{|x - y^*|^{n-2}} \right),
+\]
+where $y^* = R^2 y / |y|^2$ is the reflection of $y$ across $\partial B(0,R)$.
+\end{example}
+
+\begin{theorem}[Mean Value Property for Harmonic Functions]
+Let $u$ be harmonic in $\Omega \subset \mathbb{R}^n$. For any ball $B(x,r) \subset \Omega$:
+\[
+u(x) = \frac{1}{| \partial B(x,r) |} \int_{\partial B(x,r)} u(y) \, dS(y) = \frac{1}{\omega_{n-1} r^{n-1}} \int_{\partial B(x,r)} u(y) \, dS(y).
+\]
+Equivalently, $u(x) = \frac{1}{|B(x,r)|} \int_{B(x,r)} u(y) \, dy$.
+\end{theorem}
+
+\begin{theorem}[Dirichlet Problem for the Ball]
+Given $f \in C(\partial B(0,R))$, there exists a unique function $u \in C(\overline{B(0,R)}) \cap C^\infty(B(0,R))$ such that $\Delta u = 0$ in $B(0,R)$ and $u|_{\partial B(0,R)} = f$. The solution is given by the Poisson integral formula.
+\end{theorem}
+
+\begin{example}[Poisson Integral on Upper Half-Plane]
+For $\mathbb{H} = \{z = x+iy : y > 0\}$ and boundary data $f \in C(\mathbb{R}) \cap L^\infty(\mathbb{R})$, the harmonic extension is
+\[
+u(z) = \frac{1}{\pi} \int_{-\infty}^{\infty} \frac{y}{(x-t)^2 + y^2} f(t) \, dt.
+\]
+This solves $\Delta u = 0$ in $\mathbb{H}$ with $\lim_{y \to 0^+} u(x+iy) = f(x)$.
 \end{example}
 
 \section{Calculus of Variations and Convex Analysis}
@@ -120,6 +458,34 @@ If $y(x)$ is a sufficiently smooth curve that minimizes the functional $J[y] = \
 To find the shortest path between two points in the plane, we minimize the arc length functional $J[y] = \int_a^b \sqrt{1 + (y')^2} \, dx$. The Euler-Lagrange equation gives $-\frac{d}{dx} \left( \frac{y'}{\sqrt{1+(y')^2}} \right) = 0$, which implies $y'$ is constant, meaning the shortest path is a straight line.
 \end{example}
 
+\begin{definition}[Functional]
+A functional is a mapping $J: \mathcal{A} \to \mathbb{R}$ from a space of functions $\mathcal{A}$ to the real numbers. For example, the classical action functional is $J[y] = \int_a^b L(x, y(x), y'(x)) \, dx$, where $L$ is the Lagrangian.
+\end{definition}
+
+\begin{definition}[First Variation]
+The first variation of a functional $J[y]$ is defined as
+\[
+\delta J[y; h] = \left. \frac{d}{d\epsilon} J[y + \epsilon h] \right|_{\epsilon = 0} = \int_a^b \left( \frac{\partial L}{\partial y} h + \frac{\partial L}{\partial y'} h' \right) dx,
+\]
+where $h$ is an admissible variation with $h(a) = h(b) = 0$.
+\end{definition}
+
+\begin{definition}[Legendre Transform]
+Given a convex function $f: \mathbb{R}^n \to \mathbb{R}$, the Legendre transform $f^*: \mathbb{R}^n \to \mathbb{R}$ is defined by
+\[
+f^*(p) = \sup_{x \in \mathbb{R}^n} \{ \langle p, x \rangle - f(x) \}.
+\]
+Equivalently, if $f$ is differentiable and strictly convex, then $p = \nabla f(x)$ and $f^*(p) = \langle p, x \rangle - f(x)$ where $x = (\nabla f)^{-1}(p)$.
+\end{definition}
+
+\begin{theorem}[Jensen's Inequality (Probability Form)]
+Let $(\Omega, \mathcal{F}, \mu)$ be a probability space and let $\varphi: I \to \mathbb{R}$ be a convex function on an interval $I \subseteq \mathbb{R}$. If $X: \Omega \to I$ is an integrable random variable, then
+\[
+\varphi\left( \mathbb{E}[X] \right) \leq \mathbb{E}[\varphi(X)].
+\]
+In discrete form: for weights $\lambda_i \geq 0$ with $\sum_i \lambda_i = 1$, we have $\varphi\left(\sum_i \lambda_i x_i\right) \leq \sum_i \lambda_i \varphi(x_i)$.
+\end{theorem}
+
 \section{ODEs and Qualitative Analysis}
 
 \textbf{Key Topics:} Existence and uniqueness, linear ODEs, phase portraits, Lyapunov stability.
@@ -136,6 +502,50 @@ Consider the initial value problem $y' = f(t, y)$, $y(t_0) = y_0$. If $f$ is con
 For the linear system $X' = AX$, the origin is asymptotically stable if all eigenvalues of the matrix $A$ have strictly negative real parts. The solution is given by $X(t) = e^{At}X_0$, and the matrix exponential decays as $t \to \infty$.
 \end{example}
 
+\begin{definition}[Asymptotic Stability]
+An equilibrium point $x^*$ is asymptotically stable if it is Lyapunov stable and there exists $\delta > 0$ such that $\|x(0) - x^*\| < \delta$ implies $\lim_{t \to \infty} x(t) = x^*$.
+\end{definition}
+
+\begin{example}[Peano Existence Theorem]
+Consider $y' = \sqrt{|y|}$, $y(0) = 0$. Here $f(t, y) = \sqrt{|y|}$ is continuous but not Lipschitz in $y$ near $y = 0$. The IVP has multiple solutions: $y_1(t) = 0$ and $y_2(t) = t|t|/4$. This demonstrates that without Lipschitz continuity, uniqueness may fail.
+\end{example}
+
+\begin{definition}[Gronwall's Inequality]
+Let $u, v: [t_0, T] \to [0, \infty)$ be continuous with $u$ non-negative. If
+\[
+u(t) \leq C + \int_{t_0}^t u(s) v(s) \, ds \quad \text{for all } t \in [t_0, T],
+\]
+for some constant $C \geq 0$, then
+\[
+u(t) \leq C \exp\left( \int_{t_0}^t v(s) \, ds \right).
+\]
+In the special case $C = u(t_0)$ and $v(s) \equiv \lambda$, this yields $u(t) \leq u(t_0) e^{\lambda (t - t_0)}$.
+\end{definition}
+
+\begin{example}[Gronwall Application]
+If $\|x(t)\| \leq \|x_0\| + \int_0^t L \|x(s)\| \, ds$ for $t \geq 0$, then Gronwall's inequality gives $\|x(t)\| \leq \|x_0\| e^{Lt}$. This is used to bound solutions of perturbed linear systems.
+\end{example}
+
+\begin{definition}[Flow of an ODE]
+Let $x' = f(x)$ be a smooth vector field on an open set $U \subset \mathbb{R}^n$. The flow $\Phi: I \times U \to U$ associated with this ODE is defined by $\Phi(t, x_0) = x(t)$, where $x(t)$ is the unique solution of the IVP $x' = f(x)$, $x(0) = x_0$, defined on the maximal interval $I$ containing $0$. The flow satisfies $\Phi(0, x) = x$ and the group property $\Phi(t, \Phi(s, x)) = \Phi(t+s, x)$.
+\end{definition}
+
+\begin{example}[Flow for Linear System]
+For the linear system $x' = Ax$, the flow is $\Phi(t, x_0) = e^{At} x_0$. The map $x_0 \mapsto \Phi(t, x_0)$ is a linear transformation for each fixed $t$.
+\end{example}
+
+\begin{definition}[Phase Portrait]
+A phase portrait is a geometric representation of the trajectories of a dynamical system in the phase plane. Each trajectory corresponds to a unique initial condition and represents the time evolution of the system state.
+\end{definition}
+
+\begin{theorem}[Hartman-Grobman Theorem]
+Let $x' = f(x)$ be a smooth nonlinear system with equilibrium at the origin. If $Df(0)$ has no eigenvalues with zero real part (hyperbolicity condition), then there exists a homeomorphism $h$ defined in a neighborhood of the origin that maps trajectories of the nonlinear system to trajectories of the linearized system $y' = Df(0) y$.
+\end{theorem}
+
+\begin{theorem}[Poincaré-Bendixson Theorem]
+Let $\Omega \subset \mathbb{R}^2$ be a simply connected region. If a continuous vector field $f$ generates a trajectory $\gamma$ that stays bounded and within $\Omega$, and if $\gamma$ does not approach any equilibrium point, then $\gamma$ approaches a periodic orbit (limit cycle) as $t \to \infty$.
+\end{theorem}
+
 \section{Differential and Integral Calculus on Euclidean Space}
 
 \textbf{Key Topics:} Implicit function theorem, Lagrange multipliers, multiple integrals, Stokes' theorem.
@@ -144,10 +554,473 @@ For the linear system $X' = AX$, the origin is asymptotically stable if all eige
 A function $f: \mathbb{R}^n \to \mathbb{R}^m$ is differentiable at $a \in \mathbb{R}^n$ if there exists a linear map $L: \mathbb{R}^n \to \mathbb{R}^m$ such that $\lim_{h \to 0} \frac{\|f(a+h) - f(a) - L(h)\|}{\|h\|} = 0$. The linear map $L$ is the derivative (or Jacobian) of $f$ at $a$.
 \end{definition}
 
+\begin{definition}[Curl Operator]
+For a vector field $\mathbf{F} = (F_1, F_2, F_3)$ with continuously differentiable components in $\mathbb{R}^3$, the curl is defined as
+\[
+\nabla \times \mathbf{F} = \begin{pmatrix}
+\frac{\partial F_3}{\partial y} - \frac{\partial F_2}{\partial z} \\
+\frac{\partial F_1}{\partial z} - \frac{\partial F_3}{\partial x} \\
+\frac{\partial F_2}{\partial x} - \frac{\partial F_1}{\partial y}
+\end{pmatrix}.
+\]
+\end{definition}
+
+\begin{definition}[Divergence Operator]
+For a vector field $\mathbf{F} = (F_1, F_2, F_3)$ in $\mathbb{R}^3$, the divergence is
+\[
+\nabla \cdot \mathbf{F} = \frac{\partial F_1}{\partial x} + \frac{\partial F_2}{\partial y} + \frac{\partial F_3}{\partial z}.
+\]
+\end{definition}
+
+\begin{theorem}[Divergence Theorem (Gauss-Green)]
+Let $\Omega \subset \mathbb{R}^3$ be a bounded region with piecewise smooth boundary $\partial \Omega$. If $\mathbf{F}$ is a continuously differentiable vector field on an open set containing $\Omega$, then
+\[
+\iiint_\Omega (\nabla \cdot \mathbf{F}) \, dV = \iint_{\partial \Omega} \mathbf{F} \cdot d\mathbf{S},
+\]
+where $d\mathbf{S} = \mathbf{n} \, dS$ and $\mathbf{n}$ is the outward unit normal.
+\end{theorem}
+
+\begin{example}[Divergence Theorem Application]
+Let $\mathbf{F}(x,y,z) = (x, y, z)$ and $\Omega$ be the unit ball $B(0,1)$. Then $\nabla \cdot \mathbf{F} = 3$. The divergence theorem gives $\iiint_{B(0,1)} 3 \, dV = 3 \cdot \mathrm{Vol}(B(0,1)) = 3 \cdot \frac{4\pi}{3} = 4\pi$.
+\end{example}
+
+\begin{theorem}[Green's Theorem in the Plane]
+Let $D \subset \mathbb{R}^2$ be a bounded region with piecewise smooth, positively oriented boundary curve $\partial D$. If $P(x,y)$ and $Q(x,y)$ have continuous partial derivatives on an open set containing $D$, then
+\[
+\oint_{\partial D} (P \, dx + Q \, dy) = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) \, dA.
+\]
+\end{theorem}
+
+\begin{example}[Green's Theorem Application]
+Let $P(x,y) = -y$ and $Q(x,y) = x$, with $D$ being the unit disk. Then $\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = 1 - (-1) = 2$. Green's theorem gives $\oint_{\partial D} (-y \, dx + x \, dy) = \iint_D 2 \, dA = 2\pi$.
+\end{example}
+
+\begin{theorem}[Implicit Function Theorem]
+Let $F: \mathbb{R}^{n+m} \to \mathbb{R}^m$ be continuously differentiable in an open set containing a point $(a,b)$ where $F(a,b) = 0$. If the Jacobian matrix $\frac{\partial F}{\partial y}(a,b)$ (of size $m \times m$) is invertible, then there exist open sets $U \subset \mathbb{R}^n$ containing $a$ and $V \subset \mathbb{R}^m$ containing $b$, and a unique continuously differentiable function $g: U \to V$ such that $F(x, g(x)) = 0$ for all $x \in U$.
+\end{theorem}
+
+\begin{example}[Implicit Function Application]
+Let $F(x,y) = x^2 + y^2 - 1$. At $(a,b) = (0,1)$, we have $F(0,1) = 0$ and $\frac{\partial F}{\partial y}(0,1) = 2 \neq 0$, so we can solve for $y$ as a function of $x$: $y = g(x) = \sqrt{1-x^2}$ locally near $x=0$.
+\end{example}
+
+\begin{definition}[Lagrange Multipliers]
+To find the extrema of $f: \mathbb{R}^n \to \mathbb{R}$ subject to the constraint $g(x) = 0$ where $g: \mathbb{R}^n \to \mathbb{R}^m$ ($m \leq n$), we introduce Lagrange multipliers $\lambda \in \mathbb{R}^m$. The constrained critical points satisfy
+\[
+\nabla f(x) = \sum_{i=1}^m \lambda_i \nabla g_i(x), \quad g(x) = 0.
+\]
+Equivalently, the Lagrangian is $\mathcal{L}(x, \lambda) = f(x) - \lambda \cdot g(x)$, and we require $\nabla_x \mathcal{L} = 0$ and $\nabla_\lambda \mathcal{L} = 0$.
+\end{definition}
+
+\begin{example}[Lagrange Multipliers Application]
+Maximize $f(x,y,z) = xyz$ subject to $x^2 + y^2 + z^2 = 1$. The equations are:
+\[
+\begin{cases}
+yz = 2\lambda x \\
+xz = 2\lambda y \\
+xy = 2\lambda z \\
+x^2 + y^2 + z^2 = 1
+\end{cases}
+\]
+The maximum occurs when $x^2 = y^2 = z^2 = 1/3$, giving $f = \pm \frac{1}{3\sqrt{3}}$.
+\end{example}
+
 \begin{theorem}[Stokes' Theorem]
 Let $S$ be a smooth, oriented surface in $\mathbb{R}^3$ with a piecewise smooth, closed boundary curve $\partial S$. If $\mathbf{F}$ is a continuously differentiable vector field defined on $S$, then $\int_{\partial S} \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}$.
 \end{theorem}
 
 \begin{example}
 Let $\mathbf{F}(x,y,z) = (-y, x, 0)$ and $S$ be the upper hemisphere $x^2+y^2+z^2=1$, $z \geq 0$. The boundary $\partial S$ is the unit circle in the $xy$-plane. The curl of $\mathbf{F}$ is $(0, 0, 2)$. By Stokes' Theorem, $\int_{\partial S} \mathbf{F} \cdot d\mathbf{r} = \iint_S 2 \, dS_z = 2(\text{Area of unit circle}) = 2\pi$.
+\end{example}
+
+\section{Inequalities and Function Estimates}
+
+\textbf{Key Topics:} Jensen, Landau-Kolmogorov, Hardy, Gagliardo-Nirenberg-Sobolev, Poincaré, Hölder, uncertainty principles, Steinhaus.
+
+\begin{example}[Jensen's Inequality]
+Let $\varphi$ be convex on an interval $I$, $\mu$ a probability measure on $[a,b]$, and $f$ integrable with $f([a,b]) \subseteq I$. Then $\varphi\left(\int_a^b f \,d\mu\right) \leq \int_a^b \varphi \circ f \,d\mu$. For a discrete probability distribution, this becomes $\varphi\left(\sum \lambda_i x_i\right) \leq \sum \lambda_i \varphi(x_i)$. Taking $\varphi(t) = -\log t$ on $(0,\infty)$ gives the AM-GM inequality $\log\left(\sum \lambda_i x_i\right) \geq \sum \lambda_i \log x_i$.
+\end{example}
+
+\begin{example}[Landau-Kolmogorov Inequality]
+If $f$ is a real polynomial of degree $n$, then for any $k \in (0,n)$:
+\[ \|f^{(k)}\|_\infty \leq C_{n,k} \|f\|_\infty^{k/n} \|f^{(n)}\|_\infty^{1-k/n} \]
+where the constants $C_{n,k}$ are sharp. For $n=2$, the inequality is $|f'(x)| \leq \sqrt{2}\|f\|_\infty^{1/2}\|f''\|_\infty^{1/2}$ on $\mathbb{R}$, applied e.g. to bound $|\sin x / x|$ derivatives using the fact that $f(x) = \sin x / x$ extends to a smooth function on $\mathbb{R}$ with $\|f\|_\infty = 1$ and $f''$ bounded.
+\end{example}
+
+\begin{example}[Hardy's Inequality with Optimal Constants]
+For $f \in C_c^\infty(0,\infty)$ and $p>1$:
+\[ \left(\int_0^\infty \left(\frac{1}{x} \int_0^x f(t)\,dt\right)^p dx\right)^{1/p} \leq \frac{p}{p-1} \left(\int_0^\infty f(x)^p \,dx\right)^{1/p} \]
+The constant $\frac{p}{p-1}$ is optimal and is attained in the limit by suitable choices of $f$.
+\end{example}
+
+\begin{example}[Gagliardo-Nirenberg-Sobolev Inequality]
+For $1 < p < n$, there exists $C$ depending only on $p,n$ such that for $u \in C_c^\infty(\mathbb{R}^n)$:
+\[ \|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C \|\nabla u\|_{L^p(\mathbb{R}^n)} \]
+where $p^* = \frac{np}{n-p}$ is the Sobolev conjugate. When $p=2$, $n=2$ we get $\|u\|_{L^\infty(\mathbb{R}^2)} \leq \|\nabla u\|_{L^2(\mathbb{R}^2)}$ up to a constant.
+\end{example}
+
+\begin{example}[Poincaré Inequality on Rectangles]
+Let $\Omega = [0,L_1] \times [0,L_2]$ be a rectangle. For $u \in H_0^1(\Omega)$:
+\[ \int_\Omega |u|^2 \,dx \leq \frac{L_1^2 + L_2^2}{\pi^2} \int_\Omega |\nabla u|^2 \,dx \]
+For Neumann boundary conditions, the Poincaré constant is $L_{\max}^2/\pi^2$.
+\end{example}
+
+\begin{example}[Hölder’s Inequality]
+For $p,q,r > 1$ with $1/r = 1/p + 1/q$ and $f \in L^p, g \in L^q$:
+\[ \|fg\|_{L^r} \leq \|f\|_{L^p} \|g\|_{L^q} \]
+Equality holds for functions proportional on the support.
+\end{example}
+
+\begin{example}[Heisenberg Uncertainty Principle]
+For $f \in L^2(\mathbb{R})$ with $\|f\|_2 = 1$:
+\[ \left(\int_{\mathbb{R}} x^2 |f(x)|^2 dx\right) \left(\int_{\mathbb{R}} \xi^2 |\hat{f}(\xi)|^2 d\xi\right) \geq \frac{1}{4} \]
+Equivalently, $\|xf\|_2 \|\xi \hat{f}\|_2 \geq \frac{1}{2}\|f\|_2^2$. Equality iff $f$ is a Gaussian.
+\end{example}
+
+\begin{example}[Steinhaus Theorem on Difference Sets]
+Let $E \subseteq \mathbb{R}^n$ have positive Lebesgue measure. Then $E - E = \{x-y : x,y \in E\}$ contains an open neighborhood of the origin. In particular, $E - E$ has nonempty interior.
+\end{example}
+
+\subsection{Sobolev Spaces}
+
+\begin{definition}[Sobolev Space $W^{k,p}$]
+Let $\Omega \subset \mathbb{R}^n$ be an open set, $1 \leq p \leq \infty$, and $k \in \mathbb{N}$.
+The Sobolev space $W^{k,p}(\Omega)$ consists of functions $u \in L^p(\Omega)$ whose derivatives
+$\partial^\alpha u$ in the distribution sense belong to $L^p(\Omega)$ for all $|\alpha| \leq k$.
+The norm is
+\[
+\|u\|_{W^{k,p}} = \begin{cases}
+\left( \sum_{|\alpha| \leq k} \int_\Omega |\partial^\alpha u|^p \, dx \right)^{1/p}, & 1 \leq p < \infty, \\
+\sum_{|\alpha| \leq k} \,\esssup_\Omega |\partial^\alpha u|, & p = \infty.
+\end{cases}
+\]
+For $p=2$, we denote $H^k(\Omega) = W^{k,2}(\Omega)$, a Hilbert space.
+\end{definition}
+
+\begin{example}[Sobolev Embedding]
+For $n \geq 1$, $1 < p < \infty$, if $kp < n$ then $W^{k,p}(\mathbb{R}^n) \hookrightarrow L^q(\mathbb{R}^n)$ for $q = \frac{np}{n-kp}$. If $kp > n$, then $W^{k,p}(\mathbb{R}^n) \hookrightarrow C^{m,\alpha}(\mathbb{R}^n)$ where $m = k - \lfloor n/p \rfloor - 1$ and $\alpha = \lfloor n/p \rfloor + 1 - n/p$.
+\end{example}
+
+\begin{example}[Rellich-Kondrachov Compactness]
+Let $\Omega \subset \mathbb{R}^n$ be a bounded Lipschitz domain. For $1 \leq p \leq n$, the embedding $W^{1,p}(\Omega) \hookrightarrow L^q(\Omega)$ is compact for all $1 \leq q < \frac{np}{n-p}$ (when $p \leq n$). In particular, bounded sequences in $H_0^1(\Omega)$ have subsequences converging in $L^2(\Omega)$.
+\end{example}
+
+\subsection{Basic Inequalities}
+
+\begin{example}[Young's Inequality]
+Let $a, b \geq 0$ and $p, q > 1$ satisfy $\frac{1}{p} + \frac{1}{q} = 1$. Then
+\[ ab \leq \frac{a^p}{p} + \frac{b^q}{q} \]
+Equality holds when $a^p = b^q$, i.e., when $a = b^{q/p}$.
+\end{example}
+
+\begin{example}[AM-GM Inequality]
+For non-negative real numbers $x_1, x_2, \ldots, x_n$ and weights $\lambda_i \geq 0$ with $\sum \lambda_i = 1$:
+\[ \prod_{i=1}^n x_i^{\lambda_i} \leq \sum_{i=1}^n \lambda_i x_i \]
+In the equal-weight case $\lambda_i = 1/n$, this simplifies to
+\[ \sqrt[n]{x_1 x_2 \cdots x_n} \leq \frac{x_1 + x_2 + \cdots + x_n}{n} \]
+Equality holds if and only if $x_1 = x_2 = \cdots = x_n$.
+\end{example}
+
+\begin{example}[Cauchy-Schwarz Inequality]
+For any vectors $u, v$ in an inner product space $(\mathcal{H}, \langle \cdot, \cdot \rangle)$:
+\[ |\langle u, v \rangle| \leq \|u\| \|v\| \]
+where $\|u\| = \sqrt{\langle u, u \rangle}$. Equality holds if and only if $u$ and $v$ are linearly dependent.
+\end{example}
+
+\begin{example}[Minkowski Inequality]
+For $p \geq 1$ and measurable functions $f, g \in L^p(X, \mu)$:
+\[ \|f + g\|_p \leq \|f\|_p + \|g\|_p \]
+Equivalently,
+\[ \left( \int_X |f + g|^p \, d\mu \right)^{1/p} \leq \left( \int_X |f|^p \, d\mu \right)^{1/p} + \left( \int_X |g|^p \, d\mu \right)^{1/p} \]
+This states that $L^p$ spaces are normed vector spaces.
+\end{example}
+
+\begin{example}[Hardy Inequality in $\mathbb{R}^n$]
+For $u \in C_c^\infty(\mathbb{R}^n \setminus \{0\})$ and $n \geq 1$:
+\[
+\int_{\mathbb{R}^n} \frac{|u(x)|^p}{|x|^p} \,dx \leq \left(\frac{p}{n-p}\right)^p
+\int_{\mathbb{R}^n} |\nabla u|^p \,dx, \quad 1 < p < n.
+\]
+The constant $\left(\frac{p}{n-p}\right)^p$ is sharp.
+\end{example}
+
+\begin{example}[Nash Inequality]
+For $u \in L^1(\mathbb{R}^n) \cap H^1(\mathbb{R}^n)$ and $n \geq 1$:
+\[
+\|u\|_{L^2(\mathbb{R}^n)}^{1+2/n} \leq C \|u\|_{L^1(\mathbb{R}^n)}^{2/n} \|\nabla u\|_{L^2(\mathbb{R}^n)}.
+\]
+This is equivalent to logarithmic Sobolev inequalities.
+\end{example}
+
+\begin{example}[Logarithmic Sobolev Inequality]
+For $u \in H^1(\mathbb{R}^n)$ with $\|u\|_{L^2} = 1$:
+\[
+\int_{\mathbb{R}^n} |u|^2 \log|u|^2 \,dx \leq \frac{n}{2} \log\left( \frac{2}{\pi n e} \|\nabla u\|_{L^2}^2 \right).
+\]
+Equivalently, for the entropy $\Ent(f) = \int f \log f$:
+\[
+\Ent(f) \leq \frac{1}{2\lambda} D(f),
+\]
+where $D(f) = \int |\nabla \sqrt{f}|^2$ is the Dirichlet form.
+\end{example}
+
+\begin{example}[Korn's Inequality]
+Let $\Omega \subset \mathbb{R}^n$ ($n=2,3$) be a bounded Lipschitz domain.
+For any $u \in H^1(\Omega; \mathbb{R}^n)$:
+\[
+\|\nabla u\|_{L^2(\Omega)} \leq C \left( \|u\|_{L^2(\Omega)} + \|\varepsilon(u)\|_{L^2(\Omega)} \right),
+\]
+where $\varepsilon(u) = \frac{1}{2}(\nabla u + (\nabla u)^T)$ is the symmetric strain tensor.
+If $u \in H_0^1(\Omega; \mathbb{R}^n)$, the Korn inequality simplifies to:
+\[
+\|\nabla u\|_{L^2(\Omega)} \leq C \|\varepsilon(u)\|_{L^2(\Omega)},
+\]
+with constant $C$ depending only on $\Omega$.
+\end{example}
+
+\section{Conformal Mapping and Geometric Function Theory}
+
+\textbf{Key Topics:} Blaschke products, Schwarz lemma, conformal mappings (slit plane, lune, disk intersections), automorphisms, finite Blaschke products.
+
+\begin{example}[Blaschke Product]
+A Blaschke product of degree $N$ is
+\[ B(z) = e^{i\theta} \prod_{k=1}^N \frac{z - a_k}{1 - \overline{a_k}z} \]
+where $|a_k| < 1$. Each factor is an automorphism of the disk. $B$ is bounded by 1 in $\mathbb{D}$ and has exactly $N$ zeros (counting multiplicities) in $\mathbb{D}$. If a Blaschke product has a zero of multiplicity $m$ at $a \in \mathbb{D}$, the factor $\left(\frac{z-a}{1-\bar{a}z}\right)^m$ appears. Zeros inside the disk enforce growth restrictions: $\sum (1 - |a_k|) < \infty$ for infinite products to be bounded.
+\end{example}
+
+\begin{example}[Finite Blaschke Products]
+A finite Blaschke product maps $\mathbb{D}$ to $\mathbb{D}$ and is an $N$-to-1 map (counting multiplicity). It extends continuously to $\partial \mathbb{D}$ as a map into $\partial \mathbb{D}$. Finite Blaschke products are characterized as holomorphic self-maps of $\mathbb{D}$ with finitely many zeros. Moreover, $B$ maps $\mathbb{D}$ onto $\mathbb{D}$ with the hyperbolic distance satisfying $\rho(B(z), B(w)) = \rho(z, w)$. This follows from the invariance of the Poincaré metric under automorphisms.
+\end{example}
+
+\begin{example}[Schwarz Lemma]
+If $f: \mathbb{D} \to \mathbb{D}$ is holomorphic with $f(0) = 0$, then $|f(z)| \leq |z|$ and $|f'(0)| \leq 1$. Moreover, $|f(z)| = |z|$ for some $z \neq 0$ or $|f'(0)| = 1$ implies $f(z) = e^{i\theta}z$. The Schwarz-Pick metric provides the hyperbolic metric version.
+\end{example}
+
+\begin{theorem}[Schwarz-Pick Lemma]
+Let $f: \mathbb{D} \to \mathbb{D}$ be holomorphic. Then for all $z, w \in \mathbb{D}$:
+\[
+\rho_{\mathbb{D}}(f(z), f(w)) \leq \rho_{\mathbb{D}}(z, w)
+\]
+where the hyperbolic (Poincar\'e) metric is
+\[
+\rho_{\mathbb{D}}(z, w) = \operatorname{artanh}\left|\frac{z-w}{1-\bar{w}z}\right| = \frac{1}{2} \log \frac{1 + \left|\frac{z-w}{1-\bar{w}z}\right|}{1 - \left|\frac{z-w}{1-\bar{w}z}\right|}.
+\]
+Equivalently,
+\[
+\left|f'(z)\right| \leq \frac{1 - |f(z)|^2}{1 - |z|^2} \quad \text{for all } z \in \mathbb{D}.
+\]
+Equality holds for some $z \neq 0$ (or equivalently $|f'(0)| = 1$) if and only if $f$ is an automorphism of $\mathbb{D}$.
+\end{theorem}
+
+\begin{example}[Schwarz-Pick Lemma Application]
+For $f(z) = \frac{z-a}{1-\bar{a}z}$ with $a \in \mathbb{D}$, we have $|f'(z)| = \frac{1-|a|^2}{|1-\bar{a}z|^2}$ and $\frac{1-|f(z)|^2}{1-|z|^2} = \frac{1-|a|^2}{|1-\bar{a}z|^2}$, so equality holds. This is an automorphism of $\mathbb{D}$.
+\end{example}
+
+\begin{example}[Automorphism Group of $\mathbb{D}$]
+The automorphism group of $\mathbb{D}$ is
+\[
+\operatorname{Aut}(\mathbb{D}) = \left\{ e^{i\theta} \frac{z - a}{1 - \bar{a}z} : \theta \in \mathbb{R}, \, a \in \mathbb{D} \right\}.
+\]
+Each element is a M\"obius transformation mapping $\mathbb{D}$ onto itself. The group acts transitively: for any $z, w \in \mathbb{D}$ there exists $\varphi \in \operatorname{Aut}(\mathbb{D})$ with $\varphi(z) = w$.
+\end{example}
+
+\begin{theorem}[Carath\'eodory's Theorem on Boundary Correspondence]
+Let $f: \mathbb{D} \to \Omega$ be a conformal map onto a simply connected domain $\Omega$. If $\partial\Omega$ is a Jordan curve, then $f$ extends continuously to $\overline{\mathbb{D}}$ and induces a homeomorphism $f: \partial\mathbb{D} \to \partial\Omega$.
+\end{theorem}
+
+\begin{theorem}[Koebe Quarter Theorem]
+If $f: \mathbb{D} \to \mathbb{C}$ is univalent (injective holomorphic) with $f(0) = 0$ and $f'(0) = 1$, then $f(\mathbb{D})$ contains the quarter disk $\{z : |z| < 1/4\}$.
+
+More precisely, the image $f(\mathbb{D})$ satisfies
+\[
+\mathbb{D}(0, 1/4) \subseteq f(\mathbb{D}) \subseteq \mathbb{D}(0, 1)
+\]
+where the left inclusion is sharp (attained by the Koebe function $K(z) = z/(1-z)^2 = \sum_{n=1}^\infty n z^n$).
+\end{theorem}
+
+\begin{example}[Conformal Mapping: Slit Plane]
+The map $f(z) = \sqrt{z}$ conformally maps the slit plane $\mathbb{C} \setminus [0,\infty)$ onto the upper half-plane $\mathbb{H}$. More generally, any simply connected domain with at most two boundary points is conformally equivalent to $\mathbb{D}$.
+\end{example}
+
+\begin{example}[Conformal Mapping: Lune]
+The intersection of two disks $D(z_1, r_1) \cap D(z_2, r_2)$ is conformally mapped to a sector by the Schwarz-Christoffel formula. A lune of a regular $n$-gon is conformally equivalent to a half-plane with a certain angle. For two disks intersecting at angle $\alpha$, the intersection domain is conformally equivalent to a sector of angle $\alpha$. The Schwarz-Christoffel integral $\Phi(\zeta) = C + \int_0^\zeta \frac{d\xi}{\sqrt{\xi^2 - 1}}$ maps the upper half-plane to a symmetric lens (intersection of two disks) with interior angle depending on the parameters.
+\end{example}
+
+\begin{example}[Modulus Invariance for Annuli]
+The conformal modulus of an annulus $\Omega = \{r < |z| < R\}$ is $\log(R/r)$. Modulus is invariant under conformal maps: if $f: \Omega \to \Omega'$ is conformal, then $\mathrm{mod}(\Omega) = \mathrm{mod}(\Omega')$.
+\end{example}
+
+\begin{example}[Automorphisms of Simply Connected Domains]
+Any simply connected domain $\Omega \neq \mathbb{C}$ is conformally equivalent to $\mathbb{D}$. The group $\mathrm{Aut}(\mathbb{D})$ consists of Möbius transformations $e^{i\theta}\frac{z-a}{1-\bar{a}z}$. For a general domain, $\mathrm{Aut}(\Omega)$ is a Lie group of dimension at most 3. Cartan's Uniqueness Theorem states: if $f$ is a holomorphic automorphism of $\mathbb{D}$ fixing two distinct points, then $f$ is the identity.
+\end{example}
+
+\begin{example}[Doubly Periodic Meromorphic Functions]
+A meromorphic function on the torus $\mathbb{C}/\Lambda$ (where $\Lambda = \mathbb{Z}\omega_1 + \mathbb{Z}\omega_2$) has the same number of poles and zeros (counting multiplicity). The Weierstrass $\wp$-function provides a meromorphic function with double poles at lattice points. The group $\mathrm{Aut}(\mathbb{C}/\Lambda)$ consists of $z \mapsto \pm z + \omega$ where $\omega \in \Lambda$. In terms of the modular group, $SL(2,\mathbb{Z})$ acts on the space of lattices, identifying $\mathbb{C}/\Lambda \cong \mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$ for $\tau \in \mathbb{H}$.
+\end{example}
+
+\section{Operator Theory and Functional Analysis}
+
+\textbf{Key Topics:} Fredholm operators, Atkinson's theorem, reproducing kernel Hilbert spaces, Banach-Alaoglu, Lie-Trotter, Volterra operators, fractional integrals.
+
+\begin{example}[Fredholm Operators and Atkinson's Theorem]
+An operator $T: X \to Y$ between Banach spaces is Fredholm if $\ker T$ and $\mathrm{coker}\,T$ are both finite-dimensional. Atkinson's theorem characterizes Fredholm operators as those that are invertible modulo compact operators: there exists $S$ such that $ST = I + K_1$, $TS = I + K_2$ with $K_1, K_2$ compact.
+\end{example}
+
+\begin{example}[Reproducing Kernel Hilbert Spaces]
+A Hilbert space $\mathcal{H} \subseteq \mathbb{C}^\Omega$ is a reproducing kernel Hilbert space (RKHS) if point evaluation $f \mapsto f(x)$ is continuous for all $x \in \Omega$. The reproducing kernel $K(x,y)$ satisfies $f(x) = \langle f, K_x \rangle$ where $K_x(y) = K(y,x)$. Bergman spaces and the Hardy space $H^2$ are examples.
+\end{example}
+
+\begin{example}[Banach-Alaoglu Theorem]
+The closed unit ball of the dual space $X^*$ of a normed space $X$ is compact in the weak$^*$ topology. As a consequence, any bounded sequence in $X^*$ has a weakly$^*$ convergent subsequence. Applied to $L^\infty$, this gives precompactness in the weak$^*$ topology.
+\end{example}
+
+\begin{example}[Lie-Trotter Product Formula]
+If $A, B$ are generators of strongly continuous contraction semigroups $e^{tA}$, $e^{tB}$ on a Banach space, then
+\[ e^{t(A+B)} f = \lim_{n\to\infty} \left(e^{tA/n} e^{tB/n}\right)^n f \]
+for all $f$ in a suitable core. This underlies the construction of solutions to parabolic and Schrödinger equations.
+\end{example}
+
+\begin{example}[Volterra Operator: Compactness Without Eigenvalues]
+The Volterra operator $V: L^2[0,1] \to L^2[0,1]$, $(Vf)(x) = \int_0^x f(t)\,dt$, is compact but has no eigenvalues. Its spectrum is $\{0\}$, which is an approximate point spectrum. 0 is not an eigenvalue since $Vf = 0$ implies $f = 0$ a.e.
+\end{example}
+
+\begin{example}[Fractional Integral Operator]
+The Riesz fractional integral $I_\alpha f(x) = c_{n,\alpha} \int_{\mathbb{R}^n} \frac{f(y)}{|x-y|^{n-\alpha}} dy$ maps $L^p(\mathbb{R}^n)$ to $L^q(\mathbb{R}^n)$ when $1/p = 1/q + \alpha/n$ (with $1 < p < q < \infty$). This is the Hardy-Littlewood-Sobolev inequality.
+\end{example}
+
+\begin{definition}[Reproducing Kernel]
+Let $\mathcal{H}$ be a RKHS on $\Omega$. The reproducing kernel $K: \Omega \times \Omega \to \mathbb{C}$ is uniquely determined by:
+\begin{enumerate}
+    \item For each $y \in \Omega$, the function $K(\cdot, y) \in \mathcal{H}$ and $\langle f, K(\cdot, y) \rangle = f(y)$ for all $f \in \mathcal{H}$.
+    \item $K$ is positive definite: for any $n \in \mathbb{N}$, $c_1, \ldots, c_n \in \mathbb{C}$, and $x_1, \ldots, x_n \in \Omega$,
+    \[ \sum_{i=1}^n \sum_{j=1}^n c_i \overline{c_j} K(x_i, x_j) \geq 0. \]
+\end{enumerate}
+Moreover, $K(x,y) = \overline{K(y,x)}$ (Hermitian).
+\end{definition}
+
+\begin{example}[Reproducing Kernel for Weighted Bergman Space]
+For $\Omega = \mathbb{D}$, the Bergman space $A^2(\mathbb{D})$ with weight $(1-|z|^2)^{\alpha}$ has reproducing kernel
+\[ K_\alpha(z,w) = \frac{1}{(1-z\bar{w})^{2+\alpha}} \cdot (\text{normalization constant}), \]
+which can be computed via the reproducing property $\langle f, K(\cdot,w) \rangle = f(w)$.
+\end{example}
+
+\begin{example}[Spectral Radius Formula]
+For a bounded linear operator $T \in \mathcal{B}(X)$ on a Banach space, the spectral radius is $r(T) = \max \{ |\lambda| : \lambda \in \sigma(T) \}$. Gelfand's spectral radius formula states:
+\[ r(T) = \lim_{n \to \infty} \|T^n\|^{1/n} = \inf_{n \geq 1} \|T^n\|^{1/n}. \]
+The limit always exists. In particular, $\|T\| \geq r(T)$.
+\end{example}
+
+\begin{example}[Herglotz Representation for Positive Harmonic Functions]
+Let $u: \mathbb{H} \to [0, \infty)$ be harmonic and positive. Then there exists a unique finite Borel measure $\mu$ on $\mathbb{R}$ such that
+\[ u(z) = \int_{-\infty}^{\infty} P(z, t)\, d\mu(t) = \frac{1}{\pi} \int_{-\infty}^{\infty} \frac{\mathrm{Im}\,z}{|t-z|^2}\, d\mu(t), \quad z \in \mathbb{H}, \]
+where $P(z,t) = \frac{1}{\pi}\frac{\mathrm{Im}\,z}{|t-z|^2}$ is the Poisson kernel.
+\end{example}
+
+\begin{definition}[Relatively Bounded Perturbation]
+Let $A$ be a closed operator and $B$ be a bounded operator on a Banach space $X$. $B$ is said to be $A$-bounded (or relatively bounded) if $\mathcal{D}(A) \subseteq \mathcal{D}(B)$ and there exist constants $a, b \geq 0$ such that
+\[ \|Bx\| \leq a\|Ax\| + b\|x\|, \quad \forall x \in \mathcal{D}(A). \]
+The infimum of constants $a$ such that some $b$ exists is called the $A$-bound of $B$.
+\end{definition}
+
+\begin{example}[Analytic Perturbation of Eigenvalues]
+If $A$ has an isolated eigenvalue $\lambda_0$ with finite multiplicity $m$, and $B$ is $A$-bounded with $A$-bound $< 1$, then for small $|z|$, the eigenvalues of $A+zB$ near $\lambda_0$ can be analytically continued as functions $\lambda_j(z)$, $j=1,\ldots,m$, with $\lambda_j(0) = \lambda_0$. The total multiplicity is preserved.
+\end{example}
+
+\section{Special Topics in Complex Analysis}
+
+\textbf{Key Topics:} Bôcher's theorem, Poisson kernel, Fatou's lemma, removable singularities, Liouville theorems, identity theorem, growth restrictions.
+
+\begin{example}[Bôcher's Theorem for Positive Harmonic Functions]
+If $u$ is harmonic and positive on $\mathbb{C} \setminus \{0\}$, then either $u$ is constant or $u(z) = a\log|z| + h(z)$ where $h$ extends harmonically across $0$. This classifies the boundary behavior of positive harmonic functions at isolated singularities.
+\end{example}
+
+\begin{example}[Fatou's Lemma Techniques]
+If $f_n \to f$ a.e. with $|f_n| \leq g \in L^1$, then $\int |f_n - f| \to 0$. In $L^2$, if $f_n \rightharpoonup f$ and $\|f_n\|_2 \to \|f\|_2$, then $f_n \to f$ in $L^2$. This is used to prove convergence of spectral expansions.
+\end{example}
+
+\begin{example}[Removable Singularities]
+If $f$ is holomorphic on a punctured neighborhood of $z_0$ and bounded, then $z_0$ is a removable singularity. Riemann's removable singularity theorem states that a bounded holomorphic function on $\Omega \setminus \{z_0\}$ extends holomorphically to $\Omega$ iff $\lim_{z\to z_0} (z-z_0)f(z) = 0$.
+\end{example}
+
+\begin{example}[Liouville-Type Theorems]
+If $f$ is entire and $|f(z)| \leq C(1+|z|)^k$ for some $k$, then $f$ is a polynomial of degree at most $k$. For harmonic functions, if $u$ is harmonic on $\mathbb{R}^n$ with $u(x) = O(|x|^{-k})$ as $|x| \to \infty$, then $u$ is a polynomial times a radial function.
+\end{example}
+
+\begin{example}[Growth Restrictions on Entire Functions]
+An entire function satisfying $|\cos z| \leq C\sqrt{|z|}$ for large $|z|$ must be constant. More generally, order-$\frac{1}{2}$ entire functions with appropriate growth restrictions are uniquely determined by their zeros.
+\end{example}
+
+\begin{example}[Infinite Product for Entire Functions]
+If $\{a_n\}$ is a sequence with $\sum (1/|a_n|) < \infty$, the canonical product $P(z) = \prod_n E(z/a_n, 0)$ converges uniformly on compact sets to an entire function with zeros exactly $\{a_n\}$. Here $E(z,0) = 1-z$.
+\end{example}
+
+\begin{example}[Identity Theorem]
+If $f$ is holomorphic on a connected open set $\Omega$ and the set $\{z \in \Omega : f(z) = 0\}$ has an accumulation point in $\Omega$, then $f \equiv 0$ on $\Omega$. This follows from the isolated zero property of holomorphic functions.
+\end{example}
+
+\begin{example}[Poisson Integral Formula for the Half-Plane]
+If $f$ is continuous on $\overline{\mathbb{H}}$ and harmonic on $\mathbb{H}$, then for $z = x+iy \in \mathbb{H}$:
+\[ f(z) = \frac{1}{\pi} \int_{-\infty}^\infty \frac{y}{(x-t)^2 + y^2} f(t)\,dt \]
+This gives the solution to the Dirichlet problem on the upper half-plane.
+\end{example}
+
+\section{PDE Methods and Estimates}
+
+\textbf{Key Topics:} Interior Schauder estimates, Caccioppoli inequalities, Feynman-Kac, finite speed propagation, multipole expansions.
+
+\begin{example}[Interior Schauder Estimates]
+For a uniformly elliptic operator $L$ with smooth coefficients on $\Omega \subset \mathbb{R}^n$, solutions of $Lu = f \in C^{k,\alpha}(\Omega)$ satisfy interior estimates:
+\[ \|u\|_{C^{k+2,\alpha}(\Omega')} \leq C(\|f\|_{C^{k,\alpha}(\Omega)} + \|u\|_{L^\infty(\Omega)}) \]
+where $\Omega' \subset\subset \Omega$. These are the classical Schauder estimates.
+\end{example}
+
+\begin{example}[Caccioppoli Inequalities]
+Let $u$ be a weak solution of $-\mathrm{div}(A\nabla u) = f$ in $\Omega$ with $A$ symmetric and uniformly elliptic. For any $\zeta \in C_c^\infty(\Omega)$,
+\[ \int_\Omega \zeta^2 |\nabla u|^2 \leq C \int_\Omega |\nabla \zeta|^2 u^2 + C \int_\Omega \zeta^2 f^2 \]
+This is the key inequality in De Giorgi-Nash-Moser theory.
+\end{example}
+
+\begin{example}[Feynman-Kac Representation]
+For the heat equation $u_t = \Delta u$ on $\mathbb{R}^n$ with $u(0,x) = g(x)$, the probabilistic representation is
+\[ u(t,x) = \mathbb{E}^x[g(B_t)] = \int_{\mathbb{R}^n} g(y) \frac{1}{(4\pi t)^{n/2}} e^{-|y-x|^2/(4t)} dy \]
+For the Schrödinger operator $L = \Delta + V$, the formula involves Feynman paths with weight $\exp(\int V(B_s)ds)$.
+\end{example}
+
+\begin{example}[Finite Speed of Propagation]
+For the wave equation $u_{tt} = \Delta u$ on $\mathbb{R}^n \times [0,T]$ with initial data $(u, u_t)(0,\cdot) = (f,g)$ supported in $|x| \leq R$, the support of $u(t,\cdot)$ is contained in $|x| \leq R + t$. Energy travels at speed 1.
+\end{example}
+
+\begin{example}[Multipole Expansions for Harmonic Functions]
+For a harmonic function $u$ in $\mathbb{R}^3 \setminus B(0,R)$,
+\[ u(x) = \sum_{l=0}^\infty \sum_{m=-l}^l \frac{a_{lm}}{r^{l+1}} Y_{lm}(\theta,\phi) + b_{lm} r^l Y_{lm}(\theta,\phi) \]
+The coefficients encode the multipole moments. This is used in electrostatics and potential theory.
+\end{example}
+
+\begin{theorem}[De Giorgi-Nash-Moser Theorem]
+Let $u \in H^1(\Omega)$ be a weak solution of $-\mathrm{div}(A(x)\nabla u) = f$ in $\Omega \subset \mathbb{R}^n$, where:
+\begin{itemize}
+    \item $A(x) = (a_{ij}(x))$ is symmetric and uniformly elliptic: $\lambda |\xi|^2 \leq a_{ij}(x)\xi_i\xi_j \leq \Lambda |\xi|^2$ for a.e. $x \in \Omega$,
+    \item $A$ has bounded, measurable coefficients,
+    \item $f \in L^q(\Omega)$ for some $q > n/2$.
+\end{itemize}
+Then $u \in C^{0,\alpha}(\Omega)$ with H\"older exponent $\alpha = \alpha(n, \lambda/\Lambda) \in (0,1)$ and the estimate
+\[ \|u\|_{C^{0,\alpha}(\Omega')} \leq C\left(\|u\|_{L^2(\Omega)} + \|f\|_{L^q(\Omega)}\right) \]
+for any $\Omega' \subset\subset \Omega$.
+\end{theorem}
+
+\begin{example}[De Giorgi-Nash-Moser Application]
+Consider the equation $-\Delta u = f$ in $\Omega$ with $f \in L^\infty(\Omega)$. The theorem guarantees that any bounded weak solution is H\"older continuous. The Moser iteration scheme gives explicit H\"older exponent $\alpha = 1/(1+n/2)$.
+\end{example}
+
+\begin{theorem}[Kellogg's Theorem on Boundary Regularity]
+Let $\Omega \subset \mathbb{R}^n$ be a bounded domain and let $u \in H^1(\Omega) \cap C(\overline{\Omega})$ be the weak solution of the Dirichlet problem:
+\begin{cases}
+-\mathrm{div}(A\nabla u) = 0 & \text{in } \Omega, \\
+u = \varphi & \text{on } \partial\Omega,
+\end{cases}
+where $A$ is uniformly elliptic with bounded coefficients and $\varphi \in C(\partial\Omega)$.
+Then $u$ extends continuously to $\overline{\Omega}$ if and only if $\partial\Omega$ satisfies the Wiener criterion at each boundary point.
+\end{theorem}
+
+\begin{example}[Wiener Criterion Application]
+For the punctured ball $\Omega = B(0,1) \setminus \{0\}$ in $\mathbb{R}^n$, $n \geq 2$, the origin is an irregular boundary point: the Wiener series converges because $\mathrm{cap}(B(0,r) \setminus \Omega) = \mathrm{cap}(\{0\}) = 0$ for $n \geq 3$. Thus the Dirichlet problem does not attain the boundary data at $0$ in general.
 \end{example}

@@ -278,6 +278,31 @@ A function cannot be "large" everywhere if its average value is small and it doe
 Consider the equation $\ddot{x} + (1 + f(t)) x = 0$. We assume that $\int_0^\infty |f(t)| dt < \infty$. Study the Lyapunov stability of the solution $(x, \dot{x}) = (0, 0)$.
 \end{exercise}
 
+\begin{remarkbox}{Theoretical Framework: Lyapunov Stability Analysis}
+Lyapunov stability theory provides the mathematical foundation for determining whether a system's state remains "near" an equilibrium point under small perturbations. For a first-order system $\dot{X} = F(t, X)$ with an equilibrium point at $X^* = 0$ (i.e., $F(t, 0) = 0$), we consider the following definitions and methods:
+
+\textbf{1. Definitions of Stability:}
+\begin{itemize}
+    \item \textbf{Lyapunov Stability:} The origin is stable if for every $\epsilon > 0$, there exists a $\delta(\epsilon, t_0) > 0$ such that if $\|X(t_0)\| < \delta$, then $\|X(t)\| < \epsilon$ for all $t \geq t_0$.
+    \item \textbf{Asymptotic Stability:} The origin is asymptotically stable if it is stable and there exists $\delta > 0$ such that $\lim_{t \to \infty} \|X(t)\| = 0$.
+\end{itemize}
+
+\textbf{2. Lyapunov's Direct Method (Linearization):}
+One can often determine stability by linearizing the system around the equilibrium: $\dot{X} \approx AX$. If all eigenvalues of $A$ have strictly negative real parts, the equilibrium is exponentially stable. However, if any eigenvalues are purely imaginary (as in the harmonic oscillator), linearization is inconclusive for general non-linear perturbations, requiring more robust methods.
+
+\textbf{3. Lyapunov's Indirect Method (Lyapunov Functions):}
+This method seeks a scalar "energy" function $V(X)$ that is positive definite ($V(0)=0, V(X)>0$ for $X \neq 0$). 
+\begin{itemize}
+    \item If $\dot{V} \leq 0$, the system is stable.
+    \item If $\dot{V} < 0$, the system is asymptotically stable.
+\end{itemize}
+
+\textbf{4. Stability of Perturbed Linear Systems:}
+For systems of the form $\dot{X} = (A + B(t))X$, where $A$ is a stable matrix, stability is often analyzed using the \textbf{Variation of Constants} formula:
+\[ X(t) = e^{At} X(0) + \int_{0}^{t} e^{A(t-s)} B(s) X(s) ds. \]
+If $\|e^{At}\|$ is bounded (e.g., for a harmonic oscillator) and the perturbation $B(t)$ is \textit{integrable} ($\int_0^\infty \|B(t)\| dt < \infty$), \textbf{Gr\"onwall's Inequality} can be used to prove that $\|X(t)\|$ remains bounded by $\|X(0)\| e^{\int \|B\|}$. This is the precise approach required for this exercise, as it demonstrates that the total "accumulated perturbation" is insufficient to drive the system to infinity.
+\end{remarkbox}
+
 \begin{solution}
 \textbf{Prerequisites:}
 1. State-space representation of ODEs.
@@ -335,20 +360,45 @@ Suppose $f \in L^1[0, 2\pi], \hat{f}(n) = \frac{1}{2\pi} \int_0^{2\pi} f(x) e^{-
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-1. Plancherel/Riesz-Fischer Theorem: $L^2$ is isomorphic to $\ell^2$ via Fourier coefficients.
-2. Uniform convergence of function series: If $\sum \|g_n\|_\infty < \infty$, then $\sum g_n$ converges uniformly.
+This exercise explores the deep connection between the decay rate of Fourier coefficients and the regularity (smoothness) of the corresponding function. We provide a rigorous proof for both parts.
 
-\textbf{Steps:}
-1. For (a), the Riesz-Fischer Theorem states that if a sequence of coefficients is in $\ell^2$, there exists an $L^2$ function whose Fourier coefficients match that sequence. Since $\hat{f}(n) \in \ell^2$, $f$ must be in $L^2$.
-2. For (b), consider the formal derivative series $g(x) = \sum_{n=-\infty}^\infty (in \hat{f}(n)) e^{inx}$.
-3. The magnitude of the terms is $|in \hat{f}(n) e^{inx}| = |n \hat{f}(n)|$.
-4. Since $\sum |n \hat{f}(n)| < \infty$, the series for $g(x)$ converges uniformly by the Weierstrass M-test.
-5. A theorem in analysis states that if a series of functions converges and the series of their derivatives converges uniformly, then the limit function is differentiable and its derivative is the limit of the derivative series.
-6. Thus $f'(x) = g(x)$, and since $g(x)$ is a uniform limit of continuous functions, $f'$ is continuous. So $f \in C^1$.
+\textbf{Part (a): If $\sum_{n=-\infty}^{\infty} |\hat{f}(n)|^2 < \infty$, then $f \in L^2[0, 2\pi]$.}
+
+\begin{enumerate}
+    \item \textbf{Existence of an $L^2$ function:} The \textit{Riesz-Fischer Theorem} states that the space $L^2[0, 2\pi]$ is isometric to the Hilbert space $\ell^2(\mathbb{Z})$ of square-summable sequences. Since the sequence of Fourier coefficients $\{\hat{f}(n)\}$ is given to be in $\ell^2$, there exists a function $g \in L^2[0, 2\pi]$ such that its Fourier coefficients $\hat{g}(n)$ are exactly $\hat{f}(n)$ for all $n \in \mathbb{Z}$.
+    \item \textbf{Uniqueness of Fourier coefficients:} We are given that $f \in L^1[0, 2\pi]$. Since $L^2[0, 2\pi] \subset L^1[0, 2\pi]$, the function $g$ is also in $L^1$. We have two $L^1$ functions, $f$ and $g$, with the same Fourier coefficients: $\hat{f}(n) = \hat{g}(n)$ for all $n$.
+    \item \textbf{Conclusion:} A fundamental result in Fourier analysis states that the Fourier transform is injective on $L^1[0, 2\pi]$. That is, if two $L^1$ functions have the same Fourier coefficients, they must be equal almost everywhere. Therefore, $f = g$ a.e., and since $g \in L^2$, we conclude that $f \in L^2[0, 2\pi]$.
+\end{enumerate}
+
+\textbf{Part (b): If $\sum_{n=-\infty}^{\infty} |n \hat{f}(n)| < \infty$, then $f \in C^1[0, 2\pi]$.}
+
+\begin{enumerate}
+    \item \textbf{Uniform convergence of the Fourier series:}
+    Consider the formal Fourier series $S(x) = \sum_{n=-\infty}^\infty \hat{f}(n) e^{inx}$.
+    The magnitude of the terms is $|\hat{f}(n) e^{inx}| = |\hat{f}(n)|$.
+    Note that for $n \neq 0$, $|\hat{f}(n)| \leq |n \hat{f}(n)|$. Since $\sum |n \hat{f}(n)|$ converges, the series $\sum |\hat{f}(n)|$ also converges by the comparison test.
+    By the \textit{Weierstrass M-test}, the series $S(x)$ converges uniformly to some continuous function $h(x) \in C^0[0, 2\pi]$.
+    Again, by the uniqueness of Fourier coefficients for $L^1$ functions, we must have $f(x) = h(x)$ almost everywhere. Thus, $f$ has a continuous representative.
+
+    \item \textbf{Uniform convergence of the derivative series:}
+    Now consider the formal derivative of the Fourier series:
+    \[ g(x) = \sum_{n=-\infty}^\infty \frac{d}{dx} \left( \hat{f}(n) e^{inx} \right) = \sum_{n=-\infty}^\infty in \hat{f}(n) e^{inx}. \]
+    The magnitude of these terms is $|in \hat{f}(n) e^{inx}| = |n \hat{f}(n)|$.
+    The problem states that $\sum |n \hat{f}(n)| < \infty$. By the Weierstrass M-test, the derivative series $g(x)$ converges \textit{uniformly} to a continuous function.
+
+    \item \textbf{Term-by-term differentiation theorem:}
+    A standard theorem in analysis states that if:
+    \begin{itemize}
+        \item A sequence of functions $S_N(x) = \sum_{n=-N}^N \hat{f}(n) e^{inx}$ converges at at least one point (here it converges uniformly everywhere);
+        \item The sequence of derivatives $S_N'(x) = \sum_{n=-N}^N in \hat{f}(n) e^{inx}$ converges \textit{uniformly} to a function $g(x)$;
+    \end{itemize}
+    then the limit function $f(x)$ is differentiable, and its derivative is the limit of the derivatives: $f'(x) = g(x)$.
+
+    \item \textbf{Conclusion:} Since $g(x)$ is the uniform limit of continuous functions (trigonometric polynomials), $g$ itself is continuous. Thus $f$ is differentiable and its derivative $f'$ is continuous, meaning $f \in C^1[0, 2\pi]$.
+\end{enumerate}
 
 \textbf{Intuition:}
-Fourier coefficients encode the smoothness of a function. Part (a) says that square-integrable coefficients correspond to square-integrable functions. Part (b) says that if the coefficients decay fast enough (faster than $1/n$), the function is differentiable.
+The "size" of the Fourier coefficients $\hat{f}(n)$ corresponds directly to the "smoothness" of $f$. Part (a) shows that $L^2$ is exactly the space where the energy (sum of squares) is finite. Part (b) shows that if the coefficients decay faster than $1/|n|$, the function gains a degree of differentiability. In general, if $\sum |n^k \hat{f}(n)| < \infty$, then $f \in C^k$.
 \end{solution}
 
 \begin{exercise}
