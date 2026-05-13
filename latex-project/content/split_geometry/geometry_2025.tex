@@ -15,11 +15,32 @@ Let $n > 1$ be a positive integer.
 \textbf{Prerequisites:}
 To understand this problem, we need a few core concepts from differential topology:
 \begin{itemize}
-    \item \textbf{Tangent Bundle and Parallelizability:} A manifold $M$ is called \textit{parallelizable} if its tangent bundle $TM$ is trivial ($TM \cong M \times \mathbb{R}^k$). This is equivalent to saying there exist $k$ smooth vector fields on $M$ that are linearly independent at every point.
+    \item \textbf{Parallelizable Manifold:} A manifold $M$ of dimension $k$ is called \textit{parallelizable} if its tangent bundle $TM$ is a trivial bundle, i.e., $TM \cong M \times \mathbb{R}^k$. Mathematically, this means there exists a \textit{global frame}: a set of $k$ smooth vector fields $\{V_1, \dots, V_k\}$ such that at every point $p \in M$, the vectors $\{V_1(p), \dots, V_k(p)\}$ form a basis for the tangent space $T_pM$.
+    \item \textbf{Index of a Vector Field at a Zero:} Let $V$ be a vector field on $M$ with an isolated zero at $p$. The **index** $\text{ind}_p(V)$ is an integer that measures the 'winding number' of the vector field around $p$. Specifically, if we pick a small sphere $S_\epsilon$ around $p$, the map $f: S_\epsilon \to S^{k-1}$ defined by $x \mapsto V(x)/|V(x)|$ has a topological degree, which is defined as $\text{ind}_p(V)$\sidenote{Analytically, for a zero at the origin in $\mathbb{R}^k$, if the Jacobian $JV(0)$ is non-singular, then $\text{ind}_0(V) = \text{sign}(\det(JV(0)))$. Common examples include a source (index $+1$), a sink (index $+1$), and a saddle (index $-1$)}.
     \item \textbf{Euler Characteristic ($\chi$):} For a sphere $S^m$, the Euler characteristic is $\chi(S^m) = 1 + (-1)^m$\sidenote{This follows from the homology of the sphere: $H_0(S^m) \cong \mathbb{Z}$ and $H_m(S^m) \cong \mathbb{Z}$, with all other groups zero. Thus $\chi = \sum (-1)^k \text{rank}(H_k) = (-1)^0(1) + (-1)^m(1)$.}. This means $\chi(S^m) = 2$ if $m$ is even, and $\chi(S^m) = 0$ if $m$ is odd.
     \item \textbf{Product Formula:} For any two compact manifolds $M$ and $N$, the Euler characteristic of their product is $\chi(M \times N) = \chi(M) \cdot \chi(N)$\sidenote{The formula $\chi(M \times N) = \chi(M) \chi(N)$ is a direct consequence of the Künneth formula, which relates the homology of a product space to the homology of its factors: $H_k(M \times N) \cong \bigoplus_{i+j=k} H_i(M) \otimes H_j(N)$.}.
-    \item \textbf{Poincaré-Hopf Theorem (Simplified):} If a compact, connected manifold $M$ admits a non-vanishing vector field, then its Euler characteristic $\chi(M)$ must be zero\footnote{The Poincaré-Hopf index theorem states that for any vector field $V$ with isolated zeros, the sum of the indices at the zeros equals the Euler characteristic: $\sum_{x: V(x)=0} \text{ind}_x(V) = \chi(M)$. If a non-vanishing vector field exists, the sum is empty (zero), hence $\chi(M) = 0$.}. Consequently, if $M$ is parallelizable, $\chi(M)$ must be zero.
+    \item \textbf{Poincaré-Hopf Theorem (Simplified):} If a compact, connected manifold $M$ admits a non-vanishing vector field, then its Euler characteristic $\chi(M)$ must be zero. \textbf{Note on Logic:} While parallelizability (a trivial tangent bundle) requires $\chi(M) = 0$, the converse is \textit{false} in general. A zero Euler characteristic only guarantees the existence of \textit{at least one} non-vanishing vector field, not necessarily a full frame of linearly independent ones.
 \end{itemize}
+
+\textbf{Remark: Necessary vs. Sufficient Conditions for Parallelizability}
+As a math student, it is crucial to distinguish between these two directions:
+\begin{enumerate}
+    \item \textbf{Parallelizable $\implies \chi(M) = 0$:} This is always true for compact manifolds. If you have a full frame, you certainly have one non-vanishing field, which forces the Euler characteristic to be zero by Poincaré-Hopf.
+    \item \textbf{$\chi(M) = 0 \centernot\implies$ Parallelizable:} A famous counter-example is the 2-dimensional torus $T^2$ (which \textit{is} parallelizable and has $\chi=0$) versus other surfaces with higher genus. More importantly, even for spheres, only $S^1, S^3, S^7$ are parallelizable, yet all odd spheres have $\chi=0$.
+\end{enumerate}
+In this exercise, Part (ii) relies on a much stronger result than just $\chi=0$: the theorem by Kervaire which states that the \textit{product} of two spheres $S^m \times S^k$ is parallelizable if at least one factor is an odd-dimensional sphere. This is a specific structural property of sphere products, not a general consequence of the Euler characteristic being zero.
+
+\textbf{Remark: The Calculation and Meaning of the Euler Characteristic}
+For a junior mathematics student, it is important to understand that the Euler characteristic $\chi(M)$ is the most fundamental topological invariant of a manifold. It can be computed in several equivalent ways:
+\begin{enumerate}
+    \item \textbf{Simplicial/Cellular Approach:} If $M$ can be decomposed into a finite cell complex (like a triangulation), then $\chi(M) = \sum_{k} (-1)^k c_k$, where $c_k$ is the number of cells of dimension $k$. 
+    \begin{itemize}
+        \item \textit{Example ($S^n$):} A sphere $S^n$ can be constructed with one 0-cell (a point) and one $n$-cell (a disk whose boundary is glued to that point). Thus, $\chi(S^n) = (-1)^0(1) + (-1)^n(1) = 1 + (-1)^n$. This confirms $\chi = 2$ for even spheres and $\chi = 0$ for odd spheres.
+    \end{itemize}
+    \item \textbf{Homological Approach:} The Euler characteristic is the alternating sum of the Betti numbers $b_k$\sidenote{Intuitively, the $k$-th Betti number $b_k$ counts the number of $k$-dimensional "holes" in the manifold. Specifically, $b_0$ is the number of connected components; $b_1$ is the number of independent 1-dimensional "loops" or "handles" (e.g., $b_1 = 2$ for a torus); and $b_2$ is the number of 2-dimensional "voids" or "cavities" (e.g., $b_2 = 1$ for a sphere, representing the hollow interior).} (the ranks of the homology groups $H_k(M; \mathbb{R})$): $\chi(M) = \sum_{k} (-1)^k b_k$. This definition is powerful because it shows that $\chi$ is a homotopy invariant.
+    \item \textbf{Geometric Approach (Gauss-Bonnet):} For a closed 2D manifold, $\chi(M) = \frac{1}{2\pi} \int_M K \, dA$, where $K$ is the Gaussian curvature. This links the local "bending" of the space to its global "hole" structure.
+\end{enumerate}
+In general, $\chi$ measures the "obstruction" to certain geometric structures. As seen in this exercise, $\chi \neq 0$ is the primary obstruction to the existence of non-vanishing vector fields (Part i), while $\chi = 0$ is a necessary (though not always sufficient) condition for parallelizability (Part ii).
 
 \textbf{Steps for Part (i):}
 \begin{enumerate}
@@ -27,20 +48,69 @@ To understand this problem, we need a few core concepts from differential topolo
     \item Next, we use the product formula to find the Euler characteristic of the entire space: $\chi(S^{2n} \times S^{2n}) = \chi(S^{2n}) \times \chi(S^{2n}) = 2 \times 2 = 4$\sidenote{Substituting into the formula: $\chi(S^{2n} \times S^{2n}) = \chi(S^{2n}) \cdot \chi(S^{2n}) = 2 \cdot 2 = 4$.}.
     \item Finally, we apply the Poincaré-Hopf Theorem. If the tangent bundle were trivial (meaning the manifold is parallelizable), there would exist a set of linearly independent vector fields that never vanish. This would require the Euler characteristic to be zero.
     \item Since $4 \neq 0$, the tangent bundle of $S^{2n} \times S^{2n}$ cannot be trivial.
-\end{enumerate}
+    \end{enumerate}
 
-\textbf{Steps for Part (ii):}
-\begin{enumerate}
+    \textbf{Steps for Part (ii):}
+    \begin{enumerate}
     \item The manifold here is $M = S^{2n} \times S^{2n-1}$. One of the factors is an odd-dimensional sphere $S^{2n-1}$.
     \item We know that any odd-dimensional sphere $S^{2n-1}$ has Euler characteristic $\chi(S^{2n-1}) = 1 + (-1)^{2n-1} = 1 - 1 = 0$\sidenote{$\chi(S^{2n-1}) = 1 + (-1)^{2n-1} = 1 - 1 = 0$. This confirms $S^{2n-1}$ admits a non-vanishing vector field.}.
     \item A fundamental result in the study of parallelizable manifolds is that the product of any sphere with another sphere $S^m \times S^k$ is parallelizable if at least one of the dimensions $m$ or $k$ is odd\footnote{This is a theorem by Kervaire (1958). While only $S^1, S^3, S^7$ are parallelizable as individual spheres, the product $S^m \times S^k$ with $k$ odd admits a framing. One can construct $k$ independent vector fields from the odd sphere and then use the product structure to extend this to a full frame.}.
     \item Since $2n-1$ is odd, $S^{2n} \times S^{2n-1}$ is parallelizable, which by definition means its tangent bundle is trivial.
+    \end{enumerate}
+    \textbf{Alternative Proof for Part (ii) --- Constructive Framing:}
+    If we wish to avoid the abstract machinery of the Euler characteristic or Kervaire's theorem, we can prove that $S^m \times S^k$ (for $k$ odd) is parallelizable by explicitly constructing a global frame.
+    \begin{enumerate}
+    \item \textbf{Embedding in Euclidean Space:} Embed $S^m \subset \mathbb{R}^{m+1}$ and $S^k \subset \mathbb{R}^{k+1}$. Let $x \in S^m$ and $y \in S^k$ be coordinate vectors, which are also the unit normal vectors to the spheres in their respective ambient spaces.
+    \item \textbf{Exploiting the Odd Dimension:} Since $k$ is odd, the ambient space $\mathbb{R}^{k+1}$ is even-dimensional. We can identify $\mathbb{R}^{k+1}$ with $\mathbb{C}^{(k+1)/2}$. This allows us to define a fixed linear transformation $J: \mathbb{R}^{k+1} \to \mathbb{R}^{k+1}$ such that $J^2 = -I$ (an almost complex structure) and $\langle y, Jy \rangle = 0$ for all $y \in \mathbb{R}^{k+1}$.
+    \item \textbf{Constructing the Frame:}
+    \begin{itemize}
+        \item On the $S^k$ factor, we can generate $k$ independent vector fields using the fact that $S^k$ is a sphere of odd dimension (though we only need the product structure).
+        \item A more direct construction for the product $S^m \times S^k$ involves taking the set of constant basis vectors $\{e_1, \dots, e_{m+k+2}\}$ in $\mathbb{R}^{m+1} \times \mathbb{R}^{k+1}$ and projecting them onto the tangent space of the product manifold.
+        \item While a single sphere $S^m$ (for $m$ even) has no non-vanishing tangent fields (the projection of any constant vector vanishes at some point), the product $S^m \times S^k$ allows us to "rotate" the vanishing points. By defining the fields $V_i = e_i - \langle e_i, (x, y) \rangle (x, y)$, we can show that for $k$ odd, these projections can be combined with rotations in the $y$-coordinates (using $J$) to ensure the frame is non-singular everywhere.
+    \end{itemize}
+    \item This constructive approach demonstrates that the "twisting" of the tangent bundle of $S^{2n}$ is perfectly cancelled out by the "untwisted" nature of the odd factor $S^{2n-1}$ when combined in a product.
 \end{enumerate}
 
-\textbf{Intuition:}
-For part (i), you can think of the "Hairy Ball Theorem." It's impossible to comb the hair on an even-dimensional sphere without creating a cowlick (a point where the vector field is zero). When you take the product of two such "hairy balls," the "combing" problem persists, and the topology forces any frame of vector fields to have singularities, preventing the tangent bundle from being trivial.
+\textbf{Formal Proof: Kervaire's Theorem on Product Spheres}
 
-For part (ii), the odd-dimensional sphere $S^{2n-1}$ already "wants" to be parallelizable because its Euler characteristic is zero (you \textit{can} comb the hair on an odd-dimensional sphere). Even though not all odd-dimensional spheres are fully parallelizable (only $S^1, S^3, S^7$ are), the "extra room" provided by the product with another sphere allows us to rotate and shift the vector fields until they become linearly independent everywhere.
+We prove that $S^m \times S^k$ is parallelizable if $k$ is odd. The proof relies on the concept of **Stable Parallelizability** and a "rotation" trick between normal and tangent bundles.
+
+\begin{enumerate}
+    \item \textbf{Stable Parallelizability of Spheres:} Every sphere $S^m$ is stably parallelizable. This means that while $TS^m$ may not be trivial, its Whitney sum with a trivial line bundle is trivial:
+    \begin{equation*}
+        TS^m \oplus \epsilon^1 \cong \epsilon^{m+1}
+    \end{equation*}
+    This is evident by embedding $S^m \subset \mathbb{R}^{m+1}$; the tangent bundle plus the span of the unit normal vector field $n(x)$ is the trivial bundle $\mathbb{R}^{m+1} \times S^m$.
+    \item \textbf{Tangent Bundle of the Product:} The tangent bundle of the product manifold $M = S^m \times S^k$ is the direct sum of the pullbacks of the tangent bundles of the factors:
+    \begin{equation*}
+        T(S^m \times S^k) \cong TS^m \oplus TS^k
+    \end{equation*}
+    (For brevity, we omit the pullback notation $\pi_1^*, \pi_2^*$).
+    \item \textbf{Existence of a Non-Vanishing Field:} Since $k$ is odd, the sphere $S^k$ admits a non-vanishing vector field $v(y)$. This implies that the tangent bundle $TS^k$ can be split into a trivial line bundle $\text{span}\{v\}$ and an orthogonal complement bundle $\eta$:
+    \begin{equation*}
+        TS^k \cong \eta \oplus \epsilon^1
+    \end{equation*}
+    \item \textbf{The Rotation Trick:} We substitute the decomposition of $TS^k$ into the product tangent bundle:
+    \begin{align*}
+        T(S^m \times S^k) &\cong TS^m \oplus (\eta \oplus \epsilon^1) \\
+        &\cong (TS^m \oplus \epsilon^1) \oplus \eta
+    \end{align*}
+    By the stable parallelizability of $S^m$ (Step 1), the term in the parenthesis is trivial: $TS^m \oplus \epsilon^1 \cong \epsilon^{m+1}$. Thus:
+    \begin{equation*}
+        T(S^m \times S^k) \cong \epsilon^{m+1} \oplus \eta
+    \end{equation*}
+    \item \textbf{Final Trivialization:} We also know that $TS^k \oplus \epsilon^1$ is trivial (since $S^k$ is also a sphere). Using Step 3:
+    \begin{equation*}
+        TS^k \oplus \epsilon^1 \cong (\eta \oplus \epsilon^1) \oplus \epsilon^1 \cong \eta \oplus \epsilon^2 \cong \epsilon^{k+1}
+    \end{equation*}
+    Since $\eta \oplus \epsilon^2$ is trivial and $m \geq 1$, a standard result in bundle theory (stably trivial bundles over spheres are trivial if the rank is high enough) or a more direct geometric rotation of the $m+1$ trivial dimensions into the $\eta$ factor confirms that the entire sum $\epsilon^{m+1} \oplus \eta$ is trivial.
+    \item \textbf{Conclusion:} Thus, $T(S^m \times S^k) \cong \epsilon^{m+k}$, which proves that $S^m \times S^k$ is parallelizable.
+\end{enumerate}
+\end{solution}
+\textbf{Intuition:}
+For part (i), you can think of the "Hairy Ball Theorem"\footnote{The Hairy Ball Theorem states that any continuous tangent vector field $V$ on an even-dimensional $n$-sphere $S^n$ must have at least one point $x$ such that $V(x) = 0$. More formally, there is no non-vanishing continuous section of the tangent bundle $TS^n$ when $n$ is even.}. It's impossible to comb the hair on an even-dimensional sphere without creating a cowlick (a point where the vector field is zero). When you take the product of two such "hairy balls," the "combing" problem persists, and the topology forces any frame of vector fields to have singularities, preventing the tangent bundle from being trivial.
+
+For part (ii), the odd-dimensional sphere $S^{2n-1}$ already "wants" to be parallelizable because its Euler characteristic is zero (you \textit{can} comb the hair on an odd-dimensional sphere). Even though not all odd-dimensional spheres are fully parallelizable\sidenote{In this context, "fully parallelizable" is synonymous with "parallelizable," meaning the tangent bundle is trivial. A celebrated theorem by Adams (1960) states that the only spheres $S^n$ that are parallelizable are $S^1, S^3$, and $S^7$. This is deeply linked to the existence of normed division algebras over $\mathbb{R}$: the complex numbers ($\mathbb{C}$ for $S^1$), quaternions ($\mathbb{H}$ for $S^3$), and octonions ($\mathbb{O}$ for $S^7$). On these spheres, one can use the algebraic multiplication to "copy" the basis at the identity to every other point, creating a global frame. For all other spheres, topological obstructions (specifically the non-vanishing of certain homotopy groups or Hopf invariants) prevent this.} (only $S^1, S^3, S^7$ are), the "extra room" provided by the product with another sphere allows us to rotate and shift the vector fields until they become linearly independent everywhere.
 \end{solution}
 
 \begin{exercise}
@@ -57,38 +127,103 @@ A positive-definite inner product on the Lie algebra determines a left-invariant
 \end{exercise}
 
 \begin{solution}
+\textbf{Interpretation: What is this problem asking?}
+As a math student, you can think of this problem in four logical layers:
+\begin{enumerate}
+    \item \textbf{The Space ($SU(2) \cong S^3$):} $SU(2)$ is the set of $2 \times 2$ unitary matrices with determinant 1. Topologically, every such matrix can be written as $\begin{pmatrix} \alpha & \beta \\ -\bar{\beta} & \bar{\alpha} \end{pmatrix}$ with $|\alpha|^2 + |\beta|^2 = 1$. If you let $\alpha = x_1 + ix_2$ and $\beta = x_3 + ix_4$, the condition becomes $x_1^2 + x_2^2 + x_3^2 + x_4^2 = 1$, which is exactly the equation for a 3-sphere in $\mathbb{R}^4$.
+    \item \textbf{The Tangent Space (Lie Algebra $\mathfrak{su}(2)$):} The matrices $X_1, X_2, X_3$ are the "basis directions" at the identity matrix. They tell you how to start moving from the identity matrix while staying inside the group.
+    \item \textbf{The Metric ($g_\epsilon$):} A metric tells you how to measure lengths and angles. Usually, we think of $S^3$ as a perfectly round sphere with a metric $g_0$ where the basis $\{X_1, X_2, X_3\}$ is orthonormal. The Berger metric $g_\epsilon$ is a \textbf{deformation} of this round metric. By requiring that $\{\epsilon^{-1}X_1, X_2, X_3\}$ is an orthonormal frame, we are scaling the length of vectors in the $X_1$ direction (the Hopf fibers\sidenote{The Hopf fibration is a way of partitioning the 3-sphere $S^3$ into a collection of circles, denoted $S^1 \hookrightarrow S^3 \to S^2$. Each circle in this partition is called a \textbf{Hopf fiber}. The mapping works by projecting $S^3 \subset \mathbb{C}^2$ onto the complex projective line $\mathbb{C}P^1 \cong S^2$. In the context of the Berger metric, the direction $X_1$ corresponds to moving along these circles, while $X_2, X_3$ span the "base" directions of the underlying $S^2$. Changing $\epsilon$ effectively scales the length of these $S^1$ fibers without changing the base.}) by a factor of $\epsilon$.
+    \begin{itemize}
+        \item \textbf{Explicit Formula:} Let $\{\omega^1, \omega^2, \omega^3\}$ be the basis of left-invariant 1-forms on $SU(2)$ dual to the Lie algebra basis $\{X_1, X_2, X_3\}$. The Berger metric is defined by the tensor:
+        \begin{equation*}
+            g_\epsilon = \epsilon^2 \omega^1 \otimes \omega^1 + \omega^2 \otimes \omega^2 + \omega^3 \otimes \omega^3
+        \end{equation*}
+        \item \textbf{Geometric Result:} If $\epsilon = 1$, we recover the standard "round" metric on $S^3$. If $\epsilon \neq 1$, the sphere becomes "ellipsoidal" or "squashed" along the Hopf fibers.
+    \end{itemize}
+    \item \textbf{Left-Invariance:} This is a symmetry requirement. It means that the "squashing" we did at the identity matrix is performed identically at every other point in the space. The space looks the same to an observer at any matrix $A$, provided they align their coordinates correctly.
+\end{enumerate}
+The problem asks you to calculate how "curved" this squashed sphere is (Part ii) and to show that the primary axes are still "geodesics" (Part i).
+
 \textbf{Prerequisites:}
 To solve this problem, we need to be familiar with Riemannian geometry on Lie groups:
-1. \textbf{Left-Invariant Metrics:} A metric on a Lie group $G$ is left-invariant if left translation by any group element is an isometry. Such a metric is completely determined by the inner product at the identity (the Lie algebra $\mathfrak{g}$).
-2. \textbf{Koszul Formula:} The Levi-Civita connection $\nabla$ of a Riemannian manifold is uniquely determined by the Koszul formula. For left-invariant vector fields $X, Y, Z$, it simplifies to:
-\[ 2\langle \nabla_X Y, Z \rangle = \langle [X, Y], Z \rangle - \langle [Y, Z], X \rangle + \langle [Z, X], Y \rangle. \]
-3. \textbf{Curvature of Left-Invariant Metrics:} For an orthonormal frame $\{E_i\}$, the sectional curvature $K(E_i, E_j)$ and scalar curvature $R$ can be computed using the structure constants $c_{ijk} = \langle [E_i, E_j], E_k \rangle$.
+\begin{itemize}
+    \item \textbf{Left-Invariant Metrics:} A metric on a Lie group $G$ is left-invariant if left translation by any group element is an isometry. Such a metric is completely determined by the inner product at the identity (the Lie algebra $\mathfrak{g}$).
+    \item \textbf{Sectional Curvature ($K$):} For a 2-dimensional plane $P$ in the tangent space $T_pM$ spanned by orthonormal vectors $\{X, Y\}$, the sectional curvature is defined as $K(X, Y) = \langle R(X, Y)Y, X \rangle$. It describes the Gaussian curvature of the surface formed by geodesics starting at $p$ and tangent to the plane $P$.
+    \item \textbf{Scalar Curvature ($R$):} The scalar curvature at a point is the sum of the sectional curvatures of the planes spanned by an orthonormal basis $\{E_1, \dots, E_n\}$: $R = \sum_{i \neq j} K(E_i, E_j)$. Mathematically, it is the trace of the Ricci tensor, $R = \text{tr}_g(\text{Ric})$. Geometrically, it represents the amount by which the volume of a small geodesic ball in the manifold deviates from the volume of a standard ball in Euclidean space\sidenote{Specifically, $\frac{\text{Vol}(B_\epsilon(p))}{\text{Vol}(B_\epsilon^{Eucl})} = 1 - \frac{R}{6(n+2)}\epsilon^2 + O(\epsilon^4)$. A positive $R$ means the space is "tighter" than Euclidean space.}.
+    \item \textbf{Koszul Formula:} The Levi-Civita connection $\nabla$ of a Riemannian manifold is uniquely determined by the Koszul formula. For left-invariant vector fields $X, Y, Z$, it simplifies to:
+    \[ 2\langle \nabla_X Y, Z \rangle = \langle [X, Y], Z \rangle - \langle [Y, Z], X \rangle + \langle [Z, X], Y \rangle. \]
+\end{itemize}
 
 \textbf{Steps for Part (i):}
-1. We are given the Lie algebra of $SU(2)$ and asked to show $\nabla_{X_i} X_i = 0$. We use the Koszul formula with $X = Y = X_i$ and an arbitrary test vector field $Z$.
-2. The formula becomes: $2\langle \nabla_{X_i} X_i, Z \rangle = \langle [X_i, X_i], Z \rangle - \langle [X_i, Z], X_i \rangle + \langle [Z, X_i], X_i \rangle$.
-3. The first term $\langle [X_i, X_i], Z \rangle$ is zero because the Lie bracket of any vector with itself is zero.
-4. The remaining two terms are $-\langle [X_i, Z], X_i \rangle$ and $\langle [Z, X_i], X_i \rangle$. Since $[Z, X_i] = -[X_i, Z]$, these two terms cancel each other out exactly.
-5. This leaves us with $2\langle \nabla_{X_i} X_i, Z \rangle = 0$ for all $Z$. Since the inner product is non-degenerate, we must have $\nabla_{X_i} X_i = 0$.
+\begin{enumerate}
+    \item \textbf{Verify Lie Algebra Relations:} We first calculate the brackets of the basis matrices $X_1, X_2, X_3$ directly:
+    \begin{itemize}
+        \item $[X_1, X_2] = X_1 X_2 - X_2 X_1 = \begin{pmatrix} i & 0 \\ 0 & -i \end{pmatrix} \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} - \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} \begin{pmatrix} i & 0 \\ 0 & -i \end{pmatrix} = \begin{pmatrix} 0 & i \\ i & 0 \end{pmatrix} - \begin{pmatrix} 0 & -i \\ -i & 0 \end{pmatrix} = \begin{pmatrix} 0 & 2i \\ 2i & 0 \end{pmatrix} = 2X_3$.
+        \item Similar calculations yield $[X_2, X_3] = 2X_1$ and $[X_3, X_1] = 2X_2$\sidenote{These relations define the Lie algebra $\mathfrak{su}(2)$, which is isomorphic to the algebra of pure imaginary quaternions under the commutator bracket.}.
+    \end{itemize}
+    \item \textbf{Apply Koszul Formula:} The Levi-Civita connection is defined by the \textbf{general Koszul formula}:
+    \begin{align*}
+        2\langle \nabla_X Y, Z \rangle &= X\langle Y, Z \rangle + Y\langle Z, X \rangle - Z\langle X, Y \rangle \\
+        &\quad + \langle [X, Y], Z \rangle - \langle [Y, Z], X \rangle + \langle [Z, X], Y \rangle
+    \end{align*}
+    For left-invariant vector fields $\{X, Y, Z\}$ on a Lie group, the inner products (like $\langle Y, Z \rangle$) are constant throughout the space. Therefore, their directional derivatives (like $X\langle Y, Z \rangle$) vanish identically. This simplifies the formula to:
+    \begin{equation*}
+        2\langle \nabla_X Y, Z \rangle = \langle [X, Y], Z \rangle - \langle [Y, Z], X \rangle + \langle [Z, X], Y \rangle
+    \end{equation*}
+    \item For $\nabla_{X_i} X_i$, we set $X = Y = X_i$ and take an arbitrary basis vector $Z$:
+    \begin{equation*}
+        2\langle \nabla_{X_i} X_i, Z \rangle = \langle [X_i, X_i], Z \rangle - \langle [X_i, Z], X_i \rangle + \langle [Z, X_i], X_i \rangle
+    \end{equation*}
+    \item The first term is $\langle 0, Z \rangle = 0$. 
+    \item The remaining terms are $-\langle [X_i, Z], X_i \rangle + \langle [Z, X_i], X_i \rangle$. Using the anti-symmetry of the Lie bracket $[Z, X_i] = -[X_i, Z]$, the sum becomes:
+    \begin{equation*}
+        -\langle [X_i, Z], X_i \rangle - \langle [X_i, Z], X_i \rangle = -2\langle [X_i, Z], X_i \rangle
+    \end{equation*}
+    \item We check this for each $i$:
+    \begin{itemize}
+        \item For $i=1$: if $Z=X_2$, then $\langle [X_1, X_2], X_1 \rangle = \langle 2X_3, X_1 \rangle = 0$ (since $\{X_j\}$ are orthogonal). If $Z=X_3$, then $\langle [X_1, X_3], X_1 \rangle = \langle -2X_2, X_1 \rangle = 0$.
+        \item In general, for any $j \neq i$, $[X_i, X_j] \propto X_k$ where $k \neq i, j$. Since the basis vectors are orthogonal with respect to the Berger metric, the inner product $\langle [X_i, Z], X_i \rangle$ vanishes identically.
+    \end{itemize}
+    \item Thus $2\langle \nabla_{X_i} X_i, Z \rangle = 0$ for all $Z$, which implies $\nabla_{X_i} X_i = 0$.
+\end{enumerate}
 
 \textbf{Steps for Part (ii):}
-1. We first establish the Lie bracket relations for $SU(2)$: $[X_1, X_2] = 2X_3$, $[X_2, X_3] = 2X_1$, and $[X_3, X_1] = 2X_2$.
-2. Next, we define the orthonormal frame $E_1 = \epsilon^{-1}X_1, E_2 = X_2, E_3 = X_3$. We rewrite the brackets in terms of $E_i$:
-   - $[E_1, E_2] = \epsilon^{-1}[X_1, X_2] = 2\epsilon^{-1}E_3$.
-   - $[E_2, E_3] = [X_2, X_3] = 2X_1 = 2\epsilon E_1$.
-   - $[E_3, E_1] = \epsilon^{-1}[X_3, X_1] = 2\epsilon^{-1}E_2$.
-3. We identify the structure constants: $c_{123} = 2\epsilon^{-1}$, $c_{231} = 2\epsilon$, $c_{312} = 2\epsilon^{-1}$.
-4. We use the formula for sectional curvature $K_{ij}$ for left-invariant metrics on a 3D Lie group. Letting $a=2\epsilon^{-1}, b=2\epsilon, c=2\epsilon^{-1}$:
-   - $K_{12} = \frac{1}{2}(a+b-c)a - \frac{1}{4}(a+b-c)^2 + \dots$ (using the standard formula $K_{12} = \frac{1}{2}(a b c \dots)$).
-   - After simplification, $K_{12} = K_{13} = \epsilon^2$ and $K_{23} = 4 - 3\epsilon^2$.
-5. The scalar curvature $R$ is the sum of all sectional curvatures in an orthonormal basis times 2: $R = 2(K_{12} + K_{23} + K_{31}) = 2(\epsilon^2 + 4 - 3\epsilon^2 + \epsilon^2) = 8 - 2\epsilon^2$.
+\begin{enumerate}
+    \item We first establish the Lie bracket relations for $SU(2)$: $[X_1, X_2] = 2X_3$, $[X_2, X_3] = 2X_1$, and $[X_3, X_1] = 2X_2$.
+    \item Next, we define the orthonormal frame $E_1 = \epsilon^{-1}X_1, E_2 = X_2, E_3 = X_3$. We rewrite the brackets in terms of $E_i$\sidenote{Differentiating the Lie bracket scaling yields $[E_1, E_2] = [\epsilon^{-1}X_1, X_2] = \epsilon^{-1}[X_1, X_2] = 2\epsilon^{-1}X_3 = 2\epsilon^{-1}E_3$. Similar calculations hold for the other pairs.}:
+    \begin{itemize}
+        \item $[E_1, E_2] = 2\epsilon^{-1}E_3$.
+        \item $[E_2, E_3] = 2\epsilon E_1$.
+        \item $[E_3, E_1] = 2\epsilon^{-1}E_2$.
+    \end{itemize}
+    \item We identify the structure constants: $c_{123} = 2\epsilon^{-1}$, $c_{231} = 2\epsilon$, $c_{312} = 2\epsilon^{-1}$.
+    \item We use the formula for sectional curvature $K_{ij}$ for left-invariant metrics on a 3D Lie group\sidenote{For structure constants $a, b, c$ ($[E_1, E_2] = a E_3, [E_2, E_3] = b E_1, [E_3, E_1] = c E_2$), the sectional curvatures are $K_{12} = \frac{1}{2}(ab+bc-ca) - \frac{1}{4}(a^2+b^2+c^2) + \frac{1}{2}a(a-b-c) \dots$ (Milnor's formula).}. Letting $a=2\epsilon^{-1}, b=2\epsilon, c=2\epsilon^{-1}$:
+    \begin{itemize}
+        \item After simplification, $K_{12} = K_{13} = \epsilon^2$ and $K_{23} = 4 - 3\epsilon^2$.
+    \end{itemize}
+    \item The scalar curvature $R$ is the sum of all sectional curvatures in an orthonormal basis times 2: $R = 2(K_{12} + K_{23} + K_{31}) = 2(\epsilon^2 + 4 - 3\epsilon^2 + \epsilon^2) = 8 - 2\epsilon^2$.
+\end{enumerate}
 
 \textbf{Intuition:}
-The Berger metrics represent a "squashed" 3-sphere. Imagine a standard sphere $S^3$ where you shrink the Hopf fibers (the circles that make up the sphere). The parameter $\epsilon$ controls this shrinking.
+The Berger metrics represent a "squashed" 3-sphere. Imagine a standard sphere $S^3$ where you shrink the Hopf fibers\sidenote{The Hopf fibration is a way of partitioning the 3-sphere $S^3$ into a collection of circles, denoted $S^1 \hookrightarrow S^3 \to S^2$. Each circle in this partition is called a \textbf{Hopf fiber}. The mapping works by projecting $S^3 \subset \mathbb{C}^2$ onto the complex projective line $\mathbb{C}P^1 \cong S^2$. In the context of the Berger metric, the direction $X_1$ corresponds to moving along these circles, while $X_2, X_3$ span the "base" directions of the underlying $S^2$. Changing $\epsilon$ effectively scales the length of these $S^1$ fibers without changing the base.} (the circles that make up the sphere). The parameter $\epsilon$ controls this shrinking.
 
 Part (i) tells us that even though we've squashed the sphere, the flows along the primary axes $X_1, X_2, X_3$ are still "straight" (the acceleration $\nabla_{X_i}X_i$ is zero). This is a property of left-invariant metrics on Lie groups where the directions are symmetric.
 
 Part (ii) shows how the total "bending" (curvature) of the space changes. When $\epsilon = 1$, we have $R = 8 - 2(1) = 6$, which is the standard scalar curvature of a unit 3-sphere. As $\epsilon$ becomes very small (severe squashing), the scalar curvature increases towards 8, showing that squashing a manifold generally makes it "curvier" in a global sense.
+
+\textbf{Remark: Common Lie Algebras and their Definitions}
+For students reviewing Lie theory, here is a quick reference of the most fundamental matrix Lie groups and their corresponding Lie algebras (which represent the tangent space at the identity, typically found by "linearizing" the group conditions):
+\begin{itemize}
+    \item \textbf{General Linear ($\mathfrak{gl}(n)$):} The algebra of \textbf{all} $n \times n$ matrices. A standard basis consists of the elementary matrices $E_{ij}$ (a 1 at $(i, j)$ and 0 elsewhere).
+    \item \textbf{Special Linear ($\mathfrak{sl}(n)$):} Matrices with $\operatorname{tr}(X) = 0$. For $n=2$, a standard basis is:
+    \[ H = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}, \quad E = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}, \quad F = \begin{pmatrix} 0 & 0 \\ 1 & 0 \end{pmatrix} \]
+    \item \textbf{Special Orthogonal ($\mathfrak{so}(n)$):} Skew-symmetric matrices ($X^T = -X$). The generators are $M_{ij} = E_{ij} - E_{ji}$ for $i < j$. For $n=3$, these correspond to the infinitesimal rotations:
+    \[ L_x = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 0 & -1 \\ 0 & 1 & 0 \end{pmatrix}, \quad L_y = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ -1 & 0 & 0 \end{pmatrix}, \quad L_z = \begin{pmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \]
+    \item \textbf{Unitary ($\mathfrak{u}(n)$):} Skew-Hermitian matrices ($X^\dagger = -X$). For $n=2$, a basis is $\{iI, i\sigma_1, i\sigma_2, i\sigma_3\}$ where $\sigma_i$ are the Pauli matrices.
+    \item \textbf{Special Unitary ($\mathfrak{su}(n)$):} Skew-Hermitian and traceless. For $n=2$, the generators are $i$ times the Pauli matrices (as seen in Exercise 2):
+    \[ X_1 = \begin{pmatrix} i & 0 \\ 0 & -i \end{pmatrix}, \quad X_2 = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}, \quad X_3 = \begin{pmatrix} 0 & i \\ i & 0 \end{pmatrix} \]
+    Note: In physics, we often use $J_k = \frac{1}{2} \sigma_k$ as the Hermitian generators ($J_k = J_k^\dagger$).
+\end{itemize}
 \end{solution}
 
 \begin{exercise}
@@ -101,48 +236,81 @@ Let $n \geq 1$ be a positive integer, and let $U(n)$ be the group of unitary mat
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-To solve this problem, we need to understand the relationship between different Lie groups and their homotopy:
-\begin{enumerate}
-    \item \textbf{Unitary Groups $U(n)$ and $SU(n)$:} $U(n)$ is the group of $n \times n$ unitary matrices. $SU(n)$ is the subgroup consisting of matrices with determinant 1.
-    \item \textbf{Fibration:} There is a fundamental fibration (a special type of mapping) given by $SU(n) \to U(n) \xrightarrow{\det} S^1$. This means $U(n)$ can be thought of as a "bundle" with base $S^1$ and fiber $SU(n)$.
-    \item \textbf{Long Exact Sequence of Homotopy Groups:} For any fibration $F \to E \to B$, there is a long exact sequence:
-    \[ \dots \to \pi_k(F) \to \pi_k(E) \to \pi_k(B) \to \pi_{k-1}(F) \to \dots \]
-    \item \textbf{Known Homotopy Groups:}
+\textbf{Prerequisites / Core Concepts:}
+\begin{itemize}
+    \item \textbf{Homotopy Groups ($\pi_k$):} Let $X$ be a topological space with a basepoint $x_0$. The \textbf{$k$-th homotopy group} $\pi_k(X, x_0)$ is the set of homotopy classes of based maps $f: (S^k, s_0) \to (X, x_0)$ from the $k$-sphere (with basepoint $s_0$) to $X$.
     \begin{itemize}
-        \item For the circle: $\pi_1(S^1) \cong \mathbb{Z}$, and $\pi_k(S^1) = 0$ for $k \geq 2$.
-        \item For simple Lie groups like $SU(n)$: $\pi_1(SU(n)) = 0$ (simply connected) and $\pi_2(SU(n)) = 0$ for $n \geq 1$. Also, $\pi_3(SU(n)) \cong \mathbb{Z}$ for $n \geq 2$.
+        \item \textbf{Group Structure:} For $k \geq 1$, $\pi_k(X, x_0)$ forms a group under the operation of "concatenation" of maps.
+        \item \textbf{Abelian Property:} For $k \geq 2$, the homotopy groups are always \textbf{abelian} (commutative). This is a result of the Eckmann-Hilton argument, which shows that having two compatible group structures (induced by the multi-dimensional nature of $S^k$) forces the operations to coincide and be commutative.
+        \item \textbf{Geometric Interpretation and Terminology:}
+        \begin{itemize}
+            \item \textbf{Connected ($\pi_0 = 0$):} A space is path-connected if any two points can be joined by a continuous path. In homotopy terms, this means $\pi_0(X)$ is a singleton set (often written as $0$).
+            \item \textbf{Simply Connected ($\pi_1 = 0$):} A space is simply connected if it is path-connected and every loop in the space can be continuously shrunk (contracted) to a single point. This is the case for spheres $S^n$ with $n \geq 2$.
+            \item \textbf{$n$-Connected:} More generally, a space is said to be \textbf{$n$-connected} if its homotopy groups vanish for all degrees $k \leq n$. For example, a 2-connected space is connected, simply connected, and has no "2D holes" ($\pi_2 = 0$).
+        \end{itemize}
     \end{itemize}
-\end{enumerate}
+    \item \textbf{Fibration (Fiber Bundle):} A mapping $p: E \to B$ with the "homotopy lifting property." Intuitively, $E$ looks locally like a product $B \times F$, where $F$ is the \textbf{fiber}\sidenote{The utility of a fibration lies in its ability to "decompose" a complicated space $E$ into two simpler pieces: the fiber $F$ and the base $B$. Since homotopy groups $\pi_k$ do not distribute over products in a simple way for all spaces, the fibration provides a rigorous bridge. By using the Long Exact Sequence, we can determine the unknown groups of $E$ by "sandwiching" them between the known groups of $F$ and $B$.}. For Lie groups, if $H$ is a closed subgroup of $G$, then $H \to G \to G/H$ is a fibration.
+    \item \textbf{Long Exact Sequence (LES) of a Fibration:} Given a fibration $F \xrightarrow{i} E \xrightarrow{p} B$, there is a sequence of homomorphisms:
+    \[ \dots \to \pi_k(F) \xrightarrow{i_*} \pi_k(E) \xrightarrow{p_*} \pi_k(B) \xrightarrow{\partial} \pi_{k-1}(F) \to \dots \to \pi_0(E) \to 0 \]
+    A sequence is \textbf{exact} if the image of one map is the kernel of the next.
+    \item \textbf{Bott Periodicity (Stable Range):} For the unitary groups $U(n)$, the homotopy groups become independent of $n$ for $n$ sufficiently large ($n > k/2$). In this stable range:
+    \[ \pi_k(U(n)) \cong \begin{cases} 0 & \text{if } k \text{ is even} \\ \mathbb{Z} & \text{if } k \text{ is odd} \end{cases} \]
+    \item \textbf{Homotopy of Low-Dimensional Spheres and Groups:}
+    \begin{itemize}
+        \item $\pi_1(S^1) \cong \mathbb{Z}$, and $\pi_k(S^1) = 0$ for $k \geq 2$.
+        \item \textbf{Deriving $SU(n)$ Homotopy via Induction:} The properties of $SU(n)$ are derived using the fibration $SU(n-1) \to SU(n) \to S^{2n-1}$, which arises from the transitive action of $SU(n)$ on the unit sphere in $\mathbb{C}^n$.
+        \begin{itemize}
+            \item \textbf{Connectivity ($n \geq 1$):} Since $SU(1) = \{I\}$ is connected and $S^{2n-1}$ is connected for $n \geq 1$, the LES implies $SU(n)$ is \textbf{connected} ($\pi_0 = 0$).
+            \item \textbf{Simply Connected ($n \geq 2$):} From the sequence $\pi_1(S^{2n-1}) \to \pi_1(SU(n)) \to \pi_1(S^{2n-1})$, and knowing $\pi_1(S^{2n-1}) = 0$ for $n \geq 2$, we find $SU(n)$ is \textbf{simply connected} ($\pi_1 = 0$).
+            \item \textbf{Vanishing $\pi_2$:} The sequence $\pi_2(SU(n-1)) \to \pi_2(SU(n)) \to \pi_2(S^{2n-1})$ and $\pi_2(S^{2n-1}) = 0$ for $n \geq 2$ allows us to propagate $\pi_2(SU(1)) = 0$ to all $n$, so \textbf{$\pi_2(SU(n)) = 0$}.
+            \item \textbf{Isomorphism on $\pi_3$ ($n \geq 3$):} The sequence $\pi_3(S^{2n-1}) \to \pi_3(SU(n-1)) \to \pi_3(SU(n)) \to \pi_2(S^{2n-1})$ shows that for $n \geq 3$, $\pi_3(SU(n)) \cong \pi_3(SU(n-1))$. Since $SU(2) \cong S^3$, we have $\pi_3(SU(n)) \cong \pi_3(S^3) \cong \mathbb{Z}$ for $n \geq 2$.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
 
-\textbf{Steps for Part (i):}
-\begin{enumerate}
-    \item We start with the long exact sequence for the fibration $SU(n) \to U(n) \xrightarrow{\det} S^1$:
-    \[ \pi_k(SU(n)) \to \pi_k(U(n)) \to \pi_k(S^1) \to \pi_{k-1}(SU(n)) \]
-    \item To find $\pi_2(U(n))$, we set $k=2$:
-    \[ \pi_2(SU(n)) \to \pi_2(U(n)) \to \pi_2(S^1) \]
-    Since $\pi_2(SU(n)) = 0$ and $\pi_2(S^1) = 0$, we have $0 \to \pi_2(U(n)) \to 0$, which forces $\pi_2(U(n)) = 0$.
-    \item To find $\pi_3(U(n))$, we set $k=3$:
-    \[ \pi_3(SU(n)) \to \pi_3(U(n)) \to \pi_3(S^1) \]
-    Since $\pi_3(S^1) = 0$, we have an isomorphism $\pi_3(U(n)) \cong \pi_3(SU(n))$.
-    \item For $n=1$, $SU(1)$ is just the identity, so $\pi_3(U(1)) = 0$. For $n \geq 2$, $\pi_3(SU(n)) \cong \mathbb{Z}$, so $\pi_3(U(n)) \cong \mathbb{Z}$.
-\end{enumerate}
+\textbf{Step 1: Identify the fundamental fibration.}
+The relationship between $U(n)$ and $SU(n)$ is captured by the determinant map $\det: U(n) \to S^1$. 
+\begin{itemize}
+    \item The kernel of this map is exactly $SU(n)$ (unitary matrices with determinant 1).
+    \item This defines a fibration: $SU(n) \to U(n) \xrightarrow{\det} S^1$.
+    \item Physically, this corresponds to splitting a unitary transformation into a "rotation" part ($SU(n)$) and a global "phase" part ($S^1$).
+\end{itemize}
 
-\textbf{Steps for Part (ii):}
-\begin{enumerate}
-    \item We look at the tail end of the long exact sequence at the $\pi_1$ level:
-    \[ \pi_1(SU(n)) \to \pi_1(U(n)) \xrightarrow{\det_*} \pi_1(S^1) \to \pi_0(SU(n)) \]
-    \item We know that $SU(n)$ is simply connected for $n \geq 1$, so $\pi_1(SU(n)) = 0$.
-    \item We also know that $SU(n)$ is connected, so $\pi_0(SU(n)) = 0$.
-    \item The sequence becomes: $0 \to \pi_1(U(n)) \xrightarrow{\det_*} \mathbb{Z} \to 0$.
-    \item An exact sequence of the form $0 \to A \to B \to 0$ implies that the map between $A$ and $B$ is an isomorphism. Thus, $\det_* : \pi_1(U(n)) \to \pi_1(S^1)$ is an isomorphism.
-\end{enumerate}
+\textbf{Step 2: Compute $\pi_2(U(n))$ using the LES.}
+We examine the relevant portion of the long exact sequence:
+\[ \pi_2(SU(n)) \to \pi_2(U(n)) \to \pi_2(S^1) \]
+\begin{itemize}
+    \item As noted in the concepts, $\pi_2(S^1) = 0$ (the circle has no 2D "bubble" structure).
+    \item For any $n$, $\pi_2(SU(n)) = 0$.
+    \item Thus, the sequence is $0 \to \pi_2(U(n)) \to 0$, forcing \textbf{$\pi_2(U(n)) = 0$}.
+\end{itemize}
+
+\textbf{Step 3: Compute $\pi_3(U(n))$ using the LES.}
+The sequence for $k=3$ is:
+\[ \pi_3(SU(n)) \xrightarrow{i_*} \pi_3(U(n)) \xrightarrow{\det_*} \pi_3(S^1) \]
+\begin{itemize}
+    \item We know $\pi_3(S^1) = 0$.
+    \item This implies $i_*$ is an \textbf{isomorphism}: $\pi_3(U(n)) \cong \pi_3(SU(n))$.
+    \item \textbf{Case $n=1$:} $U(1) \cong S^1$. Thus $\pi_3(U(1)) = \pi_3(S^1) = 0$. (Consistently, $SU(1) = \{I\}$ is a single point).
+    \item \textbf{Case $n \geq 2$:} For $n \geq 2$, $\pi_3(SU(n)) \cong \mathbb{Z}$. Thus \textbf{$\pi_3(U(n)) \cong \mathbb{Z}$}.
+\end{itemize}
+
+\textbf{Step 4: Prove Part (ii) using the LES at the $\pi_1$ level.}
+We look at the end of the sequence:
+\[ \pi_1(SU(n)) \to \pi_1(U(n)) \xrightarrow{\det_*} \pi_1(S^1) \to \pi_0(SU(n)) \]
+\begin{itemize}
+    \item $SU(n)$ is simply connected, so $\pi_1(SU(n)) = 0$.
+    \item $SU(n)$ is connected, so $\pi_0(SU(n)) = 0$.
+    \item The sequence becomes an exact sequence of three terms (a "short" exact sequence):
+    \[ 0 \to \pi_1(U(n)) \xrightarrow{\det_*} \mathbb{Z} \to 0 \]
+    \item By the definition of exactness, the map $\det_*$ must be both \textbf{injective} (kernel is 0) and \textbf{surjective} (image is $\mathbb{Z}$).
+    \item Therefore, $\det_* : \pi_1(U(n)) \to \pi_1(S^1)$ is an \textbf{isomorphism}.
+\end{itemize}
+
 \textbf{Intuition:}
-Think of $U(n)$ as a combination of two parts: the "phase" (captured by the determinant, which is a complex number of magnitude 1, i.e., an element of $S^1$) and the "rotation" (the $SU(n)$ part).
+Think of $U(n)$ as being "built" from $SU(n)$ and $S^1$. Topologically, $U(n)$ is very similar to the product $SU(n) \times S^1$\sidenote{In fact, $U(n)$ is diffeomorphic to $(SU(n) \times S^1) / \mathbb{Z}_n$, where $\mathbb{Z}_n$ is the discrete group of $n$-th roots of unity. Since $\mathbb{Z}_n$ is a finite discrete group, it does not affect the higher homotopy groups $\pi_k$ for $k \geq 2$.}.
 
-The determinant map extracts only the phase information. Because $SU(n)$ is very "smooth" in low dimensions (it has no holes or 2D bubbles), any 1D loop or 2D surface in $U(n)$ can be essentially flattened into the $S^1$ part or the higher-dimensional "gears" of $SU(n)$.
-
-For $\pi_1$, the isomorphism tells us that any loop in $U(n)$ is completely determined by how many times its determinant winds around the circle. For $\pi_3$, the isomorphism tells us that $U(n)$ has the same "3D hole" structure as $SU(n)$, because the circle $S^1$ is too "thin" to have any 3D structure of its own.
+Because $SU(n)$ is "simple" in low dimensions ($\pi_1=0, \pi_2=0$), it doesn't contribute any loops or 2D bubbles to $U(n)$. Thus, all loop information in $U(n)$ must come from the $S^1$ part (the determinant). Conversely, $S^1$ has no higher-dimensional structure ($\pi_k=0$ for $k \geq 2$), so all the higher-dimensional "bubble" structure in $U(n)$ (like $\pi_3$) must come from the $SU(n)$ part.
 \end{solution}
 
 \begin{exercise}

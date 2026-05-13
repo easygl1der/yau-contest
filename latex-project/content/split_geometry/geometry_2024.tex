@@ -23,28 +23,34 @@ The topological space $X$ is obtained by gluing two tetrahedra as illustrated. T
 \textbf{Prerequisites:}
 \begin{itemize}
     \item \textbf{Euler Characteristic for CW Complexes:} For a 3-dimensional complex, $\chi(X) = V - E + F - T$, where $V$ is the number of vertices, $E$ is edges, $F$ is faces, and $T$ is tetrahedra (3-cells).
-    \item \textbf{Compact Manifolds:} A manifold is a space that locally looks like Euclidean space. A "closed" manifold is one that is compact and has no boundary (like a sphere or a torus).
-    \item \textbf{Poincaré Duality:} A fundamental symmetry in the homology of manifolds. For a closed, connected, oriented $n$-manifold, the Euler characteristic must satisfy $\chi(M) = 0$ if $n$ is odd.
+    \item \textbf{Link of a Vertex:} In a piecewise linear (PL) complex $X$, the \textbf{Link} of a vertex $v$, denoted $\operatorname{Lk}(v)$, is the set of all simplices that do not contain $v$ but are faces of simplices that do.
+    \item \textbf{Manifold Condition:} For a 3-dimensional complex $X$ to be a manifold without boundary, the Link of every vertex must be homeomorphic to a 2-sphere $S^2$.
+    \item \textbf{Poincaré Duality:} For a closed, connected, oriented $n$-manifold, the Euler characteristic must satisfy $\chi(M) = 0$ if $n$ is odd.
 \end{itemize}
 
 \textbf{Steps:}
 \begin{enumerate}
     \item \textbf{Calculate the Euler Characteristic of $X$:} 
-    We are given that the space $X$ is constructed with $V = 1$ vertex, $E = 2$ edges, $F = 4$ triangles (faces), and $T = 2$ tetrahedra. 
+    The space $X$ is given to have $V = 1$ vertex, $E = 2$ edges, $F = 4$ triangles (faces), and $T = 2$ tetrahedra. 
+    \[ \chi(X) = V - E + F - T = 1 - 2 + 4 - 2 = 1. \]
 
-    Using the formula:
-    \[ \chi(X) = 1 - 2 + 4 - 2 = 1. \]
+    \item \textbf{Topological Obstruction from Poincaré Duality:} 
+    If $X$ were a compact 3-manifold without boundary (a "closed 3-manifold"), its Euler characteristic $\chi(X)$ would necessarily be zero. This is a direct consequence of Poincaré Duality ($\chi(M) = \sum (-1)^i b_i$ and $b_i = b_{n-i}$ for oriented manifolds; for non-oriented ones, we use $\mathbb{Z}_2$ coefficients or the oriented double cover). Since $1 \neq 0$, $X$ cannot be a manifold.
 
-    \item \textbf{Determine the Euler Characteristic of a 3-Manifold:} 
-    If $X$ were a compact 3-manifold without boundary (a "closed 3-manifold"), its Euler characteristic would be determined by its Betti numbers: $\chi(M) = b_0 - b_1 + b_2 - b_3$. 
-
-    By Poincaré duality for a closed oriented 3-manifold, we know $b_0 = b_3 = 1$ and $b_1 = b_2$. Plugging these in:
-    \[ \chi(M) = 1 - b_1 + b_1 - 1 = 0. \]
-
-    Even if the manifold is non-orientable, we can use $\mathbb{Z}_2$ coefficients or the oriented double cover to show that $\chi(M)$ must still be $0$.
-
-    \item \textbf{Compare the Results:} 
-    We found $\chi(X) = 1$, but any compact 3-manifold without boundary must have $\chi = 0$. Since $1 \neq 0$, the space $X$ cannot be a manifold of this type.
+    \item \textbf{Local Analysis via the Link (The "Pinching" Proof):}
+    Let's examine the local structure at the single vertex $v$. For $X$ to be a manifold, the Link of $v$ must be $S^2$. 
+    \begin{itemize}
+        \item In our complex, the 3-cells are two tetrahedra. Each tetrahedron has 4 faces, 6 edges, and 4 vertices.
+        \item When we glue these, we end up with 4 triangles, 2 edges, and 1 vertex.
+        \item We can calculate the Euler characteristic of the link $\operatorname{Lk}(v)$ using the fact that for a 3-dimensional CW complex:
+        \[ \chi(\operatorname{Lk}(v)) = 2 - \chi(X) \cdot (\text{multiplicity factor}) \]
+        More directly, the link of a vertex in a 3-complex is a 2D complex (a union of triangles). The number of vertices, edges, and faces in $\operatorname{Lk}(v)$ corresponds to the number of edges, faces, and 3-cells incident to $v$ in $X$.
+        \item In $X$, there are $E_{inc} = 2$ edges incident to $v$, $F_{inc} = 4$ faces incident to $v$, and $T_{inc} = 2$ tetrahedra incident to $v$.
+        \item Thus, in $\operatorname{Lk}(v)$, we have $V_{link} = 2$, $E_{link} = 4$, and $F_{link} = 2$.
+        \item $\chi(\operatorname{Lk}(v)) = 2 - 4 + 2 = 0$\sidenote{Calculation for the link: $\chi = V - E + F = 2 - 4 + 2 = 0$. Since $\chi(S^2) = 2$, the link cannot be a sphere.}.
+        \item A 2D complex with $\chi = 0$ is typically a torus $T^2$ or a Klein bottle, not a sphere $S^2$.
+    \end{itemize}
+    \item \textbf{Conclusion:} Since the link of the vertex is not a sphere, the space is not locally Euclidean at the vertex. It is a "pseudo-manifold" with a singularity at the point $v$.
 \end{enumerate}
 \textbf{Intuition:}
 Imagine the Euler characteristic as a "scaffolding balance." For a smooth, well-behaved 3D shape like a manifold, the number of "points, lines, and surfaces" must perfectly cancel out the "volume" pieces to reach zero. 
@@ -60,34 +66,35 @@ Suppose $(M, h)$ is a closed Riemannian manifold with $\sec(h) \leq -1$. Suppose
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Sectional Curvature ($\sec$):} A measure of how the ambient manifold $M$ curves. $\sec \leq -1$ means the space is "negatively curved" like a saddle everywhere.
-    \item \textbf{Minimal Surface:} A surface where the mean curvature is zero ($H=0$). Intuitively, it is "pulled tight" and has no wasted area locally.
-    \item \textbf{Gauss Equation:} Relates the curvature of the surface ($K_\Sigma$) to the curvature of the ambient space ($\sec_M$) and the second fundamental form (principal curvatures $\kappa_1, \kappa_2$): $K_\Sigma = \sec_M(T\Sigma) + \kappa_1 \kappa_2$.
-    \item \textbf{Gauss-Bonnet Theorem:} Connects geometry to topology: $\int_\Sigma K_\Sigma \, dA = 2\pi \chi(\Sigma) = 4\pi(1 - g)$.
+    \item \textbf{Sectional Curvature ($\sec$):} For a 2-plane $P \subset T_pM$ spanned by orthonormal vectors $\{u, v\}$, $\sec(P) = \langle R(u, v)v, u \rangle$.
+    \item \textbf{Minimal Surface:} A surface $\Sigma$ such that the trace of its second fundamental form $h$ is zero ($H = \operatorname{tr}(h) = 0$).
+    \item \textbf{Gauss Equation:} $K_\Sigma(P) = K_M(P) + \det(h|_P)$. For a surface, $\det(h) = \kappa_1 \kappa_2$, where $\kappa_i$ are principal curvatures.
+    \item \textbf{Gauss-Bonnet Theorem:} $\int_\Sigma K_\Sigma \, dA = 2\pi \chi(\Sigma) = 4\pi(1 - g)$ for a closed surface of genus $g$.
 \end{itemize}
 
 \textbf{Steps:}
 \begin{enumerate}
     \item \textbf{Analyze the Surface Curvature via the Gauss Equation:} 
-    For any surface immersed in $M$, the Gaussian curvature $K_\Sigma$ is given by:
-    \[ K_\Sigma = K_M(T\Sigma) + \kappa_1 \kappa_2. \]
-    Since the surface $\Sigma$ is minimal, its mean curvature is zero, meaning $\kappa_1 + \kappa_2 = 0$, or $\kappa_2 = -\kappa_1$. 
-    Thus, the product of principal curvatures is $\kappa_1 \kappa_2 = -\kappa_1^2$, which is always less than or equal to zero.
+    Let $\{e_1, e_2\}$ be an orthonormal basis for $T\Sigma$. The Gaussian curvature $K_\Sigma$ is related to the ambient sectional curvature $\sec_M(T\Sigma)$ by:
+    \[ K_\Sigma = \sec_M(T\Sigma) + \kappa_1 \kappa_2. \]
+    Since $\Sigma$ is a minimal surface, its mean curvature $H = \kappa_1 + \kappa_2$ vanishes. This implies $\kappa_2 = -\kappa_1$.
+    \item \textbf{Determine the Curvature Bound:} 
+    Substituting $\kappa_2 = -\kappa_1$ into the product:
+    \[ \kappa_1 \kappa_2 = \kappa_1 (-\kappa_1) = -\kappa_1^2 \leq 0. \]
+    We are given that $\sec_M \leq -1$. Combining these inequalities:
+    \[ K_\Sigma = \sec_M(T\Sigma) - \kappa_1^2 \leq -1 - \kappa_1^2 \leq -1. \]
+    This shows that the internal curvature of a minimal surface in a negatively curved space is always \textit{more negative} than the ambient curvature\sidenote{$K_\Sigma \leq -1 - \kappa_1^2 \leq -1$. The term $-\kappa_1^2$ represents the "intrinsic penalty" for the surface to bend within the ambient space.}.
 
-    \item \textbf{Apply the Curvature Bound:} 
-    We are given that the ambient sectional curvature is $\sec_M \leq -1$. Substituting this and our result from Step 1 into the Gauss equation:
-    \[ K_\Sigma \leq -1 - \kappa_1^2 \leq -1. \]
-    This tells us that the surface itself is "more curved" (more negative) than the background space.
-
-    \item \textbf{Integrate using Gauss-Bonnet:} 
-    Now we integrate both sides of the inequality $K_\Sigma \leq -1$ over the entire surface $\Sigma$:
+    \item \textbf{Integrate over the Surface:} 
+    Integrating the inequality $K_\Sigma \leq -1$ over the manifold $\Sigma$:
     \[ \int_\Sigma K_\Sigma \, dA \leq \int_\Sigma (-1) \, dA = -\operatorname{Area}(\Sigma). \]
-    By the Gauss-Bonnet Theorem, the integral of $K_\Sigma$ is $2\pi \chi(\Sigma)$. For a surface of genus $g$, the Euler characteristic is $\chi(\Sigma) = 2 - 2g$.
+    By the Gauss-Bonnet Theorem, the left-hand side is $2\pi \chi(\Sigma)$.
     \[ 2\pi(2 - 2g) \leq -\operatorname{Area}(\Sigma). \]
-
-    \item \textbf{Final Calculation:} 
-    Multiply both sides by $-1$ (and flip the inequality):
+    
+    \item \textbf{Final Algebraic Manipulation:} 
+    Multiplying by $-1$ and rearranging:
     \[ \operatorname{Area}(\Sigma) \leq -2\pi(2 - 2g) = 4\pi(g - 1). \]
+    Since the area is positive, this also implies $g \geq 1$ (a minimal surface in $\sec \leq -1$ cannot be a sphere).
 \end{enumerate}
 \textbf{Intuition:}
 Imagine trying to stretch a rubber sheet (the surface) inside a saddle-shaped room (negative curvature). Because the room is "flaring out" in all directions, the rubber sheet has to cover a lot of "ground" just to close back up on itself and form a loop (a surface of genus $g$). 
@@ -104,30 +111,35 @@ Show that $\mathsf{SP}^{n}(\mathbb{CP}^{1})$ is homeomorphic to $\mathbb{CP}^{n}
 \textbf{Prerequisites:}
 \begin{itemize}
     \item \textbf{Symmetric Product ($\mathsf{SP}^n$):} The space of unordered sets of $n$ points. If $X$ is a space, $\mathsf{SP}^n(X)$ is the quotient $(X \times \dots \times X) / S_n$, where the symmetric group $S_n$ permutes the coordinates.
-    \item \textbf{Projective Line ($\mathbb{CP}^1$):} Topologically a sphere ($S^2$), also called the Riemann sphere. Points can be thought of as complex numbers plus a point at infinity.
-    \item \textbf{Fundamental Theorem of Algebra:} Every non-constant polynomial of degree $n$ has exactly $n$ complex roots (counting multiplicity).
-    \item \textbf{Homeomorphism:} A continuous bijection with a continuous inverse.
+    \item \textbf{Projective Line ($\mathbb{CP}^1$):} Points are $[z : w]$, where $z, w \in \mathbb{C}$ are not both zero. This is the Riemann sphere.
+    \item \textbf{Fundamental Theorem of Algebra:} Every non-zero homogeneous polynomial $P(z, w)$ of degree $n$ over $\mathbb{C}$ can be factored uniquely (up to scaling) as a product of $n$ linear factors: $P(z, w) = \prod_{i=1}^n (\alpha_i z - \beta_i w)$.
+    \item \textbf{Vieta's Formulas:} Relate the coefficients of a polynomial to symmetric functions of its roots.
 \end{itemize}
 
 \textbf{Steps:}
+\begin{enumerate}
+    \item \textbf{Map from $\mathsf{SP}^n(\mathbb{CP}^1)$ to $\mathbb{CP}^n$ (The Root-to-Coefficient Map):} 
+    An element in $\mathsf{SP}^n(\mathbb{CP}^1)$ is an unordered set of $n$ points $\{[u_1 : v_1], [u_2 : v_2], \dots, [u_n : v_n]\}$. 
+    We define a map $\Phi: \mathsf{SP}^n(\mathbb{CP}^1) \to \mathbb{CP}^n$ by constructing a homogeneous polynomial $P(z, w)$ whose roots are exactly these points:
+    \[ P(z, w) = \prod_{i=1}^n (v_i z - u_i w) = a_0 z^n + a_1 z^{n-1} w + \dots + a_n w^n. \]
+    The output of the map is the point in $\mathbb{CP}^n$ defined by the coefficients: $[a_0 : a_1 : \dots : a_n]$.
+    \item \textbf{Well-definedness and Homogeneity:}
+    \begin{itemize}
+        \item \textbf{Independence of Order:} Since the product $\prod (v_i z - u_i w)$ is commutative, the result is independent of the ordering of the $n$ points. Thus, the map is well-defined on the quotient by $S_n$.
+        \item \textbf{Independence of Scaling:} If we scale a single root $[u_j : v_j]$ to $[\lambda u_j : \lambda v_j]$, the coefficient vector $(a_0, \dots, a_n)$ is scaled by $\lambda$. In $\mathbb{CP}^n$, this represents the same point.
+    \end{itemize}
 
-1. \textbf{Link Points to Polynomials:} 
-A point in $\mathbb{CP}^n$ can be represented by its homogeneous coordinates $[a_0 : a_1 : \dots : a_n]$. These can be seen as the coefficients of a homogeneous polynomial of degree $n$:
-\[ P(z, w) = a_n z^n + a_{n-1} z^{n-1} w + \dots + a_0 w^n. \]
+    \item \textbf{Bijectivity via the Fundamental Theorem of Algebra:}
+    \begin{itemize}
+        \item \textbf{Injectivity:} If two sets of roots produce the same polynomial (up to scaling), the roots themselves must be identical as unordered sets (counting multiplicity).
+        \item \textbf{Surjectivity:} Every point $[a_0 : \dots : a_n] \in \mathbb{CP}^n$ corresponds to a non-zero homogeneous polynomial $P(z, w) = \sum a_i z^{n-i} w^i$. By the Fundamental Theorem of Algebra, this polynomial factors into $n$ linear factors $L_i(z, w) = (v_i z - u_i w)$. These $n$ factors define $n$ points $[u_i : v_i] \in \mathbb{CP}^1$.
+    \end{itemize}
 
-2. \textbf{Define the Map $\Phi$:} 
-An element in $\mathsf{SP}^n(\mathbb{CP}^1)$ is a set of $n$ points $\{[u_1 : v_1], \dots, [u_n : v_n]\}$ on the Riemann sphere. 
-We define $\Phi$ by taking these $n$ points as the \textit{roots} of a polynomial:
-\[ \Phi(\{ [u_i : v_i] \}) = \left[ \prod_{i=1}^n (u_i z - v_i w) \text{ expanded into coefficients } \right]. \]
-This map is well-defined because the order of the points (roots) does not change the resulting product of the factors.
-
-3. \textbf{Show the Map is a Bijection:} 
-By the Fundamental Theorem of Algebra, any polynomial (represented by a point in $\mathbb{CP}^n$) can be uniquely factored into $n$ linear terms. These linear terms give us $n$ points in $\mathbb{CP}^1$. Thus, for every point in $\mathbb{CP}^n$, there is a unique unordered set of $n$ points in $\mathbb{CP}^1$. This means $\Phi$ is a bijection.
-
-4. \textbf{Continuity and Compactness:} 
-The map $\Phi$ is continuous because the coefficients of a polynomial (Vieta's formulas) are continuous functions of its roots. 
-Since $\mathsf{SP}^n(\mathbb{CP}^1)$ is the quotient of a compact space ($(\mathbb{CP}^1)^n$), it is compact. 
-A continuous bijection from a compact space to a Hausdorff space ($\mathbb{CP}^n$) is automatically a homeomorphism.
+    \item \textbf{Continuity and Homeomorphism:}
+    The coefficients $a_i$ are elementary symmetric polynomials in the roots $(u_i, v_i)$. These are continuous functions. 
+    Since $(\mathbb{CP}^1)^n$ is compact, its quotient $\mathsf{SP}^n(\mathbb{CP}^1)$ is compact. 
+    $\mathbb{CP}^n$ is a Hausdorff space. A continuous bijection from a compact space to a Hausdorff space is a homeomorphism.
+\end{enumerate}
 
 \textbf{Intuition:}
 This theorem is essentially a geometric way of saying that "a polynomial is defined by its roots." 
@@ -144,32 +156,32 @@ Show that if a complete noncompact Riemannian manifold $M$ does not have the geo
 \textbf{Prerequisites:}
 \begin{itemize}
     \item \textbf{Complete Noncompact Manifold:} A manifold that has no boundary but extends infinitely (like a paraboloid or a plane).
-    \item \textbf{Geodesic:} The shortest path between two points in a curved space (the generalization of a straight line).
-    \item \textbf{Line in Universal Cover:} A geodesic $\gamma(t)$ that is distance-minimizing for \textit{all} $t \in (-\infty, \infty)$. Not every geodesic is a line!
-    \item \textbf{Universal Cover ($\widetilde{M}$):} A "unrolled" version of the manifold where all loops are unwound into paths.
+    \item \textbf{Geodesic:} A curve $\gamma(t)$ such that $\nabla_{\dot{\gamma}} \dot{\gamma} = 0$.
+    \item \textbf{Line:} A geodesic $\gamma: \mathbb{R} \to M$ that is distance-minimizing between any two of its points: $d(\gamma(t_1), \gamma(t_2)) = |t_1 - t_2|$ for all $t_1, t_2 \in \mathbb{R}$.
+    \item \textbf{Geodesic Loops to Infinity Property:} A manifold $M$ has this property if for any compact set $K \subset M$ and any non-trivial class $g \in \pi_1(M)$, there exists a geodesic loop in the class $g$ that does not intersect $K$.
 \end{itemize}
 
 \textbf{Steps:}
-
-1. \textbf{Define the Failure of the Property:} 
-Suppose $M$ does \textit{not} have the property. This means there is some loop class $g \in \pi_1(M)$ and a compact "forbidden" zone $K$ such that you cannot find any geodesic loop representing $g$ that stays entirely outside $K$. Every attempt to push the loop to infinity forces it to "snag" on $K$.
-
-2. \textbf{Construct a Sequence of Long Loops:} 
-Choose a sequence of basepoints $x_i$ that move further and further away from $K$ (so $\operatorname{dist}(x_0, x_i) \to \infty$). 
-For each $x_i$, let $\gamma_i$ be the shortest geodesic loop based at $x_i$ that represents the class $g$. 
-Because $M$ lacks the "loops to infinity" property, every one of these $\gamma_i$ must intersect the compact set $K$.
-
-3. \textbf{Find a Limiting Point in $K$:} 
-Let $y_i$ be a point where $\gamma_i$ hits $K$. Since $K$ is compact, the sequence $\{y_i\}$ has a subsequence that converges to some point $y_\infty \in K$. 
-Now, look at the loop $\gamma_i$ as two segments of length $L_i/2$ starting from $y_i$ and heading out towards $x_i$. Since $\operatorname{dist}(y_i, x_i) \to \infty$, these segments are getting longer and longer.
-
-4. \textbf{Lift to the Universal Cover:} 
-Lift everything to $\widetilde{M}$. The loop $\gamma_i$ lifts to a geodesic segment connecting a point $\tilde{y}_i$ to its "translated" version $g \cdot \tilde{y}_i$. 
-As $i \to \infty$, the distance from $\tilde{y}_i$ to the "ends" of the geodesic segment goes to infinity in both directions. 
-
-5. \textbf{Convergence to a Line:} 
-By the Arzelà-Ascoli theorem, this sequence of increasingly long geodesic segments (passing through the fixed region near $K$) converges to an infinite geodesic $\sigma: (-\infty, \infty) \to \widetilde{M}$. 
-Because each segment was part of a shortest path (a minimal geodesic segment), the limit $\sigma$ is distance-minimizing on every interval. Such an infinite distance-minimizing geodesic is, by definition, a \textbf{line}.
+\begin{enumerate}
+    \item \textbf{Formalize the Assumption:} 
+    Suppose $M$ lacks the "geodesic loops to infinity" property. There exists a non-trivial element $g \in \pi_1(M)$ and a compact set $K$ such that \textbf{every} geodesic loop in the conjugacy class of $g$ must intersect $K$.
+    \item \textbf{Construct a Sequence of Minimal Loops:} 
+    Let $x_i$ be a sequence of points in $M$ such that $d(x_i, K) \to \infty$. For each $x_i$, there exists a shortest loop $\gamma_i$ based at $x_i$ representing the class $g$. 
+    By our assumption, each $\gamma_i$ must pass through $K$. Let $y_i \in \gamma_i \cap K$.
+    \item \textbf{Apply Compactness to Find a Limit Point:}
+    Since $K$ is compact, the sequence of points $\{y_i\}$ has a subsequence (which we still call $y_i$) that converges to a point $y_\infty \in K$. 
+    For each $i$, we can parameterize $\gamma_i$ by arc length such that $\gamma_i(0) = y_i$. 
+    The total length $L_i$ of the loop $\gamma_i$ must go to infinity, because $L_i = \operatorname{length}(\gamma_i) \geq 2 d(x_i, y_i) \to \infty$\sidenote{Since $y_i \in K$ and $x_i \to \infty$, the distance $d(x_i, y_i)$ grows without bound. The loop must go from $y_i$ to $x_i$ and back, so its length is at least twice the distance.}.
+    \item \textbf{Lift to the Universal Cover:}
+    Lift each loop $\gamma_i$ to a geodesic segment $\tilde{\gamma}_i: [-a_i, b_i] \to \widetilde{M}$ in the universal cover, where $\tilde{\gamma}_i(0) = \tilde{y}_i$ (a lift of $y_i$) and the endpoints satisfy $\tilde{\gamma}_i(b_i) = g \cdot \tilde{\gamma}_i(-a_i)$. 
+    Since $y_i \to y_\infty$, we can choose lifts such that $\tilde{y}_i \to \tilde{y}_\infty$.
+    \item \textbf{Extract the Limit (Arzelà-Ascoli):}
+    The sequence of unit-speed geodesics $\tilde{\gamma}_i$ is equicontinuous and their starting points are bounded. By the Arzelà-Ascoli theorem, a subsequence converges uniformly on compact intervals to an infinite geodesic $\sigma: \mathbb{R} \to \widetilde{M}$ passing through $\tilde{y}_\infty$.
+    \item \textbf{Prove $\sigma$ is a Line:}
+    Each $\tilde{\gamma}_i$ was a lift of a \textit{shortest} loop in its class, meaning it is a distance-minimizing segment in $\widetilde{M}$ between its endpoints. 
+    In the limit, the geodesic $\sigma$ inherits this property: for any $T > 0$, $\sigma|_{[-T, T]}$ is the limit of minimizing segments, and thus is itself a minimizing segment. 
+    An infinite geodesic that is minimizing on all sub-segments is a \textbf{line}.
+\end{enumerate}
 
 \textbf{Intuition:}
 Think of the manifold as having a "narrow waist" or a "hook" represented by $K$. The loop class $g$ is like a rubber band that is caught on this hook. 
