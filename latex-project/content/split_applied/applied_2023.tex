@@ -2,93 +2,202 @@
 
 \begin{exercise}
 \label{applied:2023:1}
-Consider the forward and the centered finite difference formulas
+Consider the forward and the centered finite difference formulas to approximate the derivative of $f$ at a point $x_0$:
+\begin{equation}
+    D_h^+ f(x_0) = \frac{f(x_0 + h) - f(x_0)}{h}, \tag{1}
+\end{equation}
+\begin{equation}
+    D_h^0 f(x_0) = \frac{f(x_0 + h) - f(x_0 - h)}{2h}. \tag{2}
+\end{equation}
+Assume $f$ is a smooth function in a neighborhood of $x_0$ containing the points $x_0 + h$ and $x_0 - h$.
 
-\[
-D _ {h} ^ {+} f \left(x _ {0}\right) = \frac {f \left(x _ {0} + h\right) - f \left(x _ {0}\right)}{h}, \tag {1}
-\]
-
-\[
-D _ {h} ^ {0} f \left(x _ {0}\right) = \frac {f \left(x _ {0} + h\right) - f \left(x _ {0} - h\right)}{2 h}, \tag {2}
-\]
-
-to approximate the derivative of $f$ at a point $x _ { 0 }$ . Assume $f$ is a smooth function in a neighborhood of $x _ { 0 }$ containing the points $x _ { 0 } + h$ and $x _ { 0 } - h$ .
-
-(a) Prove that $D _ { h } ^ { + } f ( x _ { 0 } )$ and $D _ { h } ^ { 0 } f ( x _ { 0 } )$ approximate $f ^ { \prime } ( x _ { 0 } )$ to $O ( h )$ and $O ( h ^ { 2 } )$ , respectively.   
-(b) Derive an $O ( h ^ { 2 } )$ approximation to $f ^ { \prime } ( x _ { 0 } )$ from $D _ { h } ^ { + } f ( x _ { 0 } )$ by doing Richardson extrapolation.   
-(c) Take $f ( x ) = \sin x$ and $x _ { 0 } = 0$ . Prove that both $D _ { h } ^ { + } f ( x _ { 0 } )$ and $D _ { h } ^ { 0 } f ( x _ { 0 } )$ converge quadratically to $f ^ { \prime } ( x _ { 0 } )$ as $h \to 0$ and that in fact they produce the same approximation to $f ^ { \prime } ( x _ { 0 } )$ in this particular case.
+\begin{enumerate}[(a)]
+    \item Prove that $D_h^+ f(x_0)$ and $D_h^0 f(x_0)$ approximate $f'(x_0)$ to $\mathcal{O}(h)$ and $\mathcal{O}(h^2)$, respectively.
+    \item Derive an $\mathcal{O}(h^2)$ approximation to $f'(x_0)$ from $D_h^+ f(x_0)$ by performing Richardson extrapolation.
+    \item Take $f(x) = \sin x$ and $x_0 = 0$. Prove that both $D_h^+ f(x_0)$ and $D_h^0 f(x_0)$ converge quadratically to $f'(x_0)$ as $h \to 0$ and that they produce the same approximation to $f'(x_0)$ in this particular case.
+\end{enumerate}
 \end{exercise}
 
+\begin{remark}
+\textbf{Extrapolation Methods in Computational Mathematics:}
+
+\textbf{Richardson Extrapolation} is a sequence acceleration technique that significantly improves the rate of convergence of a sequence by taking linear combinations of approximations computed at different step sizes to systematically eliminate leading-order error terms. Formally, if an approximation $A(h)$ to the exact value $A^*$ possesses an asymptotic error expansion in powers of $h$, say $A(h) = A^* + c_p h^p + c_q h^q + \dots$ (with $p < q$), evaluating the scheme at a refined step size $h/t$ (often $t=2$) yields $A(h/t) = A^* + c_p (h/t)^p + c_q (h/t)^q + \dots$. By constructing the combination
+\[ R(h) = \frac{t^p A(h/t) - A(h)}{t^p - 1} = A^* + O(h^q), \]
+the dominant error term $O(h^p)$ is algebraically canceled, accelerating the method to an $O(h^q)$ convergence rate.
+
+In the broader context of applied and computational mathematics, several other advanced extrapolation and convergence acceleration techniques are heavily utilized:
+\begin{enumerate}
+    \item \textbf{Romberg Integration:} A direct application of Richardson extrapolation to the trapezoidal rule. Since the trapezoidal rule's error expansion contains only even powers of $h$ (due to the Euler-Maclaurin formula), repeated Richardson extrapolation recursively eliminates $O(h^2), O(h^4), O(h^6), \dots$ errors, yielding highly accurate quadrature rules.
+    \item \textbf{Aitken's $\Delta^2$ Process:} An acceleration method for linearly converging sequences $\{x_n\}$. It estimates the limit by assuming the error ratio $\frac{x_{n+1} - x^*}{x_n - x^*}$ is roughly constant, yielding the extrapolated sequence $x_n' = x_n - \frac{(x_{n+1}-x_n)^2}{x_{n+2}-2x_{n+1}+x_n}$, which converges much faster.
+    \item \textbf{Wynn's $\varepsilon$-Algorithm:} A recursive algorithm used to implement the Shanks transformation, which generalizes Aitken's process to eliminate multiple transient terms in slowly converging or diverging sequences. It is intimately connected to Padé approximants.
+    \item \textbf{Padé Approximants:} Extrapolates a function's power series into a rational function (ratio of two polynomials). This often drastically increases the domain of convergence and is highly effective near poles or singularities where Taylor series fail.
+    \item \textbf{Bulirsch-Stoer Algorithm:} An extrapolation method for highly accurate numerical solutions of Ordinary Differential Equations (ODEs). It combines the modified midpoint method with \textit{rational} extrapolation, effectively fitting a rational function to $A(h)$ as $h \to 0$, providing exceptional accuracy and stability for smooth ODEs.
+\end{enumerate}
+These techniques are foundational in numerical analysis for elevating low-order schemes to high precision without formulating inherently complex high-order operator discretizations.
+\end{remark}
+
 \begin{solution}
-\textbf{(a) Error Analysis:}
-By Taylor's expansion near $x_0$:
-\[ f(x_0 + h) = f(x_0) + h f'(x_0) + \frac{h^2}{2} f''(x_0) + \frac{h^3}{6} f'''(x_0) + O(h^4) \]
-\[ f(x_0 - h) = f(x_0) - h f'(x_0) + \frac{h^2}{2} f''(x_0) - \frac{h^3}{6} f'''(x_0) + O(h^4) \]
-For the forward difference:
-\[ D_h^+ f(x_0) = \frac{h f'(x_0) + \frac{h^2}{2} f''(x_0) + O(h^3)}{h} = f'(x_0) + \frac{h}{2} f''(x_0) + O(h^2) = f'(x_0) + O(h). \]
-For the centered difference:
-\[ D_h^0 f(x_0) = \frac{2 h f'(x_0) + \frac{h^3}{3} f'''(x_0) + O(h^5)}{2h} = f'(x_0) + \frac{h^2}{6} f'''(x_0) + O(h^4) = f'(x_0) + O(h^2). \]
+\textbf{(a) Error Analysis via Taylor Expansion}
 
-\textbf{(b) Richardson Extrapolation:}
-Let $D_h^+ = f'(x_0) + c_1 h + c_2 h^2 + \dots$. Then $D_{2h}^+ = f'(x_0) + 2 c_1 h + 4 c_2 h^2 + \dots$.
-To eliminate the $O(h)$ term, compute $2 D_h^+ - D_{2h}^+$:
-\[ R(h) = 2 D_h^+ f(x_0) - D_{2h}^+ f(x_0) = (2 f' + 2c_1 h + 2c_2 h^2) - (f' + 2c_1 h + 4c_2 h^2) + O(h^3) \]
-\[ R(h) = f' - 2c_2 h^2 + O(h^3) = f'(x_0) + O(h^2). \]
-Specifically, $R(h) = \frac{2}{h}(f(x_0+h)-f(x_0)) - \frac{1}{2h}(f(x_0+2h)-f(x_0)) = \frac{-f(x_0+2h) + 4f(x_0+h) - 3f(x_0)}{2h}$.
+Assuming $f$ is sufficiently smooth, we perform a Taylor series expansion of $f(x)$ around the point $x_0$:
+\begin{align}
+    f(x_0 + h) &= f(x_0) + h f'(x_0) + \frac{h^2}{2} f''(x_0) + \frac{h^3}{6} f'''(x_0) + \frac{h^4}{24} f^{(4)}(\xi_1) \label{eq:taylor_plus_new} \\
+    f(x_0 - h) &= f(x_0) - h f'(x_0) + \frac{h^2}{2} f''(x_0) - \frac{h^3}{6} f'''(x_0) + \frac{h^4}{24} f^{(4)}(\xi_2) \label{eq:taylor_minus_new}
+\end{align}
 
-\textbf{(c) Case $f(x) = \sin x, x_0 = 0$:}
-Here $f'(0) = \cos 0 = 1$ and $f''(0) = -\sin 0 = 0$.
-Forward difference: $D_h^+ \sin(0) = \frac{\sin h - 0}{h} = \frac{\sin h}{h}$.
-Centered difference: $D_h^0 \sin(0) = \frac{\sin h - \sin(-h)}{2h} = \frac{2\sin h}{2h} = \frac{\sin h}{h}$.
-Since $f''(0) = 0$, the $O(h)$ term in the error of $D_h^+$ vanishes, and both yield $\frac{\sin h}{h} = 1 - \frac{h^2}{6} + O(h^4)$, which is $O(h^2)$ accurate.
+\textbf{1. Forward Difference $D_h^+$:}
+For the forward difference operator $D_h^+ f(x_0)$, we substitute \eqref{eq:taylor_plus_new} into the formula:
+\[
+    D_h^+ f(x_0) = \frac{\left[f(x_0) + h f'(x_0) + \frac{h^2}{2} f''(x_0) + \mathcal{O}(h^3)\right] - f(x_0)}{h} = f'(x_0) + \frac{h}{2} f''(x_0) + \mathcal{O}(h^2).
+\]
+This demonstrates that $D_h^+ f(x_0) - f'(x_0) = \mathcal{O}(h)$, so it approximates $f'(x_0)$ to first order.
+
+\textbf{2. Centered Difference $D_h^0$:}
+For the centered difference operator $D_h^0 f(x_0)$, we subtract \eqref{eq:taylor_minus_new} from \eqref{eq:taylor_plus_new}:
+\[
+    f(x_0 + h) - f(x_0 - h) = 2h f'(x_0) + \frac{h^3}{3} f'''(x_0) + \mathcal{O}(h^5).
+\]
+Dividing by $2h$ yields:
+\[
+    D_h^0 f(x_0) = f'(x_0) + \frac{h^2}{6} f'''(x_0) + \mathcal{O}(h^4).
+\]
+This demonstrates that $D_h^0 f(x_0) - f'(x_0) = \mathcal{O}(h^2)$, so it approximates $f'(x_0)$ to second order.
+
+\textbf{(b) Accelerating Forward Difference via Richardson Extrapolation}
+
+From part (a), the asymptotic error expansion for the forward difference method is:
+\[
+    D_h^+ f(x_0) = f'(x_0) + c_1 h + c_2 h^2 + c_3 h^3 + \dots \quad \text{where} \quad c_1 = \frac{1}{2} f''(x_0).
+\]
+Evaluating the same approximation at step size $2h$, we obtain:
+\[
+    D_{2h}^+ f(x_0) = f'(x_0) + c_1 (2h) + c_2 (2h)^2 + \dots = f'(x_0) + 2 c_1 h + 4 c_2 h^2 + \dots
+\]
+To eliminate the leading-order $\mathcal{O}(h)$ error term ($c_1 h$), we take a linear combination that cancels it. Multiplying the $h$-step approximation by $2$ and subtracting the $2h$-step approximation:
+\begin{align*}
+    2 D_h^+ f(x_0) - D_{2h}^+ f(x_0) &= 2 \left( f'(x_0) + c_1 h + c_2 h^2 + \dots \right) - \left( f'(x_0) + 2 c_1 h + 4 c_2 h^2 + \dots \right) \\
+    &= f'(x_0) - 2 c_2 h^2 + \dots = f'(x_0) + \mathcal{O}(h^2).
+\end{align*}
+We define our extrapolated second-order approximation $R(h)$ as:
+\begin{align*}
+    R(h) &= 2 D_h^+ f(x_0) - D_{2h}^+ f(x_0) = 2 \left( \frac{f(x_0 + h) - f(x_0)}{h} \right) - \left( \frac{f(x_0 + 2h) - f(x_0)}{2h} \right) \\
+    &= \frac{4 f(x_0 + h) - 4 f(x_0) - f(x_0 + 2h) + f(x_0)}{2h} \\
+    &= \frac{-f(x_0 + 2h) + 4 f(x_0 + h) - 3 f(x_0)}{2h}.
+\end{align*}
+This derived formula is exactly the standard three-point one-sided finite difference approximation for the first derivative, which is inherently $\mathcal{O}(h^2)$.
+
+\textbf{(c) Specialized Case: $f(x) = \sin x$ at $x_0 = 0$}
+
+For $f(x) = \sin x$, the derivatives are $f'(x) = \cos x$, $f''(x) = -\sin x$, and $f'''(x) = -\cos x$.
+At $x_0 = 0$, we evaluate these to be: $f(0) = 0$, $f'(0) = 1$, $f''(0) = 0$, and $f'''(0) = -1$.
+\begin{enumerate}
+    \item \textbf{Identity of Approximations:}
+Let us directly evaluate both difference formulas at $x_0 = 0$:
+\begin{align*}
+    D_h^+ f(0) &= \frac{\sin(0 + h) - \sin(0)}{h} = \frac{\sin h}{h} \\
+    D_h^0 f(0) &= \frac{\sin(0 + h) - \sin(0 - h)}{2h} = \frac{\sin h - (-\sin h)}{2h} = \frac{2 \sin h}{2h} = \frac{\sin h}{h}
+\end{align*}
+Indeed, both methods produce the exact same approximation $\frac{\sin h}{h}$ in this specific case.
+    \item \textbf{Quadratic Convergence:}
+To analyze the convergence rate, we expand $\sin h$ using its Maclaurin series:
+\[
+    \frac{\sin h}{h} = \frac{h - \frac{h^3}{6} + \frac{h^5}{120} - \dots}{h} = 1 - \frac{h^2}{6} + \mathcal{O}(h^4).
+\]
+Since $f'(0) = 1$, the error of both approximations is exactly:
+\[
+    \text{Error} = \left| 1 - \left( 1 - \frac{h^2}{6} + \mathcal{O}(h^4) \right) \right| = \frac{h^2}{6} + \mathcal{O}(h^4).
+\]
+This proves that both $D_h^+$ and $D_h^0$ converge quadratically ($\mathcal{O}(h^2)$) to $f'(0) = 1$ as $h \to 0$. The reason the forward difference method achieves second-order accuracy here (despite generally being $\mathcal{O}(h)$) is that its leading error coefficient $c_1 = \frac{1}{2} f''(x_0)$ evaluates to exactly zero because $\sin x$ is an odd function, thus trivially eliminating the $\mathcal{O}(h)$ error term.\footnote{A numerical method is \textbf{consistent} if its Local Truncation Error (LTE) vanishes as the step size approaches zero. For finite difference approximations of derivatives, this means the discrete operator recovers the exact derivative in the limit $h \to 0$. In part (a), we showed $D_h^+ f = f' + \mathcal{O}(h)$ and $D_h^0 f = f' + \mathcal{O}(h^2)$, which satisfy consistency.} \footnote{\textbf{Pedagogical Note: The Role of Symmetry} The centered difference $D_h^0$ is $O(h^2)$ because the even-order error terms ($h, h^3, \dots$ in the expansion of $f'$) cancel out due to symmetry. For $D_h^+$, the error is usually $O(h)$ because $f''(x_0) \neq 0$. However, if $x_0$ is an inflection point ($f''(x_0) = 0$), $D_h^+$ "accidentally" gains an extra order of accuracy, as seen in part (c). This is a common feature in numerical analysis: local properties of the function can improve the global convergence rate.}
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2023:2}
-For functions defined on a closed interval $[ 0 , 1 ]$ , we want to compute the following definite integral,
-
+For functions defined on a closed interval $[0, 1]$, we want to compute the following definite integral:
 \[
-I [ f ] = \int_ {0} ^ {1} f (x) \log (1 / x) d x.
+    I[f] = \int_{0}^{1} f(x) \log(1/x) \, dx.
 \]
+Here we consider the weight function $w(x) = \log(1/x)$, and denote $P_n(x)$ as the monic orthogonal polynomials for the corresponding weighted inner product.
 
-Here we consider the weight function $\log ( 1 / x )$ , and denote $P _ { n } ( x )$ as the monic orthogonal polynomials for the corresponding weighted inner product.
-
-(a) Let $P _ { 0 } = 1$ . Find $P _ { 1 } ( x )$ , and the corresponding node $x _ { 1 } ^ { 1 }$ and weight $\omega _ { 1 } ^ { 1 }$ for the 1-point Gaussian quadrature rule.   
-(b) Derive a recursive formula for $P _ { n + 1 } ( x )$ using $P _ { n } ( x )$ and $P _ { n - 1 } ( x )$ .   
-(c) Consider the normalized orthogonal polynomials $Q _ { n } ( x ) = P _ { n } ( x ) / \vert \vert P _ { n } \vert \vert$ , where
-
-\[
-| | P _ {n} | | = \sqrt {P _ {n} (x) ^ {2} \log (1 / x) d x}.
-\]
-
-Derive a recursive formula for $Q _ { n + 1 } ( x )$ using $Q _ { n } ( x )$ and $Q _ { n - 1 } ( x )$ .
-
-(d) Use the above recursive formula to show that $x = \lambda$ is a node of the 4-point Gaussian quadrature if and only if it is an eigenvalue of a symmetric, tridiagonal matrix. Write out the form of the symmetric and tridiagonal matrix explicitly.
+\begin{enumerate}[(a)]
+    \item Let $P_0 = 1$. Find $P_1(x)$, and the corresponding node $x_1^1$ and weight $\omega_1^1$ for the 1-point Gaussian quadrature rule.
+    \item Derive a recursive formula for $P_{n+1}(x)$ using $P_n(x)$ and $P_{n-1}(x)$.
+    \item Consider the normalized orthogonal polynomials $Q_n(x) = P_n(x) / \|P_n\|$, where
+    \[
+        \|P_n\| = \sqrt{\int_0^1 P_n(x)^2 \log(1/x) \, dx}.
+    \]
+    Derive a recursive formula for $Q_{n+1}(x)$ using $Q_n(x)$ and $Q_{n-1}(x)$.
+    \item Use the above recursive formula to show that $x = \lambda$ is a node of the 4-point Gaussian quadrature if and only if it is an eigenvalue of a symmetric, tridiagonal matrix. Write out the form of the symmetric and tridiagonal matrix explicitly.
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Gaussian Quadrature:}
-Moments $\mu_k = \int_0^1 x^k \log(1/x) dx$. Let $x = e^{-t}$: $\mu_k = \int_0^\infty e^{-kt} t e^{-t} dt = \int_0^\infty t e^{-(k+1)t} dt = \frac{1}{(k+1)^2}$.
-$\mu_0 = 1, \mu_1 = 1/4$.
-Monic $P_1(x) = x - c$. Orthogonality $\langle P_1, P_0 \rangle = 0 \implies \mu_1 - c \mu_0 = 0 \implies c = 1/4$.
-$P_1(x) = x - 1/4$. Node $x_1^1 = 1/4$.
-Weight $\omega_1^1 = \mu_0/P_0(x_1^1) = 1$.
+\textbf{(a) Moments and 1-point Gaussian Quadrature}
 
-\textbf{(b) Recurrence for Monic Polynomials:}
-Monic orthogonal polynomials satisfy $P_{n+1}(x) = (x - \alpha_n) P_n(x) - \beta_n P_{n-1}(x)$, where:
-\[ \alpha_n = \frac{\langle x P_n, P_n \rangle}{\langle P_n, P_n \rangle}, \quad \beta_n = \frac{\langle P_n, P_n \rangle}{\langle P_{n-1}, P_{n-1} \rangle}. \]
+The moments $\mu_k$ of the weight function $w(x) = \log(1/x) = -\log x$ over the interval $[0, 1]$ are defined as:
+\[ \mu_k = \int_0^1 x^k \log(1/x) \, dx. \]
+To evaluate this integral, we perform the substitution $x = e^{-t}$. This implies $dx = -e^{-t} \, dt$, and the limits transform as $x=0 \to t=\infty$ and $x=1 \to t=0$:
+\[ \mu_k = \int_{\infty}^0 (e^{-t})^k t (-e^{-t} \, dt) = \int_0^\infty t e^{-(k+1)t} \, dt. \]
+We evaluate this improper integral using integration by parts, letting $u = t$ and $dv = e^{-(k+1)t} dt$:
+\begin{align*}
+    \mu_k &= \left[ t \frac{e^{-(k+1)t}}{-(k+1)} \right]_0^\infty - \int_0^\infty \frac{e^{-(k+1)t}}{-(k+1)} \, dt \\
+    &= (0 - 0) + \frac{1}{k+1} \left[ \frac{e^{-(k+1)t}}{-(k+1)} \right]_0^\infty \\
+    &= \frac{1}{k+1} \left( 0 - \frac{1}{-(k+1)} \right) = \frac{1}{(k+1)^2}.
+\end{align*}
+Thus, the first few moments are:
+\[ \mu_0 = \frac{1}{1^2} = 1, \quad \mu_1 = \frac{1}{2^2} = \frac{1}{4}, \quad \mu_2 = \frac{1}{3^2} = \frac{1}{9}. \]
 
-\textbf{(c) Recurrence for Normalized Polynomials:}
-Let $b_n = \sqrt{\beta_n} = \frac{\|P_n\|}{\|P_{n-1}\|}$. Substituting $P_n = \|P_n\| Q_n$ into (b):
-\[ \|P_{n+1}\| Q_{n+1} = (x - \alpha_n) \|P_n\| Q_n - \|P_n\|^2/\|P_{n-1}\|^2 \|P_{n-1}\| Q_{n-1} \]
-Dividing by $\|P_{n+1}\|$:
-\[ Q_{n+1} = \frac{\|P_n\|}{\|P_{n+1}\|} (x - \alpha_n) Q_n - \frac{\|P_n\|}{\|P_{n+1}\|} b_n Q_{n-1} \]
-\[ b_{n+1} Q_{n+1} = (x - \alpha_n) Q_n - b_n Q_{n-1} \implies x Q_n = b_{n+1} Q_{n+1} + \alpha_n Q_n + b_n Q_{n-1}. \]
+For the 1-point Gaussian quadrature rule ($n=1$), the node $x_1^1$ is the root of the first-degree monic orthogonal polynomial $P_1(x)$. Let $P_1(x) = x - c$. Orthogonality with $P_0(x) = 1$ under the weighted inner product requires:
+\[ \langle P_1, P_0 \rangle = \int_0^1 (x - c) \cdot 1 \cdot \log(1/x) \, dx = \mu_1 - c \mu_0 = 0. \]
+Substituting $\mu_0 = 1$ and $\mu_1 = 1/4$:
+\[ \frac{1}{4} - c(1) = 0 \implies c = \frac{1}{4} \implies P_1(x) = x - \frac{1}{4}. \]
+The node is the root: $\boxed{x_1^1 = 1/4}$. The weight $\omega_1^1$ is given by the integral of the corresponding Lagrange basis polynomial $L_1(x) = 1$:
+\[ \omega_1^1 = \int_0^1 L_1(x) \log(1/x) \, dx = \int_0^1 \log(1/x) \, dx = \mu_0 = \boxed{1}. \] \footnote{\textbf{Understanding Gaussian Nodes and Weights} Gaussian quadrature approximates an integral $\int_a^b f(x) w(x) \, dx$ as a finite sum $\sum_{k=1}^n \omega_k^n f(x_k^n)$. \textbf{1. What is a Quadrature Weight $\omega_k^n$?} In simple terms, a quadrature weight $\omega_k^n$ represents the "importance" of the function value at the specific point $x_k^n$ to the total integral. Mathematically, it is the integral of the $k$-th Lagrange basis polynomial $L_{k,n}(x)$ with respect to the weight function: $\omega_k^n = \int_a^b L_{k,n}(x) w(x) \, dx$. \textbf{2. Jacobi Matrix and Eigenvalues} The connection between nodes and eigenvalues follows from the matrix form of the recurrence: $x \mathbf{q}(x) = J_n \mathbf{q}(x) + b_n Q_n(x) \mathbf{e}_n$. The nodes $x_k^n$ are exactly the \textbf{eigenvalues} of $J_n$, and the weights $\omega_k^n$ can be computed from the normalized \textbf{eigenvectors} $\mathbf{v}_k$ as $\omega_k^n = \mu_0 |v_{1,k}|^2$.}
 
-\textbf{(d) Jacobi Matrix:}
-The nodes are the roots of $P_4(x)$ (and thus $Q_4(x)$). The recurrence for $n=0,1,2,3$ with $Q_{-1}=0$ in vector form is:
-\[ x \begin{pmatrix} Q_0 \\ Q_1 \\ Q_2 \\ Q_3 \end{pmatrix} = \begin{pmatrix} \alpha_0 & b_1 & 0 & 0 \\ b_1 & \alpha_1 & b_2 & 0 \\ 0 & b_2 & \alpha_2 & b_3 \\ 0 & 0 & b_3 & \alpha_3 \end{pmatrix} \begin{pmatrix} Q_0 \\ Q_1 \\ Q_2 \\ Q_3 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ 0 \\ b_4 Q_4(x) \end{pmatrix} \]
-At a root $x = \lambda_j$ of $Q_4$, $\lambda_j$ is an eigenvalue of the symmetric tridiagonal Jacobi matrix $J_4$.
+\textbf{(b) Recursive Formula for Monic Orthogonal Polynomials}
+
+A sequence of monic orthogonal polynomials $\{P_n\}$ satisfies a three-term recurrence relation of the form:
+\[ P_{n+1}(x) = (x - \alpha_n) P_n(x) - \beta_n P_{n-1}(x), \quad P_{-1} = 0, \quad P_0 = 1. \]
+To determine $\alpha_n$, we take the inner product of the recurrence with $P_n$:
+\[ \langle P_{n+1}, P_n \rangle = \langle x P_n, P_n \rangle - \alpha_n \langle P_n, P_n \rangle - \beta_n \langle P_{n-1}, P_n \rangle. \]
+By orthogonality, $\langle P_{n+1}, P_n \rangle = 0$ and $\langle P_{n-1}, P_n \rangle = 0$. Thus:
+\[ \alpha_n = \frac{\langle x P_n, P_n \rangle}{\langle P_n, P_n \rangle}. \]
+To determine $\beta_n$, we take the inner product of the recurrence with $P_{n-1}$:
+\[ \langle P_{n+1}, P_{n-1} \rangle = \langle x P_n, P_{n-1} \rangle - \alpha_n \langle P_n, P_{n-1} \rangle - \beta_n \langle P_{n-1}, P_{n-1} \rangle. \]
+Since $\langle P_{n+1}, P_{n-1} \rangle = 0$ and $\langle P_n, P_{n-1} \rangle = 0$:
+\[ \beta_n = \frac{\langle x P_n, P_{n-1} \rangle}{\langle P_{n-1}, P_{n-1} \rangle} = \frac{\langle P_n, x P_{n-1} \rangle}{\langle P_{n-1}, P_{n-1} \rangle}. \]
+Noting that $x P_{n-1} = P_n + (\text{lower degree terms})$, and by orthogonality $\langle P_n, \text{lower degree} \rangle = 0$, we have:
+\[ \beta_n = \frac{\langle P_n, P_n \rangle}{\langle P_{n-1}, P_{n-1} \rangle} = \frac{\|P_n\|^2}{\|P_{n-1}\|^2}. \]
+
+\textbf{(c) Recursive Formula for Normalized (Orthonormal) Polynomials}
+
+Let $Q_n(x) = \frac{P_n(x)}{\|P_n\|}$. Then $P_n(x) = \|P_n\| Q_n(x)$. Substituting this into the monic recurrence:
+\[ \|P_{n+1}\| Q_{n+1} = (x - \alpha_n) \|P_n\| Q_n - \beta_n \|P_{n-1}\| Q_{n-1}. \]
+Dividing through by $\|P_n\|$:
+\[ \frac{\|P_{n+1}\|}{\|P_n\|} Q_{n+1} = (x - \alpha_n) Q_n - \frac{\beta_n \|P_{n-1}\|}{\|P_n\|} Q_{n-1}. \]
+Using the relation $\beta_n = \|P_n\|^2 / \|P_{n-1}\|^2$ from part (b), the coefficient of $Q_{n-1}$ becomes:
+\[ \frac{\|P_n\|^2}{\|P_{n-1}\|^2} \frac{\|P_{n-1}\|}{\|P_n\|} = \frac{\|P_n\|}{\|P_{n-1}\|}. \]
+Let $b_n = \frac{\|P_n\|}{\|P_{n-1}\|}$ (note that $b_0$ is undefined, but $b_1 = \|P_1\|/\|P_0\|$). Then $b_{n+1} = \frac{\|P_{n+1}\|}{\|P_n\|}$. The recurrence is:
+\[ b_{n+1} Q_{n+1}(x) = (x - \alpha_n) Q_n(x) - b_n Q_{n-1}(x). \]
+Rearranging to isolate the $x Q_n$ term, which is standard for the Jacobi matrix representation:
+\[ x Q_n(x) = b_{n+1} Q_{n+1}(x) + \alpha_n Q_n(x) + b_n Q_{n-1}(x). \]
+
+\textbf{(d) Jacobi Matrix and Gaussian Quadrature Nodes}
+
+The nodes of the 4-point Gaussian quadrature are the roots of $P_4(x)$, and consequently the roots of $Q_4(x)$. For $n = 0, 1, 2, 3$, the orthonormal recurrence relations (with $Q_{-1} = 0$) are:
+\begin{align*}
+    x Q_0 &= \alpha_0 Q_0 + b_1 Q_1 \\
+    x Q_1 &= b_1 Q_0 + \alpha_1 Q_1 + b_2 Q_2 \\
+    x Q_2 &= b_2 Q_1 + \alpha_2 Q_2 + b_3 Q_3 \\
+    x Q_3 &= b_3 Q_2 + \alpha_3 Q_3 + b_4 Q_4(x)
+\end{align*}
+If $x = \lambda$ is a node, then $Q_4(\lambda) = 0$. The system becomes a closed matrix equation:
+\[ \lambda \begin{pmatrix} Q_0(\lambda) \\ Q_1(\lambda) \\ Q_2(\lambda) \\ Q_3(\lambda) \end{pmatrix} = \begin{pmatrix} \alpha_0 & b_1 & 0 & 0 \\ b_1 & \alpha_1 & b_2 & 0 \\ 0 & b_2 & \alpha_2 & b_3 \\ 0 & 0 & b_3 & \alpha_3 \end{pmatrix} \begin{pmatrix} Q_0(\lambda) \\ Q_1(\lambda) \\ Q_2(\lambda) \\ Q_3(\lambda) \end{pmatrix}. \]
+Let $\mathbf{q} = (Q_0(\lambda), Q_1(\lambda), Q_2(\lambda), Q_3(\lambda))^T$. Since $Q_0 = 1/\sqrt{\mu_0} = 1 \neq 0$, $\mathbf{q}$ is a non-null vector. Therefore, $\lambda$ is an eigenvalue of the symmetric tridiagonal matrix $J_4$:
+\[ J_4 = \begin{pmatrix} \alpha_0 & b_1 & 0 & 0 \\ b_1 & \alpha_1 & b_2 & 0 \\ 0 & b_2 & \alpha_2 & b_3 \\ 0 & 0 & b_3 & \alpha_3 \end{pmatrix}. \]
+If $\lambda$ is an eigenvalue of $J_4$, then the characteristic equation $\det(\lambda I - J_4) = 0$ must hold. To see the equivalence with the orthogonal polynomials, let $d_k(x) = \det(x I - J_k)$ be the characteristic polynomial of the $k \times k$ principal submatrix of $J_4$. Expanding the determinant along the last row yields the recurrence:
+\[ d_k(x) = (x - \alpha_{k-1}) d_{k-1}(x) - b_{k-1}^2 d_{k-2}(x). \]
+Comparing this with the recurrence for the monic orthogonal polynomials $P_k(x)$ derived in part (b), and noting that $\beta_k = b_k^2$, we see that $d_k(x)$ satisfies the exact same recurrence with the same initial conditions ($d_0 = 1, d_1 = x - \alpha_0$). Thus, $d_k(x) = P_k(x)$ for all $k$. This proves that the roots of $P_4(x)$ (the quadrature nodes) are identically the eigenvalues of $J_4$.
 \end{solution}
 
 \begin{exercise}
@@ -101,149 +210,383 @@ Let $A$ be a real $n \times n$ matrix with distinct eigenvalues such that
 
 with corresponding eigenvectors $\{ v _ { j } \} _ { j = 1 } ^ { n }$ .
 
-(a) Show that the power iteration
+\begin{enumerate}[(a)]
+    \item Show that the power iteration
 
-\[
-z _ {m} = \frac {A ^ {m} z _ {0}}{| | A ^ {m} z _ {0} | | _ {\infty}} \longrightarrow \pm \frac {v _ {1}}{| | v _ {1} | | _ {\infty}}, \quad \forall z _ {0} \in \mathbb {R} ^ {n}.
-\]
+    \[
+    z _ {m} = \frac {A ^ {m} z _ {0}}{| | A ^ {m} z _ {0} | | _ {\infty}} \longrightarrow \pm \frac {v _ {1}}{| | v _ {1} | | _ {\infty}}, \quad \forall z _ {0} \in \mathbb {R} ^ {n}.
+    \]
 
-(b) Consider the following iteration with initial guess $x _ { 0 } = y _ { 0 } = 1$
+    \item Consider the following iteration with initial guess $x _ { 0 } = y _ { 0 } = 1$
 
-\[
-x _ {n + 1} = x _ {n} + y _ {n}, \quad y _ {n + 1} = x _ {n + 1} + x _ {n}.
-\]
+    \[
+    x _ {n + 1} = x _ {n} + y _ {n}, \quad y _ {n + 1} = x _ {n + 1} + x _ {n}.
+    \]
 
-Show that $y _ { n } / x _ { n } \to { \sqrt { 2 } }$ as $n \to \infty$
+    Show that $y _ { n } / x _ { n } \to { \sqrt { 2 } }$ as $n \to \infty$
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Power Method:}
-Let $z_0 = \sum_{j=1}^n c_j v_j$. $A^m z_0 = \lambda_1^m [c_1 v_1 + \sum_{j=2}^n c_j (\lambda_j/\lambda_1)^m v_j]$.
-Since $|\lambda_j/\lambda_1| < 1$, $(\lambda_j/\lambda_1)^m \to 0$. Thus $A^m z_0 \approx c_1 \lambda_1^m v_1$.
-Normalizing gives $z_m \to \frac{c_1 \lambda_1^m v_1}{\|c_1 \lambda_1^m v_1\|_\infty} = \text{sgn}(c_1 \lambda_1^m) \frac{v_1}{\|v_1\|_\infty}$.
+\textbf{(a) Rigorous Proof for Power Method Convergence}
 
-\textbf{(b) Ratio Convergence:}
-The system is $\begin{pmatrix} x_{n+1} \\ y_{n+1} \end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix} \begin{pmatrix} x_n \\ y_n \end{pmatrix}$.
-Eigenvalues of $M = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix}$ are $1 \pm \sqrt{2}$.
-Dominant eigenvalue $\lambda_1 = 1+\sqrt{2}$ has eigenvector $v_1 = \begin{pmatrix} 1 \\ \sqrt{2} \end{pmatrix}$.
-By the power method, the state vector aligns with $v_1$, so $y_n/x_n \to \sqrt{2}$.
+Since the eigenvalues are distinct, the eigenvectors $\{v_j\}$ form a basis for $\mathbb{R}^n$. Any initial vector $z_0 \in \mathbb{R}^n$ can be expressed as a linear combination of these eigenvectors:
+\begin{equation}
+    z_0 = c_1 v_1 + c_2 v_2 + \dots + c_n v_n = \sum_{j=1}^n c_j v_j, \label{eq:z0_expansion}
+\end{equation}
+where $c_j$ are scalar coefficients. Applying the matrix $A$ repeatedly $m$ times to $z_0$ yields:
+\begin{equation}
+    A^m z_0 = \sum_{j=1}^n c_j A^m v_j = \sum_{j=1}^n c_j \lambda_j^m v_j. \label{eq:Am_z0}
+\end{equation}
+Assuming $c_1 \neq 0$ (the initial guess has a component in the direction of the dominant eigenvector), we can factor out the dominant eigenvalue $\lambda_1^m$:
+\begin{equation}
+    A^m z_0 = \lambda_1^m \left[ c_1 v_1 + \sum_{j=2}^n c_j \left( \frac{\lambda_j}{\lambda_1} \right)^m v_j \right]. \label{eq:Am_z0_factored}
+\end{equation}
+By the given condition $|\lambda_1| > |\lambda_2| \geq \dots \geq |\lambda_n|$, we have $|\lambda_j / \lambda_1| < 1$ for all $j \geq 2$. Consequently, as $m \to \infty$:
+\[ \left( \frac{\lambda_j}{\lambda_1} \right)^m \to 0, \quad \text{for } j = 2, \dots, n. \]
+Thus, the term in the brackets converges to $c_1 v_1$. The normalized sequence $z_m$ is:
+\[ z_m = \frac{A^m z_0}{\|A^m z_0\|_\infty} = \frac{\lambda_1^m \left[ c_1 v_1 + \sum_{j=2}^n c_j \left( \frac{\lambda_j}{\lambda_1} \right)^m v_j \right]}{\left\| \lambda_1^m \left[ c_1 v_1 + \sum_{j=2}^n c_j \left( \frac{\lambda_j}{\lambda_1} \right)^m v_j \right] \right\|_\infty}. \]
+Simplifying by canceling the magnitude $|\lambda_1|^m$:
+\[ z_m = \frac{\lambda_1^m}{|\lambda_1|^m} \frac{c_1 v_1 + \epsilon_m}{\|c_1 v_1 + \epsilon_m\|_\infty} = (\text{sgn}(\lambda_1))^m \frac{c_1 v_1 + \epsilon_m}{\|c_1 v_1 + \epsilon_m\|_\infty}, \]
+where $\epsilon_m \to 0$ as $m \to \infty$. Taking the limit $m \to \infty$:
+\[ z_m \to \pm \frac{c_1 v_1}{\|c_1 v_1\|_\infty} = \pm \frac{v_1}{\|v_1\|_\infty}. \]
+The $\pm$ sign depends on the sign of $\lambda_1$ and $c_1$. The dominant eigenvalue $\lambda_1$ governs the rate of convergence, which is linear with ratio $|\lambda_2/\lambda_1|$. \footnote{\textbf{The Power Method: A Greedy Approach} The Power Method is often described as a "greedy" algorithm because in each iteration, it simply multiplies by the matrix $A$, which effectively stretches the vector most in the direction of the dominant eigenvalue. \textbf{Limitations:} The method fails if the initial vector $z_0$ has no component in the $v_1$ direction. More critically, it fails to converge if there are two or more eigenvalues with the same maximum magnitude (e.g., $\lambda_1 = -\lambda_2$), in which case the vector may oscillate rather than converge. \textbf{Convergence Rate:} The convergence is geometric, determined by the spectral gap ratio $|\lambda_2 / \lambda_1|$. If $|\lambda_2|$ is close to $|\lambda_1|$, convergence can be extremely slow, necessitating acceleration techniques like shifts or inverse iteration.}
+
+\textbf{(b) Derivation of the Recurrence Ratio}
+
+First, we express the recurrence relations for $x_n$ and $y_n$ in terms of a matrix system. Substituting the expression for $x_{n+1}$ into the equation for $y_{n+1}$:
+\[ y_{n+1} = (x_n + y_n) + x_n = 2x_n + y_n. \]
+Thus, the system can be written as:
+\begin{equation}
+    \begin{pmatrix} x_{n+1} \\ y_{n+1} \end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix} \begin{pmatrix} x_n \\ y_n \end{pmatrix}. \label{eq:matrix_system_applied}
+\end{equation}
+Let $M = \begin{pmatrix} 1 & 1 \\ 2 & 1 \end{pmatrix}$. The eigenvalues of $M$ are found by solving $\det(M - \lambda I) = 0$:
+\[ (1-\lambda)^2 - 2 = 0 \implies 1-\lambda = \pm\sqrt{2} \implies \lambda = 1 \pm \sqrt{2}. \]
+The dominant eigenvalue is $\lambda_1 = 1 + \sqrt{2} \approx 2.414$, and the secondary eigenvalue is $\lambda_2 = 1 - \sqrt{2} \approx -0.414$.
+To find the eigenvector $v_1 = (v_{11}, v_{12})^T$ corresponding to $\lambda_1$:
+\[ (M - \lambda_1 I) v_1 = \begin{pmatrix} 1 - (1+\sqrt{2}) & 1 \\ 2 & 1 - (1+\sqrt{2}) \end{pmatrix} \begin{pmatrix} v_{11} \\ v_{12} \end{pmatrix} = \begin{pmatrix} -\sqrt{2} & 1 \\ 2 & -\sqrt{2} \end{pmatrix} \begin{pmatrix} v_{11} \\ v_{12} \end{pmatrix} = 0. \]
+This yields $-\sqrt{2} v_{11} + v_{12} = 0$, so $v_{12}/v_{11} = \sqrt{2}$. Thus $v_1 = (1, \sqrt{2})^T$.
+According to the Power Method results from part (a), the sequence of vectors $\mathbf{u}_n = (x_n, y_n)^T$ will align with the dominant eigenvector $v_1$ as $n \to \infty$:
+\[ \begin{pmatrix} x_n \\ y_n \end{pmatrix} \approx c_1 \lambda_1^n \begin{pmatrix} 1 \\ \sqrt{2} \end{pmatrix}. \]
+Consequently, the ratio of the components converges to the slope of the dominant eigenvector:
+\[ \frac{y_n}{x_n} \to \frac{v_{12}}{v_{11}} = \sqrt{2}. \]
 \end{solution}
 
 \begin{exercise}
 \label{applied:2023:4}
 Consider the initial value problem
-
+\begin{equation}
+    y' = f(t, y), \quad 0 < t \leq T, \tag{3}
+\end{equation}
+\begin{equation}
+    y(0) = y_0. \tag{4}
+\end{equation}
+Assume $f$ is continuous and Lipschitz in $y$ in $[0, T] \times (-\infty, \infty)$. Denote $y_n \approx y(t_n)$, $t_n = nh$, and $h = T/N$, with $N$ a positive integer, and consider the one-step method
 \[
-y ^ {\prime} = f (t, y), \quad 0 <   t \leq T. \tag {3}
+    y_{n+1} = y_n + \alpha h f(t_n, y_n) + \beta h f(t_n + \gamma h, y_n + \gamma h f(t_n, y_n)),
 \]
+where $\alpha, \beta$ and $\gamma$ are real parameters.
 
-\[
-y (0) = y _ {0}. \tag {4}
-\]
-
-Assume $f$ is continuous and Lipschitz in $y$ in $[ 0 , T ] \times ( - \infty , \infty )$ . Denote $y _ { n } \approx y ( t _ { n } )$ , $t _ { n } = n h$ , and $h = T / N$ , with $N$ a positive integer, and consider the one-step method
-
-\[
-y _ {n + 1} = y _ {n} + \alpha h f (t _ {n}, y _ {n}) + \beta h f (t _ {n} + \gamma h, y _ {n} + \gamma h f (t _ {n}, y _ {n})),
-\]
-
-where $\alpha$ , $\beta$ and $\gamma$ are real parameters.
-
-(a) Prove that the method is consistent if and only if $\alpha + \beta = 1$ , and the order of the method can not exceed 2.   
-(b) Suppose that a second-order method of the above form is applied to $f ( t , y ) = - \lambda y$ with $\lambda > 0$ , and the initial condition $y _ { 0 } = 1$ . Show that the sequence $( y _ { n } ) _ { n \geq 0 }$ is bounded if and only if $\begin{array} { r } { h \leq \frac { 2 } { \lambda } } \end{array}$ . Show further that for such $h$ ,
-
-\[
-| y (t _ {n}) - y _ {n} | \leq \frac {1}{6} \lambda^ {3} h ^ {2} t _ {n}, \quad n \geq 0.
-\]
+\begin{enumerate}[(a)]
+    \item Prove that the method is consistent\footnote{\textbf{Formal Definition of Consistency (ODEs)} A numerical method for an IVP $y' = f(t, y)$ is \textbf{consistent} if its Local Truncation Error (LTE) vanishes as the step size $h \to 0$. Formally, if the method is $y_{n+1} = y_n + h \Phi(t_n, y_n, h)$, the LTE is: $\tau_n(h) = \frac{y(t_{n+1}) - y(t_n)}{h} - \Phi(t_n, y(t_n), h)$. Consistency requires $\lim_{h \to 0} \tau_n(h) = 0$. For the Runge-Kutta scheme in Exercise 4, this is satisfied if $\alpha + \beta = 1$.} if and only if $\alpha + \beta = 1$, and the order of the method cannot exceed 2.
+    \item Suppose that a second-order method of the above form is applied to $f(t, y) = -\lambda y$ with $\lambda > 0$, and the initial condition $y_0 = 1$. Show that the sequence $(y_n)_{n \geq 0}$ is bounded if and only if $h \leq \frac{2}{\lambda}$. Show further that for such $h$,
+    \[
+        |y(t_n) - y_n| \leq \frac{1}{6} \lambda^3 h^2 t_n, \quad n \geq 0.
+    \]
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Consistency and Order:}
-LHS: $y(t+h) - y(t) = h f + \frac{h^2}{2} (f_t + f f_y) + O(h^3)$.
-RHS: $(\alpha+\beta) h f + \beta \gamma h^2 (f_t + f f_y) + O(h^3)$.
-Consistency: $h f = (\alpha+\beta) h f \implies \alpha+\beta=1$.
-Order 2: $\beta \gamma = 1/2$. Order 3 would requires matching terms like $f_y^2 f$, but this is a 2-stage RK method. The maximum order of an $s$-stage RK method is $s$, so $s=2$.
+\textbf{(a) Consistency and Order Analysis via Taylor Expansion}
 
-\textbf{(b) Linear Stability:}
-$y_{n+1} = y_n [1 - h\lambda + \frac{1}{2} (h\lambda)^2] \equiv g(h\lambda) y_n$.
-Bounded iff $|1 - z + z^2/2| \leq 1$ for $z=h\lambda$. This yields $z \in [0, 2]$, so $h \leq 2/\lambda$.
-Error $e_n = |y(t_n) - y_n|$. $e_{n+1} \leq g(z) e_n + |y(t_{n+1}) - g(z)y(t_n)|$.
-$LTE \approx |e^{-z} - (1-z+z^2/2)| \leq \frac{z^3}{6}$ (Taylor remainder).
-Then $e_n \leq \sum_{k=0}^{n-1} \frac{(h\lambda)^3}{6} = n \frac{1}{6} \lambda^3 h^3 = \frac{1}{6} \lambda^3 h^2 t_n$.
+To analyze the consistency and order, we compare the numerical increment with the Taylor expansion of the exact solution $y(t+h)$.
+
+\textbf{1. Taylor Expansion of the Exact Solution:}
+Expanding $y(t+h)$ about $t$:
+\begin{equation}
+    y(t+h) = y(t) + h y'(t) + \frac{h^2}{2} y''(t) + \frac{h^3}{6} y'''(t) + \mathcal{O}(h^4) \label{eq:y_exact_taylor}
+\end{equation}
+Using the ODE $y' = f(t, y)$, we find the total derivatives:
+\begin{itemize}
+    \item $y'(t) = f$
+    \item $y''(t) = \frac{d}{dt} f(t, y(t)) = f_t + f f_y$
+    \item $y'''(t) = \frac{d}{dt} (f_t + f f_y) = (f_{tt} + 2f f_{ty} + f^2 f_{yy}) + f_y(f_t + f f_y)$
+\end{itemize}
+Substituting these into \eqref{eq:y_exact_taylor}:
+\[ y(t+h) = y(t) + h f + \frac{h^2}{2}(f_t + f f_y) + \frac{h^3}{6} [ (f_{tt} + 2f f_{ty} + f^2 f_{yy}) + f_y(f_t + f f_y) ] + \mathcal{O}(h^4) \]
+
+\textbf{2. Taylor Expansion of the Numerical Scheme:}
+The numerical increment is $\Phi(t, y, h) = \alpha f + \beta f(t + \gamma h, y + \gamma h f)$. Let $f = f(t, y)$.
+Expanding the stage function $k_2 = f(t + \gamma h, y + \gamma h f)$ about $(t, y)$:
+\[ k_2 = f + \gamma h (f_t + f f_y) + \frac{(\gamma h)^2}{2} (f_{tt} + 2f f_{ty} + f^2 f_{yy}) + \mathcal{O}(h^3) \]
+The numerical update $y_{n+1} = y_n + h(\alpha k_1 + \beta k_2)$ is:
+\begin{equation}
+    y_{n+1} = y_n + (\alpha + \beta) h f + \beta \gamma h^2 (f_t + f f_y) + \frac{\beta \gamma^2 h^3}{2} (f_{tt} + 2f f_{ty} + f^2 f_{yy}) + \mathcal{O}(h^4) \label{eq:y_num_taylor}
+\end{equation}
+
+\textbf{3. Mismatch of Order $p=3$:}
+To achieve order $p=3$, the coefficients of $h^1, h^2, h^3$ must match the exact solution for any smooth $f$.
+\begin{itemize}
+    \item \textbf{Order 1:} $\alpha + \beta = 1$.
+    \item \textbf{Order 2:} $\beta \gamma = 1/2$.
+    \item \textbf{Order 3 Failure:} Comparing the $h^3$ terms:
+    \begin{align*}
+        \text{Exact: } & \frac{1}{6} (f_{tt} + 2f f_{ty} + f^2 f_{yy}) + \frac{1}{6} f_y(f_t + f f_y) \\
+        \text{Numerical: } & \frac{\beta \gamma^2}{2} (f_{tt} + 2f f_{ty} + f^2 f_{yy})
+    \end{align*}
+    For the terms involving $f_{tt}, f_{ty}, f_{yy}$ to match, we require $\frac{\beta \gamma^2}{2} = \frac{1}{6} \implies \beta \gamma^2 = \frac{1}{3}$.
+    However, the exact expansion contains the term $\frac{1}{6} f_y(f_t + f f_y)$, which is \textbf{identically zero} in the numerical expansion \eqref{eq:y_num_taylor} for all $\alpha, \beta, \gamma$. Because this term is missing, the method can never match the exact solution up to $\mathcal{O}(h^3)$ for a general non-linear $f$. Thus, the order cannot exceed 2.
+\end{itemize}
+
+\textbf{(b) Linear Stability and Error Bound}
+
+Applying the method to $f(t, y) = -\lambda y$ with $y_0 = 1$:
+\[ y_{n+1} = y_n + \alpha h (-\lambda y_n) + \beta h [-\lambda (y_n + \gamma h (-\lambda y_n))] \]
+\[ y_{n+1} = y_n [1 - (\alpha + \beta) h\lambda + \beta\gamma h^2 \lambda^2] \]
+Using the conditions for second-order accuracy ($\alpha+\beta=1, \beta\gamma=1/2$):
+\[ y_{n+1} = y_n [1 - h\lambda + \frac{1}{2} (h\lambda)^2] \equiv g(z) y_n, \quad \text{where } z = h\lambda. \]
+
+\textbf{1. Boundedness (Absolute Stability):}
+The sequence $\{y_n\}$ is bounded if and only if $|g(z)| \leq 1$:
+\[ -1 \leq 1 - z + \frac{1}{2} z^2 \leq 1 \]
+\begin{itemize}
+    \item $1 - z + \frac{1}{2} z^2 \leq 1 \implies \frac{1}{2} z^2 - z \leq 0 \implies z(z-2) \leq 0 \implies z \in [0, 2]$.
+    \item $1 - z + \frac{1}{2} z^2 \geq -1 \implies \frac{1}{2} z^2 - z + 2 \geq 0$. This quadratic has discriminant $\Delta = 1 - 4(1/2)(2) = -3 < 0$, so it is always positive.
+\end{itemize}
+Thus, stability requires $0 \leq h\lambda \leq 2$, or $\boxed{h \leq 2/\lambda}$. \sidenote{\textbf{Region of Absolute Stability} The stability condition $|g(z)| \leq 1$ defines the \textit{Region of Absolute Stability} in the complex $z$-plane ($z = h\lambda$). For ODEs where $\lambda$ may be complex (e.g., from a system of equations), the solver must ensure $h\lambda$ lies within this region to prevent exponential growth of numerical errors. \textbf{Stiff Problems:} If $\lambda$ is very large (stiff ODE), explicit methods like the one here require extremely small $h$ to stay stable. \textbf{Implicit Methods:} A-stable methods (like Backward Euler or Implicit Trapezoidal) have stability regions covering the entire left half-plane, allowing much larger steps for stiff systems.}
+
+\textbf{2. Detailed Error Bound Proof:}
+Let $e_n = y(t_n) - y_n$. The exact solution is $y(t_{n+1}) = e^{-z} y(t_n)$. The error recurrence is:
+\[ e_{n+1} = y(t_{n+1}) - y_{n+1} = e^{-z} y(t_n) - g(z) y_n = g(z) e_n + (e^{-z} - g(z)) y(t_n). \]
+The Local Truncation Error (LTE) for this linear problem is $\tau = e^{-z} - g(z)$. Using Taylor's theorem with remainder:
+\[ e^{-z} = 1 - z + \frac{z^2}{2} - \frac{z^3}{6} e^{-\xi}, \quad \xi \in (0, z). \]
+Since $z > 0$, we have $0 < e^{-\xi} < 1$, thus $|\tau| = |e^{-z} - (1 - z + \frac{z^2}{2})| \leq \frac{z^3}{6}$.
+Substituting back into the recurrence:
+\[ |e_{n+1}| \leq |g(z)| |e_n| + |\tau| |y(t_n)|. \]
+Given $h \leq 2/\lambda$, we have $0 \leq g(z) \leq 1$. Also $|y(t_n)| = e^{-n z} \leq 1$. Thus:
+\[ |e_{n+1}| \leq |e_n| + \frac{z^3}{6}. \]
+By induction, since $e_0 = 0$:
+\[ |e_n| \leq \sum_{k=0}^{n-1} \frac{z^3}{6} = n \frac{(h\lambda)^3}{6} = (nh) \frac{\lambda^3 h^2}{6} = \frac{1}{6} \lambda^3 h^2 t_n. \]
 \end{solution}
 
 \begin{exercise}
 \label{applied:2023:5}
-Let $u ( t , x )$ be the solution of the initial-boundary value problem
+Let $u(t, x)$ be the solution of the initial-boundary value problem
+\begin{equation}
+    u_t = D u_{xx}, \quad 0 < x < L, \quad 0 < t \leq T, \tag{5}
+\end{equation}
+\begin{equation}
+    u(0, x) = f(x), \tag{6}
+\end{equation}
+\begin{equation}
+    u(t, 0) = u(t, L) = 0, \tag{7}
+\end{equation}
+where $L > 0$ and $D > 0$. Consider the finite difference scheme
+\begin{equation}
+    \frac{u_j^{n+1} - u_j^n}{\Delta t} = D \frac{u_{j+1}^n - 2u_j^n + u_{j-1}^n}{(\Delta x)^2}, \quad j = 1, \dots, M-1, \quad n = 0, 1, \dots, N-1 \tag{8}
+\end{equation}
+with $u_0^n = u_M^n = 0$ for all $n$ and $u_j^0 = f(j\Delta x)$, $j = 0, \dots, M$. Here $\Delta t = T/N$ and $\Delta x = L/M$ and $u_j^n \approx u(n\Delta t, j\Delta x)$.
 
-\[
-u _ {t} = D u _ {x x}, \quad 0 <   x <   L, \quad 0 <   t \leq T, \tag {5}
-\]
-
-\[
-u (0, x) = f (x) \tag {6}
-\]
-
-\[
-u (t, 0) = u (t, L) = 0, \tag {7}
-\]
-
-where $L > 0$ and $D > 0$ . Consider the finite difference scheme
-
-\[
-\frac {u _ {j} ^ {n + 1} - u _ {j} ^ {n}}{\Delta t} = D \frac {u _ {j + 1} ^ {n} - 2 u _ {j} ^ {n} + u _ {j - 1} ^ {n}}{(\Delta x) ^ {2}}, \quad j = 1, \dots , M - 1, \quad n = 0, 1, \dots , N - 1 \tag {8}
-\]
-
-with $u _ { 0 } ^ { n } = u _ { M } ^ { n } = 0$ for all $n$ and $u _ { j } ^ { \mathrm { 0 } } = f ( j \Delta x )$ , $j = 0 , \ldots , M$ . Here $\Delta t = T / N$ and $\Delta x = L / M$ and $u _ { j } ^ { n } \approx u ( n \Delta t , j \Delta x )$ .
-
-(a) Prove that (8) is consistent with (5).   
-(b) Prove that if $\begin{array} { r } { \Delta t { } \leq \frac { 1 } { 2 D } ( \Delta x ) ^ { 2 } } \end{array}$ the finite difference scheme (8) is stable under the $l ^ { \infty }$ norm.   
-(c) Prove that if $\begin{array} { r } { \Delta t { } \leq \frac { 1 } { 2 D } ( \Delta x ) ^ { 2 } } \end{array}$ the finite difference scheme (8) converges in the $l ^ { \infty }$ norm to the exact solution of (5)-(7).
+\begin{enumerate}[(a)]
+    \item Prove that (8) is consistent\footnote{\textbf{Formal Definition of Consistency (PDEs)} For a partial differential equation $L u = f$, a finite difference scheme $L_{h, \Delta t} U = f$ is \textbf{consistent} if the Local Truncation Error $\tau = L_{h, \Delta t} u - L u$ satisfies: $\lim_{h, \Delta t \to 0} \|\tau\| = 0$.} with (5).
+    \item Prove that if $\Delta t \leq \frac{1}{2D} (\Delta x)^2$, the finite difference scheme (8) is stable under the $l^\infty$ norm.
+    \item Prove that if $\Delta t \leq \frac{1}{2D} (\Delta x)^2$, the finite difference scheme (8) converges in the $l^\infty$ norm to the exact solution of (5)-(7).
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Consistency:}
-Taylor expansion of the discrete operator applied to the exact solution $U$:
-\[ \frac{U_j^{n+1}-U_j^n}{\Delta t} - D \frac{U_{j+1}^n - 2U_j^n + U_{j-1}^n}{(\Delta x)^2} = [U_t + \frac{\Delta t}{2} U_{tt}] - D [U_{xx} + \frac{\Delta x^2}{12} U_{xxxx}] + \dots \]
-Since $U_t = D U_{xx}$, the error is $O(\Delta t + \Delta x^2)$, which vanishes as $\Delta t, \Delta x \to 0$.
+\textbf{Preliminaries: Definition of $l^\infty$ Stability}
 
-\textbf{(b) Stability:}
-$u_j^{n+1} = (1-2r) u_j^n + r u_{j+1}^n + r u_{j-1}^n$ with $r = \frac{D \Delta t}{\Delta x^2}$.
-If $r \leq 1/2$, then $1-2r \geq 0$ and all coefficients are non-negative.
-$|u_j^{n+1}| \leq (1-2r+r+r) \|u^n\|_\infty = \|u^n\|_\infty$.
+Before proceeding to the formal proofs, we define the criteria for stability used in this exercise. For a discrete solution vector $\mathbf{u}^n = [u_1^n, u_2^n, \dots, u_{M-1}^n]$ at time level $n$, the \textbf{$l^\infty$ norm} is defined as the maximum absolute value among all grid points:
+\[ \|\mathbf{u}^n\|_\infty = \max_{0 \leq j \leq M} |u_j^n|. \]
+A finite difference scheme is said to be \textbf{stable in the $l^\infty$ norm} if there exists a constant $C > 0$, independent of the discretization parameters $\Delta t$ and $\Delta x$, such that:
+\[ \|\mathbf{u}^n\|_\infty \leq C \|\mathbf{u}^0\|_\infty, \quad \forall n \geq 0. \]
+For dissipative partial differential equations like the heat equation, a stronger condition often sought is \textbf{contractivity}, where $\|\mathbf{u}^{n+1}\|_\infty \leq \|\mathbf{u}^n\|_\infty$. This ensures that the maximum value of the numerical solution never exceeds the initial maximum, preventing the growth of rounding errors or unphysical oscillations.
 
-\textbf{(c) Convergence:}
-The error $e^n$ satisfies $e^{n+1} = M e^n + \Delta t \tau^n$ where $\|M\|_\infty = 1$ and $\|\tau^n\|_\infty = O(\Delta t + \Delta x^2)$.
-By induction, $\|e^n\|_\infty \leq n \Delta t \max \|\tau\| = t_n O(\Delta t + \Delta x^2)$.
+\textbf{(a) Formal Proof of Consistency}
+
+To prove consistency, we examine the Local Truncation Error (LTE) $\tau_j^n$, defined by substituting the exact solution $u(t, x)$ into the difference scheme:
+\[ \tau_j^n = \frac{u(t_{n+1}, x_j) - u(t_n, x_j)}{\Delta t} - D \frac{u(t_n, x_{j+1}) - 2u(t_n, x_j) + u(t_n, x_{j-1})}{(\Delta x)^2}. \]
+Using Taylor expansions about the point $(t_n, x_j)$:
+\begin{enumerate}
+    \item \textbf{Temporal Expansion:}
+    \[ u(t_{n+1}, x_j) = u(t_n, x_j) + \Delta t u_t(t_n, x_j) + \frac{(\Delta t)^2}{2} u_{tt}(t_n, x_j) + \mathcal{O}(\Delta t^3) \]
+    \[ \frac{u(t_{n+1}, x_j) - u(t_n, x_j)}{\Delta t} = u_t + \frac{\Delta t}{2} u_{tt} + \mathcal{O}(\Delta t^2) \]
+    \item \textbf{Spatial Expansion:}
+    \[ u(t_n, x_{j\pm 1}) = u(t_n, x_j \pm \Delta x) = u \pm \Delta x u_x + \frac{\Delta x^2}{2} u_{xx} \pm \frac{\Delta x^3}{6} u_{xxx} + \frac{\Delta x^4}{24} u_{xxxx} + \mathcal{O}(\Delta x^5) \]
+    Summing $u(t_n, x_{j+1})$ and $u(t_n, x_{j-1})$ eliminates odd-order derivatives:
+    \[ u(t_n, x_{j+1}) + u(t_n, x_{j-1}) = 2u + \Delta x^2 u_{xx} + \frac{\Delta x^4}{12} u_{xxxx} + \mathcal{O}(\Delta x^6) \]
+    \[ \frac{u(t_n, x_{j+1}) - 2u(t_n, x_j) + u(t_n, x_{j-1})}{\Delta x^2} = u_{xx} + \frac{\Delta x^2}{12} u_{xxxx} + \mathcal{O}(\Delta x^4) \]
+\end{enumerate}
+Substituting these into the expression for $\tau_j^n$:
+\[ \tau_j^n = \left( u_t + \frac{\Delta t}{2} u_{tt} + \dots \right) - D \left( u_{xx} + \frac{\Delta x^2}{12} u_{xxxx} + \dots \right) \]
+Since the exact solution satisfies $u_t = D u_{xx}$, the leading order terms cancel:
+\[ \tau_j^n = \frac{\Delta t}{2} u_{tt} - D \frac{\Delta x^2}{12} u_{xxxx} + \mathcal{O}(\Delta t^2 + \Delta x^4) \]
+Thus, $\tau_j^n = \mathcal{O}(\Delta t + \Delta x^2)$. As $\Delta t, \Delta x \to 0$, $\tau_j^n \to 0$, which proves the scheme is consistent.
+
+\textbf{(b) Rigorous $l^\infty$ Stability Proof}
+
+Let $r = \frac{D \Delta t}{(\Delta x)^2}$. The numerical scheme (8) can be rewritten in an explicit update form:
+\begin{equation}
+    u_j^{n+1} = u_j^n + r(u_{j+1}^n - 2u_j^n + u_{j-1}^n) = (1-2r)u_j^n + r u_{j+1}^n + r u_{j-1}^n. \label{eq:heat_update}
+\end{equation}
+For $l^\infty$ stability, we require $\|u^{n+1}\|_\infty \leq \|u^n\|_\infty$.
+\begin{enumerate}
+    \item \textbf{Coefficient Analysis:} The update expresses $u_j^{n+1}$ as a linear combination of values at the previous time level $n$. The sum of the coefficients is:
+    \[ (1-2r) + r + r = 1. \]
+    \item \textbf{Non-negativity Condition:} If $r \leq 1/2$, then $1-2r \geq 0$. Since $D, \Delta t, \Delta x > 0$, we also have $r > 0$. Thus, all coefficients are non-negative.
+    \item \textbf{Bounding the Solution:} Taking the absolute value and applying the triangle inequality:
+    \[ |u_j^{n+1}| \leq |1-2r| |u_j^n| + r |u_{j+1}^n| + r |u_{j-1}^n|. \]
+    Since all coefficients are non-negative, $|1-2r| = 1-2r$. Let $\|u^n\|_\infty = \max_j |u_j^n|$:
+    \[ |u_j^{n+1}| \leq (1-2r) \|u^n\|_\infty + r \|u^n\|_\infty + r \|u^n\|_\infty = (1-2r + 2r) \|u^n\|_\infty = \|u^n\|_\infty. \]
+\end{enumerate}
+This holds for all $j$, so $\|u^{n+1}\|_\infty \leq \|u^n\|_\infty$. By induction, $\|u^n\|_\infty \leq \|u^0\|_\infty$ for all $n$, ensuring the scheme is stable. \sidenote{\textbf{The Maximum Principle} The stability proof in part (b) is a discrete manifestation of the \textit{Maximum Principle} for parabolic equations. \textbf{Continuous Case:} For the heat equation $u_t = D u_{xx}$, the maximum value of $u$ in the domain $[0, T] \times [0, L]$ must occur either at the initial time $t=0$ or on the boundaries $x=0, L$. \textbf{Discrete Case:} The condition $r \leq 1/2$ ensures that $u_j^{n+1}$ is a convex combination of $u_{j-1}^n, u_j^n, u_{j+1}^n$. If $r > 1/2$, the coefficient of $u_j^n$ becomes negative, allowing for unphysical oscillations where a local maximum can grow indefinitely, leading to $l^\infty$ instability. This is why the $l^\infty$ norm is the natural choice for studying the stability of diffusion schemes.}
+
+\textbf{(c) Formal Proof of Convergence}
+
+Define the error at grid point $(n, j)$ as $e_j^n = u(t_n, x_j) - u_j^n$. From the definition of LTE in part (a), the exact solution satisfies:
+\[ u(t_{n+1}, x_j) = (1-2r)u(t_n, x_j) + r u(t_n, x_{j+1}) + r u(t_n, x_{j-1}) + \Delta t \tau_j^n. \]
+Subtracting the numerical scheme update \eqref{eq:heat_update} from this equation:
+\[ e_j^{n+1} = (1-2r)e_j^n + r e_{j+1}^n + r e_{j-1}^n + \Delta t \tau_j^n. \]
+Under the stability condition $r \leq 1/2$, we apply the same logic as in part (b):
+\[ |e_j^{n+1}| \leq (1-2r)|e_j^n| + r|e_{j+1}^n| + r|e_{j-1}^n| + \Delta t |\tau_j^n| \leq \|e^n\|_\infty + \Delta t \|\tau^n\|_\infty. \]
+Taking the maximum over $j$:
+\[ \|e^{n+1}\|_\infty \leq \|e^n\|_\infty + \Delta t \|\tau^n\|_\infty. \]
+By recursive application (telescoping sum) starting from $n=0$:
+\[ \|e^n\|_\infty \leq \|e^0\|_\infty + \Delta t \sum_{k=0}^{n-1} \|\tau^k\|_\infty. \]
+Since the initial values are exact ($u_j^0 = f(x_j)$), $e^0 = 0$. Let $\|\tau\|_\infty = \max_{n,j} |\tau_j^n|$:
+\[ \|e^n\|_\infty \leq n \Delta t \|\tau\|_\infty = t_n \|\tau\|_\infty. \]
+Since $t_n \leq T$ and $\|\tau\|_\infty = \mathcal{O}(\Delta t + \Delta x^2)$, we have:
+\[ \|e^n\|_\infty \leq T \cdot C (\Delta t + \Delta x^2). \]
+Thus, as $\Delta t, \Delta x \to 0$, $\|e^n\|_\infty \to 0$, proving convergence.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2023:6}
-Let $\psi ^ { \varepsilon } ( t , x )$ be the solution to the following Schr¨odinger equation:
-
+Let $\psi^\varepsilon(t, x)$ be the solution to the following Schrödinger equation:
 \[
-\mathrm {i} \varepsilon \frac {\partial \psi^ {\varepsilon}}{\partial t} = - \frac {\varepsilon^ {2}}{2} \nabla_ {x} ^ {2} \psi^ {\varepsilon} + V (x) \psi^ {\varepsilon}, x = (x _ {1}, \dots , x _ {n}) ^ {\mathrm {T}} \in \mathbb {R} ^ {n},
+    \mathrm{i} \varepsilon \frac{\partial \psi^\varepsilon}{\partial t} = - \frac{\varepsilon^2}{2} \nabla_x^2 \psi^\varepsilon + V(x) \psi^\varepsilon, \quad x \in \mathbb{R}^n,
+\]
+where $\mathrm{i} = \sqrt{-1}$, $\varepsilon \ll 1$ is the rescaled Planck constant, and $V(x) \in C^\infty(\mathbb{R}^n)$ is the potential function. Consider the WKB expansion:
+\[
+    \psi^\varepsilon(t, x) = A(t, x) e^{\mathrm{i} \frac{S(t, x)}{\varepsilon}}.
 \]
 
-where $\mathrm { i } = \sqrt { - 1 }$ , $\varepsilon \ll 1$ is a small positive real number (rescaled Planck constant), $\nabla _ { x } ^ { 2 } = \sum _ { j = 1 } ^ { n } \partial _ { x _ { j } } ^ { 2 }$ , and $V ( x ) \in C ^ { \infty } ( \mathbb { R } ^ { n } )$ is the potential function.
-
-Consider the WKB expansion
-
-\[
-\psi^ {\varepsilon} (t, x) = A (t, x) e ^ {\mathrm {i} \frac {S (t , x)}{\varepsilon}},
-\]
-
-(a) Derive equations for $A ( t , x )$ and $S ( t , x )$ by asymptotic expansion. (Here both $A ( t , x )$ and $S ( t , x )$ are real-valued functions, and do not depend on $\varepsilon$ .)   
-(b) Define $u ( t , x ) = \nabla _ { x } S ( t , x ) \in \mathbb { R } ^ { n }$ . Derive an equation for $u ( t , x )$ . Suppose $u ( 0 , x ) \in$ $C ^ { \infty } ( \mathbb { R } ^ { n } )$ , will $u ( t , x )$ always be in $C ^ { \infty } ( \mathbb { R } ^ { n } )$ for all $t > 0$ ? Explain why.
+\begin{enumerate}[(a)]
+    \item Derive equations for $A(t, x)$ and $S(t, x)$ by asymptotic expansion, assuming $A$ and $S$ are real-valued and independent of $\varepsilon$.
+    \item Define $u(t, x) = \nabla_x S(t, x)$. Derive an equation for $u(t, x)$. If $u(0, x) \in C^\infty(\mathbb{R}^n)$, will $u(t, x)$ always remain in $C^\infty(\mathbb{R}^n)$ for all $t > 0$? Explain your reasoning.
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) WKB Equations:}
-Substituting $\psi = A e^{iS/\epsilon}$ and equating powers of $\epsilon$:
-$O(1)$: $-S_t = \frac{1}{2} |\nabla S|^2 + V$, which is the Hamilton-Jacobi equation.
-$O(\epsilon)$: $A_t + \nabla S \cdot \nabla A + \frac{1}{2} A \Delta S = 0$, which is the transport equation.
+\textbf{(a) WKB Expansion and Derivation of Asymptotic Equations}
 
-\textbf{(b) Gradient Equation:}
-Let $u = \nabla S$. $\nabla(S_t + \frac{1}{2} |\nabla S|^2 + V) = u_t + (u \cdot \nabla)u + \nabla V = 0$.
-This is a pressureless Euler-type equation. It does not stay in $C^\infty$ as trajectories (characteristics) can cross, leading to shock formation (gradient catastrophe) in finite time.
+We substitute the ansatz $\psi^\varepsilon = A e^{\mathrm{i} S / \varepsilon}$ into the Schrödinger equation. First, we compute the required derivatives:
+\begin{itemize}
+    \item \textbf{Time Derivative:}
+    \[ \frac{\partial \psi^\varepsilon}{\partial t} = \left( \frac{\partial A}{\partial t} + \frac{\mathrm{i}}{\varepsilon} A \frac{\partial S}{\partial t} \right) e^{\mathrm{i} S / \varepsilon} \]
+    \item \textbf{Spatial Gradient:}
+    \[ \nabla \psi^\varepsilon = \left( \nabla A + \frac{\mathrm{i}}{\varepsilon} A \nabla S \right) e^{\mathrm{i} S / \varepsilon} \]
+    \item \textbf{Laplacian:}
+    \begin{align*}
+        \nabla^2 \psi^\varepsilon &= \nabla \cdot \left[ \left( \nabla A + \frac{\mathrm{i}}{\varepsilon} A \nabla S \right) e^{\mathrm{i} S / \varepsilon} \right] \\
+        &= \left( \nabla^2 A + \frac{\mathrm{i}}{\varepsilon} \nabla A \cdot \nabla S + \frac{\mathrm{i}}{\varepsilon} \nabla \cdot (A \nabla S) - \frac{1}{\varepsilon^2} A |\nabla S|^2 \right) e^{\mathrm{i} S / \varepsilon} \\
+        &= \left( \nabla^2 A + \frac{\mathrm{i}}{\varepsilon} (2 \nabla A \cdot \nabla S + A \nabla^2 S) - \frac{1}{\varepsilon^2} A |\nabla S|^2 \right) e^{\mathrm{i} S / \varepsilon}
+    \end{align*}
+\end{itemize}
+
+Substituting these into $\mathrm{i} \varepsilon \partial_t \psi^\varepsilon = -\frac{\varepsilon^2}{2} \nabla^2 \psi^\varepsilon + V \psi^\varepsilon$ and dividing by the common phase factor $e^{\mathrm{i} S / \varepsilon}$:
+\[ \mathrm{i} \varepsilon \frac{\partial A}{\partial t} - A \frac{\partial S}{\partial t} = -\frac{\varepsilon^2}{2} \nabla^2 A - \frac{\mathrm{i} \varepsilon}{2} (2 \nabla A \cdot \nabla S + A \nabla^2 S) + \frac{1}{2} A |\nabla S|^2 + V A \]
+Separating the terms by orders of $\varepsilon$:
+
+\textbf{1. $O(1)$ Terms (Hamilton-Jacobi Equation):}
+Equating terms without $\varepsilon$:
+\[ -A \frac{\partial S}{\partial t} = \frac{1}{2} A |\nabla S|^2 + V A \implies \boxed{\frac{\partial S}{\partial t} + \frac{1}{2} |\nabla S|^2 + V = 0} \]
+This is the classical Hamilton-Jacobi equation, where $S$ acts as the action.
+
+\textbf{2. $O(\varepsilon)$ Terms (Transport Equation):}
+Equating terms of order $\mathrm{i} \varepsilon$:
+\[ \mathrm{i} \varepsilon \frac{\partial A}{\partial t} = - \frac{\mathrm{i} \varepsilon}{2} (2 \nabla A \cdot \nabla S + A \nabla^2 S) \implies \boxed{\frac{\partial A}{\partial t} + \nabla S \cdot \nabla A + \frac{1}{2} A \nabla^2 S = 0} \]
+This can be rewritten in terms of the probability density $\rho = A^2$ as $\rho_t + \nabla \cdot (\rho \nabla S) = 0$, which is a continuity equation.
+
+\begin{remark}
+\textbf{Technical Note on the $O(\varepsilon^2)$ Order:}
+A subtle point in the WKB derivation is the treatment of the term $\frac{\varepsilon^2}{2} \nabla^2 A$. Since we assumed $A$ and $S$ are independent of $\varepsilon$, this term is the coefficient of $\varepsilon^2$. In an \textbf{asymptotic expansion}, we do not require the entire equation to vanish identically for all $\varepsilon$. Instead, we use the leading terms ($A$ and $S$) to cancel the largest orders of magnitude, namely $O(1)$ and $O(\varepsilon)$. This leaves a residual error of $O(\varepsilon^2)$, which is considered negligible in the semiclassical limit ($\varepsilon \to 0$).
+
+Crucially, this does \textbf{not} imply that $\nabla^2 A = 0$. In most physical systems, such as wave packets, $\nabla^2 A$ is non-zero. If we were to require the $\varepsilon^2$ term to vanish exactly, we would have to introduce a higher-order correction to the amplitude, $A = A_0 + \varepsilon A_1 + \dots$, and use $A_1$ to compensate for $\nabla^2 A_0$. For the leading-order WKB approximation requested here, we simply accept $\nabla^2 A$ as the source of the higher-order error.
+\end{remark}
+
+\textbf{(b) Momentum Equation and Singularity Formation}
+
+\begin{lemma}
+\textbf{Vector Identity for the Convective Term}
+For any smooth vector field $\mathbf{u}$, the following identity holds:
+\[ (\mathbf{u} \cdot \nabla) \mathbf{u} = \frac{1}{2} \nabla (\mathbf{u} \cdot \mathbf{u}) - \mathbf{u} \times (\nabla \times \mathbf{u}). \]
+\end{lemma}
+
+\begin{proof}
+We use Einstein summation notation and the Levi-Civita symbol $\varepsilon_{ijk}$. The $i$-th component of the term $\mathbf{u} \times (\nabla \times \mathbf{u})$ is:
+\begin{align*}
+    [\mathbf{u} \times (\nabla \times \mathbf{u})]_i &= \varepsilon_{ijk} u_j (\nabla \times \mathbf{u})_k \\
+    &= \varepsilon_{ijk} u_j (\varepsilon_{klm} \partial_l u_m) \\
+    &= \varepsilon_{kij} \varepsilon_{klm} u_j \partial_l u_m
+\end{align*}
+Using the fundamental identity $\varepsilon_{kij} \varepsilon_{klm} = \delta_{il} \delta_{jm} - \delta_{im} \delta_{jl}$, which relates the product of two Levi-Civita symbols to Kronecker deltas:
+\begin{align*}
+    [\mathbf{u} \times (\nabla \times \mathbf{u})]_i &= (\delta_{il} \delta_{jm} - \delta_{im} \delta_{jl}) u_j \partial_l u_m \\
+    &= \delta_{il} \delta_{jm} u_j \partial_l u_m - \delta_{im} \delta_{jl} u_j \partial_l u_m \\
+    &= u_m \partial_i u_m - u_j \partial_j u_i
+\end{align*}
+We now identify these two terms in vector notation:
+\begin{enumerate}
+    \item $u_m \partial_i u_m = \frac{1}{2} \partial_i (u_m u_m) = \frac{1}{2} \partial_i (u^2)$, which is the $i$-th component of $\frac{1}{2} \nabla (u^2)$.
+    \item $u_j \partial_j u_i = (\mathbf{u} \cdot \nabla) u_i$, which is the $i$-th component of the convective operator $(\mathbf{u} \cdot \nabla) \mathbf{u}$.
+\end{enumerate}
+Substituting these back into the expression:
+\[ [\mathbf{u} \times (\nabla \times \mathbf{u})]_i = \partial_i \left( \frac{1}{2} u^2 \right) - (\mathbf{u} \cdot \nabla) u_i. \]
+Rearranging to isolate the convective term gives:
+\[ (\mathbf{u} \cdot \nabla) \mathbf{u} = \frac{1}{2} \nabla (u^2) - \mathbf{u} \times (\nabla \times \mathbf{u}). \]
+This completes the proof.
+\end{proof}
+
+Given $u = \nabla S$, we take the gradient of the Hamilton-Jacobi equation derived in (a):
+\[ \nabla \left( \frac{\partial S}{\partial t} + \frac{1}{2} |\nabla S|^2 + V \right) = 0 \implies \frac{\partial (\nabla S)}{\partial t} + \frac{1}{2} \nabla (|\nabla S|^2) + \nabla V = 0 \]
+Using the Lemma above, and noting that $\nabla \times u = \nabla \times (\nabla S) = 0$\footnote{\textbf{Second-Order Identities in Field Theory:} In vector calculus, two fundamental identities vanish identically due to the equality of mixed partial derivatives (Clairaut's theorem):
+\begin{enumerate}
+    \item \textbf{Curl of a Gradient:} $\nabla \times (\nabla \phi) = 0$. Physically, this implies that every gradient field is \textbf{irrotational} (conservative). For example, if a force $\mathbf{F} = -\nabla V$, then $\oint \mathbf{F} \cdot d\mathbf{r} = 0$.
+    \item \textbf{Divergence of a Curl:} $\nabla \cdot (\nabla \times \mathbf{A}) = 0$. Physically, this implies that curl fields are \textbf{solenoidal} (source-free). A primary example is the magnetic field $\mathbf{B} = \nabla \times \mathbf{A}$, ensuring $\nabla \cdot \mathbf{B} = 0$ (no magnetic monopoles).
+\end{enumerate}
+The vanishing of $\nabla \times (\nabla S)$ in Exercise 6 ensures that the "quantum fluid" described by the WKB expansion remains irrotational, a property central to the study of superfluids and quantum vortices.}:
+\[ \boxed{\frac{\partial u}{\partial t} + (u \cdot \nabla)u + \nabla V = 0} \]
+This is the momentum equation for a pressureless fluid (or a collection of non-interacting particles).
+
+\textbf{Regularity Analysis (The Gradient Catastrophe):}
+Even if the initial data $u(0, x)$ is $C^\infty$, the solution $u(t, x)$ generally fails to remain in $C^\infty$ for all $t > 0$. We prove this using the \textbf{Method of Characteristics}.
+
+\begin{enumerate}
+    \item \textbf{Characteristic Equations:}
+    The momentum equation is $u_t + (u \cdot \nabla)u = -\nabla V$. Define a trajectory $x(t; \alpha)$ starting at $\alpha$, such that $\frac{d}{dt} x(t; \alpha) = u(t, x(t; \alpha))$. Along this trajectory, the total derivative of $u$ is:
+    \[ \frac{d}{dt} u(t, x(t; \alpha)) = u_t + (u \cdot \nabla)u = -\nabla V(x(t; \alpha)). \]
+    This system of ODEs describes the evolution of the velocity and position.
+
+    \item \textbf{Evolution of the Gradient (1D Case):}
+    For simplicity, consider the 1D case where $u_t + u u_x = -V_x$. Let $w(t) = u_x(t, x(t))$ be the spatial gradient along the characteristic. Differentiating the PDE with respect to $x$:
+    \[ (u_x)_t + u_x^2 + u (u_x)_x = -V_{xx}. \]
+    Using the total derivative $\frac{dw}{dt} = w_t + u w_x$, we obtain a \textbf{Riccati-type ODE}:
+    \begin{equation}
+        \frac{dw}{dt} = -w^2 - V_{xx}(x(t)). \label{eq:riccati_gradient}
+    \end{equation}
+    \sidenote{\textbf{The Essence of Characteristics: Lagrangian Perspective} The transition from $u_t + u u_x = F$ to $\frac{du}{dt} = F$ along $\dot{x} = u$ is a shift from an Eulerian (fixed grid) to a Lagrangian (moving particle) frame. \textbf{Why differentiate by $x$?} To study regularity, we must track how the "slope" or gradient $w = u_x$ changes as a particle moves. By applying $\partial_x$ to the PDE, we use the identity $\partial_x(u u_x) = u_x^2 + u u_{xx}$. The resulting equation $(w_t + u w_x) = -w^2 - V_{xx}$ allows us to reuse the \textit{same} characteristic curves to see that the gradient $w$ evolves via a Riccati ODE, which is the standard mathematical mechanism for finite-time singularity formation in non-linear transport.}
+
+    \item \textbf{Finite-Time Blow-up:}
+    Suppose $V=0$ (free particle case). Then $\frac{dw}{dt} = -w^2$. Solving this separable ODE with initial condition $w(0) = u_x(0, \alpha)$:
+    \[ w(t) = \frac{w(0)}{1 + w(0)t}. \]
+    If the initial velocity field is "converging" at any point, i.e., $w(0) = u_x(0, \alpha) < 0$, then as $t \to T^* = -1/w(0) > 0$, the gradient $w(t) \to -\infty$. 
+    At this critical time $T^*$, the velocity $u$ develops a vertical slope (gradient catastrophe), and for $t > T^*$, the characteristics cross, making $u$ multi-valued. In the presence of a potential $V$, the $V_{xx}$ term can accelerate or delay this blow-up, but it cannot generally prevent it if $w(0)$ is sufficiently negative.
+
+    \item \textbf{Higher Dimensions (Jacobian Analysis):}
+    In $n$ dimensions, the density of trajectories is governed by the Jacobian $J(t; \alpha) = \det\left(\frac{\partial x(t; \alpha)}{\partial \alpha}\right)$. From the transport equation in part (a), the amplitude $A$ satisfies $A^2(t, x(t)) J(t; \alpha) = A^2(0, \alpha)$. When trajectories cross, $J(t; \alpha) \to 0$, which forces the amplitude $A$ to blow up to infinity. 
+\end{enumerate}
+Consequently, $u(t, x)$ does not stay in $C^\infty$.
+\sidenote{\textbf{The Semiclassical Limit and Caustics} The WKB approximation establishes the link between quantum mechanics and classical mechanics. As $\varepsilon \to 0$, the wave function behaves like a collection of classical particles. \textbf{Caustics:} These are the loci in space where $J(t; \alpha) = 0$. Mathematically, these are the envelopes of the classical trajectories. At a caustic, the gradient of the phase $S$ (the velocity $u$) becomes multi-valued and the amplitude $A$ diverges, signaling the failure of the simple WKB ansatz.}
 \end{solution}

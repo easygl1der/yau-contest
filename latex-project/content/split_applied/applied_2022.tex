@@ -8,25 +8,27 @@ Consider $\left\{ p _ { i } ( x ) \right\} _ { i = 0 } ^ { \infty }$ , a family 
 \langle f, g \rangle = \int_ {- 1} ^ {1} f (x) g (x) w (x) d x, \quad w (x) > 0 \quad \mathrm {f o r} x \in (- 1, 1),
 \]
 
-where $p _ { i } ( x )$ is a polynomial of degree ??. Let $x _ { 0 } , x _ { 1 } , \ldots , x _ { n }$ be the roots of $p _ { n + 1 } ( x )$ . Construct an orthonormal basis in the subspace of the polynomials of degree no more than $n$ such that, for any polynomial in this subspace, the coefficients of its expansion into the basis are equal to the scaled values of this polynomial at the nodes $x _ { 0 } , x _ { 1 } , \ldots , x _ { n }$ .
+where $p _ { i } ( x )$ is a polynomial of degree $i$. Let $x _ { 0 } , x _ { 1 } , \ldots , x _ { n }$ be the roots of $p _ { n + 1 } ( x )$ . Construct an orthonormal basis in the subspace of the polynomials of degree no more than $n$ such that, for any polynomial in this subspace, the coefficients of its expansion into the basis are equal to the scaled values of this polynomial at the nodes $x _ { 0 } , x _ { 1 } , \ldots , x _ { n }$ .
 \end{exercise}
 
 \begin{solution}
-Let $V = \mathbb{P}_n$ be the space of polynomials of degree at most $n$. The roots $x_0, x_1, \dots, x_n$ of the orthogonal polynomial $p_{n+1}(x)$ are the nodes for the $(n+1)$-point Gaussian quadrature rule associated with the weight function $w(x)$. This quadrature rule is exact for polynomials of degree at most $2n+1$.
+Let $V = \mathbb{P}_n$ be the space of polynomials of degree at most $n$. The roots $x_0, x_1, \dots, x_n$ of the orthogonal polynomial $p_{n+1}(x)$ are the nodes for the $(n+1)$-point Gaussian quadrature rule associated with the weight function $w(x)$. The fundamental property of Gaussian quadrature is that it is exact for all polynomials of degree up to $2n+1$:
+\[ \int_{-1}^{1} Q(x) w(x) \, dx = \sum_{k=0}^{n} w_k Q(x_k), \quad \forall Q \in \mathbb{P}_{2n+1}, \]
+where $w_k > 0$ are the weights.
 
-Let $l_i(x)$ for $i=0, \dots, n$ be the Lagrange interpolating polynomials of degree $n$ for the nodes $x_0, \dots, x_n$:
-\[ l_i(x) = \prod_{j \neq i}^n \frac{x-x_j}{x_i-x_j}. \]
-Since $l_i(x)l_j(x)$ has degree $2n \leq 2n+1$, the Gaussian quadrature is exact:
-\[ \langle l_i, l_j \rangle = \int_{-1}^{1} l_i(x)l_j(x)w(x) \, dx = \sum_{k=0}^{n} w_k l_i(x_k) l_j(x_k), \]
-where $w_k$ are the positive Gaussian weights. Using the property $l_i(x_k) = \delta_{ik}$, we have:
-\[ \langle l_i, l_j \rangle = \sum_{k=0}^{n} w_k \delta_{ik} \delta_{jk} = w_i \delta_{ij}. \]
-Thus, the Lagrange polynomials are orthogonal. We normalize them to obtain an orthonormal basis $\{R_i\}_{i=0}^n$:
+Let $l_i(x) \in \mathbb{P}_n$ for $i=0, \dots, n$ be the Lagrange interpolating polynomials for the nodes $x_0, \dots, x_n$:
+\[ l_i(x) = \prod_{j \neq i}^n \frac{x-x_j}{x_i-x_j}, \quad \text{which satisfies} \quad l_i(x_k) = \delta_{ik}. \]
+For any $i, j \in \{0, \dots, n\}$, the product $l_i(x)l_j(x)$ is a polynomial of degree $2n$. Since $2n \leq 2n+1$, the Gaussian quadrature is exact:
+\[ \langle l_i, l_j \rangle = \int_{-1}^{1} l_i(x)l_j(x)w(x) \, dx = \sum_{k=0}^{n} w_k l_i(x_k) l_j(x_k) = \sum_{k=0}^{n} w_k \delta_{ik} \delta_{jk}. \]
+The sum collapses to a single term when $k=i=j$, giving:
+\[ \langle l_i, l_j \rangle = w_i \delta_{ij}. \]
+Thus, the Lagrange polynomials are orthogonal with respect to the inner product $\langle \cdot, \cdot \rangle$. To obtain an orthonormal basis $\{R_i\}_{i=0}^n$, we normalize $l_i$ by dividing by its norm $\|l_i\| = \sqrt{w_i}$:
 \[ R_i(x) = \frac{1}{\sqrt{w_i}} l_i(x). \]
-For any polynomial $f(x) \in \mathbb{P}_n$, its expansion in this basis is $f(x) = \sum_{i=0}^n f_i R_i(x)$. The coefficients $f_i$ are given by the projections:
+For any polynomial $f(x) \in \mathbb{P}_n$, its expansion in this basis is $f(x) = \sum_{i=0}^n f_i R_i(x)$. The coefficients $f_i$ are found by taking the inner product:
 \[ f_i = \langle f, R_i \rangle = \int_{-1}^{1} f(x) \frac{l_i(x)}{\sqrt{w_i}} w(x) \, dx. \]
-Since $f(x)l_i(x)$ has degree $2n \leq 2n+1$, Gaussian quadrature is again exact:
-\[ f_i = \sum_{k=0}^n w_k f(x_k) \frac{l_i(x_k)}{\sqrt{w_i}} = \sum_{k=0}^n w_k f(x_k) \frac{\delta_{ik}}{\sqrt{w_i}} = \sqrt{w_i} f(x_i). \]
-Thus, the coefficients $f_i$ are precisely the values of the polynomial at the nodes $x_i$ scaled by $\sqrt{w_i}$.
+Since the integrand $f(x)l_i(x)/\sqrt{w_i}$ has degree $2n \leq 2n+1$, Gaussian quadrature is again exact:
+\[ f_i = \sum_{k=0}^n w_k f(x_k) \frac{l_i(x_k)}{\sqrt{w_i}} = \sum_{k=0}^n w_k f(x_k) \frac{\delta_{ik}}{\sqrt{w_i}} = \frac{w_i f(x_i)}{\sqrt{w_i}} = \sqrt{w_i} f(x_i). \]
+Thus, the coefficients $f_i$ are the values of the polynomial at the nodes $x_i$ scaled by $\sqrt{w_i}$.
 \end{solution}
 
 \begin{exercise}
@@ -49,22 +51,35 @@ Prove that iteration (2) is convergent, to the same fixed point as iteration (1)
 \end{exercise}
 
 \begin{solution}
-First, we verify that the new iteration has the same fixed point as the original. For (1), the fixed point satisfy $x_\infty = f(x_\infty, y_\infty)$ and $y_\infty = g(x_\infty, y_\infty)$. Substituting into (2):
-\[ f(x_\infty, y_\infty) = x_\infty, \quad g(x_\infty, y_\infty) = y_\infty. \]
-Since $x_{k+1}$ in $g(x_{k+1}, y_k)$ becomes $x_\infty$ at the fixed point, the equations are identical, and $(x_\infty, y_\infty)$ is indeed a fixed point of iteration (2).
+First, we verify that the new iteration has the same fixed point as the original. For (1), the fixed point satisfy $x_\infty = f(x_\infty, y_\infty)$ and $y_\infty = g(x_\infty, y_\infty)$. Substituting $(x_\infty, y_\infty)$ into (2):
+\[ x_{k+1} = f(x_\infty, y_\infty) = x_\infty, \quad y_{k+1} = g(x_{k+1}, y_\infty) = g(x_\infty, y_\infty) = y_\infty. \]
+Since the equations are satisfied, $(x_\infty, y_\infty)$ is indeed a fixed point of iteration (2).
 
-Next, we analyze the local convergence. Let $\mathbf{z}_k = (x_k, y_k)^T$. Iteration (2) can be seen as $\mathbf{z}_{k+1} = \Phi(\mathbf{z}_k)$ where $\Phi(x, y) = (f(x, y), g(f(x, y), y))^T$. The Jacobian of $\Phi$ at the fixed point is:
-\[ \mathbf{J}_2 = \begin{pmatrix} f_x & f_y \\ g_x f_x & g_x f_y + g_y \end{pmatrix}. \]
-The infinity norm of a matrix is the maximum absolute row sum. 
-For the first row, the sum is $|f_x| + |f_y|$, which is the first row sum of the original Jacobian $\mathbf{J}_1$. By assumption:
-\[ |f_x| + |f_y| \leq \|\mathbf{J}_1\|_\infty < 1. \]
-For the second row, we have:
+Next, we analyze local convergence using the Jacobian matrix at $(x_\infty, y_\infty)$. Let $\mathbf{z}_k = (x_k, y_k)^T$. Iteration (2) can be expressed as $\mathbf{z}_{k+1} = \Phi(\mathbf{z}_k)$, where $\Phi(x, y) = (\Phi_1, \Phi_2)^T$ with:
 \begin{align*}
-|g_x f_x| + |g_x f_y + g_y| &\leq |g_x| (|f_x| + |f_y|) + |g_y| \\
-&\leq |g_x| \|\mathbf{J}_1\|_\infty + |g_y| \\
-&< |g_x| + |g_y| \leq \|\mathbf{J}_1\|_\infty < 1.
+\Phi_1(x, y) &= f(x, y), \\
+\Phi_2(x, y) &= g(f(x, y), y).
 \end{align*}
-Thus, $\|\mathbf{J}_2\|_\infty < 1$, which implies the spectral radius $\rho(\mathbf{J}_2) \leq \|\mathbf{J}_2\|_\infty < 1$. By the Ostrowski Theorem, the iteration (2) converges locally to $(x_\infty, y_\infty)$.
+The Jacobian of $\Phi$, denoted $\mathbf{J}_2$, is calculated using the chain rule:
+\[ \mathbf{J}_2 = \begin{pmatrix} \frac{\partial \Phi_1}{\partial x} & \frac{\partial \Phi_1}{\partial y} \\ \frac{\partial \Phi_2}{\partial x} & \frac{\partial \Phi_2}{\partial y} \end{pmatrix} = \begin{pmatrix} f_x & f_y \\ g_x f_x & g_x f_y + g_y \end{pmatrix}. \]
+Let $\mathbf{J}_1 = \begin{pmatrix} f_x & f_y \\ g_x & g_y \end{pmatrix}$ be the Jacobian of the original iteration. By assumption, $\|\mathbf{J}_1\|_\infty < 1$, which means:
+\begin{align*}
+\text{Row 1: } & |f_x| + |f_y| \leq \|\mathbf{J}_1\|_\infty < 1, \\
+\text{Row 2: } & |g_x| + |g_y| \leq \|\mathbf{J}_1\|_\infty < 1.
+\end{align*}
+For the new Jacobian $\mathbf{J}_2$, the infinity norm is the maximum absolute row sum:
+\begin{enumerate}
+    \item Row 1 absolute sum: $|f_x| + |f_y| = \|\text{Row 1 of } \mathbf{J}_1\|_1 < 1$.
+    \item Row 2 absolute sum: 
+    \begin{align*}
+    |g_x f_x| + |g_x f_y + g_y| &\leq |g_x| |f_x| + |g_x f_y| + |g_y| \quad \text{(triangle inequality)} \\
+    &= |g_x| (|f_x| + |f_y|) + |g_y| \\
+    &\leq |g_x| \|\mathbf{J}_1\|_\infty + |g_y|.
+    \end{align*}
+    Since $\|\mathbf{J}_1\|_\infty < 1$ and $|g_x| \geq 0$, we have $|g_x| \|\mathbf{J}_1\|_\infty \leq |g_x|$. However, we need a strict inequality to show it is $<1$. Since $\|J_1\|_\infty < 1$, we have:
+    \[ |g_x| \|\mathbf{J}_1\|_\infty + |g_y| < |g_x| + |g_y| \leq \|\mathbf{J}_1\|_\infty < 1. \]
+\end{enumerate}
+Thus, $\|\mathbf{J}_2\|_\infty < 1$. By the property of induced norms, the spectral radius $\rho(\mathbf{J}_2) \leq \|\mathbf{J}_2\|_\infty < 1$. According to the Ostrowski Theorem, if the spectral radius of the Jacobian at the fixed point is less than 1, the iteration converges locally for initial values sufficiently close to the fixed point.
 \end{solution}
 
 \begin{exercise}
@@ -82,24 +97,33 @@ a _ {i i} \geq \sum_ {j \neq i} | a _ {i j} | + 2, \quad a _ {i i} \leq 7.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a)} Suppose $A$ is singular. Then there exists a non-zero vector $v$ such that $Av = 0$. Let $|v_k| = \max_j |v_j| > 0$. From the $k$-th row of $Av=0$:
-\[ a_{kk} v_k = -\sum_{j \neq k} a_{kj} v_j \implies |a_{kk}| |v_k| \leq \sum_{j \neq k} |a_{kj}| |v_j| \leq \left(\sum_{j \neq k} |a_{kj}|\right) |v_k|. \]
-Dividing by $|v_k|$, we get $|a_{kk}| \leq \sum_{j \neq k} |a_{kj}|$. This contradicts the given condition $a_{ii} \geq \sum_{j \neq i} |a_{ij}| + 2$ (which implies $a_{ii} > \sum_{j \neq i} |a_{ij}|$). Thus $A$ must be non-singular, and $A^{-1}$ exists.
+\textbf{(a)} Suppose $A$ is singular. Then there exists a non-zero vector $v \in \mathbb{R}^m$ such that $Av = 0$. Let $k$ be the index such that $|v_k| = \max_{1 \leq j \leq m} |v_j|$. Since $v \neq 0$, we have $|v_k| > 0$. From the $k$-th row of the equation $Av=0$:
+\[ \sum_{j=1}^m a_{kj} v_j = 0 \implies a_{kk} v_k = -\sum_{j \neq k} a_{kj} v_j. \]
+Taking the absolute value and applying the triangle inequality:
+\[ |a_{kk}| |v_k| \leq \sum_{j \neq k} |a_{kj}| |v_j| \leq \left(\sum_{j \neq k} |a_{kj}|\right) |v_k|. \]
+Dividing by the non-zero $|v_k|$, we obtain $|a_{kk}| \leq \sum_{j \neq k} |a_{kj}|$. This contradicts the given condition $a_{ii} \geq \sum_{j \neq i} |a_{ij}| + 2$ (which implies $a_{ii} > \sum_{j \neq i} |a_{ij}|$). Thus, $A$ must be non-singular, and $A^{-1}$ exists.
 
-\textbf{(b)} The matrix infinity norm is $\|A\|_\infty = \sup_{x \neq 0} \frac{\|Ax\|_\infty}{\|x\|_\infty}$. For any $x$ with $\|x\|_\infty = 1$, we have:
-\[ |(Ax)_i| = \left|\sum_j a_{ij} x_j\right| \leq \sum_j |a_{ij}| |x_j| \leq \sum_j |a_{ij}|. \]
-Thus $\|Ax\|_\infty \leq \max_i \sum_j |a_{ij}|$.
-Equality is achieved by choosing $k$ such that $\sum_j |a_{kj}|$ is maximal and setting $x_j = \text{sgn}(a_{kj})$. Then $\|x\|_\infty = 1$ and $|(Ax)_k| = \sum_j |a_{kj}|$. Thus $\|A\|_\infty = \max_i \sum_j |a_{ij}|$.
+\textbf{(b)} The matrix infinity norm is defined as $\|A\|_\infty = \sup_{x \neq 0} \frac{\|Ax\|_\infty}{\|x\|_\infty}$. For any vector $x$ with $\|x\|_\infty = 1$, the $i$-th component of the product $Ax$ satisfies:
+\[ |(Ax)_i| = \left|\sum_{j=1}^m a_{ij} x_j\right| \leq \sum_{j=1}^m |a_{ij}| |x_j| \leq \sum_{j=1}^m |a_{ij}|. \]
+This implies $\|Ax\|_\infty \leq \max_i \sum_j |a_{ij}|$. Equality is achieved by choosing $k$ such that $\sum_j |a_{kj}|$ is maximal and setting $x_j = \text{sgn}(a_{kj})$. Then $\|x\|_\infty = 1$ and $|(Ax)_k| = \sum_j |a_{kj}|$. Thus, $\|A\|_\infty = \max_i \sum_j |a_{ij}|$.
 
-\textbf{(c)} Let $R_i = \sum_{j \neq i} |a_{ij}|$. The $i$-th row absolute sum is $a_{ii} + R_i$ (since $a_{ii} \geq 2$).
-From $R_i \leq a_{ii} - 2$, we have:
-\[ \|A\|_\infty = \max_i (a_{ii} + R_i) \leq \max_i (a_{ii} + a_{ii} - 2) = 2a_{ii} - 2 \leq 2(7) - 2 = 12. \]
-For the lower bound, since $R_i \geq 0$, we have $a_{ii} + R_i \geq a_{ii} \geq 2$. Thus $2 \leq \|A\|_\infty \leq 12$.
+\textbf{(c)} Let $R_i = \sum_{j \neq i} |a_{ij}|$. The absolute row sum is $|a_{ii}| + R_i$. Since $a_{ii} \geq R_i + 2$, we have $a_{ii} \geq 2$ (since $R_i \geq 0$), which implies $a_{ii}$ is positive, so $|a_{ii}| = a_{ii}$.
+\begin{itemize}
+    \item \textbf{Upper Bound:} From $R_i \leq a_{ii} - 2$, the row sum satisfies $a_{ii} + R_i \leq a_{ii} + (a_{ii} - 2) = 2a_{ii} - 2$. Given $a_{ii} \leq 7$, we get $\|A\|_\infty = \max_i (a_{ii} + R_i) \leq 2(7) - 2 = 12$.
+    \item \textbf{Lower Bound:} Since $R_i \geq 0$, we have $a_{ii} + R_i \geq a_{ii} \geq 2$.
+\end{itemize}
+Thus, $2 \leq \|A\|_\infty \leq 12$.
 
-\textbf{(d)} If $A = A^T$, then $\|A\|_2 = \rho(A)$. By Gershgorin's Disk Theorem, each eigenvalue $\lambda$ lies in some disk $D_i = [a_{ii} - R_i, a_{ii} + R_i]$.
-As shown in (c), $a_{ii} - R_i \geq 2$ and $a_{ii} + R_i \leq 12$. Thus $2 \leq \lambda \leq 12$ for all eigenvalues.
-Consequently, $2 \leq \|A\|_2 \leq 12$.
-For $A^{-1}$, the eigenvalues are $1/\lambda$, so $1/12 \leq \|A^{-1}\|_2 \leq 1/2$.
+\textbf{(d)} If $A = A^T$, then $A$ is real symmetric, so $\|A\|_2 = \rho(A) = \max_i |\lambda_i|$. According to Gershgorin's Disk Theorem, every eigenvalue $\lambda$ of $A$ lies in at least one disk $D_i = \{ z \in \mathbb{C} : |z - a_{ii}| \leq R_i \}$. Since $A$ is symmetric, all eigenvalues are real, so $\lambda \in [a_{ii} - R_i, a_{ii} + R_i]$.
+As shown in part (c), $a_{ii} + R_i \leq 12$. For the lower end, $a_{ii} - R_i \geq (R_i + 2) - R_i = 2$.
+Thus, $2 \leq \lambda_i \leq 12$ for all eigenvalues, which implies $2 \leq \|A\|_2 \leq 12$.
+For the inverse $A^{-1}$, the eigenvalues are $1/\lambda_i$. Since $A$ is symmetric and non-singular, $A^{-1}$ is also symmetric, and $\|A^{-1}\|_2 = \rho(A^{-1}) = \max_i |1/\lambda_i| = 1/\min_i |\lambda_i|$.
+From $2 \leq \lambda_i \leq 12$, it follows that $1/12 \leq 1/\lambda_i \leq 1/2$. Thus:
+\[ \frac{1}{12} \leq \|A^{-1}\|_2 \leq \frac{1}{2}. \]
+
+\begin{remark}
+For a general matrix $A \in \mathbb{R}^{m \times m}$, the matrix 2-norm (spectral norm) is defined as $\|A\|_2 = \sqrt{\rho(A^T A)} = \sigma_{\max}(A)$, which is the largest singular value of $A$. While the spectral radius $\rho(A)$ always satisfies $\rho(A) \leq \|A\|$ for any induced matrix norm, the equality $\|A\|_2 = \rho(A)$ holds if and only if $A$ is a normal matrix (i.e., $AA^T = A^T A$), a category that includes symmetric, skew-symmetric, and orthogonal matrices. If $A$ is neither symmetric nor normal, $\|A\|_2$ can be strictly greater than $\rho(A)$. A classic example is the Jordan block $J = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$, where $\rho(J) = 0$ but $\|J\|_2 = 1$.
+\end{remark}
 \end{solution}
 
 \begin{exercise}
@@ -155,73 +179,150 @@ so that
 \end{exercise}
 
 \begin{solution}
-\textbf{(a)} The stage $U^{(1)}$ is a Forward Euler step with step size $k\beta_{10}$. It is stable ($\|U^{(1)}\| \leq \|U^n\|$) if $k\beta_{10} \leq k_{\mathrm{FE}}$, i.e., $k \leq k_{\mathrm{FE}}/\beta_{10}$.
-The final step is:
-\[ U^{n+1} = \alpha_{20} \left(U^n + \frac{k\beta_{20}}{\alpha_{20}} f(U^n)\right) + \alpha_{21} \left(U^{(1)} + \frac{k\beta_{21}}{\alpha_{21}} f(U^{(1)})\right). \]
-This is a convex combination of two Forward Euler steps from $U^n$ and $U^{(1)}$ respectively. They are stable if:
-\[ \frac{k\beta_{20}}{\alpha_{20}} \leq k_{\mathrm{FE}} \quad \text{and} \quad \frac{k\beta_{21}}{\alpha_{21}} \leq k_{\mathrm{FE}}. \]
-Under these conditions, $\|U^{n+1}\| \leq \alpha_{20} \|U^n\| + \alpha_{21} \|U^{(1)}\| \leq (\alpha_{20} + \alpha_{21}) \|U^n\| = \|U^n\|$.
-Thus $k \leq k^* = k_{\mathrm{FE}} \cdot \min \left( \frac{1}{\beta_{10}}, \frac{\alpha_{20}}{\beta_{20}}, \frac{\alpha_{21}}{\beta_{21}} \right)$.
-
-\textbf{(b)} To evaluate accuracy, we apply the method to $u' = \lambda u$ (let $z = k\lambda$):
-$U^{(1)} = (1 + z\beta_{10}) U^n$.
-$U^{n+1} = \alpha_{20}(1 + z\frac{\beta_{20}}{\alpha_{20}})U^n + \alpha_{21}(1 + z\frac{\beta_{21}}{\alpha_{21}})U^{(1)}$.
-Substituting $U^{(1)}$:
+\textbf{(a)} The intermediate stage $U^{(1)}$ can be viewed as a Forward Euler step from $U^n$ with an effective step size $k\beta_{10}$. From the stability property of FE, we have:
+\[ \|U^{(1)}\| \leq \|U^n\| \quad \text{provided that} \quad 0 \leq k\beta_{10} \leq k_{\mathrm{FE}}. \]
+The final update $U^{n+1}$ can be rewritten as a convex combination:
+\[ U^{n+1} = \alpha_{20} \underbrace{\left( U^n + \frac{k\beta_{20}}{\alpha_{20}} f(U^n) \right)}_{V_1} + \alpha_{21} \underbrace{\left( U^{(1)} + \frac{k\beta_{21}}{\alpha_{21}} f(U^{(1)}) \right)}_{V_2}. \]
+Using the triangle inequality and the stability property of FE:
+\begin{itemize}
+    \item $\|V_1\| \leq \|U^n\|$ if $\frac{k\beta_{20}}{\alpha_{20}} \leq k_{\mathrm{FE}}$.
+    \item $\|V_2\| \leq \|U^{(1)}\|$ if $\frac{k\beta_{21}}{\alpha_{21}} \leq k_{\mathrm{FE}}$.
+\end{itemize}
+If these conditions are satisfied, then:
 \begin{align*}
-U^{n+1} &= \left[ (\alpha_{20} + z\beta_{20}) + (\alpha_{21} + z\beta_{21})(1 + z\beta_{10}) \right] U^n \\
-&= \left[ (\alpha_{20}+\alpha_{21}) + z(\beta_{20} + \beta_{21} + \alpha_{21}\beta_{10}) + z^2(\beta_{10}\beta_{21}) \right] U^n.
+\|U^{n+1}\| &\leq \alpha_{20} \|V_1\| + \alpha_{21} \|V_2\| \\
+&\leq \alpha_{20} \|U^n\| + \alpha_{21} \|U^{(1)}\| \\
+&\leq \alpha_{20} \|U^n\| + \alpha_{21} \|U^n\| \quad \text{(Stability of } U^{(1)}) \\
+&= (\alpha_{20} + \alpha_{21}) \|U^n\| = \|U^n\|.
 \end{align*}
-Matching with the Taylor series $e^z = 1 + z + z^2/2 + O(z^3)$:
-1) $\alpha_{20} + \alpha_{21} = 1$ (given).
-2) $\beta_{20} + \beta_{21} + \alpha_{21}\beta_{10} = 1$.
-3) $\beta_{10}\beta_{21} = 1/2$.
-To maximize $k^*$, we want to maximize $\min \left( \frac{1}{\beta_{10}}, \frac{\alpha_{20}}{\beta_{20}}, \frac{\alpha_{21}}{\beta_{21}} \right)$.
-The optimal coefficients (SSP-RK2) are:
-$\beta_{10} = 1, \beta_{21} = 1/2, \alpha_{21} = 1/2 \implies \beta_{20} = 0, \alpha_{20} = 1/2$.
-Checking $k^*$: $\min(1/1, \infty, 1) = 1$. So $k^* = k_{\mathrm{FE}}$.
+The total stability condition is the intersection of:
+\[ k\beta_{10} \leq k_{\mathrm{FE}}, \quad k\frac{\beta_{20}}{\alpha_{20}} \leq k_{\mathrm{FE}}, \quad k\frac{\beta_{21}}{\alpha_{21}} \leq k_{\mathrm{FE}}. \]
+Thus, $k \leq k^*$ where $k^* = k_{\mathrm{FE}} \cdot \min \left( \frac{1}{\beta_{10}}, \frac{\alpha_{20}}{\beta_{20}}, \frac{\alpha_{21}}{\beta_{21}} \right)$.
+
+\textbf{(b)} To evaluate accuracy, we apply the method to $u' = \lambda u$ and let $z = k\lambda$.
+\begin{enumerate}
+    \item Stage 1: $U^{(1)} = (1 + z\beta_{10}) U^n$.
+    \item Final Step: 
+    \begin{align*}
+    U^{n+1} &= \alpha_{20}(1 + z\frac{\beta_{20}}{\alpha_{20}})U^n + \alpha_{21}(1 + z\frac{\beta_{21}}{\alpha_{21}})U^{(1)} \\
+    &= (\alpha_{20} + z\beta_{20}) U^n + (\alpha_{21} + z\beta_{21})(1 + z\beta_{10}) U^n \\
+    &= \left[ (\alpha_{20} + \alpha_{21}) + z(\beta_{20} + \beta_{21} + \alpha_{21}\beta_{10}) + z^2(\beta_{10}\beta_{21}) \right] U^n.
+    \end{align*}
+\end{enumerate}
+Matching with the Taylor series $e^z = 1 + z + \frac{z^2}{2} + O(z^3)$, we obtain:
+\begin{itemize}
+    \item $C_0: \alpha_{20} + \alpha_{21} = 1$ (consistent).
+    \item $C_1: \beta_{20} + \beta_{21} + \alpha_{21}\beta_{10} = 1$ (first-order accuracy).
+    \item $C_2: \beta_{10}\beta_{21} = 1/2$ (second-order accuracy).
+\end{itemize}
+To maximize $k^*$, we want to maximize the minimum of $\{ \frac{1}{\beta_{10}}, \frac{\alpha_{20}}{\beta_{20}}, \frac{\alpha_{21}}{\beta_{21}} \}$. A balanced choice is $\beta_{10} = 1$, which from $C_2$ gives $\beta_{21} = 1/2$.
+Then $C_1$ becomes $\beta_{20} + 1/2 + \alpha_{21} = 1 \implies \beta_{20} + \alpha_{21} = 1/2$.
+Since $\alpha_{20} = 1 - \alpha_{21}$, we have $\beta_{20} + (1 - \alpha_{20}) = 1/2 \implies \alpha_{20} - \beta_{20} = 1/2$.
+To maximize $\alpha_{20}/\beta_{20}$, we choose $\beta_{20} = 0$, giving $\alpha_{20} = 1/2$ and $\alpha_{21} = 1/2$.
+The optimal coefficients (Strong Stability Preserving RK2) are:
+\[ \beta_{10} = 1, \quad \beta_{20} = 0, \quad \beta_{21} = \frac{1}{2}, \quad \alpha_{20} = \frac{1}{2}, \quad \alpha_{21} = \frac{1}{2}. \]
+Checking $k^*$: $\min(1, \infty, 1) = 1$. Thus, $k^* = k_{\mathrm{FE}}$.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2022:5}
-Construct a third-order accurate Lax-Wendroff-type method for $u _ { t } + a u _ { x } = 0$ $[ a > 0$ is a constant] in the following way:
-
-(a) • Expand $u ( t + k , x )$ in a Taylor series and keep the first four terms. Replace all time derivatives by spatial derivatives using the equation.   
-• Construct a cubic polynomial passing through the points $U _ { j - 2 } ^ { n } , U _ { j - 1 } ^ { n } , U _ { j } ^ { n } , U _ { j + 1 } ^ { n } .$   
-• Approximate the spatial derivatives in the Taylor series by the exact derivatives of the above constructed cubic polynomial.
-
-(b) Verify that the truncation error is $O ( k ^ { 3 } )$ if $h = O ( k )$ .
+Construct a third-order accurate Lax-Wendroff-type method for $u_t + a u_x = 0$ ($a > 0$ is a constant) in the following way:
+\begin{enumerate}[label=(\alph*)]
+    \item 
+    \begin{itemize}
+        \item Expand $u(t + k, x)$ in a Taylor series and keep the first four terms. Replace all time derivatives by spatial derivatives using the equation.
+        \item Construct a cubic polynomial passing through the points $U_{j-2}^n, U_{j-1}^n, U_j^n, U_{j+1}^n$.
+        \item Approximate the spatial derivatives in the Taylor series by the exact derivatives of the above constructed cubic polynomial.
+    \end{itemize}
+    \item Verify that the truncation error is $O(k^3)$ if $h = O(k)$.
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{(a)} Taylor expansion in time:
-\[ u(t+k, x) = u + k u_t + \frac{k^2}{2} u_{tt} + \frac{k^3}{6} u_{ttt} + O(k^4). \]
-From $u_t = -au_x$, we have $u_{tt} = a^2 u_{xx}$ and $u_{ttt} = -a^3 u_{xxx}$. Thus:
-\[ u(t+k, x) = u - ak u_x + \frac{a^2k^2}{2} u_{xx} - \frac{a^3k^3}{6} u_{xxx} + O(k^4). \]
-Let $p_3(x)$ be the cubic interpolating $\{U_{j-2}, U_{j-1}, U_j, U_{j+1}\}$ at $x_i = ih$. Its derivatives at $x_j$ are:
-\begin{align*}
-u_x &\approx p_3'(x_j) = \frac{U_{j-2} - 6U_{j-1} + 3U_j + 2U_{j+1}}{6h}, \\
-u_{xx} &\approx p_3''(x_j) = \frac{U_{j-1} - 2U_j + U_{j+1}}{h^2}, \\
-u_{xxx} &\approx p_3'''(x_j) = \frac{-U_{j-2} + 3U_{j-1} - 3U_j + U_{j+1}}{h^3}.
-\end{align*}
-The scheme is:
-\[ U_j^{n+1} = U_j^n - \frac{ak}{6h}(U_{j-2} - 6U_{j-1} + 3U_j + 2U_{j+1}) + \frac{a^2k^2}{2h^2}(U_{j-1} - 2U_j + U_{j+1}) - \frac{a^3k^3}{6h^3}(-U_{j-2} + 3U_{j-1} - 3U_j + U_{j+1}). \]
+\begin{enumerate}[label=(\alph*)]
+    \item Taylor expansion in time:
+    \[ u(t+k, x) = u + k u_t + \frac{k^2}{2} u_{tt} + \frac{k^3}{6} u_{ttt} + O(k^4). \]
+    From $u_t = -au_x$, we have $u_{tt} = a^2 u_{xx}$ and $u_{ttt} = -a^3 u_{xxx}$. Thus:
+    \[ u(t+k, x) = u - ak u_x + \frac{a^2k^2}{2} u_{xx} - \frac{a^3k^3}{6} u_{xxx} + O(k^4). \]
+    Let $p_3(x)$ be the cubic interpolating $\{U_{j-2}, U_{j-1}, U_j, U_{j+1}\}$ at nodes $x_i = ih$. Using the local coordinate $s = (x-x_j)/h$, the polynomial is given by:
+    \[ p_3(x_j + sh) = \sum_{i=-2}^{1} L_i(s) U_{j+i}, \]
+    where the Lagrange basis polynomials for nodes $\{-2, -1, 0, 1\}$ are:
+    \begin{align*}
+    L_{-2}(s) &= \frac{(s+1)s(s-1)}{(-1)(-2)(-3)} = -\frac{s^3 - s}{6}, \\
+    L_{-1}(s) &= \frac{(s+2)s(s-1)}{(1)(-1)(-2)} = \frac{s^3 + s^2 - 2s}{2}, \\
+    L_{0}(s) &= \frac{(s+2)(s+1)(s-1)}{(2)(1)(-1)} = -\frac{s^3 + 2s^2 - s - 2}{2}, \\
+    L_{1}(s) &= \frac{(s+2)(s+1)s}{(3)(2)(1)} = \frac{s^3 + 3s^2 + 2s}{6}.
+    \end{align*}
+    To find the spatial derivatives at $x_j$, we differentiate $p_3(x_j + sh)$ with respect to $x$. Since $\frac{d}{dx} = \frac{1}{h} \frac{d}{ds}$, we have $\frac{d^m}{dx^m} p_3 = \frac{1}{h^m} \sum_{i=-2}^1 L_i^{(m)}(s) U_{j+i}$. Evaluating at $x_j$ (i.e., $s=0$):
+    \begin{itemize}
+        \item \textbf{First Derivative ($m=1$):}
+        The derivatives of the basis polynomials at $s=0$ are $L_{-2}'(0) = \frac{1}{6}$, $L_{-1}'(0) = -1$, $L_{0}'(0) = \frac{1}{2}$, and $L_{1}'(0) = \frac{1}{3}$. Thus:
+        \[ u_x = \frac{U_{j-2} - 6U_{j-1} + 3U_j + 2U_{j+1}}{6h} + O(h^3). \]
+        \item \textbf{Second Derivative ($m=2$):}
+        The second derivatives at $s=0$ are $L_{-2}''(0) = 0$, $L_{-1}''(0) = 1$, $L_{0}''(0) = -2$, and $L_{1}''(0) = 1$. Thus:
+        \[ u_{xx} = \frac{U_{j-1} - 2U_j + U_{j+1}}{h^2} + O(h^2). \]
+        \item \textbf{Third Derivative ($m=3$):}
+        The third derivatives (which are constant for a cubic) are $L_{-2}'''(s) = -1$, $L_{-1}'''(s) = 3$, $L_{0}'''(s) = -3$, and $L_{1}'''(s) = 1$. Thus:
+        \[ u_{xxx} = \frac{-U_{j-2} + 3U_{j-1} - 3U_j + U_{j+1}}{h^3} + O(h). \]
+    \end{itemize}
+    The scheme is:
+    \[ U_j^{n+1} = U_j^n - \frac{ak}{6h}(U_{j-2} - 6U_{j-1} + 3U_j + 2U_{j+1}) + \frac{a^2k^2}{2h^2}(U_{j-1} - 2U_j + U_{j+1}) - \frac{a^3k^3}{6h^3}(-U_{j-2} + 3U_{j-1} - 3U_j + U_{j+1}). \]
 
-\textbf{(b)} The local truncation error is $\tau = \frac{u(t+k) - u(t)}{k} - (\dots)$.
-The spatial derivative approximations satisfy $p_3^{(m)} = u^{(m)} + O(h^{4-m})$.
-Thus $p_3' = u_x + O(h^3)$, $p_3'' = u_{xx} + O(h^2)$, $p_3''' = u_{xxx} + O(h)$.
-Substituting into the scheme:
-\[ u(t+k) = u - ak(u_x + O(h^3)) + \frac{a^2k^2}{2}(u_{xx} + O(h^2)) - \frac{a^3k^3}{6}(u_{xxx} + O(h)) + O(k^4). \]
-The error is:
-\[ E = -ak O(h^3) + k^2 O(h^2) - k^3 O(h) + O(k^4). \]
-If $h = O(k)$, then $E = O(k^4)$. The truncation error per step is $E/k = O(k^3)$.
+    \item The local truncation error per step is defined as $E = u(t+k, x_j) - U_j^{n+1}$, where $u$ is the exact solution and $U_j^{n+1}$ is calculated assuming $U_j^n = u(t, x_j)$.
+    
+    First, we expand the exact solution in time up to $O(k^4)$:
+    \[ u(t+k, x_j) = u + k u_t + \frac{k^2}{2} u_{tt} + \frac{k^3}{6} u_{ttt} + \frac{k^4}{24} u_{tttt} + O(k^5). \]
+    Using the governing equation $u_t = -au_x$, we substitute the time derivatives with spatial derivatives:
+    \[ u_t = -au_x, \quad u_{tt} = a^2 u_{xx}, \quad u_{ttt} = -a^3 u_{xxx}, \quad u_{tttt} = a^4 u_{xxxx}. \]
+    Thus, the exact expansion is:
+    \[ u(t+k, x_j) = u - ak u_x + \frac{a^2k^2}{2} u_{xx} - \frac{a^3k^3}{6} u_{xxx} + \frac{a^4k^4}{24} u_{xxxx} + O(k^5). \]
+    The numerical scheme from part (a) is:
+    \[ U_j^{n+1} = u - ak D_1 U_j + \frac{a^2k^2}{2} D_2 U_j - \frac{a^3k^3}{6} D_3 U_j, \]
+    where $D_1, D_2, D_3$ are the spatial finite difference operators. We perform Taylor expansion of $U_{j+i}$ about $x_j$:
+    \[ U_{j+i} = u + (ih) u_x + \frac{(ih)^2}{2} u_{xx} + \frac{(ih)^3}{6} u_{xxx} + \frac{(ih)^4}{24} u_{xxxx} + O(h^5). \]
+    Applying this to each operator:
+    \begin{itemize}
+        \item \textbf{First-derivative stencil:}
+        \begin{align*}
+        D_1 U_j &= \frac{U_{j-2} - 6U_{j-1} + 3U_j + 2U_{j+1}}{6h} \\
+        &= \frac{1}{6h} \left[ \sum c_i (u + ih u_x + \dots) \right] = u_x + \frac{1}{12} h^3 u_{xxxx} + O(h^4) \\
+        &= u_x + O(h^3).
+        \end{align*}
+        \item \textbf{Second-derivative stencil:}
+        \begin{align*}
+        D_2 U_j &= \frac{U_{j-1} - 2U_j + U_{j+1}}{h^2} \\
+        &= \frac{1}{h^2} \left[ (u - h u_x + \frac{h^2}{2} u_{xx} \dots) - 2u + (u + h u_x + \frac{h^2}{2} u_{xx} \dots) \right] \\
+        &= u_{xx} + \frac{h^2}{12} u_{xxxx} + O(h^4) = u_{xx} + O(h^2).
+        \end{align*}
+        \item \textbf{Third-derivative stencil:}
+        \begin{align*}
+        D_3 U_j &= \frac{-U_{j-2} + 3U_{j-1} - 3U_j + U_{j+1}}{h^3} \\
+        &= u_{xxx} - \frac{h}{2} u_{xxxx} + O(h^2) = u_{xxx} + O(h).
+        \end{align*}
+    \end{itemize}
+    Substituting these approximations into the numerical scheme:
+    \begin{align*}
+    U_j^{n+1} &= u - ak(u_x + O(h^3)) + \frac{a^2k^2}{2}(u_{xx} + O(h^2)) - \frac{a^3k^3}{6}(u_{xxx} + O(h)) \\
+    &= (u - ak u_x + \frac{a^2k^2}{2} u_{xx} - \frac{a^3k^3}{6} u_{xxx}) + O(kh^3) + O(k^2h^2) + O(k^3h).
+    \end{align*}
+    Comparing this with the exact Taylor expansion $u(t+k, x_j)$ derived above:
+    \[ u(t+k, x_j) = (u - ak u_x + \frac{a^2k^2}{2} u_{xx} - \frac{a^3k^3}{6} u_{xxx}) + \frac{a^4k^4}{24} u_{xxxx} + O(k^5). \]
+    The error $E = u(t+k, x_j) - U_j^{n+1}$ is:
+    \[ E = \frac{a^4k^4}{24} u_{xxxx} + O(kh^3) + O(k^2h^2) + O(k^3h) + O(k^5). \]
+    Under the condition $h = O(k)$, all residual terms $kh^3, k^2h^2, k^3h, k^4$ are of order $O(k^4)$. Thus:
+    \[ E = O(k^4). \]
+    The local truncation error (error per unit time step) is:
+    \[ \tau = \frac{E}{k} = O(k^3). \]
+    This confirms the scheme is third-order accurate.
+\end{enumerate}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2022:6}
-Suppose you have $\$ 60 K$ to invest and there are 3 investment options available. You must invest in multiples of $\$ 10K$ . If $d _ { i }$ dollars are invested in investment ?? then you receive a net value (as the profit) of $r _ { i } ( d _ { i } )$ dollars. For $d _ { i } > 0$ we have
+Suppose you have $\$ 60 K$ to invest and there are 3 investment options available. You must invest in multiples of $\$ 10K$ . If $d _ { i }$ dollars are invested in investment $i$ then you receive a net value (as the profit) of $r _ { i } ( d _ { i } )$ dollars. For $d _ { i } > 0$ we have
 
 \[
-\begin{array}{l} r _ {1} (d _ {1}) = (7 d _ {1} + 2) \times 1 0, \\ r _ {2} (d _ {2}) = (3 d _ {2} + 7) \times 1 0, \\ r _ {3} (d _ {3}) = (4 d _ {3} + 5) \times 1 0, \\ \end{array}
+\begin{array}{l} r _ {1} (d _ {1}) = (7 d _ {1} + 2) \times 10, \\ r _ {2} (d _ {2}) = (3 d _ {2} + 7) \times 10, \\ r _ {3} (d _ {3}) = (4 d _ {3} + 5) \times 10, \\ \end{array}
 \]
 
 and $d _ { 1 } ( 0 ) = d _ { 2 } ( 0 ) = d _ { 3 } ( 0 )$ . All are measured in $\$ 10K$ dollars. The objective is to maximize the net value of your
@@ -233,34 +334,79 @@ investments. This can be formulated as a linear programming problem:
 \]
 
 \[
-\text {s u c h t h a t} \quad d _ {1} + d _ {2} + d _ {3} \leq 6,
+\text{such that}\quad d_1 + d_2 + d_3 \leq 6,
 \]
 
 \[
-d _ {i} \geq 0 \quad i = 1, 2, 3 \quad \text {a r e i n t e g e r s}.
+d_i \geq 0\quad i = 1, 2, 3\quad \text{are integers}.
 \]
 \end{exercise}
 
 \begin{solution}
-We solve this via dynamic programming. Let $f_i(s)$ be the max return from options $i$ to 3 with total investment $s$.
-The returns $r_i(d)$ for $d \in \{0, \dots, 6\}$ are:
-$r_1: [0, 90, 160, 230, 300, 370, 440]$
-$r_2: [0, 100, 130, 160, 190, 220, 250]$
-$r_3: [0, 90, 130, 170, 210, 250, 290]$
+The problem asks to maximize the total return $R = r_1(d_1) + r_2(d_2) + r_3(d_3)$ subject to the budget constraint $d_1 + d_2 + d_3 \leq 6$, where $d_i \in \{0, 1, \dots, 6\}$ are integers representing units of $\$10K$. We solve this using **Dynamic Programming**, decomposing the problem into three stages corresponding to the three investment options.
 
-Stage 3: $f_3(s) = r_3(s)$.
-Stage 2: $f_2(s) = \max_{0 \leq d \leq s} \{r_2(d) + f_3(s-d)\}$.
-$f_2(1) = \max(r_2(1)+f_3(0), r_2(0)+f_3(1)) = \max(100+0, 0+90) = 100$ ($d_2=1$).
-$f_2(2) = \max(r_2(2)+0, r_2(1)+90, 0+130) = \max(130, 190, 130) = 190$ ($d_2=1, d_3=1$).
-$f_2(3) = \max(r_2(3), r_2(2)+90, r_2(1)+130, 170) = \max(160, 220, 230, 170) = 230$ ($d_2=1, d_3=2$).
-... Following this, $f_2(6)=350$ (with $d_2=1, d_3=5$).
-Stage 1: $f_1(6) = \max_{0 \leq d_1 \leq 6} \{r_1(d_1) + f_2(6-d_1)\}$.
-$d_1=0: 0 + 35 = 35$
-$d_1=1: 9 + 31 = 40$
-$d_1=2: 16 + 27 = 43$
-$d_1=3: 23 + 23 = 46$
-$d_1=4: 30 + 19 = 49$
-$d_1=5: 37 + 10 = 47$
-$d_1=6: 44 + 0 = 44$
-Maximum return is 490 (units of $\$1K$), achieved at $d_1=4, d_2=1, d_3=1$.
+\noindent \textbf{1. Definitions and Parameters}
+Let $f_i(s)$ be the maximum total return from investments $i, i+1, \dots, 3$ given a remaining budget $s$. The decision variable $d_i$ is the amount invested in option $i$, such that $0 \leq d_i \leq s$.
+The individual return functions $r_i(d)$ (in units of $\$1K$) are calculated as:
+\begin{itemize}
+    \item $r_1(d_1) = 70d_1 + 20$ for $d_1 > 0$, and $r_1(0) = 0$.
+    \item $r_2(d_2) = 30d_2 + 70$ for $d_2 > 0$, and $r_2(0) = 0$.
+    \item $r_3(d_3) = 40d_3 + 50$ for $d_3 > 0$, and $r_3(0) = 0$.
+\end{itemize}
+Tabulating these values for $d \in \{0, 1, \dots, 6\}$:
+\begin{center}
+\begin{tabular}{c|ccccccc}
+$d$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\ \hline
+$r_1(d)$ & 0 & 90 & 160 & 230 & 300 & 370 & 440 \\
+$r_2(d)$ & 0 & 100 & 130 & 160 & 190 & 220 & 250 \\
+$r_3(d)$ & 0 & 90 & 130 & 170 & 210 & 250 & 290 \\
+\end{tabular}
+\end{center}
+
+\noindent \textbf{2. Stage-by-Stage Recursive Calculation}
+
+\medskip
+\noindent \textbf{Stage 3 (Investment Option 3):}
+Since this is the last option, we invest all remaining budget $s$ if the marginal return is positive.
+\[ f_3(s) = r_3(s) \quad \implies \quad f_3: [0, 90, 130, 170, 210, 250, 290]. \]
+
+\medskip
+\noindent \textbf{Stage 2 (Investment Options 2 and 3):}
+The Bellman equation is $f_2(s) = \max_{0 \leq d_2 \leq s} \{ r_2(d_2) + f_3(s - d_2) \}$.
+\begin{itemize}
+    \item $s=0: f_2(0) = r_2(0) + f_3(0) = 0$.
+    \item $s=1: \max \{r_2(0)+f_3(1), r_2(1)+f_3(0)\} = \max(90, 100) = 100 \implies d_2^* = 1$.
+    \item $s=2: \max \{r_2(0)+130, r_2(1)+90, r_2(2)+0\} = \max(130, 190, 130) = 190 \implies d_2^* = 1$.
+    \item $s=3: \max \{r_2(0)+170, r_2(1)+130, r_2(2)+90, r_2(3)+0\} = \max(170, 230, 220, 160) = 230 \implies d_2^* = 1$.
+    \item $s=4: \max \{r_2(0)+210, r_2(1)+170, r_2(2)+130, r_2(3)+90, r_2(4)+0\} = \max(210, 270, 260, 250, 190) = 270 \implies d_2^* = 1$.
+    \item $s=5: \max \{r_2(0)+250, r_2(1)+210, r_2(2)+170, r_2(3)+130, r_2(4)+90, r_2(5)+0\} = \max(250, 310, 300, 290, 280, 220) = 310 \implies d_2^* = 1$.
+    \item $s=6: \max \{r_2(0)+290, r_2(1)+250, r_2(2)+210, r_2(3)+170, r_2(4)+130, r_2(5)+90, r_2(6)+0\} = \max(290, 350, 340, 330, 320, 310, 250) = 350 \implies d_2^* = 1$.
+\end{itemize}
+The optimal values are $f_2(s) = [0, 100, 190, 230, 270, 310, 350]$ with $d_2^*=1$ for all $s \geq 1$.
+
+\medskip
+\noindent \textbf{Stage 1 (Investment Options 1, 2, and 3):}
+We seek $f_1(6) = \max_{0 \leq d_1 \leq 6} \{ r_1(d_1) + f_2(6 - d_1) \}$.
+\begin{itemize}
+    \item $d_1=0: r_1(0) + f_2(6) = 0 + 350 = 350$.
+    \item $d_1=1: r_1(1) + f_2(5) = 90 + 310 = 400$.
+    \item $d_1=2: r_1(2) + f_2(4) = 160 + 270 = 430$.
+    \item $d_1=3: r_1(3) + f_2(3) = 230 + 230 = 460$.
+    \item $d_1=4: r_1(4) + f_2(2) = 300 + 190 = 490$.
+    \item $d_1=5: r_1(5) + f_2(1) = 370 + 100 = 470$.
+    \item $d_1=6: r_1(6) + f_2(0) = 440 + 0 = 440$.
+\end{itemize}
+The maximum return is \textbf{490} (units of $\$1K$).
+
+\noindent \textbf{3. Optimal Policy Identification}
+Tracing back the optimal decisions from $f_1(6) = 490$:
+\begin{enumerate}
+    \item In Stage 1, the optimal choice is \textbf{$d_1 = 4$}.
+    \item The remaining budget for Stage 2 is $s = 6 - 4 = 2$.
+    \item From our Stage 2 calculations, for $s=2$, the optimal choice is \textbf{$d_2 = 1$}.
+    \item The remaining budget for Stage 3 is $s = 2 - 1 = 1$.
+    \item In Stage 3, we invest the remainder: \textbf{$d_3 = 1$}.
+\end{enumerate}
+Final Optimal Allocation: Invest \textbf{\$40,000} in option 1, \textbf{\$10,000} in option 2, and \textbf{\$10,000} in option 3.
+The total maximum profit is \textbf{\$49,000}.
 \end{solution}

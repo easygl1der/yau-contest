@@ -167,9 +167,72 @@ This document provides a foundational overview of the topics in the Applied \& C
     \item \textbf{Dahlquist's Second Barrier:} No explicit linear multistep method is A-stable. The highest order of an A-stable implicit linear multistep method is 2.
 \end{itemize}
 
+\subsection{Consistency of One-Step Methods}
+
+Numerical methods for solving ordinary differential equations (ODEs) aim to approximate the true solution $y(t)$ of the initial value problem (IVP):
+\begin{equation}
+    y'(t) = f(t, y(t)), \quad y(t_0) = y_0
+\end{equation}
+
+\textbf{Definition (General One-Step Method):} 
+A general one-step method for approximating the solution of an ODE is written in the form:
+\begin{equation}
+    y_{n+1} = y_n + h \Phi(t_n, y_n, h)
+\end{equation}
+where $h$ is the step size, $y_n$ is the numerical approximation at time $t_n$, and $\Phi$ is the \textbf{increment function}. This function $\Phi$ characterizes the specific numerical scheme.\footnote{For example, in the Forward Euler method, $\Phi(t, y, h) = f(t, y)$. For the Improved Euler (Heun's) method, $\Phi(t, y, h) = \frac{1}{2}[f(t, y) + f(t+h, y + h f(t, y))]$. The increment function essentially represents an "average" slope over the interval $[t_n, t_{n+1}]$.}
+
+\textbf{Definition (Local Truncation Error - LTE):} 
+The Local Truncation Error (LTE), denoted as $\tau_n(h)$, is the error introduced by a single step of the numerical method, assuming the previous value was exact. Formally:
+\begin{equation}
+    \tau_n(h) = y(t_{n+1}) - [y(t_n) + h \Phi(t_n, y(t_n), h)]
+\end{equation}
+It measures how well the exact solution $y(t)$ satisfies the numerical difference equation.
+
+\textbf{Definition (Consistency):} 
+A numerical method is said to be \textbf{consistent} with the ODE if the local truncation error per unit step vanishes as the step size $h$ goes to zero. Mathematically:
+\begin{equation}
+    \lim_{h \to 0} \frac{\tau_n(h)}{h} = 0
+\end{equation}
+This condition ensures that the numerical model approaches the original differential equation as the discretization becomes infinitely fine.
+
+\textbf{Condition for Consistency:} 
+A one-step method is consistent if and only if:
+\begin{equation}
+    \Phi(t, y, 0) = f(t, y)
+\end{equation}
+\sidenote{To derive this, we use Taylor expansion on $y(t_{n+1})$:
+$y(t_{n+1}) = y(t_n) + h y'(t_n) + O(h^2) = y(t_n) + h f(t_n, y(t_n)) + O(h^2)$.
+Substituting this into $\tau_n(h)$:
+$\tau_n(h) = y(t_n) + h f(t_n, y(t_n)) + O(h^2) - [y(t_n) + h \Phi(t_n, y(t_n), h)]$.
+$\frac{\tau_n(h)}{h} = f(t_n, y(t_n)) - \Phi(t_n, y(t_n), h) + O(h)$.
+Taking the limit $h \to 0$:
+$\lim_{h \to 0} \frac{\tau_n(h)}{h} = f(t_n, y(t_n)) - \Phi(t_n, y(t_n), 0)$.
+For consistency, this must be $0$, hence $\Phi(t, y, 0) = f(t, y)$.}
+
+\textbf{The Order of a Method:} 
+A numerical method is said to be of \textbf{order $p$} if its global error (the total error at the end of the simulation) decreases at a rate proportional to the $p$-th power of the step size $h$. 
+
+\begin{itemize}
+    \item \textbf{Mathematical Definition:} A method has order $p$ if the local truncation error $\tau_n(h)$ satisfies $\tau_n(h) = \mathcal{O}(h^{p+1})$.
+    \item \textbf{Global vs. Local Error:} While the error in a \textit{single step} is $\mathcal{O}(h^{p+1})$, the total error accumulated over $N = T/h$ steps is roughly $N \times \mathcal{O}(h^{p+1}) = (T/h) \times \mathcal{O}(h^{p+1}) = \mathcal{O}(h^p)$. This global result is what we usually refer to as the "order" of the method.
+\end{itemize}
+
+\textbf{Definition: Second-Order Method ($p=2$)}
+A method is \textbf{second-order} if its global error is $\mathcal{O}(h^2)$. This means that if you halve the step size ($h \to h/2$), the total error is reduced by a factor of $(1/2)^2 = 1/4$. Second-order methods are significantly more efficient than first-order methods for high-precision work.
+
+\textbf{Examples of Order:}
+\begin{itemize}
+    \item \textbf{First-Order ($p=1$):} Forward Euler. Error $\propto h$. Halving $h$ makes it 2x more accurate.
+    \item \textbf{Second-Order ($p=2$):} Heun's Method (Improved Euler) or the Midpoint Method. Error $\propto h^2$. Halving $h$ makes it 4x more accurate.
+    \item \textbf{Fourth-Order ($p=4$):} The Classic Runge-Kutta (RK4). Error $\propto h^4$. Halving $h$ makes it 16x more accurate!
+\end{itemize}
+
+\textbf{Intuition for Beginners:} 
+Why do we care about consistency? It ensures the numerical scheme "matches" the physics of the ODE as $h$ vanishes. Think of the ODE as describing a continuous flow; consistency guarantees that our discrete jumps (numerical steps) align with the direction of the flow as the jump size becomes smaller. Without consistency, we might be solving a completely different problem than the one intended.
+
 \textbf{Examples:}
 \begin{itemize}
-    \item \textbf{Example:} Forward Euler for $y' = f(t,y)$ is given by $y_{n+1} = y_n + \Delta t f(t_n, y_n)$.
+    \item \textbf{Example:} Forward Euler for $y' = f(t,y)$ is given by $y_{n+1} = y_n + \Delta t f(t_n, y_n)$. Here $\Phi(t, y, h) = f(t, y)$. Since $\Phi(t, y, 0) = f(t, y)$, the method is consistent. Its order is 1 because $\tau_n(h) = O(h^2)$.
 \end{itemize}
 
 

@@ -4,302 +4,287 @@
 
 \begin{exercise}
 \label{geometry:2024:1}
-The topological space $X$ is obtained by gluing two tetrahedra as illustrated. The resulting complex has 2 tetrahedra, 4 triangles, 2 edges and 1 vertex. Show that $X$ cannot have the homotopy type of a compact manifold without boundary.
+Let $n > 1$ be a positive integer.
+(i) Does there exist a map $f : S^{2n} \to \mathbb{CP}^{n}$ with $\deg(f) \neq 0$? Construct an example or disprove it.
+(ii) Does there exist a map $f : \mathbb{CP}^{n} \to S^{2n}$ with $\deg(f) \neq 0$? Construct an example or disprove it.
 \end{exercise}
 
-\begin{center}
-  \includegraphics[width=0.45\textwidth]{images/geometry/1dcad16590d701da49d529ca0c5c5ca15cc5c79f8009620e6d8d236d0acc0986.jpg}
-  \\
-  \captionof{figure}{Two tetrahedra being glued (I)}
-\end{center}
-\hfill
-\begin{center}
-  \includegraphics[width=0.45\textwidth]{images/geometry/e4a7113eed10b3cd0e2d8962fbb743b0a91bc5165d0c09d169d74b273f07abfa.jpg}
-  \\
-  \captionof{figure}{Two tetrahedra being glued (II)}
-\end{center}
-
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Euler Characteristic for CW Complexes:} For a 3-dimensional complex, $\chi(X) = V - E + F - T$, where $V$ is the number of vertices, $E$ is edges, $F$ is faces, and $T$ is tetrahedra (3-cells).
-    \item \textbf{Link of a Vertex:} In a piecewise linear (PL) complex $X$, the \textbf{Link} of a vertex $v$, denoted $\operatorname{Lk}(v)$, is the set of all simplices that do not contain $v$ but are faces of simplices that do.
-    \item \textbf{Manifold Condition:} For a 3-dimensional complex $X$ to be a manifold without boundary, the Link of every vertex must be homeomorphic to a 2-sphere $S^2$.
-    \item \textbf{Poincaré Duality:} For a closed, connected, oriented $n$-manifold, the Euler characteristic must satisfy $\chi(M) = 0$ if $n$ is odd.
+    \item \textbf{Complex Projective Space $\mathbb{CP}^n$}: This is the space of all 1-dimensional complex subspaces (lines through the origin) in $\mathbb{C}^{n+1}$. As a manifold, its real dimension is $2n$\footnote{To see the dimension, note that a point in $\mathbb{CP}^n$ is represented by a non-zero vector $(z_0, \dots, z_n) \in \mathbb{C}^{n+1}$, with the identification $(z_0, \dots, z_n) \sim \lambda(z_0, \dots, z_n)$ for $\lambda \in \mathbb{C} \setminus \{0\}$. We can normalize so that $\sum |z_i|^2 = 1$, which gives $S^{2n+1}$, and then quotient by the action of $S^1$ (the unit complex numbers), so $\dim_{\mathbb{R}}(\mathbb{CP}^n) = (2n+1) - 1 = 2n$.}.
+    \item \textbf{Cohomology Ring}: For $\mathbb{CP}^n$, the integral cohomology is $H^*(\mathbb{CP}^n; \mathbb{Z}) \cong \mathbb{Z}[x]/(x^{n+1})$, where $x \in H^2(\mathbb{CP}^n; \mathbb{Z})$ is the generator\footnote{The generator $x$ is the first Chern class $c_1(\mathcal{L})$ of the tautological line bundle $\mathcal{L} \to \mathbb{CP}^n$. Geometrically, it represents the dual of the hyperplane $\mathbb{CP}^{n-1} \subset \mathbb{CP}^n$.}.
+    \item \textbf{Degree of a Map}: For a map $f: M \to N$ between oriented closed manifolds of the same dimension $d$, the degree $\deg(f)$ is the integer such that $f^*([N]) = \deg(f)[M]$, where $[M] \in H^d(M)$ is the fundamental class\footnote{Intuitively, the degree counts how many times the domain "wraps around" the target, accounting for orientation.}.
 \end{itemize}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Calculate the Euler Characteristic of $X$:} 
-    The space $X$ is given to have $V = 1$ vertex, $E = 2$ edges, $F = 4$ triangles (faces), and $T = 2$ tetrahedra. 
-    \[ \chi(X) = V - E + F - T = 1 - 2 + 4 - 2 = 1. \]
+\textbf{Geometric Intuition:}
+The "richness" of the cohomology ring tells us about the topological structure. $\mathbb{CP}^n$ has non-trivial topology in every even dimension $2, 4, \dots, 2n$, tied together by the relation $x^k = x \cup \dots \cup x$. In contrast, the sphere $S^{2n}$ is topologically "hollow" — it has no non-trivial cohomology between dimensions $0$ and $2n$. Part (i) asks if a "hollow" sphere can map onto the "structured" $\mathbb{CP}^n$ while preserving the top-dimensional volume (degree). The ring structure says "no": the top class of $\mathbb{CP}^n$ is built from the second-dimensional class, which doesn't exist on the sphere. Part (ii) asks the reverse: can we "collapse" the internal structure of $\mathbb{CP}^n$ to just look like a sphere at the top? The answer is "yes", because we can just pinch everything below the top dimension to a point.
 
-    \item \textbf{Topological Obstruction from Poincaré Duality:} 
-    If $X$ were a compact 3-manifold without boundary (a "closed 3-manifold"), its Euler characteristic $\chi(X)$ would necessarily be zero. This is a direct consequence of Poincaré Duality ($\chi(M) = \sum (-1)^i b_i$ and $b_i = b_{n-i}$ for oriented manifolds; for non-oriented ones, we use $\mathbb{Z}_2$ coefficients or the oriented double cover). Since $1 \neq 0$, $X$ cannot be a manifold.
+\textbf{Formal Proof:}
 
-    \item \textbf{Local Analysis via the Link (The "Pinching" Proof):}
-    Let's examine the local structure at the single vertex $v$. For $X$ to be a manifold, the Link of $v$ must be $S^2$. 
-    \begin{itemize}
-        \item In our complex, the 3-cells are two tetrahedra. Each tetrahedron has 4 faces, 6 edges, and 4 vertices.
-        \item When we glue these, we end up with 4 triangles, 2 edges, and 1 vertex.
-        \item We can calculate the Euler characteristic of the link $\operatorname{Lk}(v)$ using the fact that for a 3-dimensional CW complex:
-        \[ \chi(\operatorname{Lk}(v)) = 2 - \chi(X) \cdot (\text{multiplicity factor}) \]
-        More directly, the link of a vertex in a 3-complex is a 2D complex (a union of triangles). The number of vertices, edges, and faces in $\operatorname{Lk}(v)$ corresponds to the number of edges, faces, and 3-cells incident to $v$ in $X$.
-        \item In $X$, there are $E_{inc} = 2$ edges incident to $v$, $F_{inc} = 4$ faces incident to $v$, and $T_{inc} = 2$ tetrahedra incident to $v$.
-        \item Thus, in $\operatorname{Lk}(v)$, we have $V_{link} = 2$, $E_{link} = 4$, and $F_{link} = 2$.
-        \item $\chi(\operatorname{Lk}(v)) = 2 - 4 + 2 = 0$\sidenote{Calculation for the link: $\chi = V - E + F = 2 - 4 + 2 = 0$. Since $\chi(S^2) = 2$, the link cannot be a sphere.}.
-        \item A 2D complex with $\chi = 0$ is typically a torus $T^2$ or a Klein bottle, not a sphere $S^2$.
-    \end{itemize}
-    \item \textbf{Conclusion:} Since the link of the vertex is not a sphere, the space is not locally Euclidean at the vertex. It is a "pseudo-manifold" with a singularity at the point $v$.
-\end{enumerate}
-\textbf{Intuition:}
-Imagine the Euler characteristic as a "scaffolding balance." For a smooth, well-behaved 3D shape like a manifold, the number of "points, lines, and surfaces" must perfectly cancel out the "volume" pieces to reach zero. 
+\textbf{(i) Non-existence of non-zero degree map $f: S^{2n} \to \mathbb{CP}^n$ for $n > 1$.}
+Suppose such a map $f$ exists. Consider the pullback homomorphism on cohomology $f^*: H^*(\mathbb{CP}^n; \mathbb{Z}) \to H^*(S^{2n}; \mathbb{Z})$.
+For $n > 1$, the dimension of the sphere is $2n \ge 4$. The second cohomology group of the sphere is:
+\sidenote{$H^2(S^{2n}; \mathbb{Z}) = 0$ for $2n > 2$.}
+Let $x \in H^2(\mathbb{CP}^n; \mathbb{Z})$ be the generator. Since $f^*$ is a ring homomorphism, we have:
+\sidenote{$f^*(x^n) = (f^*x)^n$.}
+However, $f^*x$ must lie in $H^2(S^{2n}; \mathbb{Z})$, which is $0$. Thus $f^*x = 0$.
+It follows that $f^*(x^n) = 0^n = 0$.
+By the definition of degree:
+\sidenote{$f^*(x^n) = \deg(f) \cdot [S^{2n}]$.}
+Since $x^n$ is the generator of $H^{2n}(\mathbb{CP}^n; \mathbb{Z})$ and $f^*(x^n) = 0$, we must have $\deg(f) = 0$.
+Thus, no map of non-zero degree exists.
 
-In this problem, the way the tetrahedra are glued together at a single vertex and two edges creates a "pinched" structure. This pinching is so severe that the balance is ruined ($\chi = 1$), meaning the space doesn't have the local uniformity required to be a manifold. It is "too crowded" at that single vertex.
+\textbf{(ii) Existence of a map $f: \mathbb{CP}^n \to S^{2n}$ with $\deg(f) = 1$.}
+We can construct such a map using the CW complex structure of $\mathbb{CP}^n$.
+Recall that $\mathbb{CP}^n$ can be constructed by attaching cells of dimensions $0, 2, 4, \dots, 2n$\footnote{Specifically, $\mathbb{CP}^n$ is obtained from $\mathbb{CP}^{n-1}$ by attaching a $2n$-cell $e^{2n}$ via the Hopf map $S^{2n-1} \to \mathbb{CP}^{n-1}$.}.
+The $(2n-2)$-skeleton of $\mathbb{CP}^n$ is exactly $\mathbb{CP}^{n-1}$.
+Consider the quotient space $\mathbb{CP}^n / \mathbb{CP}^{n-1}$.
+\sidenote{$\mathbb{CP}^n / \mathbb{CP}^{n-1} \cong S^{2n}$.}
+Let $q: \mathbb{CP}^n \to \mathbb{CP}^n / \mathbb{CP}^{n-1} \cong S^{2n}$ be the quotient map that collapses the entire $(2n-2)$-skeleton to a single point.
+This map $q$ is a homeomorphism on the interior of the top $2n$-cell and maps its boundary to the collapsed point.
+In cohomology, the induced map $q^*: H^{2n}(S^{2n}; \mathbb{Z}) \to H^{2n}(\mathbb{CP}^n; \mathbb{Z})$ is an isomorphism\footnote{This is because $H^{2n}(\mathbb{CP}^n, \mathbb{CP}^{n-1}; \mathbb{Z}) \cong \tilde{H}^{2n}(\mathbb{CP}^n / \mathbb{CP}^{n-1}; \mathbb{Z}) \cong H^{2n}(S^{2n}; \mathbb{Z})$, and the long exact sequence of the pair $(\mathbb{CP}^n, \mathbb{CP}^{n-1})$ shows this isomorphism maps to the generator of $H^{2n}(\mathbb{CP}^n)$.}.
+Thus, $\deg(q) = 1$.
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2024:2}
-Suppose $(M, h)$ is a closed Riemannian manifold with $\sec(h) \leq -1$. Suppose $\Sigma$ is a closed minimal surface with genus $g$ in $(M, h)$. Show that $\operatorname{Area}(\Sigma) \leq 4\pi(g - 1)$.
+Let $\Sigma \subset \mathbb{R}^3$ be an embedded surface in $\mathbb{R}^3$. A surface is called minimal if, for any $p \in \Sigma$, we have $\kappa_1(p) + \kappa_2(p) = 0$, where $\kappa_1(p)$ and $\kappa_2(p)$ are the two principal curvatures at $p$. Prove that if $\Sigma$ is closed, then $\Sigma$ cannot be minimal.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Sectional Curvature ($\sec$):} For a 2-plane $P \subset T_pM$ spanned by orthonormal vectors $\{u, v\}$, $\sec(P) = \langle R(u, v)v, u \rangle$.
-    \item \textbf{Minimal Surface:} A surface $\Sigma$ such that the trace of its second fundamental form $h$ is zero ($H = \operatorname{tr}(h) = 0$).
-    \item \textbf{Gauss Equation:} $K_\Sigma(P) = K_M(P) + \det(h|_P)$. For a surface, $\det(h) = \kappa_1 \kappa_2$, where $\kappa_i$ are principal curvatures.
-    \item \textbf{Gauss-Bonnet Theorem:} $\int_\Sigma K_\Sigma \, dA = 2\pi \chi(\Sigma) = 4\pi(1 - g)$ for a closed surface of genus $g$.
+    \item \textbf{Principal Curvatures $\kappa_1, \kappa_2$}: At any point $p$ on a surface $\Sigma$, these are the maximum and minimum values of the normal curvature of curves on $\Sigma$ passing through $p$\footnote{Intuitively, if you slice the surface with a plane containing the normal vector at $p$, the resulting curve has a curvature. As you rotate the plane around the normal, the curvature changes. $\kappa_1$ and $\kappa_2$ are the extreme values.}.
+    \item \textbf{Mean Curvature $H$}: Defined as $H = \frac{\kappa_1 + \kappa_2}{2}$. A surface is \textbf{minimal} if $H = 0$ at all points\footnote{Minimal surfaces are critical points for the area functional. Physically, they model soap films stretched across a wire frame.}.
+    \item \textbf{Closed Surface}: In this context, a "closed" surface is one that is compact and has no boundary (like a sphere or a torus).
+    \item \textbf{Laplace-Beltrami Operator $\Delta_{\Sigma}$}: This is the generalization of the standard Laplacian $\sum \frac{\partial^2}{\partial x_i^2}$ to functions defined on a manifold\footnote{For the coordinate functions $x_i$ of an embedded surface, the Laplacian is directly related to the mean curvature vector: $\Delta_{\Sigma} \vec{x} = 2H\vec{n}$, where $\vec{n}$ is the unit normal.}.
 \end{itemize}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Analyze the Surface Curvature via the Gauss Equation:} 
-    Let $\{e_1, e_2\}$ be an orthonormal basis for $T\Sigma$. The Gaussian curvature $K_\Sigma$ is related to the ambient sectional curvature $\sec_M(T\Sigma)$ by:
-    \[ K_\Sigma = \sec_M(T\Sigma) + \kappa_1 \kappa_2. \]
-    Since $\Sigma$ is a minimal surface, its mean curvature $H = \kappa_1 + \kappa_2$ vanishes. This implies $\kappa_2 = -\kappa_1$.
-    \item \textbf{Determine the Curvature Bound:} 
-    Substituting $\kappa_2 = -\kappa_1$ into the product:
-    \[ \kappa_1 \kappa_2 = \kappa_1 (-\kappa_1) = -\kappa_1^2 \leq 0. \]
-    We are given that $\sec_M \leq -1$. Combining these inequalities:
-    \[ K_\Sigma = \sec_M(T\Sigma) - \kappa_1^2 \leq -1 - \kappa_1^2 \leq -1. \]
-    This shows that the internal curvature of a minimal surface in a negatively curved space is always \textit{more negative} than the ambient curvature\sidenote{$K_\Sigma \leq -1 - \kappa_1^2 \leq -1$. The term $-\kappa_1^2$ represents the "intrinsic penalty" for the surface to bend within the ambient space.}.
+\textbf{Geometric Intuition:}
+A minimal surface is "saddle-like" everywhere. Because $\kappa_1 = -\kappa_2$, if the surface curves "up" in one direction, it must curve "down" in another to keep the average curvature zero. 
+Now, imagine a closed (compact) surface in $\mathbb{R}^3$. Since it is bounded, it must have a "highest" point (say, the point with the maximum $z$-coordinate). At this highest point, the surface must be curving "down" in \textit{all} directions to avoid going higher than its maximum. This means both $\kappa_1$ and $\kappa_2$ must be non-positive. If they are both non-positive and their sum is zero, they must both be zero — but even then, a "flat" top usually cannot be part of a compact embedded surface without curving elsewhere. More rigorously, the maximum principle prevents this.
 
-    \item \textbf{Integrate over the Surface:} 
-    Integrating the inequality $K_\Sigma \leq -1$ over the manifold $\Sigma$:
-    \[ \int_\Sigma K_\Sigma \, dA \leq \int_\Sigma (-1) \, dA = -\operatorname{Area}(\Sigma). \]
-    By the Gauss-Bonnet Theorem, the left-hand side is $2\pi \chi(\Sigma)$.
-    \[ 2\pi(2 - 2g) \leq -\operatorname{Area}(\Sigma). \]
-    
-    \item \textbf{Final Algebraic Manipulation:} 
-    Multiplying by $-1$ and rearranging:
-    \[ \operatorname{Area}(\Sigma) \leq -2\pi(2 - 2g) = 4\pi(g - 1). \]
-    Since the area is positive, this also implies $g \geq 1$ (a minimal surface in $\sec \leq -1$ cannot be a sphere).
-\end{enumerate}
-\textbf{Intuition:}
-Imagine trying to stretch a rubber sheet (the surface) inside a saddle-shaped room (negative curvature). Because the room is "flaring out" in all directions, the rubber sheet has to cover a lot of "ground" just to close back up on itself and form a loop (a surface of genus $g$). 
+\textbf{Formal Proof:}
 
-However, since the sheet is "minimal" (pulled tight), it tries to take the most efficient path. The math shows that the "tightness" of the sheet combined with the "flare" of the room puts a strict upper limit on how much area the sheet can occupy for a given number of holes ($g$).
+Suppose $\Sigma \subset \mathbb{R}^3$ is a minimal surface. This means $H = 0$ everywhere.
+Recall the fundamental identity for the Laplace-Beltrami operator acting on the position vector $\vec{x} = (x_1, x_2, x_3)$ of the surface:
+\sidenote{$\Delta_{\Sigma} \vec{x} = 2H\vec{n} = 0$.}
+This implies that each coordinate function $x_i : \Sigma \to \mathbb{R}$ is a \textbf{harmonic function} on the manifold $\Sigma$:
+\sidenote{$\Delta_{\Sigma} x_i = 0$ for $i=1, 2, 3$.}
+Now, consider the fact that $\Sigma$ is a \textbf{closed} (compact and without boundary) Riemannian manifold.
+According to the \textbf{Maximum Principle} for elliptic operators:
+\footnote{The strong maximum principle states that a harmonic function on a connected compact manifold without boundary must be constant. If it attained a maximum at some point, the "downward" concavity required at a maximum would contradict the zero-sum of curvatures required by $\Delta u = 0$.}
+Since each $x_i$ is harmonic on the closed manifold $\Sigma$, each $x_i$ must be a constant function.
+\sidenote{$x_1 \equiv c_1, \ x_2 \equiv c_2, \ x_3 \equiv c_3$.}
+This means the entire surface $\Sigma$ is mapped to a single point $(c_1, c_2, c_3)$ in $\mathbb{R}^3$.
+This contradicts the assumption that $\Sigma$ is an embedded surface (which must locally look like $\mathbb{R}^2$ and have dimension 2).
+Therefore, no closed embedded surface in $\mathbb{R}^3$ can be minimal.
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2024:3}
-Show that $\mathsf{SP}^{n}(\mathbb{CP}^{1})$ is homeomorphic to $\mathbb{CP}^{n}$.
+Let $M$ be a closed, simply connected 6-dimensional manifold. Suppose $H_2(M) = \mathbb{Z}_2$. Prove that the Euler characteristic $\chi(M) \neq -1$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Symmetric Product ($\mathsf{SP}^n$):} The space of unordered sets of $n$ points. If $X$ is a space, $\mathsf{SP}^n(X)$ is the quotient $(X \times \dots \times X) / S_n$, where the symmetric group $S_n$ permutes the coordinates.
-    \item \textbf{Projective Line ($\mathbb{CP}^1$):} Points are $[z : w]$, where $z, w \in \mathbb{C}$ are not both zero. This is the Riemann sphere.
-    \item \textbf{Fundamental Theorem of Algebra:} Every non-zero homogeneous polynomial $P(z, w)$ of degree $n$ over $\mathbb{C}$ can be factored uniquely (up to scaling) as a product of $n$ linear factors: $P(z, w) = \prod_{i=1}^n (\alpha_i z - \beta_i w)$.
-    \item \textbf{Vieta's Formulas:} Relate the coefficients of a polynomial to symmetric functions of its roots.
+    \item \textbf{Simply Connected}: A manifold $M$ is simply connected if its fundamental group $\pi_1(M)$ is trivial. This implies that the first Betti number $b_1 = 0$ and $H_1(M; \mathbb{Z}) = 0$\footnote{Hurewicz Theorem states that for a simply connected space, the first non-zero homotopy group and homology group occur at the same dimension. Here, $\pi_1=0 \implies H_1=0$.}.
+    \item \textbf{Betti Numbers $b_k$}: The rank of the free part of the $k$-th homology group $H_k(M; \mathbb{Z})$ (or the dimension of $H_k(M; \mathbb{R})$ as a vector space).
+    \item \textbf{Euler Characteristic $\chi(M)$}: For a 6-manifold, $\chi(M) = \sum_{k=0}^6 (-1)^k b_k$.
+    \item \textbf{Poincaré Duality}: For a closed oriented $n$-manifold, $b_k = b_{n-k}$\footnote{Poincaré Duality provides a perfect pairing between $H^k$ and $H^{n-k}$, which implies their ranks (Betti numbers) must be equal.}.
 \end{itemize}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Map from $\mathsf{SP}^n(\mathbb{CP}^1)$ to $\mathbb{CP}^n$ (The Root-to-Coefficient Map):} 
-    An element in $\mathsf{SP}^n(\mathbb{CP}^1)$ is an unordered set of $n$ points $\{[u_1 : v_1], [u_2 : v_2], \dots, [u_n : v_n]\}$. 
-    We define a map $\Phi: \mathsf{SP}^n(\mathbb{CP}^1) \to \mathbb{CP}^n$ by constructing a homogeneous polynomial $P(z, w)$ whose roots are exactly these points:
-    \[ P(z, w) = \prod_{i=1}^n (v_i z - u_i w) = a_0 z^n + a_1 z^{n-1} w + \dots + a_n w^n. \]
-    The output of the map is the point in $\mathbb{CP}^n$ defined by the coefficients: $[a_0 : a_1 : \dots : a_n]$.
-    \item \textbf{Well-definedness and Homogeneity:}
-    \begin{itemize}
-        \item \textbf{Independence of Order:} Since the product $\prod (v_i z - u_i w)$ is commutative, the result is independent of the ordering of the $n$ points. Thus, the map is well-defined on the quotient by $S_n$.
-        \item \textbf{Independence of Scaling:} If we scale a single root $[u_j : v_j]$ to $[\lambda u_j : \lambda v_j]$, the coefficient vector $(a_0, \dots, a_n)$ is scaled by $\lambda$. In $\mathbb{CP}^n$, this represents the same point.
-    \end{itemize}
+\textbf{Geometric Intuition:}
+The Euler characteristic is a "topological count" of cells or holes. Poincaré Duality tells us that for a closed manifold, there is a symmetry between high-dimensional holes and low-dimensional holes. In a 6-dimensional manifold, $b_0$ is mirrored by $b_6$, $b_1$ by $b_5$, and $b_2$ by $b_4$. The "middle" Betti number $b_3$ stands alone. Crucially, in the middle dimension of a $4k+2$ manifold (like $n=6, k=1$), the way 3-dimensional cycles "intersect" is skew-symmetric ($A \cap B = -B \cap A$). This anti-symmetry is like a complex structure or a symplectic form on a vector space, which can only exist if the dimension of that space (the Betti number $b_3$) is even.
 
-    \item \textbf{Bijectivity via the Fundamental Theorem of Algebra:}
-    \begin{itemize}
-        \item \textbf{Injectivity:} If two sets of roots produce the same polynomial (up to scaling), the roots themselves must be identical as unordered sets (counting multiplicity).
-        \item \textbf{Surjectivity:} Every point $[a_0 : \dots : a_n] \in \mathbb{CP}^n$ corresponds to a non-zero homogeneous polynomial $P(z, w) = \sum a_i z^{n-i} w^i$. By the Fundamental Theorem of Algebra, this polynomial factors into $n$ linear factors $L_i(z, w) = (v_i z - u_i w)$. These $n$ factors define $n$ points $[u_i : v_i] \in \mathbb{CP}^1$.
-    \end{itemize}
+\textbf{Formal Proof:}
 
-    \item \textbf{Continuity and Homeomorphism:}
-    The coefficients $a_i$ are elementary symmetric polynomials in the roots $(u_i, v_i)$. These are continuous functions. 
-    Since $(\mathbb{CP}^1)^n$ is compact, its quotient $\mathsf{SP}^n(\mathbb{CP}^1)$ is compact. 
-    $\mathbb{CP}^n$ is a Hausdorff space. A continuous bijection from a compact space to a Hausdorff space is a homeomorphism.
-\end{enumerate}
+\textbf{1. Determining Betti Numbers via Duality and Constraints:}
+Since $M$ is connected and closed, $b_0 = 1$ and $b_6 = 1$.
+Since $M$ is simply connected, $b_1 = 0$. By Poincaré Duality, $b_5 = b_1 = 0$.
+We are given $H_2(M) = \mathbb{Z}_2$. This group is pure torsion (it has no free part).
+\sidenote{$b_2 = \text{rank}(H_2(M; \mathbb{Z})) = 0$.}
+By Poincaré Duality, $b_4 = b_2 = 0$.
+Now, let's write the formula for the Euler characteristic:
+\sidenote{$\chi(M) = b_0 - b_1 + b_2 - b_3 + b_4 - b_5 + b_6$.}
+Substituting the values we found:
+\sidenote{$\chi(M) = 1 - 0 + 0 - b_3 + 0 - 0 + 1 = 2 - b_3$.}
 
-\textbf{Intuition:}
-This theorem is essentially a geometric way of saying that "a polynomial is defined by its roots." 
+\textbf{2. The Parity of the Middle Betti Number $b_3$:}
+Consider the cohomology group $H^3(M; \mathbb{R})$. Poincaré Duality implies that the cup product followed by evaluation on the fundamental class $[M]$ defines a non-degenerate bilinear form:
+\sidenote{$Q: H^3(M; \mathbb{R}) \times H^3(M; \mathbb{R}) \to \mathbb{R}, \ Q(\alpha, \beta) = \langle \alpha \cup \beta, [M] \rangle$.}
+For elements of odd dimension (like 3), the cup product is \textbf{graded-commutative}, which in this case means it is \textbf{skew-symmetric}:
+\sidenote{$\alpha \cup \beta = (-1)^{3 \cdot 3} \beta \cup \alpha = -\beta \cup \alpha$.}
+Thus, $Q$ is a non-degenerate, skew-symmetric bilinear form (a \textbf{symplectic form}) on $H^3(M; \mathbb{R})$\footnote{A fundamental result in linear algebra is that any vector space carrying a non-degenerate skew-symmetric form must have an even dimension. This is because such a space can be decomposed into pairs of hyperbolic planes.}.
+This forces the dimension of the space, which is the Betti number $b_3$, to be \textbf{even}.
+\sidenote{$b_3 = 2k$ for some integer $k \ge 0$.}
 
-If you have $n$ loose points on a sphere, you can "melt" them down into a single object: a polynomial whose zeros are those points. Conversely, if you have a polynomial, you can "crack it open" to find exactly $n$ points inside. The math tells us that the space of "collections of points" and the space of "polynomial shapes" are actually the exact same shape, just described in different languages.
+\textbf{3. Conclusion:}
+Substituting $b_3 = 2k$ back into the Euler characteristic:
+\sidenote{$\chi(M) = 2 - 2k = 2(1-k)$.}
+This result shows that $\chi(M)$ must be an \textbf{even integer}.
+Since $-1$ is an odd integer, we conclude:
+\sidenote{$\chi(M) \neq -1$.}
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2024:4}
-Show that if a complete noncompact Riemannian manifold $M$ does not have the geodesic loops to infinity property, then there is a line in the universal cover $\widetilde{M}$.
+Let $(M, g)$ be a closed oriented $n$-dimensional Riemannian manifold. Let $p \in M$ and $\mathrm{Ric}_p$ be the Ricci curvature tensor at $p$, $S_p$ be the scalar curvature at $p$ which is defined to be $S_p := \frac{1}{n} \mathrm{Tr}_g(\mathrm{Ric}_p)$. Prove that the scalar curvature $S_p$ at $p \in M$ is given by
+\[
+S_p = \frac{1}{\omega_{n-1}} \int_{S^{n-1}} \mathrm{Ric}_p(V, V) d S^{n-1},
+\]
+where $\omega_{n-1}$ is the area of the unit sphere $S^{n-1}$ in $T_p M$, $V \in S^{n-1}$ are unit vector fields, and $d S^{n-1}$ is the area element on $S^{n-1}$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Complete Noncompact Manifold:} A manifold that has no boundary but extends infinitely (like a paraboloid or a plane).
-    \item \textbf{Geodesic:} A curve $\gamma(t)$ such that $\nabla_{\dot{\gamma}} \dot{\gamma} = 0$.
-    \item \textbf{Line:} A geodesic $\gamma: \mathbb{R} \to M$ that is distance-minimizing between any two of its points: $d(\gamma(t_1), \gamma(t_2)) = |t_1 - t_2|$ for all $t_1, t_2 \in \mathbb{R}$.
-    \item \textbf{Geodesic Loops to Infinity Property:} A manifold $M$ has this property if for any compact set $K \subset M$ and any non-trivial class $g \in \pi_1(M)$, there exists a geodesic loop in the class $g$ that does not intersect $K$.
+    \item \textbf{Ricci Curvature $\mathrm{Ric}_p$}: This is a symmetric bilinear form on the tangent space $T_p M$. For a unit vector $V$, $\mathrm{Ric}_p(V, V)$ is the sum of sectional curvatures of planes containing $V$\footnote{Sectional curvature $K(V, W)$ measures the Gaussian curvature of the surface formed by geodesics starting in the plane spanned by $V$ and $W$. Ricci curvature is the average of these curvatures over all $W \perp V$.}.
+    \item \textbf{Scalar Curvature $S_p$}: This is the simplest curvature invariant, obtained by taking the trace of the Ricci tensor. It measures how the volume of a small ball in the manifold differs from a ball in Euclidean space\footnote{Specifically, $\frac{\text{Vol}(B_{\epsilon}(p))}{\text{Vol}_{\text{Eucl}}(B_{\epsilon})} = 1 - \frac{S}{6(n+2)}\epsilon^2 + O(\epsilon^4)$.}.
+    \item \textbf{Symmetry of Sphere Integrals}: When integrating components of a vector $V = (v_1, \dots, v_n)$ over the unit sphere, the integral $\int_{S^{n-1}} v_i v_j dS$ is zero if $i \neq j$ because the sphere is symmetric under reflections $v_i \to -v_i$.
 \end{itemize}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Formalize the Assumption:} 
-    Suppose $M$ lacks the "geodesic loops to infinity" property. There exists a non-trivial element $g \in \pi_1(M)$ and a compact set $K$ such that \textbf{every} geodesic loop in the conjugacy class of $g$ must intersect $K$.
-    \item \textbf{Construct a Sequence of Minimal Loops:} 
-    Let $x_i$ be a sequence of points in $M$ such that $d(x_i, K) \to \infty$. For each $x_i$, there exists a shortest loop $\gamma_i$ based at $x_i$ representing the class $g$. 
-    By our assumption, each $\gamma_i$ must pass through $K$. Let $y_i \in \gamma_i \cap K$.
-    \item \textbf{Apply Compactness to Find a Limit Point:}
-    Since $K$ is compact, the sequence of points $\{y_i\}$ has a subsequence (which we still call $y_i$) that converges to a point $y_\infty \in K$. 
-    For each $i$, we can parameterize $\gamma_i$ by arc length such that $\gamma_i(0) = y_i$. 
-    The total length $L_i$ of the loop $\gamma_i$ must go to infinity, because $L_i = \operatorname{length}(\gamma_i) \geq 2 d(x_i, y_i) \to \infty$\sidenote{Since $y_i \in K$ and $x_i \to \infty$, the distance $d(x_i, y_i)$ grows without bound. The loop must go from $y_i$ to $x_i$ and back, so its length is at least twice the distance.}.
-    \item \textbf{Lift to the Universal Cover:}
-    Lift each loop $\gamma_i$ to a geodesic segment $\tilde{\gamma}_i: [-a_i, b_i] \to \widetilde{M}$ in the universal cover, where $\tilde{\gamma}_i(0) = \tilde{y}_i$ (a lift of $y_i$) and the endpoints satisfy $\tilde{\gamma}_i(b_i) = g \cdot \tilde{\gamma}_i(-a_i)$. 
-    Since $y_i \to y_\infty$, we can choose lifts such that $\tilde{y}_i \to \tilde{y}_\infty$.
-    \item \textbf{Extract the Limit (Arzelà-Ascoli):}
-    The sequence of unit-speed geodesics $\tilde{\gamma}_i$ is equicontinuous and their starting points are bounded. By the Arzelà-Ascoli theorem, a subsequence converges uniformly on compact intervals to an infinite geodesic $\sigma: \mathbb{R} \to \widetilde{M}$ passing through $\tilde{y}_\infty$.
-    \item \textbf{Prove $\sigma$ is a Line:}
-    Each $\tilde{\gamma}_i$ was a lift of a \textit{shortest} loop in its class, meaning it is a distance-minimizing segment in $\widetilde{M}$ between its endpoints. 
-    In the limit, the geodesic $\sigma$ inherits this property: for any $T > 0$, $\sigma|_{[-T, T]}$ is the limit of minimizing segments, and thus is itself a minimizing segment. 
-    An infinite geodesic that is minimizing on all sub-segments is a \textbf{line}.
-\end{enumerate}
+\textbf{Geometric Intuition:}
+The Ricci curvature $\mathrm{Ric}_p(V, V)$ tells you how the manifold is curving in the "direction" $V$. The scalar curvature is the total curvature at point $p$, which we can think of as the "average" of all these directional curvatures. By integrating the Ricci curvature over all possible unit directions (the sphere $S^{n-1}$) and dividing by the total area $\omega_{n-1}$, we are literally computing the average value of the Ricci curvature.
 
-\textbf{Intuition:}
-Think of the manifold as having a "narrow waist" or a "hook" represented by $K$. The loop class $g$ is like a rubber band that is caught on this hook. 
+\textbf{Formal Proof:}
 
-Even if you try to pull the basepoint of the rubber band out to the edge of the universe (infinity), the rubber band is still "anchored" to the hook $K$. As you pull harder and farther, the two strands of the rubber band stretch out more and more. In the limit, these two strands become a single straight line that runs from one end of the universe to the other, passing right through our "hook" $K$. This straight line is exactly the "line in the universal cover" we were looking for.
+Let $p \in M$. In the tangent space $T_p M$, we can choose an orthonormal basis $\{e_1, e_2, \dots, e_n\}$ that diagonalizes the Ricci tensor.
+\sidenote{$\mathrm{Ric}_p(e_i, e_j) = R_{ii} \delta_{ij}$.}
+Any unit vector $V \in S^{n-1} \subset T_p M$ can be written in terms of its components in this basis:
+\sidenote{$V = \sum_{i=1}^n v_i e_i, \quad \text{with} \quad \sum_{i=1}^n v_i^2 = 1$.}
+Now, let's expand the expression for the Ricci curvature in the direction $V$:
+\sidenote{$\mathrm{Ric}_p(V, V) = \sum_{i,j} \mathrm{Ric}_p(v_i e_i, v_j e_j) = \sum_{i,j} R_{ij} v_i v_j$.}
+Since the basis is orthonormal and diagonalizes the Ricci tensor, $R_{ij} = 0$ for $i \neq j$.
+\sidenote{$\mathrm{Ric}_p(V, V) = \sum_{i=1}^n R_{ii} v_i^2$.}
+We wish to compute the integral of this expression over the unit sphere $S^{n-1}$.
+\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \int_{S^{n-1}} v_i^2 dS$.}
+By the symmetry of the sphere, the integral of $v_i^2$ is the same for all $i$.
+\sidenote{$\sum_{k=1}^n \int_{S^{n-1}} v_k^2 dS = \int_{S^{n-1}} (\sum v_k^2) dS = \int_{S^{n-1}} 1 dS = \omega_{n-1}$.}
+Since there are $n$ such identical integrals, we have:
+\sidenote{$\int_{S^{n-1}} v_i^2 dS = \frac{\omega_{n-1}}{n}$.}
+Substituting this back into the integral of the Ricci curvature:
+\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \left(\frac{\omega_{n-1}}{n}\right) = \frac{\omega_{n-1}}{n} \sum_{i=1}^n R_{ii}$.}
+The sum $\sum R_{ii}$ is the trace of the Ricci tensor.
+\sidenote{$\sum_{i=1}^n R_{ii} = \mathrm{Tr}_g(\mathrm{Ric}_p)$.}
+By the definition given in the problem, $S_p = \frac{1}{n} \mathrm{Tr}_g(\mathrm{Ric}_p)$.
+\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \omega_{n-1} \cdot S_p$.}
+Rearranging the terms, we obtain the final formula:
+\sidenote{$S_p = \frac{1}{\omega_{n-1}} \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS^{n-1}$.}
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2024:5}
-(a) Show that $\pi_1$ of an H-space is Abelian.
-(b) Show $S^{2022}$ is not an H-space.
+Let $S^n$ be the $n$-dimensional sphere with $n \ge 2$, and let $G$ be a finite group that acts freely on $S^n$. Suppose $G$ is non-trivial. Then,
+(i) Compute the homotopy groups of the quotient space $\pi_i(S^n/G)$ for $0 \le i \le n$.
+(ii) Suppose $n$ is even. Prove that $G$ is isomorphic to $\mathbb{Z}_2$.
+(iii) Suppose $n$ is odd. Show that $G$ cannot be isomorphic to $\mathbb{Z}_p \times \mathbb{Z}_p$ for $p$ a prime number.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{H-Space:} A topological space $X$ with a continuous "multiplication" map $\mu: X \times X \to X$ and an identity element $e$, such that multiplying by $e$ is homotopic to doing nothing (the identity map).
-    \item \textbf{Fundamental Group ($\pi_1$):} The group of loops in a space. A group is Abelian if the order of multiplication doesn't matter ($a \cdot b = b \cdot a$).
-    \item \textbf{Cohomology Ring ($H^*$):} A way to assign algebraic rings to spaces. The "cup product" ($\cup$) multiplies two cohomology classes.
-    \item \textbf{Tensor Product ($\otimes$):} A way to combine algebraic structures. The Künneth formula says $H^*(X \times X) \cong H^*(X) \otimes H^*(X)$.
+    \item \textbf{Free Group Action}: A group $G$ acts freely on a space $X$ if the only element that has a fixed point is the identity element $e$\footnote{Formally, for all $g \in G \setminus \{e\}$ and all $x \in X$, $g \cdot x \neq x$.}.
+    \item \textbf{Covering Space}: If a finite group $G$ acts freely on a manifold $X$, the projection $p: X \to X/G$ is a regular covering map\footnote{The quotient space $X/G$ inherits the local manifold structure of $X$, and the fiber over any point in the quotient consists of $|G|$ points in $X$.}.
+    \item \textbf{Homotopy Groups $\pi_i$}: For a covering $p: \tilde{X} \to X$ with $\tilde{X}$ simply connected, $\pi_1(X) \cong G$ (the deck transformation group) and $\pi_i(X) \cong \pi_i(\tilde{X})$ for $i \ge 2$\footnote{This follows from the long exact sequence of homotopy groups for a covering (which is a fibration with discrete fiber).}.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Geometric Intuition:}
+Imagine the sphere $S^n$. A free action means $G$ moves points around like a "shuffling" operation. For $n$ even, the Hairy Ball Theorem tells us we can't have a non-vanishing vector field, which is a hint that it's hard to "rotate" the sphere without fixing some points (like the poles). The only way to move every point without fixing any is a "flip" like the antipodal map $x \to -x$. Since doing this flip twice gets you back to where you started, the group can only have two elements: the identity and the flip. For $n$ odd, the constraints are looser (you can rotate an odd sphere), but the group still can't be too "complex" (like a grid $\mathbb{Z}_p^2$) because it has to "fit" into the homology of a sphere-like space.
 
-\textbf{Part (a): $\pi_1$ is Abelian}
-1. \textbf{Setup the Two Operations:} 
-In an H-space, we have two ways to "multiply" loops: 
-First, the standard concatenation of loops (do loop $\alpha$, then loop $\beta$), denoted $[\alpha] \cdot [\beta]$. 
-Second, using the H-space multiplication $\mu$ pointwise: $\mu_*([\alpha], [\beta])$.
+\textbf{Formal Proof:}
 
-2. \textbf{Eckmann-Hilton Argument:} 
-Because the identity element $e$ acts as a constant loop, we have $\mu_*([\alpha], [e]) = [\alpha]$ and $\mu_*([e], [\beta]) = [\beta]$. 
-Now, we write out the standard product using this property:
-\[ [\alpha] \cdot [\beta] = \mu_*([\alpha], [e]) \cdot \mu_*([e], [\beta]). \]
-Because $\mu$ is a continuous map, we can "slide" the standard loop concatenation inside the $\mu$ operation:
-\[ \dots = \mu_*([\alpha] \cdot [e], [e] \cdot [\beta]) = \mu_*([\alpha], [\beta]). \]
-We can do the same trick in reverse order:
-\[ [\beta] \cdot [\alpha] = \mu_*([e], [\beta]) \cdot \mu_*([\alpha], [e]) = \mu_*([e] \cdot [\alpha], [\beta] \cdot [e]) = \mu_*([\alpha], [\beta]). \]
-Since both orderings equal $\mu_*([\alpha], [\beta])$, they must equal each other: $[\alpha] \cdot [\beta] = [\beta] \cdot [\alpha]$.
+\textbf{(i) Homotopy Groups of $S^n/G$:}
+Since $G$ acts freely and $S^n$ is simply connected for $n \ge 2$, the projection $p: S^n \to S^n/G$ is a universal covering.
+The fundamental group of the quotient is isomorphic to the group of deck transformations:
+\sidenote{$\pi_1(S^n/G) \cong G$.}
+For higher homotopy groups ($i \ge 2$), they are isomorphic to those of the universal cover:
+\sidenote{$\pi_i(S^n/G) \cong \pi_i(S^n)$.}
+Since $S^n$ is $(n-1)$-connected, $\pi_i(S^n) = 0$ for $1 \le i < n$.
+\sidenote{$\pi_i(S^n/G) = 0$ for $2 \le i < n$.}
+At dimension $n$, we have $\pi_n(S^n/G) \cong \pi_n(S^n) \cong \mathbb{Z}$.
+The 0-th homotopy group (set of path components) is trivial since $S^n$ is connected:
+\sidenote{$\pi_0(S^n/G) = 0$.}
 
-\textbf{Part (b): $S^{2022}$ is not an H-space}
-1. \textbf{Examine Cohomology:} 
-Suppose a sphere of dimension $k$, $S^k$, is an H-space. Let $x$ be the generator of its top cohomology group $H^k(S^k)$. 
-The multiplication map $\mu: S^k \times S^k \to S^k$ induces a map backward on cohomology: $\mu^*: H^k(S^k) \to H^k(S^k \times S^k)$.
+\textbf{(ii) Case $n$ is even:}
+Let $g \in G$ be any non-identity element. Since the action is free, $g$ has no fixed points.
+According to the \textbf{Lefschetz Fixed Point Theorem}:
+\footnote{The Lefschetz number $L(g)$ of a map $g$ is defined as $\sum_{i=0}^n (-1)^i \text{Tr}(g_* | H_i(X; \mathbb{Q}))$. If $g$ has no fixed points, then $L(g) = 0$.}
+For the sphere $S^n$, the only non-zero homology groups are $H_0 \cong \mathbb{Q}$ and $H_n \cong \mathbb{Q}$.
+\sidenote{$L(g) = \text{Tr}(g_* | H_0) + (-1)^n \text{Tr}(g_* | H_n) = 1 + (-1)^n \deg(g)$.}
+For $n$ even, we have $L(g) = 1 + \deg(g)$.
+Since $g$ is a homeomorphism, $\deg(g) = \pm 1$.
+If $g$ has no fixed points, $L(g)$ must be $0$, which forces $\deg(g) = -1$.
+Now, consider any $g, h \in G \setminus \{e\}$. Then $\deg(g) = -1$ and $\deg(h) = -1$.
+The degree of the composition is:
+\sidenote{$\deg(gh) = \deg(g)\deg(h) = (-1)(-1) = 1$.}
+If $gh \neq e$, then $gh$ would have a non-zero Lefschetz number $L(gh) = 1+1 = 2$, meaning it must have a fixed point.
+This contradicts the free action. Thus, we must have $gh = e$ for all non-identity $g, h$.
+This implies every non-identity element is its own inverse, and there is only one such element.
+Thus, $G \cong \mathbb{Z}_2$.
 
-2. \textbf{Use the Identity Property:} 
-Because multiplying by $e$ is the identity, $\mu^*(x)$ must have a specific form in $H^*(S^k) \otimes H^*(S^k)$:
-\[ \mu^*(x) = 1 \otimes x + x \otimes 1. \]
-
-3. \textbf{Cup Product Contradiction:} 
-We know that in a sphere, the product of the top generator with itself is zero because it would live in dimension $2k$: $x \cup x = 0$. 
-So, $\mu^*(x \cup x) = \mu^*(0) = 0$. 
-But if we compute it using the formula from Step 2:
-\[ \mu^*(x \cup x) = (1 \otimes x + x \otimes 1) \cup (1 \otimes x + x \otimes 1). \]
-When we expand this, we must remember the graded commutativity rule: $(a \otimes b) \cup (c \otimes d) = (-1)^{|b||c|} (a \cup c) \otimes (b \cup d)$. 
-This gives us: $1 \otimes (x \cup x) + (x \cup 1) \otimes (1 \cup x) + (-1)^{k^2} (x \cup x) \otimes 1 + (x \cup x) \otimes 1$. 
-Since $x \cup x = 0$, the only surviving middle term is:
-\[ x \otimes x + (-1)^{k^2} x \otimes x = (1 + (-1)^{k^2}) x \otimes x. \]
-For this to equal $0$, we must have $1 + (-1)^{k^2} = 0$, which means $k^2$ must be odd, so $k$ must be odd. Since $2022$ is even, $S^{2022}$ cannot be an H-space.
-
-\textbf{Intuition:}
-For part (a), having a "multiplication" on the space itself gives you so much freedom to slide loops around each other that they no longer care which one came first.
-
-For part (b), an H-space structure puts a severe restriction on the "algebraic skeleton" (cohomology) of the space. For spheres, this skeleton forces the dimension to be odd because of how minus signs work when you swap coordinates. (A deeper theorem by Adams shows it's actually only possible for dimensions 1, 3, and 7!)
+\textbf{(iii) Case $n$ is odd:}
+Suppose $G \cong \mathbb{Z}_p \times \mathbb{Z}_p$ acts freely on $S^n$.
+A finite group $G$ acting freely on a sphere $S^n$ must satisfy the \textbf{p-periodicity} condition:
+\footnote{A group $G$ has $p$-periodic cohomology if its cohomology with coefficients in $\mathbb{Z}_p$ is periodic. Smith's theorem states that a finite group acting freely on a sphere $S^n$ cannot have any subgroup isomorphic to $\mathbb{Z}_p \times \mathbb{Z}_p$.}
+The cohomology ring $H^*(\mathbb{Z}_p \times \mathbb{Z}_p; \mathbb{Z}_p)$ is quite large; its dimensions grow linearly with the degree.
+In contrast, if $G$ acts freely on $S^n$, the quotient $S^n/G$ is a manifold whose cohomology must vanish above dimension $n$.
+Using the spectral sequence for the covering, we find that the cohomology of $G$ must be periodic with period $n+1$\footnote{Specifically, if $X$ is a homotopy sphere, $H^k(G; \mathbb{Z}) \cong H^k(X/G; \mathbb{Z})$ for $0 < k < n$. For $k > n$, periodicity kicks in. $\mathbb{Z}_p^2$ does not have this property.}.
+This periodicity is impossible for $\mathbb{Z}_p \times \mathbb{Z}_p$.
+Thus, $G$ cannot be isomorphic to $\mathbb{Z}_p \times \mathbb{Z}_p$.
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2024:6}
-(a) Show $S^n(\sqrt{2n})$ is a shrinker. (b) Compact shrinker intersects $S^n(\sqrt{2n})$.
+Let $M$ be a closed oriented Riemannian manifold, where $g_t$ is a family of smooth Riemannian metrics smoothly depending on $t \in (-\epsilon, \epsilon)$. Suppose there exists a family of eigenfunctions $f_t$ and eigenvalues $\lambda_t$ smoothly depending on $t$ such that
+\[
+\Delta_{g_t} f_t = \lambda_t f_t,
+\]
+where $\Delta_{g_t}$ is the Laplace-Beltrami operator defined using the Riemannian metric $g_t$. Additionally, assume that $f_0$ is not a constant function. We define $\dot{\lambda} := \left.\frac{d}{dt}\right|_{t=0} \lambda_t$ and $\dot{\Delta} := \left.\frac{d}{dt}\right|_{t=0} \Delta_{g_t}$. Prove the following:
+(i) As $\lambda_0$ is an eigenvalue of $\Delta_{g_0}$, let $V_{\lambda_0} := \mathrm{Ker}(\Delta_{g_0} - \lambda_0)$ be the eigenspace of $\lambda_0$, and let $\Pi : L^2(M, g_0) \to V_{\lambda_0}$ be the orthogonal projection onto the eigenspace. Prove that $\dot{\lambda}$ is an eigenvalue of the operator $\Pi \circ \dot{\Delta} : V_{\lambda_0} \to V_{\lambda_0}$.
+(ii) Let $\varphi_t : M \to M$ be a 1-parameter family of diffeomorphisms of $M$ and assume $g_t = \varphi_t^* g_0$. Prove that $\dot{\lambda} = 0$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
+\textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Shrinker:} A surface that satisfies the equation $H = \frac{1}{2} \langle x, \mathbf{n} \rangle$, where $H$ is the mean curvature, $x$ is the position vector, and $\mathbf{n}$ is the outward normal vector. These surfaces model singularities in mean curvature flow.
-    \item \textbf{Mean Curvature ($H$):} The sum of the principal curvatures. For a sphere of radius $R$ in $\mathbb{R}^{n+1}$, $H = n/R$.
-    \item \textbf{Maximum Principle:} A fundamental tool in elliptic PDEs. It says that at a local maximum of a function on a closed surface, its Laplacian must be $\leq 0$, and at a minimum, it must be $\geq 0$.
+    \item \textbf{Laplace-Beltrami Operator $\Delta_g$}: This is the generalization of the Laplacian to a Riemannian manifold. Its eigenvalues $\lambda$ are always non-negative, and its eigenfunctions $f$ represent the "modes of vibration" of the manifold\footnote{For a function $u$, $\Delta u = -\text{div}(\text{grad } u)$. On a closed manifold, the spectrum is discrete: $0 = \lambda_0 < \lambda_1 \le \lambda_2 \dots \to \infty$.}.
+    \item \textbf{Eigenvalue Variation}: When the metric $g_t$ changes, the operator $\Delta_{g_t}$ changes, and consequently its eigenvalues $\lambda_t$ and eigenfunctions $f_t$ also vary. The study of this variation is central to spectral geometry.
+    \item \textbf{Orthogonal Projection $\Pi$}: In the Hilbert space $L^2(M, g_0)$, $\Pi$ maps any function to its "shadow" on the subspace $V_{\lambda_0}$\footnote{If $\{u_1, \dots, u_k\}$ is an orthonormal basis for $V_{\lambda_0}$, then $\Pi(h) = \sum_{j=1}^k \langle h, u_j \rangle u_j$.}.
 \end{itemize}
 
-\textbf{Steps:}
+\textbf{Geometric Intuition:}
+Imagine the manifold is a bell. The eigenvalues are the frequencies you hear when you strike it. If you slightly change the shape of the bell (change the metric $g_t$), the frequencies will change. Part (i) tells us exactly how much the frequency shifts based on the "speed" at which the shape is changing ($\dot{\Delta}$). Part (ii) says that if the "change" is just a relabeling of the points on the bell (a diffeomorphism $\varphi_t$) without actually changing its physical geometry, the frequencies won't change at all—a rotated bell sounds exactly the same as the original.
 
-\textbf{Part (a): $S^n(\sqrt{2n})$ is a shrinker}
-1. \textbf{Calculate Mean Curvature:} 
-For a sphere of radius $R$ in $\mathbb{R}^{n+1}$, the principal curvatures are all $1/R$. 
-The mean curvature is the sum of these $n$ principal curvatures: $H = n/R$.
+\textbf{Formal Proof:}
 
-2. \textbf{Calculate the Normal Vector Term:} 
-For a sphere centered at the origin, the outward normal vector $\mathbf{n}$ at a point $x$ points straight out from the origin. Thus, $\mathbf{n} = x/R$. 
-Taking the dot product with $x$: $\langle x, \mathbf{n} \rangle = \langle x, x/R \rangle = |x|^2/R = R^2/R = R$.
+\textbf{(i) The First-Order Variation Formula:}
+We start with the eigenvalue equation at each time $t$:
+\sidenote{$\Delta_{g_t} f_t = \lambda_t f_t$.}
+Differentiating this equation with respect to $t$ at $t=0$ using the product rule:
+\sidenote{$\dot{\Delta} f_0 + \Delta_{g_0} \dot{f} = \dot{\lambda} f_0 + \lambda_0 \dot{f}$.}
+Rearranging the terms to group the variation of the operator and the variation of the eigenvalue:
+\sidenote{$(\dot{\Delta} - \dot{\lambda}) f_0 = (\lambda_0 - \Delta_{g_0}) \dot{f}$.}
+Now, we apply the orthogonal projection $\Pi$ onto the eigenspace $V_{\lambda_0}$ to both sides of the equation.
+\sidenote{$\Pi(\dot{\Delta} f_0) - \Pi(\dot{\lambda} f_0) = \Pi((\lambda_0 - \Delta_{g_0}) \dot{f})$.}
+Since $f_0 \in V_{\lambda_0}$, we have $\Pi(f_0) = f_0$ and $\Pi(\dot{\lambda} f_0) = \dot{\lambda} f_0$.
+For the right-hand side, consider the fact that $\Delta_{g_0}$ is self-adjoint on $L^2(M, g_0)$.
+\footnote{For any $u \in V_{\lambda_0}$ and any $v \in L^2$, we have $\langle (\lambda_0 - \Delta_{g_0}) v, u \rangle = \langle v, (\lambda_0 - \Delta_{g_0}) u \rangle = \langle v, 0 \rangle = 0$. This means the range of $(\lambda_0 - \Delta_{g_0})$ is orthogonal to $V_{\lambda_0}$.}
+Therefore, the projection of any element in the image of $(\lambda_0 - \Delta_{g_0})$ onto $V_{\lambda_0}$ is zero.
+\sidenote{$\Pi((\lambda_0 - \Delta_{g_0}) \dot{f}) = 0$.}
+The equation simplifies to:
+\sidenote{$\Pi(\dot{\Delta} f_0) = \dot{\lambda} f_0$.}
+This demonstrates that $f_0$ is an eigenfunction of the operator $\Pi \circ \dot{\Delta}$ with eigenvalue $\dot{\lambda}$.
 
-3. \textbf{Solve the Shrinker Equation:} 
-Plug these into the shrinker equation: $H = \frac{1}{2} \langle x, \mathbf{n} \rangle$.
-\[ \frac{n}{R} = \frac{1}{2} R \implies R^2 = 2n \implies R = \sqrt{2n}. \]
-Thus, the sphere of radius $\sqrt{2n}$ exactly satisfies the equation.
-
-\textbf{Part (b): Compact shrinker intersects $S^n(\sqrt{2n})$}
-1. \textbf{Use the Laplacian of the Squared Distance:} 
-For any hypersurface $\Sigma$, there's a geometric identity for how the squared distance from the origin changes along the surface:
-\[ \Delta_\Sigma |x|^2 = 2n - 2H \langle x, \mathbf{n} \rangle. \]
-Since $\Sigma$ is a shrinker, we substitute $H = \frac{1}{2} \langle x, \mathbf{n} \rangle$:
-\[ \Delta_\Sigma |x|^2 = 2n - 2\left(\frac{1}{2} \langle x, \mathbf{n} \rangle\right) \langle x, \mathbf{n} \rangle = 2n - \langle x, \mathbf{n} \rangle^2. \]
-
-2. \textbf{Apply the Maximum Principle at the Furthest Point:} 
-Let $x_{max}$ be the point on $\Sigma$ furthest from the origin. Here, $|x|^2$ is maximized. 
-By the Maximum Principle, $\Delta_\Sigma |x|^2 \leq 0$ at this point. 
-Also, at the furthest point, the surface must be tangent to a sphere centered at the origin, meaning the position vector $x_{max}$ is perfectly aligned with the normal vector $\mathbf{n}$. So, $\langle x_{max}, \mathbf{n} \rangle^2 = |x_{max}|^2 = R_{max}^2$.
-Plugging this into our identity:
-\[ 0 \geq \Delta_\Sigma |x|^2 = 2n - R_{max}^2 \implies R_{max}^2 \geq 2n \implies R_{max} \geq \sqrt{2n}. \]
-
-3. \textbf{Apply the Maximum Principle at the Closest Point:} 
-Similarly, let $x_{min}$ be the point closest to the origin. Here, $\Delta_\Sigma |x|^2 \geq 0$ and $\langle x_{min}, \mathbf{n} \rangle^2 = R_{min}^2$.
-\[ 0 \leq \Delta_\Sigma |x|^2 = 2n - R_{min}^2 \implies R_{min}^2 \leq 2n \implies R_{min} \leq \sqrt{2n}. \]
-
-4. \textbf{Conclusion:} 
-The closest point to the origin is inside or on the sphere $S^n(\sqrt{2n})$, and the furthest point is outside or on it. Therefore, the continuous surface $\Sigma$ must intersect this sphere somewhere.
-
-\textbf{Intuition:}
-A "shrinker" is a surface trying to collapse into the origin, but its geometry precisely balances this inward pull. 
-
-The sphere $S^n(\sqrt{2n})$ is the perfect "equilibrium" bubble. If you have any other closed, lumpy shrinker, it can't be entirely tucked inside this equilibrium bubble (it would collapse too fast), nor can it sit entirely outside it (it wouldn't collapse fast enough). It must straddle the boundary of the equilibrium sphere to maintain the delicate balance required by the shrinker equation.
+\textbf{(ii) Invariance Under Diffeomorphisms:}
+If $g_t = \varphi_t^* g_0$ for some diffeomorphisms $\varphi_t$, then by the naturality of the Laplace-Beltrami operator, we have:
+\sidenote{$\Delta_{g_t} = \varphi_t^* \circ \Delta_{g_0} \circ (\varphi_t^*)^{-1}$.}
+This means that for every $t$, the operator $\Delta_{g_t}$ is \textbf{isometrically conjugate} to $\Delta_{g_0}$.
+\footnote{Two conjugate operators have the same spectrum. In this case, $\Delta_{g_t} (\varphi_t^* f) = \lambda (\varphi_t^* f)$ if and only if $\Delta_{g_0} f = \lambda f$.}
+Therefore, the eigenvalues of $\Delta_{g_t}$ are identical to the eigenvalues of $\Delta_{g_0}$ for all $t \in (-\epsilon, \epsilon)$.
+\sidenote{$\lambda_t = \lambda_0$ for all $t$.}
+It follows immediately that the derivative of the eigenvalue with respect to time must be zero:
+\sidenote{$\dot{\lambda} = \frac{d}{dt} \lambda_t = 0$.}
 \end{solution}

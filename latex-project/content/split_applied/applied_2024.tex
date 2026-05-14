@@ -2,30 +2,69 @@
 
 \begin{exercise}
 \label{applied:2024:1}
-Let $A \in \mathbb { R } ^ { n \times n }$ be a non-singular matrix. Let $u$ , $v \in \mathbb { R } ^ { n }$ be column vectors. Define the rank 1 perturbation $\stackrel { \triangledown } { \boldsymbol { A } } = \boldsymbol { A } + u \boldsymbol { v } ^ { T }$ .
+Let $A \in \mathbb { R } ^ { n \times n }$ be a non-singular matrix. Let $u$ , $v \in \mathbb { R } ^ { n }$ be column vectors. Define the rank 1 perturbation $\widehat { \boldsymbol { A } } = \boldsymbol { A } + u \boldsymbol { v } ^ { T }$ .
 
 (a) Derive a necessary and sufficient condition for $\widehat { A }$ to be invertible.   
 (b) Let $x$ , $z$ and $b$ be column vectors in $\mathbb { R } ^ { n }$ . Suppose one can solve $A z = b$ with ${ \mathcal { O } } ( n )$ floating-point operations (flops). Under the conditions derived in(a), design an algorithm to solve ${ \widehat { A } } x = b$ with ${ \mathcal { O } } ( n )$ flops, and provide justification for your answer.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Condition for Invertibility:} 
-By the Matrix Determinant Lemma, $\det(\widehat{A}) = \det(A + uv^T) = \det(A)(1 + v^T A^{-1} u)$.
-Since $A$ is non-singular, $\det(A) \neq 0$. Thus, $\widehat{A}$ is invertible if and only if:
-\[ 1 + v^T A^{-1} u \neq 0. \]
+\textbf{(a) Condition for Invertibility}
 
-\textbf{(b) $\mathcal{O}(n)$ Algorithm:}
-Using the Sherman-Morrison formula, if $\widehat{A}$ is invertible, then:
-\[ \widehat{A}^{-1} = A^{-1} - \frac{A^{-1} u v^T A^{-1}}{1 + v^T A^{-1} u}. \]
-To solve $\widehat{A}x = b$, we compute $x = \widehat{A}^{-1} b = A^{-1}b - \frac{A^{-1} u (v^T A^{-1} b)}{1 + v^T A^{-1} u}$.
+To determine the invertibility of $\widehat{A} = A + uv^T$, we analyze its determinant using the \textbf{Matrix Determinant Lemma}. 
+
+\textbf{Proof of Matrix Determinant Lemma:}
+Consider the identity for the determinant of a block matrix:
+\[ \det \begin{pmatrix} I & 0 \\ C & D \end{pmatrix} = \det(I) \det(D) = \det(D) \]
+and
+\[ \det \begin{pmatrix} A & B \\ C & D \end{pmatrix} = \det(A) \det(D - CA^{-1}B) \]
+if $A$ is invertible. Let us construct the matrix:
+\[ M = \begin{pmatrix} I & v^T \\ -u & A \end{pmatrix} \]
+Using the Schur complement of $A$:
+\[ \det(M) = \det(A) \det(I - v^T A^{-1}(-u)) = \det(A) (1 + v^T A^{-1} u) \]
+Alternatively, using the Schur complement of $I$:
+\[ \det(M) = \det(I) \det(A - (-u)I^{-1}v^T) = \det(A + uv^T) \]
+Equating the two expressions for $\det(M)$, we obtain:
+\[ \det(\widehat{A}) = \det(A + uv^T) = \det(A)(1 + v^T A^{-1} u) \]
+Since $A$ is given as non-singular, $\det(A) \neq 0$. Therefore, $\widehat{A}$ is invertible if and only if $\det(\widehat{A}) \neq 0$, which yields the necessary and sufficient condition:
+\[ \boxed{1 + v^T A^{-1} u \neq 0} \]
+
+\textbf{(b) $\mathcal{O}(n)$ Algorithm and Justification}
+
+\textbf{Derivation of the Sherman-Morrison Formula:}
+Assume $\widehat{A}x = b$, so $(A + uv^T)x = b$. Expanding this:
+\[ Ax + u(v^T x) = b \]
+Since $A$ is invertible, multiply by $A^{-1}$:
+\[ x + A^{-1}u(v^T x) = A^{-1}b \]
+Let $\alpha = v^T x$ be a scalar. Then $x = A^{-1}b - \alpha A^{-1}u$. To find $\alpha$, multiply by $v^T$:
+\[ v^T x = v^T A^{-1} b - \alpha v^T A^{-1} u \]
+\[ \alpha = v^T A^{-1} b - \alpha (v^T A^{-1} u) \implies \alpha (1 + v^T A^{-1} u) = v^T A^{-1} b \]
+Substituting $\alpha = \frac{v^T A^{-1} b}{1 + v^T A^{-1} u}$ back into the expression for $x$:
+\[ x = A^{-1}b - \frac{v^T A^{-1} b}{1 + v^T A^{-1} u} A^{-1} u \]
+This justifies the \textbf{Sherman-Morrison formula}: $\widehat{A}^{-1} = A^{-1} - \frac{A^{-1} u v^T A^{-1}}{1 + v^T A^{-1} u}$.
+
+\textbf{Algorithm Design:}
+To solve $\widehat{A}x = b$ efficiently:
 \begin{enumerate}
-    \item Solve $Az = b$ for $z$. ($O(n)$ flops)
-    \item Solve $Aw = u$ for $w$. ($O(n)$ flops)
-    \item Compute the scalar $\alpha = v^T z$. ($O(n)$ flops)
-    \item Compute the scalar $\gamma = 1 + v^T w$. ($O(1)$ flops)
-    \item Compute $x = z - \frac{\alpha}{\gamma} w$. ($O(n)$ flops)
+    \item \textbf{Solve} $Az = b$ for $z \in \mathbb{R}^n$. (Given cost: $O(n)$ flops)
+    \item \textbf{Solve} $Aw = u$ for $w \in \mathbb{R}^n$. (Given cost: $O(n)$ flops)
+    \item \textbf{Compute} the inner product $\rho = v^T z$. (Cost: $2n-1$ flops)
+    \item \textbf{Compute} the inner product $\eta = v^T w$. (Cost: $2n-1$ flops)
+    \item \textbf{Compute} the scalar denominator $\gamma = 1 + \eta$. (Cost: $1$ flop)
+    \item \textbf{Compute} the final result $x = z - \frac{\rho}{\gamma} w$. (Cost: $2n+1$ flops)
 \end{enumerate}
-Total cost is $O(n)$, and the algorithm is justified by the Sherman-Morrison identity.
+
+\textbf{Flop Count Analysis:}
+\begin{itemize}
+    \item Steps 1 and 2: $2 \times O(n)$ flops.
+    \item Steps 3, 4, and 6: $O(n)$ flops.
+    \item Total complexity: $O(n)$ flops.
+\end{itemize}
+The algorithm is valid because it only requires two linear solves with the matrix $A$ and a few vector-vector operations, all of which are $O(n)$.
+
+\begin{sidenote}
+\textbf{Pedagogical Note:} The Sherman-Morrison formula is a specific case of the Woodbury Matrix Identity. The rank-1 update allows for solving perturbed systems without refactorizing the matrix, which is crucial in optimization (e.g., Quasi-Newton methods like BFGS).
+\end{sidenote}
 \end{solution}
 
 \begin{exercise}
@@ -44,7 +83,7 @@ where $f$ is continuous, $f ^ { \prime } ( 0 ) \neq 0$ , and $f ( x )$ decays li
 \int_ {0} ^ {L} f (x) d x.
 \]
 
-What is the asymptotic error formula for the error in the limit $n  \infty$ with $L$ fixed?
+What is the asymptotic error formula for the error in the limit $n\to  \infty$ with $L$ fixed?
 
 (b) Suppose you consider the quadrature from (a) to be an approximation to the full integral from 0 to $\infty$ . How should $L$ increase with $n$ to optimize the asymptotic rate of total error decay? What is the rate of error decrease with this choice of L? 5
 
@@ -60,27 +99,62 @@ Suppose you apply the equispaced composite trapezoid rule; what is the asymptoti
 \end{exercise}
 
 \begin{solution}
-\textbf{(a)} For fixed $L$, the composite trapezoid rule error for $\int_0^L f(x) dx$ with $h = L/n$ is:
-\[ E_{\text{trap}}(L, n) \approx -\frac{L h^2}{12} f''(\xi) = \mathcal{O}(h^2) = \mathcal{O}(L^2 n^{-2}). \]
+\textbf{(a) Asymptotic Error for Fixed $L$}
 
-\textbf{(b)} The full error is $E \approx | \int_L^\infty f(x) dx | + | E_{\text{trap}}(L, n) |$.
-As $L \to \infty$, $\int_L^ \infty f(x) dx \sim \int_L^\infty x^{-1-\alpha} dx \sim L^{-\alpha}$.
-Thus $E \sim L^{-\alpha} + L^2 n^{-2}$.
-To balance the terms, set $L^{-\alpha} \sim L^2 n^{-2} \implies L^{\alpha+2} \sim n^2 \implies L \sim n^{\frac{2}{\alpha+2}}$.
-The total error decay rate is $E \sim n^{-\frac{2\alpha}{\alpha+2}}$.
+For a fixed interval $[0, L]$, the error of the composite trapezoid rule with step size $h = L/n$ for a $C^2$ function is given by:
+\[ E_{\text{trap}} = -\frac{L}{12} h^2 f''(\xi) = -\frac{L^3}{12 n^2} f''(\xi), \quad \xi \in [0, L]. \]
+As $n \to \infty$, the error behaves as:
+\[ \boxed{E_n(L) \sim \mathcal{O}(h^2) = \mathcal{O}(L^2 n^{-2})} \]
+Note: If $f'$ does not vanish at the boundaries, the Euler-Maclaurin expansion provides $E \approx \frac{h^2}{12}(f'(0) - f'(L))$. Since $f'(0) \neq 0$, the $h^2$ behavior is guaranteed.
 
-\textbf{(c)} The new integrand is $F_L(y) = f(L\frac{1+y}{1-y}) \frac{2L}{(1-y)^2}$.
-As $y \to 1$, $x = L\frac{1+y}{1-y} \to \infty$. Given $f(x) \sim x^{-(1+\alpha)}$, we have:
-\[ F_L(y) \sim \left( \frac{1+y}{1-y} \right)^{-(1+\alpha)} \frac{1}{(1-y)^2} \sim (1-y)^{1+\alpha-2} = (1-y)^{\alpha-1}. \]
-Near $y=1$, the error of the trapezoid rule for an integrand with a singularity $(1-y)^{\beta}$ is known to be $\mathcal{O}(n^{-(1+\beta)})$.
-For $\beta = \alpha-1$, the asymptotic error is $\mathcal{O}(n^{-\alpha})$.
+\textbf{(b) Optimization of Domain Truncation}
 
-\textbf{(d)} Comparison:
-Domain truncation gives $\mathcal{O}(n^{-p})$ with $p = \frac{2\alpha}{\alpha+2} = 2 - \frac{4}{\alpha+2}$.
-Change-of-variable gives $\mathcal{O}(n^{-\alpha})$.
-As $\alpha \to \infty$, $p \to 2$ while $\alpha$ keeps increasing. Thus for large $\alpha$, change-of-variable is far superior.
-Specifically, $\alpha > \frac{2\alpha}{\alpha+2}$ is always true for $\alpha > 0$ unless there are other smoothness constraints. However, for small $\alpha$, the singularity $(1-y)^{\alpha-1}$ becomes stronger, potentially limiting the method if $\alpha \leq 1$.
+The total error $E_{\text{total}}$ consists of the \textbf{truncation error} $E_{\text{trunc}}$ and the \textbf{discretization error} $E_{\text{disc}}$.
+\begin{enumerate}
+    \item \textbf{Truncation Error:} Since $f(x) \sim x^{-(1+\alpha)}$ as $x \to \infty$:
+    \[ E_{\text{trunc}} = \int_L^\infty f(x) dx \sim \int_L^\infty x^{-(1+\alpha)} dx = \left[ \frac{x^{-\alpha}}{-\alpha} \right]_L^\infty = \frac{1}{\alpha} L^{-\alpha}. \]
+    \item \textbf{Discretization Error:} From part (a), $E_{\text{disc}} \sim \frac{L^2}{n^2}$. (More precisely, if we consider $f''$ decay, $E_{\text{disc}} \sim h^2 \int_0^L |f''(x)| dx$. Since $f''(x) \sim x^{-3-\alpha}$, the integral converges as $L \to \infty$, so $E_{\text{disc}} \sim (L/n)^2$).
+\end{enumerate}
+To optimize $E_{\text{total}} \approx C_1 L^{-\alpha} + C_2 L^2 n^{-2}$, we balance the two terms:
+\[ L^{-\alpha} \sim L^2 n^{-2} \implies n^2 \sim L^{\alpha+2} \implies \boxed{L \sim n^{\frac{2}{\alpha+2}}} \]
+Substituting this $L$ back into the error expression:
+\[ E_{\text{total}} \sim (n^{\frac{2}{\alpha+2}})^{-\alpha} = n^{-\frac{2\alpha}{\alpha+2}}. \]
+The rate of error decrease is $\boxed{\mathcal{O}(n^{-\frac{2\alpha}{\alpha+2}})}$.
+
+\textbf{(c) Change of Variable Analysis}
+
+The change of variable $x = L \frac{1+y}{1-y}$ maps $y \in [-1, 1]$ to $x \in [0, \infty)$. The differential is:
+\[ dx = L \left( \frac{1-y + 1+y}{(1-y)^2} \right) dy = \frac{2L}{(1-y)^2} dy. \]
+The integral becomes $\int_{-1}^1 F_L(y) dy$ where $F_L(y) = f\left( L \frac{1+y}{1-y} \right) \frac{2L}{(1-y)^2}$.
+We analyze the behavior of $F_L(y)$ near the endpoints:
+\begin{itemize}
+    \item \textbf{Near $y = -1$:} $x \to 0$. $F_L(-1) = f(0) \cdot \frac{2L}{2^2} = \frac{L}{2} f(0)$, which is finite.
+    \item \textbf{Near $y = 1$:} $x \to \infty$. Since $f(x) \sim x^{-(1+\alpha)}$, we have:
+    \[ F_L(y) \sim \left( L \frac{1+y}{1-y} \right)^{-(1+\alpha)} \frac{2L}{(1-y)^2} \sim (1-y)^{1+\alpha} \frac{1}{(1-y)^2} = (1-y)^{\alpha-1}. \]
+\end{itemize}
+The integrand has an algebraic singularity of the form $(1-y)^\beta$ with $\beta = \alpha-1$. The trapezoid rule error for such a singularity is known to be $\mathcal{O}(n^{-(1+\beta)})$ if $\beta > 0$ and $\mathcal{O}(n^{-2})$ if $\beta \geq 2$.
+Thus, the asymptotic error for fixed $L$ is:
+\[ \boxed{E_n \sim \mathcal{O}(n^{-\min(2, \alpha)})} \]
+(Assuming $\alpha > 1$ for the integral of $F_L$ to be handled by trapezoid rule effectively without endpoint correction).
+
+\textbf{(d) Comparison and Preference}
+
+\begin{itemize}
+    \item \textbf{Truncation rate:} $p_1 = \frac{2\alpha}{\alpha+2} = 2 - \frac{4}{\alpha+2}$. Note $p_1 < 2$ for all $\alpha > 0$.
+    \item \textbf{Change-of-variable rate:} $p_2 = \min(2, \alpha)$.
+\end{itemize}
+For any $\alpha > 0$, we check $p_2 > p_1$:
+\begin{itemize}
+    \item If $\alpha \geq 2$, $p_2 = 2$ and $p_1 < 2$. \textbf{Change-of-variable is better}.
+    \item If $\alpha < 2$, we compare $\alpha$ and $\frac{2\alpha}{\alpha+2}$. Since $\alpha+2 > 2$ for $\alpha > 0$, we have $\alpha > \frac{2\alpha}{\alpha+2}$. \textbf{Change-of-variable is better}.
+\end{itemize}
+\textbf{Conclusion:} The \textbf{change-of-variable} method is generally preferable as it yields a faster asymptotic convergence rate $\mathcal{O}(n^{-\alpha})$ (up to 2nd order limit) compared to the balanced truncation rate. However, for very small $\alpha \leq 1$, the singularity at $y=1$ becomes non-integrable or extremely sharp, requiring specialized quadrature.
 \end{solution}
+
+\begin{sidenote}
+\textbf{Pedagogical Note: Truncation vs. Mapping} 
+The \textit{Domain Truncation} method is often easier to implement but requires a delicate balance (Part b) between the cutoff $L$ and the number of points $n$. The \textit{Change of Variable} (or Mapping) method is theoretically more elegant as it treats the entire domain, but it often introduces algebraic singularities at the boundaries (Part c). In this specific case, mapping is superior because the decay of $f(x)$ is fast enough that the resulting singularity in $F_L(y)$ is manageable by the trapezoid rule.
+\end{sidenote}
 
 \begin{exercise}
 \label{applied:2024:3}
@@ -111,23 +185,86 @@ U _ {n} (x) = \frac {1}{n + 1} T ^ {\prime} (x), \quad n \geq 0.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Recurrence:} 
-Since $T_{n+1}(\cos\theta) = \cos((n+1)\theta)$, differentiating with respect to $x$ gives:
-\[ T_{n+1}'(\cos\theta) (-\sin\theta) = -(n+1) \sin((n+1)\theta) \implies U_n(x) = \frac{\sin((n+1)\theta)}{\sin\theta}. \]
-Using the identity $\sin((n+2)\theta) + \sin(n\theta) = 2 \sin((n+1)\theta) \cos\theta$, we have:
-\[ (\sin\theta) U_{n+1}(x) + (\sin\theta) U_{n-1}(x) = 2 (\sin\theta) U_n(x) x \implies U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x). \]
-Initial conditions: $U_0 = 1$, $U_1 = 2x$.
+\textbf{(a) Recurrence Relation Derivation}
 
-\textbf{(b) Orthogonality:}
-Let $x = \cos\theta, dx = -\sin\theta d\theta, \sqrt{1-x^2} = \sin\theta$.
-\[ \int_{-1}^1 U_n(x) U_m(x) \sqrt{1-x^2} dx = \int_{\pi}^0 \frac{\sin((n+1)\theta)}{\sin\theta} \frac{\sin((m+1)\theta)}{\sin\theta} \sin\theta (-\sin\theta d\theta) \]
-\[ = \int_0^\pi \sin((n+1)\theta) \sin((m+1)\theta) d\theta = \frac{\pi}{2} \delta_{nm}. \]
+First, we find a trigonometric representation for $U_n(x)$. Let $x = \cos\theta$.
+The definition provided is $U_n(x) = \frac{1}{n+1} T_{n+1}'(x)$.
+\[ T_{n+1}(\cos\theta) = \cos((n+1)\theta) \]
+Differentiating with respect to $\theta$ using the chain rule:
+\[ \frac{d}{d\theta} T_{n+1}(\cos\theta) = T_{n+1}'(\cos\theta) (-\sin\theta) = -(n+1) \sin((n+1)\theta) \]
+Substituting the definition:
+\[ (n+1) U_n(\cos\theta) (-\sin\theta) = -(n+1) \sin((n+1)\theta) \implies U_n(\cos\theta) = \frac{\sin((n+1)\theta)}{\sin\theta}. \]
+To derive the recurrence, we use the product-to-sum identity:
+\[ 2 \sin A \cos B = \sin(A+B) + \sin(A-B) \]
+Let $A = (n+1)\theta$ and $B = \theta$:
+\[ 2 \sin((n+1)\theta) \cos\theta = \sin((n+2)\theta) + \sin(n\theta) \]
+Divide both sides by $\sin\theta$:
+\[ 2 \frac{\sin((n+1)\theta)}{\sin\theta} \cos\theta = \frac{\sin((n+2)\theta)}{\sin\theta} + \frac{\sin(n\theta)}{\sin\theta} \]
+Substituting $U_k(x)$ and $x = \cos\theta$:
+\[ 2 U_n(x) \cdot x = U_{n+1}(x) + U_{n-1}(x) \implies \boxed{U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x)} \]
+Initial conditions:
+\begin{itemize}
+    \item $U_0(x) = \frac{\sin\theta}{\sin\theta} = 1$.
+    \item $U_1(x) = \frac{\sin 2\theta}{\sin\theta} = \frac{2 \sin\theta \cos\theta}{\sin\theta} = 2x$.
+\end{itemize}
 
-\textbf{(c) 2-Point Gaussian Quadrature:}
-The nodes are the roots of $U_2(x) = 2x U_1 - U_0 = 4x^2 - 1 = 0 \implies x_1 = -1/2, x_2 = 1/2$.
-The weights for a symmetric interval are $w_1 = w_2 = \frac{1}{2} \int_{-1}^1 \sqrt{1-x^2} dx = \frac{1}{2} \cdot \frac{\pi}{2} = \pi/4$.
-The rule is: $\int_{-1}^1 f(x) \sqrt{1-x^2} dx \approx \frac{\pi}{4} [ f(-1/2) + f(1/2) ]$.
+\textbf{(b) Orthogonality Proof}
+
+We evaluate the inner product $\langle U_n, U_m \rangle$ using the substitution $x = \cos\theta$, $dx = -\sin\theta d\theta$. Note $\sqrt{1-x^2} = \sin\theta$.
+\[ I_{nm} = \int_{-1}^1 U_n(x) U_m(x) \sqrt{1-x^2} dx = \int_{\pi}^0 \frac{\sin((n+1)\theta)}{\sin\theta} \frac{\sin((m+1)\theta)}{\sin\theta} \sin\theta (-\sin\theta d\theta) \]
+\[ I_{nm} = \int_0^\pi \sin((n+1)\theta) \sin((m+1)\theta) d\theta \]
+Using the identity $\sin A \sin B = \frac{1}{2}[\cos(A-B) - \cos(A+B)]$:
+\[ I_{nm} = \frac{1}{2} \int_0^\pi [\cos((n-m)\theta) - \cos((n+m+2)\theta)] d\theta \]
+\begin{itemize}
+    \item If $n \neq m$:
+    \[ I_{nm} = \frac{1}{2} \left[ \frac{\sin((n-m)\theta)}{n-m} - \frac{\sin((n+m+2)\theta)}{n+m+2} \right]_0^\pi = 0. \]
+    \item If $n = m$:
+    \[ I_{nn} = \frac{1}{2} \int_0^\pi [1 - \cos((2n+2)\theta)] d\theta = \frac{1}{2} [\theta]_0^\pi = \frac{\pi}{2}. \]
+\end{itemize}
+Thus, $\langle U_n, U_m \rangle = \frac{\pi}{2} \delta_{nm}$, proving \textbf{orthogonality}.
+
+\textbf{(c) 2-Point Gaussian Quadrature Derivation}
+
+The nodes of a Gaussian quadrature rule are the roots of the orthogonal polynomial of the corresponding degree. For $n=2$:
+\[ U_2(x) = 2x U_1(x) - U_0(x) = 2x(2x) - 1 = 4x^2 - 1. \]
+Setting $U_2(x) = 0 \implies 4x^2 = 1 \implies \boxed{x_1 = -1/2, x_2 = 1/2}$.
+The weights $w_1, w_2$ can be found using the method of undetermined coefficients (the rule must be exact for $f(x)=1, x$):
+\begin{enumerate}
+    \item For $f(x)=1$: $w_1 + w_2 = \int_{-1}^1 \sqrt{1-x^2} dx$. Let $x = \sin\phi$, $dx = \cos\phi d\phi$:
+    \[ \int_{-\pi/2}^{\pi/2} \cos^2\phi d\phi = \int_{-\pi/2}^{\pi/2} \frac{1+\cos 2\phi}{2} d\phi = \frac{\pi}{2}. \]
+    \item For $f(x)=x$: $w_1 x_1 + w_2 x_2 = \int_{-1}^1 x \sqrt{1-x^2} dx = 0$ (integrand is odd).
+\end{enumerate}
+From (2), $w_1(-1/2) + w_2(1/2) = 0 \implies w_1 = w_2$.
+From (1), $2w_1 = \pi/2 \implies w_1 = w_2 = \pi/4$.
+The rule is:
+\[ \boxed{\int_{-1}^1 f(x) \sqrt{1-x^2} dx \approx \frac{\pi}{4} \left[ f(-1/2) + f(1/2) \right]} \]
 \end{solution}
+
+\begin{sidenote}
+\textbf{Pedagogical Note: The Motivation for Orthogonal Polynomials}
+While Chebyshev polynomials (like $U_n(x)$ in this exercise) are optimized for specific weights like $\sqrt{1-x^2}$, the \textbf{Legendre polynomials} $P_n(x)$ are the most "natural" basis for the standard $L^2[-1, 1]$ inner product with weight $w(x)=1$:
+\[ \langle f, g \rangle = \int_{-1}^1 f(x)g(x) dx. \]
+
+\textbf{1. Why Legendre?}
+Standard powers $\{1, x, x^2, \dots\}$ are "tangled" (not orthogonal). $P_n(x)$ can be viewed as the "purified" version of $x^n$ where all "low-order contamination" (projections onto $x^0, \dots, x^{n-1}$) has been subtracted.
+\begin{itemize}
+    \item $P_0(x) = 1$
+    \item $P_1(x) = x$
+    \item $P_2(x) \propto x^2 - 1/3$ (subtracting the constant component)
+\end{itemize}
+
+\textbf{2. The Logic of the Rodrigues Formula}
+The formula $P_n(x) = \frac{1}{2^n n!} \frac{d^n}{dx^n}(x^2-1)^n$ is not a random discovery. It is designed such that $(x^2-1)^n$ has \textbf{$n$-fold zeros} at $x = \pm 1$. 
+When checking orthogonality against any lower-order polynomial $q(x)$ ($\deg q < n$), we integrate by parts $n$ times. Each time:
+\begin{itemize}
+    \item The boundary terms vanish due to the high-order zeros at $\pm 1$.
+    \item After $n$ steps, the $n$-th derivative falls on $q(x)$, which becomes zero.
+\end{itemize}
+This "boundary-vanishing" property is the core mathematical driver behind the existence of such formulas.
+
+\textbf{3. Connection to Quadrature}
+Just as the roots of $U_2(x)$ give the nodes for the weight $\sqrt{1-x^2}$ in part (c), the roots of $P_n(x)$ give the optimal nodes for standard \textbf{Gauss-Legendre Quadrature}.
+\end{sidenote}
 
 \begin{exercise}
 \label{applied:2024:4}
@@ -147,22 +284,60 @@ Provide a derivation and write down the resulting linear system (by giving the e
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Discretization:}
-We use the centered difference scheme at $x_l$:
-\[ - \frac{1}{h} \left[ \left( a \frac{du}{dx} \right)_{l+1/2} - \left( a \frac{du}{dx} \right)_{l-1/2} \right] \approx f_l \]
-\[ - \frac{1}{h} \left[ a_{l+1/2} \frac{u_{l+1} - u_l}{h} - a_{l-1/2} \frac{u_l - u_{l-1}}{h} \right] = f_l \]
-\[ \frac{1}{h^2} [ -a_{l+1/2} u_{l+1} + (a_{l+1/2} + a_{l-1/2}) u_l - a_{l-1/2} u_{l-1} ] = f_l. \]
-For $l=1, \dots, n-1$, with $u_0 = u_n = 0$, we have $A u = f$ where:
-\[ A_{l,l} = \frac{a_{l+1/2} + a_{l-1/2}}{h^2}, \quad A_{l,l-1} = -\frac{a_{l-1/2}}{h^2}, \quad A_{l,l+1} = -\frac{a_{l+1/2}}{h^2}. \]
+\textbf{(a) Staggered Grid Discretization}
 
-\textbf{(b) Eigenvalue Bounds:}
-By Gerschgorin's Circle Theorem, every eigenvalue $\lambda$ lies in the union of discs $D_l = \{ z \in \mathbb{C} \mid |z - A_{ll}| \leq R_l \}$ where $R_l = \sum_{j \neq l} |A_{lj}|$.
-Here $R_l = \frac{a_{l+1/2} + a_{l-1/2}}{h^2} = A_{ll}$.
-Thus each disc $D_l$ is centered at $A_{ll}$ and has radius $A_{ll}$, which means they all touch the origin and lie within the interval $[0, 2 A_{ll}]$.
-Let $a_{\max} = \| a \|_\infty$. Then $A_{ll} \leq \frac{2 a_{\max}}{h^2}$.
-The union of these discs is contained in a single disc centered at $\frac{2 a_{\max}}{h^2}$ with radius $\frac{2 a_{\max}}{h^2}$.
-\[ \mathcal{D} = \left\{ z \in \mathbb{C} : \left| z - \frac{2 a_{\max}}{h^2} \right| \leq \frac{2 a_{\max}}{h^2} \right\}. \]
+To avoid differentiating $a(x)$, we use a staggered grid approach. Define midpoints $x_{l+1/2} = (l+1/2)h$. 
+Let $w(x) = a(x) \frac{du}{dx}$. The ODE is $-\frac{dw}{dx} = f(x)$.
+Approximating the derivative of $w$ at $x_l$ using a centered difference:
+\[ -\frac{w_{l+1/2} - w_{l-1/2}}{h} \approx f(x_l) \]
+Now approximate $w$ at the midpoints:
+\[ w_{l+1/2} = a(x_{l+1/2}) \left( \frac{du}{dx} \right)_{l+1/2} \approx a_{l+1/2} \frac{u_{l+1} - u_l}{h} \]
+\[ w_{l-1/2} = a(x_{l-1/2}) \left( \frac{du}{dx} \right)_{l-1/2} \approx a_{l-1/2} \frac{u_l - u_{l-1}}{h} \]
+Substituting these back into the balance equation:
+\[ -\frac{1}{h} \left[ a_{l+1/2} \frac{u_{l+1} - u_l}{h} - a_{l-1/2} \frac{u_l - u_{l-1}}{h} \right] = f_l \]
+\[ \frac{1}{h^2} \left[ -a_{l-1/2} u_{l-1} + (a_{l-1/2} + a_{l+1/2}) u_l - a_{l+1/2} u_{l+1} \right] = f_l \]
+For $l = 1, \dots, n-1$, and $u_0 = u_n = 0$, the system is $A \mathbf{u} = \mathbf{f}$ where $A$ is tridiagonal:
+\begin{itemize}
+    \item $A_{l,l} = \frac{a_{l-1/2} + a_{l+1/2}}{h^2}$
+    \item $A_{l,l-1} = -\frac{a_{l-1/2}}{h^2}$
+    \item $A_{l,l+1} = -\frac{a_{l+1/2}}{h^2}$
+\end{itemize}
+This scheme is $O(h^2)$ accurate as it relies on centered differences.
+
+\textbf{(b) Gerschgorin's Circle Theorem Application}
+
+Every eigenvalue $\lambda$ of $A$ lies in at least one Gerschgorin disc $D_l$:
+\[ D_l = \{ z \in \mathbb{C} \mid |z - A_{l,l}| \leq R_l \}, \quad R_l = \sum_{j \neq l} |A_{l,j}| \]
+For the tridiagonal matrix $A$:
+\begin{itemize}
+    \item \textbf{Internal rows ($1 < l < n-1$):} The row sum of off-diagonal elements is $R_l = |A_{l,l-1}| + |A_{l,l+1}| = \frac{a_{l-1/2}}{h^2} + \frac{a_{l+1/2}}{h^2}$. This is exactly equal to the diagonal element $A_{l,l}$. Thus, these discs are centered at $A_{l,l}$ and touch the origin.
+    \item \textbf{Boundary rows ($l=1$ and $l=n-1$):} For the first row, $R_1 = |A_{1,2}| = \frac{a_{3/2}}{h^2}$. The diagonal is $A_{1,1} = \frac{a_{1/2} + a_{3/2}}{h^2}$. Since $a(x) > \delta \geq 0$, we have $R_1 < A_{1,1}$. Similarly, for the last row, $R_{n-1} < A_{n-1,n-1}$. These discs lie strictly in the right half-plane and do not touch the origin.
+\end{itemize}
+Since $A$ is real and symmetric ($A_{l,l+1} = A_{l+1,l}$), its eigenvalues are strictly real. The matrix is irreducibly diagonally dominant because it is tridiagonal, the boundary rows are strictly diagonally dominant, and the graph of the matrix is connected. This implies $A$ is positive definite and all eigenvalues are strictly positive.
+
+To find the containment disc, let $a_{\max} = \sup_{x \in [0,1]} a(x)$. The maximum possible value for any $A_{l,l} + R_l$ is:
+\[ A_{l,l} + R_l \leq 2 A_{l,l} = \frac{2(a_{l-1/2} + a_{l+1/2})}{h^2} \leq \frac{4 a_{\max}}{h^2}. \]
+Thus, all eigenvalues $\lambda$ are contained in the interval $(0, \frac{4 a_{\max}}{h^2}]$. The smallest disc in $\mathbb{C}$ centered on the real axis guaranteed to contain all eigenvalues is:
+\[ \boxed{\mathcal{D} = \left\{ z \in \mathbb{C} : \left| z - \frac{2 a_{\max}}{h^2} \right| \leq \frac{2 a_{\max}}{h^2} \right\}} \]
+
+\begin{sidenote}
+\textbf{Pedagogical Note:} The fact that $R_l = A_{ll}$ implies the matrix is diagonally dominant. Specifically, for the boundary rows, $R_l < A_{ll}$ (e.g., $R_1 = a_{1.5}/h^2 < (a_{0.5}+a_{1.5})/h^2$), which ensures the matrix is irreducibly diagonally dominant and thus positive definite.
+\end{sidenote}
 \end{solution}
+
+\begin{remark}
+\textbf{Formal Definition of Gerschgorin's Circle Theorem:}
+The localization of the spectrum used in the solution above is provided by \textbf{Gerschgorin's Circle Theorem} (also known as the Gerschgorin Disk Theorem).
+
+\textbf{Definition:} Let $A = (a_{ij}) \in \mathbb{C}^{n \times n}$ be a complex square matrix. For each row $i \in \{1, \dots, n\}$, define the \textbf{Gerschgorin radius} $R_i$ as the sum of the absolute values of the off-diagonal entries in that row:
+\[ R_i = \sum_{j \neq i} |a_{ij}|. \]
+Let $D_i(a_{ii}, R_i)$ be the closed disc in the complex plane centered at $a_{ii}$ with radius $R_i$:
+\[ D_i = \{ z \in \mathbb{C} : |z - a_{ii}| \leq R_i \}. \]
+The theorem states that every eigenvalue $\lambda$ of the matrix $A$ must lie within the union of these $n$ discs:
+\[ \lambda \in \bigcup_{i=1}^n D_i. \]
+
+Furthermore, for the matrix $A$ in Exercise 4, which is real, symmetric, and tridiagonal, the theorem effectively bounds the eigenvalues to a segment of the real axis. The fact that the boundary rows are \textbf{strictly diagonally dominant} ($R_i < |a_{ii}|$) while the internal rows are diagonally dominant ($R_i = |a_{ii}|$) ensures that the matrix is positive definite and all its eigenvalues are strictly positive.
+\end{remark}
 
 \begin{exercise}
 \label{applied:2024:5}
@@ -177,29 +352,85 @@ is well posed as an initial value problem.
 (b) Consider solving it numerically using the scheme
 
 \[
-\frac {u (t + k , x) - u (t - k , x)}{2 k} = \frac {- \frac {1}{2} u (x - 2 h , t) + u (x - h , t) - u (x + h , t) + \frac {1}{2} u (x + 2 h , t)}{h}.
+\frac {u (t + k , x) - u (t - k , x)}{2 k} = \frac {- \frac {1}{2} u (x - 2 h , t) + u (x - h , t) - u (x + h , t) + \frac {1}{2} u (x + 2 h , t)}{h^3}.
 \]
 
 Determine this scheme’s stability condition.
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Well-posedness:}
-Applying the Fourier transform in space: $\hat{u}_t = (ik)^3 \hat{u} = -ik^3 \hat{u}$.
-The solution is $\hat{u}(k, t) = e^{-ik^3 t} \hat{u}(k, 0)$.
-Since $|e^{-ik^3 t}| = 1$, we have $\|\hat{u}(\cdot, t)\|_{L^2} = \|\hat{u}(\cdot, 0)\|_{L^2}$. The $L^2$ norm is conserved, so the IVP is well-posed.
+\textbf{Definition: Well-posedness (Hadamard's Criteria)}
+A mathematical problem is said to be \textit{well-posed} if:
+\begin{enumerate}
+    \item A solution exists.
+    \item The solution is unique.
+    \item The solution's behavior changes continuously with the initial conditions (stability).
+\end{enumerate}
+For a linear evolution PDE $u_t = P(\partial_x)u$, well-posedness in $L^2$ specifically requires that there exists a constant $C(T)$ such that $\|u(\cdot, t)\|_{L^2} \leq C(T) \|u(\cdot, 0)\|_{L^2}$ for all $0 \leq t \leq T$.
 
-\textbf{(b) Stability:}
-Assume the correct scale of the divisor is $h^3$ for consistency. Let $u_j^n = g^n e^{ij\theta}$.
-Substituting into the scheme (Leapfrog step):
-\[ \frac{g^{n+1} - g^{n-1}}{2k} = \frac{1}{h^3} \left[ -\frac{1}{2} e^{-2i\theta} + e^{-i\theta} - e^{i\theta} + \frac{1}{2} e^{2i\theta} \right] g^n \]
-\[ g^2 - 1 = \frac{2k}{h^3} \left[ i \sin(2\theta) - 2 i \sin\theta \right] g. \]
-Let $S = \frac{k}{h^3} ( \sin(2\theta) - 2 \sin\theta ) = \frac{2k}{h^3} \sin\theta (\cos\theta - 1)$.
-The quadratic is $g^2 - 2 i S g - 1 = 0$, with roots $g = i S \pm \sqrt{1 - S^2}$.
-For stability, we require $|g| = 1$, which implies $1 - S^2 \geq 0 \implies |S| \leq 1$.
-The maximum of $|f(\theta)| = |2 \sin\theta (\cos\theta - 1)|$ occurs at $\cos\theta = -1/2$, where $|f(\theta)| = \frac{3\sqrt{3}}{2}$.
-Thus stability requires $\frac{k}{h^3} \cdot \frac{3\sqrt{3}}{2} \leq 1 \implies k \leq \frac{2}{3\sqrt{3}} h^3 \approx 0.3849 h^3$.
+\textbf{(a) Well-posedness Analysis}
+
+A PDE $u_t = P(\partial_x)u$ is well-posed in $L^2$ if the growth factor of its spatial Fourier transform is bounded.
+Apply the Fourier transform $\hat{u}(\xi, t) = \int_{-\infty}^\infty u(x, t) e^{-i\xi x} dx$:
+\[ \frac{\partial}{\partial t} \hat{u}(\xi, t) = (i\xi)^3 \hat{u}(\xi, t) = -i\xi^3 \hat{u}(\xi, t). \]
+The solution in Fourier space is:
+\[ \hat{u}(\xi, t) = \hat{u}(\xi, 0) e^{-i\xi^3 t}. \]
+Taking the magnitude:
+\[ |\hat{u}(\xi, t)| = |\hat{u}(\xi, 0)| \cdot |e^{-i\xi^3 t}| = |\hat{u}(\xi, 0)|. \]
+By Plancherel's theorem, $\|u(\cdot, t)\|_{L^2} = \|\hat{u}(\cdot, t)\|_{L^2} = \|\hat{u}(\cdot, 0)\|_{L^2} = \|u(\cdot, 0)\|_{L^2}$.
+Since the $L^2$ norm of the solution is exactly conserved (no growth), the problem is \textbf{well-posed}.
+
+\textbf{Definition: von Neumann Stability}
+For a finite difference scheme, \textit{von Neumann stability} (also known as Fourier stability analysis) is a method to determine the conditions under which the numerical errors (or the solution itself) do not grow uncontrollably as the simulation progresses through time steps.
+
+\begin{itemize}
+    \item \textbf{The Core Idea:} We assume the solution consists of a sum of waves (Fourier modes) of the form $u_j^n = g^n e^{i j \theta}$, where $j$ is the spatial index, $n$ is the time level, and $\theta = \xi h$ is the phase angle.
+    \item \textbf{Amplification Factor ($g$):} This value tells us how much the amplitude of a wave changes in a single time step. $u_j^{n+1} = g u_j^n$.
+    \item \textbf{Stability Criterion:} For the solution to remain bounded, we require $|g| \leq 1$ for all possible wave frequencies $\theta$. If $|g| > 1$, even a tiny error will be multiplied by $g$ every step, leading to "numerical blow-up."
+\end{itemize}
+
+\textbf{Examples for Beginners:}
+\begin{enumerate}
+    \item \textbf{Heat Equation (Forward Euler):} For $u_t = u_{xx}$, the stability condition is $k \leq \frac{h^2}{2}$. If you choose a time step $k$ larger than this, the high-frequency "noise" in your data will grow exponentially, destroying the simulation.
+    \item \textbf{Advection Equation (Upwind Scheme):} This leads to the famous \textit{CFL Condition} (Courant-Friedrichs-Lewy), typically $a \frac{k}{h} \leq 1$. This physically means information cannot travel faster across the grid than the numerical scheme allows.
+\end{enumerate}
+
+\textbf{(b) von Neumann Stability Analysis}
+
+The scheme is a Leapfrog-type temporal discretization with a centered spatial difference. Let $u_j^n = g^n e^{ij\theta}$ where $\theta = \xi h$.
+Substituting into the spatial operator $L$:
+\[ L u_j = \frac{1}{h^3} \left[ -\frac{1}{2} e^{-2i\theta} + e^{-i\theta} - e^{i\theta} + \frac{1}{2} e^{2i\theta} \right] g^n e^{ij\theta} \]
+\begin{sidenote}
+\textbf{Sidenote: Deriving the Spatial Operator}
+Using Euler's formula $e^{i\phi} - e^{-i\phi} = 2i\sin\phi$:
+\[ \frac{1}{2} e^{2i\theta} - \frac{1}{2} e^{-2i\theta} = i\sin(2\theta) \]
+\[ e^{-i\theta} - e^{i\theta} = -2i\sin\theta \]
+Summing these yields the imaginary operator: $i[\sin(2\theta) - 2\sin\theta]$.
+\end{sidenote}
+\[ L u_j = \frac{1}{h^3} [ i \sin(2\theta) - 2 i \sin\theta ] u_j. \]
+The full scheme is:
+\[ \frac{g^{n+1} - g^{n-1}}{2k} = \frac{i}{h^3} [ \sin(2\theta) - 2 \sin\theta ] g^n \]
+Let $S = \frac{k}{h^3} (\sin(2\theta) - 2 \sin\theta)$. The characteristic equation is:
+\[ g^2 - 2 i S g - 1 = 0 \implies g = i S \pm \sqrt{1 - S^2}. \]
+For stability, we require $|g| \leq 1$.
+\begin{itemize}
+    \item If $1 - S^2 \geq 0$: Then $g = iS \pm \sqrt{1-S^2}$. The magnitude is $|g|^2 = S^2 + (1 - S^2) = 1$. This is \textit{neutrally stable} (errors don't grow, but they don't decay either).
+    \item If $1 - S^2 < 0$: Then $\sqrt{1-S^2}$ is imaginary, say $i\sqrt{S^2-1}$. Then $g = i(S \pm \sqrt{S^2-1})$. One of these roots will have $|g| = |S| + \sqrt{S^2 - 1} > 1$, causing the simulation to blow up.
+\end{itemize}
+Thus, stability requires $|S| \leq 1$ for all $\theta \in [0, 2\pi]$.
+Analyze $f(\theta) = \sin(2\theta) - 2 \sin\theta = 2 \sin\theta \cos\theta - 2 \sin\theta = 2 \sin\theta (\cos\theta - 1)$.
+To find the extremum, set $f'(\theta) = 0$:
+\[ f'(\theta) = 2 \cos\theta (\cos\theta - 1) - 2 \sin^2\theta = 2 \cos^2\theta - 2 \cos\theta - 2(1 - \cos^2\theta) = 4 \cos^2\theta - 2 \cos\theta - 2 = 0 \]
+\[ 2 \cos^2\theta - \cos\theta - 1 = 0 \implies (2 \cos\theta + 1)(\cos\theta - 1) = 0. \]
+\begin{enumerate}
+    \item $\cos\theta = 1 \implies f(\theta) = 0$.
+    \item $\cos\theta = -1/2 \implies \sin\theta = \pm \sqrt{3}/2$.
+    $|f(\theta)| = |2 (\pm \sqrt{3}/2) (-1/2 - 1)| = | \pm \sqrt{3} (-3/2) | = \frac{3\sqrt{3}}{2}$.
+\end{enumerate}
+The stability condition $|S| \leq 1$ becomes:
+\[ \frac{k}{h^3} \cdot \frac{3\sqrt{3}}{2} \leq 1 \implies \boxed{k \leq \frac{2}{3\sqrt{3}} h^3 \approx 0.385 h^3}. \]
 \end{solution}
+
 
 \begin{exercise}
 \label{applied:2024:6}
@@ -224,33 +455,122 @@ v _ {n + 1} = v _ {n} + \mu k L v _ {n}, \tag {1}
 and (ii) Crank-Nicolson
 
 \[
-v _ {n + 1} = v _ {n} + \mu k \left(L v _ {n} + L v _ {n + 1}\right). \tag {2}
+v _ {n + 1} = v _ {n} + \mu k \frac{1}{2} \left(L v _ {n} + L v _ {n + 1}\right). \tag {2}
 \]
 
 Throughout, consider $[ a , b ] = [ 0 , 2 \pi ]$ and the finite difference stencil to have periodic boundary conditions on the spatial lattice $[ 0 , h , 2 h , \ldots , ( N - 1 ) h ]$ where $h = { \frac { 2 \pi } { N } }$ and $N$ is even.
 
 (a) Determine the order of accuracy of the central difference operator $\mathit { L v }$ in approximating the second derivative $v _ { x x }$ .   
-(b) Using $v _ { m } ^ { n } = \sum _ { l = 0 } ^ { N - 1 } \hat { v } _ { l } ^ { n } \exp \left( - i \frac { 2 \pi l m } { N } \right)$ vˆ give the updates $\hat { v } _ { l } ^ { n + 1 }$ in terms of $\hat { v } _ { l } ^ { n }$ for each of the methods, including the case $l = 0$ .   
-(c) Give the solution for $v _ { m } ^ { \pi }$ for each method when the initial condition is $\phi ( m \Delta x ) =$ $( - 1 ) ^ { m }$ .   
+(b) Using $v _ { m } ^ { n } = \sum _ { l = 0 } ^ { N - 1 } \hat { v } _ { l } ^ { n } \exp \left( - i \frac { 2 \pi l m } { N } \right)$ give the updates $\hat { v } _ { l } ^ { n + 1 }$ in terms of $\hat { v } _ { l } ^ { n }$ for each of the methods, including the case $l = 0$ .   
+(c) Give the solution for $v _ { m } ^ { n }$ for each method when the initial condition is $\phi ( m \Delta x ) =$ $( - 1 ) ^ { m }$ .   
 (d) What are the stability constraints on the time step $k$ for each of the methods, if any, in equations (1) and (2)? Show there are either no constraints or express them in the form $k \leq F ( h , \mu )$ .
 \end{exercise}
 
 \begin{solution}
-\textbf{(a) Accuracy:}
-By Taylor expansion, $L v = v_{xx} + \frac{h^2}{12} v_{xxxx} + O(h^4)$, so the order of accuracy is $\mathcal{O}(h^2)$.
+\subsubsection*{Core Concepts}
+\textbf{Intuition / Motivation}: The diffusion (or heat) equation $\frac{\partial v}{\partial t} = \mu \frac{\partial^2 v}{\partial x^2}$ describes the macroscopic evolution of a conserved quantity distributing itself from regions of high concentration to regions of low concentration, fundamentally acting as a continuous smoothing process over time. High-frequency spatial variations (sharp peaks and valleys) are damped out exponentially faster than low-frequency variations. Numerically, our primary goal is to preserve this smoothing property without artificially amplifying any frequencies due to time-discretization errors.
 
-\textbf{(b) Growth Factors:}
-Let $\hat{v}_l^{n+1} = g_l \hat{v}_l^n$. The eigenvalue of $L$ corresponding to the $l$-th mode is $\lambda_l = \frac{2(\cos \theta_l - 1)}{h^2} = -\frac{4}{h^2} \sin^2(\frac{\theta_l}{2})$, where $\theta_l = \frac{2\pi l}{N}$.
-(i) FE: $g_{FE, l} = 1 + \mu k \lambda_l = 1 - \frac{4\mu k}{h^2} \sin^2(\frac{\theta_l}{2})$.
-(ii) CN: $g_{CN, l} = \frac{1 + \mu k \lambda_l / 2}{1 - \mu k \lambda_l / 2} = \frac{1 - \frac{2\mu k}{h^2} \sin^2(\frac{\theta_l}{2})}{1 + \frac{2\mu k}{h^2} \sin^2(\frac{\theta_l}{2})}$.
+\textbf{Prerequisites}: The numerical analysis of linear, shift-invariant difference equations heavily relies on discrete Fourier analysis. Because the spatial domain is periodic and the finite difference operator $L$ applies identical uniform weights everywhere (translation invariance), the complex exponentials (Fourier modes) serve as the fundamental eigenfunctions of the discrete operator. By decomposing the solution into a superposition of these orthogonal modes, we can analyze the precise growth or decay of each frequency completely isolated from the rest, beautifully transforming a massive system of coupled spatial difference equations into uncoupled, scalar recurrence relations.
 
-\textbf{(c) Solution for $(-1)^m$:}
-$(-1)^m = e^{im\pi}$, so $\theta = \pi$. $\sin^2(\pi/2) = 1$.
-(i) $v_m^n = g_{FE}(\pi)^n (-1)^m = (1 - \frac{4\mu k}{h^2})^n (-1)^m$.
-(ii) $v_m^n = g_{CN}(\pi)^n (-1)^m = \left( \frac{1 - 2\mu k / h^2}{1 + 2\mu k / h^2} \right)^n (-1)^m$.
+\subsubsection*{(a) Order of Accuracy of the Central Difference Operator}
+To determine the exact order of accuracy of the central difference operator $L v_m = \frac{v_{m+1} - 2v_m + v_{m-1}}{h^2}$ in approximating the continuous second derivative $v_{xx}(x_m)$, we explicitly expand the neighboring nodal values $v_{m+1} = v(x_m + h)$ and $v_{m-1} = v(x_m - h)$ in Taylor series centered around $x_m$:
+\[
+v(x_m \pm h) = v(x_m) \pm h v_x(x_m) + \frac{h^2}{2!} v_{xx}(x_m) \pm \frac{h^3}{3!} v_{xxx}(x_m) + \frac{h^4}{4!} v_{xxxx}(x_m) \pm \dots
+\]
+Summing the expansions for $v_{m+1} and v_{m-1}$, we observe that all terms involving odd powers of $h$ (which possess alternating signs) inherently and perfectly cancel out due to the symmetric nature of the stencil.
+\sidenote{Adding the two series mathematically: \\ $v(x_m+h) + v(x_m-h) = \left(v + h v_x + \dots\right) + \left(v - h v_x + \dots\right) = 2v + h^2 v_{xx} + \frac{h^4}{12} v_{xxxx} + \dots$}
+This algebraic cancellation isolates only the even powers of $h$:
+\[
+v(x_m + h) + v(x_m - h) = 2v(x_m) + h^2 v_{xx}(x_m) + \frac{h^4}{12} v_{xxxx}(x_m) + \mathcal{O}(h^6).
+\]
+Substituting this resultant sum back directly into the definition of the central difference operator $L v_m$:
+\[
+L v_m = \frac{2v(x_m) + h^2 v_{xx}(x_m) + \frac{h^4}{12} v_{xxxx}(x_m) + \mathcal{O}(h^6) - 2v(x_m)}{h^2}.
+\]
+Simplifying the entire expression yields the continuous derivative plus residual truncation terms:
+\[
+L v_m = v_{xx}(x_m) + \frac{h^2}{12} v_{xxxx}(x_m) + \mathcal{O}(h^4).
+\]
+The fundamental truncation error is bounded by $L v_m - v_{xx}(x_m) = \mathcal{O}(h^2)$, rigorously confirming that the central difference operator is second-order accurate.
 
-\textbf{(d) Stability:}
-For FE, $|g_{FE}| \leq 1 \implies -1 \leq 1 - \frac{4\mu k}{h^2} \sin^2(\theta/2) \leq 1$.
-The left inequality gives $k \leq \frac{h^2}{2\mu}$ (for $\sin^2=1$).
-For CN, $|g_{CN}| \leq 1$ is always true for any $k > 0$, so it is unconditionally stable.
+\subsubsection*{(b) Fourier Mode Updates}
+We substitute the discrete Fourier mode $v_m^n = \sum_{l=0}^{N-1} \hat{v}_l^n \exp\left(-i \frac{2\pi l m}{N}\right)$ into the designated numerical schemes. Since the spatial operator $L$ is strictly linear, we can exclusively analyze its localized action on a single basis mode $e^{i \theta_l m}$, where $\theta_l = -\frac{2\pi l}{N}$.
+\sidenote{Applying the uniform operator $L$ to the isolated mode yields: \\ $L \left( e^{i \theta_l m} \right) = \frac{e^{i \theta_l (m+1)} - 2 e^{i \theta_l m} + e^{i \theta_l (m-1)}}{h^2} = e^{i \theta_l m} \left( \frac{e^{i \theta_l} - 2 + e^{-i \theta_l}}{h^2} \right)$.}
+Using Euler's symmetric formula $e^{i\theta} + e^{-i\theta} = 2\cos\theta$, we can elegantly rewrite the isolated numerator factor as $2 \cos(\theta_l) - 2$.
+\sidenote{Applying the trigonometric half-angle identity $1 - \cos\theta = 2\sin^2(\theta/2)$: \\ $2 \cos(\theta_l) - 2 = -4 \sin^2\left(\frac{\theta_l}{2}\right) = -4 \sin^2\left(-\frac{\pi l}{N}\right) = -4 \sin^2\left(\frac{\pi l}{N}\right)$.}
+This powerful substitution reveals that the periodic Fourier modes are exact eigenfunctions of the discrete Laplacian $L$, paired with corresponding real, strictly non-positive eigenvalues $\lambda_l$:
+\[
+L \left( e^{-i \frac{2\pi l m}{N}} \right) = \lambda_l e^{-i \frac{2\pi l m}{N}}, \quad \text{where} \quad \lambda_l = -\frac{4}{h^2} \sin^2\left( \frac{\pi l}{N} \right).
+\]
+\footnote{The specific mode $l=0$ corresponds to the zero-frequency (constant) macro-component of the solution, representing the total spatial mean of the distribution $\int_a^b v(x,t) dx$. For $l=0$, the analytical eigenvalue is $\lambda_0 = 0$, explicitly reflecting the physical conservation of the total mass in the periodic domain, since a flat constant spatial profile is entirely unaffected by diffusion.}
+
+\textbf{(i) Forward-Euler Update:}
+Substituting the eigen-decomposition directly into the explicit Forward-Euler scheme (Equation 1):
+\[
+\hat{v}_l^{n+1} e^{i \theta_l m} = \hat{v}_l^n e^{i \theta_l m} + \mu k \lambda_l \hat{v}_l^n e^{i \theta_l m}.
+\]
+Factoring out the shared spatial exponential $e^{i \theta_l m}$ gives the frequency-specific scalar amplification factor $g_l = 1 + \mu k \lambda_l$:
+\[
+\hat{v}_l^{n+1} = \left( 1 - \frac{4 \mu k}{h^2} \sin^2\left(\frac{\pi l}{N}\right) \right) \hat{v}_l^n.
+\]
+
+\textbf{(ii) Crank-Nicolson Update:}
+Assuming the standard implicit Crank-Nicolson representation (with the $\frac{1}{2}$ trapezoidal averaging coefficient from Equation 2):
+\sidenote{Using the explicit eigenvalue relation mapped across both the current and future time steps: \\ $\hat{v}_l^{n+1} = \hat{v}_l^n + \frac{\mu k}{2} \lambda_l \hat{v}_l^n + \frac{\mu k}{2} \lambda_l \hat{v}_l^{n+1}$.}
+Algebraically grouping the $\hat{v}_l^{n+1}$ terms and solving isolates the specific frequency update fraction:
+\[
+\hat{v}_l^{n+1} = \left( \frac{1 + \frac{1}{2} \mu k \lambda_l}{1 - \frac{1}{2} \mu k \lambda_l} \right) \hat{v}_l^n = \left( \frac{1 - \frac{2 \mu k}{h^2} \sin^2\left(\frac{\pi l}{N}\right)}{1 + \frac{2 \mu k}{h^2} \sin^2\left(\frac{\pi l}{N}\right)} \right) \hat{v}_l^n.
+\]
+
+\subsubsection*{(c) Solution for the Highest Frequency Initial Condition}
+The supplied initial condition is rigidly oscillatory: $\phi(m \Delta x) = (-1)^m$. Since $m$ acts as an integer spatial index, we can dynamically express this condition in complex exponential form identically as $(-1)^m = \cos(\pi m) = e^{i \pi m}$.
+\footnote{The spatial sequence $(-1)^m$ alternates sign abruptly at every consecutive grid point. This characterizes the Nyquist frequency, which represents the absolute highest frequency structurally resolvable on any discrete grid, identifiable by a minimal continuous wavelength of $2h$. Because it oscillates most rapidly, it universally suffers the most severe numerical dispersion or damping and serves as the precise 'worst-case' benchmark mode for rigorously evaluating explicit stability limits.}
+To determine the corresponding internal wave number $l$, we perfectly match $e^{i \pi m}$ to our foundational Fourier basis $e^{-i 2\pi l m / N}$, yielding the congruence $-\frac{2\pi l}{N} \equiv \pi \pmod{2\pi}$, which corresponds directly to the critical index $l = N/2$ (valid since $N$ is mandated to be even). For this supreme Nyquist limit, the trigonometric term trapped in the eigenvalue definitively reaches its maximum amplitude:
+\[
+\sin^2\left( \frac{\pi (N/2)}{N} \right) = \sin^2\left( \frac{\pi}{2} \right) = 1.
+\]
+Thus, the discrete Laplacian eigenvalue violently achieves its most negative functional value: $\lambda_{N/2} = -4/h^2$.
+
+\textbf{(i) Forward-Euler:}
+The targeted amplification factor for the $l = N/2$ mode is definitively $g_{N/2} = 1 + \mu k \lambda_{N/2} = 1 - \frac{4 \mu k}{h^2}$. The physical solution at time step $n$ simply compounds this rigid amplification factor $n$ continuous times:
+\[
+v_m^n = \left( 1 - \frac{4 \mu k}{h^2} \right)^n (-1)^m.
+\]
+
+\textbf{(ii) Crank-Nicolson:}
+The parallel amplification factor for this critical mode is explicitly evaluated by forcing $\lambda_{N/2} = -4/h^2$ into the implicit Crank-Nicolson update fraction:
+\[
+g_{N/2} = \frac{1 + \frac{1}{2} \mu k \lambda_{N/2}}{1 - \frac{1}{2} \mu k \lambda_{N/2}} = \frac{1 - \frac{2 \mu k}{h^2}}{1 + \frac{2 \mu k}{h^2}}.
+\]
+Consequently, the full solution projected at time step $n$ is:
+\[
+v_m^n = \left( \frac{1 - \frac{2 \mu k}{h^2}}{1 + \frac{2 \mu k}{h^2}} \right)^n (-1)^m.
+\]
+
+\subsubsection*{(d) Stability Constraints (von Neumann Analysis)}
+For any numerical time-marching scheme to remain strictly stable in the boundless $L^2$ norm, the amplification factor $g_l$ must invariably satisfy $|g_l| \leq 1$ across all valid frequency modes $l \in [0, N-1]$. This rigorous analytical procedure is universally known as von Neumann stability analysis. For notational clarity, let $r = \frac{\mu k}{h^2} > 0$ denote the dimensionless grid ratio.
+
+\textbf{(i) Forward-Euler:}
+The spectral amplification factor is bounded by $g_l = 1 - 4r \sin^2\left(\frac{\pi l}{N}\right)$. Stability requires:
+\[
+-1 \leq 1 - 4r \sin^2\left(\frac{\pi l}{N}\right) \leq 1.
+\]
+The rightward inequality is unconditionally and trivially satisfied precisely because $4r \sin^2(\cdot) \geq 0$. Conversely, the leftward inequality imposes a dangerously strict upper bound on the time step. The most demanding and stringent constraint structurally occurs when $\sin^2\left(\frac{\pi l}{N}\right)$ is forcefully maximized (at the extreme Nyquist frequency $l = N/2$, where it strictly equals $1$), yielding:
+\[
+-1 \leq 1 - 4r \implies 4r \leq 2 \implies r \leq \frac{1}{2}.
+\]
+\footnote{This harsh theoretical constraint mathematically guarantees that the numerical domain of temporal dependence fully encompasses the physical domain of spatial dependence. For explicit diffusion schemes across the board, $r \le 1/2$ constitutes the standard CFL-like parabolic stability boundary, mandating that the temporal step $k$ must scale quadratically alongside the spatial resolution $h^2$.}
+Thus, the explicit Forward-Euler method is functionally categorized as conditionally stable, with the stability envelope explicitly expressed as:
+\[
+k \leq \frac{h^2}{2 \mu}.
+\]
+
+\textbf{(ii) Crank-Nicolson:}
+The holistic spectral amplification factor for this implicit scheme is dictated by:
+\[
+g_l = \frac{1 - 2r \sin^2\left(\frac{\pi l}{N}\right)}{1 + 2r \sin^2\left(\frac{\pi l}{N}\right)}.
+\]
+Let us strategically define a localized variable $z = 2r \sin^2\left(\frac{\pi l}{N}\right)$. It is crucial to note that $z \geq 0$ completely for all operational modes $l$ simply because $r > 0$ and squared parameters are undeniably non-negative. We can thereby rewrite the fractional amplification factor identically as $g_l = \frac{1 - z}{1 + z}$. We assess temporal stability fundamentally through the lens of this fractional linear transformation.
+\sidenote{For any conceivable real number $z \ge 0$, the numerator magnitude absolute $|1-z|$ is permanently and strictly less than or equal to the denominator magnitude $|1+z|$. \\ Therefore, the structural ratio is universally and strictly bounded: $\left| \frac{1-z}{1+z} \right| \le 1$.}
+Since $z \ge 0$ universally across the discrete spectrum, the stringent stability condition $|g_l| \leq 1$ is unconditionally satisfied regardless of any independent combinatorial choice of $k$, $h$, and $\mu > 0$. Therefore, the implicit Crank-Nicolson method remarkably imposes \textbf{no constraints} natively on the time step $k$. It acts entirely unconditionally stable (A-stable). This highly desirable, robust property is a direct mathematical hallmark of the specific fractional linear transformation acting as the scheme's temporal propagator (the Cayley transform), which gracefully and flawlessly maps the entire expansive left half of the complex eigenvalue plane (the continuously stable structural region) perfectly securely into the stable unit disk.
 \end{solution}

@@ -17,18 +17,53 @@ is a polynomial of degree $n$ with extrema at $x_{k}=\cos(k\pi/n)$, $k=0,1,\dots
 
 \begin{solution}
 \begin{enumerate}
-\item[(a)] Let $x = \cos \theta$, where $\theta \in [0, \pi]$. Then $T_n(x) = \cos(n\theta)$. Using the identity $\cos((n+1)\theta) + \cos((n-1)\theta) = 2\cos \theta \cos(n\theta)$, we obtain the recurrence relation:
-\[ T_{n+1}(x) = 2x T_n(x) - T_{n-1}(x) \]
-With $T_0(x) = 1$ and $T_1(x) = x$, it follows by induction that $T_n(x)$ is a polynomial of degree $n$. For $n \geq 1$, the leading coefficient $a_n$ satisfies $a_{n+1} = 2a_n$ with $a_1 = 1$, thus $a_n = 2^{n-1}$.
-The extrema of $T_n(x)$ in $[-1, 1]$ occur when $|\cos(n\theta)| = 1$, i.e., $n\theta = k\pi$ for $k=0, 1, \dots, n$. This yields $x_k = \cos(k\pi/n)$. At these points, $T_n(x_k) = (-1)^k$, achieving the maximum and minimum values of $\pm 1$.
+\item[(a)] Let $x = \cos \theta$, where $\theta \in [0, \pi]$ so that the mapping is a bijection between $[-1, 1]$ and $[0, \pi]$. Then $T_n(x) = \cos(n\theta)$. To show $T_n(x)$ is a polynomial, we use the trigonometric identity:
+\[
+\cos((n+1)\theta) + \cos((n-1)\theta) = 2\cos \theta \cos(n\theta).
+\]
+Substituting $\cos(n\theta) = T_n(x)$ and $\cos \theta = x$, we obtain the fundamental three-term recurrence relation:
+\[
+T_{n+1}(x) = 2x T_n(x) - T_{n-1}(x), \quad n \geq 1,
+\]
+with $T_0(x) = 1$ and $T_1(x) = x$. By induction, since $T_0$ and $T_1$ are polynomials of degree 0 and 1 respectively, and $T_{n+1}$ is a linear combination of $x T_n$ and $T_{n-1}$, $T_n(x)$ is a polynomial of degree $n$ for all $n \in \mathbb{N}$.
 
-\item[(b)] The error in polynomial interpolation for $n+1$ nodes $x_0, \dots, x_n$ is given by:
-\[ f(x) - P(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{k=0}^n (x - x_k) \]
-for some $\xi \in (-1, 1)$. Let $\omega(x) = \prod_{k=0}^n (x - x_k)$. Since $x_k$ are the extrema of $T_n(x)$, they are the roots of $(1-x^2)T_n'(x)$. Note that $T_n'(x) = n U_{n-1}(x)$, where $U_{n-1}$ is the Chebyshev polynomial of the second kind with leading coefficient $2^{n-1}$.
-Thus, $(1-x^2)U_{n-1}(x)$ has leading coefficient $-2^{n-1}$. The monic polynomial $\omega(x)$ of degree $n+1$ is then
-\[ \omega(x) = -\frac{1}{2^{n-1}}(x^2-1)U_{n-1}(x). \]
-On $[-1, 1]$, let $x = \cos \theta$. Then $|(x^2-1)U_{n-1}(x)| = |-\sin^2 \theta \frac{\sin n\theta}{\sin \theta}| = |\sin \theta \sin n\theta| \leq 1$.
-Therefore, $\|\omega(x)\|_{\infty} \leq \frac{1}{2^{n-1}}$, and the bound follows.
+\sidenote{Leading Coefficient Induction:
+Let $a_n$ be the leading coefficient of $T_n(x)$. For $n=1$, $T_1(x) = x$, so $a_1 = 1$. For $n \geq 1$, the recurrence $T_{n+1}(x) = 2x T_n(x) - T_{n-1}(x)$ implies that the highest power $x^{n+1}$ comes only from $2x \cdot (a_n x^n)$. Thus $a_{n+1} = 2a_n$. This geometric progression with $a_1 = 1$ yields $a_n = 2^{n-1}$ for $n \geq 1$.}
+
+The extrema of $T_n(x)$ in the interval $[-1, 1]$ are the points where $|T_n(x)| = 1$. Setting $|\cos(n\theta)| = 1$ gives $n\theta = k\pi$ for $k = 0, 1, \dots, n$. Solving for $\theta$ and then $x$, we find:
+\[
+x_k = \cos\left(\frac{k\pi}{n}\right), \quad k = 0, 1, \dots, n.
+\]
+At these points, $T_n(x_k) = \cos(k\pi) = (-1)^k$, which oscillates between the global maximum 1 and minimum $-1$. Since $T_n(x)$ is a polynomial of degree $n$, its derivative $T_n'(x)$ has at most $n-1$ roots in $(-1, 1)$, and including the endpoints $\pm 1$, there are at most $n+1$ extrema, all of which are identified here.
+
+\item[(b)] For $f \in C^{n+1}[-1, 1]$, the error of the polynomial $P(x)$ of degree at most $n$ that interpolates $f$ at $n+1$ distinct nodes $x_0, x_1, \dots, x_n$ is given by the standard Lagrange interpolation error formula:
+\[
+f(x) - P(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} \prod_{k=0}^n (x - x_k),
+\]
+where $\xi \in (-1, 1)$ is a point depending on $x$. Let $\omega(x) = \prod_{k=0}^n (x - x_k)$ be the monic nodal polynomial of degree $n+1$. To prove the required bound, we must estimate the maximum value of $|\omega(x)|$ on the interval $[-1, 1]$ when the nodes are chosen as the Chebyshev extrema $x_k = \cos(k\pi/n)$, $k=0, 1, \dots, n$.
+
+As established in part (a), the set $\{x_k\}_{k=0}^n$ consists of the points where $T_n(x) = \pm 1$. These points are the $n-1$ roots of $T_n'(x)$ in the interior $(-1, 1)$, plus the two boundary points $x=1$ (for $k=0$) and $x=-1$ (for $k=n$). \sidenote{Construction of the Nodal Polynomial:
+The interior extrema are the roots of the polynomial $T_n'(x)$, which is of degree $n-1$. The endpoints $x=1$ and $x=-1$ are the roots of $1-x^2$. Thus, the polynomial $Q(x) = (1-x^2)T_n'(x)$ has exactly the $n+1$ nodes $x_0, \dots, x_n$ as its roots. Since $Q(x)$ is of degree $2 + (n-1) = n+1$, it is proportional to the nodal polynomial $\omega(x)$.}
+
+From part (a), we know $T_n(x) = \cos(n\theta)$ with $x = \cos \theta$. By the chain rule:
+\[ T_n'(x) = \frac{d T_n}{d \theta} \frac{d \theta}{d x} = (-n \sin n\theta) \left( -\frac{1}{\sin \theta} \right) = n \frac{\sin n\theta}{\sin \theta} = n U_{n-1}(x), \]
+where $U_{n-1}(x)$ is the Chebyshev polynomial of the second kind. The leading coefficient of $U_{n-1}(x)$ is $2^{n-1}$, so the leading coefficient of $T_n'(x)$ is $n 2^{n-1}$. The polynomial $Q(x) = (1-x^2)T_n'(x)$ has leading coefficient $-n 2^{n-1}$ (coming from $-x^2 \cdot n 2^{n-1} x^{n-1}$). To obtain the monic polynomial $\omega(x)$, we divide by this coefficient:
+\[
+\omega(x) = \frac{(1-x^2)T_n'(x)}{-n 2^{n-1}} = \frac{(x^2-1) U_{n-1}(x)}{2^{n-1}}.
+\]
+To find the maximum of $|\omega(x)|$ on $[-1, 1]$, we use the trigonometric substitution $x = \cos \theta$:
+\[
+|(x^2-1) U_{n-1}(x)| = \left| -\sin^2 \theta \frac{\sin n\theta}{\sin \theta} \right| = |\sin \theta \sin n\theta|.
+\]
+Since $|\sin \theta| \leq 1$ and $|\sin n\theta| \leq 1$ for $\theta \in [0, \pi]$, we have $\|(x^2-1) U_{n-1}(x)\|_{\infty} = 1$. It follows that:
+\[
+\|\omega(x)\|_{\infty} = \frac{1}{2^{n-1}} \|(x^2-1) U_{n-1}(x)\|_{\infty} = \frac{1}{2^{n-1}}.
+\]
+Substituting this bound into the error formula:
+\[
+\|f - P\|_{\infty} = \frac{\|f^{(n+1)}\|_{\infty}}{(n+1)!} \|\omega\|_{\infty} \leq \frac{\|f^{(n+1)}\|_{\infty}}{2^{n-1}(n+1)!}.
+\]
+This completes the proof. \footnote{These nodes $x_k$ are known as the Chebyshev extrema or Gauss-Lobatto nodes. While the roots of $T_{n+1}(x)$ (Chebyshev nodes) yield the absolute minimum of $\|\omega(x)\|_{\infty}$ as $2^{-n}$, the Gauss-Lobatto nodes are often preferred in spectral methods because they include the endpoints, simplifying the imposition of boundary conditions.}
 \end{enumerate}
 \end{solution}
 
@@ -38,152 +73,409 @@ Let $S ( x )$ be a cubic spline with knots $\{ t _ { i } \} _ { i = 0 } ^ { n }$
 \end{exercise}
 
 \begin{solution}
-By definition, a cubic spline $S(x)$ belongs to $C^2[t_0, t_n]$. On each subinterval $[t_i, t_{i+1}]$, $S''(x)$ is a linear polynomial.
-If $S(x)$ is linear over $[t_1, t_2]$, then $S''(x) = 0$ for all $x \in (t_1, t_2)$. By the continuity of $S''$, we have $S''(t_1) = 0$ and $S''(t_2) = 0$.
-Similarly, if $S(x)$ is linear over $[t_3, t_4]$, then $S''(x) = 0$ for all $x \in (t_3, t_4)$, implying $S''(t_4) = 0$ and $S''(t_3) = 0$.
-Now consider the interval $[t_2, t_3]$. On this interval, $S''(x)$ is a linear function. Since we have $S''(t_2) = 0$ and $S''(t_3) = 0$, and a linear function is uniquely determined by its values at two points, it follows that $S''(x) \equiv 0$ for all $x \in [t_2, t_3]$.
-Integrating $S''(x) = 0$ twice shows that $S(x)$ is a linear function on $[t_2, t_3]$.
+By the definition of a cubic spline $S(x)$ on the partition $\{t_i\}_{i=0}^n$, $S(x)$ is a piecewise cubic polynomial belonging to $C^2[t_0, t_n]$. This implies that the second derivative $S''(x)$ is a continuous function on $[t_0, t_n]$ and, on each subinterval $[t_i, t_{i+1}]$, $S''(x)$ is a linear polynomial (the derivative of a cubic is quadratic, and its derivative is linear).
+
+Consider the interval $[t_1, t_2]$. We are given that $S(x)$ is linear on $[t_1, t_2]$. Consequently, its second derivative $S''(x)$ must vanish identically on this interval:
+\[
+S''(x) = 0, \quad \forall x \in (t_1, t_2).
+\]
+Due to the $C^2$ continuity of $S(x)$, the limits from within the interval must match the values at the knots, specifically $S''(t_1) = 0$ and $S''(t_2) = 0$. Similarly, since $S(x)$ is linear on $[t_3, t_4]$, we have $S''(x) = 0$ for all $x \in (t_3, t_4)$, which implies $S''(t_3) = 0$ and $S''(t_4) = 0$.
+
+Now, focus on the subinterval $[t_2, t_3]$. On this interval, $S(x)$ is a cubic polynomial, so $S''(x)$ is a linear function of the form $Ax + B$. We have already established that:
+\[
+S''(t_2) = 0 \quad \text{and} \quad S''(t_3) = 0.
+\]
+A linear function on a closed interval is uniquely determined by its values at the two endpoints. Since the only linear function that vanishes at two distinct points is the zero function, we must have:
+\[
+S''(x) \equiv 0, \quad \forall x \in [t_2, t_3].
+\]
+Integrating $S''(x) = 0$ twice with respect to $x$, we obtain:
+\[
+S'(x) = C \quad \text{and} \quad S(x) = Cx + D,
+\]
+where $C$ and $D$ are constants of integration. This demonstrates that $S(x)$ is a linear function on $[t_2, t_3]$. \footnote{This property highlights the global coupling inherent in spline interpolation. The $C^2$ continuity requirement forces local behavior (linearity in adjacent intervals) to propagate across knots.}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2021:3}
-Let $f : \mathbf { R }  \mathbf { R }$ be defined by $f ( x ) = 2 x - \cos x$ .
-
-(a) Prove that the equation $f(x) = 0$ has a unique solution $x^* \in \mathbb{R}$ that lies in the interval $\bigl(\frac{1}{4},\frac{1}{2}\bigr)$.
-(b) Prove that the sequence defined by the fixed point iteration
-
+Let $f : \mathbf { R } \to \mathbf { R }$ be defined by $f ( x ) = 2 x - \cos x$ .
+\begin{enumerate}
+\item[(a)] Prove that the equation $f(x) = 0$ has a unique solution $x^* \in \mathbb{R}$ that lies in the interval $\bigl(\frac{1}{4},\frac{1}{2}\bigr)$.
+\item[(b)] Prove that the sequence defined by the fixed point iteration
 \[
 x_{n} = \frac{1}{2}\cos x_{n-1}, \quad n = 1,2,\dots,
 \]
-
 converges to $x^*$ with any initial guess $x_0$.
-
-(c) For the fixed point iteration in (b) with $x_0 = \frac{\pi}{6}$, determine an $n$ that guarantees $|x_n - x^*| < \frac{1}{2} \times 10^{-8}$. For the fixed point iteration in (b) with $x_0 = 20$, determine an $n$ that guarantees $|x_n - x^*| < \frac{1}{4}$.
+\item[(c)] For the fixed point iteration in (b) with $x_0 = \frac{\pi}{6}$, determine an $n$ that guarantees $|x_n - x^*| < \frac{1}{2} \times 10^{-8}$. For the fixed point iteration in (b) with $x_0 = 20$, determine an $n$ that guarantees $|x_n - x^*| < \frac{1}{4}$.
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
 \begin{enumerate}
-\item[(a)] $f(1/4) = 1/2 - \cos(1/4) \approx 0.5 - 0.9689 < 0$ and $f(1/2) = 1 - \cos(1/2) \approx 1 - 0.8776 > 0$. By the Intermediate Value Theorem, there exists $x^* \in (1/4, 1/2)$ such that $f(x^*) = 0$. Since $f'(x) = 2 + \sin x \geq 1 > 0$, $f$ is strictly increasing, so $x^*$ is unique.
-\item[(b)] The equation $f(x)=0$ is equivalent to $x = g(x)$ where $g(x) = \frac{1}{2}\cos x$. For any $x, y \in \mathbb{R}$, $|g'(x)| = |-\frac{1}{2}\sin x| \leq \frac{1}{2} = L < 1$. By the Banach Fixed Point Theorem, $g$ is a contraction mapping on $\mathbb{R}$, and the iteration $x_n = g(x_{n-1})$ converges to the unique fixed point $x^*$ for any $x_0$.
-\item[(c)] The error estimate is $|x_n - x^*| \leq \frac{L^n}{1-L}|x_1 - x_0| = 2^{1-n}|x_1 - x_0|$.
-For $x_0 = \pi/6$, $x_1 = \frac{1}{2}\cos(\pi/6) = \frac{\sqrt{3}}{4}$, so $|x_1 - x_0| \approx |0.4330 - 0.5236| = 0.0906$.
-We require $2^{1-n} (0.0906) < 0.5 \times 10^{-8} \implies 2^n > 3.624 \times 10^7 \implies n \geq 26$.
-For $x_0 = 20$, $x_1 = \frac{1}{2}\cos(20) \approx 0.204$. $|x_1 - x_0| \approx 19.796$.
-We require $2^{1-n} (19.796) < 0.25 \implies 2^n > 158.37 \implies n \geq 8$.
-\end{enumerate}
+\item[(a)] We first check the values of $f(x) = 2x - \cos x$ at the boundaries of the interval $[1/4, 1/2]$. Note that $\cos(1/4) \approx 0.9689$ and $\cos(1/2) \approx 0.8776$.
+\[
+f(1/4) = 2(1/4) - \cos(1/4) = 0.5 - 0.9689 = -0.4689 < 0,
+\]
+\[
+f(1/2) = 2(1/2) - \cos(1/2) = 1 - 0.8776 = 0.1224 > 0.
+\]
+Since $f$ is continuous on $\mathbb{R}$, the Intermediate Value Theorem guarantees the existence of at least one root $x^* \in (1/4, 1/2)$ such that $f(x^*) = 0$. To prove uniqueness, we examine the derivative:
+\[
+f'(x) = 2 + \sin x.
+\]
+Since $-1 \leq \sin x \leq 1$ for all $x \in \mathbb{R}$, we have $1 \leq f'(x) \leq 3$. The derivative is strictly positive, which implies that $f(x)$ is strictly increasing on $\mathbb{R}$. Therefore, the root $x^*$ must be unique.
+
+\item[(b)] The equation $f(x) = 0$ is equivalent to $2x = \cos x$, or $x = g(x)$ where $g(x) = \frac{1}{2}\cos x$. To apply the Banach Fixed Point Theorem, we calculate the derivative of $g(x)$:
+\[
+g'(x) = -\frac{1}{2}\sin x.
+\]
+Taking the absolute value, $|g'(x)| = \frac{1}{2}|\sin x| \leq \frac{1}{2}$ for all $x \in \mathbb{R}$. Thus, $g(x)$ is a contraction mapping on $\mathbb{R}$ with Lipschitz constant $L = 1/2$. By the Banach Fixed Point Theorem, for any initial guess $x_0 \in \mathbb{R}$, the sequence $x_n = g(x_{n-1})$ converges to the unique fixed point $x^*$.
+
+\item[(c)] The error estimate for the fixed point iteration is given by:
+\[
+|x_n - x^*| \leq \frac{L^n}{1-L} |x_1 - x_0|.
+\]
+With $L = 1/2$, this becomes $|x_n - x^*| \leq 2^{1-n} |x_1 - x_0|$.
+\begin{itemize}
+    \item \textbf{Case 1:} $x_0 = \pi/6$. Then $x_1 = \frac{1}{2}\cos(\pi/6) = \frac{\sqrt{3}}{4} \approx 0.43301$.
+    The initial step size is $|x_1 - x_0| = |\frac{\sqrt{3}}{4} - \frac{\pi}{6}| \approx |0.43301 - 0.52360| = 0.09059$.
+    We require $|x_n - x^*| < \frac{1}{2} \times 10^{-8}$:
+    \[
+    2^{1-n} (0.09059) < 5 \times 10^{-9} \implies 2^{n-1} > \frac{0.09059}{5 \times 10^{-9}} = 1.8118 \times 10^7.
+    \]
+    Taking the logarithm: $(n-1) \ln 2 > \ln(1.8118 \times 10^7) \approx 16.713 \implies n-1 > 24.11 \implies n \geq 26$.
+    
+    \item \textbf{Case 2:} $x_0 = 20$. Then $x_1 = \frac{1}{2}\cos(20) \approx \frac{1}{2}(0.40808) = 0.20404$.
+    The initial step size is $|x_1 - x_0| = |0.20404 - 20| = 19.79596$.
+    We require $|x_n - x^*| < 1/4$:
+    \[
+    2^{1-n} (19.79596) < 0.25 \implies 2^{n-1} > \frac{19.79596}{0.25} = 79.1838.
+    \]
+    Since $2^6 = 64$ and $2^7 = 128$, we need $n-1 \geq 7$, so $n \geq 8$.
+\end{itemize}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2021:4}
-Let matrix $\mathbf { A } \in \mathbf { R } ^ { \mathbf { m } \times \mathbf { n } }$ with $m \geq n$ and $r = \mathrm { r a n k } ( \mathbf { A } ) < n$ , and assume $A$ has the following SVD decomposition
-
+Let matrix $\mathbf { A } \in \mathbf { R } ^ { m \times n }$ with $m \geq n$ and $r = \mathrm { rank } ( \mathbf { A } ) < n$ , and assume $\mathbf{A}$ has the following SVD decomposition
 \[
 \mathbf {A} = [ \mathbf {U _ {1}}, \mathbf {U _ {2}} ] \left[ \begin{array}{c c} \Sigma_ {\mathbf {1}} & \mathbf {0} \\ \mathbf {0} & \mathbf {0} \end{array} \right] [ \mathbf {V} _ {1}, \mathbf {V} _ {2} ] ^ {T} = \mathbf {U} _ {1} \Sigma_ {\mathbf {1}} \mathbf {V} _ {1} ^ {T},
 \]
-
-where $\Sigma _ { 1 }$ is $r \times r$ nonsingular and $\mathbf { U } _ { 1 }$ and $\mathbf { V } _ { 1 }$ have $r$ columns. Let $\sigma = \sigma _ { \mathrm { m i n } } ( \Sigma _ { 1 } )$ the smallest nonzero σsingular value of A. Consider the following least square problem, for some $ { \mathbf { b } } \in  { \mathbf { R } } ^ {  { \mathbf { m } } }$ ,
-
+where $\Sigma _ { 1 }$ is $r \times r$ nonsingular and $\mathbf { U } _ { 1 }$ and $\mathbf { V } _ { 1 }$ have $r$ columns. Let $\sigma = \sigma _ { \mathrm { m i n } } ( \Sigma _ { 1 } )$ be the smallest nonzero singular value of $\mathbf{A}$. Consider the following least square problem, for some $\mathbf{b} \in \mathbf{R}^m$,
 \[
 \min  _ {\mathbf {x} \in \mathbf {R} ^ {n}} \| \mathbf {A x} - \mathbf {b} \| _ {2}.
 \]
 
-(a) Show that all solutions x can be written as
-
+\begin{enumerate}
+\item[(a)] Show that all solutions $\mathbf{x}$ can be written as
 \[
 \mathbf {x} = \mathbf {V} _ {1} \boldsymbol {\Sigma} _ {1} ^ {- 1} \mathbf {U} _ {1} ^ {\mathrm {T}} \mathbf {b} + \mathbf {V} _ {2} \mathbf {z} _ {2},
 \]
-
 with $\mathbf { z } _ { 2 }$ an arbitrary vector.
 
-(b) Show that the solution x has minimal norm $\left\| \mathbf { x } \right\| _ { 2 }$ precisely when $\mathbf { z } _ { 2 } = \mathbf { 0 }$ , and in which case,
-
+\item[(b)] Show that the solution $\mathbf{x}$ has minimal norm $\left\| \mathbf { x } \right\| _ { 2 }$ precisely when $\mathbf { z } _ { 2 } = \mathbf { 0 }$ , and in which case,
 \[
 \| \mathbf {x} \| _ {2} \leq \frac {\| \mathbf {b} \| _ {2}}{\sigma}.
 \]
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
 \begin{enumerate}
-\item[(a)] Let $\mathbf{x} = \mathbf{V}\mathbf{y} = \mathbf{V}_1 \mathbf{y}_1 + \mathbf{V}_2 \mathbf{y}_2$. Then $\|\mathbf{Ax} - \mathbf{b}\|_2 = \|\mathbf{U}\Sigma\mathbf{y} - \mathbf{b}\|_2 = \|\Sigma \mathbf{y} - \mathbf{U}^T \mathbf{b}\|_2$.
-Expanding the blocks:
-\[ \|\mathbf{Ax} - \mathbf{b}\|_2^2 = \|\Sigma_1 \mathbf{y}_1 - \mathbf{U}_1^T \mathbf{b}\|_2^2 + \|\mathbf{U}_2^T \mathbf{b}\|_2^2. \]
-The minimum is achieved when $\Sigma_1 \mathbf{y}_1 = \mathbf{U}_1^T \mathbf{b} \implies \mathbf{y}_1 = \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}$. The vector $\mathbf{y}_2$ (denoted as $\mathbf{z}_2$) is unconstrained and thus arbitrary.
-Therefore, $\mathbf{x} = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b} + \mathbf{V}_2 \mathbf{z}_2$.
-\item[(b)] Using the orthogonality of $\mathbf{V}_1$ and $\mathbf{V}_2$, $\|\mathbf{x}\|_2^2 = \|\mathbf{y}_1\|_2^2 + \|\mathbf{y}_2\|_2^2$. This is minimized for $\mathbf{y}_2 = \mathbf{z}_2 = 0$.
-The minimal norm solution is $\mathbf{x}^\dagger = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}$. Its norm is
-\[ \|\mathbf{x}^\dagger\|_2^2 = \|\Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}\|_2^2 \leq \|\Sigma_1^{-1}\|_2^2 \|\mathbf{U}_1^T \mathbf{b}\|_2^2 \leq \frac{1}{\sigma^2} \|\mathbf{b}\|_2^2. \]
-Thus $\|\mathbf{x}\|_2 \leq \|\mathbf{b}\|_2/\sigma$.
+\item[(a)] Given the SVD $\mathbf{A} = \mathbf{U} \Sigma \mathbf{V}^T$, let $\mathbf{x} \in \mathbb{R}^n$ and $\mathbf{b} \in \mathbb{R}^m$. To solve the least squares problem $\min_{\mathbf{x}} \|\mathbf{Ax} - \mathbf{b}\|_2$, we utilize the orthogonal invariance of the $L_2$ norm. \sidenote{Orthogonal Invariance:
+For any orthogonal matrix $\mathbf{Q}$, we have $\|\mathbf{Q}\mathbf{z}\|_2^2 = (\mathbf{Q}\mathbf{z})^T(\mathbf{Q}\mathbf{z}) = \mathbf{z}^T\mathbf{Q}^T\mathbf{Q}\mathbf{z} = \mathbf{z}^T\mathbf{z} = \|\mathbf{z}\|_2^2$. Since $\mathbf{U}$ is orthogonal, multiplying by $\mathbf{U}^T$ does not change the 2-norm.}
+Applying this to the residual:
+\[
+\|\mathbf{A x} - \mathbf{b}\|_2 = \|\mathbf{U} \Sigma \mathbf{V}^T \mathbf{x} - \mathbf{b}\|_2 = \|\mathbf{U}^T (\mathbf{U} \Sigma \mathbf{V}^T \mathbf{x} - \mathbf{b})\|_2 = \|\Sigma \mathbf{V}^T \mathbf{x} - \mathbf{U}^T \mathbf{b}\|_2.
+\]
+Let $\mathbf{y} = \mathbf{V}^T \mathbf{x}$ and $\hat{\mathbf{b}} = \mathbf{U}^T \mathbf{b}$. Partitioning these vectors according to the rank $r$:
+\[
+\mathbf{y} = \begin{bmatrix} \mathbf{y}_1 \\ \mathbf{y}_2 \end{bmatrix}, \quad \hat{\mathbf{b}} = \begin{bmatrix} \hat{\mathbf{b}}_1 \\ \hat{\mathbf{b}}_2 \end{bmatrix},
+\]
+where $\mathbf{y}_1, \hat{\mathbf{b}}_1 \in \mathbb{R}^r$. The system $\Sigma \mathbf{y} = \hat{\mathbf{b}}$ becomes:
+\[
+\begin{bmatrix} \Sigma_1 & \mathbf{0} \\ \mathbf{0} & \mathbf{0} \end{bmatrix} \begin{bmatrix} \mathbf{y}_1 \\ \mathbf{y}_2 \end{bmatrix} = \begin{bmatrix} \hat{\mathbf{b}}_1 \\ \hat{\mathbf{b}}_2 \end{bmatrix}.
+\]
+The residual squared is $\|\Sigma_1 \mathbf{y}_1 - \hat{\mathbf{b}}_1\|_2^2 + \|\hat{\mathbf{b}}_2\|_2^2. This is minimized when $\Sigma_1 \mathbf{y}_1 = \hat{\mathbf{b}}_1$, or $\mathbf{y}_1 = \Sigma_1^{-1} \hat{\mathbf{b}}_1$. Since $\mathbf{y}_2$ does not appear in the residual expression, it can be any arbitrary vector $\mathbf{z}_2 \in \mathbb{R}^{n-r}$.
+Transforming back to the original coordinates:
+\[
+\mathbf{x} = \mathbf{V} \mathbf{y} = \begin{bmatrix} \mathbf{V}_1 & \mathbf{V}_2 \end{bmatrix} \begin{bmatrix} \mathbf{y}_1 \\ \mathbf{z}_2 \end{bmatrix} = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b} + \mathbf{V}_2 \mathbf{z}_2,
+\]
+where we used $\hat{\mathbf{b}}_1 = \mathbf{U}_1^T \mathbf{b}$.
+
+\item[(b)] To find the solution with minimal norm, we examine $\|\mathbf{x}\|_2^2$. Since $\mathbf{V}$ is orthogonal, $\|\mathbf{x}\|_2 = \|\mathbf{y}\|_2$. Thus:
+\[
+\|\mathbf{x}\|_2^2 = \|\mathbf{y}_1\|_2^2 + \|\mathbf{z}_2\|_2^2.
+\]
+Since $\|\mathbf{y}_1\|_2^2 = \|\Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}\|_2^2$ is fixed by the minimization requirement, the total norm is minimized if and only if $\mathbf{z}_2 = \mathbf{0}$. The minimal norm solution is $\mathbf{x}^\dagger = \mathbf{V}_1 \Sigma_1^{-1} \mathbf{U}_1^T \mathbf{b}$. 
+For the bound, we use the property of induced matrix norms:
+\[
+\|\mathbf{x}^\dagger\|_2 \leq \|\Sigma_1^{-1}\|_2 \|\mathbf{U}_1^T \mathbf{b}\|_2.
+\]
+The 2-norm of the diagonal matrix $\Sigma_1^{-1}$ is $\max_i (1/\sigma_i) = 1/\sigma_{\min}(\Sigma_1) = 1/\sigma$. Since $\mathbf{U}_1$ consists of orthonormal columns, $\|\mathbf{U}_1^T \mathbf{b}\|_2 \leq \|\mathbf{b}\|_2$. Therefore:
+\[
+\|\mathbf{x}^\dagger\|_2 \leq \frac{\|\mathbf{b}\|_2}{\sigma}.
+\] \footnote{This minimal norm solution is the standard result of the Moore-Penrose pseudoinverse $\mathbf{A}^\dagger$. Geometrically, the solution set is an affine subspace parallel to the null space of $\mathbf{A}$. The minimal norm solution is the unique element of this subspace that is orthogonal to the null space, i.e., it lies in the row space of $\mathbf{A}$.}
 \end{enumerate}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2021:5}
 Consider the family of semi-implicit Runge-Kutta methods
-
 \[
 \begin{array}{l} k _ {1} = f \left(y _ {n} + \beta h k _ {1}\right), \quad k _ {2} = f \left(y _ {n} + h k _ {1} + \beta h k _ {2}\right), \\ y _ {n + 1} = y _ {n} + h \left(\left(\frac {1}{2} + \beta\right) k _ {1} + \left(\frac {1}{2} - \beta\right) k _ {2}\right). \\ \end{array}
 \]
 
-(a) Determine the order and the principal part of the local truncation error.   
-(b) Show that if $\beta > \frac { 1 } { 2 }$ , then the negative real axis $\{ z : \mathbf { R e } ( z ) < 0 , \mathbf { I m } ( z ) = 0 \}$ is contained in the region of β >absolute stability of the method.
+\begin{enumerate}
+\item[(a)] Determine the order and the principal part of the local truncation error.   
+\item[(b)] Show that if $\beta > \frac { 1 } { 2 }$ , then the negative real axis $\{ z : \mathbf { R e } ( z ) < 0 , \mathbf { I m } ( z ) = 0 \}$ is contained in the region of absolute stability of the method.
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
 \begin{enumerate}
-\item[(a)] Apply the method to $y' = \lambda y$. Let $z = \lambda h$.
-$k_1 = \lambda (y_n + \beta z k_1) \implies k_1 = \frac{\lambda y_n}{1 - \beta z}$.
-$k_2 = \lambda (y_n + z k_1 + \beta z k_2) \implies k_2 = \frac{\lambda y_n (1 - \beta z + z)}{(1 - \beta z)^2}$.
-Substituting into $y_{n+1} = y_n + h(b_1 k_1 + b_2 k_2)$ gives the stability function:
-\[ R(z) = \frac{1 + (1-2\beta) z + (\beta^2 - 2\beta + 1/2) z^2}{(1 - \beta z)^2} \]
-Expanding $R(z)$ in powers of $z$:
-\[ R(z) = 1 + z + \frac{1}{2} z^2 + (\beta - \beta^2) z^3 + O(z^4) \]
-Comparing with $e^z = 1 + z + \frac{1}{2} z^2 + \frac{1}{6} z^3 + O(z^4)$, we see the method is of order $2$ for any $\beta$.
-The principal part of the local truncation error is $(\beta - \beta^2 - 1/6) h^3 y^{(3)}(t_n)$.
-\item[(b)] For $z = x < 0$, let $x = -X$ ($X > 0$). Then $R(-X) = \frac{1 - (1-2\beta)X + (\beta^2 - 2\beta + 1/2) X^2}{(1 + \beta X)^2}$.
-We have $|R(-X)| \leq 1 \iff -1 \leq R(-X) \leq 1$.
-$R(-X) \leq 1 \iff 1 + (2\beta-1)X + (\beta^2-2\beta+1/2)X^2 \leq 1 + 2\beta X + \beta^2 X^2 \iff -X + (-2\beta+1/2)X^2 \leq 0$.
-For $\beta > 1/2$, both coefficients are negative, so $R(-X) < 1$.
-$R(-X) \geq -1 \iff 2 + (4\beta-1)X + (2\beta^2-2\beta+1/2)X^2 \geq 0 \iff 2 + (4\beta-1)X + 2(\beta-1/2)^2 X^2 \geq 0$.
-Since $\beta > 1/2$, all coefficients are positive for $X > 0$.
-Thus the method is absolutely stable on the negative real axis.
+\item[(a)] To determine the order, we apply the method to the test equation $y' = \lambda y$. \footnote{The equation $y' = \lambda y$ is known as the Dahlquist test equation. In the analysis of numerical methods for ODEs, it serves as the standard tool for deriving the stability function $R(z)$. For any linear Runge-Kutta method, the behavior on this linear equation is representative of its behavior on general systems near an equilibrium. Comparing the Taylor expansion of $R(z)$ with that of the exact solution $e^z$ provides a direct way to verify the order of consistency without performing multi-dimensional Taylor expansions for a general $f(y)$.} Let $z = \lambda h$. The stages are:
+\[
+k_1 = \lambda (y_n + \beta h k_1) \implies (1 - \beta z) k_1 = \lambda y_n \implies k_1 = \frac{\lambda y_n}{1 - \beta z}.
+\]
+\[
+k_2 = \lambda (y_n + h k_1 + \beta h k_2) \implies (1 - \beta z) k_2 = \lambda y_n + z k_1 = \lambda y_n \left( 1 + \frac{z}{1 - \beta z} \right).
+\]
+\sidenote{Simplifying $k_2$:
+We have:
+\[ k_2 = \frac{\lambda y_n}{1 - \beta z} \left( \frac{1 - \beta z + z}{1 - \beta z} \right) = \frac{\lambda y_n (1 + (1-\beta)z)}{(1 - \beta z)^2}. \]}
+Substituting $k_1, k_2$ into the update equation $y_{n+1} = y_n + h\left[ \left(\frac{1}{2} + \beta\right) k_1 + \left(\frac{1}{2} - \beta\right) k_2 \right]$:
+\[
+y_{n+1} = y_n + \left(\frac{1}{2} + \beta\right) \frac{z y_n}{1 - \beta z} + \left(\frac{1}{2} - \beta\right) \frac{z y_n (1 + (1-\beta)z)}{(1 - \beta z)^2}.
+\]
+The stability function $R(z) = y_{n+1}/y_n$ is:
+\[
+R(z) = 1 + \frac{(1/2 + \beta) z (1 - \beta z) + (1/2 - \beta) (z + (1-\beta)z^2)}{(1 - \beta z)^2}.
+\]
+\sidenote{Algebraic reduction of $R(z)$:
+The numerator is:
+\[ (1 - \beta z)^2 + (1/2 + \beta)z(1 - \beta z) + (1/2 - \beta)(z + (1-\beta)z^2) \]
+\[ = (1 - 2\beta z + \beta^2 z^2) + (z/2 - \beta z^2 / 2 + \beta z - \beta^2 z^2) + (z/2 + z^2/2 - \beta z^2 / 2 - \beta z - \beta z^2 + \beta^2 z^2) \]
+\[ = 1 + (1-2\beta)z + (1/2 - 2\beta + \beta^2)z^2. \]}
+Thus,
+\[
+R(z) = \frac{1 + (1-2\beta) z + (\beta^2 - 2\beta + 1/2) z^2}{(1 - \beta z)^2}.
+\]
+To find the order, we expand $R(z)$ in powers of $z$ around $z=0$:
+\[
+R(z) = [1 + (1-2\beta) z + (\beta^2 - 2\beta + 1/2) z^2] \cdot \sum_{j=0}^{\infty} (j+1) (\beta z)^j
+\]
+\[
+= [1 + (1-2\beta) z + (\beta^2 - 2\beta + 1/2) z^2] [1 + 2\beta z + 3\beta^2 z^2 + 4\beta^3 z^3 + \dots]
+\]
+Performing the multiplication:
+\begin{align*}
+R(z) &= 1 + [2\beta + (1-2\beta)]z + [3\beta^2 + 2\beta(1-2\beta) + (\beta^2 - 2\beta + 1/2)]z^2 \\
+&\quad + [4\beta^3 + 3\beta^2(1-2\beta) + 2\beta(\beta^2 - 2\beta + 1/2)]z^3 + O(z^4) \\
+&= 1 + z + \frac{1}{2} z^2 + (\beta - \beta^2) z^3 + O(z^4).
+\end{align*}
+The exact solution expansion is $e^z = 1 + z + \frac{1}{2}z^2 + \frac{1}{6}z^3 + O(z^4)$. Comparing these, the method is of order 2. The principal part of the local truncation error is:
+\[
+\text{LTE} \approx (\beta - \beta^2 - 1/6) h^3 y^{(3)}(t_n).
+\]
+
+\item[(b)] Absolute stability on the negative real axis requires $|R(x)| \leq 1$ for all $x < 0$. Let $x = -X$ where $X > 0$. The condition $|R(-X)| \leq 1$ is equivalent to $-1 \leq R(-X) \leq 1$.
+First, consider $R(-X) \leq 1$:
+\[
+\frac{1 - (1-2\beta)X + (\beta^2 - 2\beta + 1/2) X^2}{(1 + \beta X)^2} \leq 1 \iff 1 + (2\beta-1)X + (\beta^2-2\beta+1/2)X^2 \leq 1 + 2\beta X + \beta^2 X^2
+\]
+\[
+\iff -X + (-2\beta + 1/2) X^2 \leq 0 \iff X(1 + (2\beta - 1/2)X) \geq 0.
+\]
+For $X > 0$, this is satisfied if $2\beta - 1/2 \geq 0 \implies \beta \geq 1/4$.
+Second, consider $R(-X) \geq -1$:
+\[
+1 + (2\beta-1)X + (\beta^2-2\beta+1/2)X^2 \geq -(1 + 2\beta X + \beta^2 X^2) \iff 2 + (4\beta-1)X + (2\beta^2 - 2\beta + 1/2) X^2 \geq 0.
+\]
+The quadratic in $X$ is $Q(X) = 2(\beta-1/2)^2 X^2 + (4\beta-1)X + 2$. If $\beta > 1/2$, then $4\beta-1 > 1$ and $(\beta-1/2)^2 > 0$, so $Q(X) > 0$ for all $X \geq 0$.
+Combining these conditions, $\beta > 1/2$ ensures that $|R(x)| \leq 1$ for all $x \in (-\infty, 0)$. \footnote{This specific Runge-Kutta method belongs to the Singly Diagonally Implicit Runge-Kutta (SDIRK) family. SDIRK methods are highly valued for solving stiff differential equations because they offer a pragmatic compromise between stability and computational cost. Unlike fully implicit methods, where all stage values are coupled, SDIRK stages can be solved sequentially. Since all diagonal entries $\beta$ are the same, the Jacobian matrix $I - h\beta J$ remains constant for all stages, allowing for the reuse of a single LU decomposition throughout the entire step.}
 \end{enumerate}
 \end{solution}
 
 \begin{exercise}
 \label{applied:2021:6}
 Consider the Beam equation from mechanics with boundary conditions that model a cantilever beam:
-
 \[
 \begin{array}{l} u ^ {(4)} = f (x), \quad x \in (0, 1), \\ u (0) = u ^ {\prime} (0) = u ^ {\prime \prime} (1) = u ^ {\prime \prime \prime} (1) = 0. \tag {1} \\ \end{array}
 \]
 
-(a) Recast this equation into a variational problem, stating the trial and test function spaces.   
-(b) Interpret the variational problem as an energy minimization problem, clearly stating the energy functional. Prove that the variational problem and the energy minimization problems are equivalent.   
-(c) Develop a CG(3) (cubic continuous Galerkin method) finite element method for this problem.   
-(d) Prove an a priori error estimate for this method in the energy norm:
-
-\[
-\left\| e \right\| _ {E} = \left(\int_ {0} ^ {1} \left(e ^ {\prime \prime}\right) ^ {2} d x\right) ^ {\frac {1}{2}},
-\]
-
-Where $e = u ( x ) - U ( x )$ , in which, $u ( x )$ is the exact solution to VP (variational problem), $U ( x )$ is the FEM (finite element method) solution.
-
-(e) Prove an a priori error estimate for this method in the $L _ { 2 }$ norm:
-
-\[
-\| e \| _ {L _ {2}} =: \| e \| = \left(\int_ {0} ^ {1} e ^ {2} d x\right) ^ {\frac {1}{2}}.
-\]
+\begin{enumerate}
+    \item[(a)] Recast this equation into a variational problem, stating the trial and test function spaces.   
+    \item[(b)] Interpret the variational problem as an energy minimization problem, clearly stating the energy functional. Prove that the variational problem and the energy minimization problems are equivalent.   
+    \item[(c)] Develop a CG(3) (cubic continuous Galerkin method) finite element method for this problem.   
+    \item[(d)] Prove an a priori error estimate for this method in the energy norm:
+    \[
+    \left\| e \right\| _ {E} = \left(\int_ {0} ^ {1} \left(e ^ {\prime \prime}\right) ^ {2} d x\right) ^ {\frac {1}{2}},
+    \]
+    where $e = u ( x ) - U ( x )$ , in which, $u ( x )$ is the exact solution to VP (variational problem), $U ( x )$ is the FEM (finite element method) solution.
+    \item[(e)] Prove an a priori error estimate for this method in the $L _ { 2 }$ norm:
+    \[
+    \| e \| _ {L _ {2}} =: \| e \| = \left(\int_ {0} ^ {1} e ^ {2} d x\right) ^ {\frac {1}{2}}.
+    \]
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
 \begin{enumerate}
-\item[(a)] Let $V = \{ v \in H^2(0, 1) : v(0) = v'(0) = 0 \}$. Multiplying by $v$ and integrating by parts twice:
-\[ \int_0^1 u^{(4)}v \, dx = [u'''v - u''v']_0^1 + \int_0^1 u'' v'' \, dx = \int_0^1 f v \, dx. \]
-Given $u''(1)=u'''(1)=0$ and $v(0)=v'(0)=0$, the boundary terms vanish.
-Variational Problem: Find $u \in V$ such that $a(u, v) = L(v)$ for all $v \in V$, with $a(u, v) = \int_0^1 u'' v'' \, dx$ and $L(v) = \int_0^1 f v \, dx$.
-\item[(b)] The energy functional is $J(v) = \frac{1}{2} a(v, v) - L(v)$. Since $a(\cdot, \cdot)$ is symmetric and coercive on $V$ (by Poincar\'{e}), $u = \arg\min J$ iff $dJ(u; v) = a(u, v) - L(v) = 0$.
-\item[(c)] Let $V_h \subset V$ consist of piecewise cubic polynomials with $C^1$ continuity (Hermite elements) on a mesh of size $h$. The FEM solution $U \in V_h$ satisfies $a(U, v_h) = L(v_h)$ for all $v_h \in V_h$.
-\item[(d)] By Cea's Lemma, $\|u - U\|_E \le \min_{v_h \in V_h} \|u - v_h\|_E$. For cubic elements, interpolation theory gives $\|u - I_h u\|_{H^2} \leq C h^{4-2} |u|_{H^4} = C h^2 \|f\|_{L^2}$. Thus $\|e\|_E \leq C h^2 \|f\|_{L^2}$.
-\item[(e)] Using the Aubin-Nitsche trick, solve $\psi^{(4)} = e$ with BCs. Then $\|e\|_{L^2}^2 = a(e, \psi) = a(e, \psi - I_h \psi) \leq \|e\|_E \|\psi - I_h \psi\|_E \leq (C h^2 \|f\|) (C h^2 |u|_{H^4}) \leq C h^4 \|f\|_{L^2}$.
+    \item[(a)] We define the trial and test function space $V$ based on the regularity requirements of the fourth-order operator and the essential boundary conditions. For $u^{(4)} = f$, the energy involves second-order derivatives, suggesting the Sobolev space $H^2(0, 1)$. The boundary conditions at $x=0$, namely $u(0) = 0$ and $u'(0) = 0$, involve the function and its first derivative, which are "essential" (Dirichlet) conditions for this problem. The conditions at $x=1$ involve higher-order derivatives ($u''(1)=0, u'''(1)=0$) and will be naturally satisfied by the variational form. Thus, we define:
+    \[
+    V = \{ v \in H^2(0, 1) : v(0) = v'(0) = 0 \}.
+    \]
+    To derive the variational problem, we multiply the differential equation by a test function $v \in V$ and integrate over the domain $\Omega = (0, 1)$:
+    \[
+    \int_0^1 u^{(4)}(x) v(x) \, dx = \int_0^1 f(x) v(x) \, dx.
+    \]
+    \sidenote{Integration by Parts:
+    Applying the integration by parts formula twice:
+    First step:
+    \[ \int_0^1 u^{(4)}v \, dx = [u'''v]_0^1 - \int_0^1 u'''v' \, dx. \]
+    Second step:
+    \[ -\int_0^1 u'''v' \, dx = -[u''v']_0^1 + \int_0^1 u''v'' \, dx. \]
+    Combining these:
+    \[ \int_0^1 u^{(4)}v \, dx = [u'''v - u''v']_0^1 + \int_0^1 u''v'' \, dx. \]}
+    Using the natural boundary conditions $u''(1) = u'''(1) = 0$ and the essential boundary conditions on the test space $v(0) = v'(0) = 0$, the boundary term $[u'''v - u''v']_0^1$ vanishes identically. \footnote{In the context of the Beam equation, $u''(x)$ represents the bending moment and $u'''(x)$ represents the shear force. The conditions $u''(1)=0$ and $u'''(1)=0$ thus model a "free end" at $x=1$ where no external moment or force is applied. Conversely, $u(0)=0$ and $u'(0)=0$ model a "clamped end" at $x=0$.} The Variational Problem (VP) \footnote{A variational problem (also known as a weak formulation) involves finding an element $u$ in a function space $V$ that satisfies an integral equation for all test functions $v \in V$. Formally, it is stated as: find $u \in V$ such that $a(u, v) = L(v)$ for all $v \in V$. This formulation is "weak" because it requires fewer derivatives from the solution than the original differential equation (the "strong" form) and allows for solutions that may not have continuous derivatives of the highest order. In physics and engineering, the variational problem often expresses a balance of virtual work or the stationarity of an energy functional.} is then: Find $u \in V$ such that
+    \[
+    a(u, v) = L(v) \quad \forall v \in V,
+    \]
+    where the bilinear form $a(\cdot, \cdot)$ and linear functional $L(\cdot)$ are defined as:
+    \[
+    a(u, v) = \int_0^1 u''(x) v''(x) \, dx, \quad L(v) = \int_0^1 f(x) v(x) \, dx.
+    \]
+
+    \item[(b)] The energy functional $J: V \to \mathbb{R}$ associated with this system represents the total potential energy (strain energy minus work done by external forces):
+    \[
+    J(v) = \frac{1}{2} a(v, v) - L(v) = \int_0^1 \left[ \frac{1}{2} (v''(x))^2 - f(x)v(x) \right] \, dx.
+    \]
+    \textbf{Equivalence Proof:}
+    $(\text{VP} \implies \text{Minimization})$: Suppose $u \in V$ satisfies $a(u, v) = L(v)$ for all $v \in V$. For any $w \in V$, let $w = u + v$ where $v \in V$. Then:
+    \[
+    J(u + v) = \frac{1}{2} a(u + v, u + v) - L(u + v).
+    \]
+    \sidenote{Minimization Identity:
+    Expanding using the bilinearity of $a(\cdot, \cdot)$:
+    \[ J(u + v) = \frac{1}{2} [a(u, u) + 2a(u, v) + a(v, v)] - [L(u) + L(v)] \]
+    \[ = \left( \frac{1}{2} a(u, u) - L(u) \right) + (a(u, v) - L(v)) + \frac{1}{2} a(v, v). \]
+    Since $u$ satisfies the VP, $a(u, v) - L(v) = 0$, so:
+    \[ J(u + v) = J(u) + \frac{1}{2} a(v, v). \]
+    Since $a(v, v) = \int_0^1 (v'')^2 \, dx \geq 0$, we have $J(w) \geq J(u)$ for all $w \in V$.}
+    Equality $J(w) = J(u)$ holds only if $a(v, v) = 0$, which implies $v'' = 0$. Since $v(0) = v'(0) = 0$, this forces $v \equiv 0$, so the minimizer is unique.
+    $(\text{Minimization} \implies \text{VP})$: Suppose $u \in V$ is the minimizer. Then for any $v \in V$, the function $g(\epsilon) = J(u + \epsilon v)$ must have a minimum at $\epsilon = 0$.
+    \sidenote{Explicit Derivation of the Variation:
+    First, expand $J(u + \epsilon v)$:
+    \[ g(\epsilon) = \frac{1}{2} a(u + \epsilon v, u + \epsilon v) - L(u + \epsilon v) \]
+    \[ = \frac{1}{2} [a(u, u) + 2\epsilon a(u, v) + \epsilon^2 a(v, v)] - [L(u) + \epsilon L(v)] \]
+    \[ = J(u) + \epsilon (a(u, v) - L(v)) + \frac{\epsilon^2}{2} a(v, v). \]
+    Now, take the derivative with respect to $\epsilon$:
+    \[ g'(\epsilon) = (a(u, v) - L(v)) + \epsilon a(v, v). \]
+    Setting $g'(0) = 0$ yields the variational problem:
+    \[ a(u, v) - L(v) = 0, \quad \forall v \in V. \] }
+    The necessary condition $g'(0) = 0$ yields $a(u, v) - L(v) = 0$, which is the variational problem. \footnote{The existence and uniqueness of the solution to this variational problem are guaranteed by the Lax-Milgram Theorem. The bilinear form $a(\cdot, \cdot)$ is continuous and coercive on $V$ due to the Poincaré-type inequality $\|v\|_{H^2} \leq C \|v''\|_{L_2}$, which holds because of the boundary conditions $v(0)=v'(0)=0$.}
+
+    \item[(c)] To solve the problem using a Finite Element Method (FEM), we partition $[0, 1]$ into $N$ subintervals $K_j = [x_{j-1}, x_j]$ of length $h_j$. For the fourth-order problem, we require $V_h \subset H^2(0, 1)$, which necessitates $C^1$-continuous piecewise polynomials. \footnote{Standard Lagrange elements ($C^0$) are insufficient for $H^2$ problems because their second derivatives involve Dirac deltas at the nodes, preventing them from being in $L_2$. Hermite elements ensure $C^1$ continuity, which is required for the conforming FEM in this case.} A CG(3) (cubic continuous Galerkin) method uses cubic Hermite elements.
+    \sidenote{The Spirit of CG(3):
+    The "spirit" of CG(3) for the beam equation is to balance local simplicity with global regularity. To make the second derivative $\int u'' v'' \, dx$ well-defined, the function $u$ must have a continuous first derivative. A cubic polynomial is the \textit{minimal} order that allows us to specify both the value and the slope at each node independently. This "Hermite" approach ensures the discrete model behaves like a physical beam—smoothly connected without "kinks" in the slope at the joints.}
+    Each element has 4 degrees of freedom: the value and the first derivative at each endpoint $\{x_{j-1}, x_j\}$. The discrete space is:
+    \[
+    V_h = \{ v_h \in C^1[0, 1] : v_h|_K \in \mathbb{P}_3(K) \, \forall K, \, v_h(0) = v_h'(0) = 0 \}.
+    \]
+    The finite element solution $U \in V_h$ is defined by the Galerkin projection:
+    \[
+    a(U, v_h) = L(v_h) \quad \forall v_h \in V_h.
+    \]
+    This leads to a system of linear equations $S \mathbf{u} = \mathbf{f}$, where $S$ is the stiffness matrix involving integrals of the products of the second derivatives of the Hermite basis functions.
+
+    \item[(d)] The energy norm is defined by $\|v\|_E = \sqrt{a(v, v)} = \|v''\|_{L_2}$. By the orthogonality property $a(u - U, v_h) = 0$ for all $v_h \in V_h$, we have:
+    \sidenote{Galerkin Orthogonality:
+    The "magic" of the third equality lies in the fact that the error $e = u - U$ is orthogonal to the entire discrete space $V_h$ with respect to the bilinear form $a(\cdot, \cdot)$. Since $a(u, v_h) = L(v_h)$ and $a(U, v_h) = L(v_h)$, subtracting them gives $a(u - U, v_h) = 0$. 
+    Thus, for any $v_h \in V_h$:
+    \[ a(u - U, u - U) = a(u - U, u - v_h + v_h - U) \]
+    \[ = a(u - U, u - v_h) + a(u - U, v_h - U). \]
+    Since $(v_h - U) \in V_h$, the second term is zero. This allows us to "swap" $U$ for any $v_h$ in the second argument.}
+    \[
+    \|e\|_E^2 = a(e, e) = a(u - U, u - U) = a(u - U, u - v_h) \leq \|e\|_E \|u - v_h\|_E.
+    \]
+    This leads to Cea's Lemma: $\|e\|_E = \min_{v_h \in V_h} \|u - v_h\|_E. 
+    Let $I_h u \in V_h$ be the Hermite cubic interpolant of $u$. 
+    \sidenote{Why $I_h u \in V_h$? 
+    By construction, the Hermite interpolant $I_h u$ is defined locally on each element $[x_i, x_{i+1}]$ as the unique cubic polynomial that matches the values and first derivatives of $u$ at the endpoints $x_i$ and $x_{i+1}$. Because it matches both $u(x_i)$ and $u'(x_i)$ from both left and right elements, the resulting global function is automatically $C^1$-continuous. Since $u \in V$ implies $u(0)=u'(0)=0$, the interpolant also satisfies $I_h u(0) = (I_h u)'(0) = 0$, thus $I_h u \in V_h$.}
+    Standard interpolation theory for $C^1$ Hermite cubics provides the estimate:
+    \[
+    \|u - I_h u\|_{H^k(0, 1)} \leq C h^{4-k} |u|_{H^4(0, 1)}, \quad k = 0, 1, 2.
+    \]
+    \sidenote{Derivation of the $h^{4-k}$ bound:
+    This estimate comes from a Taylor expansion argument. On a reference element of size $h$, the remainder of a cubic Taylor expansion is of order $O(h^4)$. When we take the $k$-th derivative, we "lose" $k$ powers of $h$:
+    - For $k=0$ (the function itself), the error is $O(h^4)$.
+    - For $k=1$ (the slope), the error is $O(h^3)$.
+    - For $k=2$ (the curvature/energy norm), the error is $O(h^2)$.
+    Generally, for a polynomial of degree $p$, the error is $O(h^{p+1-k})$. Here $p=3$, so we get $4-k$.}
+    \sidenote{Energy Norm Estimate:
+    For $k=2$ (the energy norm involves the second derivative):
+    \[ \|u - I_h u\|_E = \|(u - I_h u)''\|_{L_2} \leq C h^{4-2} |u|_{H^4}. \]
+    From the original equation $u^{(4)} = f$, we have $|u|_{H^4} = \|f\|_{L_2}$.}
+    Substituting this into Cea's Lemma gives the a priori estimate:
+    \[
+    \|e\|_E \leq C h^2 \|f\|_{L_2}.
+    \]
+
+    \item[(e)] To prove the $L_2$ estimate, we employ the Aubin-Nitsche duality argument. We seek the solution $\psi \in V$ to the dual problem:
+    \[
+    a(v, \psi) = (e, v)_{L_2} \quad \forall v \in V.
+    \]
+    This variational problem corresponds to the BVP $\psi^{(4)} = e$ with boundary conditions $\psi(0) = \psi'(0) = \psi''(1) = \psi'''(1) = 0$. By the regularity of the beam equation, $\|\psi\|_{H^4} \leq C \|e\|_{L_2}$.
+    \sidenote{Aubin-Nitsche Calculation:
+    Setting $v = e$ in the dual problem:
+    \[ \|e\|_{L_2}^2 = (e, e)_{L_2} = a(e, \psi). \]
+    By Galerkin orthogonality, $a(e, v_h) = 0$ for any $v_h \in V_h$. Choosing $v_h = I_h \psi$:
+    \[ \|e\|_{L_2}^2 = a(e, \psi - I_h \psi). \]
+    Applying the Cauchy-Schwarz inequality in the energy norm:
+    \[ \|e\|_{L_2}^2 \leq \|e\|_E \|\psi - I_h \psi\|_E. \]}
+    Using the interpolation estimate $\|\psi - I_h \psi\|_E \leq C h^2 \|\psi\|_{H^4} $ and the regularity result:
+    \[
+    \|e\|_{L_2}^2 \leq (C h^2 \|f\|_{L_2}) (C h^2 \|\psi\|_{H^4}) \leq C h^4 \|f\|_{L_2} \|e\|_{L_2}.
+    \]
+    Dividing by $\|e\|_{L_2}$, we obtain the $L_2$ error estimate:
+    \[
+    \|e\|_{L_2} \leq C h^4 \|f\|_{L_2}.
+    \] \footnote{This estimate shows that the $L_2$ norm error is $O(h^4)$, which is the optimal rate for cubic elements. This "recovery" of two orders of $h$ compared to the energy norm estimate is typical for the Aubin-Nitsche trick applied to second-order operators (like the Laplacian, where it recovers two orders from $H^1$ to $L_2$) and carries over to the fourth-order beam operator.}
 \end{enumerate}
 \end{solution}
+
+\begin{remark}[The CG(3) Method and Hermite Elements]
+The CG(3) method, or the cubic continuous Galerkin method, refers to a finite element discretization using piecewise cubic polynomials. A crucial requirement for the fourth-order Beam equation is that the finite element space $V_h$ must be a subspace of $H^2(0, 1)$. This implies that the approximating functions must not only be continuous ($C^0$) but also have continuous first derivatives ($C^1$) across the element interfaces. 
+
+Standard Lagrange finite elements, which are only $C^0$-continuous, are insufficient for this problem because their first derivatives are discontinuous at the nodes, leading to "non-conforming" approximations that do not reside in $H^2$. To achieve the required $C^1$ continuity, the **Hermite element** is typically employed. In a 1D Hermite element, each node $x_i$ is assigned two degrees of freedom: the value $U(x_i)$ and the slope $U'(x_i)$. Within an element $[x_j, x_{j+1}]$, the four degrees of freedom (two at each endpoint) uniquely determine a cubic polynomial. This construction ensures that the slope is matched at each node, thereby guaranteeing global $C^1$ continuity. The error analysis in parts (d) and (e) demonstrates that this method achieves $O(h^2)$ convergence in the energy norm and an optimal $O(h^4)$ convergence in the $L_2$ norm.
+\end{remark}
+
+\begin{remark}[A Beginner's Primer on Finite Element Methods (FEM)]
+For those new to Finite Element Methods, the core idea can be summarized as a systematic way to convert a complex partial differential equation (PDE) into a simple system of linear algebraic equations ($K \mathbf{u} = \mathbf{f}$) that a computer can solve. Here is the logical flow:
+
+\textbf{1. From Strong to Weak Form (The Variational Principle)}
+A PDE like $u^{(4)} = f$ is the "strong form"—it requires $u$ to be four-times differentiable at every single point. This is often too restrictive. We transform it into a "weak form" by multiplying by a test function $v$ and integrating over the domain. Using integration by parts (Green's formulas in higher dimensions), we shift the derivative burden from $u$ to $v$. For the beam equation, instead of four derivatives on $u$, we require two on $u$ and two on $v$. The resulting equation $\int u''v'' \, dx = \int fv \, dx$ is the \textit{Variational Problem}.
+
+\textbf{2. Discretization (The Mesh and Basis Functions)}
+We cannot solve the problem in an infinite-dimensional space $V$. Instead, we choose a finite-dimensional subspace $V_h \subset V$. 
+\begin{itemize}
+    \item \textbf{The Mesh}: We divide the domain $[0, 1]$ into small "elements" (subintervals).
+    \item \textbf{Basis Functions}: Inside each element, we assume the solution $u$ is simple (e.g., a polynomial). We define a set of local basis functions $\{\phi_i\}_{i=1}^M$ such that any $v_h \in V_h$ can be written as $v_h = \sum_{j=1}^M c_j \phi_j$.
+\end{itemize}
+
+\textbf{3. The Galerkin Method (Converting to Algebra)}
+We require the weak form to hold for $U \in V_h$ using only test functions $v_h \in V_h$. Substituting $U = \sum U_j \phi_j$ into the weak form $a(U, \phi_i) = L(\phi_i)$ leads to:
+\[ \sum_{j=1}^M U_j a(\phi_j, \phi_i) = L(\phi_i), \quad \text{for } i=1, \dots, M. \]
+This is a matrix equation $K \mathbf{u} = \mathbf{F}$, where $K_{ij} = a(\phi_j, \phi_i)$ is called the \textbf{Stiffness Matrix} and $F_i = L(\phi_i)$ is the \textbf{Load Vector}.
+
+\textbf{4. Necessary Theorems for the Final Exam}
+\begin{itemize}
+    \item \textbf{Lax-Milgram Theorem}: Guarantees that the variational problem has a unique solution. It requires the bilinear form $a(u, v)$ to be \textit{bounded} ($|a(u, v)| \leq C \|u\| \|v\|$) and \textit{coercive} ($a(v, v) \geq \alpha \|v\|^2$).
+    \item \textbf{Cea's Lemma}: This is the fundamental error estimate. It states that the FEM solution $U$ is the "best approximation" to the exact solution $u$ in the energy norm: $\|u - U\|_E \leq \frac{C}{\alpha} \min_{v_h \in V_h} \|u - v_h\|_E$. 
+    \item \textbf{Aubin-Nitsche Trick}: A specific technique (used in part e) to show that the error in the $L_2$ norm converges even faster than the error in the energy (derivative) norm.
+\end{itemize}
+
+\textbf{5. Summary of Construction}
+To implement FEM, you: (1) Derive the weak form, (2) Define the mesh and basis functions (e.g., Hermite cubics), (3) Compute the local stiffness matrices for each element, (4) "Assemble" them into a global matrix $K$, (5) Apply boundary conditions, and (6) Solve the linear system.
+\end{remark}
