@@ -45,6 +45,21 @@ Let $q: \mathbb{CP}^n \to \mathbb{CP}^n / \mathbb{CP}^{n-1} \cong S^{2n}$ be the
 This map $q$ is a homeomorphism on the interior of the top $2n$-cell and maps its boundary to the collapsed point.
 In cohomology, the induced map $q^*: H^{2n}(S^{2n}; \mathbb{Z}) \to H^{2n}(\mathbb{CP}^n; \mathbb{Z})$ is an isomorphism\footnote{This is because $H^{2n}(\mathbb{CP}^n, \mathbb{CP}^{n-1}; \mathbb{Z}) \cong \tilde{H}^{2n}(\mathbb{CP}^n / \mathbb{CP}^{n-1}; \mathbb{Z}) \cong H^{2n}(S^{2n}; \mathbb{Z})$, and the long exact sequence of the pair $(\mathbb{CP}^n, \mathbb{CP}^{n-1})$ shows this isomorphism maps to the generator of $H^{2n}(\mathbb{CP}^n)$.}.
 Thus, $\deg(q) = 1$.
+
+\begin{remark}
+For $n \ge 1$, the integral homology and cohomology groups of the $n$-dimensional sphere $S^n$ and the complex projective space $\mathbb{CP}^n$ are:
+\begin{itemize}
+    \item \textbf{Sphere $S^n$}:
+    \begin{equation*}
+        H_k(S^n; \mathbb{Z}) \cong \begin{cases} \mathbb{Z} & k=0, n \\ 0 & \text{otherwise} \end{cases}, \quad H^k(S^n; \mathbb{Z}) \cong \begin{cases} \mathbb{Z} & k=0, n \\ 0 & \text{otherwise} \end{cases}
+    \end{equation*}
+    \item \textbf{Complex Projective Space $\mathbb{CP}^n$}:
+    \begin{equation*}
+        H_k(\mathbb{CP}^n; \mathbb{Z}) \cong \begin{cases} \mathbb{Z} & k \in \{0, 2, \dots, 2n\} \\ 0 & \text{otherwise} \end{cases}, \quad H^k(\mathbb{CP}^n; \mathbb{Z}) \cong \begin{cases} \mathbb{Z} & k \in \{0, 2, \dots, 2n\} \\ 0 & \text{otherwise} \end{cases}
+    \end{equation*}
+\end{itemize}
+\footnote{The cohomology ring for $S^n$ is $H^*(S^n; \mathbb{Z}) \cong \mathbb{Z}[\alpha]/(\alpha^2)$ where $|\alpha| = n$. For $\mathbb{CP}^n$, it is $H^*(\mathbb{CP}^n; \mathbb{Z}) \cong \mathbb{Z}[x]/(x^{n+1})$ where $|x| = 2$. For $n > 1$, this implies $H^2(S^{2n}; \mathbb{Z}) = 0$ while $H^2(\mathbb{CP}^n; \mathbb{Z}) \cong \mathbb{Z}$. This difference is the critical fact used to show $\deg(f)=0$ in part (i), as any map $f: S^{2n} \to \mathbb{CP}^n$ must pull back the generator $x \in H^2(\mathbb{CP}^n)$ to zero, forcing $f^*(x^n) = (f^*x)^n = 0$.}
+\end{remark}
 \end{solution}
 
 \begin{exercise}
@@ -55,31 +70,52 @@ Let $\Sigma \subset \mathbb{R}^3$ be an embedded surface in $\mathbb{R}^3$. A su
 \begin{solution}
 \textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Principal Curvatures $\kappa_1, \kappa_2$}: At any point $p$ on a surface $\Sigma$, these are the maximum and minimum values of the normal curvature of curves on $\Sigma$ passing through $p$\footnote{Intuitively, if you slice the surface with a plane containing the normal vector at $p$, the resulting curve has a curvature. As you rotate the plane around the normal, the curvature changes. $\kappa_1$ and $\kappa_2$ are the extreme values.}.
-    \item \textbf{Mean Curvature $H$}: Defined as $H = \frac{\kappa_1 + \kappa_2}{2}$. A surface is \textbf{minimal} if $H = 0$ at all points\footnote{Minimal surfaces are critical points for the area functional. Physically, they model soap films stretched across a wire frame.}.
-    \item \textbf{Closed Surface}: In this context, a "closed" surface is one that is compact and has no boundary (like a sphere or a torus).
-    \item \textbf{Laplace-Beltrami Operator $\Delta_{\Sigma}$}: This is the generalization of the standard Laplacian $\sum \frac{\partial^2}{\partial x_i^2}$ to functions defined on a manifold\footnote{For the coordinate functions $x_i$ of an embedded surface, the Laplacian is directly related to the mean curvature vector: $\Delta_{\Sigma} \vec{x} = 2H\vec{n}$, where $\vec{n}$ is the unit normal.}.
+    \item \textbf{Principal Curvatures $\kappa_1, \kappa_2$}: At any point $p$ on a surface $\Sigma$, these are the eigenvalues of the shape operator $S_p = -d\mathbf{N}_p$\footnote{Geometrically, they represent the maximum and minimum normal curvatures of all curves on the surface passing through $p$. If we rotate a normal plane around the normal vector, the curvature of the intersection curve varies between these two values.}.
+    \item \textbf{Mean Curvature $H$}: Defined as $H = \frac{\kappa_1 + \kappa_2}{2}$. A surface is \textbf{minimal} if $H = 0$ everywhere\footnote{The term "minimal" comes from the fact that these surfaces locally minimize area. Specifically, they are critical points for the area functional under compactly supported variations.}.
+    \item \textbf{Closed Surface}: A surface $\Sigma$ is called \textbf{closed} if it is a compact manifold without boundary\footnote{In the context of $\mathbb{R}^3$, being closed means the surface is bounded and "loops back" on itself, having no edges or boundaries (like a sphere or a torus). This topological constraint is crucial because it implies the existence of extreme points (maxima/minima of coordinate functions) and allows for the application of the Maximum Principle.}.
+    \item \textbf{Properties of a Closed Surface in $\mathbb{R}^3$}:
+    \begin{itemize}
+        \item \textbf{Compactness}: Since $\Sigma$ is closed and bounded in $\mathbb{R}^3$, it is compact by the Heine-Borel theorem.
+        \item \textbf{Orientability}: A fundamental result in topology states that any closed, embedded surface in $\mathbb{R}^3$ is orientable.
+        \item \textbf{Jordan-Brouwer Separation Theorem}: A closed surface in $\mathbb{R}^3$ divides the space into exactly two regions: a bounded "inside" and an unbounded "outside."
+    \end{itemize}
+    \item \textbf{Laplace-Beltrami Operator $\Delta_{\Sigma}$}: For a surface $\Sigma$, the Laplacian of the position vector $\vec{x}$ is given by $\Delta_{\Sigma} \vec{x} = 2H\mathbf{N}$. For a minimal surface ($H=0$), the coordinate functions are harmonic.
 \end{itemize}
 
 \textbf{Geometric Intuition:}
-A minimal surface is "saddle-like" everywhere. Because $\kappa_1 = -\kappa_2$, if the surface curves "up" in one direction, it must curve "down" in another to keep the average curvature zero. 
-Now, imagine a closed (compact) surface in $\mathbb{R}^3$. Since it is bounded, it must have a "highest" point (say, the point with the maximum $z$-coordinate). At this highest point, the surface must be curving "down" in \textit{all} directions to avoid going higher than its maximum. This means both $\kappa_1$ and $\kappa_2$ must be non-positive. If they are both non-positive and their sum is zero, they must both be zero — but even then, a "flat" top usually cannot be part of a compact embedded surface without curving elsewhere. More rigorously, the maximum principle prevents this.
+The condition $\kappa_1 + \kappa_2 = 0$ implies that at every point, the surface must look like a "saddle" (unless it is flat, $\kappa_1 = \kappa_2 = 0$). If it curves "up" in one direction, it must curve "down" in the perpendicular direction.
+However, a closed surface in $\mathbb{R}^3$ is "trapped" within a finite region. If you look at the "highest" point (the one with the largest $z$-coordinate), the surface must curve "down" in \textit{all} directions to stay below that maximum level. This requires both $\kappa_1$ and $\kappa_2$ to be non-positive ($\kappa_1, \kappa_2 \le 0$). But if their sum is zero, then they both must be zero. This suggests the surface must be flat at its extreme points, which is a very strong constraint that ultimately leads to a contradiction when combined with the global structure.
 
 \textbf{Formal Proof:}
 
-Suppose $\Sigma \subset \mathbb{R}^3$ is a minimal surface. This means $H = 0$ everywhere.
-Recall the fundamental identity for the Laplace-Beltrami operator acting on the position vector $\vec{x} = (x_1, x_2, x_3)$ of the surface:
-\sidenote{$\Delta_{\Sigma} \vec{x} = 2H\vec{n} = 0$.}
-This implies that each coordinate function $x_i : \Sigma \to \mathbb{R}$ is a \textbf{harmonic function} on the manifold $\Sigma$:
+\textbf{Method 1: The Harmonic Function Argument (Analytical)}
+Assume $\Sigma \subset \mathbb{R}^3$ is a minimal, closed, embedded surface.
+By definition, the mean curvature $H$ is identically zero on $\Sigma$.
+Recall the fundamental formula for the Laplace-Beltrami operator acting on the position vector $\vec{x} = (x_1, x_2, x_3)$ of the surface:
+\sidenote{$\Delta_{\Sigma} \vec{x} = 2H\mathbf{N}$.}
+Since $H = 0$, we have $\Delta_{\Sigma} \vec{x} = 0$. This implies that each coordinate function $x_i : \Sigma \to \mathbb{R}$ is a \textbf{harmonic function} on the manifold $\Sigma$:
 \sidenote{$\Delta_{\Sigma} x_i = 0$ for $i=1, 2, 3$.}
-Now, consider the fact that $\Sigma$ is a \textbf{closed} (compact and without boundary) Riemannian manifold.
-According to the \textbf{Maximum Principle} for elliptic operators:
-\footnote{The strong maximum principle states that a harmonic function on a connected compact manifold without boundary must be constant. If it attained a maximum at some point, the "downward" concavity required at a maximum would contradict the zero-sum of curvatures required by $\Delta u = 0$.}
-Since each $x_i$ is harmonic on the closed manifold $\Sigma$, each $x_i$ must be a constant function.
+Now, we utilize the \textbf{Maximum Principle} for harmonic functions on a compact manifold without boundary.
+\footnote{The Maximum Principle states that a harmonic function $u$ on a connected compact Riemannian manifold without boundary must be constant. If $u$ were not constant, it would have a maximum at some point $p$. At a maximum, the Hessian $\nabla^2 u$ must be negative semi-definite, which implies $\Delta u = \text{tr}(\nabla^2 u) \le 0$. If $\Delta u = 0$, the function must be "flat" in a way that forces it to be constant by the strong maximum principle.}
+Since $\Sigma$ is closed (compact and without boundary), and each $x_i$ is harmonic on $\Sigma$, each $x_i$ must be constant on each connected component of $\Sigma$.
 \sidenote{$x_1 \equiv c_1, \ x_2 \equiv c_2, \ x_3 \equiv c_3$.}
-This means the entire surface $\Sigma$ is mapped to a single point $(c_1, c_2, c_3)$ in $\mathbb{R}^3$.
-This contradicts the assumption that $\Sigma$ is an embedded surface (which must locally look like $\mathbb{R}^2$ and have dimension 2).
-Therefore, no closed embedded surface in $\mathbb{R}^3$ can be minimal.
+This would mean that the entire surface $\Sigma$ (or at least a connected component of it) consists of a single point $(c_1, c_2, c_3)$.
+However, an embedded surface must have dimension 2. This is a contradiction.
+Therefore, a closed minimal surface cannot be embedded in $\mathbb{R}^3$.
+
+\textbf{Method 2: The Extreme Point Argument (Geometric)}
+Consider the function $f(\vec{x}) = |\vec{x}|^2 = x_1^2 + x_2^2 + x_3^2$ defined on $\Sigma$.
+Since $\Sigma$ is compact, $f$ must attain a maximum at some point $p_0 \in \Sigma$.
+Let $R^2 = f(p_0)$ be the maximum value. Then the entire surface $\Sigma$ is contained within the closed ball $B_R(0)$.
+At the point $p_0$, the surface $\Sigma$ is tangent to the sphere $S_R(0)$.
+\sidenote{Curvature Comparison:
+At the point $p_0$, the principal curvatures of the surface $\Sigma$ (relative to the inward normal) must be at least as large as the principal curvatures of the enclosing sphere $S_R(0)$.}
+The principal curvatures of the sphere $S_R(0)$ are both $1/R$.
+Thus, for the surface $\Sigma$ at $p_0$, we must have $\kappa_1 \ge 1/R$ and $\kappa_2 \ge 1/R$.
+This implies that the mean curvature at $p_0$ satisfies:
+\sidenote{$H(p_0) = \frac{\kappa_1 + \kappa_2}{2} \ge \frac{1}{R} + \frac{1}{R} \cdot \frac{1}{2} = \frac{1}{R} > 0$.}
+This contradicts the assumption that $\Sigma$ is a minimal surface ($H \equiv 0$).
+Thus, $\Sigma$ cannot be minimal.
 \end{solution}
 
 \begin{exercise}
@@ -90,43 +126,54 @@ Let $M$ be a closed, simply connected 6-dimensional manifold. Suppose $H_2(M) = 
 \begin{solution}
 \textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Simply Connected}: A manifold $M$ is simply connected if its fundamental group $\pi_1(M)$ is trivial. This implies that the first Betti number $b_1 = 0$ and $H_1(M; \mathbb{Z}) = 0$\footnote{Hurewicz Theorem states that for a simply connected space, the first non-zero homotopy group and homology group occur at the same dimension. Here, $\pi_1=0 \implies H_1=0$.}.
-    \item \textbf{Betti Numbers $b_k$}: The rank of the free part of the $k$-th homology group $H_k(M; \mathbb{Z})$ (or the dimension of $H_k(M; \mathbb{R})$ as a vector space).
-    \item \textbf{Euler Characteristic $\chi(M)$}: For a 6-manifold, $\chi(M) = \sum_{k=0}^6 (-1)^k b_k$.
-    \item \textbf{Poincaré Duality}: For a closed oriented $n$-manifold, $b_k = b_{n-k}$\footnote{Poincaré Duality provides a perfect pairing between $H^k$ and $H^{n-k}$, which implies their ranks (Betti numbers) must be equal.}.
+    \item \textbf{Simply Connected}: A manifold $M$ is simply connected if its fundamental group $\pi_1(M)$ is trivial. This implies that the first Betti number $b_1 = 0$ and $H_1(M; \mathbb{Z}) = 0$\footnote{The Hurewicz Theorem states that for a path-connected space, the first non-zero homotopy group and homology group occur at the same dimension and are isomorphic. Thus, $\pi_1(M) = 0 \implies H_1(M; \mathbb{Z}) = 0$.}.
+    \item \textbf{Poincaré Duality}: For a closed oriented $n$-manifold, there is an isomorphism $H^k(M; \mathbb{Z}) \cong H_{n-k}(M; \mathbb{Z})$. This implies that the Betti numbers satisfy the symmetry $b_k = b_{n-k}$\footnote{Poincaré Duality is a deep result reflecting the self-duality of the manifold's structure. It ensures that the "holes" in dimension $k$ are perfectly mirrored by "holes" in dimension $n-k$.}.
+    \item \textbf{Universal Coefficient Theorem (UCT)}: Relates cohomology to homology. Specifically, $H^k(M; \mathbb{Z}) \cong \text{Hom}(H_k(M), \mathbb{Z}) \oplus \text{Ext}(H_{k-1}(M), \mathbb{Z})$. This theorem allows us to track how torsion in homology affects cohomology.
+    \item \textbf{Intersection Form}: For a $2n$-dimensional manifold, the cup product followed by evaluation on the fundamental class $[M]$ defines a bilinear form on $H^n(M)$.
+    \item \textbf{Euler Characteristic $\chi(M)$}: Defined as the alternating sum of Betti numbers: $\chi(M) = \sum_{k=0}^n (-1)^k b_k$.
 \end{itemize}
 
 \textbf{Geometric Intuition:}
-The Euler characteristic is a "topological count" of cells or holes. Poincaré Duality tells us that for a closed manifold, there is a symmetry between high-dimensional holes and low-dimensional holes. In a 6-dimensional manifold, $b_0$ is mirrored by $b_6$, $b_1$ by $b_5$, and $b_2$ by $b_4$. The "middle" Betti number $b_3$ stands alone. Crucially, in the middle dimension of a $4k+2$ manifold (like $n=6, k=1$), the way 3-dimensional cycles "intersect" is skew-symmetric ($A \cap B = -B \cap A$). This anti-symmetry is like a complex structure or a symplectic form on a vector space, which can only exist if the dimension of that space (the Betti number $b_3$) is even.
+The Euler characteristic is a topological invariant that counts the "alternating number of holes" in a space. For a closed manifold, Poincaré Duality forces a symmetry in this count. In our 6D case, $b_0=b_6$, $b_1=b_5$, and $b_2=b_4$. The "odd one out" is the middle Betti number $b_3$. 
+The core of the problem lies in the nature of the "intersections" of 3-dimensional cycles. In a 6D manifold, the intersection of two 3-cycles is a 0-dimensional object (points). Because the dimension is odd ($3$), the order in which we intersect them matters: $A \cap B = -B \cap A$. This anti-symmetry is characteristic of a symplectic structure. Just as a symplectic vector space must be even-dimensional, the space of 3-cycles (measured by $b_3$) must have an even rank. This parity constraint on $b_3$ is what ultimately determines the possible values of $\chi(M)$.
 
 \textbf{Formal Proof:}
 
 \textbf{1. Determining Betti Numbers via Duality and Constraints:}
-Since $M$ is connected and closed, $b_0 = 1$ and $b_6 = 1$.
-Since $M$ is simply connected, $b_1 = 0$. By Poincaré Duality, $b_5 = b_1 = 0$.
-We are given $H_2(M) = \mathbb{Z}_2$. This group is pure torsion (it has no free part).
-\sidenote{$b_2 = \text{rank}(H_2(M; \mathbb{Z})) = 0$.}
-By Poincaré Duality, $b_4 = b_2 = 0$.
-Now, let's write the formula for the Euler characteristic:
-\sidenote{$\chi(M) = b_0 - b_1 + b_2 - b_3 + b_4 - b_5 + b_6$.}
-Substituting the values we found:
+Since $M$ is connected and closed, the top and bottom Betti numbers are fixed:
+\sidenote{$b_0 = 1$ and $b_6 = 1$.}
+We are given that $M$ is simply connected, which implies $H_1(M; \mathbb{Z}) = 0$. Thus, $b_1 = 0$. By Poincaré Duality:
+\sidenote{$b_5 = b_1 = 0$.}
+Next, we are given $H_2(M; \mathbb{Z}) = \mathbb{Z}_2$. The Betti number $b_2$ is the rank of the free part of $H_2$. Since $\mathbb{Z}_2$ is purely torsion:
+\sidenote{$b_2 = \text{rank}(\mathbb{Z}_2) = 0$.}
+Again, by Poincaré Duality, the Betti number of the dual dimension must match:
+\sidenote{$b_4 = b_2 = 0$.}
+
+\textbf{2. Evaluating the Euler Characteristic:}
+The formula for the Euler characteristic of a 6-manifold is:
+\[
+\chi(M) = b_0 - b_1 + b_2 - b_3 + b_4 - b_5 + b_6.
+\]
+Substituting the known values:
 \sidenote{$\chi(M) = 1 - 0 + 0 - b_3 + 0 - 0 + 1 = 2 - b_3$.}
 
-\textbf{2. The Parity of the Middle Betti Number $b_3$:}
-Consider the cohomology group $H^3(M; \mathbb{R})$. Poincaré Duality implies that the cup product followed by evaluation on the fundamental class $[M]$ defines a non-degenerate bilinear form:
-\sidenote{$Q: H^3(M; \mathbb{R}) \times H^3(M; \mathbb{R}) \to \mathbb{R}, \ Q(\alpha, \beta) = \langle \alpha \cup \beta, [M] \rangle$.}
-For elements of odd dimension (like 3), the cup product is \textbf{graded-commutative}, which in this case means it is \textbf{skew-symmetric}:
-\sidenote{$\alpha \cup \beta = (-1)^{3 \cdot 3} \beta \cup \alpha = -\beta \cup \alpha$.}
-Thus, $Q$ is a non-degenerate, skew-symmetric bilinear form (a \textbf{symplectic form}) on $H^3(M; \mathbb{R})$\footnote{A fundamental result in linear algebra is that any vector space carrying a non-degenerate skew-symmetric form must have an even dimension. This is because such a space can be decomposed into pairs of hyperbolic planes.}.
-This forces the dimension of the space, which is the Betti number $b_3$, to be \textbf{even}.
+\textbf{3. The Symplectic Nature of the Middle Dimension:}
+Consider the cohomology group with real coefficients $H^3(M; \mathbb{R})$. The cup product defines a bilinear form:
+\[
+Q: H^3(M; \mathbb{R}) \times H^3(M; \mathbb{R}) \to \mathbb{R}, \quad Q(\alpha, \beta) = \langle \alpha \cup \beta, [M] \rangle.
+\]
+By the properties of the cup product, for elements of odd degree $k$, we have $\alpha \cup \beta = (-1)^{k \cdot k} \beta \cup \alpha$. For $k=3$:
+\sidenote{$\alpha \cup \beta = (-1)^9 \beta \cup \alpha = -\beta \cup \alpha$.}
+Thus, $Q$ is a \textbf{skew-symmetric} bilinear form. Poincaré Duality further guarantees that $Q$ is \textbf{non-degenerate}.
+\footnote{A non-degenerate skew-symmetric form is called a symplectic form. A standard result in linear algebra states that any real vector space admitting a non-degenerate skew-symmetric bilinear form must have an even dimension. This is because such a space can be decomposed into pairs of hyperbolic planes.}
+This implies that the dimension of $H^3(M; \mathbb{R})$, which is exactly the Betti number $b_3$, must be even.
 \sidenote{$b_3 = 2k$ for some integer $k \ge 0$.}
 
-\textbf{3. Conclusion:}
-Substituting $b_3 = 2k$ back into the Euler characteristic:
+\textbf{4. Conclusion:}
+Plugging $b_3 = 2k$ back into our expression for the Euler characteristic:
 \sidenote{$\chi(M) = 2 - 2k = 2(1-k)$.}
-This result shows that $\chi(M)$ must be an \textbf{even integer}.
-Since $-1$ is an odd integer, we conclude:
-\sidenote{$\chi(M) \neq -1$.}
+This shows that $\chi(M)$ is an \textbf{even integer}.
+Since $-1$ is an odd integer, it is impossible for $\chi(M)$ to equal $-1$.
 \end{solution}
 
 \begin{exercise}
