@@ -88,19 +88,47 @@ However, a closed surface in $\mathbb{R}^3$ is "trapped" within a finite region.
 
 \textbf{Formal Proof:}
 
+\begin{lemma}[Maximum Principle for Harmonic Functions]
+Let $M$ be a connected, compact Riemannian manifold without boundary. If $u \in C^2(M)$ is a harmonic function (i.e., $\Delta_M u = 0$), then $u$ must be constant.
+\end{lemma}
+
+\begin{proof}
+Consider the integral of the Laplacian of $u^2$ over the manifold $M$. By the identity $\Delta(u^2) = 2u\Delta u + 2|\nabla u|^2$, and the fact that $\Delta u = 0$, we have:
+\[
+\Delta(u^2) = 2|\nabla u|^2.
+\]
+Integrating this over the entire manifold $M$:
+\[
+\int_M \Delta(u^2) \, dV_g = 2 \int_M |\nabla u|^2 \, dV_g.
+\]
+By the Divergence Theorem, since $M$ is a compact manifold without boundary ($\partial M = \emptyset$):
+\sidenote{$\int_M \Delta f \, dV_g = \int_{\partial M} \frac{\partial f}{\partial \nu} \, dA = 0$.}
+Thus, the integral of the Laplacian must be zero:
+\[
+0 = 2 \int_M |\nabla u|^2 \, dV_g.
+\]
+Since $|\nabla u|^2 \ge 0$, the integrand must vanish identically on $M$. This implies $\nabla u = 0$ everywhere on $M$. Because $M$ is connected, a function with a zero gradient must be constant.
+\end{proof}
+
 \textbf{Method 1: The Harmonic Function Argument (Analytical)}
 Assume $\Sigma \subset \mathbb{R}^3$ is a minimal, closed, embedded surface.
 By definition, the mean curvature $H$ is identically zero on $\Sigma$.
 Recall the fundamental formula for the Laplace-Beltrami operator acting on the position vector $\vec{x} = (x_1, x_2, x_3)$ of the surface:
-\sidenote{$\Delta_{\Sigma} \vec{x} = 2H\mathbf{N}$.}
+\sidenote{Derivation of $\Delta_{\Sigma} \vec{x} = 2H\mathbf{N}$:
+In local coordinates $\{u^i\}$, the Laplacian is $\Delta f = g^{ij} (\partial_i \partial_j f - \Gamma_{ij}^k \partial_k f)$.
+Applying this to $\vec{x}$, we have $\Delta_{\Sigma} \vec{x} = g^{ij} (\vec{x}_{ij} - \Gamma_{ij}^k \vec{x}_k)$.
+From the Gauss formula, $\vec{x}_{ij} = \Gamma_{ij}^k \vec{x}_k + h_{ij} \mathbf{N}$, where $h_{ij}$ is the second fundamental form.
+The tangential terms cancel: $\Delta_{\Sigma} \vec{x} = g^{ij} h_{ij} \mathbf{N}$.
+By definition, $H = \frac{1}{2} \text{tr}(g^{-1} h) = \frac{1}{2} g^{ij} h_{ij}$, thus $\Delta_{\Sigma} \vec{x} = 2H\mathbf{N}$.}
 Since $H = 0$, we have $\Delta_{\Sigma} \vec{x} = 0$. This implies that each coordinate function $x_i : \Sigma \to \mathbb{R}$ is a \textbf{harmonic function} on the manifold $\Sigma$:
 \sidenote{$\Delta_{\Sigma} x_i = 0$ for $i=1, 2, 3$.}
 Now, we utilize the \textbf{Maximum Principle} for harmonic functions on a compact manifold without boundary.
 \footnote{The Maximum Principle states that a harmonic function $u$ on a connected compact Riemannian manifold without boundary must be constant. If $u$ were not constant, it would have a maximum at some point $p$. At a maximum, the Hessian $\nabla^2 u$ must be negative semi-definite, which implies $\Delta u = \text{tr}(\nabla^2 u) \le 0$. If $\Delta u = 0$, the function must be "flat" in a way that forces it to be constant by the strong maximum principle.}
 Since $\Sigma$ is closed (compact and without boundary), and each $x_i$ is harmonic on $\Sigma$, each $x_i$ must be constant on each connected component of $\Sigma$.
-\sidenote{$x_1 \equiv c_1, \ x_2 \equiv c_2, \ x_3 \equiv c_3$.}
-This would mean that the entire surface $\Sigma$ (or at least a connected component of it) consists of a single point $(c_1, c_2, c_3)$.
-However, an embedded surface must have dimension 2. This is a contradiction.
+\sidenote{$x_1 \equiv c_1, \ x_2 \equiv c_2, \ x_3 \equiv c_3$ for some constants $c_i$.}
+This implies that the position vector $\vec{x}$ is constant across each connected component of $\Sigma$. Consequently, the entire component is mapped to a single point $(c_1, c_2, c_3)$ in $\mathbb{R}^3$.
+\sidenote{Dimension Contradiction:
+An embedded surface $\Sigma \subset \mathbb{R}^3$ must locally be homeomorphic to $\mathbb{R}^2$ and thus have dimension 2. A single point has dimension 0. This topological collapse contradicts the assumption that $\Sigma$ is a manifold of dimension 2.}
 Therefore, a closed minimal surface cannot be embedded in $\mathbb{R}^3$.
 
 \textbf{Method 2: The Extreme Point Argument (Geometric)}
@@ -118,6 +146,44 @@ This contradicts the assumption that $\Sigma$ is a minimal surface ($H \equiv 0$
 Thus, $\Sigma$ cannot be minimal.
 \end{solution}
 
+\begin{remark}[The Landscape of Surface Curvatures]
+The local and global geometry of a surface in $\mathbb{R}^3$ is characterized by a hierarchy of curvature invariants, from local principal curvatures to high-dimensional tensors:
+\begin{enumerate}
+    \item \textbf{Principal Curvatures ($\kappa_1, \kappa_2$)}: These are the eigenvalues of the shape operator $S = -d\mathbf{N}$. 
+    \sidenote{The Weingarten Equation:
+    The shape operator (or Weingarten map) $S_p: T_p \Sigma \to T_p \Sigma$ is defined by $S_p(v) = -\nabla_v \mathbf{N}$. In local coordinates, this gives the Weingarten equations: $\partial_j \mathbf{N} = -S^i_j \partial_i$, where $S^i_j = g^{ik} h_{kj}$.}
+    \item \textbf{Gauss Curvature ($K$)}: Defined extrinsically as the product of principal curvatures ($K = \kappa_1 \kappa_2 = \det S$). 
+    \sidenote{Theorema Egregium:
+    Gauss's "Remarkable Theorem" states that $K$ is actually an \textbf{intrinsic} invariant. It depends only on the metric $g_{ij}$ and its derivatives, and is related to the Riemann tensor by the Gauss equation: $R_{1212} = K \det(g)$.}
+    \item \textbf{Mean Curvature ($H$)}: Defined as the average curvature $H = \frac{1}{2}(\kappa_1 + \kappa_2) = \frac{1}{2} \text{tr}(S)$. It is an \textbf{extrinsic} measure of how the surface is "bent" in $\mathbb{R}^3$.
+    \item \textbf{Riemann Curvature Tensor ($R$)}: A $(1,3)$-tensor $R(X, Y)Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X, Y]} Z$ that measures the failure of covariant derivatives to commute. 
+    \sidenote{Riemann Tensor in 2D:
+    For a 2-manifold, the tensor is entirely determined by $K$. In its $(0,4)$-form, $R_{ijkl} = K(g_{ik}g_{jl} - g_{il}g_{jk})$. This form satisfies all symmetry properties of the Riemann tensor (skew-symmetry in $ij$ and $kl$, and symmetry under $ij \leftrightarrow kl$).}
+    \item \textbf{Sectional Curvature ($Sec$)}: A generalization of Gauss curvature to higher dimensions. For a plane $P \subset T_p M$ spanned by orthonormal vectors $\{u, v\}$, $Sec(P) = \langle R(u, v)v, u \rangle$. For surfaces, $Sec(T_p \Sigma) = K$.
+    \item \textbf{Ricci Curvature ($\mathrm{Ric}$)}: A $(0,2)$-tensor defined by $\mathrm{Ric}(V, W) = \sum_{i=1}^n \langle R(e_i, V)W, e_i \rangle$. 
+    \sidenote{Ricci Tensor in 2D:
+    For a surface ($n=2$), the Ricci tensor is isotropic: $\mathrm{Ric} = K g$. This reflects the fact that there is only one independent sectional curvature at each point.}
+    \item \textbf{Scalar Curvature ($R_{scal}$)}: The trace of the Ricci tensor $R_{scal} = g^{ij} R_{ij}$. In 2D, $R_{scal} = 2K$. 
+    \sidenote{Convention Note:
+    In Exercise \ref{geometry:2024:4}, the symbol $S_p$ is defined as $\frac{1}{n} R_{scal}$. For a surface, this convention yields $S_p = \frac{1}{2}(2K) = K$.}
+\end{enumerate}
+
+\textbf{Classification of Points on a Surface}:
+The signs of $K$ and $H$ classify the local shape at point $p$:
+\begin{itemize}
+    \item \textbf{Elliptic} ($K > 0$): Same signs ($\kappa_1 \kappa_2 > 0$). Locally convex (e.g., sphere).
+    \item \textbf{Hyperbolic} ($K < 0$): Opposite signs ($\kappa_1 \kappa_2 < 0$). Locally saddle-shaped (characteristic of minimal surfaces).
+    \item \textbf{Parabolic} ($K = 0, H \neq 0$): One zero curvature. Locally cylindrical.
+    \item \textbf{Planar} ($K = 0, H = 0$): Both zero. Locally flat.
+    \item \textbf{Umbilic} ($\kappa_1 = \kappa_2$): Curvature isotropic in all directions ($H^2 = K$).
+\end{itemize}
+
+\textbf{Geometric Identities}:
+The principal curvatures are the roots of $\lambda^2 - 2H\lambda + K = 0$:
+\[ \kappa_{1,2} = H \pm \sqrt{H^2 - K}. \]
+For a minimal surface ($H=0$), we have $\kappa_{1,2} = \pm \sqrt{-K}$, implying $K \le 0$ everywhere, with $K < 0$ at non-planar points.
+\end{remark}
+
 \begin{exercise}
 \label{geometry:2024:3}
 Let $M$ be a closed, simply connected 6-dimensional manifold. Suppose $H_2(M) = \mathbb{Z}_2$. Prove that the Euler characteristic $\chi(M) \neq -1$.
@@ -130,6 +196,7 @@ Let $M$ be a closed, simply connected 6-dimensional manifold. Suppose $H_2(M) = 
     \item \textbf{Poincaré Duality}: For a closed oriented $n$-manifold, there is an isomorphism $H^k(M; \mathbb{Z}) \cong H_{n-k}(M; \mathbb{Z})$. This implies that the Betti numbers satisfy the symmetry $b_k = b_{n-k}$\footnote{Poincaré Duality is a deep result reflecting the self-duality of the manifold's structure. It ensures that the "holes" in dimension $k$ are perfectly mirrored by "holes" in dimension $n-k$.}.
     \item \textbf{Universal Coefficient Theorem (UCT)}: Relates cohomology to homology. Specifically, $H^k(M; \mathbb{Z}) \cong \text{Hom}(H_k(M), \mathbb{Z}) \oplus \text{Ext}(H_{k-1}(M), \mathbb{Z})$. This theorem allows us to track how torsion in homology affects cohomology.
     \item \textbf{Intersection Form}: For a $2n$-dimensional manifold, the cup product followed by evaluation on the fundamental class $[M]$ defines a bilinear form on $H^n(M)$.
+    \item \textbf{Symplectic Vector Space}: A finite-dimensional vector space $V$ over a field (typically $\mathbb{R}$) equipped with a \textbf{symplectic form} $\omega$, which is a non-degenerate, skew-symmetric bilinear form $\omega: V \times V \to \mathbb{R}$\footnote{A fundamental property of symplectic vector spaces is that they must be even-dimensional. This is because a non-degenerate skew-symmetric matrix $J$ must have $\det(J) \neq 0$, and since $J^T = -J$, we have $\det(J) = \det(-J) = (-1)^{\dim V} \det(J)$, which implies $(-1)^{\dim V} = 1$ for non-zero determinant.}.
     \item \textbf{Euler Characteristic $\chi(M)$}: Defined as the alternating sum of Betti numbers: $\chi(M) = \sum_{k=0}^n (-1)^k b_k$.
 \end{itemize}
 
@@ -162,8 +229,11 @@ Consider the cohomology group with real coefficients $H^3(M; \mathbb{R})$. The c
 \[
 Q: H^3(M; \mathbb{R}) \times H^3(M; \mathbb{R}) \to \mathbb{R}, \quad Q(\alpha, \beta) = \langle \alpha \cup \beta, [M] \rangle.
 \]
-By the properties of the cup product, for elements of odd degree $k$, we have $\alpha \cup \beta = (-1)^{k \cdot k} \beta \cup \alpha$. For $k=3$:
-\sidenote{$\alpha \cup \beta = (-1)^9 \beta \cup \alpha = -\beta \cup \alpha$.}
+\sidenote{Construction of the Symplectic Form:
+For $\alpha, \beta \in H^3(M; \mathbb{R})$, the form $Q(\alpha, \beta)$ is defined by evaluating the cup product $\alpha \cup \beta \in H^6(M; \mathbb{R})$ on the fundamental class $[M] \in H_6(M; \mathbb{R})$. 
+In the de Rham framework, this corresponds to $Q([\omega], [\eta]) = \int_M \omega \wedge \eta$.
+Graded commutativity implies $\alpha \cup \beta = (-1)^{3 \cdot 3} \beta \cup \alpha = -\beta \cup \alpha$, establishing skew-symmetry. 
+Non-degeneracy follows from Poincaré Duality, which asserts that the map $H^3(M; \mathbb{R}) \to \text{Hom}(H^3(M; \mathbb{R}), \mathbb{R})$ given by $\alpha \mapsto Q(\alpha, \cdot)$ is an isomorphism.}
 Thus, $Q$ is a \textbf{skew-symmetric} bilinear form. Poincaré Duality further guarantees that $Q$ is \textbf{non-degenerate}.
 \footnote{A non-degenerate skew-symmetric form is called a symplectic form. A standard result in linear algebra states that any real vector space admitting a non-degenerate skew-symmetric bilinear form must have an even dimension. This is because such a space can be decomposed into pairs of hyperbolic planes.}
 This implies that the dimension of $H^3(M; \mathbb{R})$, which is exactly the Betti number $b_3$, must be even.
@@ -175,6 +245,48 @@ Plugging $b_3 = 2k$ back into our expression for the Euler characteristic:
 This shows that $\chi(M)$ is an \textbf{even integer}.
 Since $-1$ is an odd integer, it is impossible for $\chi(M)$ to equal $-1$.
 \end{solution}
+
+\begin{remark}[Step-by-Step Cohomology of Standard Manifolds]
+To build intuition for Betti numbers and Poincaré Duality, let's explicitly calculate the groups and Euler characteristics for standard spaces:
+\begin{enumerate}
+    \item \textbf{Spheres $S^n$}:
+    The cohomology groups are $H^0 \cong \mathbb{Z}$ and $H^n \cong \mathbb{Z}$.
+    \begin{itemize}
+        \item For $S^6$: Betti numbers are $b_0=1, b_6=1$, and $b_k=0$ for $0 < k < 6$.
+        \item Euler characteristic: $\chi(S^6) = 1 - 0 + 0 - 0 + 0 - 0 + 1 = 2$.
+        \item General rule: $\chi(S^n) = 1 + (-1)^n$, which is 2 for $n$ even and 0 for $n$ odd.
+    \end{itemize}
+    
+    \item \textbf{Complex Projective Space $\mathbb{CP}^n$}:
+    The cohomology exists only in even dimensions: $H^{2k} \cong \mathbb{Z}$ for $k=0, \dots, n$.
+    \begin{itemize}
+        \item For $\mathbb{CP}^3$ (dim 6): Betti numbers are $b_0=1, b_2=1, b_4=1, b_6=1$, and $b_k=0$ otherwise.
+        \item Euler characteristic: $\chi(\mathbb{CP}^3) = 1 - 0 + 1 - 0 + 1 - 0 + 1 = 4$.
+        \item General rule: $\chi(\mathbb{CP}^n) = n+1$.
+    \end{itemize}
+    
+    \item \textbf{Torus $T^n = (S^1)^n$}:
+    The Betti numbers are given by the binomial coefficients $\binom{n}{k}$.
+    \begin{itemize}
+        \item For $T^3$ (dim 3): $b_0 = \binom{3}{0}=1, b_1 = \binom{3}{1}=3, b_2 = \binom{3}{2}=3, b_3 = \binom{3}{3}=1$.
+        \item Euler characteristic: $\chi(T^3) = 1 - 3 + 3 - 1 = 0$.
+        \item For $T^6$: The middle Betti number is $b_3 = \binom{6}{3} = 20$.
+        \item General rule: $\chi(T^n) = 0$ for all $n \ge 1$.
+    \end{itemize}
+    
+    \item \textbf{Product of Spheres $S^3 \times S^3$}:
+    We use the Künneth formula: $b_k(X \times Y) = \sum_{i+j=k} b_i(X)b_j(Y)$.
+    \begin{itemize}
+        \item For $S^3 \times S^3$ (dim 6):
+        \begin{itemize}
+            \item $b_0 = b_0(S^3)b_0(S^3) = 1 \cdot 1 = 1$.
+            \item $b_3 = b_0(S^3)b_3(S^3) + b_3(S^3)b_0(S^3) = 1 \cdot 1 + 1 \cdot 1 = 2$.
+            \item $b_6 = b_3(S^3)b_3(S^3) = 1 \cdot 1 = 1$.
+        \end{itemize}
+        \item Euler characteristic: $\chi(S^3 \times S^3) = 1 - 0 + 0 - 2 + 0 - 0 + 1 = 0$.
+    \end{itemize}
+\end{enumerate}
+\end{remark}
 
 \begin{exercise}
 \label{geometry:2024:4}
@@ -188,7 +300,11 @@ where $\omega_{n-1}$ is the area of the unit sphere $S^{n-1}$ in $T_p M$, $V \in
 \begin{solution}
 \textbf{Prerequisites \& Definitions:}
 \begin{itemize}
-    \item \textbf{Ricci Curvature $\mathrm{Ric}_p$}: This is a symmetric bilinear form on the tangent space $T_p M$. For a unit vector $V$, $\mathrm{Ric}_p(V, V)$ is the sum of sectional curvatures of planes containing $V$\footnote{Sectional curvature $K(V, W)$ measures the Gaussian curvature of the surface formed by geodesics starting in the plane spanned by $V$ and $W$. Ricci curvature is the average of these curvatures over all $W \perp V$.}.
+    \item \textbf{Ricci Curvature $\mathrm{Ric}_p$}: This is a symmetric $(0,2)$-tensor obtained by taking a trace of the Riemann curvature tensor $R$. Formally, for tangent vectors $X, Y$, the Ricci tensor is defined as:
+    \[ \mathrm{Ric}(X, Y) = \text{Tr}(Z \mapsto R(Z, X)Y) \]
+    In local coordinates, this corresponds to the contraction:
+    \[ R_{ij} = R^k_{ikj}, \quad \text{where } R^k_{lij} \text{ are components of the Riemann tensor.} \]
+    \footnote{Geometrically, $\mathrm{Ric}(V, V)$ is the sum of sectional curvatures of $(n-1)$ independent planes containing $V$. It measures the rate at which the volume of a narrow cone of geodesics starting at $p$ in direction $V$ deviates from the Euclidean case.}
     \item \textbf{Scalar Curvature $S_p$}: This is the simplest curvature invariant, obtained by taking the trace of the Ricci tensor. It measures how the volume of a small ball in the manifold differs from a ball in Euclidean space\footnote{Specifically, $\frac{\text{Vol}(B_{\epsilon}(p))}{\text{Vol}_{\text{Eucl}}(B_{\epsilon})} = 1 - \frac{S}{6(n+2)}\epsilon^2 + O(\epsilon^4)$.}.
     \item \textbf{Symmetry of Sphere Integrals}: When integrating components of a vector $V = (v_1, \dots, v_n)$ over the unit sphere, the integral $\int_{S^{n-1}} v_i v_j dS$ is zero if $i \neq j$ because the sphere is symmetric under reflections $v_i \to -v_i$.
 \end{itemize}
@@ -198,28 +314,28 @@ The Ricci curvature $\mathrm{Ric}_p(V, V)$ tells you how the manifold is curving
 
 \textbf{Formal Proof:}
 
-Let $p \in M$. In the tangent space $T_p M$, we can choose an orthonormal basis $\{e_1, e_2, \dots, e_n\}$ that diagonalizes the Ricci tensor.
-\sidenote{$\mathrm{Ric}_p(e_i, e_j) = R_{ii} \delta_{ij}$.}
+Let $p \in M$. In the tangent space $T_p M$, we can choose an orthonormal basis $\{e_1, e_2, \dots, e_n\}$ that diagonalizes the Ricci tensor:
+\[ \mathrm{Ric}_p(e_i, e_j) = R_{ii} \delta_{ij} \]
 Any unit vector $V \in S^{n-1} \subset T_p M$ can be written in terms of its components in this basis:
-\sidenote{$V = \sum_{i=1}^n v_i e_i, \quad \text{with} \quad \sum_{i=1}^n v_i^2 = 1$.}
+\[ V = \sum_{i=1}^n v_i e_i, \quad \text{with} \quad \sum_{i=1}^n v_i^2 = 1 \]
 Now, let's expand the expression for the Ricci curvature in the direction $V$:
-\sidenote{$\mathrm{Ric}_p(V, V) = \sum_{i,j} \mathrm{Ric}_p(v_i e_i, v_j e_j) = \sum_{i,j} R_{ij} v_i v_j$.}
-Since the basis is orthonormal and diagonalizes the Ricci tensor, $R_{ij} = 0$ for $i \neq j$.
-\sidenote{$\mathrm{Ric}_p(V, V) = \sum_{i=1}^n R_{ii} v_i^2$.}
-We wish to compute the integral of this expression over the unit sphere $S^{n-1}$.
-\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \int_{S^{n-1}} v_i^2 dS$.}
-By the symmetry of the sphere, the integral of $v_i^2$ is the same for all $i$.
-\sidenote{$\sum_{k=1}^n \int_{S^{n-1}} v_k^2 dS = \int_{S^{n-1}} (\sum v_k^2) dS = \int_{S^{n-1}} 1 dS = \omega_{n-1}$.}
+\[ \mathrm{Ric}_p(V, V) = \sum_{i,j} \mathrm{Ric}_p(v_i e_i, v_j e_j) = \sum_{i,j} R_{ij} v_i v_j \]
+Since the basis is orthonormal and diagonalizes the Ricci tensor, $R_{ij} = 0$ for $i \neq j$:
+\[ \mathrm{Ric}_p(V, V) = \sum_{i=1}^n R_{ii} v_i^2 \]
+We wish to compute the integral of this expression over the unit sphere $S^{n-1}$:
+\[ \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \int_{S^{n-1}} v_i^2 dS \]
+By the symmetry of the sphere, the integral of $v_i^2$ is the same for all $i$:
+\[ \sum_{k=1}^n \int_{S^{n-1}} v_k^2 dS = \int_{S^{n-1}} \left(\sum v_k^2\right) dS = \int_{S^{n-1}} 1 dS = \omega_{n-1} \]
 Since there are $n$ such identical integrals, we have:
-\sidenote{$\int_{S^{n-1}} v_i^2 dS = \frac{\omega_{n-1}}{n}$.}
+\[ \int_{S^{n-1}} v_i^2 dS = \frac{\omega_{n-1}}{n} \]
 Substituting this back into the integral of the Ricci curvature:
-\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \left(\frac{\omega_{n-1}}{n}\right) = \frac{\omega_{n-1}}{n} \sum_{i=1}^n R_{ii}$.}
-The sum $\sum R_{ii}$ is the trace of the Ricci tensor.
-\sidenote{$\sum_{i=1}^n R_{ii} = \mathrm{Tr}_g(\mathrm{Ric}_p)$.}
-By the definition given in the problem, $S_p = \frac{1}{n} \mathrm{Tr}_g(\mathrm{Ric}_p)$.
-\sidenote{$\int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \omega_{n-1} \cdot S_p$.}
+\[ \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \sum_{i=1}^n R_{ii} \left(\frac{\omega_{n-1}}{n}\right) = \frac{\omega_{n-1}}{n} \sum_{i=1}^n R_{ii} \]
+The sum $\sum R_{ii}$ is the trace of the Ricci tensor:
+\[ \sum_{i=1}^n R_{ii} = \mathrm{Tr}_g(\mathrm{Ric}_p) \]
+By the definition given in the problem, $S_p = \frac{1}{n} \mathrm{Tr}_g(\mathrm{Ric}_p)$:
+\[ \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS = \omega_{n-1} \cdot S_p \]
 Rearranging the terms, we obtain the final formula:
-\sidenote{$S_p = \frac{1}{\omega_{n-1}} \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS^{n-1}$.}
+\[ S_p = \frac{1}{\omega_{n-1}} \int_{S^{n-1}} \mathrm{Ric}_p(V, V) dS^{n-1} \]
 \end{solution}
 
 \begin{exercise}
@@ -234,6 +350,11 @@ Let $S^n$ be the $n$-dimensional sphere with $n \ge 2$, and let $G$ be a finite 
 \textbf{Prerequisites \& Definitions:}
 \begin{itemize}
     \item \textbf{Free Group Action}: A group $G$ acts freely on a space $X$ if the only element that has a fixed point is the identity element $e$\footnote{Formally, for all $g \in G \setminus \{e\}$ and all $x \in X$, $g \cdot x \neq x$.}.
+    \item \textbf{Quotient Space $X/G$}: This is the set of orbits of the action.
+    \sidenote{Definition of the Quotient:
+    The space $X/G$ is defined by the equivalence relation $x \sim y$ if there exists $g \in G$ such that $y = g \cdot x$. The set of all such points $\{g \cdot x \mid g \in G\}$ is called the \textbf{orbit} of $x$. 
+    The quotient space is equipped with the \textbf{quotient topology}, where a set $U \subset X/G$ is open if and only if its preimage $p^{-1}(U) \subset X$ is open.
+    Because $G$ is finite and acts freely and continuously, the projection $p: X \to X/G$ is an open map and a local homeomorphism, ensuring $X/G$ inherits the manifold structure and Hausdorff property of $X$.}
     \item \textbf{Covering Space}: If a finite group $G$ acts freely on a manifold $X$, the projection $p: X \to X/G$ is a regular covering map\footnote{The quotient space $X/G$ inherits the local manifold structure of $X$, and the fiber over any point in the quotient consists of $|G|$ points in $X$.}.
     \item \textbf{Homotopy Groups $\pi_i$}: For a covering $p: \tilde{X} \to X$ with $\tilde{X}$ simply connected, $\pi_1(X) \cong G$ (the deck transformation group) and $\pi_i(X) \cong \pi_i(\tilde{X})$ for $i \ge 2$\footnote{This follows from the long exact sequence of homotopy groups for a covering (which is a fibration with discrete fiber).}.
 \end{itemize}
@@ -243,17 +364,50 @@ Imagine the sphere $S^n$. A free action means $G$ moves points around like a "sh
 
 \textbf{Formal Proof:}
 
-\textbf{(i) Homotopy Groups of $S^n/G$:}
-Since $G$ acts freely and $S^n$ is simply connected for $n \ge 2$, the projection $p: S^n \to S^n/G$ is a universal covering.
-The fundamental group of the quotient is isomorphic to the group of deck transformations:
-\sidenote{$\pi_1(S^n/G) \cong G$.}
-For higher homotopy groups ($i \ge 2$), they are isomorphic to those of the universal cover:
-\sidenote{$\pi_i(S^n/G) \cong \pi_i(S^n)$.}
-Since $S^n$ is $(n-1)$-connected, $\pi_i(S^n) = 0$ for $1 \le i < n$.
-\sidenote{$\pi_i(S^n/G) = 0$ for $2 \le i < n$.}
-At dimension $n$, we have $\pi_n(S^n/G) \cong \pi_n(S^n) \cong \mathbb{Z}$.
-The 0-th homotopy group (set of path components) is trivial since $S^n$ is connected:
-\sidenote{$\pi_0(S^n/G) = 0$.}
+\textbf{(i) Step-by-Step Derivation of the Homotopy Groups of $S^n/G$:}
+
+\textbf{1. The Covering Space Structure:}
+Since $G$ is a finite group acting freely on $S^n$, the projection map $p: S^n \to S^n/G$ is a \textbf{regular covering map}. 
+For $n \ge 2$, the sphere $S^n$ is simply connected ($\pi_1(S^n) = 0$). 
+\sidenote{A covering space with a simply connected total space is called the \textbf{universal cover}. This is the most "unrolled" version of the space.}
+Thus, $p: S^n \to S^n/G$ is the universal covering of the quotient space $X = S^n/G$.
+
+\textbf{2. Using the Long Exact Sequence of a Fibration:}
+Every covering map is a \textbf{fibration} where the fiber $F$ is a discrete set of points (the points in an orbit). For a regular covering, the fiber $F$ is in one-to-one correspondence with the group $G$.
+The homotopy groups of any fibration $F \to E \to B$ are linked by a long exact sequence:
+\[ \dots \to \pi_i(F) \to \pi_i(E) \to \pi_i(B) \xrightarrow{\partial} \pi_{i-1}(F) \to \dots \]
+In our case, $F = G$, $E = S^n$, and $B = S^n/G$.
+
+\textbf{3. Higher Homotopy Groups ($i \ge 2$):}
+Because $G$ is a discrete group, its points are isolated. A "continuous map from a sphere" into a discrete set must be constant.
+\sidenote{Discrete Fiber Homotopy: For any discrete space $F$, $\pi_i(F) = 0$ for all $i \ge 1$.}
+Substituting this into the sequence for $i \ge 2$:
+\[ \dots \to 0 \to \pi_i(S^n) \to \pi_i(S^n/G) \to 0 \to \dots \]
+By the property of \textbf{exactness} (the image of one map is the kernel of the next), a map between two groups surrounded by zeros must be an \textbf{isomorphism}.
+\sidenote{Result for $i \ge 2$: $\pi_i(S^n/G) \cong \pi_i(S^n)$.}
+Using the known homotopy groups of the sphere:
+\begin{itemize}
+    \item For $2 \le i < n$, $\pi_i(S^n/G) \cong \pi_i(S^n) = 0$.
+    \item For $i = n$, $\pi_n(S^n/G) \cong \pi_n(S^n) \cong \mathbb{Z}$.
+\end{itemize}
+
+\textbf{4. The Fundamental Group ($i = 1$):}
+For the first dimension, the end of the long exact sequence is:
+\[ \pi_1(S^n) \to \pi_1(S^n/G) \xrightarrow{\partial} \pi_0(G) \to \pi_0(S^n) \]
+We substitute the values for the sphere:
+\begin{itemize}
+    \item $\pi_1(S^n) = 0$ (simply connected).
+    \item $\pi_0(S^n) = 0$ (path-connected, so there is only one "component").
+    \item $\pi_0(G) = G$ (each element of the group is a separate component).
+\end{itemize}
+The sequence becomes:
+\[ 0 \to \pi_1(S^n/G) \xrightarrow{\cong} G \to 0 \]
+\sidenote{Conclusion for $i=1$: $\pi_1(S^n/G) \cong G$.}
+Intuitively, since the top space has no "holes" ($\pi_1=0$), all the "loops" in the quotient space must come from moving from one point in an orbit to another, which is exactly what the group $G$ does.
+
+\textbf{5. The 0-th Homotopy Group ($i = 0$):}
+Since $S^n$ is path-connected and the map $p$ is surjective, the quotient $S^n/G$ is also path-connected.
+\sidenote{Result for $i = 0$: $\pi_0(S^n/G) = 0$.}
 
 \textbf{(ii) Case $n$ is even:}
 Let $g \in G$ be any non-identity element. Since the action is free, $g$ has no fixed points.
