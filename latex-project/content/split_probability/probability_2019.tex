@@ -266,8 +266,29 @@ The unbiased variance estimator under additivity generalizes to:
 
 \textbf{Step 5: Asymptotic Normality (Part f).}
 
-By the Finite Population Central Limit Theorem (e.g., Hajek's CLT), as $N_t, N_c \to \infty$, any linear combination of a random sample without replacement converges to a normal distribution, provided the potential outcomes are bounded or satisfy mild moment conditions.
-Thus, $\frac{\hat{\tau} - \tau}{\sqrt{\operatorname{Var}(\hat{\tau})}} \xrightarrow{d} N(0, 1)$.
+\textbf{As stated, this Gaussian claim needs an extra regularity condition.}
+Large sample sizes alone do not force a finite-population randomization distribution to
+look Gaussian. For example, if one unit has a potential outcome whose centered value is
+of the same order as the whole standard deviation, the random assignment of that single
+unit leaves a visible two-point component in the distribution, so a central limit theorem
+cannot hold.
+
+A standard correct version assumes treatment fractions bounded away from $0$ and $1$,
+and a finite-population Lindeberg condition such as
+\[
+\frac{\max_i |Y_i(1)-\bar Y(1)|^2}{\sum_{j=1}^{N_t+N_c}(Y_j(1)-\bar Y(1))^2}\to 0,
+\qquad
+\frac{\max_i |Y_i(0)-\bar Y(0)|^2}{\sum_{j=1}^{N_t+N_c}(Y_j(0)-\bar Y(0))^2}\to 0.
+\]
+Under this condition, Hajek's finite-population central limit theorem gives
+\[
+\frac{\hat{\tau}-\tau}{\sqrt{\operatorname{Var}(\hat{\tau})}}
+\xrightarrow{d} N(0,1).
+\]
+A small simulation should therefore use non-dominating potential outcomes, for instance
+bounded or light-tailed generated potential outcomes, and compare the histogram of
+re-randomized values of $\hat\tau$ with the normal approximation using the finite-population
+variance above.
 
 \textbf{Step 6: Covariate Adjustment (Parts g \& h).}
 
@@ -422,7 +443,7 @@ and justify your answer.
 
 \textbf{Intuition / Motivation:}
 
-Imagine building a random permutation of $n$ people by having them sit at circular tables. The 1st person sits at a new table. The 2nd person can either sit with the 1st person or start a new table. In a uniformly random permutation, the probability they start a new table is exactly $1/2$. The 3rd person has a $1/3$ chance of starting a new table, and so on.
+Imagine building a random permutation of $n$ people by having them sit at circular tables. The 1st person sits at a new table. The 2nd person can either sit with the 1st person or start a new table. In a uniformly random permutation, the probability that the $k$-th person starts a new table is exactly $1/k$.
 If we define $I_k$ as an indicator variable (1 if the $k$-th person starts a new table, 0 otherwise), the total number of tables (cycles) is simply the sum of these indicators.
 Because the chance of starting a new table drops off like $1/k$, the expected number of tables is the sum of $1/k$ up to $n$. This is the famous Harmonic Series, which is known to grow precisely at the same rate as the natural logarithm function.
 

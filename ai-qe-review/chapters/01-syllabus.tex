@@ -1,0 +1,123 @@
+\chapter{考试大纲与考点地图}
+\label{ch:syllabus}
+
+求真书院 2026 年 AI 方向博士生资格考试大纲列出四门核心课程：Machine Learning Theory、Advanced Deep Learning、Optimization Methods for AI、Natural Language Understanding。这四门课也是三套公开试卷的四个 Section。以下按官方大纲的条目顺序给出复习地图；每项的定义、推导和题型训练在第 \ref{ch:primer} 章及各年份真题章中展开 \parencite{qzc-ai-syllabus-2026}。
+
+\input{chapters/01-textbooks}
+
+\section{机器学习理论}
+
+官方大纲要求覆盖八组主题：
+
+\begin{enumerate}
+  \item 监督学习与 PAC 学习理论；
+  \item VC 维、Sauer 引理，以及样本复杂度与 VC 维的关系；
+  \item 模型选择与偏差--方差权衡；
+  \item 线性回归与逻辑回归；
+  \item 决策树；
+  \item 最近邻算法；
+  \item 支持向量机与核方法；
+  \item 压缩感知。
+\end{enumerate}
+
+考纲指定教材为 \textcite{shalev2014uml} 和 \textcite{mohri2018foundations}；两条引用均链接至文末的标准书目信息与原书官网。
+
+机器学习理论卷最稳定的考法不是背模型名称，而是证明学习保证。
+
+必会对象如下：
+
+\begin{itemize}
+  \item 经验风险 \(L_S(h)\) 与真实风险 \(L_{\Dcal,f}(h)\)；
+  \item VC 维、增长函数 \(\tau_{\Hcal}(m)\)、Sauer 引理；
+  \item 可实现 PAC 与不可实现/agnostic PAC；
+  \item 模型选择、偏差--方差、线性/逻辑回归、树模型与 \(k\)-NN；
+  \item 核函数的正定性、Hilbert 空间特征映射、SVM margin 与 hinge loss；
+  \item 稀疏测量、\(\ell_1\) 松弛与压缩感知的恢复条件。
+\end{itemize}
+
+\MLTextbooks
+
+\section{深度学习和强化学习}
+
+官方大纲把本部分分为五组：
+
+\begin{enumerate}
+  \item 神经网络框架、训练方法、逼近与泛化分析；
+  \item 视觉任务中的特征提取、图像恢复、三维重构、光流估计、识别和分割；
+  \item 无监督学习中的自编码器、对比学习、隐式正则化、迁移学习和元学习；
+  \item 视觉生成模型中的 GAN、VAE、扩散模型、流模型及表达力分析；
+  \item 强化学习中的贝尔曼方程、Q-learning 与 policy gradient。
+\end{enumerate}
+
+指定教材依次包括 \textcite{goodfellow2016deep,bishop2023deep,bishop2006prml,szeliski2022vision}。其中视觉任务应按输入、输出和评价指标组织，而生成模型与强化学习应能写出目标函数或递推式。
+
+三套卷的重点可按上述条目定位：
+
+\begin{itemize}
+  \item MLP、CNN、Transformer 的结构、参数量、反向传播、归一化与泛化；
+  \item 表征学习、对比学习、预训练--微调与迁移/元学习的目标；
+  \item likelihood、normalizing flow、VAE ELBO、GAN、DDPM ELBO 与 score matching；
+  \item Bellman equation、policy iteration、actor-critic 与 policy gradient theorem。
+\end{itemize}
+
+\DeepTextbooks
+
+\section{人工智能中的优化方法}
+
+官方大纲要求四组内容：
+
+\begin{enumerate}
+  \item 凸集与凸函数；
+  \item 次微分及其性质、凸函数的重要性质；
+  \item 梯度下降、随机梯度下降与随机坐标下降；
+  \item 动量加速与自适应学习率。
+\end{enumerate}
+
+指定教材为 \textcite{nesterov2018convex,beck2017first}。公开卷中常把这些对象组合为 composite optimization：
+
+\[
+  \min_{x\in \R^d} F(x) = f(x) + R(x),
+  \qquad
+  x_{k+1} = \prox_{\gamma R}\bigl(x_k-\gamma g(x_k,\xi_k)\bigr).
+\]
+
+必须掌握以下链条：
+
+\[
+  \text{强凸/光滑}
+  \Longrightarrow
+  \text{梯度映射收缩}
+  \Longrightarrow
+  \text{prox 非扩张}
+  \Longrightarrow
+  \text{一阶递推}
+  \Longrightarrow
+  \text{噪声地板与复杂度}.
+\]
+
+\OptimizationTextbooks
+
+\section{自然语言处理}
+
+官方大纲的六项内容是：
+
+\begin{enumerate}
+  \item 自然语言处理任务的统计建模假设与方法；
+  \item Word2vec 的数学原理；
+  \item Transformer 中 self-attention 的原理与实现；
+  \item 大模型预训练对齐方法的原理、局限与改进；
+  \item Scaling Law 的基本原理；
+  \item 基于 embedding 的知识库推理方法、局限与改进。
+\end{enumerate}
+
+指定教材为 \textcite{jurafsky2026slp,goldberg2017nnnlp}。公开卷在此基础上还出现 RAG、MLN、topic model、contrastive learning、长上下文 Transformer 和 text-to-image diffusion system design；这些属于考纲主线的具体应用和延伸。
+
+复习时把 NLP 题分成三类：
+
+\begin{itemize}
+  \item 概念题：n-gram smoothing、representation learning、top-\(p\)、Transformer 优势；
+  \item 数学题：InfoNCE 梯度、scaling law、MLN 概率、supervised LDA joint；
+  \item 系统题：RAG、RLHF、长上下文、信息抽取全局一致性、文生图 diffusion。
+\end{itemize}
+
+\NLPTextbooks

@@ -13,7 +13,11 @@ Prove that $f(x)\equiv 0$ is the only solution in $L^2(\mathbb{R}^n)$ such that
 \begin{solution}
 \textbf{Prerequisites:}
 \begin{itemize}
-    \item \textbf{Fourier Transform of Derivatives:} The Fourier transform $\mathcal{F}$ converts differentiation into multiplication. Specifically, $\mathcal{F}(\triangle f)(\xi) = -|\xi|^2 \hat{f}(\xi)$, where $\triangle$ is the Laplacian operator.
+    \item \textbf{Fourier Transform of Derivatives:} We use
+    \[
+    \widehat f(\xi)=\int_{\mathbb{R}^n}f(x)e^{-ix\cdot\xi}\,dx.
+    \]
+    With this convention, $\mathcal{F}(\triangle f)(\xi) = -|\xi|^2 \hat{f}(\xi)$, where $\triangle$ is the Laplacian operator.
     \item \textbf{Plancherel's Theorem:} A function $f$ is in $L^2(\mathbb{R}^n)$ if and only if its Fourier transform $\hat{f}$ is also in $L^2(\mathbb{R}^n)$. This means the "energy" of the function is preserved in the frequency domain.
     \item \textbf{Distributions Supported at a Point:} A tempered distribution whose support is a single point $\{0\}$ must be a finite linear combination of the Dirac delta function $\delta$ and its partial derivatives.
 \end{itemize}
@@ -194,6 +198,9 @@ in the sense of distributions.
 \end{itemize}
 
 \textbf{Steps:}
+\textbf{Statement convention.}
+The proof below establishes the standard small-parameter version: $|\varepsilon|<\varepsilon_0$; in particular it proves the printed claim if the intended quantifier was $0\leq\varepsilon<\varepsilon_0$.  Read literally, ``all real $\varepsilon<\varepsilon_0$'' includes arbitrarily large negative parameters, and the uniqueness statement is not guaranteed by the Poincar\'e argument.
+
 \begin{enumerate}
     \item \textbf{Existence:} We reframe the PDE as a minimization problem. Consider the energy functional defined on $H_0^1(\Omega)$:
        \[
@@ -201,7 +208,7 @@ in the sense of distributions.
        \]
        A minimizer of this functional will satisfy the Euler-Lagrange equation $-\triangle u + \varepsilon\sin(u) = f$.
     \item We must show $E(u)$ is bounded below. Notice that $-\varepsilon\cos(u)$ is bounded. By Cauchy-Schwarz and the Poincaré inequality, the linear term $-fu$ grows slower than the quadratic term $\frac{1}{2}|\nabla u|^2$. Thus, the functional is bounded below and coercive. Therefore, a minimizing sequence converges weakly to a minimizer $u \in H_0^1(\Omega)$, proving existence.
-    \item \textbf{Uniqueness:} Suppose there are two solutions, $u_1$ and $u_2$, in $H_0^1(\Omega)$. They both satisfy the PDE, so their difference satisfies:
+    \item \textbf{Uniqueness:} First assume $0\leq\varepsilon<\lambda_1(\Omega)$. Suppose there are two solutions, $u_1$ and $u_2$, in $H_0^1(\Omega)$. They both satisfy the PDE, so their difference satisfies:
        \[
        -\triangle(u_1 - u_2) + \varepsilon(\sin(u_1) - \sin(u_2)) = 0
        \]
@@ -221,7 +228,14 @@ in the sense of distributions.
        \[
        \|\nabla(u_1 - u_2)\|_{L^2}^2 \leq \frac{\varepsilon}{\lambda_1(\Omega)} \|\nabla(u_1 - u_2)\|_{L^2}^2
        \]
-    \item If we set $\varepsilon_0 = \lambda_1(\Omega)$, then for any $\varepsilon < \varepsilon_0$, the multiplier $\frac{\varepsilon}{\lambda_1(\Omega)}$ is strictly less than $1$. The only way a number can be strictly less than itself multiplied by a fraction is if the number is zero. Thus, $\|\nabla(u_1 - u_2)\|_{L^2}^2 = 0$, which means $u_1 = u_2$.
+    \item If $0\leq\varepsilon<\lambda_1(\Omega)$, the multiplier $\frac{\varepsilon}{\lambda_1(\Omega)}$ is strictly less than $1$. For the symmetric small-parameter statement $|\varepsilon|<\lambda_1(\Omega)$, the same estimate is obtained by inserting absolute values in the preceding display:
+       \[
+       \|\nabla(u_1-u_2)\|_{L^2}^2
+       \leq |\varepsilon|\|u_1-u_2\|_{L^2}^2
+       \leq \frac{|\varepsilon|}{\lambda_1(\Omega)}
+       \|\nabla(u_1-u_2)\|_{L^2}^2.
+       \]
+       Hence $\|\nabla(u_1 - u_2)\|_{L^2}^2 = 0$, which means $u_1 = u_2$.
 \end{enumerate}
 
 \textbf{Intuition:}

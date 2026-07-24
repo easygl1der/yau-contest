@@ -1,6 +1,6 @@
 # YAU Contest Past Exam Papers — LaTeX Edition
 
-A LaTeX compilation of the S.-T. Yau College Student Mathematics Contest papers (2010–2025), typeset with the [kaobook](https://github.com/fmarotta/kaobook) class.
+A LaTeX compilation of the S.-T. Yau College Student Mathematics Contest papers (2010–2026), typeset with the [kaobook](https://github.com/fmarotta/kaobook) class.
 
 ## Compile
 

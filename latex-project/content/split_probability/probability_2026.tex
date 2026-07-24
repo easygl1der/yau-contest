@@ -1,0 +1,472 @@
+\section{2026 Probability \& Statistics}
+
+Solve every problem.
+
+\begin{exercise}\label{probability:2026:1}
+A copula is a multivariate cumulative distribution function with uniform marginals on $[0,1]$.
+By Sklar's Theorem, any joint distribution can be decomposed into its marginal distributions and a copula that captures the dependence structure between variables. That is, for random variables $U$ and $V$ with marginal CDFs $F_U$ and $F_V$, their joint CDF can be written as
+\[
+H(u,v)=C\{F_U(u),F_V(v)\}
+\]
+for some copula $C$. The copula parameter $\rho$ indexes the strength and shape of dependence, independently of the marginals.
+
+Let $Y_a\in\{0,1,\ldots,L-1\}$ be an ordinal outcome observed in treatment group $a\in\{0,1\}$.
+\begin{enumerate}
+    \item[(1)] Define $\psi=\Pr(Y_1>Y_0)$ as the probability that the outcome in the treatment group exceeds that in the control group. Suppose the joint CDF satisfies
+    \[
+    \Pr(Y_1\leq k,Y_0\leq j)=C\{F_1(k),F_0(j)\}
+    \]
+    with the convention $F_a(-1)=0$, where $C$ is a pre-specified copula. Derive a closed-form expression for $\psi$ in terms of $C$, $F_1$, and $F_0$.
+
+    \item[(2)] Suppose $Y_a$ arises from a latent continuous variable $Y_a^*$ through the threshold model
+    \[
+    Y_a^*=\mu_a+\epsilon_a,\qquad
+    Y_a=\ell \Longleftrightarrow \tau_{\ell-1}<Y_a^*\leq \tau_\ell,
+    \]
+    with shared thresholds $-\infty=\tau_{-1}<\tau_0<\cdots<\tau_{L-2}<\tau_{L-1}=+\infty$ and $\mu_a$ a constant for group $a$. Also, suppose the joint distribution of the latent residuals satisfies
+    \[
+    \Pr(\epsilon_1\leq e_1,\epsilon_0\leq e_0)
+    =C\{F_{\epsilon_1}(e_1),F_{\epsilon_0}(e_0)\},
+    \]
+    where $C$ is a pre-specified copula and $F_{\epsilon_a}(e)=\Pr(\epsilon_a\leq e)$. Prove that this implies
+    \[
+    \Pr(Y_1\leq k,Y_0\leq j)=C\{F_1(k),F_0(j)\}.
+    \]
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+Let
+\[
+H(k,j)=\Pr(Y_1\leq k,Y_0\leq j)=C\{F_1(k),F_0(j)\},
+\]
+where $F_a(-1)=0$. For $0\leq k,j\leq L-1$, the joint mass at $(k,j)$ is the two-dimensional difference
+\[
+\Pr(Y_1=k,Y_0=j)
+=H(k,j)-H(k-1,j)-H(k,j-1)+H(k-1,j-1).
+\]
+Therefore
+\[
+\psi
+=\Pr(Y_1>Y_0)
+=\sum_{j=0}^{L-1}\sum_{k=j+1}^{L-1}
+\bigl[
+C\{F_1(k),F_0(j)\}
+-C\{F_1(k-1),F_0(j)\}
+-C\{F_1(k),F_0(j-1)\}
++C\{F_1(k-1),F_0(j-1)\}
+\bigr].
+\]
+This is already a closed form. A slightly more compact equivalent expression is obtained by summing over the value $j$ of $Y_0$:
+\[
+\psi
+=\sum_{j=0}^{L-1}\Pr(Y_1>j,Y_0=j).
+\]
+Now
+\[
+\Pr(Y_1>j,Y_0=j)
+=\Pr(Y_0=j)-\Pr(Y_1\leq j,Y_0=j).
+\]
+Since
+\[
+\Pr(Y_0=j)=F_0(j)-F_0(j-1)
+\]
+and
+\[
+\Pr(Y_1\leq j,Y_0=j)
+=H(j,j)-H(j,j-1),
+\]
+we get
+\[
+\boxed{
+\psi
+=\sum_{j=0}^{L-1}
+\Bigl[
+F_0(j)-F_0(j-1)
+-C\{F_1(j),F_0(j)\}
++C\{F_1(j),F_0(j-1)\}
+\Bigr].
+}
+\]
+For $j=L-1$ the summand is zero because $F_1(L-1)=F_0(L-1)=1$ and every copula satisfies $C(1,u)=u$.
+
+For the latent-threshold part, observe first that
+\[
+\{Y_a\leq k\}=\{Y_a^*\leq \tau_k\}
+=\{\mu_a+\epsilon_a\leq \tau_k\}
+=\{\epsilon_a\leq \tau_k-\mu_a\}.
+\]
+Thus
+\[
+F_a(k)=\Pr(Y_a\leq k)
+=F_{\epsilon_a}(\tau_k-\mu_a).
+\]
+Consequently,
+\[
+\begin{aligned}
+\Pr(Y_1\leq k,Y_0\leq j)
+&=\Pr(\epsilon_1\leq \tau_k-\mu_1,\epsilon_0\leq \tau_j-\mu_0)\\
+&=C\{F_{\epsilon_1}(\tau_k-\mu_1),F_{\epsilon_0}(\tau_j-\mu_0)\}\\
+&=C\{F_1(k),F_0(j)\}.
+\end{aligned}
+\]
+This proves that the same copula representation holds for the observed ordinal outcomes.
+\end{solution}
+
+\begin{exercise}\label{probability:2026:2}
+Consider the partitioned linear regression model
+\[
+Y=X_1\beta_1+X_2\beta_2+\epsilon,
+\]
+where $Y\in\mathbb{R}^n$, $X_1\in\mathbb{R}^{n\times k_1}$, $X_2\in\mathbb{R}^{n\times k_2}$, $k_1,k_2\geq 1$, and $[X_1\ X_2]$ have full column rank. Define the annihilator matrix
+\[
+M_1=I_n-X_1{(X_1^\top X_1)}^{-1}X_1^\top,
+\]
+which projects onto the orthogonal complement of the column space of $X_1$. Recall that for a generic regression of a response $\widetilde{Y}$ on a predictor matrix $\widetilde{X}$ with full column rank, the OLS estimator is
+\[
+\widehat{\beta}={(\widetilde{X}^\top\widetilde{X})}^{-1}\widetilde{X}^\top\widetilde{Y}.
+\]
+
+Prove: the OLS estimator $\widehat{\beta}_2$ obtained from the full regression of $Y$ on $[X_1\ X_2]$ is identical to the OLS estimator obtained from regressing $M_1Y$ on $M_1X_2$.
+\end{exercise}
+
+\begin{solution}
+The matrix $M_1$ is symmetric and idempotent:
+\[
+M_1^\top=M_1,\qquad M_1^2=M_1,
+\]
+and it annihilates $X_1$:
+\[
+M_1X_1=0.
+\]
+Because $[X_1\ X_2]$ has full column rank, $M_1X_2$ has full column rank. Indeed, if $M_1X_2c=0$, then $X_2c$ lies in the column space of $X_1$, so $X_2c=X_1d$ for some $d$. This gives
+\[
+X_1d-X_2c=0,
+\]
+and the full column rank of $[X_1\ X_2]$ forces $c=0$.
+
+Let $(\widehat{\beta}_1,\widehat{\beta}_2)$ be the OLS estimator in the full regression. The normal equations are
+\[
+X_1^\top(Y-X_1\widehat{\beta}_1-X_2\widehat{\beta}_2)=0
+\]
+and
+\[
+X_2^\top(Y-X_1\widehat{\beta}_1-X_2\widehat{\beta}_2)=0.
+\]
+From the first equation,
+\[
+\widehat{\beta}_1
+={(X_1^\top X_1)}^{-1}X_1^\top(Y-X_2\widehat{\beta}_2).
+\]
+Substituting this expression into the fitted residual gives
+\[
+Y-X_1\widehat{\beta}_1-X_2\widehat{\beta}_2
+=M_1(Y-X_2\widehat{\beta}_2).
+\]
+The second normal equation becomes
+\[
+X_2^\top M_1(Y-X_2\widehat{\beta}_2)=0.
+\]
+Hence
+\[
+X_2^\top M_1X_2\widehat{\beta}_2=X_2^\top M_1Y,
+\]
+and therefore
+\[
+\widehat{\beta}_2={(X_2^\top M_1X_2)}^{-1}X_2^\top M_1Y.
+\]
+
+Now regress $M_1Y$ on $M_1X_2$. The OLS estimator from that regression is
+\[
+\begin{aligned}
+\widetilde{\beta}_2
+&={\left({(M_1X_2)}^\top{(M_1X_2)}\right)}^{-1}{(M_1X_2)}^\top M_1Y\\
+&={(X_2^\top M_1^2X_2)}^{-1}X_2^\top M_1^2Y\\
+&={(X_2^\top M_1X_2)}^{-1}X_2^\top M_1Y.
+\end{aligned}
+\]
+Thus $\widetilde{\beta}_2=\widehat{\beta}_2$. This is the Frisch-Waugh-Lovell residualization identity.
+\end{solution}
+
+\begin{exercise}\label{probability:2026:3}
+Let $\phi$ and $\Phi$ be the density and distribution functions of the standard normal, and $a>0$ is a constant.
+\begin{enumerate}
+    \item[(a)] Show that $f(x)=2\phi(x)\Phi(ax)$ is the density of some random variable, denoted by $Y$.
+    \item[(b)] Calculate $E(Y)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+The function $f$ is nonnegative because both $\phi$ and $\Phi$ are nonnegative. It remains to show that it integrates to $1$.
+
+Let $Z$ and $W$ be independent standard normal random variables. Then
+\[
+\int_{-\infty}^{\infty}\phi(x)\Phi(ax)\,dx
+=E\{\Phi(aZ)\}
+=\Pr(W\leq aZ).
+\]
+The random variable $W-aZ$ is normal with mean $0$ and variance $1+a^2$, hence it is symmetric about $0$. Therefore
+\[
+\Pr(W\leq aZ)=\Pr(W-aZ\leq 0)=\frac{1}{2}.
+\]
+It follows that
+\[
+\int_{-\infty}^{\infty}2\phi(x)\Phi(ax)\,dx=1,
+\]
+so $f$ is a probability density.
+
+For the mean,
+\[
+E(Y)=2\int_{-\infty}^{\infty}x\phi(x)\Phi(ax)\,dx.
+\]
+Since $\phi'(x)=-x\phi(x)$,
+\[
+E(Y)=-2\int_{-\infty}^{\infty}\Phi(ax)\,d\phi(x).
+\]
+The boundary term in integration by parts vanishes because $\phi(x)\Phi(ax)\to 0$ as $x\to\pm\infty$. Thus
+\[
+\begin{aligned}
+E(Y)
+&=2a\int_{-\infty}^{\infty}\phi(x)\phi(ax)\,dx\\
+&=2a\int_{-\infty}^{\infty}
+\frac{1}{2\pi}\exp\left\{-\frac{1+a^2}{2}x^2\right\}\,dx\\
+&=\frac{2a}{2\pi}\sqrt{\frac{2\pi}{1+a^2}}\\
+&=\sqrt{\frac{2}{\pi}}\frac{a}{\sqrt{1+a^2}}.
+\end{aligned}
+\]
+Therefore
+\[
+\boxed{E(Y)=\sqrt{\frac{2}{\pi}}\frac{a}{\sqrt{1+a^2}}.}
+\]
+\end{solution}
+
+\begin{exercise}\label{probability:2026:4}
+Let $\{B_t,t\geq 0\}$ be a standard Brownian motion. For $a>0$, define the first exit time from the interval $(-a,a)$:
+\[
+\tau_a=\inf\{t\geq 0:|B_t|=a\}.
+\]
+Compute $E[\tau_a^2]$.
+\end{exercise}
+
+\begin{solution}
+More generally, for Brownian motion started at $x\in(-a,a)$, write
+\[
+u(x)=E_x[\tau_a],\qquad v(x)=E_x[\tau_a^2].
+\]
+The generator of standard Brownian motion is $(1/2)d^2/dx^2$. Since the interval is bounded, $\tau_a$ has finite moments; for instance, this follows from the standard exponential tail bound obtained by applying the strong Markov property to successive time intervals. The first moment solves the Dirichlet problem
+\[
+\frac{1}{2}u''(x)=-1,\qquad u(-a)=u(a)=0.
+\]
+Solving gives
+\[
+u(x)=a^2-x^2.
+\]
+
+For the second moment, we use the same killed-process recursion. For a small time step $h$ before exiting, the Markov property gives informally
+\[
+E_x[\tau_a^2]
+=E_x\{(h+\tau_a\circ\theta_h)^2;\ h<\tau_a\}+o(h).
+\]
+Expanding the square and passing to the generator identity gives
+\[
+\frac{1}{2}v''(x)=-2u(x),
+\qquad v(-a)=v(a)=0.
+\]
+Equivalently, this is the standard formula $\mathcal{L}m_k=-k m_{k-1}$ for exit-time moments, with $\mathcal{L}=(1/2)d^2/dx^2$, $m_0=1$, $m_1=u$, and $m_2=v$.
+Thus
+\[
+v''(x)=-4(a^2-x^2).
+\]
+Integrating twice,
+\[
+v(x)=-2a^2x^2+\frac{x^4}{3}+C_1x+C_2.
+\]
+By symmetry $v$ is even, so $C_1=0$. The boundary condition $v(a)=0$ gives
+\[
+0=-2a^4+\frac{a^4}{3}+C_2,
+\]
+hence
+\[
+C_2=\frac{5}{3}a^4.
+\]
+The Brownian motion in the problem starts at $0$, so
+\[
+\boxed{E[\tau_a^2]=v(0)=\frac{5}{3}a^4.}
+\]
+\end{solution}
+
+\begin{exercise}\label{probability:2026:5}
+Let $X_1,X_2,\ldots$ be i.i.d.\ random variables. Suppose that for some integer $n\geq 2$, there exist constants $a>0$ and $b\in\mathbb{R}$ such that
+\[
+X_1+\cdots+X_n\stackrel{d}{=}aX_1+b. \tag{U1}
+\]
+Let
+\[
+\alpha=\frac{\ln n}{\ln a}.
+\]
+\begin{enumerate}
+    \item[(a)] Prove: In the case $\alpha=1$ and $b=0$, the characteristic function of $X_k$ is
+    \[
+    \varphi(t)=\exp\{i\mu t-\gamma |t|\}.
+    \]
+
+    \item[(b)] Prove: If we additionally assume $E|X_1|<\infty$, then, excluding the degenerate case, it is impossible to satisfy (U1) and $\alpha\leq 1$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+Let $\varphi(t)=E e^{itX_1}$. From (U1),
+\[
+{\varphi(t)}^n=e^{ibt}\varphi(at). \tag{1}
+\]
+
+\textbf{Part (a).} If $\alpha=1$, then $a=n$. If also $b=0$, (1) becomes
+\[
+\varphi(nt)={\varphi(t)}^n. \tag{2}
+\]
+
+There is a technical point in the printed statement: equation (2) for one fixed integer $n$ gives $n$-semistability. In full generality, semistable laws may contain log-periodic factors, so the displayed Cauchy form does not follow from a single scaling equation alone without the usual stable-law regularity or ``for all scalings'' interpretation. Under the standard intended stable-law interpretation, $X_1$ is strictly stable with index $1$.
+
+The characteristic function of a one-dimensional stable law with index $1$ has the form
+\[
+\varphi(t)
+=\exp\left\{
+i\delta t-\gamma |t|
+-i\gamma\beta\frac{2}{\pi}t\log |t|
+\right\},
+\]
+where $\gamma\geq 0$ and $-1\leq \beta\leq 1$. Substituting this expression into (2), the real parts agree with the scaling $|nt|=n|t|$. The linear location term also agrees. The logarithmic skewness term gives, on the left,
+\[
+-i\gamma\beta\frac{2}{\pi}(nt)\log |nt|
+=-i\gamma\beta\frac{2}{\pi}nt(\log n+\log |t|),
+\]
+whereas the right side gives only
+\[
+-i\gamma\beta\frac{2}{\pi}nt\log |t|.
+\]
+Since $b=0$ leaves no centering term to absorb
+\[
+-i\gamma\beta\frac{2}{\pi}nt\log n,
+\]
+we must have $\gamma\beta=0$. If $\gamma=0$, the distribution is degenerate. Otherwise $\beta=0$, and therefore
+\[
+\varphi(t)=\exp\{i\delta t-\gamma |t|\}.
+\]
+Renaming $\delta$ as $\mu$ gives
+\[
+\boxed{\varphi(t)=\exp\{i\mu t-\gamma |t|\}.}
+\]
+This is the characteristic function of a Cauchy distribution with location $\mu$ and scale $\gamma$; the case $\gamma=0$ is the degenerate case.
+
+\textbf{Part (b).} Assume $E|X_1|<\infty$ and put $m=E X_1$. Taking expectations in (U1) gives
+\[
+nm=am+b,
+\]
+so $b=(n-a)m$. Define the centered variable
+\[
+Y=X_1-m.
+\]
+Then (U1) is equivalent to
+\[
+Y_1+\cdots+Y_n\stackrel{d}{=}aY_1, \tag{3}
+\]
+where $Y_1,Y_2,\ldots$ are i.i.d.\ copies of $Y$ and $EY=0$.
+
+Iterating (3) gives, for every integer $r\geq 1$,
+\[
+Y_1+\cdots+Y_{n^r}\stackrel{d}{=}a^r Y_1. \tag{4}
+\]
+If $a\geq n$, divide (4) by $n^r$:
+\[
+\frac{Y_1+\cdots+Y_{n^r}}{n^r}
+\stackrel{d}{=}
+{\left(\frac{a}{n}\right)}^r Y_1.
+\]
+By the weak law of large numbers, the left-hand side converges to $0$ in probability. If $a=n$, this forces $Y_1\equiv 0$. If $a>n$, then for every fixed $\epsilon>0$,
+\[
+\Pr\left(\left|{\left(\frac{a}{n}\right)}^r Y_1\right|>\epsilon\right)\to 0.
+\]
+Since ${(a/n)}^r\to\infty$, this again implies $\Pr(|Y_1|>\delta)=0$ for every $\delta>0$, hence $Y_1\equiv 0$.
+
+It remains to note that if $0<a<1$, then (4) also forces degeneracy. Let $\chi(t)=E e^{itY_1}$. From (4),
+\[
+{\chi(t)}^{n^r}=\chi(a^r t).
+\]
+As $r\to\infty$, $a^r t\to 0$, so the right-hand side tends to $1$. If $|\chi(t)|<1$ for some $t$, then the left-hand side tends to $0$, a contradiction. Hence $|\chi(t)|=1$ for all $t$, which is possible only when $Y_1$ is degenerate.
+
+Now interpret $\alpha\leq 1$. For $a>1$, the inequality
+\[
+\alpha=\frac{\ln n}{\ln a}\leq 1
+\]
+is equivalent to $a\geq n$, which we have just shown implies degeneracy. For $0<a<1$, the preceding characteristic-function argument also gives degeneracy. Therefore, excluding the degenerate case, (U1) cannot hold with $E|X_1|<\infty$ and $\alpha\leq 1$.
+\end{solution}
+
+\begin{exercise}\label{probability:2026:6}
+Let $\xi$ and $\eta$ be independent random variables. If the sum $S=\xi+\eta$ and the difference $D=\xi-\eta$ are also independent, prove that $\xi$ and $\eta$ must follow normal distributions.
+\end{exercise}
+
+\begin{solution}
+Let
+\[
+f(t)=E e^{it\xi},\qquad g(t)=E e^{it\eta}
+\]
+be the characteristic functions of $\xi$ and $\eta$. The joint characteristic function of $(S,D)$ is
+\[
+E e^{iuS+ivD}
+=E e^{i(u+v)\xi+i(u-v)\eta}
+=f(u+v)g(u-v).
+\]
+Since $S$ and $D$ are independent, this must factor as
+\[
+E e^{iuS}\,E e^{ivD}
+=f(u)g(u)f(v)g(-v).
+\]
+Hence, for all real $u,v$,
+\[
+f(u+v)g(u-v)=f(u)g(u)f(v)g(-v). \tag{1}
+\]
+
+Because $f(0)=g(0)=1$ and characteristic functions are continuous, $f$ and $g$ are nonzero in a neighborhood of $0$. On that neighborhood choose continuous logarithms
+\[
+F(t)=\log f(t),\qquad G(t)=\log g(t),
+\]
+with $F(0)=G(0)=0$. Taking logarithms in (1), for small $u,v$,
+\[
+F(u+v)+G(u-v)=F(u)+G(u)+F(v)+G(-v). \tag{2}
+\]
+
+A standard finite-difference argument now shows that $F$ and $G$ are quadratic polynomials near $0$. Indeed, apply the mixed difference operator $\Delta_h^u\Delta_h^v$ to (2). The terms depending only on $u$ or only on $v$ disappear, and one obtains
+\[
+F(x+2h)-2F(x+h)+F(x)
+=G(y+h)-2G(y)+G(y-h),
+\]
+where $x=u+v$ and $y=u-v$. For small $x$ and $y$ these variables can be varied independently, so both sides must depend only on $h$. Taking one more difference in $x$ or $y$ gives zero third differences. Continuity then implies that $F$ and $G$ are polynomials of degree at most $2$ near $0$.
+
+Thus, near $0$,
+\[
+F(t)=i\mu_1t-\frac{\sigma_1^2t^2}{2},
+\qquad
+G(t)=i\mu_2t-\frac{\sigma_2^2t^2}{2},
+\]
+with $\sigma_1^2,\sigma_2^2\geq 0$. Substituting these forms into (2), the coefficient of $uv$ is
+\[
+-(\sigma_1^2-\sigma_2^2),
+\]
+so $\sigma_1^2=\sigma_2^2$. Write the common value as $\sigma^2$.
+
+The local conclusion extends to all real $t$. From (1), taking $u=v=t/2$ gives
+\[
+f(t)={f(t/2)}^2 g(t/2)g(-t/2), \tag{3}
+\]
+and taking $u=t/2$, $v=-t/2$ gives
+\[
+g(t)={g(t/2)}^2 f(t/2)f(-t/2). \tag{4}
+\]
+Starting from the neighborhood of $0$ where the Gaussian forms are known, formulas (3) and (4) propagate the same forms by repeated doubling. Therefore, for all $t\in\mathbb{R}$,
+\[
+f(t)=\exp\left(i\mu_1t-\frac{\sigma^2t^2}{2}\right),
+\qquad
+g(t)=\exp\left(i\mu_2t-\frac{\sigma^2t^2}{2}\right).
+\]
+These are characteristic functions of normal distributions. Hence $\xi$ and $\eta$ are normal, with the same variance $\sigma^2$; $\sigma^2=0$ is the degenerate normal case.
+\end{solution}

@@ -519,76 +519,53 @@ Let $X_1, X_2, \dots$ be independent and identically distributed real-valued ran
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites / Core Concepts:}
-\begin{itemize}
-    \item \textbf{Borel-Cantelli Lemmas:} 
-    1. If the sum of probabilities of a sequence of events is finite ($\sum \mathbb{P}(A_n) < \infty$), then the probability that infinitely many of them occur is 0. 
-    2. (Reverse) If the events are independent, and the sum of probabilities is infinite ($\sum \mathbb{P}(A_n) = \infty$), then the probability that infinitely many of them occur is 1.
-\end{itemize}
+\textbf{Statement-risk note.}
+As stated, the proposition is true. The possible trap is that infinitely many events
+$\{|X_n|\geq n\}$ would only force the limsup to be at least $1$, not greater than $1$.
+The iid assumption rules out the borderline counterexample by scaling the threshold.
 
-\textbf{Intuition / Motivation:}
-
-We are asked to connect a limit behavior (the variables $X_n$ rarely exceed $n$) with a probability sum. The Second Borel-Cantelli Lemma is the perfect tool for this because it gives an exact "if and only if" relationship for independent events. If the sum of probabilities $\mathbb{P}(|X_n| \geq n)$ was infinite, Borel-Cantelli would guarantee that $|X_n| \geq n$ happens infinitely often, which would completely ruin the limit supremum $\limsup \frac{|X_n|}{n} \leq 1$. Wait, does it? If $|X_n| \geq n$, then $\frac{|X_n|}{n} \geq 1$. If this happens infinitely often, the $\limsup$ is at least 1. But the premise says the $\limsup$ is $\leq 1$. This is a subtle trap! A $\limsup$ exactly equal to 1 is perfectly compatible with hitting $\geq 1$ infinitely often, as long as it doesn't hit, say, $1.1$ infinitely often. To definitively prove the sum must be finite, we must look at a threshold slightly larger than 1. Unfortunately, the premise only restricts the threshold at 1. This means we can construct a counterexample to disprove the statement.
-
-\textbf{Logical Step-by-Step Breakdown:}
-
-\textbf{Step 1: Analyze the claim via Borel-Cantelli.}
-
-Let the events be $A_n = \{|X_n| \geq n\}$.
-Since the variables $X_n$ are independent, the events $A_n$ are independent.
-By the Second Borel-Cantelli Lemma, if $\sum_{n=1}^\infty \mathbb{P}(A_n) = \infty$, then almost surely, infinitely many of the events $A_n$ occur.
-If infinitely many $A_n$ occur, then for infinitely many $n$, we have $\frac{|X_n|}{n} \geq 1$.
-This implies that $\limsup_{n \to \infty} \frac{|X_n|}{n} \geq 1$.
-However, the given condition is $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$.
-If both are true, it simply means $\limsup_{n \to \infty} \frac{|X_n|}{n} = 1$. This is not a contradiction! The statement claims the sum \textit{must} be finite, but our logic shows it's entirely possible for the sum to be infinite as long as the $\limsup$ is exactly 1. Therefore, the statement is false. We need to construct a counterexample.
-
-\textbf{Step 2: Construct a counterexample.}
-
-We need a distribution for $X_1$ such that:
-\begin{enumerate}
-    \item $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$ (to disprove the conclusion).
-    \item $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$ almost surely (to satisfy the premise).
-\end{enumerate}
-
-To ensure the $\limsup$ does not exceed 1, we absolutely must prevent $|X_n|$ from exceeding $n(1+\epsilon)$ infinitely often. By Borel-Cantelli, this requires $\sum \mathbb{P}(|X_1| \geq n(1+\epsilon)) < \infty$ for any $\epsilon > 0$.
-So we need a random variable where the tail probability $\mathbb{P}(|X_1| \geq x)$ decays just right: slow enough so the sum at $x=n$ diverges, but fast enough so the sum at $x=n(1+\epsilon)$ converges.
-This is impossible if we use a continuous, smooth tail. Why? Because $\mathbb{P}(|X_1| \geq n)$ and $\mathbb{P}(|X_1| \geq 1.1n)$ will have the same asymptotic divergence properties for standard heavy-tailed distributions.
-
-\textbf{Step 3: Exploit the discrete gaps.}
-
-The trick is to make the distribution of $X_1$ discrete, taking values exactly on the integers $n$, so that $\mathbb{P}(|X_1| \geq n)$ is large, but $\mathbb{P}(|X_1| \geq n(1+\epsilon))$ drops instantly to 0 for a while.
-Wait, since $X_1$ is a single fixed distribution, $\mathbb{P}(|X_1| \geq x)$ must be a single fixed function. If it drops to 0 at $n(1+\epsilon)$, it's bounded. 
-Let's try a standard heavy-tailed distribution.
-We know that $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$ is mathematically identical to saying $\mathbb{E}[|X_1|] = \infty$.
-We need $\mathbb{E}[|X_1|] = \infty$ but $\limsup \frac{|X_n|}{n} \leq 1$.
-Actually, a known theorem states: For i.i.d. $X_n$, $\limsup \frac{|X_n|}{n} = c$ almost surely, where $c \in [0, \infty]$, and $c < \infty$ if and only if $\mathbb{E}[|X_1|] < \infty$. Wait! If $\mathbb{E}[|X_1|] = \infty$, then $\limsup \frac{|X_n|}{n} = \infty$ almost surely.
-Let's verify this. If $\mathbb{E}[|X_1|] = \infty$, then for ANY constant $M > 0$, $\sum \mathbb{P}(|X_1| \geq M n) = \infty$.
-By Borel-Cantelli, $|X_n| \geq M n$ infinitely often, almost surely.
-This means $\limsup \frac{|X_n|}{n} \geq M$.
-Since this is true for any arbitrarily large $M$, we must have $\limsup \frac{|X_n|}{n} = \infty$.
-
-\textbf{Step 4: Conclude the proof (The statement is actually TRUE!).}
-
-My initial brainstorming tried to find a counterexample, but I just proved it's impossible. If the sum is infinite, the $\limsup$ explodes to infinity.
-Let's write down the rigorous proof that the statement is TRUE.
-Assume, for the sake of contradiction, that $\sum_{n=1}^\infty \mathbb{P}(|X_n| \geq n) = \infty$.
-Since the $X_n$ are identically distributed, $\mathbb{P}(|X_n| \geq n) = \mathbb{P}(|X_1| \geq n)$.
-Thus, $\sum_{n=1}^\infty \mathbb{P}(|X_1| \geq n) = \infty$.
-This is a well-known property of expected value: for a non-negative random variable $Y$, $\sum_{n=1}^\infty \mathbb{P}(Y \geq n) \leq \mathbb{E}[Y] \leq 1 + \sum_{n=1}^\infty \mathbb{P}(Y \geq n)$.
-Therefore, our assumption implies $\mathbb{E}[|X_1|] = \infty$.
-Now, consider any integer $M > 1$. Let $Y = |X_1| / M$. Since $\mathbb{E}[|X_1|] = \infty$, we also have $\mathbb{E}[Y] = \infty$.
-Applying the expectation property again, $\sum_{n=1}^\infty \mathbb{P}(Y \geq n) = \infty$.
-Substitute back $X_1$: $\sum_{n=1}^\infty \mathbb{P}\left(\frac{|X_1|}{M} \geq n\right) = \infty \implies \sum_{n=1}^\infty \mathbb{P}(|X_1| \geq Mn) = \infty$.
-Because the sequence $X_n$ is identically distributed, $\mathbb{P}(|X_n| \geq Mn) = \mathbb{P}(|X_1| \geq Mn)$.
-Thus, the sum of probabilities of the events $E_n = \{|X_n| \geq Mn\}$ is infinite.
-Because the variables $X_n$ are independent, the events $E_n$ are independent.
-By the Second Borel-Cantelli Lemma, the event $E_n$ occurs infinitely often with probability 1.
-This means that almost surely, $\frac{|X_n|}{n} \geq M$ for infinitely many $n$.
-Therefore, almost surely, $\limsup_{n \to \infty} \frac{|X_n|}{n} \geq M$.
-But $M$ was an arbitrary integer greater than 1. This means the $\limsup$ must be $\infty$.
-This strictly contradicts the given premise that $\limsup_{n \to \infty} \frac{|X_n|}{n} \leq 1$.
-Thus, our assumption must be false. We must have $\sum_{n=1}^\infty \mathbb{P}(|X_n| \geq n) < \infty$.
-The statement is proven true.
+Assume for contradiction that
+\[
+\sum_{n=1}^\infty \mathbb P(|X_n|\geq n)=\infty.
+\]
+Since the variables are identically distributed, this is
+\[
+\sum_{n=1}^\infty \mathbb P(|X_1|\geq n)=\infty.
+\]
+For a nonnegative random variable $Z$,
+\[
+\sum_{n=1}^\infty \mathbb P(Z\geq n)\leq E Z\leq
+1+\sum_{n=1}^\infty \mathbb P(Z\geq n),
+\]
+so the preceding divergence implies
+\[
+E|X_1|=\infty.
+\]
+Fix any integer $M>1$. Then $E(|X_1|/M)=\infty$, hence
+\[
+\sum_{n=1}^\infty \mathbb P(|X_1|\geq Mn)=\infty.
+\]
+By identical distribution,
+\[
+\sum_{n=1}^\infty \mathbb P(|X_n|\geq Mn)=\infty.
+\]
+The events $\{|X_n|\geq Mn\}$ are independent, so the second Borel-Cantelli lemma gives
+\[
+\mathbb P(|X_n|\geq Mn\ \text{infinitely often})=1.
+\]
+Therefore
+\[
+\limsup_{n\to\infty}\frac{|X_n|}{n}\geq M
+\]
+almost surely. Since this holds for every integer $M>1$, the limsup is infinite almost
+surely, contradicting the hypothesis
+\[
+\limsup_{n\to\infty}\frac{|X_n|}{n}\leq 1.
+\]
+Thus
+\[
+\sum_{n=1}^\infty \mathbb P(|X_n|\geq n)<\infty.
+\]
 \end{solution}
 
 \begin{exercise}\label{probability:2016:10}
@@ -637,9 +614,19 @@ Notice this is slightly less than twice the average arc length ($2 \times \frac{
 We need $\operatorname{Var}(L_{target}) = \mathbb{E}[L_{target}^2] - (\mathbb{E}[L_{target}])^2$.
 We know $L_{target} = L_1 + L_2$ (using generic indices for the two adjacent elementary arcs).
 \[ \mathbb{E}[(L_1 + L_2)^2] = \mathbb{E}[L_1^2] + 2\mathbb{E}[L_1 L_2] + \mathbb{E}[L_2^2] = 2\mathbb{E}[L_1^2] + 2\mathbb{E}[L_1 L_2] \]
-To find these second moments, we use the fact that the joint distribution of the lengths of arcs formed by $n+1$ uniform points on a circle of length $C$ is uniformly distributed on the simplex $\sum L_i = C$.
-This is equivalent to a Dirichlet distribution $\text{Dir}(1, 1, \dots, 1)$.
-For a Dirichlet distribution scaled by $C$:
+To find these second moments, we can derive the needed spacing law directly. Cut the circle at $P_0=(1,0)$ and identify it with the interval $[0,C)$, where $C=2\pi$. If $0<U_{(1)}<\cdots<U_{(n)}<C$ are the ordered random cuts, the elementary spacings
+\[
+U_{(1)},\quad U_{(2)}-U_{(1)},\quad \ldots,\quad U_{(n)}-U_{(n-1)},\quad C-U_{(n)}
+\]
+have constant joint density $n!/C^n$ on the simplex where their sum is $C$. Thus the normalized spacings have the finite-sample Dirichlet distribution
+\[
+\operatorname{Dirichlet}(1,\ldots,1).
+\]
+The target arc is the sum of the two spacings adjacent to $P_0$, so
+\[
+\frac{L_{\mathrm{target}}}{C}\sim \operatorname{Beta}(2,n-1).
+\]
+Equivalently, using the second moments of the same Dirichlet vector:
 \[ \mathbb{E}[L_1^2] = \frac{2}{(n+1)(n+2)} C^2 \]
 \[ \mathbb{E}[L_1 L_2] = \frac{1}{(n+1)(n+2)} C^2 \]
 Substitute these into our target squared expectation:

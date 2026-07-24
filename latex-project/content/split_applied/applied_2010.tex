@@ -180,17 +180,28 @@ Let $X_1, \dots, X_n$ be i.i.d. with distribution function $F$. Let $Y_1 < \dots
 \end{exercise}
 
 \begin{solution}
-\textbf{Steps:}
-\begin{enumerate}
-    \item Note that if $X \sim F$, then $F(X) \sim U(0, 1)$ (Probability Integral Transform).
-    \item Let $U_1, \dots, U_n$ be i.i.d. $U(0, 1)$. The order statistics $U_{(j)} = F(Y_j)$ are the variables $Z_j$ we are interested in.
-    \item The probability density function of the $j$-th order statistic from a $U(0, 1)$ distribution is given by:
-    \[ f_{U_{(j)}}(z) = \frac{n!}{(j-1)!(n-j)!} z^{j-1} (1-z)^{n-j}, \quad 0 < z < 1. \]
-    \item This is precisely the PDF of the $Beta(j, n-j+1)$ distribution.
-\end{enumerate}
+Assume $F$ is continuous, as in the source problem.  Put
+\[
+U_i=F(X_i).
+\]
+Then the probability integral transform gives $U_i\sim \operatorname{Unif}(0,1)$, and monotonicity of $F$ implies
+\[
+Z_j=F(Y_j)=U_{(j)},
+\]
+the $j$-th order statistic of $U_1,\ldots,U_n$.
 
-\textbf{Intuition:}
-The transformation $F(X)$ maps any continuous distribution to the uniform distribution on $[0,1]$. The order statistics of uniform variables naturally follow Beta distributions, as they partition the interval $[0,1]$ into segments whose lengths are related to the counts of variables falling in each segment.
+For $0<z<1$, the distribution function of $U_{(j)}$ is
+\[
+\mathbb{P}(U_{(j)}\leq z)
+=\sum_{k=j}^n {n\choose k}z^k(1-z)^{n-k},
+\]
+because at least $j$ of the $n$ uniform variables must fall in $[0,z]$. Differentiating gives
+\[
+f_{U_{(j)}}(z)
+=\frac{n!}{(j-1)!(n-j)!}z^{j-1}(1-z)^{n-j},
+\qquad 0<z<1.
+\]
+This is exactly the density of a $\operatorname{Beta}(j,n-j+1)$ random variable.
 \end{solution}
 
 \begin{exercise}
@@ -199,13 +210,52 @@ Investigate the convergence to a Normal distribution for the sequence of random 
 \end{exercise}
 
 \begin{solution}
-\textbf{Steps:}
-\begin{enumerate}
-    \item This problem involves studying the asymptotic behavior of a sum of kernel-like terms. 
-    \item Check the conditions for the Central Limit Theorem (CLT) for the sum $\sum Y_{n,i}$. 
-    \item Calculate the mean and variance of $Y_{n,i}$. The variance will depend on the scale $b_n$ and the underlying distribution of $X_i$.
-    \item Usually, if $b_n \to 0$ or $b_n \to \infty$ at specific rates, the normalized sum will converge to a normal distribution by the Lindeberg-Feller CLT.
-\end{enumerate}
+Assume the common distribution of the $X_i$ has a density $f$ that is continuous at $0$, and consider the kernel average
+\[
+\hat f_n(0)=\frac{1}{n}\sum_{i=1}^n Y_{n,i}.
+\]
+Write
+\[
+K(u)=\frac{3}{4}(1-u^2)I(|u|\leq1),
+\qquad
+Y_{n,i}=\frac{1}{b_n}K(X_i/b_n).
+\]
+Then
+\[
+E Y_{n,i}=\int_{-1}^{1}K(u)f(b_nu)\,du\to f(0)
+\]
+as $b_n\to0$, because $\int_{-1}^{1}K(u)\,du=1$.
+
+The second moment is
+\[
+E Y_{n,i}^2=\frac{1}{b_n}\int_{-1}^{1}K(u)^2f(b_nu)\,du
+\sim \frac{f(0)}{b_n}\int_{-1}^{1}K(u)^2\,du.
+\]
+Since
+\[
+\int_{-1}^{1}K(u)^2\,du
+=\frac{9}{16}\int_{-1}^{1}(1-2u^2+u^4)\,du
+=\frac{3}{5},
+\]
+we have
+\[
+\operatorname{Var}(Y_{n,i})\sim \frac{3f(0)}{5b_n}.
+\]
+
+If
+\[
+b_n\to0,\qquad nb_n\to\infty,
+\]
+then the triangular-array Lindeberg condition holds because the kernel is bounded by $3/(4b_n)$, while the standard deviation of $\sum_i Y_{n,i}$ is of order $\sqrt{n/b_n}$. Hence
+\[
+\sqrt{nb_n}\left(\hat f_n(0)-E\hat f_n(0)\right)
+\xrightarrow{d}N\left(0,\frac{3}{5}f(0)\right).
+\]
+If $f$ is twice continuously differentiable at $0$, then
+\[
+E\hat f_n(0)-f(0)=\frac{b_n^2}{10}f''(0)+o(b_n^2),
+\]
+so the centered CLT with $f(0)$ in place of $E\hat f_n(0)$ also holds when $nb_n^5\to0$.
 \end{solution}
 
 \begin{exercise}
@@ -214,31 +264,123 @@ Prove the minimax error bound: $\min \sup_{|\theta| \le \tau} E (\sum a_i X_i + 
 \end{exercise}
 
 \begin{solution}
-\textbf{Steps:}
-\begin{enumerate}
-    \item This is a classic result in minimax estimation. Consider the linear estimator $\delta = w \bar{X}$.
-    \item The risk is $R(\theta, w) = E(w \bar{X} - \theta)^2 = w^2 \frac{1}{n} + (w-1)^2 \theta^2$.
-    \item To find the minimax estimator, we look for the $w$ that minimizes the maximum risk over $\theta \in [-\tau, \tau]$.
-    \item The maximum risk occurs at $\theta = \pm \tau$. Thus we minimize $f(w) = \frac{w^2}{n} + (w-1)^2 \tau^2$.
-    \item Taking the derivative: $\frac{2w}{n} + 2(w-1)\tau^2 = 0 \implies w = \frac{\tau^2}{\tau^2 + n^{-1}}$.
-    \item Substituting $w$ back into the risk gives the bound $\frac{\tau^2 n^{-1}}{\tau^2 + n^{-1}}$.
-\end{enumerate}
+Write the affine estimator as
+\[
+\delta(X)=\sum_{i=1}^n a_iX_i+a_{n+1}.
+\]
+Let $A=\sum_{i=1}^n a_i$. Since $X_i=\theta+\varepsilon_i$ with independent $\varepsilon_i\sim N(0,1)$,
+\[
+R(\theta,\delta)
+=E_\theta(\delta-\theta)^2
+=\sum_{i=1}^n a_i^2+\{(A-1)\theta+a_{n+1}\}^2.
+\]
+For fixed $A$, Cauchy's inequality gives
+\[
+\sum_{i=1}^n a_i^2\geq \frac{A^2}{n},
+\]
+with equality exactly when $a_1=\cdots=a_n=A/n$. Also, because the parameter set is symmetric, any nonzero intercept increases the larger of the two endpoint risks:
+\[
+\max_{\theta=\pm\tau}\{(A-1)\theta+a_{n+1}\}^2
+\geq (A-1)^2\tau^2.
+\]
+Thus no affine estimator can have smaller worst-case risk than the best estimator of the form
+\[
+\delta_A=A\bar X.
+\]
+For this estimator,
+\[
+R(\theta,\delta_A)=\frac{A^2}{n}+(A-1)^2\theta^2,
+\]
+and the maximum over $|\theta|\leq\tau$ is
+\[
+\frac{A^2}{n}+(A-1)^2\tau^2.
+\]
+Minimizing in $A$ gives
+\[
+\frac{2A}{n}+2(A-1)\tau^2=0,
+\qquad
+A=\frac{\tau^2}{\tau^2+n^{-1}}.
+\]
+Substitution gives the minimax value in the affine class:
+\[
+\min_{a_1,\ldots,a_{n+1}}\sup_{|\theta|\leq\tau}
+E_\theta(\delta-\theta)^2
+=\frac{\tau^2 n^{-1}}{\tau^2+n^{-1}}.
+\]
+The least favorable two-point prior intuition is that the endpoints $\theta=\pm\tau$ are exactly where the optimized affine risk is largest; the symmetric shrinkage balances variance at the center against endpoint bias.
 \end{solution}
 
 \begin{exercise}
 \label{applied:2010:10}
-In a foul shooting model, let $N_0, N_1, N_2$ be the counts of players missing both, making one, and making both shots respectively in $n$ pairs of shots. Derive the MLE $\hat{p} = \frac{N_1 + 2N_2}{N_0 + 2N_1 + 2N_2}$ (assuming independent shots) and find its asymptotic distribution.
+In the ``1 and 1'' foul shooting model, the shooter first takes one shot. If that shot is made, the shooter gets a second shot; if the first shot is missed, the trial ends. Let $N_0,N_1,N_2$ be the counts, in $n$ independent trials, of making $0,1,2$ baskets. Assume each shot is an independent Bernoulli trial with success probability $p$. Derive the MLE
+\[
+\widehat p=\frac{N_1+2N_2}{N_0+2N_1+2N_2}
+\]
+and find its asymptotic distribution.
 \end{exercise}
 
 \begin{solution}
-\textbf{Steps:}
-\begin{enumerate}
-    \item If shots are independent with probability $p$, the counts $N_0, N_1, N_2$ follow a multinomial distribution with probabilities $(1-p)^2, 2p(1-p), p^2$.
-    \item The log-likelihood is $\ell(p) = N_0 \ln(1-p)^2 + N_1 \ln(2p(1-p)) + N_2 \ln p^2$.
-    \item $\ell'(p) = \frac{-2N_0}{1-p} + \frac{N_1}{p} - \frac{N_1}{1-p} + \frac{2N_2}{p} = 0$.
-    \item Solving for $p$ gives $\hat{p} = \frac{N_1 + 2N_2}{2(N_0 + N_1 + N_2)}$. Note the denominator in the prompt might assume a different total count convention.
-    \item By the property of MLE, $\sqrt{n}(\hat{p} - p) \xrightarrow{d} N(0, I(p)^{-1})$.
-\end{enumerate}
+Under the source model, a trial may use either one or two shots. The cell probabilities are
+\[
+p_0=1-p,\qquad p_1=p(1-p),\qquad p_2=p^2,
+\]
+and $(N_0,N_1,N_2)$ is multinomial with total $n=N_0+N_1+N_2$.  The log-likelihood, up to constants, is
+\[
+\ell(p)=(N_0+N_1)\log(1-p)+(N_1+2N_2)\log p.
+\]
+Thus
+\[
+\ell'(p)=\frac{N_1+2N_2}{p}-\frac{N_0+N_1}{1-p}.
+\]
+Setting this equal to zero gives
+\[
+\widehat p
+=\frac{N_1+2N_2}{N_0+2N_1+2N_2}.
+\]
+The denominator is the random total number of shots actually attempted, not $2n$.
+
+For the asymptotic distribution, for each trial define
+\[
+A=\text{number of made shots}\in\{0,1,2\},
+\qquad
+B=\text{number of attempted shots}\in\{1,2\}.
+\]
+Then
+\[
+\widehat p=\frac{\bar A_n}{\bar B_n}.
+\]
+The means are
+\[
+E A=p(1-p)+2p^2=p(1+p),
+\qquad
+E B=(1-p)+2p=1+p,
+\]
+so $EA/EB=p$. The delta-method influence variable for the ratio is
+\[
+\frac{A-pB}{1+p}.
+\]
+Its variance is
+\[
+\frac{E(A-pB)^2}{(1+p)^2}.
+\]
+Using the three outcomes $0,1,2$ baskets,
+\[
+\begin{aligned}
+E(A-pB)^2
+&=(1-p)p^2+p(1-p)(1-2p)^2+p^2(2-2p)^2\\
+&=p(1-p^2).
+\end{aligned}
+\]
+Therefore
+\[
+\sqrt n(\widehat p-p)
+\xrightarrow{d}
+N\left(0,\frac{p(1-p)}{1+p}\right).
+\]
+For finite $n$, $\widehat p$ is generally not unbiased; for example when $n=1$,
+\[
+E\widehat p=\frac{1}{2}p(1-p)+p^2=\frac{p(1+p)}{2}\neq p.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -316,22 +458,101 @@ Here $u$ is a vector of size $m$ and $A$ and $B$ are $m \times m$ real matrices.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Well-posedness for linear hyperbolic systems.
-    \item Matrix diagonalization and the condition number of the eigenvector matrix.
-    \item Operator splitting and the Lax Equivalence Theorem.
-\end{itemize}
+\textbf{Statement-risk note.}
+As stated, the first claim is true, while the two ``guaranteed'' questions in (2) and (3)
+have negative answers. The missing condition in (3) is a common, grid-uniform contraction
+bound for the two substeps; mere stability of the two separate one-step schemes does not
+force stability of their product.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Well-posedness of (4) and (5):} Since $A$ is diagonalizable with real eigenvalues, let $A = PDP^{-1}$. The substitution $v = P^{-1}u$ gives $v_t + Dv_x = 0$, which decouples into scalar advection equations $v_{i,t} + \lambda_i v_{i,x} = 0$. Since $\|v_i(\cdot, t)\|_2 = \|v_i(\cdot, 0)\|_2$, we have $\|u(\cdot, t)\|_2 \le \|P\| \|v(\cdot, t)\|_2 = \|P\| \|P^{-1} u(\cdot, 0)\|_2$. Thus $C(T) = \kappa(P)$ makes it well-posed. The same applies to $B$.
+\textbf{(1) Well-posedness of (4) and (5).}
+Write $A=PDP^{-1}$ with $D=\operatorname{diag}(\lambda_1,\ldots,\lambda_m)$ and
+$\lambda_j\in\mathbb R$. Setting $v=P^{-1}u$ gives the decoupled system
+\[
+v_t+Dv_x=0,\qquad (v_j)_t+\lambda_j(v_j)_x=0.
+\]
+On the periodic domain each scalar component is just translated, hence
+\[
+\|v(\cdot,t)\|_2=\|v(\cdot,0)\|_2.
+\]
+Therefore
+\[
+\|u(\cdot,t)\|_2\leq \|P\|_2\|P^{-1}\|_2\|u(\cdot,0)\|_2,
+\]
+so (4) is well-posed in $L^2$. The same argument applies to $B$.
 
-    \item \textbf{Counterexample for (6):} Let $A = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}$ and $B = \begin{bmatrix} -1 & 0 \\ -2 & 1 \end{bmatrix}$. Both have real eigenvalues $\pm 1$. However, $C = A+B = \begin{bmatrix} 0 & 1 \\ -2 & 0 \end{bmatrix}$ has eigenvalues $\pm i \sqrt{2}$. For a first-order system, complex eigenvalues lead to exponential growth in Fourier space, $e^{|\xi| t \sqrt{2}}$, which is not bounded by any $C(T)$, making it ill-posed.
+\textbf{(2) The sum need not be well-posed.}
+Let
+\[
+A=
+\begin{pmatrix}
+1&1\\
+0&-1
+\end{pmatrix},
+\qquad
+B=
+\begin{pmatrix}
+-1&0\\
+-2&1
+\end{pmatrix}.
+\]
+Both matrices have the distinct real eigenvalues $1$ and $-1$, hence both are
+diagonalizable over $\mathbb R$. But
+\[
+C=A+B=
+\begin{pmatrix}
+0&1\\
+-2&0
+\end{pmatrix}
+\]
+has characteristic polynomial $\lambda^2+2$, so its eigenvalues are
+$\pm i\sqrt 2$. For the Fourier mode $e^{ikx}$, the system
+$u_t+Cu_x=0$ gives
+\[
+\widehat u_t=-ikC\widehat u.
+\]
+Since $C$ has non-real eigenvalues, the matrix $-ikC$ has a real eigenvalue of size
+$|k|\sqrt 2$. Thus some modes grow like $e^{|k|\sqrt 2\,t}$, and no bound depending
+only on $T$ can hold uniformly in $k$. Hence (6) is not guaranteed to be well-posed.
 
-    \item \textbf{Splitting Scheme Stability:} By the Lax Equivalence Theorem, for a consistent scheme, stability is equivalent to the well-posedness of the target PDE in the grid-independent limit. Since the underlying PDE (6) can be ill-posed, the splitting scheme $u^{n+1} = B_h A_h u^n$ cannot be stable in those cases.
-\end{enumerate}
+\textbf{(3) The product of stable substeps need not be stable.}
+Here ``stable'' cannot be replaced by ``each one-step matrix is power-bounded'' unless
+the two bounds are compatible in one common norm. A finite-dimensional model already
+shows the gap. Put
+\[
+S=
+\begin{pmatrix}
+1&0\\
+0&-1
+\end{pmatrix},
+\qquad
+T=
+\begin{pmatrix}
+1&1\\
+0&-1
+\end{pmatrix}.
+\]
+Then $S^2=T^2=I$, so the separate schemes $u^{n+1}=Su^n$ and $u^{n+1}=Tu^n$ are
+stable. However,
+\[
+TS=
+\begin{pmatrix}
+1&-1\\
+0&1
+\end{pmatrix},
+\qquad
+(TS)^n=
+\begin{pmatrix}
+1&-n\\
+0&1
+\end{pmatrix},
+\]
+whose $L^2$ operator norm is unbounded as $n\to\infty$. Thus the splitting update
+$u^{n+1}=TSu^n$ is not stable.
 
-\textbf{Intuition:}
-The well-posedness of a linear system is determined by the eigenvalues of the coefficient matrix. Hyperbolicity (real eigenvalues) is necessary. However, the set of matrices with real eigenvalues is not closed under addition. Consequently, the combination of two stable processes can result in an unstable system.
+If one strengthens the hypothesis to
+\[
+\|A_h\|_2\leq 1,\qquad \|B_h\|_2\leq 1
+\]
+uniformly in $h$, then $\|B_hA_h\|_2\leq 1$ by submultiplicativity, and the product
+is stable. That stronger contraction assumption is not what the problem states.
 \end{solution}

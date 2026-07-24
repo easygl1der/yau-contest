@@ -401,15 +401,36 @@ For $f \in L^p([0,1])$, show that $\lim_{\lambda\to\infty} \lambda^p m(\{|f|>\la
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is a refinement of Markov's inequality. For $f \in L^p$, the "tail" of the integral must vanish.
+\textbf{Motivation:} This is a strict tail version of Chebyshev's inequality. Chebyshev gives the uniform bound
+\[
+\lambda^p m(\{|f|>\lambda\}) \leq \|f\|_p^p,
+\]
+but integrability of $|f|^p$ forces the far tail to vanish.
 
-\begin{enumerate}
-    \item $\int_0^1 |f|^p dm \geq \int_{\{|f|>\lambda\}} |f|^p dm \geq \lambda^p m(\{|f|>\lambda\})$.
-    \item Let $g = |f|^p$. Then $g \in L^1$. We want to show $\lambda^p m(\{g > \lambda^p\}) \to 0$.
-    \item Let $E_\lambda = \{|f| > \lambda\}$. As $\lambda \to \infty$, $E_\lambda \downarrow \emptyset$ a.e.
-    \item By the Dominated Convergence Theorem, $\int_{E_\lambda} |f|^p dm \to 0$ because $f \in L^p$ and the measure of $E_\lambda$ goes to $0$.
-    \item Since $\lambda^p m(E_\lambda) \leq \int_{E_\lambda} |f|^p dm$, the limit is 0.
-\end{enumerate}
+Put $g=|f|^p$. Then $g\in L^1([0,1])$. For $\lambda>0$ let
+\[
+E_\lambda=\{x\in[0,1]: |f(x)|>\lambda\}.
+\]
+On $E_\lambda$ we have $|f(x)|^p>\lambda^p$, so
+\[
+\lambda^p m(E_\lambda)\leq \int_{E_\lambda}|f(x)|^p\,dm(x).
+\]
+
+It remains to show that the right-hand side goes to zero. As $\lambda\to\infty$, the sets $E_\lambda$ decrease to the set where $|f|=\infty$, which has measure zero because $f\in L^p$. Hence $\mathbf 1_{E_\lambda}(x)\to 0$ almost everywhere. Moreover,
+\[
+0\leq |f(x)|^p\mathbf 1_{E_\lambda}(x)\leq |f(x)|^p,
+\]
+and $|f|^p$ is integrable. By the dominated convergence theorem,
+\[
+\int_{E_\lambda}|f|^p\,dm
+=\int_0^1 |f|^p\mathbf 1_{E_\lambda}\,dm \to 0.
+\]
+Therefore
+\[
+0\leq \lambda^p m(\{|f|>\lambda\})
+\leq \int_{\{|f|>\lambda\}} |f|^p\,dm \to 0,
+\]
+which proves the claim.
 \end{solution}
 
 \begin{exercise}
@@ -428,14 +449,67 @@ For $f \in L^p([0,1])$, show that $\lim_{\lambda\to\infty} \lambda^p m(\{|f|>\la
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} Completeness means the span is dense. We use the fact that continuous functions are dense in $L^2$ and trigonometric polynomials are dense in continuous periodic functions.
+\textbf{Part 1: the Hilbert-space equivalences.}
+For a finite set $S$ of indices, write
+\[
+P_Sx=\sum_{\nu\in S}(x,e_\nu)e_\nu .
+\]
+Since the $e_\nu$ are orthonormal,
+\[
+\|x-P_Sx\|^2=\|x\|^2-\sum_{\nu\in S}|(x,e_\nu)|^2.
+\]
+This is Bessel's inequality for finite partial sums, and it also shows that the partial sums are Cauchy exactly when the scalar series converges.
 
-\begin{enumerate}
-    \item Continuous functions $C[0,2\pi]$ are dense in $L^2[0,2\pi]$.
-    \item For any $f \in C[0,2\pi]$, we can approximate it by periodic continuous functions by slightly modifying it near the boundaries.
-    \item By the Stone-Weierstrass Theorem, the span of $\{1, \cos nx, \sin nx\}$ is dense in $C_{per}[0,2\pi]$ under the sup-norm.
-    \item Since $\| \cdot \|_2 \leq \sqrt{2\pi} \| \cdot \|_\infty$, density in sup-norm implies density in $L^2$.
-\end{enumerate}
+If $x\in E=\overline{\operatorname{span}}\mathfrak F$, choose finite linear combinations $y_j$ of the $e_\nu$ with $y_j\to x$. For finite linear combinations Parseval's identity is immediate. Passing to the limit gives
+\[
+\|x\|^2=\sum_\nu |(x,e_\nu)|^2
+\]
+and
+\[
+x=\sum_\nu (x,e_\nu)e_\nu
+\]
+in the norm of $H$. Thus (1) implies both (2) and (3).
+
+Conversely, assume (2). Let
+\[
+y=\lim_S P_Sx\in E
+\]
+be the norm limit of the partial sums. Then $(x-y,e_\nu)=0$ for every $\nu$, while
+\[
+\|y\|^2=\sum_\nu |(x,e_\nu)|^2=\|x\|^2.
+\]
+Since $x-y$ is orthogonal to $y$, the Pythagorean identity gives
+\[
+\|x\|^2=\|y\|^2+\|x-y\|^2.
+\]
+Hence $\|x-y\|=0$, so $x=y\in E$. Finally, (3) directly says that $x$ is a norm limit of finite linear combinations of the $e_\nu$, so (3) also implies (1). The three statements are equivalent.
+
+\textbf{Part 2: completeness of the trigonometric system.}
+With the normalization
+\[
+\langle f,g\rangle=\frac{1}{\pi}\int_0^{2\pi}f(x)g(x)\,dx,
+\]
+the functions $\frac{1}{\sqrt2}$, $\cos nx$, and $\sin nx$ are orthonormal. Let $E$ be their closed span. It suffices to show $E^\perp=\{0\}$.
+
+Suppose $h\in E^\perp$. Then every Fourier coefficient of $h$ is zero:
+\[
+\int_0^{2\pi}h(x)\,dx=0,\qquad
+\int_0^{2\pi}h(x)\cos nx\,dx=0,\qquad
+\int_0^{2\pi}h(x)\sin nx\,dx=0.
+\]
+Thus $\int hT=0$ for every trigonometric polynomial $T$.
+
+By the Stone--Weierstrass theorem, trigonometric polynomials are uniformly dense in the continuous $2\pi$-periodic functions. Hence
+\[
+\int_0^{2\pi}h(x)\varphi(x)\,dx=0
+\]
+for every continuous $2\pi$-periodic function $\varphi$.
+
+Continuous functions are dense in $L^2[0,2\pi]$, and any continuous function can be adjusted near the endpoints on intervals of arbitrarily small length to make it periodic without changing it much in $L^2$. Therefore continuous periodic functions are dense in $L^2[0,2\pi]$. Choose such $\varphi_j$ with $\varphi_j\to h$ in $L^2$. Then
+\[
+\|h\|_2^2=\lim_{j\to\infty}\int_0^{2\pi}h(x)\varphi_j(x)\,dx=0.
+\]
+So $h=0$, and therefore $E=H$.
 \end{solution}
 
 \begin{exercise}
@@ -444,14 +518,41 @@ Show that the Volterra operator $(Kf)(s) = \int_0^s f(t) dt$ is compact and has 
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} The Volterra operator is a classic example of a compact operator without eigenvalues (its spectrum is $\{0\}$, but it's not a nil-potent operator).
+\textbf{Compactness.}
+Let $\{f_n\}$ be bounded in $L^2[0,1]$, say $\|f_n\|_2\leq M$. Put
+\[
+u_n(s)=(Kf_n)(s)=\int_0^s f_n(t)\,dt.
+\]
+By Cauchy--Schwarz,
+\[
+|u_n(s)|\leq \int_0^1 |f_n(t)|\,dt\leq \|f_n\|_2\leq M.
+\]
+Also, for $0\leq s_1<s_2\leq 1$,
+\[
+|u_n(s_2)-u_n(s_1)|
+\leq \int_{s_1}^{s_2}|f_n(t)|\,dt
+\leq M |s_2-s_1|^{1/2}.
+\]
+Thus $\{u_n\}$ is uniformly bounded and equicontinuous in $C[0,1]$. By Arzel\`a--Ascoli, a subsequence converges uniformly on $[0,1]$. Uniform convergence implies convergence in $L^2[0,1]$, so $K$ maps bounded sets in $L^2$ to relatively compact sets. Hence $K$ is compact.
 
-\begin{enumerate}
-    \item \textbf{Compactness:} Let $\|f_n\|_2 \leq 1$. Then $|Kf_n(s)| \leq 1$ and $|Kf_n(s_1) - Kf_n(s_2)| \leq \sqrt{|s_1-s_2|}$. By Arzel\`a-Ascoli, $\{Kf_n\}$ is precompact in $C[0,1]$, and thus in $L^2[0,1]$.
-    \item \textbf{Eigenvalues:} $Kf = \lambda f$.
-\end{enumerate}
-   - If $\lambda=0$, $\int_0^s f = 0 \implies f=0$ a.e.
-   - If $\lambda \neq 0$, $f(s) = \frac{1}{\lambda} \int_0^s f(t) dt$. This implies $f$ is continuous, then $C^1$.
-   - Differentiating gives $f'(s) = \frac{1}{\lambda} f(s) \implies f(s) = C e^{s/\lambda}$.
-   - At $s=0$, $f(0) = \frac{1}{\lambda} \int_0^0 f = 0$. Thus $C e^0 = 0 \implies C = 0 \implies f=0$.
+\textbf{Absence of eigenvalues.}
+Suppose $Kf=\lambda f$ for some $f\in L^2[0,1]$.
+
+If $\lambda=0$, then
+\[
+\int_0^s f(t)\,dt=0
+\]
+for every $s$. The indefinite integral is absolutely continuous and has derivative $f$ almost everywhere, so $f=0$ almost everywhere. Hence $0$ is not an eigenvalue.
+
+If $\lambda\neq 0$, then
+\[
+f(s)=\frac{1}{\lambda}\int_0^s f(t)\,dt
+\]
+for almost every $s$. The right side is continuous, so $f$ has a continuous representative. With that representative the identity holds for every $s$, and differentiating gives
+\[
+f'(s)=\frac{1}{\lambda}f(s),\qquad f(0)=0.
+\]
+The unique solution is $f\equiv 0$. Thus no $\lambda$ has a nonzero eigenvector.
+
+Therefore the Volterra operator is compact and has no eigenvalues.
 \end{solution}

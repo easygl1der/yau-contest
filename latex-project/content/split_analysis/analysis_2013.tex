@@ -4,7 +4,7 @@
 
 \begin{exercise}
 \label{analysis:2013:1}
-Suppose that $f$ is an integrable function on $\mathbb{R}^d$. For each $\alpha0$, let $E_{\alpha}=\{x\mid |f(x)|\alpha\}$. Prove that:
+Suppose that $f$ is an integrable function on $\mathbb{R}^d$. For each $\alpha>0$, let $E_{\alpha}=\{x\mid |f(x)|>\alpha\}$. Prove that:
 \[
 \int_{\mathbb{R}^d}|f(x)|\,dx = \int_0^{\infty} m(E_{\alpha})\,d\alpha.
 \]
@@ -169,7 +169,7 @@ Suppose $H=L^2(B)$, $B$ is the unit ball in $\mathbb{R}^d$. Let $K(x,y)$ be a me
 \[
 |K(x,y)| \leq A|x-y|^{-d+\alpha}
 \]
-for some $\alpha0$, whenever $x,y\in B$. Define
+for some $\alpha>0$, whenever $x,y\in B$. Define
 \[
 Tf(x) = \int_B K(x,y)f(y)\,dy.
 \]
@@ -406,32 +406,54 @@ Let $\mathbf{H}$ be a Hilbert space and $\mathbf{A}$ a compact self-adjoint line
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Functional Analysis: Spectral Theorem for compact self-adjoint operators.
-    \item Linear Algebra: Eigenspaces and orthogonality.
-    \item Topology: Compactness and its relation to eigenvalue decay.
-\end{itemize}
+\textbf{Proof, with the compact spectral theorem reduced to its key lemma.}
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item For a compact self-adjoint operator, the nonzero eigenvalues are real and have finite multiplicity.
+\textbf{Lemma.}
+If \(A\) is a nonzero compact self-adjoint operator on a Hilbert space \(H\), then \(A\) has a nonzero eigenvalue.
 
-    \item Eigenspaces corresponding to different eigenvalues are orthogonal because $\mathbf{A}$ is self-adjoint.
+\textit{Proof of the lemma.}
+For a compact self-adjoint operator, one first shows that the numerical radius is attained on the unit sphere. Indeed, choose unit vectors \(x_j\) such that
+\[
+|\langle Ax_j,x_j\rangle|\to
+\sup_{\|x\|=1}|\langle Ax,x\rangle|.
+\]
+After passing to a weakly convergent subsequence \(x_j\rightharpoonup x\), compactness gives \(Ax_j\to Ax\) in norm. The standard polarization identity then shows that equality in the extremal variational problem forces
+\[
+Ax=\lambda x
+\]
+for a real number \(\lambda\) with \(|\lambda|=\sup_{\|y\|=1}|\langle Ay,y\rangle|\). Since \(A\neq0\), this \(\lambda\neq0\). This proves the lemma.
 
-    \item Let $\{\lambda_n\}$ be the sequence of nonzero eigenvalues and $\{\varphi_n\}$ the corresponding orthonormal eigenvectors. The closure of the span of these eigenvectors is exactly $(\operatorname{Ker} \mathbf{A})^\perp$.
+Now construct the decomposition. Pick a nonzero eigenvalue \(\lambda_1\) and its eigenspace \(E_{\lambda_1}\). If \(\lambda\neq\mu\), then for \(u\in E_\lambda\) and \(v\in E_\mu\),
+\[
+\lambda\langle u,v\rangle
+=\langle Au,v\rangle
+=\langle u,Av\rangle
+=\mu\langle u,v\rangle,
+\]
+so \(E_\lambda\perp E_\mu\). Also \(E_\lambda\) is finite-dimensional when \(\lambda\neq0\): if it were infinite-dimensional, its unit ball would contain an orthonormal sequence \(\{e_j\}\), and \(Ae_j=\lambda e_j\) would have no convergent subsequence, contradicting compactness.
 
-    \item Any vector $\xi \in \mathbf{H}$ can be uniquely decomposed as $\xi = \xi_{perp} + \xi'$, where $\xi' \in \operatorname{Ker} \mathbf{A}$ and $\xi_{perp} \in \overline{\operatorname{span}\{\varphi_n\}}$.
+Remove \(E_{\lambda_1}\) and repeat the argument on the orthogonal complement. The complement is invariant under \(A\), because \(A\) is self-adjoint. This gives a countable orthonormal family of eigenvectors for all nonzero eigenspaces. Let \(M\) be the closed span of those eigenspaces.
 
-    \item Thus $\xi = \sum c_n \varphi_n + \xi'$, where $c_n = \langle \xi, \varphi_n \rangle$.
+The restriction of \(A\) to \(M^\perp\) is still compact and self-adjoint. It has no nonzero eigenvalue by construction. By the lemma, this restriction must be the zero operator. Hence
+\[
+M^\perp\subset \ker A.
+\]
+Therefore every \(\xi\in H\) decomposes uniquely as
+\[
+\xi=\sum_k c_k\varphi_k+\xi',
+\qquad
+\xi'\in\ker A,
+\]
+where \(c_k=\langle \xi,\varphi_k\rangle\), and the series converges in the Hilbert norm. Applying \(A\) term by term gives
+\[
+A\xi=\sum_k \lambda_k c_k\varphi_k.
+\]
 
-    \item Applying $\mathbf{A}$, we get $\mathbf{A}\xi = \sum c_n \mathbf{A}\varphi_n + \mathbf{A}\xi' = \sum \lambda_n c_n \varphi_n$.
-
-    \item If there were infinitely many $\lambda_n$ not converging to 0, there would be an infinite-dimensional subspace where $\mathbf{A}$ is bounded away from zero, which contradicts the compactness of $\mathbf{A}$.
-\end{enumerate}
-
-\textbf{Intuition:}
-Compact operators are "almost" finite-dimensional. Just like a symmetric matrix can be diagonalized, a compact self-adjoint operator can be diagonalized using an orthonormal basis. The eigenvalues must decay to zero because the operator "shrinks" the dimensions as we go further into the basis, eventually making the transformation infinitesimal in higher dimensions.
+Finally, if infinitely many nonzero eigenvalues did not tend to \(0\), then there would be \(\epsilon>0\) and an orthonormal sequence \(\varphi_{k_j}\) with \(|\lambda_{k_j}|\geq\epsilon\). The sequence
+\[
+A\varphi_{k_j}=\lambda_{k_j}\varphi_{k_j}
+\]
+has no norm-convergent subsequence, contradicting compactness. Hence \(\lambda_k\to0\) along any infinite list of nonzero eigenvalues.
 \end{solution}
 
 \begin{exercise}
@@ -445,26 +467,47 @@ A function $f : \mathbb{R} \to \mathbb{R}$ is called convex if $f(\lambda x + (1
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item Real Analysis: Properties of convex functions (monotonicity of slopes).
-    \item Legendre Transform: Definition and properties.
-    \item Differentiability: Left and right derivatives $f'_-(x)$ and $f'_+(x)$.
-\end{itemize}
+\textbf{As written, part (a) is missing a growth hypothesis.}
+The continuity assertion is correct, but the claim that
+\[
+g(y)=\max_{x\in\mathbb R}(xy-f(x))
+\]
+is well-defined for every finite convex \(f\) is false. For example, if \(f(x)\equiv0\), then \(xy-f(x)=xy\), whose maximum over \(x\in\mathbb R\) is not finite unless \(y=0\), and even at \(y=0\) the maximum is attained by every \(x\). Thus the intended transform needs an additional coercivity condition, or the word ``max'' should be replaced by the extended-valued supremum.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item \textbf{Continuity:} For any $x$, convexity implies that the slope of secant lines is non-decreasing. This bound on slopes ensures the function is locally Lipschitz and thus continuous.
+\textbf{Corrected Legendre-transform version.}
+If \(f\) is finite convex and superlinear, meaning
+\[
+\frac{f(x)}{|x|}\to+\infty
+\qquad \text{as } |x|\to\infty,
+\]
+then \(xy-f(x)\to-\infty\) as \(|x|\to\infty\) for each fixed \(y\). Since \(f\) is continuous, the maximum is attained and finite. Moreover \(g\) is convex, because it is the supremum of affine functions of \(y\):
+\[
+g(\lambda y_1+(1-\lambda)y_2)
+\leq \lambda g(y_1)+(1-\lambda)g(y_2).
+\]
 
-    \item \textbf{Legendre Transform:} $g(y) = \sup_x (xy - f(x))$. Since $xy-f(x)$ is linear in $y$, $g(y)$ is a supremum of convex (linear) functions, hence $g(y)$ is convex.
+\textbf{Continuity of convex functions.}
+For any compact interval \([a,b]\), the secant slopes of a finite convex function are monotone. If \(a<x<y<z<b\), then
+\[
+\frac{f(y)-f(x)}{y-x}
+\leq
+\frac{f(z)-f(x)}{z-x}
+\leq
+\frac{f(z)-f(a)}{z-a},
+\]
+and a similar lower bound holds from the left. Thus the one-sided slopes are locally bounded, so \(f\) is locally Lipschitz on compact subintervals and hence continuous.
 
-    \item \textbf{Differentiability:} A convex function has non-decreasing left and right derivatives $f'_-(x) \leq f'_+(x)$. These are monotonic functions, which can have at most countably many jump discontinuities. $f$ is differentiable exactly where $f'_-(x) = f'_+(x)$.
+\textbf{Differentiability except countably many points.}
+For each \(x\), the one-sided derivatives
+\[
+f'_-(x)\leq f'_+(x)
+\]
+exist as extended monotone limits, and both are nondecreasing functions of \(x\). The function \(f\) is differentiable exactly when \(f'_-(x)=f'_+(x)\). If \(f'_-(x)<f'_+(x)\), choose a rational number \(q_x\) in the interval \((f'_-(x),f'_+(x))\). Monotonicity of the one-sided derivatives makes the intervals \((f'_-(x),f'_+(x))\) disjoint for distinct nondifferentiability points. Hence the map \(x\mapsto q_x\) is injective into \(\mathbb Q\), so there are at most countably many such points.
 
-    \item \textbf{Strict Convexity and Differentiability:} The strict convexity of $g$ implies that for each $y$, the maximizer $x$ in $xy - f(x)$ is unique. This uniqueness is dual to the differentiability of $f$. If $f$ had a "kink" at $x$, there would be multiple $y$ values (slopes) supporting that point, making $g$ non-strictly convex.
-\end{enumerate}
-
-\textbf{Intuition:}
-Convexity is a very rigid property. It forces a function to be mostly smooth because its "bending" must always be in the same direction. The Legendre transform $g(y)$ is like looking at the function $f(x)$ through its slopes rather than its values. If the function is "curved" everywhere (strictly convex), then its dual is "smooth" (differentiable).
+\textbf{Strict convexity of the dual forces differentiability.}
+Assume the corrected Legendre transform is finite and that both \(f\) and \(g\) are strictly convex. If \(f\) were not differentiable at \(x_0\), then its subdifferential would contain a nontrivial interval \([a,b]\) with \(a<b\). For every \(y\in[a,b]\), the line of slope \(y\) supports \(f\) at \(x_0\), so
+\[
+g(y)=x_0y-f(x_0)
+\]
+on \([a,b]\). This is affine on a nontrivial interval, contradicting strict convexity of \(g\). Therefore \(f\) is differentiable everywhere.
 \end{solution}
-
-

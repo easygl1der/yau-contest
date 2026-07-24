@@ -1,0 +1,232 @@
+# Solution Risk Audit Baseline
+Generated from current LaTeX split files. This is a heuristic triage table; subagents must verify mathematically before editing.
+## Overall Counts
+- `THEOREM_DEP`: 267
+- `OK`: 220
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 150
+- `SOURCE_ALIGN_RISK`: 115
+- `STATEMENT_RISK+THEOREM_DEP`: 13
+- `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK`: 11
+
+## Counts by Subject
+### algebra
+- `THEOREM_DEP`: 57
+- `OK`: 41
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 32
+- `SOURCE_ALIGN_RISK`: 14
+- `STATEMENT_RISK+THEOREM_DEP`: 2
+- `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK`: 1
+### analysis
+- `THEOREM_DEP`: 56
+- `OK`: 40
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 28
+- `SOURCE_ALIGN_RISK`: 24
+- `STATEMENT_RISK+THEOREM_DEP`: 5
+- `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK`: 4
+### applied
+- `OK`: 55
+- `THEOREM_DEP`: 38
+- `SOURCE_ALIGN_RISK`: 35
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 14
+- `STATEMENT_RISK+THEOREM_DEP`: 3
+### geometry
+- `THEOREM_DEP`: 61
+- `OK`: 39
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 28
+- `SOURCE_ALIGN_RISK`: 25
+- `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK`: 2
+- `STATEMENT_RISK+THEOREM_DEP`: 2
+### physics
+- `OK`: 12
+- `THEOREM_DEP`: 9
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 8
+- `SOURCE_ALIGN_RISK`: 1
+### probability
+- `THEOREM_DEP`: 46
+- `THEOREM_DEP+SOURCE_ALIGN_RISK`: 40
+- `OK`: 33
+- `SOURCE_ALIGN_RISK`: 16
+- `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK`: 4
+- `STATEMENT_RISK+THEOREM_DEP`: 1
+
+## High-Priority Candidate Rows
+- `algebra` 2010 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`
+- `algebra` 2010 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`
+- `algebra` 2010 problem 3 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`
+- `algebra` 2010 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`; dep: Eisenstein, Galois
+- `algebra` 2010 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`
+- `algebra` 2010 problem 6 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`; dep: representation theory
+- `algebra` 2010 problem 8 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`; dep: Mason-Stothers
+- `algebra` 2010 problem 9 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`
+- `algebra` 2010 problem 10 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`; dep: Eisenstein, Galois
+- `algebra` 2010 problem 11 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2010.tex`; dep: Sylow, false
+- `algebra` 2011 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2011.tex`; dep: Galois
+- `algebra` 2011 problem 6 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2011.tex`; dep: Sylow
+- `algebra` 2011 problem 7 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2011.tex`
+- `algebra` 2011 problem 11 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2011.tex`; dep: Sylow
+- `algebra` 2011 problem 12 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2011.tex`
+- `algebra` 2012 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`; dep: Eisenstein
+- `algebra` 2012 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`; dep: Sylow
+- `algebra` 2012 problem 3 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`; dep: representation theory
+- `algebra` 2012 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`
+- `algebra` 2012 problem 8 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`; dep: Sylow
+- `algebra` 2012 problem 12 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2012.tex`
+- `algebra` 2013 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`; dep: Sylow
+- `algebra` 2013 problem 2 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 3 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 4 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 5 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 7 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`
+- `algebra` 2013 problem 8 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2013.tex`; dep: Galois
+- `algebra` 2014 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2014.tex`
+- `algebra` 2014 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2014.tex`; dep: individual
+- `algebra` 2014 problem 8 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2014.tex`
+- `algebra` 2014 problem 11 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2014.tex`
+- `algebra` 2015 problem 3 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: Frobenius, Galois
+- `algebra` 2015 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`
+- `algebra` 2015 problem 6 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`
+- `algebra` 2015 problem 7 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: Sylow
+- `algebra` 2015 problem 8 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: Galois
+- `algebra` 2015 problem 9 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: representation theory
+- `algebra` 2015 problem 10 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: spectral theorem
+- `algebra` 2015 problem 11 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2015.tex`; dep: Eisenstein, Galois, Sylow
+- `algebra` 2016 problem 1 `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`; dep: counterexample, does not hold
+- `algebra` 2016 problem 2 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`; dep: structure theorem
+- `algebra` 2016 problem 3 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`
+- `algebra` 2016 problem 4 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`; dep: individual
+- `algebra` 2016 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`; dep: Sylow
+- `algebra` 2016 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`
+- `algebra` 2016 problem 7 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`
+- `algebra` 2016 problem 8 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`; dep: Galois
+- `algebra` 2016 problem 9 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`
+- `algebra` 2016 problem 10 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2016.tex`
+- `algebra` 2017 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: individual
+- `algebra` 2017 problem 2 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`
+- `algebra` 2017 problem 3 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: Galois
+- `algebra` 2017 problem 4 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`
+- `algebra` 2017 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: Frobenius
+- `algebra` 2017 problem 6 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: source
+- `algebra` 2017 problem 7 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`
+- `algebra` 2017 problem 8 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`
+- `algebra` 2017 problem 9 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: Eisenstein, Galois
+- `algebra` 2017 problem 10 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2017.tex`; dep: Frobenius
+- `algebra` 2018 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`
+- `algebra` 2018 problem 2 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`; dep: Eisenstein, Galois
+- `algebra` 2018 problem 3 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`; dep: Sylow
+- `algebra` 2018 problem 4 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`
+- `algebra` 2018 problem 5 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`
+- `algebra` 2018 problem 6 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`
+- `algebra` 2018 problem 7 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`; dep: Kummer
+- `algebra` 2018 problem 8 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`; dep: Frobenius
+- `algebra` 2018 problem 9 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`; dep: Galois
+- `algebra` 2018 problem 10 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2018.tex`
+- `algebra` 2019 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: representation theory
+- `algebra` 2019 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: Galois
+- `algebra` 2019 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: Jordan normal form
+- `algebra` 2019 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: Frobenius
+- `algebra` 2019 problem 7 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: representation theory
+- `algebra` 2019 problem 9 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: Galois
+- `algebra` 2019 problem 10 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2019.tex`; dep: Galois
+- `algebra` 2020 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2020.tex`
+- `algebra` 2020 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2020.tex`; dep: Eisenstein
+- `algebra` 2020 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2020.tex`
+- `algebra` 2021 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2021.tex`; dep: Frobenius, Galois
+- `algebra` 2021 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2021.tex`; dep: Galois
+- `algebra` 2021 problem 4 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2021.tex`; dep: Galois, false
+- `algebra` 2021 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2021.tex`; dep: individual
+- `algebra` 2022 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2022.tex`; dep: individual
+- `algebra` 2022 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2022.tex`; dep: Eisenstein
+- `algebra` 2022 problem 6 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2022.tex`
+- `algebra` 2023 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`
+- `algebra` 2023 problem 2 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`
+- `algebra` 2023 problem 3 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`; dep: Galois
+- `algebra` 2023 problem 4 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`; dep: commutative algebra
+- `algebra` 2023 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`; dep: Jordan normal form
+- `algebra` 2023 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_algebra/algebra_2023.tex`
+- `algebra` 2024 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2024.tex`; dep: structure theorem
+- `algebra` 2024 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2024.tex`; dep: Smith, Smith Normal Form
+- `algebra` 2024 problem 3 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2024.tex`
+- `algebra` 2024 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2024.tex`
+- `algebra` 2024 problem 6 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2024.tex`; dep: Frobenius
+- `algebra` 2025 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2025.tex`; dep: Galois, Kummer
+- `algebra` 2025 problem 2 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2025.tex`; dep: Frobenius, representation theory
+- `algebra` 2025 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2025.tex`; dep: Galois
+- `algebra` 2025 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2025.tex`; dep: Galois
+- `algebra` 2026 problem 1 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2026.tex`
+- `algebra` 2026 problem 4 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2026.tex`; dep: Eisenstein
+- `algebra` 2026 problem 5 `THEOREM_DEP` in `latex-project/content/split_algebra/algebra_2026.tex`; dep: Eisenstein, Galois, Kummer
+- `analysis` 2010 problem 1 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2010.tex`
+- `analysis` 2010 problem 7 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2010.tex`
+- `analysis` 2010 problem 9 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2010.tex`
+- `analysis` 2010 problem 11 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2010.tex`
+- `analysis` 2010 problem 12 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2010.tex`
+- `analysis` 2011 problem 1 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`
+- `analysis` 2011 problem 4 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`
+- `analysis` 2011 problem 5 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`
+- `analysis` 2011 problem 6 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2011.tex`; dep: individual
+- `analysis` 2011 problem 7 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`
+- `analysis` 2011 problem 10 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`; dep: Borel-Cantelli
+- `analysis` 2011 problem 11 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`; dep: counterexample
+- `analysis` 2011 problem 12 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2011.tex`
+- `analysis` 2012 problem 1 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`
+- `analysis` 2012 problem 2 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`; dep: pinch
+- `analysis` 2012 problem 4 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`
+- `analysis` 2012 problem 6 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`
+- `analysis` 2012 problem 8 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`; dep: Riemann Mapping
+- `analysis` 2012 problem 10 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`
+- `analysis` 2012 problem 11 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2012.tex`
+- `analysis` 2013 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 2 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 3 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 4 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 5 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 7 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 8 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 9 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2013 problem 10 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`; dep: source
+- `analysis` 2013 problem 11 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`; dep: spectral theorem
+- `analysis` 2013 problem 12 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2013.tex`
+- `analysis` 2014 problem 3 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`
+- `analysis` 2014 problem 5 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`
+- `analysis` 2014 problem 6 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`
+- `analysis` 2014 problem 9 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`; dep: false
+- `analysis` 2014 problem 10 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`; dep: Poincaré
+- `analysis` 2014 problem 11 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`; dep: maximum principle
+- `analysis` 2014 problem 12 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2014.tex`
+- `analysis` 2015 problem 1 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`
+- `analysis` 2015 problem 2 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`
+- `analysis` 2015 problem 3 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`
+- `analysis` 2015 problem 4 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: maximum principle
+- `analysis` 2015 problem 5 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: Fredholm, individual
+- `analysis` 2015 problem 6 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: Sobolev embedding
+- `analysis` 2015 problem 7 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: false
+- `analysis` 2015 problem 9 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`
+- `analysis` 2015 problem 11 `STATEMENT_RISK+THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: Fredholm, false
+- `analysis` 2015 problem 12 `THEOREM_DEP` in `latex-project/content/split_analysis/analysis_2015.tex`; dep: Poincaré, source
+- `analysis` 2016 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 2 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 3 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 4 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 5 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 7 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 8 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 9 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 10 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2016 problem 11 `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`; dep: false
+- `analysis` 2016 problem 12 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2016.tex`
+- `analysis` 2017 problem 1 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 2 `STATEMENT_RISK+THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`; dep: counterexample
+- `analysis` 2017 problem 3 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 4 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 5 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 6 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 7 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 8 `THEOREM_DEP+SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 9 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 10 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 11 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2017 problem 12 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2017.tex`
+- `analysis` 2018 problem 1 `SOURCE_ALIGN_RISK` in `latex-project/content/split_analysis/analysis_2018.tex`

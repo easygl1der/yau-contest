@@ -149,24 +149,49 @@ Prove that $Tf \in C^0([0, 1])$. Moreover $\Omega = \{ Tf \mid \|f\|_{sup} \leq 
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{enumerate}
-    \item \textbf{Arzela-Ascoli Theorem:} A set of functions in $C^0$ is precompact if it is uniformly bounded and equicontinuous.
-    \item \textbf{$L^1$ approximation:} Continuous functions (and polynomials) are dense in $L^1$.
-\end{enumerate}
+\textbf{As written, the $C^0$ conclusion is false.}
+Take
+\[
+K(x,y)=\mathbf 1_{[0,1/2]}(x)
+\]
+and take \(f\equiv 1\). Then
+\[
+Tf(x)=\int_0^1K(x,y)\,dy=\mathbf 1_{[0,1/2]}(x),
+\]
+up to the harmless value at \(x=1/2\). This is not a continuous function on \([0,1]\). Thus an arbitrary \(L^1\) kernel on the square does not define a map into \(C^0([0,1])\), and the asserted precompactness in \(C^0\) cannot be proved from the stated hypotheses.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item First, assume $K$ is a polynomial $P(x, y) = \sum a_{ij} x^i y^j$. Then $T_P f(x) = \sum a_{ij} x^i \int_0^1 y^j f(y) dy$, which is a polynomial in $x$ and thus continuous.
-    \item For $K \in L^1$, by the hint, there exists a sequence of polynomials $P_n$ such that $\iint |K - P_n| dy dx \to 0$.
-    \item We need to show equicontinuity of $\Omega$. $|Tf(x_1) - Tf(x_2)| = |\int (K(x_1, y) - K(x_2, y)) f(y) dy| \leq \|f\|_\infty \int |K(x_1, y) - K(x_2, y)| dy$.
-    \item For $K \in L^1(Q)$, the map $x \mapsto K(x, \cdot)$ is continuous in $L^1(0, 1)$ for almost every kernel (or we assume the problem implies a kernel where this holds, such as $C^0$ or $L^p$). More formally, one uses the fact that translation is continuous in $L^1$.
-    \item Uniform boundedness: $|Tf(x)| \leq \|f\|_\infty \int |K(x,y)| dy$. The $L^1$ norm of $K$ ensures this is finite almost everywhere.
-    \item Since $\Omega$ is equicontinuous and uniformly bounded, by Arzela-Ascoli, it is precompact.
-\end{enumerate}
+\textbf{What the hint does prove.}
+The \(L^1\)-polynomial approximation hint proves a correct compactness statement with \(L^1\) as the target. Namely, if \(\|f\|_\infty\leq 1\), then
+\[
+\|T_Kf-T_Pf\|_{L^1_x}
+\leq \int_0^1\int_0^1 |K(x,y)-P(x,y)|\,dy\,dx.
+\]
+For a polynomial
+\[
+P(x,y)=\sum_{i,j}a_{ij}x^iy^j,
+\]
+the operator \(T_P\) has finite-dimensional range, since
+\[
+T_Pf(x)=\sum_{i,j}a_{ij}x^i\int_0^1y^jf(y)\,dy.
+\]
+Therefore \(T_K\) is an operator-norm limit, as a map from the sup-norm unit ball of \(C[0,1]\) into \(L^1[0,1]\), of finite-rank operators. Hence the image is precompact in \(L^1[0,1]\).
 
-\textbf{Intuition:}
-This operator is a "smoothing" operator. Even if the kernel $K$ is somewhat rough ($L^1$), the act of integrating it against a continuous function $f$ produces a function $Tf$ that inherits regularity. The compact operator theory tells us that such integral transforms map bounded sets to precompact sets, effectively "concentrating" the information.
+\textbf{A corrected $C^0$ version.}
+If the intended hypothesis is \(K\in C([0,1]^2)\), then the printed conclusion is true. Indeed,
+\[
+|Tf(x)|\leq \|f\|_\infty \int_0^1 |K(x,y)|\,dy
+\leq \|K\|_\infty
+\]
+for \(\|f\|_\infty\leq 1\). Also, by uniform continuity of \(K\) on the square, for every \(\epsilon>0\) there is \(\delta>0\) such that \(|x-x'|<\delta\) implies
+\[
+\int_0^1 |K(x,y)-K(x',y)|\,dy<\epsilon.
+\]
+Thus
+\[
+|Tf(x)-Tf(x')|
+\leq \|f\|_\infty\int_0^1|K(x,y)-K(x',y)|\,dy<\epsilon.
+\]
+The family \(\{Tf:\|f\|_\infty\leq1\}\) is uniformly bounded and equicontinuous, so Arzel\`a--Ascoli gives precompactness in \(C[0,1]\).
 \end{solution}
 
 \begin{exercise}
@@ -411,20 +436,27 @@ Show that $u_1 = u_2$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-1. Green's Second Identity: $\int_\Omega (u \Delta v - v \Delta u) dx = \int_{\partial \Omega} (u \frac{\partial v}{\partial n} - v \frac{\partial u}{\partial n}) d\sigma$.
-2. Property of strictly decreasing functions.
+\textbf{Comparison lemma used in the classical version.}
+We use the standard smooth-domain form of the maximum principle: if \(u,v>0\) solve
+\[
+\Delta u+f(u)=0,\qquad \Delta v+f(v)=0,\qquad u|_{\partial\Omega}=v|_{\partial\Omega}=0,
+\]
+and if \(g(t)=f(t)/t\) is strictly decreasing on \(t>0\), then \(u\leq Cv\) with equality at an interior contact point for the least such \(C\) forces \(C\leq1\).
 
-\textbf{Steps:}
-1. Assume $u_1$ and $u_2$ are two positive solutions. By Green's identity and the boundary condition $u_1=u_2=0$:
-$\int_\Omega (u_2 \Delta u_1 - u_1 \Delta u_2) dx = 0$.
-2. Substitute the PDE $\Delta u_i = -f(u_i)$:
-$\int_\Omega (u_2 (-f(u_1)) - u_1 (-f(u_2))) dx = \int_\Omega (u_1 f(u_2) - u_2 f(u_1)) dx = 0$.
-3. Factor out $u_1 u_2$: $\int_\Omega u_1 u_2 \left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right) dx = 0$.
-4. Suppose $u_1 \not\equiv u_2$. Since $f(t)/t$ is strictly decreasing, the term $\left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right)$ has the same sign as $(u_1 - u_2)$.
-5. Specifically, $(u_1 - u_2) \left( \frac{f(u_2)}{u_2} - \frac{f(u_1)}{u_1} \right) \geq 0$ and is zero only when $u_1 = u_2$.
-6. However, the integral of $u_1 u_2 (\dots)$ is zero. This forces $u_1 = u_2$ almost everywhere.
+Here is the short proof of the contact step. Let
+\[
+C=\sup_\Omega \frac{u}{v}.
+\]
+Under the usual boundary regularity hypotheses, the quotient is controlled up to the boundary by the Hopf boundary lemma, so the supremum is attained. If \(C>1\), put \(w=Cv-u\). Then \(w\geq0\) and \(w(x_0)=0\) at some interior point \(x_0\). At this point \(u(x_0)=Cv(x_0)>v(x_0)\), and
+\[
+-\Delta w(x_0)
+=C f(v(x_0))-f(u(x_0))
+=Cv(x_0)\bigl(g(v(x_0))-g(Cv(x_0))\bigr)>0.
+\]
+But \(w\) has an interior minimum at \(x_0\), so \(\Delta w(x_0)\geq0\), equivalently \(-\Delta w(x_0)\leq0\), a contradiction. Hence \(C\leq1\), and \(u\leq v\). Interchanging \(u\) and \(v\) gives \(v\leq u\), so \(u=v\).
 
-\textbf{Intuition:}
-This is a uniqueness result for "sublinear" elliptic problems. The condition that $f(t)/t$ is decreasing means the "restoring force" $f(u)$ gets relatively weaker as $u$ gets larger. This prevents the formation of multiple distinct equilibrium states (solutions).
+Applying this lemma to \(u_1,u_2\) gives \(u_1=u_2\).
+
+\textbf{Remark on hypotheses.}
+The printed statement only says that \(\Omega\) is bounded. The quotient/Hopf argument needs the usual classical boundary regularity and positivity up to the boundary behavior. Without such regularity, the intended uniqueness theorem should be read in the weak/maximum-principle framework with the comparison lemma stated explicitly.
 \end{solution}

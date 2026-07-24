@@ -119,30 +119,80 @@ The problem guarantees that $\mathbb{E}_1[\nu(X)] > \mathbb{E}_2[\nu(Y)]$ for so
 However, the decision function $\phi(r)$ is strictly bounded because it represents a probability: $0 \leq \phi(r) \leq 1$.
 The flaw is assuming that $\mathbb{E}[A] > \mathbb{E}[B]$ implies $\mathbb{E}[\phi(A)] > \mathbb{E}[\phi(B)]$ for a bounded function $\phi$. This is mathematically false because the unbounded function can be inflated by rare, extreme outliers, while the bounded function $\phi$ "caps" or "squashes" the impact of those outliers.
 
-\textbf{Step 3: Construct a definitive counterexample.}
-Let the unbounded function be $\nu(x) = x$. Let the decision rule be the standard logistic sigmoid function, $\phi(x) = \frac{1}{1 + e^{-x}}$. This function is strictly one-to-one and maps $\mathbb{R} \to (0,1)$, satisfying all constraints.
-Construct two discrete populations to drastically expose the outlier effect:
-- \textbf{Population 1 ($X$):} Value is $100$ with probability $0.01$; Value is $0$ with probability $0.99$.
-- \textbf{Population 2 ($Y$):} Value is $0.5$ with probability $1$.
+\textbf{Step 3: Construct a counterexample satisfying the unboundedness condition.}
+The finite-support outlier example gives the right intuition but does not satisfy the
+stated requirement that $\nu(X)$ and $\nu(Y)$ be unbounded. We now use countable
+distributions. Let
+\[
+\nu(x)=x,
+\qquad
+\phi(x)=\frac{1}{1+e^{-x}}.
+\]
+The rule $\phi$ is one-to-one from $\mathbb R$ into $(0,1)$. Let $T$ and $S$ be independent
+integer-valued variables with
+\[
+\mathbb P(T=100+k)=2^{-k-1},\qquad
+\mathbb P(S=1+k)=2^{-k-1},\qquad k=0,1,2,\ldots.
+\]
+Define
+\[
+X=\begin{cases}
+0,& \text{with probability }0.99,\\
+T,& \text{with probability }0.01,
+\end{cases}
+\qquad
+Y=\begin{cases}
+1/2,& \text{with probability }0.999,\\
+S,& \text{with probability }0.001.
+\end{cases}
+\]
+Both $X$ and $Y$ have unbounded support and finite means. They have densities with
+respect to the counting measure on their countable support.
 
-\textbf{Step 4: Verify expectations of $\nu$.}
-\[ \mathbb{E}_1[\nu(X)] = \mathbb{E}_1[X] = 100(0.01) + 0(0.99) = 1 \]
-\[ \mathbb{E}_2[\nu(Y)] = \mathbb{E}_2[Y] = 0.5(1) = 0.5 \]
-Condition satisfied: $\mathbb{E}_1[X] > \mathbb{E}_2[Y]$ ($1 > 0.5$).
+\textbf{Step 4: Verify the expectation ordering.}
+Since $E T=101$ and $E S=2$,
+\[
+E_1[\nu(X)]=E X=0.01\cdot 101=1.01,
+\]
+while
+\[
+E_2[\nu(Y)]=E Y=0.999\cdot \frac12+0.001\cdot 2=0.5015.
+\]
+Thus
+\[
+E_1[\nu(X)]>E_2[\nu(Y)].
+\]
 
-\textbf{Step 5: Verify expectations of the decision rule $\phi$.}
-For Population 1:
-\[ \mathbb{E}_1[\phi(X)] = 0.01 \phi(100) + 0.99 \phi(0) \]
-Since $\phi(100) \approx 1$ and $\phi(0) = 0.5$:
-\[ \mathbb{E}_1[\phi(X)] \approx 0.01(1) + 0.99(0.5) = 0.01 + 0.495 = 0.505 \]
-For Population 2:
-\[ \mathbb{E}_2[\phi(Y)] = \phi(0.5) = \frac{1}{1 + e^{-0.5}} \approx \frac{1}{1 + 0.6065} \approx 0.622 \]
+\textbf{Step 5: Verify that the decision rule selects population 1 too rarely.}
+Because $0<\phi<1$ and $\phi(0)=1/2$,
+\[
+E_1[\phi(X)]
+=0.99\phi(0)+0.01E[\phi(T)]
+<0.99\cdot \frac12+0.01=0.505.
+\]
+Also,
+\[
+E_2[\phi(Y)]
+=0.999\phi(1/2)+0.001E[\phi(S)]
+>0.999\phi(1/2).
+\]
+Since $\phi(1/2)>0.62$, we get
+\[
+E_2[\phi(Y)]>0.619.
+\]
+Therefore
+\[
+E_1[\phi(X)]<E_2[\phi(Y)].
+\]
 
 \textbf{Step 6: Conclude the proof by counterexample.}
-We observe that $\mathbb{E}_1[\phi(X)] = 0.505$ is strictly less than $\mathbb{E}_2[\phi(Y)] = 0.622$.
-Substituting this back into the formula from Step 1:
-\[ P(\text{Correct}) = \frac{1}{2} + \frac{1}{2}(0.505 - 0.622) = 0.5 - 0.0585 = 0.4415 \]
-Since $0.4415 < 0.5$, we have constructed a valid scenario where the algorithm performs *worse* than random guessing, definitively proving the claim is false.
+The probability of a correct decision is
+\[
+P(\text{Correct})
+=\frac12+\frac12\{E_1[\phi(X)]-E_2[\phi(Y)]\}.
+\]
+For the distributions above this is strictly less than $1/2$. Hence the proposed
+guarantee is false as stated.
 \end{solution}
 
 \begin{exercise}\label{probability:2025:3}

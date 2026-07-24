@@ -486,7 +486,7 @@ Finally, to show $\mathrm{End}_R(M)$ is local, pick any $u$. If $u$ is nilpotent
 \begin{itemize}
     \item \textbf{Binomial Expansion:} The sum of all binomial coefficients in a row is $\sum_{m=0}^n \binom{n}{m} = 2^n$.
     \item \textbf{Legendre's Formula:} The power of a prime $p$ dividing $n!$ is $v_p(n!) = \sum_{k=1}^\infty \lfloor n/p^k \rfloor$.
-    \item \textbf{Kummer's Theorem:} $v_p(\binom{n}{m})$ is equal to the number of carries when adding $m$ and $n-m$ in base $p$.
+    \item \textbf{Kummer's Theorem / Carry Bound:} The full theorem says $v_p(\binom{n}{m})$ is the number of carries when adding $m$ and $n-m$ in base $p$. For this problem we only need the weaker bound proved below from Legendre's formula.
     \item \textbf{Prime Counting Function $\pi(n)$:} The number of primes $p \leq n$.
 \end{itemize}
 
@@ -516,8 +516,23 @@ More precisely, for $n \geq 2$, $2^n = \binom{n}{0} + \dots + \binom{n}{n} \leq 
 
 \textbf{Part 2: Upper bound on prime power factors.}
 
-Using Kummer's Theorem, $v_p(\binom{n}{m})$ is the number of carries when adding $m$ and $n-m$ in base $p$. The number of digits of $n$ in base $p$ is $\lfloor \log_p n \rfloor + 1$. The number of carries can never exceed the number of digits. Thus:
-\[ v_p\left(\binom{n}{m}\right) \leq \text{number of digits of } n \text{ in base } p \approx \log_p n. \]
+We prove the needed Kummer-type estimate directly. By Legendre's formula,
+\[
+v_p\left(\binom{n}{m}\right)
+=\sum_{r\geq 1}\left(
+\left\lfloor\frac{n}{p^r}\right\rfloor
+-\left\lfloor\frac{m}{p^r}\right\rfloor
+-\left\lfloor\frac{n-m}{p^r}\right\rfloor
+\right).
+\]
+For each $r$, the summand is either $0$ or $1$, because for real numbers $u,v$,
+\[
+\lfloor u+v\rfloor-\lfloor u\rfloor-\lfloor v\rfloor\in\{0,1\}.
+\]
+The summand is zero whenever $p^r>n$. Hence there are at most $\lfloor \log_p n\rfloor$ nonzero summands, and therefore
+\[
+v_p\left(\binom{n}{m}\right) \leq \lfloor \log_p n\rfloor \leq \log_p n.
+\]
 
 \bigskip
 

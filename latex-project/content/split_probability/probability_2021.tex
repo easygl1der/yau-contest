@@ -332,7 +332,7 @@ Find the UMVUE of $\gamma$ or prove it does not exist.
 \textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
     \item \textbf{UMVUE (Uniformly Minimum Variance Unbiased Estimator):} The "best" possible unbiased estimator. By the Lehmann-Scheffé Theorem, any unbiased estimator that is a function of purely complete and sufficient statistics is the unique UMVUE.
-    \item \textbf{Complete Sufficient Statistics in Regression:} For a normal linear model $\mathbf{Y} \sim N(X\boldsymbol{\beta}, \sigma^2 I)$, the complete sufficient statistics are the fitted values $\hat{\mathbf{Y}} = X\hat{\boldsymbol{\beta}}$ and the residual sum of squares $S^2 = \|\mathbf{Y} - \hat{\mathbf{Y}}\|^2$. Furthermore, $\hat{\mathbf{Y}}$ and $S^2$ are completely independent (Basu's Theorem).
+    \item \textbf{Complete Sufficient Statistics in Regression:} For a normal linear model $\mathbf{Y} \sim N(X\boldsymbol{\beta}, \sigma^2 I)$, the complete sufficient statistics may be taken as the fitted values $\hat{\mathbf{Y}} = X\hat{\boldsymbol{\beta}}$ and the residual sum of squares $S^2 = \|\mathbf{Y} - \hat{\mathbf{Y}}\|^2$. The needed independence here follows directly from the orthogonal normal decomposition, not from an ancillary-completeness argument.
     \item \textbf{Inverse Chi Distribution Moments:} If $W \sim \chi^2_m$, the expectation of $W^{-1/2}$ is known via the Gamma function.
 \end{itemize}
 
@@ -356,7 +356,12 @@ For the linear regression model $\mathbf{Y} \sim N(X\boldsymbol{\beta}, \sigma^2
 Let $k = \mathrm{rank}(X)$. We know the exact distributions of these statistics:
 - $X\hat{\boldsymbol{\beta}} \sim N(X\boldsymbol{\beta}, \sigma^2 P_X)$
 - $S^2/\sigma^2 \sim \chi^2_{n-k}$
-Crucially, by Basu's theorem (since $P_X$ and $I_n - P_X$ are orthogonal projections), $X\hat{\boldsymbol{\beta}}$ and $S^2$ are statistically independent.
+Crucially, $P_X\mathbf{Y}$ and $(I_n-P_X)\mathbf{Y}$ are independent normal vectors. Indeed, their covariance is
+\[
+\operatorname{Cov}(P_X\mathbf{Y},(I_n-P_X)\mathbf{Y})
+=\sigma^2P_X(I_n-P_X)=0,
+\]
+and zero covariance implies independence for jointly normal vectors. Since $S^2$ is a function only of $(I_n-P_X)\mathbf{Y}$, it follows that $X\hat{\boldsymbol{\beta}}=P_X\mathbf{Y}$ and $S^2$ are independent.
 
 \textbf{Step 2: Construct an unbiased estimator for the numerator.}
 
@@ -452,10 +457,23 @@ Since the components are independent and the loss is a sum, the total Bayes risk
 
 \textbf{Step 4: Conclude minimaxity.}
 
-As the prior variance $\tau^2 \to \infty$, the fraction $\frac{\tau^2}{\tau^2 + 1} \to 1$.
-Therefore, $\lim_{\tau^2 \to \infty} r(\pi_\tau) = p$.
-Because the Bayes risk $r(\pi_\tau)$ is the absolute minimum expected loss achievable against the specific prior $\pi_\tau$, the maximum risk (worst-case scenario) for *any* estimator must be at least $r(\pi_\tau)$.
-Since this holds for all $\tau^2$, the minimax risk over all possible estimators must be at least $\lim_{\tau^2 \to \infty} r(\pi_\tau) = p$.
-Our estimator $\mathbf{Y}$ (which is exactly $\mathbf{X}$ in the original coordinates) achieves a maximum risk of exactly $p$.
-Since its maximum risk equals the absolute theoretical minimum of maximum risks, it is a minimax estimator.
+As the prior variance $\tau^2 \to \infty$,
+\[
+r(\pi_\tau)=p\frac{\tau^2}{\tau^2+1}\to p.
+\]
+For any estimator $\delta$,
+\[
+\sup_{\eta}R(\eta,\delta)
+\geq \int R(\eta,\delta)\,\pi_\tau(d\eta)
+\geq r(\pi_\tau).
+\]
+The first inequality says that the worst-case risk dominates the average risk under any prior; the second says that the Bayes rule minimizes that prior-average risk. Taking the supremum over $\tau$ gives
+\[
+\inf_\delta\sup_\eta R(\eta,\delta)\geq p.
+\]
+The estimator $\delta(Y)=Y$ has constant risk exactly $p$, so
+\[
+\inf_\delta\sup_\eta R(\eta,\delta)=p,
+\]
+and $\delta(Y)=Y$ is minimax. Translating back to the original coordinates, this is exactly the estimator $\mathbf{d}=\mathbf{X}$.
 \end{solution}

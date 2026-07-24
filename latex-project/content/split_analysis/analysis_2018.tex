@@ -69,6 +69,10 @@ Holomorphic functions, Maximum Modulus Principle, Open Mapping Theorem, and Möb
 \textbf{Steps:}
 
 \begin{enumerate}
+    \item \textbf{Connectedness convention:}
+
+    We argue on the connected component of $U$ that contains $\overline D$.  If the word ``open set'' is read literally as possibly disconnected and ``non-constant'' only means non-constant somewhere on $U$, the statement is false: take $f\equiv 1$ on the component containing $\overline D$ and make $f$ non-constant on another component.  The intended statement is therefore the usual one on the relevant connected component.
+
     \item \textbf{Setup and Assumption}
 
     We are given a non-constant holomorphic function $f$ on a set containing the closed unit disk $\bar{D}$, with $|f(z)| = 1$ on the boundary $\partial D$. By the Maximum Modulus Principle, since $f$ is non-constant, we must have $|f(z)| < 1$ for all $z \in D$.
@@ -171,6 +175,8 @@ Borel measures, upper semi-continuity, indicator functions, and Fatou's Lemma (o
 \begin{enumerate}
     \item \textbf{Part (1): Proving Upper Semi-Continuity}
 
+    We use the standard convention that a Borel measure in this problem is locally finite, equivalently finite on compact balls.  Without this convention the displayed integrals may take the value $+\infty$, and the proof below has to be interpreted in the extended-real sense.
+
     Let $x \in \mathbb{R}^n$ and consider a sequence $x_k \to x$. We want to show that $\limsup_{k\to\infty} \theta(x_k) \leq \theta(x)$.
     The function $\theta(x_k)$ can be written as an integral of an indicator function:
     \[
@@ -261,28 +267,35 @@ Fundamental solution of the Laplacian, convolution of functions, differentiation
     \]
     which is exactly the requested formula.
 
-    \item \textbf{Part (3): Proving $-\Delta f = g$}
+    \item \textbf{Part (3): constant check and the corrected equation.}
 
-    We want to show that $\Delta f(x) = -g(x)$. Using the result from Part (2) and differentiating again:
+    There is a literal constant risk in the printed statement.  Since $\alpha(n)$ is the volume of the unit ball, the surface area of $S^{n-1}$ is $n\alpha(n)$.  For
     \[
-    \Delta f(x) = \int_{\mathbb{R}^n} \Phi(y) \Delta_x g(x-y) \, dy
+    \Phi_c(x)=c|x|^{2-n},
     \]
-    Recall that $\Phi$ is the fundamental solution of the Laplacian (up to a sign and constant). Specifically, for $n > 2$, $\Delta \Phi = 0$ for $x \neq 0$. 
-    To evaluate the integral, we split it into a small ball $B_\epsilon(0)$ and the rest of the space $\mathbb{R}^n \setminus B_\epsilon(0)$:
+    Green's identity on $\mathbb{R}^n\setminus B_\varepsilon(0)$ gives, in the sense of distributions,
     \[
-    \Delta f(x) = \lim_{\epsilon \to 0} \int_{\mathbb{R}^n \setminus B_\epsilon(0)} \Phi(y) \Delta_x g(x-y) \, dy + \int_{B_\epsilon(0)} \Phi(y) \Delta_x g(x-y) \, dy
+    -\Delta\Phi_c=c(n-2)n\alpha(n)\delta_0.
     \]
-    The second term goes to 0 as $\epsilon \to 0$ because $\Phi$ is integrable. For the first term, we use Green's Second Identity:
+    Thus the Newtonian fundamental solution for $-\Delta$ is
     \[
-    \int_{\mathbb{R}^n \setminus B_\epsilon(0)} \Phi \Delta g - g \Delta \Phi = \int_{\partial B_\epsilon(0)} \left( \Phi \frac{\partial g}{\partial \nu} - g \frac{\partial \Phi}{\partial \nu} \right) \, d\sigma
+    \Phi(x)=\frac{1}{n(n-2)\alpha(n)}|x|^{2-n}.
+    \]
+    With the denominator printed in the problem, namely $n(n-1)\alpha(n)$, the same computation yields
+    \[
+    -\Delta f=\frac{n-2}{n-1}g,
+    \]
+    not $g$, for $n>2$.
+
+    Therefore the assertion $-\Delta f=g$ is correct after replacing $n(n-1)\alpha(n)$ by $n(n-2)\alpha(n)$.  Under this corrected normalization, the proof is as follows.  For $\varphi\in C_c^\infty(\mathbb{R}^n)$,
+    \[
+    \int_{\mathbb{R}^n}\Phi(x)(-\Delta\varphi)(x)\,dx=\varphi(0),
+    \]
+    which is exactly the distribution identity $-\Delta\Phi=\delta_0$.  Hence
+    \[
+    -\Delta(\Phi*g)=(-\Delta\Phi)*g=\delta_0*g=g.
     \]
 \end{enumerate}
-Since $\Delta \Phi = 0$ on this region, and evaluating the boundary terms (where $\nu$ is the inward normal to the ball, so outward to the region):
-The $\Phi \frac{\partial g}{\partial \nu}$ term goes to 0 as $\epsilon^{n-1} \cdot \epsilon^{-(n-2)} = \epsilon \to 0$.
-The $-g \frac{\partial \Phi}{\partial \nu}$ term: $\frac{\partial \Phi}{\partial r} = \frac{-(n-2)}{n(n-1)\alpha(n) r^{n-1}}$. On $\partial B_\epsilon$, $\frac{\partial \Phi}{\partial \nu} = -\frac{\partial \Phi}{\partial r}$. 
-The integral becomes $\int_{\partial B_\epsilon} g(x-y) \frac{n-2}{n(n-1)\alpha(n) \epsilon^{n-1}} \, d\sigma \approx g(x) \frac{n-2}{n(n-1)\alpha(n) \epsilon^{n-1}} (n \alpha(n) \epsilon^{n-1}) = g(x) \frac{n-2}{n-1}$.
-Actually, there is a slight difference in constants depending on the definition of $\Phi$. The standard fundamental solution is $\Phi(x) = \frac{1}{n(n-2)\alpha(n) |x|^{n-2}}$ which gives $\Delta \Phi = -\delta$.
-Given our formula has $n(n-1)\alpha(n)$, we follow the calculation carefully to show it results in $-g$. Note: the constants in the problem $\frac{1}{n(n-1)\alpha(n)}$ might be specifically chosen for a certain normalization.
 
 \par\vspace{\baselineskip}
 \textbf{Intuition:} 
@@ -319,6 +332,7 @@ Harmonic functions, Bôcher's Theorem for positive harmonic functions on a punct
 
     We are given $u(x) > 0$. For $n > 2$, the fundamental solution $|x|^{2-n}$ tends to 0 as $|x| \to \infty$. 
     Thus, from the decomposition $u(x) = v(x) + b|x|^{2-n}$, the positivity of $u$ implies that for large $|x|$, $v(x)$ cannot be "too negative." Specifically, $v(x) \geq -b|x|^{2-n}$, which means $v$ is bounded below as $|x| \to \infty$.
+    For $n=2$, Bôcher's theorem gives a possible logarithmic term $b(-\log|x|)$ near $0$.  Positivity both near $0$ and near infinity forces this logarithmic coefficient to be $0$, because $\log|x|$ is unbounded with opposite signs at the two ends.
 
     \item \textbf{Applying Liouville's Theorem}
 
@@ -327,11 +341,11 @@ Harmonic functions, Bôcher's Theorem for positive harmonic functions on a punct
 
     \item \textbf{Final Form and Constants}
 
-    Substituting $v(x) = a$ into our decomposition, we get:
+    Substituting $v(x) = a$ into our decomposition, we get, for $n>2$,
     \[
     u(x) = a + b|x|^{2-n}
     \]
-    Since $u > 0$ and $\lim_{|x|\to\infty} u(x) = a$, we must have $a \geq 0$. Furthermore, since $u$ is positive and $|x|^{2-n}$ explodes at the origin, we must have $b \geq 0$. (If $b$ were negative, $u$ would become negative as $x \to 0$).
+    Since $u > 0$ and $\lim_{|x|\to\infty} u(x) = a$, we must have $a \geq 0$. Furthermore, since $u$ is positive and $|x|^{2-n}$ explodes at the origin, we must have $b \geq 0$. (If $b$ were negative, $u$ would become negative as $x \to 0$).  For $n=2$, the preceding paragraph shows that $u$ is constant, which is consistent with the displayed form after taking $b=0$.
 \end{enumerate}
 
 \par\vspace{\baselineskip}
@@ -401,61 +415,51 @@ Let $\hat{f}(\xi) = \int e^{-ix\xi} f(x) dx$ be the Fourier transform on Schwart
 Fourier transform, Poisson Summation Formula (PSF), Schwartz space properties, and the Zak Transform.
 
 \par\vspace{\baselineskip}
-\textbf{Steps:}
+\textbf{Statement risk and correction.}
+As written, the statement is false.  The two lattice-vanishing conditions do not force a Schwartz function to vanish identically.
 
 \par\vspace{\baselineskip}
-1. \textbf{Applying the Poisson Summation Formula to $f$}
-
-\par\vspace{\baselineskip}
-The Poisson Summation Formula relates the values of a function on a lattice to the values of its Fourier transform on the dual lattice. In its standard form for a $2\pi$-periodic summation:
+\textbf{Counterexample.}
+Choose a non-zero function $\phi\in C_c^\infty(0,\pi)$ and define
 \[
-\sum_{n \in \mathbb{Z}} f(x + 2\pi n) = \frac{1}{2\pi} \sum_{k \in \mathbb{Z}} \hat{f}(k) e^{ikx}
+f(x)=\phi(x)-\phi(x-2\pi).
 \]
-We are given that $\hat{f}(k) = 0$ for all integers $k$. Substituting this into the RHS, we find that the entire sum on the left is zero for every $x$:
+Then $f\in C_c^\infty(\mathbb{R})\subset\mathcal{S}(\mathbb{R})$ and $f\not\equiv0$.  Since both supports avoid the lattice $2\pi\mathbb{Z}$, we have
 \[
-\sum_{n \in \mathbb{Z}} f(x + 2\pi n) = 0 \quad \text{for all } x \in \mathbb{R}
+f(2\pi n)=0,\qquad n\in\mathbb{Z}.
 \]
-
-\par\vspace{\baselineskip}
-2. \textbf{Applying the Poisson Summation Formula to $\hat{f}$}
-
-\par\vspace{\baselineskip}
-Next, we apply the PSF to the Fourier transform $\hat{f}$. Using the dual lattice (spacing 1):
+With the convention in the problem,
 \[
-\sum_{n \in \mathbb{Z}} \hat{f}(\xi + n) = \sum_{k \in \mathbb{Z}} \mathcal{F}[\hat{f}](2\pi k) e^{i(2\pi k)\xi}
+\hat f(\xi)
+=\int_{\mathbb{R}}\phi(x)e^{-ix\xi}\,dx
+-\int_{\mathbb{R}}\phi(x-2\pi)e^{-ix\xi}\,dx
+=\left(1-e^{-2\pi i\xi}\right)\hat\phi(\xi).
 \]
-Recall the Fourier inversion property: $\mathcal{F}[\hat{f}](y) = 2\pi f(-y)$. Thus:
+Therefore
 \[
-\sum_{n \in \mathbb{Z}} \hat{f}(\xi + n) = 2\pi \sum_{k \in \mathbb{Z}} f(-2\pi k) e^{i 2\pi k \xi}
+\hat f(n)=0,\qquad n\in\mathbb{Z}.
 \]
-Since we are given $f(2\pi k) = 0$ for all integers $k$, the RHS is zero:
+Thus the hypotheses hold, but $f$ is non-zero.
+
+\par\vspace{\baselineskip}
+\textbf{What the Poisson summation argument really gives.}
+The condition $\hat f(n)=0$ implies, by Poisson summation,
 \[
-\sum_{n \in \mathbb{Z}} \hat{f}(\xi + n) = 0 \quad \text{for all } \xi \in \mathbb{R}
+\sum_{m\in\mathbb{Z}} f(x+2\pi m)=0.
 \]
+The condition $f(2\pi n)=0$ gives only the additional vanishing of this periodized data at one lattice of points.  It does not imply the full Zak transform vanishes.  A smooth section of the Zak line bundle may vanish on such sets without being identically zero; the stronger topological assertion sometimes invoked in informal solutions is not valid for arbitrary Schwartz functions.
 
 \par\vspace{\baselineskip}
-3. \textbf{The Zak Transform Argument}
-
-\par\vspace{\baselineskip}
-Define the Zak Transform of $f$ as $Zf(x, \xi) = \sum_{n \in \mathbb{Z}} f(x + 2\pi n) e^{in\xi}$.
-From Step 1, we have $Zf(x, 0) = \sum f(x + 2\pi n) = 0$.
-From the definition, $Zf(0, \xi) = \sum f(2\pi n) e^{in\xi} = 0$, which is also given.
-A known result in the theory of the Zak transform for Schwartz functions is that $Zf(x, \xi)$ is a smooth function that satisfies certain quasi-periodicity relations. Specifically, $Zf$ can be viewed as a section of a line bundle of degree 1 over a torus. A topological property of such sections is that they must have a total winding number (or total number of zeros) equal to the degree of the bundle.
-If $Zf$ vanishes on the lines $x=0$ and $\xi=0$, it has a "cross" of zeros. For a smooth section of a degree 1 bundle, having such an extensive set of zeros (more than the required single zero) in a way that is inconsistent with the bundle's topology forces the section to be zero everywhere, i.e., $Zf(x, \xi) \equiv 0$.
-
-\par\vspace{\baselineskip}
-4. \textbf{Conclusion}
-
-\par\vspace{\baselineskip}
-If $Zf(x, \xi) = 0$ for all $(x, \xi)$, then its Fourier coefficients in $\xi$ must all be zero:
+\textbf{A valid strengthened version.}
+If one assumes instead that the whole Zak transform
 \[
-f(x + 2\pi n) = \frac{1}{2\pi} \int_0^{2\pi} Zf(x, \xi) e^{-in\xi} \, d\xi = 0
+Zf(x,\xi)=\sum_{m\in\mathbb{Z}}f(x+2\pi m)e^{im\xi}
 \]
-This implies $f(x) = 0$ for all $x$. Thus, $f = 0$.
-
-\par\vspace{\baselineskip}
-\textbf{Intuition:} 
-This problem explores the "critical density" of sampling. The Poisson Summation Formula shows that if you know a function's values on a grid, you know something about its Fourier transform on the dual grid. Here, the grid $2\pi \mathbb{Z}$ and the dual grid $\mathbb{Z}$ are exactly at the "balance point" ($2\pi \times 1 = 2\pi$). Vanishing on both grids is such a strong constraint that the function is "locked" into being zero everywhere.
+vanishes for all $(x,\xi)$, then all its Fourier coefficients in $\xi$ vanish:
+\[
+f(x+2\pi m)=\frac{1}{2\pi}\int_0^{2\pi}Zf(x,\xi)e^{-im\xi}\,d\xi=0,
+\]
+and hence $f\equiv0$.  This is a true uniqueness statement, but it is stronger than the printed hypotheses.
 \end{solution}
 
 \begin{exercise}

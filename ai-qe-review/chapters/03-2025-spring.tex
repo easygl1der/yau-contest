@@ -1,0 +1,738 @@
+\chapter{2025 春季 QE-AI 真题解答}
+\label{ch:2025spring}
+
+\section{A. Machine Learning Theory}
+
+\begin{examproblem}[A1：经验损失的方差]
+固定二分类假设 \(h\)，证明样本量为 \(m\) 时经验损失 \(L_S(h)\) 的方差为 \(L_{\Dcal,f}(h)(1-L_{\Dcal,f}(h))/m\)。
+\source{官方卷：2025 Spring, p.~1}
+\officialenglish{Let \(\mathcal H\) be a class of binary classifiers over \(X\), \(D\) an unknown distribution, \(f\in\mathcal H\) the target, and fix \(h\in\mathcal H\). Show that the variance, over samples \(S\) of size \(m\) drawn from \(D\), of the empirical loss \(L_S(h)\) is inversely proportional to \(m\). More specifically, prove \(\operatorname{Var}_{S\mid x\sim D^m}[L_S(h)]=L_{D,f}(h)(1-L_{D,f}(h))/m\).}
+\chinesetranslation{设 \(\mathcal H\) 是二分类器类，\(D\) 是未知分布，\(f\) 是目标假设，固定 \(h\)。证明大小为 \(m\) 的独立样本上经验损失 \(L_S(h)\) 的方差与 \(m\) 成反比，并给出精确式 \(L_{D,f}(h)(1-L_{D,f}(h))/m\)。}
+\end{examproblem}
+
+\solution
+令
+
+\[
+  Z_i=\mathbf{1}[h(x_i)\ne f(x_i)],
+  \qquad
+  p=L_{\Dcal,f}(h).
+\]
+
+由于 \(x_i\overset{\mathrm{i.i.d.}}{\sim}\Dcal\)，所以 \(Z_i\overset{\mathrm{i.i.d.}}{\sim}\Bern(p)\)。经验损失是
+
+\[
+  L_S(h)=\frac1m\sum_{i=1}^{m}Z_i.
+\]
+
+独立性给出
+
+\[
+  \Var_S(L_S(h))
+  =
+  \Var\left(\frac1m\sum_{i=1}^{m}Z_i\right)
+  =
+  \frac{1}{m^2}\sum_{i=1}^{m}\Var(Z_i)
+  =
+  \frac{p(1-p)}{m}.
+\]
+
+把 \(p\) 换回 \(L_{\Dcal,f}(h)\)，得到
+
+\[
+  \Var_S(L_S(h))
+  =
+  \frac{L_{\Dcal,f}(h)\bigl(1-L_{\Dcal,f}(h)\bigr)}{m}.
+\]
+
+这就是 \(O(1/m)\) 的均值方差缩减。
+
+\begin{examproblem}[A2：非同分布样本的可实现 PAC 界]
+第 \(i\) 个样本来自 \(\Dcal_i\)，标签由同一个 \(f\in\Hcal\) 给出。令平均分布 \(\bar \Dcal_m=(\Dcal_1+\cdots+\Dcal_m)/m\)。证明当 \(\varepsilon=1/4\) 时，存在训练误差为零但平均分布误差超过 \(\varepsilon\) 的 \(h\) 的概率至多 \(|\Hcal|e^{-m/4}\)。
+\source{官方卷：2025 Spring, p.~1}
+\officialenglish{Let \(D_1,\ldots,D_m\) be distributions over \(X\), and \(\mathcal H\) a finite binary class with \(f\in\mathcal H\). Sample \(x_i\sim D_i\), label \(y_i=f(x_i)\), and let \(\bar D_m=(D_1+\cdots+D_m)/m\). For \(\varepsilon=1/4\), show \(\mathbb P[\exists h\in\mathcal H:\ L_{\bar D_m,f}(h)>\varepsilon\ \text{and}\ L_{S,f}(h)=0]\le|\mathcal H|e^{-m/4}\). Hint: \(\ln(3/4)<-1/4\).}
+\chinesetranslation{令第 \(i\) 个样本来自分布 \(D_i\)，标签由同一个 \(f\in\mathcal H\) 给出，\(\bar D_m\) 是这些分布的平均。对 \(\varepsilon=1/4\)，证明存在平均分布风险超过 \(\varepsilon\) 却训练误差为零的 \(h\) 的概率不超过 \(|\mathcal H|e^{-m/4}\)。提示：\(\ln(3/4)<-1/4\)。}
+\end{examproblem}
+
+\solution
+固定 \(h\in\Hcal\)。记
+
+\[
+  p_i=\Pbb_{x\sim \Dcal_i}[h(x)\ne f(x)].
+\]
+
+在样本 \(S\) 上训练误差为零的概率为
+
+\[
+  \Pbb[L_S(h)=0]
+  =
+  \prod_{i=1}^{m}(1-p_i).
+\]
+
+若
+
+\[
+  L_{\bar \Dcal_m,f}(h)
+  =
+  \frac1m\sum_{i=1}^{m}p_i
+  >
+  \varepsilon,
+\]
+
+则由算术平均-几何平均不等式，
+
+\[
+  \prod_{i=1}^{m}(1-p_i)
+  \le
+  \left(1-\frac1m\sum_{i=1}^{m}p_i\right)^m
+  <
+  (1-\varepsilon)^m.
+\]
+
+取 \(\varepsilon=1/4\)，并用题目给出的 \(\ln(3/4)<-1/4\)，得
+
+\[
+  (1-\varepsilon)^m
+  =
+  \left(\frac34\right)^m
+  \le e^{-m/4}.
+\]
+
+最后对有限类 \(\Hcal\) 做 union bound：
+
+\[
+  \Pbb\left[
+    \exists h\in\Hcal:
+    L_{\bar \Dcal_m,f}(h)>1/4,\ L_S(h)=0
+  \right]
+  \le
+  |\Hcal|e^{-m/4}.
+\]
+
+\begin{examproblem}[A3：并类的 VC 维]
+设 \(\Hcal\) 与 \(\Hcal'\) 的 VC 维有限。证明
+
+\[
+  \operatorname{VCdim}(\Hcal\cup\Hcal')
+  \le
+  \operatorname{VCdim}(\Hcal)
+  +
+  \operatorname{VCdim}(\Hcal')
+  +1.
+\]
+
+并用于二维轴平行矩形类与三角形类的并。
+\source{官方卷：2025 Spring, p.~2}
+\officialenglish{Let \(\mathcal H\) and \(\mathcal H'\) be two families from \(X\) to \(\{0,1\}\) with finite VC dimensions. (a) Show \(\operatorname{VCdim}(\mathcal H\cup\mathcal H')\le\operatorname{VCdim}(\mathcal H)+\operatorname{VCdim}(\mathcal H')+1\). (b) Use this to determine the VC dimension of the union of axis-aligned rectangles and triangles in dimension 2; you may use that the triangle class has VC dimension 7.}
+\chinesetranslation{设 \(\mathcal H,\mathcal H'\) 是从 \(X\) 到 \(\{0,1\}\) 的有限 VC 维函数族。(a) 证明并类 VC 维的上界；(b) 将结论用于二维轴平行矩形与三角形类的并，三角形类 VC 维可直接取为 7。}
+\end{examproblem}
+
+\solution
+令 \(d=\operatorname{VCdim}(\Hcal)\)，\(d'=\operatorname{VCdim}(\Hcal')\)，\(m=d+d'+2\)。若 \(\Hcal\cup\Hcal'\) 能 shatter 某个 \(m\) 点集，则该点集上所有 \(2^m\) 种标记都能由 \(\Hcal\) 或 \(\Hcal'\) 实现，因此
+
+\[
+  2^m
+  \le
+  \tau_{\Hcal}(m)+\tau_{\Hcal'}(m).
+\]
+
+由 \conceptref{concept:vc-sauer}{Sauer 引理}，
+
+\[
+  \tau_{\Hcal}(m)
+  \le
+  \sum_{i=0}^{d}\binom{m}{i},
+  \qquad
+  \tau_{\Hcal'}(m)
+  \le
+  \sum_{i=0}^{d'}\binom{m}{i}.
+\]
+
+因为 \(d+d'=m-2\)，两个尾部都至少留下互补侧的一项。利用二项式系数对称性可得
+
+\[
+  \sum_{i=0}^{d}\binom{m}{i}
+  +
+  \sum_{i=0}^{d'}\binom{m}{i}
+  <
+  2^m.
+\]
+
+这与 shatter 假设矛盾。因此不能 shatter \(m=d+d'+2\) 个点，故
+
+\[
+  \operatorname{VCdim}(\Hcal\cup\Hcal')
+  \le d+d'+1.
+\]
+
+二维轴平行矩形的 VC 维为 \(4\)，题目允许直接使用二维三角形类的 VC 维为 \(7\)。所以
+
+\[
+  \operatorname{VCdim}(\Hcal_{\mathrm{rect}}\cup\Hcal_{\mathrm{tri}})
+  \le 4+7+1=12.
+\]
+
+\examnote
+严格地说，上述结论给出的是并类的上界。若题目把“determine”理解为“用刚证的定理给出考试所需界”，答案是 \(12\) 这个上界；若要求 exact VC dimension，还需要额外构造下界，原题并未提供足够提示。
+
+\begin{examproblem}[A4：稳定性与正则化 ERM]
+证明 on-average replace-one stability 推出期望泛化界；再证明 convex Lipschitz 损失下正则化 ERM 的风险界。
+\source{官方卷：2025 Spring, p.~2}
+\officialenglish{(a) Let \(S=(z_1,\ldots,z_m)\) be i.i.d. from \(D\). If learning algorithm \(A\) is on-average replace-one stable at rate \(\varepsilon(m)\), prove \(\mathbb E_{S\sim D^m}[L_D(A(S))-L_S(A(S))]\le\varepsilon(m)\). (b) Let \(\ell\) be convex and \(\rho\)-Lipschitz. Prove regularized ERM satisfies \(\mathbb E_S L_D(A(S))\le L_D(w^*)+\lambda\|w^*\|^2+2\rho^2/(\lambda m)\), where \(w^*=\arg\min_{w\in\mathcal H}L_D(w)\).}
+\chinesetranslation{(a) 若算法具有 on-average replace-one stability 速率 \(\varepsilon(m)\)，证明其期望泛化差不超过该量；(b) 对凸且 \(\rho\)-Lipschitz 的损失，证明正则化 ERM 的期望风险满足题给的 \(\lambda\|w^*\|^2+2\rho^2/(\lambda m)\) 上界。}
+\end{examproblem}
+
+\solution
+(a) 设 \(S=(z_1,\ldots,z_m)\)，令 \(z_i'\) 是独立同分布替换样本，\(S^{(i)}\) 为把 \(z_i\) 替换成 \(z_i'\) 的数据集。由独立性和对称性，
+
+\[
+  \E_S L_{\Dcal}(A(S))
+  =
+  \frac1m\sum_{i=1}^{m}
+  \E_{S,z_i'} \ell(A(S),z_i'),
+\]
+
+而
+
+\[
+  \E_S L_S(A(S))
+  =
+  \frac1m\sum_{i=1}^{m}
+  \E_S \ell(A(S),z_i).
+\]
+
+由于 \(S^{(i)}\) 与 \(S\) 同分布，
+
+\[
+  \E_S \ell(A(S),z_i)
+  =
+  \E_{S,z_i'} \ell(A(S^{(i)}),z_i').
+\]
+
+两式相减得到
+
+\[
+  \E_S\!\left[
+    L_{\Dcal}(A(S))-L_S(A(S))
+  \right]
+  =
+  \frac1m\sum_{i=1}^{m}
+  \E
+  \left[
+    \ell(A(S),z_i')-\ell(A(S^{(i)}),z_i')
+  \right]
+  \le \varepsilon(m).
+\]
+
+(b) 对正则化 ERM，目标函数中的 \(\lambda\|w\|^2\) 提供 \(2\lambda\)-强凸性。对 \(\rho\)-Lipschitz convex 损失，标准稳定性推导给出量级
+
+\[
+  \varepsilon(m)\le \frac{2\rho^2}{\lambda m}.
+\]
+
+又因为 \(A(S)\) 最小化正则化经验风险，
+
+\[
+  L_S(A(S))+\lambda\|A(S)\|^2
+  \le
+  L_S(w^*)+\lambda\|w^*\|^2.
+\]
+
+取期望并丢掉非负项 \(\lambda\|A(S)\|^2\)，有
+
+\[
+  \E_S L_S(A(S))
+  \le
+  L_{\Dcal}(w^*)+\lambda\|w^*\|^2.
+\]
+
+再加上稳定性泛化差距，得到
+
+\[
+  \E_S L_{\Dcal}(A(S))
+  \le
+  L_{\Dcal}(w^*)+\lambda\|w^*\|^2+\frac{2\rho^2}{\lambda m}.
+\]
+
+\section{B. Deep Learning and Reinforcement Learning}
+
+\begin{examproblem}[B1：监督分类深度学习流水线]
+给出 MLP feature extractor + MLP classifier 的假设空间、交叉熵和 SGD、batch normalization、欠拟合和过拟合处理。
+\source{官方卷：2025 Spring, p.~2--3}
+\officialenglish{For training data \(\{(x_i,y_i)\}_{i=1}^N\), \(x_i\in\mathbb R^d\), \(y_i\in\{1,\ldots,C\}\): (a) define the hypothesis space of networks with an MLP feature extractor and an MLP classifier to class probabilities, specifying input, output, and trainable parameters; (b) give a suitable loss and explain SGD; (c) describe batch normalization in training and testing; (d) if training error is unsatisfactory, give at least two changes improving expressivity; (e) if training error is low but test error high, give at least two anti-overfitting strategies.}
+\chinesetranslation{对 \(C\) 类监督分类流水线：(a) 定义 MLP 特征提取器和 MLP 分类器组成的假设空间；(b) 给损失与 SGD；(c) 说明训练/测试阶段的 batch normalization；(d) 训练误差高时给至少两种增加表达力的方式；(e) 训练低而测试高时给至少两种防过拟合策略。}
+\end{examproblem}
+
+\solution
+设训练集为 \(\{(x_i,y_i)\}_{i=1}^{N}\)，其中 \(x_i\in\R^d\)，\(y_i\in\{1,\ldots,C\}\)。定义 feature extractor
+
+\[
+  \phi_{\theta_f}:\R^d\to \R^r
+\]
+
+和 classifier
+
+\[
+  c_{\theta_c}:\R^r\to \R^C.
+\]
+
+网络输出 logits
+
+\[
+  a_\theta(x)=c_{\theta_c}(\phi_{\theta_f}(x)),
+  \qquad
+  p_\theta(y=c|x)=
+  \frac{\exp(a_{\theta,c}(x))}{\sum_{j=1}^{C}\exp(a_{\theta,j}(x))}.
+\]
+
+假设空间是
+
+\[
+  \Hcal=
+  \{x\mapsto \softmax(c_{\theta_c}(\phi_{\theta_f}(x))):\theta=(\theta_f,\theta_c)\}.
+\]
+
+交叉熵损失为
+
+\[
+  \widehat L(\theta)
+  =
+  -\frac1N\sum_{i=1}^{N}
+  \log p_\theta(y_i|x_i).
+\]
+
+SGD 在 minibatch \(B_k\) 上近似梯度：
+
+\[
+  \theta_{k+1}
+  =
+  \theta_k-\eta_k
+  \frac{1}{|B_k|}
+  \sum_{i\in B_k}
+  \nabla_\theta[-\log p_\theta(y_i|x_i)].
+\]
+
+Batch normalization 对一个 batch 的 pre-activation \(u\) 做
+
+\[
+  \hat u=\frac{u-\mu_B}{\sqrt{\sigma_B^2+\epsilon}},
+  \qquad
+  \operatorname{BN}(u)=\gamma\hat u+\beta.
+\]
+
+训练时用 batch 统计量并更新 running mean/variance；测试时使用 running statistics，避免单个样本导致输出随机。
+
+若训练误差高，说明表达力或优化不足。可增加深度/宽度、换用更合适的架构、改初始化/学习率、加入残差连接或更长训练。若训练误差低而测试误差高，说明过拟合。可使用 weight decay、dropout、data augmentation、early stopping、label smoothing、模型集成或减小模型容量。
+
+\begin{examproblem}[B2：VP SDE 与 score matching]
+给定 VP SDE
+
+\[
+  dx=-\frac12\beta(t)x\,dt+\sqrt{\beta(t)}\,dW_t,
+\]
+
+写 reverse-time SDE，证明 denoising score matching 恒等式，并给出条件分布与训练损失。
+\source{官方卷：2025 Spring, p.~3}
+\officialenglish{For the variance-preserving SDE \(dx=-\tfrac12\beta(t)x\,dt+\sqrt{\beta(t)}\,dW_t\): (a) write the reverse-time SDE and explain the score-matching objective \(\min_\theta\mathbb E_t\lambda(t)\mathbb E_{x_t}\|s_\theta(x_t,t)-\nabla_{x_t}\log p_t(x_t)\|^2\); (b) prove its denoising-score-matching conditional form differs only by a constant; (c) find \(p_{t|0}(x_t|x_0)\) and derive the final denoising loss.}
+\chinesetranslation{对 VP SDE：(a) 写反向时间 SDE 并说明为什么需要 score matching；(b) 证明边缘 score 目标与条件 denoising score matching 目标只差常数；(c) 求 \(p_{t|0}(x_t\mid x_0)\)，导出最终的去噪 score-matching 损失。}
+\end{examproblem}
+
+\solution
+一般 forward SDE 的 reverse-time SDE 为
+
+\[
+  dx=
+  \left[
+    f(x,t)-g(t)^2\nabla_x\log p_t(x)
+  \right]dt
+  +
+  g(t)\,d\bar W_t,
+\]
+
+其中 \(dt\) 沿反向时间为负。对 VP SDE，\(f(x,t)=-\beta(t)x/2\)，\(g(t)=\sqrt{\beta(t)}\)，所以
+
+\[
+  dx=
+  \left[
+    -\frac12\beta(t)x-\beta(t)\nabla_x\log p_t(x)
+  \right]dt
+  +
+  \sqrt{\beta(t)}\,d\bar W_t.
+\]
+
+因此需要训练网络 \(s_\theta(x_t,t)\approx \nabla_{x_t}\log p_t(x_t)\)，即回查 \conceptref{concept:diffusion-score}{diffusion score} 的训练信号。
+
+下面证明 denoising identity。对任意函数 \(s_\theta\)，展开平方：
+
+\[
+  \E_{x_t}\|s_\theta(x_t,t)-\nabla\log p_t(x_t)\|^2.
+\]
+
+利用
+
+\[
+  p_t(x_t)=\int p_{t|0}(x_t|x_0)p_{\text{data}}(x_0)\,dx_0
+\]
+
+和 Fisher identity，
+
+\[
+  \nabla_{x_t}\log p_t(x_t)
+  =
+  \E[\nabla_{x_t}\log p_{t|0}(x_t|x_0)\mid x_t].
+\]
+
+令 \(Y=\nabla\log p_{t|0}(x_t|x_0)\)，则 \(\E[Y|x_t]=\nabla\log p_t(x_t)\)。条件方差分解给出
+
+\[
+  \E\|s_\theta-\E[Y|x_t]\|^2
+  =
+  \E\|s_\theta-Y\|^2
+  -
+  \E\|Y-\E[Y|x_t]\|^2.
+\]
+
+第二项与 \(\theta\) 无关，因此
+
+\[
+  \E_{x_t}\|s_\theta-\nabla\log p_t\|^2
+  =
+  \E_{x_0,x_t}\|s_\theta-\nabla\log p_{t|0}(x_t|x_0)\|^2+C.
+\]
+
+对 VP SDE，解线性 SDE 得
+
+\[
+  x_t=\alpha(t)x_0+\sqrt{1-\alpha(t)^2}\,\varepsilon,
+  \qquad
+  \varepsilon\sim \N(0,I),
+\]
+
+其中
+
+\[
+  \alpha(t)=\exp\left(-\frac12\int_0^t\beta(s)\,ds\right).
+\]
+
+所以
+
+\[
+  p_{t|0}(x_t|x_0)
+  =
+  \N\left(\alpha(t)x_0,\bigl(1-\alpha(t)^2\bigr)I\right),
+\]
+
+并且
+
+\[
+  \nabla_{x_t}\log p_{t|0}(x_t|x_0)
+  =
+  -\frac{x_t-\alpha(t)x_0}{1-\alpha(t)^2}.
+\]
+
+最终训练目标可写为
+
+\[
+  \min_\theta
+  \E_{t,x_0,\varepsilon}
+  \lambda(t)
+  \left\|
+    s_\theta\!\left(\alpha(t)x_0+\sqrt{1-\alpha(t)^2}\varepsilon,t\right)
+    +
+    \frac{\varepsilon}{\sqrt{1-\alpha(t)^2}}
+  \right\|^2.
+\]
+
+\section{C. Optimization Methods in Artificial Intelligence}
+
+\begin{examproblem}[C1-C6：prox-SGD 收敛递推]
+考虑 \(f\) 为 \(L\)-smooth、\(\mu\)-strongly convex，随机梯度 \(g(x,\xi)=\nabla f(x)+\xi\)，\(\E\xi=0\)，\(\E\|\xi\|^2\le \sigma^2\)，并用
+
+\[
+  x_{k+1}=\prox_{\gamma R}(x_k-\gamma g(x_k,\xi^k))
+\]
+
+求解 \(\min_x f(x)+R(x)\)。
+\source{官方卷：2025 Spring, p.~3--4}
+\officialenglish{Let \(f\) be \(L\)-smooth and \(\mu\)-strongly convex, \(g(x,\xi)=\nabla f(x)+\xi\) with zero-mean noise and second moment at most \(\sigma^2\), and \(x_{k+1}=\operatorname{prox}_{\gamma R}(x_k-\gamma g(x_k,\xi_k))\). (1) define \(L\)-smoothness and \(\mu\)-strong convexity; (2) combine them via \(g(x)=f(x)-\mu\|x\|^2/2\) to prove the stated co-coercivity inequality; (3) derive the prox nonexpansive recurrence; (4) apply variance decomposition; (5) at \(\gamma=2/(\mu+L)\), obtain the simplified contraction; (6) prove the stated precision/iteration complexity bound and noise floor.}
+\chinesetranslation{对含 prox 的随机梯度法六问：定义 \(L\)-光滑和 \(\mu\)-强凸；结合二者导出 co-coercivity 型不等式；用 prox 非扩张性给递推；作方差分解；在 \(\gamma=2/(\mu+L)\) 下得到压缩；最后证明指定精度的迭代复杂度与噪声地板。}
+\end{examproblem}
+
+\solution
+\textbf{定义。} \conceptref{concept:smooth-strong-convex}{\(L\)-smooth 与 \(\mu\)-strong convex} 已在第 \ref{ch:primer} 章给出。把
+
+\[
+  g_0(x)=f(x)-\frac{\mu}{2}\|x\|^2
+\]
+
+则 \(g_0\) convex，且 \((L-\mu)\)-smooth。其梯度是
+
+\[
+  \nabla g_0(x)=\nabla f(x)-\mu x.
+\]
+
+对 convex smooth 函数使用 cocoercivity：
+
+\[
+  \frac{1}{L-\mu}
+  \|\nabla g_0(x)-\nabla g_0(y)\|^2
+  \le
+  \langle \nabla g_0(x)-\nabla g_0(y),x-y\rangle.
+\]
+
+展开并整理，可得题中所需的不等式形式：
+
+\[
+  \mu\|x-y\|^2+
+  \frac{1}{L}\|\nabla f(x)-\nabla f(y)\|^2
+  \le
+  \left(1+\frac{\mu}{L}\right)
+  \langle \nabla f(x)-\nabla f(y),x-y\rangle.
+\]
+
+\textbf{prox 递推。} \conceptref{concept:prox-nonexpansive}{prox 最优性条件}说明最优点 \(x^*\) 满足
+
+\[
+  x^*=\prox_{\gamma R}(x^*-\gamma\nabla f(x^*)).
+\]
+
+由 \conceptref{concept:prox-nonexpansive}{prox 非扩张}，
+
+\[
+  \|x_{k+1}-x^*\|^2
+  \le
+  \|x_k-\gamma(\nabla f(x_k)+\xi^k)-x^*+\gamma\nabla f(x^*)\|^2.
+\]
+
+即
+
+\[
+  \|x_{k+1}-x^*\|^2
+  \le
+  \|x_k-x^*-\gamma(\nabla f(x_k)-\nabla f(x^*)+\xi^k)\|^2.
+\]
+
+\textbf{方差分解。} 条件于 \(x_k\)，令
+
+\[
+  a=x_k-x^*-\gamma(\nabla f(x_k)-\nabla f(x^*)).
+\]
+
+则
+
+\[
+  \E_k\|a-\gamma\xi^k\|^2
+  =
+  \|a\|^2
+  -2\gamma\langle a,\E_k\xi^k\rangle
+  +
+  \gamma^2\E_k\|\xi^k\|^2.
+\]
+
+由于 \(\E_k\xi^k=0\)，
+
+\[
+  \E_k\|x_{k+1}-x^*\|^2
+  \le
+  \|x_k-x^*-\gamma(\nabla f(x_k)-\nabla f(x^*))\|^2
+  +
+  \gamma^2\sigma^2.
+\]
+
+\textbf{线性收缩。} 取 \(\gamma=2/(L+\mu)\)。展开确定性项：
+
+\[
+  \|u-\gamma v\|^2
+  =
+  \|u\|^2-2\gamma\langle u,v\rangle+\gamma^2\|v\|^2,
+\]
+
+其中 \(u=x_k-x^*\)，\(v=\nabla f(x_k)-\nabla f(x^*)\)。利用上面的强凸-光滑联合不等式，得到
+
+\[
+  \|u-\gamma v\|^2
+  \le
+  \left(1-\frac{4\mu L}{(L+\mu)^2}\right)\|u\|^2.
+\]
+
+记
+
+\[
+  \rho=\frac{4\mu L}{(L+\mu)^2}.
+\]
+
+由 tower property，
+
+\[
+  \E\|x_{k+1}-x^*\|^2
+  \le
+  (1-\rho)\E\|x_k-x^*\|^2+\gamma^2\sigma^2.
+\]
+
+递推展开为
+
+\[
+  \E\|x_k-x^*\|^2
+  \le
+  (1-\rho)^k\|x_0-x^*\|^2
+  +
+  \frac{\gamma^2\sigma^2}{\rho}.
+\]
+
+对小步长也可用
+
+\[
+  \E\|x_k-x^*\|^2
+  \le
+  (1-\gamma\mu)^k\|x_0-x^*\|^2+\frac{\gamma\sigma^2}{\mu}.
+\]
+
+若希望第一项不超过 \(\varepsilon\|x_0-x^*\|^2\)，只需
+
+\[
+  k\ge \frac{1}{\gamma\mu}\log\frac1\varepsilon.
+\]
+
+选择 \(\gamma\) 与条件数 \(\kappa=L/\mu\) 同阶的稳定步长，可得到题中形式的
+
+\[
+  k\ge \frac{L/\mu+3}{4}\log\frac1\varepsilon,
+  \qquad
+  \E\|x_k-x^*\|^2
+  \le
+  \varepsilon\|x_0-x^*\|^2+\frac{\gamma\sigma^2}{\mu}.
+\]
+
+最后一项就是 stochastic gradient 的 noise floor；除非让 \(\gamma\to0\) 或降低方差，否则不能消失。
+
+\section{D. Natural Language Processing}
+
+\begin{examproblem}[D1-D5：概念题]
+回答 trigram smoothing、representation learning、top-\(p\)、LLM 成功因素和 Transformer 相比 RNN 的优势。
+\source{官方卷：2025 Spring, p.~5}
+\officialenglish{Short Answer Questions on Concepts. (1) How is \(p(w_3\mid w_1,w_2)\) learned in a trigram language model, and how is it estimated under unseen contexts/tokens? (2) What is the central idea of representation learning and which algorithms implement it? (3) Why do LLMs use top-\(P\) sampling rather than greedy/beam search, and why can it be superior to top-\(K\)? (4) List key factors behind the current LLM-based approach to AGI and their importance. (5) Give at least two advantages of Transformers over recurrent models for seq2seq.}
+\chinesetranslation{五道概念简答：trigram 的条件概率学习与平滑；表示学习的核心和算法；LLM 为什么用 top-\(P\) 而非 greedy/beam，以及相对 top-\(K\) 的优点；当前 LLM 路线的关键成功要素；Transformer 相对 LSTM/GRU 的至少两个 seq2seq 优势。}
+\end{examproblem}
+
+\solution
+\textbf{Trigram。} 极大似然估计为
+
+\[
+  \hat p(w_3|w_1,w_2)=
+  \frac{c(w_1,w_2,w_3)}{c(w_1,w_2)}.
+\]
+
+若上下文未出现，需要 smoothing/backoff/interpolation，例如
+
+\[
+  p(w_3|w_1,w_2)
+  =
+  \lambda_3\hat p_{\mathrm{tri}}
+  +
+  \lambda_2\hat p_{\mathrm{bi}}
+  +
+  \lambda_1\hat p_{\mathrm{uni}}.
+\]
+
+也可使用 Kneser-Ney smoothing。
+
+\textbf{Representation learning。} 中心思想是从数据关系中学习低维连续表征，让语义、结构或任务相关相似性在向量空间中可计算。典型算法包括 autoencoder、word2vec、GloVe、contrastive learning、BERT/Transformer encoder、graph embedding。
+
+\textbf{Top-\(p\) sampling。} Greedy/beam search 容易生成高概率但重复、退化的文本。Top-\(p\) 从累计概率达到 \(p\) 的最小候选集合中采样，候选数随分布熵自适应；相比 top-\(k\)，它不会在尖锐分布时强行保留太多低质词，也不会在平坦分布时过早截断合理词。
+
+\textbf{LLM 成功因素。} 关键包括大规模 \conceptref{concept:pretraining-alignment}{自监督预训练}、\conceptref{concept:self-attention}{Transformer 可并行优化}、数据和参数 \conceptref{concept:scaling-law}{scaling law}、instruction tuning、\conceptref{concept:rlhf-dpo}{RLHF/DPO 对齐}、检索/工具使用、系统工程上的高吞吐训练和推理优化。
+
+\textbf{Transformer 优势。} 相比 LSTM/GRU，\conceptref{concept:self-attention}{self-attention} 的路径长度短，长程依赖更直接；训练可并行，硬件利用率高；多头注意力可以在不同子空间捕获不同关系；残差和归一化让深层训练更稳定。
+
+\begin{examproblem}[D6：从统计学习角度解释 data scaling law]
+解释为什么样本量增加会带来规律性的性能改善，且不能假设数据简单高斯。
+\source{官方卷：2025 Spring, p.~5}
+\officialenglish{Explain why the data scaling law relating performance to sample size holds from the perspective of statistical learning. Give a detailed analysis and avoid overly simplistic assumptions such as Gaussian data.}
+\chinesetranslation{从统计学习角度解释性能与样本量关系的 data scaling law，给出详细分析，不得依赖“数据为高斯”等过度简化假设。}
+\end{examproblem}
+
+\solution
+设模型类和训练算法固定，泛化误差可粗略拆成 approximation、estimation 和 optimization 三项：
+
+\[
+  L(\hat h_n)-L^*
+  =
+  \underbrace{L(h_{\Hcal}^*)-L^*}_{\text{approximation}}
+  +
+  \underbrace{L(\hat h_n)-L(h_{\Hcal}^*)}_{\text{estimation}}
+  +
+  \underbrace{\text{optimization gap}}_{\text{training}}.
+\]
+
+样本量 \(n\) 增大主要降低 estimation error。对有限 VC/Rademacher 复杂度类，统一收敛给出 \(O(n^{-1/2})\) 或更精细的幂律；对过参数神经网络，经验上不同误差来源叠加后常呈
+
+\[
+  L(n)=L_\infty+A n^{-\alpha}.
+\]
+
+这并不要求数据高斯。它依赖的是样本独立性或弱依赖、任务分布稳定、模型和优化能把新增样本信息转化为有效约束。若数据重复、污染、分布漂移或模型容量不足，scaling law 会偏离。
+
+\begin{examproblem}[D7：RLHF 策略优化]
+假设 reward model 已训练，说明如何用强化学习让 LLM 对齐人类偏好，包括数据、损失和梯度。
+\source{官方卷：2025 Spring, p.~5}
+\officialenglish{A reward model for RLHF training of an LLM has already been trained. Explain how reinforcement learning aligns the model to human preferences, including data usage, the RL loss function, and its gradient.}
+\chinesetranslation{已训练好奖励模型。说明如何通过强化学习将 LLM 与人类偏好对齐，必须包括数据如何使用、强化学习损失函数以及该损失的梯度。}
+\end{examproblem}
+
+\solution
+本题把 \conceptref{concept:rlhf-dpo}{RLHF} 写成序列决策问题，策略梯度骨架回查 \conceptref{concept:policy-gradient}{第三章 policy gradient 推导}。
+
+给定 prompt \(x\)，策略 \(\pi_\theta(y|x)\) 生成回答 \(y\)。reward model 给出 \(r_\psi(x,y)\)。常用目标是带 KL 正则的期望奖励：
+
+\[
+  J(\theta)
+  =
+  \E_{x,y\sim \pi_\theta}
+  \left[
+    r_\psi(x,y)
+    -
+    \beta
+    \log\frac{\pi_\theta(y|x)}{\pi_{\mathrm{ref}}(y|x)}
+  \right].
+\]
+
+把整段回答视为 action trajectory，policy gradient 为
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \E
+  \left[
+    \nabla_\theta\log \pi_\theta(y|x)
+    \left(
+      r_\psi(x,y)
+      -
+      \beta\log\frac{\pi_\theta(y|x)}{\pi_{\mathrm{ref}}(y|x)}
+      -
+      b(x)
+    \right)
+  \right],
+\]
+
+其中 \(b(x)\) 是 baseline/value model，用于降方差。PPO 版本会加入 clipped ratio，控制策略更新不离旧策略太远。
+
+\begin{examproblem}[D8：无标注领域 QA 的 RAG 系统设计]
+已有领域文档但无问答标注，设计可回答领域问题的系统。
+\source{官方卷：2025 Spring, p.~5--6}
+\officialenglish{A general-purpose LLM performs poorly at QA in a specific domain because it lacks domain knowledge. A large corpus of domain documents is available, but there are no labeled QA pairs. Design a system that accurately answers questions in this domain; you may add components such as embedding models.}
+\chinesetranslation{通用 LLM 因缺少领域知识而在某专门领域 QA 上表现很差。现有大量领域文档但没有标注问答对。设计一个能准确回答该领域问题的系统，可以加入 embedding 等组件。}
+\end{examproblem}
+
+\solution
+最小可靠方案是 \conceptref{concept:rag-mln}{RAG}：
+
+\begin{enumerate}
+  \item \textbf{文档处理：} 清洗、分块、保留标题/章节/页码/时间等 metadata。
+  \item \textbf{索引：} 用领域 embedding model 生成 chunk 向量，建立向量索引；同时保留 BM25 关键词索引。
+  \item \textbf{检索：} 对问题 \(q\) 做 query rewriting，混合 dense retrieval 与 sparse retrieval，取 top-\(k\)。
+  \item \textbf{重排：} 用 cross-encoder/reranker 过滤无关 chunk。
+  \item \textbf{生成：} 将证据片段、引用信息和约束 prompt 输入 LLM，要求只基于证据回答。
+  \item \textbf{校验：} 输出答案后做 citation check、answerability check 和 hallucination detector。
+\end{enumerate}
+
+无 QA 标注时可用文档自动生成 synthetic QA，再人工抽样校验；也可用 contrastive 或 instruction-tuning 微调 embedding/reranker。评价指标包括 retrieval recall@\(k\)、faithfulness、answer exactness 和人工专家评分。

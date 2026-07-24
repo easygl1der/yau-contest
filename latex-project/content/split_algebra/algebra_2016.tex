@@ -46,8 +46,20 @@ where $G$ is the Gram matrix. Thus $W^T = G^{-1}$.
 The inner products of the dual basis are given by:
 \[ \langle v_i, v_j \rangle = \sum_{k,l} w_{ik} \langle u_k, u_l \rangle w_{jl} = (W G W^T)_{ij} = (G^{-1} G G^{-1})_{ij} = (G^{-1})_{ij} \]
 Our Gram matrix $G$ has the property that its off-diagonal entries are $\leq 0$. Because $G$ is also positive definite, it is a \textbf{Stieltjes matrix}.
-A deep result in linear algebra states that the inverse of any Stieltjes matrix contains only non-negative entries.
-Therefore, $\langle v_i, v_j \rangle \geq 0$ for all $i, j$.
+Here is the needed special case of the inverse-positivity theorem. Let $b\geq 0$ componentwise and let $x=G^{-1}b$. The vector $x$ is the unique minimizer of
+\[
+Q(z)=\frac12 z^T Gz-b^Tz.
+\]
+Write $x=x^+-x^-$, where $x^+$ and $x^-$ have disjoint supports and non-negative entries. Since the off-diagonal entries of $G$ are non-positive,
+\[
+(x^+)^TGx^-\leq 0.
+\]
+Therefore
+\[
+Q(x)-Q(x^+)=\frac12 (x^-)^TGx^--(x^+)^TGx^-+b^Tx^-\geq 0,
+\]
+with strict inequality if $x^-\neq 0$, because $G$ is positive definite. Thus the minimizer has $x^-=0$, so $G^{-1}b\geq 0$ for every $b\geq 0$. Taking $b=e_j$ shows every column of $G^{-1}$ is non-negative.
+Therefore, $\langle v_i, v_j \rangle=(G^{-1})_{ij}\geq 0$ for all $i, j$.
 
 \textbf{(c) Step 3: Find a counterexample for the reverse implication.}
 If we assume $\langle u_i, u_j \rangle \geq 0$, does it force the dual products to be $\leq 0$?
@@ -98,9 +110,21 @@ Since both numbers are finite, the total count $f_d(n)$ is finite.
 
 \textbf{(b) Step 2: Prove multiplicativity using the Chinese Remainder Theorem.}
 A subgroup $G$ of index $n$ is defined by its quotient group $Q = \mathbb{Z}^d / G$, which has size $n$.
-If $n = mk$ with $\gcd(m, k) = 1$, then by the structure theorem for finite abelian groups, the quotient $Q$ splits uniquely into two parts: $Q \cong Q_m \oplus Q_k$, where $|Q_m| = m$ and $|Q_k| = k$.
-This decomposition of the quotient corresponds to a unique decomposition of the subgroup $G$ into two "independent" components. Thus, the number of choices for $G$ is the product of the choices for the $m$-part and the $k$-part. This proves $f_d(mn) = f_d(m)f_d(n)$.
-The same logic applies to $g_d(n)$ because a product group $A \times B$ is cyclic if and only if both $A$ and $B$ are cyclic and their orders are coprime.
+If $n = mk$ with $\gcd(m, k) = 1$, then multiplication by $m$ and $k$ gives the canonical primary decomposition
+\[
+Q=Q[m]\oplus Q[k],
+\qquad |Q[m]|=m,\quad |Q[k]|=k,
+\]
+where $Q[m]$ is the subgroup killed by $m$ and similarly for $Q[k]$. This is the finite-abelian-group structure theorem in the only form needed here; equivalently it follows from the Bezout identity $am+bk=1$.
+
+For the lattice, the corresponding subgroups are obtained by taking inverse images under the quotient map $\mathbb{Z}^d\to Q$. Thus a quotient of order $mk$ is the same data as a quotient of order $m$ together with a quotient of order $k$, and this correspondence is reversible. Hence
+\[
+f_d(mk)=f_d(m)f_d(k).
+\]
+The same correspondence preserves cyclicity because a product $A\oplus B$ with coprime orders is cyclic if and only if both $A$ and $B$ are cyclic. Therefore
+\[
+g_d(mk)=g_d(m)g_d(k).
+\]
 
 \textbf{(c) Step 3: Count cyclic quotients for prime powers.}
 We want to count subgroups $H$ such that $\mathbb{Z}^d / H \cong \mathbb{Z}/p^r\mathbb{Z}$.

@@ -145,36 +145,81 @@ Let $M$ be a compact Riemannian manifold without boundary. Show that if $M$ has 
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{enumerate}
-    \item Hodge theory: Every de Rham cohomology class has a unique harmonic representative. If we want to show $H^1(M, \mathbb{R}) = 0$, we just need to show that the only harmonic 1-form is the zero form.
-    \item Harmonic form: A form $\omega$ is harmonic if its Hodge Laplacian vanishes: $\Delta \omega = 0$.
-    \item Bochner-Weitzenböck formula: A powerful identity relating the Laplacian of a form, its covariant derivative, and the curvature of the manifold.
-    \item Ricci curvature $\text{Ric}$: A geometric quantity measuring how volume elements behave; positive Ricci curvature means the space tends to "converge" geodesics.
-\end{enumerate}
+\textbf{Step 1: Reduce a cohomology class to a harmonic representative.}
+Let $[\alpha]\in H^1(M,\mathbb{R})$ be represented by a closed 1-form $\alpha$. Among all representatives
+\[
+\alpha+du
+\]
+in the same de Rham class, choose one with minimal $L^2$ norm. On a compact manifold this minimizer exists by the standard elliptic compactness argument for the scalar Laplacian; for this problem, the key Euler--Lagrange equation is enough to record.
 
-\textbf{Steps:}
-\begin{enumerate}
-    \item Assume there is a non-trivial cohomology class $[\omega] \in H^1(M, \mathbb{R})$. By Hodge theory, we can choose a representative 1-form $\omega$ that is harmonic, so $\Delta \omega = 0$.
-    \item We apply the Bochner-Weitzenböck formula to our harmonic 1-form $\omega$:
-    \[ \Delta \omega = \nabla^* \nabla \omega + \text{Ric}(\omega^\sharp, \cdot) \]
-    where $\nabla^* \nabla$ is the rough Laplacian (a positive-definite operator on forms), $\omega^\sharp$ is the vector field dual to $\omega$ (raising the index), and $\text{Ric}$ is the Ricci tensor.
-    \item Since $\omega$ is harmonic, $\Delta \omega = 0$. We take the inner product of the entire Bochner-Weitzenböck equation with $\omega$ itself:
-    \[ 0 = \langle \nabla^* \nabla \omega, \omega \rangle + \text{Ric}(\omega^\sharp, \omega^\sharp). \]
-    \item We integrate this equation over the entire compact manifold $M$ with respect to the Riemannian volume measure $dV$:
-    \[ 0 = \int_M \langle \nabla^* \nabla \omega, \omega \rangle dV + \int_M \text{Ric}(\omega^\sharp, \omega^\sharp) dV. \]
-    \item Using integration by parts on the first term (since $M$ has no boundary), we move the adjoint $\nabla^*$ to $\nabla$:
-    \[ 0 = \int_M |\nabla \omega|^2 dV + \int_M \text{Ric}(\omega^\sharp, \omega^\sharp) dV. \]
-    \item The first term, $\int_M |\nabla \omega|^2 dV$, is the integral of a non-negative quantity, so it must be $\ge 0$.
-    \item The second term involves the Ricci curvature. We are given that $M$ has strictly positive Ricci curvature, meaning there is some positive constant $\kappa > 0$ such that $\text{Ric}(X, X) \ge \kappa |X|^2$ for any non-zero vector $X$.
-    \item Therefore, the second integral is strictly positive unless $\omega^\sharp = 0$ everywhere:
-    \[ \int_M \text{Ric}(\omega^\sharp, \omega^\sharp) dV \ge \int_M \kappa |\omega|^2 dV. \]
-    \item For the sum of a non-negative term and a strictly positive term to equal zero, both terms must be identically zero. This forces $|\omega|^2 = 0$ everywhere.
-    \item Thus, the only harmonic 1-form is the zero form ($\omega = 0$). By Hodge theory, $H^1(M, \mathbb{R}) = 0$.
-\end{enumerate}
+For every smooth function $\varphi$,
+\[
+0
+=
+\left.\frac{d}{dt}\right|_{t=0}
+\int_M |\alpha+d(u+t\varphi)|^2\,dV
+=
+2\int_M \langle \alpha+du,d\varphi\rangle\,dV.
+\]
+Integration by parts gives
+\[
+d^*(\alpha+du)=0.
+\]
+The form
+\[
+\omega=\alpha+du
+\]
+is still closed, and now it is also co-closed. Therefore
+\[
+d\omega=0,\qquad d^*\omega=0,
+\]
+so it is harmonic:
+\[
+\Delta_H\omega=(dd^*+d^*d)\omega=0.
+\]
+Thus it suffices to prove that every harmonic 1-form on $M$ is zero.
+
+\textbf{Step 2: Apply the Bochner identity for 1-forms.}
+For a 1-form $\omega$, the Weitzenböck formula is
+\[
+\Delta_H\omega=\nabla^*\nabla\omega+\operatorname{Ric}(\omega^\sharp,\cdot),
+\]
+where $\omega^\sharp$ is the vector field metrically dual to $\omega$. Pair with $\omega$ and integrate:
+\[
+0
+=
+\int_M \langle \Delta_H\omega,\omega\rangle\,dV
+=
+\int_M |\nabla\omega|^2\,dV
++
+\int_M \operatorname{Ric}(\omega^\sharp,\omega^\sharp)\,dV.
+\]
+There is no boundary term because $M$ is compact without boundary.
+
+\textbf{Step 3: Use positive Ricci curvature.}
+Since $M$ is compact and $\operatorname{Ric}$ is positive on every unit vector, there is a constant $\kappa>0$ such that
+\[
+\operatorname{Ric}(X,X)\geq \kappa |X|^2
+\]
+for every tangent vector $X$. Hence
+\[
+0
+\geq
+\int_M |\nabla\omega|^2\,dV
++
+\kappa\int_M |\omega|^2\,dV.
+\]
+Both terms on the right are nonnegative, so both must vanish. In particular,
+\[
+\omega\equiv0.
+\]
+Therefore every de Rham class in $H^1(M,\mathbb{R})$ is zero, and
+\[
+H^1(M,\mathbb{R})=0.
+\]
 
 \textbf{Intuition:}
-This is a classic "vanishing theorem" by Bochner. The first cohomology group $H^1$ measures the presence of "1-dimensional holes" or loops that you can't shrink to a point. Positive Ricci curvature means the space is "curved inwards" in every direction, much like the surface of a sphere. The Bochner technique shows that this positive curvature creates an "energy cost" for any non-trivial harmonic form. If you try to wrap a harmonic 1-form around a hole in a space with positive Ricci curvature, the curvature physically squeezes the form so much that its energy would have to be negative to balance the equation, which is impossible. Hence, no such forms (and no such holes) can exist.
+The minimizer step chooses the lowest-energy representative of a closed 1-form class. Bochner's formula then says that a harmonic 1-form pays two nonnegative energy costs: variation energy $|\nabla\omega|^2$ and curvature energy $\operatorname{Ric}(\omega^\sharp,\omega^\sharp)$. Positive Ricci curvature makes the second cost strictly positive unless the form vanishes.
 \end{solution}
 
 \begin{exercise}
@@ -195,7 +240,7 @@ Let $M$ be an orientable, closed and embedded minimal hypersurface in $S^{n+1}$.
 3. Thus, for each coordinate function $x_i$, we have $\Delta x_i = -n x_i$. (Using the convention where $\Delta$ is a negative operator, the eigenvalue is $n$).
 4. Because the center of mass of a closed minimal submanifold of a sphere is at the origin, $\int_M x_i dV = 0$. This means the $x_i$ functions are orthogonal to the constant functions (which have eigenvalue 0).
 5. Since $x_i$ are non-trivial eigenfunctions with eigenvalue $n$, this immediately shows that $n$ is *an* eigenvalue in the spectrum of $M$. Consequently, the lowest non-zero eigenvalue $\lambda_1$ must satisfy $\lambda_1 \le n$.
-6. The harder part is establishing the lower bound $\lambda_1 \ge n/2$. This is a celebrated theorem by Choi and Wang (1983).
+6. The harder part is establishing the lower bound $\lambda_1 \ge n/2$. This is the Choi--Wang eigenvalue estimate, not a consequence of the preceding coordinate-eigenfunction observation. The following lines record the proof dependency rather than expand the full argument.
 7. The proof by Choi and Wang uses the Reilly formula applied to the upper hemisphere of the ambient space and the relationship between the first eigenvalue and the index of the minimal surface (the number of negative eigenvalues of the second variation of area operator).
 8. By analyzing the stability operator $L = -\Delta - |A|^2 - n$, they show that if an eigenvalue were smaller than $n/2$, it would lead to a contradiction in the energy estimates for vector fields extending the eigenfunctions.\\[2ex]
 
@@ -276,29 +321,88 @@ State and prove the Frobenius Theorem on a differentiable manifold.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-1. Vector field: An assignment of a tangent vector to each point on a manifold.
-2. Distribution $\mathcal{D}$: A smooth choice of a subspace of the tangent space at each point on a manifold $M$. If the dimension of the subspace is $k$, it's a rank-$k$ distribution.
-3. Integral manifold: A submanifold $N \subset M$ such that at every point $p \in N$, the tangent space $T_p N$ is exactly equal to the distribution subspace $\mathcal{D}_p$.
-4. Integrable distribution: A distribution is completely integrable if through every point there passes an integral manifold.
-5. Involutive distribution: A distribution is involutive if the Lie bracket $[X, Y]$ of any two vector fields $X, Y$ taking values in $\mathcal{D}$ also takes values in $\mathcal{D}$.\\[2ex]
+\textbf{Theorem.}
+Let $\mathcal D\subset TM$ be a smooth rank $k$ distribution. Then $\mathcal D$ is completely integrable if and only if it is involutive, meaning that for any local vector fields $X,Y$ tangent to $\mathcal D$,
+\[
+[X,Y]\in \Gamma(\mathcal D).
+\]
 
-\textbf{Steps:}
-1. \textbf{Theorem statement:} A smooth distribution $\mathcal{D} \subset TM$ is completely integrable if and only if it is involutive.
-2. \textbf{Proof of "Integrable $\implies$ Involutive":}
-   - Assume $\mathcal{D}$ is integrable. Choose an integral manifold $N$ through a point $p$.
-   - Any vector fields $X, Y \in \mathcal{D}$ evaluated on $N$ are tangent to $N$.
-   - By the properties of the Lie bracket, if two vector fields are tangent to a submanifold, their Lie bracket $[X, Y]$ is also tangent to that submanifold.
-   - Since the tangent space of $N$ is exactly $\mathcal{D}$, $[X, Y]$ must be in $\mathcal{D}$. Thus, $\mathcal{D}$ is involutive.
-3. \textbf{Proof of "Involutive $\implies$ Integrable" (Sketch):}
-   - This direction requires induction on the rank $k$ of the distribution.
-   - \textbf{Base case $k=1$:} A rank-1 distribution is spanned by a single non-vanishing vector field $X$. Its integral curves (guaranteed by the existence and uniqueness theorem of ODEs) serve as 1-dimensional integral manifolds. The bracket $[fX, gX]$ is always proportional to $X$, so a rank-1 distribution is trivially involutive and integrable.
-   - \textbf{Inductive step:} Assume it holds for rank $k-1$. For a rank-$k$ distribution $\mathcal{D}$, we can locally find $k$ independent vector fields $X_1, \dots, X_k$ spanning $\mathcal{D}$.
-   - We use the Flow Box Theorem (or Rectification Theorem) to find a local coordinate system $(y_1, \dots, y_n)$ where $X_1 = \frac{\partial}{\partial y_1}$. This "straightens" the first vector field.
-   - We now consider slices defined by $y_1 = \text{constant}$. We project the remaining vector fields $X_2, \dots, X_k$ onto these slices to create a rank-$(k-1)$ distribution.
-   - The involutivity of the original distribution $\mathcal{D}$ guarantees that this projected distribution is also involutive on the $(n-1)$-dimensional slices.
-   - By the inductive hypothesis, this $(k-1)$-dimensional distribution is integrable, giving integral submanifolds within the slices.
-   - Finally, we let the flow of $X_1$ carry these $(k-1)$-dimensional submanifolds along the $y_1$ direction. Because of involutivity, this sweeping motion produces a $k$-dimensional integral manifold for $\mathcal{D}$.\\[2ex]
+\textbf{Proof of the easy direction.}
+Assume $\mathcal D$ is integrable, and let $N$ be an integral manifold. If $X$ and $Y$ are tangent to $\mathcal D$, then their restrictions to $N$ are vector fields tangent to $N$. The Lie bracket of vector fields tangent to a submanifold is again tangent to that submanifold, because in adapted coordinates tangent fields differentiate only in the submanifold directions. Since $T_qN=\mathcal D_q$, the bracket $[X,Y]$ lies in $\mathcal D$. Thus $\mathcal D$ is involutive.
+
+\textbf{Proof of the local existence direction.}
+Fix $p\in M$. Choose local coordinates
+\[
+(x^1,\dots,x^k,y^1,\dots,y^{n-k})
+\]
+near $p$ such that the projection
+\[
+(x,y)\mapsto y
+\]
+is transverse to $\mathcal D$. Equivalently, after shrinking the chart, $\mathcal D$ is spanned by vector fields of the form
+\[
+X_i
+=
+\frac{\partial}{\partial x^i}
++
+\sum_{\alpha=1}^{n-k} a_i^\alpha(x,y)\frac{\partial}{\partial y^\alpha},
+\qquad 1\leq i\leq k.
+\]
+An integral manifold through $(0,y_0)$ which is written as a graph
+\[
+y^\alpha=u^\alpha(x^1,\dots,x^k)
+\]
+must satisfy the first-order system
+\[
+\frac{\partial u^\alpha}{\partial x^i}
+=
+a_i^\alpha(x,u(x)).
+\]
+Thus the question is local solvability of this system with initial value $u(0)=y_0$.
+
+The compatibility condition for this system is equality of mixed partial derivatives. Differentiating the equations gives
+\[
+\frac{\partial^2u^\alpha}{\partial x^i\partial x^j}
+-
+\frac{\partial^2u^\alpha}{\partial x^j\partial x^i}
+=
+\left(
+X_i(a_j^\alpha)-X_j(a_i^\alpha)
+\right)(x,u(x)).
+\]
+On the other hand, the vertical component of the bracket is exactly
+\[
+[X_i,X_j]^{\mathrm{vert}}
+=
+\sum_{\alpha}
+\left(
+X_i(a_j^\alpha)-X_j(a_i^\alpha)
+\right)
+\frac{\partial}{\partial y^\alpha}.
+\]
+Since the horizontal part of $[X_i,X_j]$ is zero and involutivity says $[X_i,X_j]$ is a linear combination of the $X_\ell$, it must in fact be zero. Therefore
+\[
+X_i(a_j^\alpha)-X_j(a_i^\alpha)=0
+\]
+for all $i,j,\alpha$. These are precisely the mixed-derivative compatibility conditions.
+
+With these compatibility identities, the solution can be built by successively solving ordinary differential equations in the $x^1,\dots,x^k$ directions; independence of the order of integration follows from the vanishing brackets above. More explicitly, let $\Phi_i^t$ be the flow of $X_i$. The identities $[X_i,X_j]=0$ imply that the flows commute locally:
+\[
+\Phi_i^s\Phi_j^t=\Phi_j^t\Phi_i^s.
+\]
+Then
+\[
+F(x^1,\dots,x^k)
+=
+\Phi_1^{x^1}\circ\cdots\circ\Phi_k^{x^k}(0,y_0)
+\]
+is well-defined near $0$, and
+\[
+\frac{\partial F}{\partial x^i}=X_i(F).
+\]
+Hence the image of $F$ is a $k$-dimensional submanifold whose tangent space is exactly $\mathcal D$.
+
+Since this construction works through every point, $\mathcal D$ is completely integrable.
 
 \textbf{Intuition:}
 Imagine drawing a bunch of little $2 \text{D}$ planes attached to points in a $3 \text{D}$ space (a rank-2 distribution). You want to know: "Can I connect all these little planes together to form a smooth, continuous surface?" The Frobenius theorem says you can do this if and only if the planes don't "twist" into the 3rd dimension. The Lie bracket $[X, Y]$ is exactly the mathematical tool that measures this twisting. If the bracket stays inside your planes (involutive), the planes lock together perfectly to form sheets. If it points outside the planes, the planes are twisting like a spiral staircase, and you can't form a single continuous floor.

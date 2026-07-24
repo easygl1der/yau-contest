@@ -1,0 +1,520 @@
+     QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE
+                        FALL 2025
+
+
+
+                                        Instructions
+         • This exam consists of four sections, each with a total of 33 points. You are
+           required to choose three out of the four sections and answer the questions
+           in the selected sections. You will earn an additional point for writing your
+           name and student ID number on your answer sheet. The maximum possible
+           score you can achieve is 100.
+         • Please clearly indicate your section choices at the very beginning of your
+           answer sheet. If you answer questions in more than three sections, only the
+           first three sections will be graded.
+
+
+                           A. Machine Learning Theory
+
+Part I: Warm-Up Questions [5 pts. + 1 bonus pts.]
+  This section contains multiple-choice questions. Please select only one answer for each
+question. No justification is required.
+
+    1. [0.5 pts.] Which of the following best describes the bias–variance tradeoff?
+        (a) Increasing model bias reduces variance but increases approximation error
+        (b) Increasing model bias reduces both bias and variance
+        (c) Variance is always independent of bias
+        (d) The tradeoff only applies to neural networks
+    2. [0.5 pts.] Why does the ‘No Free Lunch’ theorem matter in machine learning?
+        (a) Every algorithm performs optimally on all data sets
+        (b) All learning tasks require exponential time
+        (c) There is no universally superior learning algorithm across all tasks
+        (d) Only smooth loss functions can be optimised
+    3. [0.5 pts.] Which of the following is true about Rademacher complexity?
+        (a) It measures how well a hypothesis class fits random labels
+        (b) It always equals the VC dimension
+        (c) It decreases with model complexity
+        (d) It is independent of sample size
+    4. [0.5 pts.] In Empirical Risk Minimisation (ERM), what is being minimised?
+        (a) The true risk on unseen data
+        (b) The average loss on the training sample
+                                            1
+2           QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE FALL 2025
+
+
+        (c) The VC dimension of the hypothesis class
+        (d) The variance of the hypothesis
+    5. [1 pts.] Which statement is true about the VC dimension?
+        (a) A class with infinite VC dimension can never be PAC learnable
+        (b) The VC dimension of halfspaces in Rd is exactly d + 1
+        (c) VC dimension always equals the number of parameters of the hypothesis class
+        (d) Finite VC dimension implies zero generalisation error
+    6. [1 pts.] In the agnostic PAC learning model, what changes compared to the realisable
+       PAC model?
+        (a) The learner must always find a hypothesis with zero training error
+        (b) The hypothesis class must contain the true labelling function
+        (c) The goal is to compete with the best hypothesis in the class, even if labels are
+             noisy
+        (d) The sample complexity becomes independent of 
+    7. [1 pts.] In stochastic gradient descent (SGD), why does using a decreasing learning
+       rate help?
+        (a) It avoids overfitting completely
+        (b) It ensures convergence under certain convexity assumptions
+        (c) It increases variance in gradient estimates
+        (d) It eliminates the need for backpropagation
+    8. [Optional: 1-Points Bonus!] What does Sauer’s Lemma imply about a hypoth-
+       esis class H with VC-dimension d?
+        (a) H can shatter any set of size larger than d
+        (b) The growth function τH (m) is bounded polynomially in m once m > d
+        (c) The empirical risk minimiser achieves zero risk for m ≤ d
+        (d) The sample complexity is independent of d
+
+Part II: Theoretical Exercises [28 pts.]
+  This is the main part of the exam. Provide detailed solutions and reasoning for each
+question. Full marks are awarded only for complete and well-explained answers.
+    9. [5 pts.] Let H be the class of signed intervals, that is,
+                             H = {ha,b,s : a ≤ b, s ∈ {−1, 1}},
+       where                               (
+                                            s  if x ∈ [a, b]
+                              ha,b,s (x) =                   .
+                                            −s if x ∈
+                                                    / [a, b]
+       Calculate VCdim(H).
+
+    10. [6 pts.] Lemma – show it holds. Strong Convexity Properties. Show the
+        following holds.
+           Let f : Rd → R. Then:
+         (a) The function f (w) = λkwk2 is 2λ-strongly convex.
+     QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                  FALL 2025         3
+
+
+    (b) If f is λ-strongly convex and g is convex, then f + g is λ-strongly convex.
+    (c) If f is λ-strongly convex and u is a minimiser of f , then for any w,
+                                              λ
+                            f (w) − f (u) ⩾     kw − uk2 .
+                                              2
+
+11. [5 pts.] Let X = R2 , Y = {0, 1}, and let H be the class of concentric circles in the
+    plane, that is,
+
+                   H = {hr : r ∈ R+ },   where hr (x) = 1{kxk≤r} .
+
+       Prove that H is PAC learnable (assume realisability), and its sample complexity
+    is bounded by
+                                              log(1/δ)
+                                mH (, δ) ≤            .
+                                                  
+
+12. [7 pts.] We initialise w1 ∈ W. At round t = 1, 2, . . . , we obtain a random estimate
+    ĝt of a subgradient gt ∈ ∂F (wt ) so that E[ĝt ] = gt , and update the iterate wt as
+    follows:
+
+                              wt+1 = ΠW (wt − ηt ĝt ),
+    where ηt is a suitably chosen step-size parameter, and ΠW denotes projection on W.
+    Assume F is λ -strongly convex, and that
+
+                                   E kgt k2 ≤ G2
+                                           
+
+                                                                         1
+    for all t. Consider Stochastic Gradient Descent with step sizes ηt = λt .
+    Show    that  for any  w ∈ W  , the following inequality  holds:
+       E kwt+1 − wk2 ≤ E kwt − wk2 − 2ηt E [hgt , wt − wi] + ηt2 G2 .
+                                      
+
+
+13. [5 pts.] Neural Networks are universal approximators: Let f : [−1, 1]n →
+    [−1, 1] be a ρ-Lipschitz function. Fix some  > 0. Construct a neural network
+    N : [−1, 1]n → [−1, 1], with the sigmoid activation function, such that for every
+    x ∈ [−1, 1]n it holds that
+
+                                 |f (x) − N (x)| ≤ .
+
+    Hint: Partition [−1, 1]n into small boxes. Use the Lipschitzness of f to show that
+    it is approximately constant at each box. Finally, show that a neural network can
+    first decide which box the input vector belongs to, and then predict the averaged
+    value of f at that box.
+4           QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE FALL 2025
+
+
+                 B. Deep Learning and Reinforcement Learning
+
+
+    1. [9 pts.] Neural Network Architectures (CNNs & Transformers)
+        (a) [3 pts.] Derive the number of trainable parameters in a single convolutional
+            layer with input size H × W × Cin , kernel size k × k, and Cout output channels
+            (assume bias), and compare it with a fully connected (dense) layer of the same
+            input and output size.
+        (b) [3 pts.] Write the scaled dot-product self-attention formula (define Q, K, V ).
+            Explain why positional information is necessary in Transformers and describe
+            one method to inject positional information.
+        (c) [3 pts.] State one key benefit of (i) convolution for vision and (ii) self-attention.
+            Then design a minimal vision transformer for images that uses both structures:
+            specify how to tokenize the image into patch embeddings, where self-attention
+            is applied, and where convolution is introduced.
+
+    2. [14 pts.] Generative Models and Likelihood-based Training
+        (a) [2 pts.] Show that maximizing the likelihood of a generative model pθ (x)
+            given data distribution pdata (x) is equivalent to minimizing the KL divergence
+            KL(pdata k pθ ).
+        (b) [4 pts.]
+            Consider a normalizing flow model composed of L invertible transformations
+                 z0 ∼ p(z0 ),          z` = f` (z`−1 ), ` = 1, . . . , L,   x = zL ,
+           where each f` is bijective and differentiable, and p(z0 ) is a simple base den-
+           sity (e.g., standard Gaussian). Write down the training objective (loss) for
+           normalizing flows on a dataset {x(i) }Ni=1 sampled from the data distribution.
+       (c) [4 pts.] Explain why the variational autoencoder (VAE) uses the evidence lower
+           bound (ELBO) to approximate maximum likelihood training. Write down the
+           ELBO expression and explain the roles of the reconstruction term and the
+           regularization term.
+       (d) [4 pts.] We can interpret diffusion probabilistic models as a form of hierarchical
+           variational autoencoders (VAEs). Let x0 ∼ pdata denote a data sample. The
+           forward process (the encoder) is defined by adding noise
+                             T
+                             Y                                           √
+           q(x1:T | x0 ) =         q(xt | xt−1 ),     q(xt | xt−1 ) = N ( αt xt−1 , βt I) ,
+                             t=1
+                                                          Qt
+            where αt = 1 − βt ∈ (0, 1) and ᾱt =            s=1 αs .
+
+            Write down the probabilistic model of the backward process (the decoder), and
+            show that the ELBO for log pθ (x0 ) can be written as
+                                                       
+               log pθ (x0 ) ⩾ − KL q(xT | x0 ) k p(xT )
+    QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                            FALL 2025      5
+
+                                T
+                                X                                              
+                            −         Eq KL q(xt−1 | xt , x0 ) k pθ (xt−1 | xt )
+                                t=2
+                                                 
+                            + Eq log pθ (x0 | x1 ) .
+
+3. [10 pts.] Policy Gradient Methods
+      Consider a discounted Markov Decision Process (MDP) (S, A, P, r, γ) with states
+   s ∈ S, actions a ∈ A, transition kernel P (s0 | s, a), reward r(s, a) bounded, and dis-
+   count γ ∈ (0, 1). Let πθ (a | s) be a differentiable, stochastic policy with parameters
+   θ, and let s0 be a fixed start state. Define the (discounted) return
+                                             ∞
+                                             X
+                                  G0 =              γ t r(st , at ),
+                                             t=0
+
+   and the performance objective
+                           J(θ) = V πθ (s0 ) = Eτ ∼πθ G0 ,
+                                                       
+
+   where a trajectory τ = (s0 , a0 , s1 , a1 , . . .) is generated by st+1 ∼ P (· | st , at ) and
+   at ∼ πθ (· | st ).
+      Denote the value and action-value functions by
+                                 "∞                           #
+                                  X
+                       π                 t
+                      V (s) = Eπ      γ r(st , at ) s0 = s ,
+                                       t=0
+                                      "∞                                #
+                                       X
+                     π                        t
+                   Q (s, a) = Eπ             γ r(st , at ) s0 = s, a0 = a ,
+                                       t=0
+
+   and the advantage by Aπ (s, a) = Qπ (s, a) − V π (s). Let dπ (s) be the (unnormalized)
+   γ-discounted state visitation distribution:
+                                          ∞
+                                          X
+                            dπ (s) =              γ t Pr(st = s | π).
+                                          t=0
+
+  (a) [6 pts.] Prove the Policy Gradient Theorem.
+                " ∞                                       #
+                  X
+                       t                      πθ
+ ∇θ J(θ) = Eπθ        γ ∇θ log πθ (at | st ) Q (st , at )
+                     t=0
+                                          1
+                                             Es∼dπθ , a∼πθ ∇θ log πθ (a | s) Qπθ (s, a) .
+                                                                                      
+                                  =
+                                         1−γ
+   (b) [4 pts.] Show that for any function b : S → R,
+                       " ∞                                #
+                        X
+                              t
+                    Eπθ      γ ∇θ log πθ (at | st ) b(st ) = 0,
+                            t=0
+6             QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE FALL 2025
+
+
+             and hence the policy gradient can be equivalently written as
+                             " ∞                                                 #
+                               X
+                                    t                      πθ
+                                                                               
+               ∇θ J(θ) = Eπθ       γ ∇θ log πθ (at | st ) Q (st , at ) − b(st ) .
+                                 t=0
+
+             In the advantage method, how should b(s) be chosen, and what is the benefit
+             of this choice?
+
+
+
+                C. Optimization Methods in Artificial Intelligence
+
+
+    Consider the regularized finite-sum problem
+                                                                    n
+                                                                 1X
+                    min F (x) := f (x) + R(x),        f (x) :=         fi (x),
+                   x∈Rd                                          n i=1
+
+where each fi : Rd → R is convex and Li -smooth, the aggregate f is L-smooth and µ-
+strongly convex (µ > 0), and R : Rd → (−∞, +∞]Pis proper, closed, and convex. For a
+probability vector q = (q1 , . . . , qn ) with qi > 0 and i qi = 1, define a categorical random
+variable s ∈ {1, . . . , n} with P(s = i) = qi . Fix a minibatch size τ ∈ {1, 2, . . .}, and draw
+i.i.d. copies s1 , . . . , sτ of s. Define the multisampling gradient estimator
+                                              τ
+                                         1X 1
+                                 g(x) :=             ∇fst (x),
+                                         τ t=1 n qst
+
+and the proximal SGD iteration
+                       xk+1 = proxγR xk − γ g k ,          g k := g(xk ).
+                                               
+
+We denote the Bregman divergence of f by
+                          Df (x, y) := f (x) − f (y) − h∇f (y), x − yi.
+      1. [3 pts.] Basic Definitions: Give the definitions of L-smoothness and µ-strong con-
+         vexity.
+
+      2. [2 pts.] Uniqueness of the Minimizer: Show that F admits a unique minimizer x? .
+
+      3. [5 pts.] Unbiasedness of the Gradient Estimator: Prove that g(x) is unbiased, i.e.,
+         E[g(x)] = ∇f (x).
+
+      4. [8 pts.] Expected Smoothness Bound: Assuming each fi is Li -smooth and convex,
+         and f is L-smooth, show that for all x, y ∈ Rd ,
+                          E kg(x) − g(y)k2 ⩽ 2 A00 (τ, q) Df (x, y),
+                                         
+    QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                  FALL 2025         7
+
+
+   where the expected-smoothness constant A00 (depending on τ and q) is
+                                  1     Li          1
+                    A00 (τ, q) :=    max      + 1−        L.
+                                  τ   i  nqi           τ
+   Hint: Expand the square, separate diagonal and cross terms using independence,
+   and use smoothness to bound gradient differences via Bregman divergences.
+
+5. [4 pts.] Extremes, Monotonicity, and Interpolation:
+    (a) Evaluate A00 (τ, q) at τ = 1 and as τ → +∞. Identify the limiting algorithms
+        (SGD-NS vs. GD) and the corresponding constants.
+    (b) Show that A00 (τ, q) is nonincreasing in τ , and interpret how the minibatch size
+        τ interpolates
+                 Pn between SGD-NS and GD.
+   Hint: Use n1 i=1 Li ⩾ L.
+
+6. [4 pts.] Design of Importance Sampling q: For a fixed τ , minimize the first term of
+   A00 (τ, q), i.e.,
+                         Li                             X
+                 min max     ,  where ∆n = {q ∈ Rn++ :       qi = 1}.
+                q∈∆n  i  nqi                              i
+                                                         Li
+   Derive the optimal q ? and the attained value of maxi nq ? . Compare with uniform
+                                                             i
+   sampling qiuni = n1 .
+                Pn
+   Hint: Use n1 i=1 Li ⩽ maxi Li .
+
+7. [3 pts.] Variance at the Optimum and Minibatch Scaling: Let ξ(x) := g(x) − ∇f (x).
+   Show that                                            
+                              ? 2
+                                    1         1       ?
+                         E kξ(x )k = Var         ∇fs (x ) ,
+                                     τ       nqs
+   i.e., the variance at the optimum scales as 1/τ . Express your answer in terms of q
+   and {∇fi (x? )}ni=1 .
+
+8. [2 pts.] AC inequality and computing (A, C): Consider the following classical results:
+   AC inequality: There exist constants A ⩾ 0 and C ⩾ 0 such that for all k ⩾ 0,
+                 E kg k − ∇f (x? )k2 xk ⩽ 2A Df (xk , x? ) + C.
+                                       
+
+   Implication from expected smoothness: If g(x) is an unbiased estimator of
+      ∇f (x) and, for all x, y,
+                 E kg(x) − g(y)k2 ⩽ 2A00 Df (x, y) + C 00 (y),
+                                
+
+        then for G(x, y) := Ekg(x) − ∇f (y)k2 one has the AC inequality
+                       G(x, y) ⩽ 2A Df (x, y) + C,
+        where A = 2A and C = 2 Var[g(y)] + C 00 (y) .
+                      00
+                                                   
+8           QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE FALL 2025
+
+
+      Specialize the above implication to obtain the AC constants (A, C), and write an
+      explicit formula for Var[g(x? )].
+
+    9. [2 pts.] Stepsize and convergence: Given the classical convergence theorem of SGD:
+       Assume f is µ-convex, g k is unbiased, and the AC inequality holds with constants
+       (A, C). Then for any stepsize 0 < γ ⩽ A1 , the iterates satisfy
+                                                                  γC
+                      Ekxk − x? k2 ⩽ (1 − γµ)k kx0 − x? k2 +         .
+                                                                   µ
+      Using the (A, C) obtained in question 8 to compute:
+        • the admissible stepsize range;
+        • the explicit convergence bound with the noise floor written in closed form.
+
+
+                         D. Natural Language Processing
+
+Part I: Questions on Concepts and Algorithm Analysis [13 pts.]
+    1. [3 pts.] Embedding for Texts and Graphs. Embedding methods obtain vec-
+       tor representations of individual items by exploiting the relationships among them
+       within a collection. GloVe and Skip-Gram are used to learn representations of
+       words in text; Node2Vec learns representations of nodes in a network; and TransE
+       learns representations of entities and relations in a knowledge graph. In 2–3 sen-
+       tences each, succinctly describe the data signal, the learning objective type, and
+       the key inductive bias (the model’s built-in assumptions) for the four paradigms:
+       GloVe, Skip-gram, Node2Vec, TransE.
+
+    2. [5 pts.] Scaling Laws and Architectural Bias (LSTM vs. Transformer).
+       Consider language models trained autoregressively on the same corpus with identical
+       tokenization, context length, optimizer, and training pipeline. For an architecture
+       arch ∈ {LSTM, Transformer}, assume the test loss obeys
+         Larch (P, T ) = L∞ + Aarch P −αarch + Barch T −βarch ,   αarch , βarch > 0,
+      where P is the parameter count and T is the number of training tokens. Assume
+      L∞ is the same across architectures (same task/data).
+      (a) Fixed-data regime. Fix a large but finite T = T0 . On a log–log plot of
+          L(P, T0 ) − L∞ versus P , state the expected qualitative relationships between
+          (αarch , Aarch ) for LSTM vs. Transformer and the resulting relative positions
+          and slopes of their P –L curves.
+      (b) Fixed-parameter regime. Fix a parameter budget P = P0 and vary T .
+          On a log–log plot of L(P0 , T ) − L∞ versus T , state the expected qualitative
+          relationships between (βarch , Barch ) for LSTM vs. Transformer and the relative
+          positions and slopes of their T –L curves.
+    QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                    FALL 2025          9
+
+
+    (c) Justification. Justify your answers in (a)–(b) from the viewpoints of: (i) long-
+        range dependency handling, (ii) parallelizability/throughput and optimization
+        dynamics, and (iii) inductive bias and sample efficiency.
+
+3. [5 pts.]    Analysis of a Markov Logic Network (MLN). A Markov Logic
+   Network (MLN) defines a probability distribution over possible worlds. It is specified
+   by a set of weighted first-order logic formulas, (φi , wi ). For a given world x (i.e., a
+   truth assignment to all possible ground atoms), its probability is given by:
+                                                   !
+                                   1    X
+                        P (X = x) = exp   wi ni (x) ,
+                                   Z    i
+
+
+   where wi is the weight of the i-th formula φi , ni (x) is the number of true groundings
+   of φi in world x, and Z is the partition function (normalization constant).
+      Consider a simple MLN designed to analyze topics of academic papers, consisting
+   of two weighted formulas:
+    (a) ∀p1 , p2 Cites(p1 , p2 ) ∧ InTopic(p1 , “AI”) ⇒ InTopic(p2 , “AI”), with weight w1 =
+        1.5;
+        (Interpretation: If a paper in the AI topic cites another paper, the cited paper
+        is also likely in the AI topic.)
+    (b) ∀p InTopic(p, “AI”), with weight w2 = −1.0.
+        (Interpretation: There is a general prior that a paper is less likely to be in the
+        AI topic.)
+      Assume our domain contains only two papers, P1 and P2, and one topic, “AI”.
+   Answer the following questions:
+    (a) Model Structure Analysis Please briefly describe the structure of the ground
+        Markov network corresponding to this MLN. What are the nodes? What are
+        the cliques and why?
+    (b) Probability Calculation Consider a specific possible world x1 where: P1
+        cites P2, P1 is in the AI topic, but P2 is not. Furthermore, P2 does not cite
+        P1. (i.e., Cites(P1, P2) is true, Cites(P2, P1) is false, InTopic(P1, “AI”) is true,
+        and InTopic(P2, “AI”) is false.) 1) For this world x1 , calculate the number of
+        true groundings for each of the two formulas (i.e., find the values of n1 (x1 ) and
+        n2 (x1 )). 2) Write down the un-normalized probability of world x1 (i.e., the
+        exp(. . . ) term).
+    (c) Parameter Impact Analysis 1) Suppose we change the weight of the first
+        formula, w1 , from 1.5 to −1.5. In one sentence, what kind of academic cita-
+        tion phenomenon does the model now favor? 2) Without re-calculating specific
+        probabilities, what qualitative effect (e.g., significant increase, significant de-
+        crease, or little change) does this modification have on the probability of a world
+        where ‘P1’ and ‘P2’ are both AI papers and ‘P1’ cites ‘P2’ ? Briefly explain
+        your reasoning.
+10          QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE FALL 2025
+
+
+        (d) Maximum a Posteriori (MAP) Inference. Given that Cites(P1 , P2 ) = true
+            and all other atoms are unobserved, and using the original weights w1 = 1.5
+            and w2 = −1.0, determine the MAP truth assignments for InTopic(P1 , “AI”)
+            and InTopic(P2 , “AI”). Provide a 1–2 sentence justification.
+Part II: Questions on Algorithm and System Design [20 pts.]
+     4. [10 pts.] Topic–Ontology LDA for Fact Triples. A document d is represented
+        by a multiset of fact triples
+                                      Fd = {f = (s, r, o)},
+       where s ∈ Vs and o ∈ Vo are subject/object mentions (surface phrases), and r ∈ Vr
+       is a relation mention. Each triple also carries latent ontology variables: subject
+       type cs ∈ C, object type co ∈ C, and relation type t ∈ R. Assume there are K
+       topics. The goal is to uncover (i) document–level topic mixtures and (ii) ontology
+       assignments/types for entities and relations using an LDA-style generative approach.
+       Unless stated otherwise, use symmetric Dirichlet priors.
+        (a) Generative process & model specification. Design an LDA-style gen-
+            erative model that jointly produces fact triples. Your model should at least
+            include: document-level topic mixtures θd ∼ Dir(α); topic-specific distribu-
+                                            (s)        (o)      (r)
+            tions over ontology variables πk on C, πk on C, πk on R; and type-specific
+                                        (s)          (o)       (r)
+            surface-form distributions φc on Vs , φc on Vo , φt on Vr .
+        (b) Joint probability. Write the factorized form of the full joint
+                    p(Θ, Π, Φ, Z, Cs , Co , T, S, O, R | hyperparameters),
+                                           (s)   (o)    (r)              (s)   (o)                (r)
+            where Θ = {θd }d , Π = {πk , πk , πk }k , Φ = {φc , φc }c∈C ∪ {φt }t∈R and
+            Z = {zf }, Cs = {cs,f }, Co = {co,f }, T = {tf }, and S, O, R the observed
+            mentions.
+        (c) Automatic naming of discovered categories. After inference, suppose you
+            obtain several latent categories for ontologies (entity types and relation types).
+            Design an automatic naming method that gives a reasonable name for each
+            category.
+
+     5. [10 pts.] Design and Analyze a Text-to-Image Diffusion System. You will
+        design a text-to-image generation system. Given a text prompt T , the system
+        should generate an image I. We adopt a diffusion framework with a Transformer
+        backbone for the image denoiser and a Transformer for the text encoder.
+         (a) Forward process, ELBO, and closed-form posteriors. Let the clean
+             image be x0 ∈ RH×W ×C and define the forward noising process
+                                                                                     t
+                                 √                                                  Y
+             q(xt | xt−1 ) = N       αt xt−1 , βt I ,    βt = 1 − αt ,     ᾱt =           αs ,
+                                                                                     s=1
+
+            with prior p(xT ) = N (0, I).
+QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                   FALL 2025         11
+
+                                           √                    
+       (i) Show that q(xt | x0 ) = N ᾱt x0 , (1 − ᾱt )I .
+      (ii) Express the evidence lower bound (ELBO) on log pθ (x0 ) as the sum of a
+           reconstruction term and KL divergence terms. You may state the final
+           expression directly; if you provide a derivation, include only the two key
+           steps.
+     (iii) Show that the exact posterior q(xt−1 | xt , x0 ) is Gaussian with variance
+           β̃t = 1− ᾱt−1
+                  1−ᾱt βt and provide its mean.
+(b) Noise-prediction parameterization             and training loss. Assume pθ (xt−1 |
+    xt ) = N xt−1 ; µθ (xt , t), σt2 I with fixed σt2 = β̃t .
+       (i) Show that the optimal mean can be parameterized by a noise-prediction
+           network θ as
+                                                                 
+                                 1              βt
+                 µθ (xt , t) = √        xt − √         θ (xt , t) .
+                                 αt            1 − ᾱt
+      (ii) Prove that, up to constant and per-timestep weights, training reduces to
+                           h        √        √              2
+                                                              i
+              Lt = Et,x0 ,  − θ ( ᾱt x0 + 1 − ᾱt , t) 2 ,
+           where  ∼ N (0, I) and t is sampled from a specified distribution over
+           {1, . . . , T }.
+(c) Text-conditional modeling with a Transformer. Design a conditional
+    reverse process pθ (xt−1 | xt , Text) using Transformer architecture. Your answer
+    should specify:
+       (i) How to implement the image denoiser using a Transformer architecture;
+      (ii) How to condition the image denoiser on the input text.
+

@@ -1,0 +1,429 @@
+\section{2026 Analysis \& Differential Equations}
+
+\subsection{Exam}
+
+\begin{exercise}
+\label{analysis:2026:1}
+For any $n\in\mathbb{N}$, define
+\[
+I_n:=\frac{1}{n!}\int_{-\pi/2}^{\pi/2}\left(\frac{\pi^2}{4}-t^2\right)^n\cos t\,dt.
+\]
+\begin{itemize}
+\item[(a)] Prove
+\[
+I_{n+1}=2(2n+1)I_n-\pi^2I_{n-1}.
+\]
+\item[(b)] Show that $\pi^2\notin\mathbb{Q}$, that is, $\pi^2$ is irrational.
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+Put $a=\pi/2$ and
+\[
+P_n(t):=\frac{(a^2-t^2)^n}{n!}.
+\]
+Then $I_n=\int_{-a}^a P_n(t)\cos t\,dt$.  A direct differentiation gives, for $n\geq 1$,
+\[
+P_{n+1}''(t)
+=\pi^2P_{n-1}(t)-2(2n+1)P_n(t).
+\]
+Indeed,
+\[
+\begin{aligned}
+P_{n+1}''(t)
+&=-2P_n(t)+4t^2\frac{(a^2-t^2)^{n-1}}{(n-1)!}  \\
+&=-2P_n(t)+4a^2P_{n-1}(t)-4nP_n(t) \\
+&=\pi^2P_{n-1}(t)-2(2n+1)P_n(t).
+\end{aligned}
+\]
+Since $P_{n+1}(\pm a)=P_{n+1}'(\pm a)=0$, integrating by parts twice yields
+\[
+\int_{-a}^a P_{n+1}''(t)\cos t\,dt
+=-\int_{-a}^a P_{n+1}(t)\cos t\,dt
+=-I_{n+1}.
+\]
+Integrating the displayed identity for $P_{n+1}''$ against $\cos t$ therefore gives
+\[
+-I_{n+1}=\pi^2I_{n-1}-2(2n+1)I_n,
+\]
+which is the desired recurrence.
+
+For irrationality, first note that $I_n>0$ for all $n$, because
+$a^2-t^2\geq 0$ and $\cos t\geq 0$ on $[-a,a]$, and the integrand is not identically zero.  Also
+\[
+I_0=\int_{-\pi/2}^{\pi/2}\cos t\,dt=2,
+\]
+and
+\[
+\begin{aligned}
+I_1
+&=\int_{-\pi/2}^{\pi/2}\left(\frac{\pi^2}{4}-t^2\right)\cos t\,dt \\
+&=\frac{\pi^2}{4}\cdot 2-\left[t^2\sin t+2t\cos t-2\sin t\right]_{-\pi/2}^{\pi/2}
+=4.
+\end{aligned}
+\]
+Suppose, for contradiction, that $\pi^2=p/q$ with positive integers $p,q$.  Define
+\[
+J_n:=q^n I_n.
+\]
+Then $J_0=2$ and $J_1=4q$ are integers.  Multiplying the recurrence by $q^{n+1}$ gives
+\[
+J_{n+1}=2(2n+1)qJ_n-pqJ_{n-1},
+\]
+so induction gives $J_n\in\mathbb{Z}$ for all $n$.
+
+On the other hand,
+\[
+0<I_n
+\leq \frac{1}{n!}\int_{-\pi/2}^{\pi/2}\left(\frac{\pi^2}{4}\right)^n\,dt
+=\frac{\pi}{n!}\left(\frac{\pi^2}{4}\right)^n.
+\]
+Hence
+\[
+0<J_n
+\leq \frac{\pi}{n!}\left(\frac{q\pi^2}{4}\right)^n
+=\frac{\pi}{n!}\left(\frac{p}{4}\right)^n
+\longrightarrow 0.
+\]
+For all sufficiently large $n$, this gives an integer $J_n$ satisfying $0<J_n<1$, a contradiction.  Therefore $\pi^2$ is irrational.
+\end{solution}
+
+\begin{exercise}
+\label{analysis:2026:2}
+For any $n\times n$ complex matrix $X$, define
+\[
+e^X=\sum_{m\geq 0}\frac{X^m}{m!}.
+\]
+\begin{itemize}
+\item[(a)] If $X,Y$ are $n\times n$ complex matrices satisfying $[X,Y]=0$, then
+\[
+e^Xe^Y=e^{X+Y}=e^Ye^X.
+\]
+\item[(b)] If $X,Y$ are $n\times n$ complex matrices satisfying
+\[
+[X,[X,Y]]=[Y,[X,Y]]=0,
+\]
+then
+\[
+e^Xe^Y=e^{X+Y+\frac{1}{2}[X,Y]}.
+\]
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+For part (a), since $X$ and $Y$ commute, every power of $X$ commutes with every power of $Y$.  Therefore the Cauchy product of the two absolutely convergent matrix series is legitimate:
+\[
+\begin{aligned}
+e^Xe^Y
+&=\left(\sum_{j\geq 0}\frac{X^j}{j!}\right)
+  \left(\sum_{k\geq 0}\frac{Y^k}{k!}\right) \\
+&=\sum_{m\geq 0}\sum_{j+k=m}\frac{X^jY^k}{j!k!}
+=\sum_{m\geq 0}\frac{1}{m!}\sum_{j=0}^m\binom{m}{j}X^jY^{m-j} \\
+&=\sum_{m\geq 0}\frac{(X+Y)^m}{m!}
+=e^{X+Y}.
+\end{aligned}
+\]
+The same argument gives $e^Ye^X=e^{Y+X}=e^{X+Y}$.
+
+For part (b), set
+\[
+C:=[X,Y].
+\]
+The assumptions say $[X,C]=[Y,C]=0$.  In particular, $C$ commutes with $X$, $Y$, and $X+Y$.
+
+Consider
+\[
+\Phi(t):=e^{tX}e^{tY}.
+\]
+We claim that
+\[
+\Phi'(t)=(X+Y+tC)\Phi(t).
+\]
+Indeed,
+\[
+\Phi'(t)=Xe^{tX}e^{tY}+e^{tX}Ye^{tY}.
+\]
+Since $[X,C]=0$, the conjugation identity truncates after the first commutator:
+\[
+e^{tX}Ye^{-tX}=Y+t[X,Y]=Y+tC.
+\]
+Thus
+\[
+e^{tX}Ye^{tY}=(Y+tC)e^{tX}e^{tY},
+\]
+and the claimed differential equation follows.
+
+Now define
+\[
+\Psi(t):=e^{t(X+Y)+\frac{t^2}{2}C}.
+\]
+Because $C$ commutes with $X+Y$,
+\[
+\Psi'(t)=(X+Y+tC)\Psi(t).
+\]
+Also $\Phi(0)=\Psi(0)=I$.  Uniqueness for linear ODEs in the finite-dimensional space of complex matrices gives $\Phi(t)=\Psi(t)$ for all $t$.  Setting $t=1$ yields
+\[
+e^Xe^Y=e^{X+Y+\frac12[X,Y]}.
+\]
+\end{solution}
+
+\begin{exercise}
+\label{analysis:2026:3}
+Let $f(z)$ be a smooth function on $|z|<R$, and fix a real number $\rho$ such that $0<\rho<R$.  Put
+\[
+g(z)=\frac{1}{2\pi\sqrt{-1}}\iint_{|\zeta|\leq \rho}
+\frac{f(\zeta)}{\zeta-z}\,d\zeta\wedge d\bar{\zeta}.
+\]
+Then
+\[
+\frac{\partial}{\partial\bar z}g(z)=f(z),\qquad |z|<\rho.
+\]
+\end{exercise}
+
+\begin{solution}
+We use the standard notation
+\[
+\frac{\partial}{\partial\bar z}
+=\frac12\left(\frac{\partial}{\partial x}+i\frac{\partial}{\partial y}\right),
+\qquad z=x+iy.
+\]
+Since $d\zeta\wedge d\bar{\zeta}=-2i\,dA(\zeta)$, where $dA$ is planar Lebesgue measure, the given function can be rewritten as
+\[
+g(z)=\frac{1}{\pi}\iint_{|\zeta|\leq \rho}
+\frac{f(\zeta)}{z-\zeta}\,dA(\zeta).
+\]
+Thus $g$ is the convolution of $f\mathbf{1}_{|\zeta|\leq\rho}$ with the Cauchy kernel
+\[
+E(z)=\frac{1}{\pi z}.
+\]
+
+The key distributional identity is
+\[
+\frac{\partial E}{\partial\bar z}=\delta_0.
+\]
+For completeness, recall why the normalization is correct.  For a test function $\varphi\in C_c^\infty(\mathbb{C})$, applying Green's formula on $\{|z|>\varepsilon\}$ and then using the Cauchy integral formula gives
+\[
+-\int_{|z|>\varepsilon}\frac{1}{\pi z}
+\frac{\partial\varphi}{\partial\bar z}\,dA(z)
+=\frac{1}{2\pi i}\int_{|z|=\varepsilon}\frac{\varphi(z)}{z}\,dz+o(1)
+\longrightarrow \varphi(0).
+\]
+Hence $\partial_{\bar z}E=\delta_0$.
+
+Now fix a point $z$ with $|z|<\rho$.  Since $z$ lies in the interior of the disk of integration, the distributional computation is local near $z$:
+\[
+\begin{aligned}
+\frac{\partial g}{\partial\bar z}(z)
+&=\iint_{|\zeta|\leq\rho}
+f(\zeta)\frac{\partial}{\partial\bar z}
+\left(\frac{1}{\pi(z-\zeta)}\right)dA(\zeta) \\
+&=\iint_{|\zeta|\leq\rho}f(\zeta)\delta_z(\zeta)\,dA(\zeta)
+=f(z).
+\end{aligned}
+\]
+This proves the asserted Cauchy--Green formula on $|z|<\rho$.
+\end{solution}
+
+\begin{exercise}
+\label{analysis:2026:4}
+Let $C([0,1])$ be the space of continuous functions over $[0,1]$.  Consider the $\infty$-norm on $C([0,1])$
+\[
+\|f\|_{L^\infty}:=\max_{x\in[0,1]}|f(x)|.
+\]
+Then $(C([0,1]),\|\cdot\|_{L^\infty})$ is a Banach space.  Consider the closed linear subspace $\mathcal{P}$ of $C([0,1])$ consisting of polynomials over $[0,1]$.  Show that $\dim\mathcal{P}<\infty$.
+\end{exercise}
+
+\begin{solution}
+For each $m\geq 0$, let
+\[
+\mathcal{P}_m:=\{p\in\mathcal{P}: p \text{ is represented on } [0,1]
+\text{ by a polynomial of degree at most } m\}.
+\]
+Then $\mathcal{P}_m$ is a finite-dimensional linear subspace of $C([0,1])$, hence it is closed in $C([0,1])$.  Therefore $\mathcal{P}_m$ is also closed in the Banach space $\mathcal{P}$.
+
+Because every element of $\mathcal{P}$ is a polynomial, we have
+\[
+\mathcal{P}=\bigcup_{m=0}^{\infty}\mathcal{P}_m.
+\]
+The space $\mathcal{P}$ is complete, since it is closed in the Banach space $C([0,1])$.  By the Baire category theorem, a complete metric space cannot be a countable union of closed subsets with empty interior.  Hence some $\mathcal{P}_N$ has nonempty interior in $\mathcal{P}$.
+
+But $\mathcal{P}_N$ is a linear subspace of $\mathcal{P}$.  A proper linear subspace of a normed vector space has empty interior: if it contained a ball around some point, translating would give a ball around $0$, and scaling that ball would force the whole space to lie in the subspace.  Therefore $\mathcal{P}_N=\mathcal{P}$.
+
+It follows that
+\[
+\dim\mathcal{P}=\dim\mathcal{P}_N\leq N+1<\infty.
+\]
+\end{solution}
+
+\begin{exercise}
+\label{analysis:2026:5}
+Consider the heat equation with periodic boundary conditions on the unit interval $[0,1]$
+\[
+\begin{cases}
+\partial_tu(t,x)-\partial_{xx}u(t,x)=0, & \forall t>0,\ \forall x\in(0,1),\\
+u(t,0)=u(t,1), & \forall t>0,\\
+\partial_xu(t,0)=\partial_xu(t,1), & \forall t>0.
+\end{cases}
+\tag{1}
+\]
+\begin{itemize}
+\item[(1)] Write an orthonormal basis for $L^2([0,1])$, you do not need to verify this.  Show that the double derivative operator $f\mapsto f''$ with domain
+\[
+F:=\{f\in H^2([0,1]): f(0)=f(1),\ f'(0)=f'(1)\}\subset L^2([0,1])
+\]
+is a self-adjoint operator.
+\item[(2)] Recall that the fundamental solution of the heat equation (1) refers to a function $h(t,x,y)$ on $(0,\infty)\times[0,1]\times[0,1]$ which satisfies that
+\begin{itemize}
+\item[(a)] for any $y\in[0,1]$, $(t,x)\mapsto h(t,x,y)$ is a solution of (1);
+\item[(b)] for any $x\in[0,1]$, $h(t,x,y)\to\delta_x$ weakly as $t\to 0$.  That is, for any continuous function $\varphi$ on $[0,1]$ with $\varphi(0)=\varphi(1)$,
+\[
+\int_0^1h(t,x,y)\varphi(y)\,dy\to\varphi(x)
+\]
+as $t\to 0$.
+\end{itemize}
+Find the fundamental solution $h(t,x,y)$ of the heat equation (1) and check that it satisfies the conditions (a) and (b).
+\item[(3)] For each fixed $t>0$, where does the fundamental solution $h(t,x,y)$ attain its maximum (that is, for what $x,y\in[0,1]$ is $h$ maximum)?  What can you say about $h(t,x,y)$ when $t\to\infty$?  Finally, show that $h(t,x,y)\sim t^{-1/2}\exp(-d(x,y)^2/t)$ for small $t>0$, where
+\[
+d(x,y):=\min\{|x-y|,1-|x-y|\}.
+\]
+That is, there exist constants $A,B,C,D>0$, such that for all $t\in(0,1)$, $x,y\in[0,1]$,
+\[
+\frac{A}{\sqrt{t}}e^{-\frac{Bd(x,y)^2}{t}}
+\leq h(t,x,y)\leq
+\frac{C}{\sqrt{t}}e^{-\frac{Dd(x,y)^2}{t}}.
+\]
+\end{itemize}
+\end{exercise}
+
+\begin{solution}
+\textbf{Part (1).}
+Use the complex Fourier basis
+\[
+e_k(x):=e^{2\pi ikx},\qquad k\in\mathbb{Z}.
+\]
+This is an orthonormal basis of $L^2([0,1])$.  For $e_k$,
+\[
+e_k''=-(2\pi k)^2e_k.
+\]
+If $f=\sum_{k\in\mathbb{Z}}\hat f_k e_k$, then the periodic Sobolev domain $F$ is exactly
+\[
+F=\left\{f\in L^2([0,1]):
+\sum_{k\in\mathbb{Z}}(1+k^4)|\hat f_k|^2<\infty\right\},
+\]
+and
+\[
+f''=\sum_{k\in\mathbb{Z}}-(2\pi k)^2\hat f_k e_k.
+\]
+Under the Fourier transform, the operator $A f=f''$ with domain $F$ becomes multiplication on $\ell^2(\mathbb{Z})$ by the real sequence $-(2\pi k)^2$ on its maximal natural domain
+\[
+\left\{(\hat f_k)\in\ell^2:
+\sum_{k\in\mathbb{Z}}k^4|\hat f_k|^2<\infty\right\}.
+\]
+A real multiplication operator on this maximal domain is self-adjoint.  Therefore $f\mapsto f''$ with the periodic $H^2$ domain $F$ is self-adjoint.  Equivalently, the integration-by-parts boundary form
+\[
+\langle f'',g\rangle-\langle f,g''\rangle
+=\left[f'\bar g-f\bar g'\right]_{0}^{1}
+\]
+vanishes for $f,g\in F$, and the Fourier description shows that the symmetric operator has no larger adjoint domain.
+
+\textbf{Part (2).}
+The heat kernel is obtained by evolving each Fourier mode:
+\[
+h(t,x,y)
+=\sum_{k\in\mathbb{Z}}e^{-4\pi^2k^2t}e^{2\pi ik(x-y)}.
+\]
+Equivalently,
+\[
+h(t,x,y)
+=1+2\sum_{k=1}^{\infty}e^{-4\pi^2k^2t}\cos(2\pi k(x-y)).
+\]
+For every $t>0$ this series is absolutely and uniformly convergent, and the differentiated series are also uniformly convergent on compact subsets of $(0,\infty)\times[0,1]\times[0,1]$.  Thus we may differentiate term by term:
+\[
+\partial_t h
+=\sum_{k\in\mathbb{Z}}(-4\pi^2k^2)e^{-4\pi^2k^2t}e^{2\pi ik(x-y)}
+=\partial_{xx}h.
+\]
+Also each mode is $1$-periodic in $x$, so
+\[
+h(t,0,y)=h(t,1,y),
+\qquad
+\partial_xh(t,0,y)=\partial_xh(t,1,y).
+\]
+This checks condition (a).
+
+The same kernel has the periodized Gaussian representation
+\[
+h(t,x,y)=\sum_{m\in\mathbb{Z}}\frac{1}{\sqrt{4\pi t}}
+\exp\left(-\frac{(x-y+m)^2}{4t}\right),
+\]
+which follows from the Poisson summation formula.  Let $\varphi$ be continuous on $[0,1]$ with $\varphi(0)=\varphi(1)$, and extend it periodically to a continuous function $\tilde\varphi$ on $\mathbb{R}$.  Then
+\[
+\int_0^1h(t,x,y)\varphi(y)\,dy
+=\int_{\mathbb{R}}\frac{1}{\sqrt{4\pi t}}
+\exp\left(-\frac{(x-\eta)^2}{4t}\right)\tilde\varphi(\eta)\,d\eta.
+\]
+The Gaussian kernels on the real line form an approximate identity, so the last expression tends to $\tilde\varphi(x)=\varphi(x)$ as $t\to 0$.  This proves condition (b).
+
+\textbf{Part (3).}
+The kernel depends only on the periodic difference $x-y$.  Write
+\[
+H_t(r):=\sum_{k\in\mathbb{Z}}e^{-4\pi^2k^2t}e^{2\pi ikr}.
+\]
+Then $h(t,x,y)=H_t(x-y)$ and
+\[
+H_t(0)-H_t(r)
+=2\sum_{k=1}^{\infty}e^{-4\pi^2k^2t}\bigl(1-\cos(2\pi kr)\bigr)\geq 0.
+\]
+Equality holds precisely when $r\in\mathbb{Z}$.  Hence, for $x,y\in[0,1]$, the maximum is attained exactly when the two points are the same point on the circle, namely $d(x,y)=0$; in interval coordinates this means $x=y$, together with the endpoint identifications $(x,y)=(0,1)$ and $(1,0)$.
+
+As $t\to\infty$, all nonzero Fourier modes vanish exponentially fast:
+\[
+h(t,x,y)\longrightarrow 1
+\]
+uniformly in $x,y$.  This is the convergence to the constant equilibrium with total mass one.
+
+It remains to prove the small-time Gaussian bounds.  Let
+\[
+r=d(x,y)\in[0,1/2].
+\]
+Using the periodized Gaussian formula and choosing an integer $m_0$ for which $|x-y+m_0|=r$, we get the lower bound
+\[
+h(t,x,y)\geq \frac{1}{\sqrt{4\pi t}}\exp\left(-\frac{r^2}{4t}\right).
+\]
+Thus the desired lower estimate holds, for example, with
+\[
+A=\frac{1}{\sqrt{4\pi}},
+\qquad
+B=\frac14.
+\]
+
+For the upper bound, write $s=x-y$.  Since $r=\min_{m\in\mathbb{Z}}|s+m|$, every summand satisfies $|s+m|\geq r$.  Therefore
+\[
+\exp\left(-\frac{(s+m)^2}{4t}\right)
+\leq
+\exp\left(-\frac{r^2}{8t}\right)
+\exp\left(-\frac{(s+m)^2}{8t}\right).
+\]
+For $0<t<1$,
+\[
+\sum_{m\in\mathbb{Z}}\exp\left(-\frac{(s+m)^2}{8t}\right)
+\leq C_0
+\]
+with a universal constant $C_0$, because the left side is uniformly bounded for $s\in[0,1]$ and $0<t<1$.  Hence
+\[
+h(t,x,y)
+\leq \frac{C_0}{\sqrt{4\pi t}}
+\exp\left(-\frac{r^2}{8t}\right).
+\]
+This is the desired upper estimate, for instance with
+\[
+C=\frac{C_0}{\sqrt{4\pi}},
+\qquad
+D=\frac18.
+\]
+Combining the two estimates proves
+\[
+h(t,x,y)\asymp t^{-1/2}\exp\left(-\frac{d(x,y)^2}{t}\right)
+\]
+in the stated two-sided sense for $0<t<1$.
+\end{solution}

@@ -98,7 +98,8 @@ The boundary map $\partial_k: C_k \to C_{k-1}$ tells us how the boundary of the 
     \item $\partial_1: C_1 \to C_0$ is simply the zero map because $C_1 = 0$.
     \item $\partial_2: C_2 \to C_1$ is also the zero map because $C_1 = 0$.
     \item $\partial_3: C_3 \to C_2$ is the crucial one. The boundary of our 3-cell $e_3$ is attached to the two 2-cells. The degrees $d_1$ and $d_2$ precisely provide the coefficients for how it wraps! Therefore, $\partial_3(e_3) = d_1 e_1 + d_2 e_2$.
-\end{itemize}As a matrix mapping from $\mathbb{Z}$ to $\mathbb{Z}^2$, $\partial_3$ is just the column vector $[d_1, d_2]^T$.
+\end{itemize}
+As a matrix mapping from $\mathbb{Z}$ to $\mathbb{Z}^2$, $\partial_3$ is just the column vector $[d_1, d_2]^T$.
 
 \textbf{Step 4: Calculate the homology groups.}
 Homology is defined as $H_k(X) = \ker(\partial_k) / \mathrm{im}(\partial_{k+1})$.
@@ -236,7 +237,8 @@ On a Riemannian manifold, let $F$ be the set of smooth functions $f$ on $M$ with
 \begin{enumerate}
     \item \textbf{$\le$:} For any $f \in F$ and path $\gamma$: $|f(y)-f(x)| = |\int \langle \nabla f, \gamma' \rangle| \le \int |\nabla f| |\gamma'| \le \text{Length}(\gamma)$. Thus $|f(y)-f(x)| \le d(x, y)$.
     \item \textbf{$\ge$:} Consider $f_0(z) = d(x, z)$. This function is 1-Lipschitz by triangle inequality, so $|\nabla f_0| \le 1$ almost everywhere. Smooth approximations $f_\epsilon$ satisfy $|\nabla f_\epsilon| \le 1$ and $|f_\epsilon(y)-f_\epsilon(x)| \to d(x, y)$.
-\end{enumerate}\end{solution}
+\end{enumerate}
+\end{solution}
 
 \begin{exercise}
 \label{geometry:2017:6}
@@ -246,7 +248,47 @@ Let $M$ be an $n$-dimensional oriented closed minimal submanifold in an $(n + p)
 \begin{solution}
 \textbf{Geometric Intuition:} This is a curvature "pinching" theorem. It says that if a minimal submanifold is "too flat" (but still positively curved) compared to the sphere it lives in, it must actually be a perfectly flat great sphere. There's no room for "small" minimal wrinkles if the curvature is high.
 
-\textbf{Proof Sketch:} One uses the Simons' identity for the second fundamental form $|h|^2$. The curvature bound $K_M > \frac{p-1}{2p-1}$ ensures that the "curving" term in the Laplacian formula for $\Delta |h|^2$ dominates. Integrating over the closed manifold forces $|h|=0$, meaning the submanifold is totally geodesic.
+\textbf{Proof:}
+Let $h$ be the second fundamental form and put
+\[
+S=|h|^2.
+\]
+This proof uses the standard Simons pinching package. The integration step below is elementary once the displayed Simons--Chern--do Carmo--Kobayashi inequality and the algebraic pinching estimate are granted; those two inputs are not expanded here.
+
+For a closed minimal submanifold of the unit sphere, the Simons--Chern--do Carmo--Kobayashi inequality gives
+\[
+\frac{1}{2}\Delta S
+\geq
+|\nabla h|^2+nS-\left(2-\frac{1}{p}\right)S^2.
+\]
+
+The sectional curvature pinching enters through the Gauss equation. For a minimal submanifold in $S^{n+p}$, the algebraic pinching estimate says that
+\[
+K_M>\frac{p-1}{2p-1}
+\quad\Longrightarrow\quad
+S<\frac{n}{2-\frac{1}{p}}
+=\frac{np}{2p-1}.
+\]
+This is the standard algebraic lemma in the proof of the Simons pinching theorem: the lower sectional curvature bound prevents the traceless second fundamental form from reaching the equality model.
+
+Therefore the coefficient
+\[
+n-\left(2-\frac{1}{p}\right)S
+\]
+is strictly positive at every point unless $S=0$. Integrating the Simons inequality over the closed manifold gives
+\[
+0
+=
+\int_M \frac{1}{2}\Delta S\,dV
+\geq
+\int_M |\nabla h|^2\,dV
++
+\int_M
+\left(n-\left(2-\frac{1}{p}\right)S\right)S\,dV.
+\]
+Both terms on the right are nonnegative, and the second is positive wherever $S>0$. Hence $S\equiv 0$.
+
+Thus $h\equiv 0$, so $M$ is totally geodesic in the unit sphere. A connected totally geodesic $n$-dimensional closed submanifold of $S^{n+p}$ is an equatorial great sphere $S^n$.
 \end{solution}
 
 \subsection{Team Exam}
@@ -265,13 +307,72 @@ By Seifert-van Kampen: $\pi_1(X) = \langle a_1, a_2 \mid a_1^2 = a_2^2 \rangle$.
 
 \begin{exercise}
 \label{geometry:2017:8}
-For $n \in \mathbb{Z}$, let $f_{n}$ be a degree $n$ map on $S^{3}. Compute the integral homology groups of $T_{f_{n}}$.
+For $n \in \mathbb{Z}$, let $f_{n}$ be a degree $n$ map on $S^{3}$. Compute the integral homology groups of $T_{f_{n}}$.
 \end{exercise}
 
 \begin{solution}
 \textbf{Geometric Intuition:} A mapping torus is a "cylinder" $S^3 \times [0, 1]$ with the ends glued after a "twist" by $f_n$. The homology depends on how $f_n$ permutes the cycles of $S^3$.
 
-\textbf{Result:} Using the Wang sequence: $H_0 \cong \mathbb{Z}, H_1 \cong \mathbb{Z}$. $H_2 = 0$. $H_3 \cong \mathbb{Z}_{|n-1|}$. If $n=1$, $H_3 \cong \mathbb{Z}, H_4 \cong \mathbb{Z}$. If $n \neq 1$, $H_4 = 0$.
+\textbf{Proof:}
+The mapping torus is
+\[
+T_{f_n}=S^3\times[0,1]/(x,1)\sim(f_n(x),0).
+\]
+The Wang sequence for a mapping torus gives
+\[
+\cdots\to H_q(S^3)
+\xrightarrow{\,1-(f_n)_*\,}
+H_q(S^3)
+\to H_q(T_{f_n})
+\to H_{q-1}(S^3)
+\xrightarrow{\,1-(f_n)_*\,}
+H_{q-1}(S^3)\to\cdots .
+\]
+
+The only nonzero homology groups of $S^3$ are
+\[
+H_0(S^3)\cong \mathbb{Z},\qquad H_3(S^3)\cong \mathbb{Z}.
+\]
+On $H_0$, $(f_n)_*$ is the identity. On $H_3$, $(f_n)_*$ is multiplication by the degree $n$.
+
+In low degrees the sequence gives
+\[
+H_0(T_{f_n})\cong \mathbb{Z},\qquad
+H_1(T_{f_n})\cong \mathbb{Z},\qquad
+H_2(T_{f_n})=0.
+\]
+In degrees $3$ and $4$ we get the exact sequence
+\[
+0\to H_4(T_{f_n})
+\to \mathbb{Z}
+\xrightarrow{\,1-n\,}
+\mathbb{Z}
+\to H_3(T_{f_n})
+\to 0.
+\]
+Therefore
+\[
+H_4(T_{f_n})=\ker(1-n:\mathbb{Z}\to\mathbb{Z}),
+\qquad
+H_3(T_{f_n})=\operatorname{coker}(1-n:\mathbb{Z}\to\mathbb{Z}).
+\]
+So
+\[
+H_4(T_{f_n})\cong
+\begin{cases}
+\mathbb{Z}, & n=1,\\
+0, & n\neq 1,
+\end{cases}
+\]
+and
+\[
+H_3(T_{f_n})\cong
+\begin{cases}
+\mathbb{Z}, & n=1,\\
+\mathbb{Z}/|n-1|\mathbb{Z}, & n\neq 1.
+\end{cases}
+\]
+Here $\mathbb{Z}/1\mathbb{Z}=0$, so this also covers $n=0$ and $n=2$ correctly.
 \end{solution}
 
 \begin{exercise}
@@ -282,7 +383,60 @@ Show that geodesic torsion along a curve $C$ on a surface $S$ is given by the sp
 \begin{solution}
 \textbf{Geometric Intuition:} Geodesic torsion measures how the surface normal "tilts" sideways as you move along a curve. The determinant formula combines the shape of the surface (II) and the direction of the curve ($du, dv$) in a way that extracts this "twist."
 
-\textbf{Proof Sketch:} One calculates $\tau_g = \langle d\mathbf{N}/ds, \mathbf{n}_g \rangle$. By substituting the Weingarten equations and the components of the normals, the algebraic expansion matches the provided determinant.
+\textbf{Proof:}
+Let a local parametrization of the surface be $X(u,v)$, and write
+\[
+I=E\,du^2+2F\,du\,dv+G\,dv^2,
+\qquad
+II=L\,du^2+2M\,du\,dv+N\,dv^2.
+\]
+Let $C$ be written as $X(u(s),v(s))$ with arc length parameter $s$, and set
+\[
+u'=\frac{du}{ds},\qquad v'=\frac{dv}{ds}.
+\]
+The unit tangent is
+\[
+T=u'X_u+v'X_v,
+\]
+with
+\[
+E(u')^2+2Fu'v'+G(v')^2=1.
+\]
+
+Let $\mathbf{n}$ be the unit surface normal and let
+\[
+Q=\mathbf{n}\times T
+\]
+be the unit tangent vector orthogonal to $T$. In coordinates one checks from
+\[
+\langle Q,T\rangle=0,\qquad |Q|=1
+\]
+that
+\[
+Q=
+\frac{-(Fu'+Gv')X_u+(Eu'+Fv')X_v}{\sqrt{EG-F^2}}.
+\]
+
+Using the Weingarten equation $d\mathbf{n}(T)=-S(T)$ and
+\[
+II(A,B)=\langle S(A),B\rangle,
+\]
+the geodesic torsion with the convention
+\[
+\tau_g=\langle d\mathbf{n}/ds,Q\rangle
+\]
+is
+\[
+\tau_g=-II(T,Q).
+\]
+Substituting the coordinate expressions for $T$ and $Q$ gives
+\[
+\tau_g
+=
+\frac{(FL-EM)(u')^2+(GL-EN)u'v'+(GM-FN)(v')^2}
+{\sqrt{EG-F^2}}.
+\]
+This is the desired determinant form. Equivalently, it is obtained by expanding the determinant expression built from the first and second fundamental form coefficients; changing the sign convention for $Q$ or for geodesic torsion changes only the overall sign.
 \end{solution}
 
 \begin{exercise}

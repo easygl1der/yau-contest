@@ -226,6 +226,38 @@ where $\|\vec{k}\|_\infty = \max_{1 \leq i \leq n} |k_i|$ in about $O((2K+1)^n)$
 Assuming that the memory is essentially unlimited, suggest a better algorithm which uses about $O((2K+1)^{n/2})$ arithmetic operations.
 \end{exercise}
 
+\begin{solution}
+This is a meet-in-the-middle problem.  Write the exponent vector as
+\[
+\vec{k}=(k_1,\dots,k_m,k_{m+1},\dots,k_n),\qquad m=\lfloor n/2\rfloor .
+\]
+For the first block form all products
+\[
+P(\alpha)=u_1^{\alpha_1}\cdots u_m^{\alpha_m},
+\qquad -K\leq \alpha_i\leq K,
+\]
+and store them in a table indexed by the value of $P(\alpha)$, together with the corresponding vector $\alpha$.  There are $(2K+1)^m$ such products.
+
+For the second block form
+\[
+Q(\beta)=u_{m+1}^{\beta_{m+1}}\cdots u_n^{\beta_n},
+\qquad -K\leq \beta_i\leq K.
+\]
+The required relation is equivalent to
+\[
+P(\alpha)Q(\beta)=1,\qquad\text{or}\qquad P(\alpha)=Q(\beta)^{-1}.
+\]
+Thus, for each second-block vector $\beta$, look up $Q(\beta)^{-1}$ in the table of first-block products.  Whenever a match is found, concatenate the two exponent vectors to obtain a candidate $\vec{k}$.
+
+The all-zero vector must be discarded.  If the input integers are positive, all products can be represented exactly by prime-exponent vectors after factoring the $u_i$; alternatively, one can store exact rational products.  The algorithm is therefore exact, not a floating-point collision test.
+
+The number of table entries and lookups is
+\[
+(2K+1)^m+(2K+1)^{n-m}=O((2K+1)^{\lceil n/2\rceil}),
+\]
+using essentially the same order of memory.  This improves the direct enumeration cost $O((2K+1)^n)$ by splitting the search into two halves.
+\end{solution}
+
 \begin{exercise}
 \label{applied:2017:7}
 We have the following partial differential equation
@@ -242,6 +274,62 @@ where $a, b, c$ are constants which may depend on the ratio $\mu = \frac{\Delta 
     \item Find the CFL number $\mu_0$ such that the scheme, with the constants determined by Step 1 above, is stable under the time step restriction $\mu \leq \mu_0$. Please specify which norm you are using for stability, and prove this stability result.
 \end{enumerate}
 \end{exercise}
+
+\begin{solution}
+For consistency, expand the right-hand side around $(x_j,t^n)$.  Since
+\[
+H(u_{j\pm1}^n)=H(u)\pm \Delta x\,H(u)_x+\frac{\Delta x^2}{2}H(u)_{xx}+O(\Delta x^3),
+\]
+we get
+\[
+u_j^{n+1}=u+\Delta t\,u_t+O(\Delta t^2)
+\]
+on the left and
+\[
+u_j^n+aH(u_{j-1}^n)+bH(u_j^n)+cH(u_{j+1}^n)
+=u+(a+b+c)H(u)+(c-a)\Delta x\,H(u)_x+\frac{a+c}{2}\Delta x^2 H(u)_{xx}+O(\Delta x^3)
+\]
+on the right.  To approximate $u_t=H(u)_{xx}$ without zero-order or first-derivative pollution, and with the correct coefficient for $H(u)_{xx}$, we require
+\[
+a+b+c=0,\qquad c-a=0,\qquad \frac{a+c}{2}\Delta x^2=\Delta t.
+\]
+Hence
+\[
+a=c=\mu,\qquad b=-2\mu,\qquad \mu=\frac{\Delta t}{\Delta x^2}.
+\]
+The scheme is therefore
+\[
+u_j^{n+1}=u_j^n+\mu\left(H(u_{j-1}^n)-2H(u_j^n)+H(u_{j+1}^n)\right).
+\]
+This is second order in space and first order in time; under the parabolic scaling $\Delta t=O(\Delta x^2)$ its local truncation error is $O(\Delta x^2)$.
+
+We prove stability in the maximum norm by a discrete maximum principle.  Let
+\[
+M^n=\max_j u_j^n,\qquad m^n=\min_j u_j^n.
+\]
+Since $H$ is nondecreasing and $0\leq H'\leq d$, for every $j$,
+\[
+H(u_{j-1}^n)-H(u_j^n)\leq d(M^n-u_j^n),
+\qquad
+H(u_{j+1}^n)-H(u_j^n)\leq d(M^n-u_j^n).
+\]
+Therefore
+\[
+u_j^{n+1}
+=u_j^n+\mu\{H(u_{j-1}^n)-H(u_j^n)+H(u_{j+1}^n)-H(u_j^n)\}
+\leq (1-2\mu d)u_j^n+2\mu d\,M^n.
+\]
+If $2\mu d\leq1$, the right-hand side is at most $M^n$.  Hence $M^{n+1}\leq M^n$.  The same argument applied to the lower bound gives $m^{n+1}\geq m^n$.  Thus
+\[
+\|u^{n+1}\|_\infty\leq \|u^n\|_\infty
+\]
+whenever the data are measured relative to zero, and more generally the numerical range $[m^n,M^n]$ is nonexpanding.
+Thus the scheme is stable in $\ell^\infty$ under
+\[
+\mu\leq \mu_0=\frac{1}{2d}.
+\]
+For the linear case $H(u)=du$, this is exactly the standard explicit heat-equation CFL condition.
+\end{solution}
 
 \begin{exercise}
 \label{applied:2017:8}
@@ -264,6 +352,102 @@ In each case:
 \end{itemize}
 \end{exercise}
 
+\begin{solution}
+After the scaling
+\[
+y=L\tilde y,\qquad t=T\tilde t,
+\]
+the equation becomes
+\[
+\frac{L}{T^2}\tilde y''=-\frac{GM}{(R+L\tilde y)^2}.
+\]
+Equivalently,
+\[
+\tilde y''=-\frac{GMT^2}{L(R+L\tilde y)^2},
+\qquad
+\tilde y(0)=\frac{y_0}{L},\qquad
+\tilde y'(0)=\frac{T}{L}V_0.
+\]
+It is useful to write
+\[
+\varepsilon_R=\frac{R}{L},\qquad
+\Gamma=\frac{GMT^2}{L^3},
+\]
+so that
+\[
+\tilde y''=-\frac{\Gamma}{(\varepsilon_R+\tilde y)^2}.
+\]
+
+\textbf{(a) Fast projectile limit.}
+Choose
+\[
+L=V_0T,\qquad T=\frac{R}{V_0},
+\]
+so $L=R$ and the initial velocity is normalized:
+\[
+\tilde y'(0)=1,\qquad
+\tilde y''=-\frac{GM}{RV_0^2}\frac{1}{(1+\tilde y)^2}.
+\]
+The small parameter is
+\[
+\varepsilon=\frac{GM}{RV_0^2}\to 0.
+\]
+The leading problem is free flight,
+\[
+\tilde y''=0,\qquad \tilde y'(0)=1.
+\]
+
+\textbf{(b) Dense Earth limit.}
+Here $M\to\infty$ with $R,V_0=O(1)$.  Balance inertia and gravity near the surface by taking $L=R$ and
+\[
+T=\sqrt{\frac{R^3}{GM}}.
+\]
+Then
+\[
+\tilde y''=-\frac{1}{(1+\tilde y)^2},\qquad
+\tilde y'(0)=V_0\sqrt{\frac{R}{GM}}.
+\]
+The small parameter is
+\[
+\varepsilon=V_0\sqrt{\frac{R}{GM}}\to 0.
+\]
+The leading problem has negligible initial velocity and gravity-dominated motion:
+\[
+\tilde y''=-\frac{1}{(1+\tilde y)^2},\qquad \tilde y'(0)=0.
+\]
+
+\textbf{(c) Light Earth limit.}
+Take again $L=R$ and $T=R/V_0$ to normalize the initial velocity.  The scaled equation is
+\[
+\tilde y''=-\frac{GM}{RV_0^2}\frac{1}{(1+\tilde y)^2},\qquad \tilde y'(0)=1.
+\]
+The small parameter
+\[
+\varepsilon=\frac{GM}{RV_0^2}\to 0
+\]
+again gives the free-flight leading problem $\tilde y''=0$.
+
+\textbf{(d) Small Earth limit.}
+When $R\to0$ and $V_0,M=O(1)$, the singularity at $y=-R$ matters.  A natural near-surface scaling is
+\[
+L=R,\qquad T=\sqrt{\frac{R^3}{GM}},
+\]
+which gives
+\[
+\tilde y''=-\frac{1}{(1+\tilde y)^2},\qquad
+\tilde y'(0)=V_0\sqrt{\frac{R}{GM}}.
+\]
+The small parameter is
+\[
+\varepsilon=V_0\sqrt{\frac{R}{GM}}\to0.
+\]
+The leading problem is again
+\[
+\tilde y''=-\frac{1}{(1+\tilde y)^2},\qquad \tilde y'(0)=0,
+\]
+but unlike case (b), the scale $L=R$ collapses to zero, so this is a boundary-layer or near-singularity scaling rather than a macroscopic dense-gravity scaling.  If the initial height $y_0$ is not $O(R)$, one should instead scale $L$ with $y_0$; then $R/L\to0$ and the leading force is $-GM/\tilde y^2$ away from the collision singularity.
+\end{solution}
+
 \begin{exercise}
 \label{applied:2017:9}
 Let $f \in C^n(\mathbb{R})$. Given $n$ distinct points $x_1, \dots, x_n$ and an extra point $x_0$, we want to approximate $f'(x_0)$ using a linear combination:
@@ -277,6 +461,48 @@ f'(x_0) \approx \sum_{i=1}^n c_i f(x_i)
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\textbf{(a) Undetermined coefficients.}
+Require the formula to be exact for monomials $1,x,\dots,x^{n-1}$.  This gives
+\[
+\sum_{i=1}^n c_i x_i^m=
+\begin{cases}
+0,&m=0,\\
+m x_0^{m-1},&1\leq m\leq n-1.
+\end{cases}
+\]
+The coefficient matrix is a Vandermonde matrix built from the distinct nodes $x_1,\dots,x_n$, hence it is nonsingular.
+
+For $n=3$ with $x_1=x_0$, $x_2=x_0+h$, $x_3=x_0+2h$, it is simpler to shift $x_0$ to $0$.  Exactness for $1,x,x^2$ gives
+\[
+c_1+c_2+c_3=0,\qquad hc_2+2hc_3=1,\qquad h^2c_2+4h^2c_3=0.
+\]
+Solving,
+\[
+c_1=-\frac{3}{2h},\qquad c_2=\frac{2}{h},\qquad c_3=-\frac{1}{2h}.
+\]
+Thus
+\[
+f'(x_0)\approx \frac{-3f(x_0)+4f(x_0+h)-f(x_0+2h)}{2h}.
+\]
+
+\textbf{(b) Interpolation method.}
+Let
+\[
+p(x)=\sum_{i=1}^n f(x_i)\ell_i(x),
+\qquad
+\ell_i(x)=\prod_{m\neq i}\frac{x-x_m}{x_i-x_m}.
+\]
+Then
+\[
+p'(x_0)=\sum_{i=1}^n \ell_i'(x_0)f(x_i).
+\]
+This is a formula of the required form with $c_i=\ell_i'(x_0)$.  If $f$ is a polynomial of degree at most $n-1$, then $p=f$ identically, so $p'(x_0)=f'(x_0)$ exactly.
+
+\textbf{(c) Equivalence.}
+The interpolation coefficients $c_i=\ell_i'(x_0)$ satisfy the exactness equations from part (a), because interpolation is exact on every polynomial of degree at most $n-1$.  Since the Vandermonde system in part (a) is nonsingular, those coefficients are the unique solution.  Therefore the undetermined-coefficients and interpolation methods produce the same finite-difference formula.
+\end{solution}
+
 \begin{exercise}
 \label{applied:2017:10}
 Let
@@ -285,3 +511,93 @@ Let
 \]
 Find $\mathcal{A}^{-1}$ explicitly. Show that all entries of $\mathcal{A}^{-1}$ are nonnegative if and only if $\gamma \geq 1$.
 \end{exercise}
+
+\begin{solution}
+Let $\mathcal{A}$ be $n\times n$.  Solve $\mathcal{A}x=e_j$.  Away from the forcing index $j$, the recurrence is
+\[
+-x_{i-1}+2x_i-x_{i+1}=0,
+\]
+so $x_i$ is affine in $i$ on each side of $j$.  The left boundary row gives $2x_1-x_2=0$, which is equivalent to the ghost condition $x_0=0$.  The last row is
+\[
+-x_{n-1}+\gamma x_n=\delta_{nj}.
+\]
+
+For $i\leq j$, write $x_i=A i$.  For $i\geq j$, write $x_i=B+C i$.  Continuity at $i=j$ gives $Aj=B+Cj$.  The jump equation at $i=j$ gives
+\[
+-x_{j-1}+2x_j-x_{j+1}=1,
+\]
+which implies
+\[
+A-C=1.
+\]
+The right boundary condition for $j<n$ gives
+\[
+-(B+C(n-1))+\gamma(B+Cn)=0.
+\]
+Using $B=(A-C)j=j$ and $C=A-1$, this becomes
+\[
+(\gamma-1)j+\bigl((\gamma-1)n+1\bigr)(A-1)=0.
+\]
+Hence
+\[
+A=1-\frac{(\gamma-1)j}{1+n(\gamma-1)}
+=\frac{1+(n-j)(\gamma-1)}{1+n(\gamma-1)}.
+\]
+Therefore, for $i\leq j$,
+\[
+(\mathcal{A}^{-1})_{ij}
+=\frac{i\bigl(1+(n-j)(\gamma-1)\bigr)}{1+n(\gamma-1)}.
+\]
+By symmetry of $\mathcal{A}$, the full formula is
+\[
+(\mathcal{A}^{-1})_{ij}
+=\frac{\min(i,j)\bigl(1+(n-\max(i,j))(\gamma-1)\bigr)}{1+n(\gamma-1)},
+\qquad 1\leq i,j\leq n,
+\]
+provided $1+n(\gamma-1)\neq0$.  This same formula also covers $j=n$ by the same recurrence, or by taking $\max(i,j)=n$.
+
+If $\gamma\geq1$, then the denominator and every numerator factor are nonnegative, and the denominator is positive; hence all entries are nonnegative.
+
+Conversely, if all entries are nonnegative, first $\mathcal{A}$ must be nonsingular, and in particular the diagonal entry
+\[
+(\mathcal{A}^{-1})_{nn}=\frac{n}{1+n(\gamma-1)}
+\]
+must be nonnegative, so $1+n(\gamma-1)>0$.  Also
+\[
+(\mathcal{A}^{-1})_{1n}=\frac{1}{1+n(\gamma-1)}>0,
+\]
+and
+\[
+(\mathcal{A}^{-1})_{11}=\frac{1+(n-1)(\gamma-1)}{1+n(\gamma-1)}
+\]
+is nonnegative.  More decisively, consider
+\[
+(\mathcal{A}^{-1})_{1,n-1}
+=\frac{1+(\gamma-1)}{1+n(\gamma-1)}
+=\frac{\gamma}{1+n(\gamma-1)}.
+\]
+For this to be nonnegative with positive denominator, we need $\gamma\geq0$.  Applying the formula to $(i,j)=(1,n-2),(1,n-3),\dots,(1,1)$ yields
+\[
+1+k(\gamma-1)\geq0,\qquad k=1,\dots,n-1.
+\]
+The strongest of these is $1+(n-1)(\gamma-1)\geq0$, which alone does not force $\gamma\geq1$.
+
+Thus the stated ``if and only if $\gamma\geq1$'' needs one more qualification.  For example, when $n=2$ and $\gamma=3/4$,
+\[
+\mathcal A^{-1}
+=\frac{1}{2\gamma-1}
+\begin{bmatrix}
+\gamma&1\\
+1&2
+\end{bmatrix}
+\]
+has all entries positive, although $\gamma<1$.  The threshold $\gamma\geq1$ is true as a uniform sufficient condition independent of $n$, or under the usual $M$-matrix diagonal-dominance condition on the last row.  For a fixed $n$, the explicit formula shows the exact condition is
+\[
+1+k(\gamma-1)\geq0\quad\text{for all }k=0,\dots,n,
+\]
+equivalently
+\[
+\gamma>\frac{n-1}{n}.
+\]
+Under the contest statement's intended diagonal-dominance threshold, $\gamma\geq1$ is sufficient and is the sharp threshold independent of $n$; it is not the fixed-$n$ necessity threshold for the displayed matrix.
+\end{solution}

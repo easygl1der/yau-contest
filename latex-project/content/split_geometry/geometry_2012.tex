@@ -82,53 +82,44 @@ Let $M$ be a smooth manifold of dimension $n$, and $X_{1}, \ldots, X_{k}$ be $k$
 \end{exercise}
 
 \begin{solution}
-\textbf{Geometric Intuition:} This is a special case of the Frobenius Theorem.\sidenote{The \textbf{Frobenius Theorem} states that a smooth distribution $\mathcal{D}$ on a manifold is integrable if and only if it is involutive.
-\begin{itemize}
-    \item A $k$-dimensional \textbf{distribution} $\mathcal{D}$ is a smooth assignment of a $k$-dimensional subspace $\mathcal{D}_p \subset T_pM$ at each point $p$. In this problem, the distribution is $\mathcal{D}_p = \text{span}\{X_1(p), \dots, X_k(p)\}$.
-    \item A distribution is \textbf{involutive} if for any two vector fields $X, Y$ that lie in the distribution, their Lie bracket $[X, Y]$ also lies in the distribution. The given condition $[X_i, X_j] = 0$ for all $i,j$ is a strong form of this. It immediately implies that for any two vector fields $X = \sum f_i X_i$ and $Y = \sum g_j X_j$ in $\mathcal{D}$, their bracket $[X,Y]$ is also in $\mathcal{D}$.
-    \item A distribution is \textbf{integrable} if, for every point, there is a coordinate chart $(V, y^i)$ where the distribution is spanned by the first $k$ coordinate vector fields, i.e., $\mathcal{D} = \text{span}\{\frac{\partial}{\partial y^1}, \dots, \frac{\partial}{\partial y^k}\}$.
-\end{itemize}
-The theorem guarantees that the "infinitesimal" algebraic condition of involutivity is the necessary and sufficient condition for the "local" geometric existence of these special coordinate charts (integral submanifolds).} The condition $[X_i, X_j]=0$ means that the flows of the vector fields commute, which allows us to build a consistent "grid" or coordinate system where the vector fields $X_i$ serve as the coordinate axes.
+\textbf{Geometric Intuition:} The condition $[X_i,X_j]=0$ says that the local flows of the vector fields commute. Thus one can start from a small transverse slice through $p$ and flow independently in the $X_1,\dots,X_k$ directions; commutativity makes this construction independent of the order of the flows, so it gives a coordinate grid.
 
-\textbf{A More Readable Proof (by Induction):}
+\textbf{Proof.}
+Let
+\[
+\mathcal{D}_p=\operatorname{span}\{X_1(p),\dots,X_k(p)\}\subset T_pM.
+\]
+Choose an $(n-k)$-dimensional embedded submanifold $S$ through $p$ whose tangent space is complementary to $\mathcal{D}_p$:
+\[
+T_pM=\mathcal{D}_p\oplus T_pS.
+\]
+Let $z^{k+1},\dots,z^n$ be local coordinates on $S$ centered at $p$.
 
-The proof proceeds by induction on $k$, the number of vector fields.
+Denote by $\Phi_i^t$ the local flow of $X_i$. Since
+\[
+[X_i,X_j]=0,
+\]
+the local flows commute wherever both sides are defined:
+\[
+\Phi_i^s\circ\Phi_j^t=\Phi_j^t\circ\Phi_i^s.
+\]
+This follows by differentiating one flow pushed forward by the other: commutation of Lie brackets says each flow preserves the other vector field.
 
-\textbf{Base Case (k=1):} We are given a single non-vanishing vector field $X_1$. The "Flowbox Theorem" (or "Straightening Theorem") states that for any non-vanishing smooth vector field, we can always find local coordinates $(z^1, \dots, z^n)$ around any point $p$ such that in these coordinates, the vector field is constant: $X_1 = \frac{\partial}{\partial z^1}$.\sidenote{\textbf{Flowbox Theorem Statement:} Let $X$ be a smooth vector field on an $n$-manifold $M$. If $X(p) \neq 0$ for some $p \in M$, then there exists a coordinate chart $(U, (y^1, \dots, y^n))$ centered at $p$ such that on $U$, the vector field $X$ is given by $X = \frac{\partial}{\partial y^1}$. Intuitively, this theorem says that the integral curves of any non-vanishing vector field can be locally "straightened out" to become parallel to the first coordinate axis.} This establishes our base case.
+Define
+\[
+F(t^1,\dots,t^k,z^{k+1},\dots,z^n)
+=
+\Phi_1^{t^1}\circ\cdots\circ\Phi_k^{t^k}(z),
+\qquad z\in S.
+\]
+At the origin, the differential of $F$ sends the coordinate vectors $\partial/\partial t^i$ to $X_i(p)$ and the remaining coordinate vectors to $T_pS$. These vectors form a basis of $T_pM$, so $dF_0$ is an isomorphism. After shrinking the domain, the inverse function theorem makes $F$ a coordinate chart.
 
-\textbf{Inductive Step:} Assume the theorem is true for any set of $k-1$ commuting, linearly independent vector fields. Now we prove it for $k$ fields, $\{X_1, \dots, X_k\}$.
-
-\begin{enumerate}
-    \item \textbf{Straighten the first vector field:} From the base case, we know there exists a coordinate chart $(U, z^i)$ around $p$ such that $X_1 = \frac{\partial}{\partial z^1}$.
-
-    \item \textbf{Analyze the remaining fields in the new chart:} Let's express the other vector fields $X_j$ (for $j=2, \dots, k$) in this new coordinate system:
-    \[ X_j = \sum_{l=1}^n f_{jl}(z) \frac{\partial}{\partial z^l} \]
-    where $f_{jl}(z)$ are smooth functions of the coordinates $(z^1, \dots, z^n)$.
-
-    \item \textbf{Use the commuting property:} We are given that $[X_1, X_j] = 0$. Let's compute this Lie bracket:
-    \[\begin{aligned}
-    [X_1, X_j]
-    &= \left[ \frac{\partial}{\partial z^1}, \sum_{l=1}^n f_{jl}(z) \frac{\partial}{\partial z^l} \right] \\
-    &= \sum_{l=1}^n \left( \frac{\partial}{\partial z^1} f_{jl}(z) \right) \frac{\partial}{\partial z^l}
-       - \sum_{l=1}^n f_{jl}(z) \underbrace{\left[\frac{\partial}{\partial z^1}, \frac{\partial}{\partial z^l}\right]}_{=0} \\
-    &= \sum_{l=1}^n \frac{\partial f_{jl}}{\partial z^1} \frac{\partial}{\partial z^l} = 0
-    \end{aligned}\]
-    Since we know $[X_1, X_j]=0$, every component of this resulting vector field must be zero. This means:
-    \[ \frac{\partial f_{jl}}{\partial z^1} = 0 \quad \text{for all } j \in \{2, \dots, k\} \text{ and } l \in \{1, \dots, n\}. \]
-    This is a crucial simplification: the component functions $f_{jl}$ of the vector fields $X_2, \dots, X_k$ do not depend on the first coordinate, $z^1$.
-
-    \item \textbf{Reduce the dimension:} This means that on any hypersurface defined by $z^1 = \text{constant}$, the vector fields $X_2, \dots, X_k$ are well-defined and depend only on the coordinates $(z^2, \dots, z^n)$. Furthermore, since $\{X_1, \dots, X_k\}$ are linearly independent and $X_1$ is not in the span of $\{\frac{\partial}{\partial z^2}, \dots, \frac{\partial}{\partial z^n}\}$, the vector fields $\{X_2, \dots, X_k\}$ when restricted to this hypersurface must be linearly independent and still commute with each other.
-
-    \item \textbf{Apply the inductive hypothesis:} We now have a set of $k-1$ commuting, linearly independent vector fields on an $(n-1)$-dimensional manifold (the slice $z^1=\text{const}$). By our inductive hypothesis, there exists a coordinate change from $(z^2, \dots, z^n)$ to a new set $(y^2, \dots, y^n)$ such that in these new coordinates, $X_j = \frac{\partial}{\partial y^j}$ for $j=2, \dots, k$.
-    Importantly, this coordinate change does not involve $z^1$. So we can define a new coordinate system for our original $n$-dimensional manifold:
-    \[ y^1 = z^1, \quad y^2 = y^2(z^2, \dots, z^n), \quad \dots, \quad y^n = y^n(z^2, \dots, z^n). \]
-    \item \textbf{Conclusion:} In this final $(y^1, \dots, y^n)$ coordinate system, we have:
-    \begin{itemize}
-        \item $X_1 = \frac{\partial}{\partial z^1} = \frac{\partial}{\partial y^1}$ (since $y^1$ is just $z^1$ and the other $y^i$ don't depend on $z^1$).
-        \item $X_j = \frac{\partial}{\partial y^j}$ for $j=2, \dots, k$ (by the inductive step).
-    \end{itemize}
-    We have successfully constructed a coordinate chart where $X_i = \frac{\partial}{\partial y^i}$ for all $i=1, \dots, k$. The induction is complete.
-\end{enumerate}
+Use the coordinates $y^i=t^i$ for $1\leq i\leq k$ and $y^\alpha=z^\alpha$ for $\alpha>k$. Because the flows commute, varying $t^i$ while holding all other coordinates fixed is exactly flowing by $X_i$. Therefore, in these coordinates,
+\[
+X_i=\frac{\partial}{\partial y^i},
+\qquad 1\leq i\leq k.
+\]
+This proves the desired local normal form.
 \end{solution}
 
 \clearpage
@@ -152,7 +143,7 @@ For any compact, connected, $m$-dimensional manifold $M$, its top homology group
 \begin{enumerate}
     \item An \textbf{orientation} on $M$ is equivalent to choosing one of the two generators of this group. This chosen generator is called the \textbf{fundamental class}, denoted $[M]$.
     \item For $\mathbb{CP}^2$ (a real 4-manifold), this means choosing a generator for $H_4(\mathbb{CP}^2; \mathbb{Z}) \cong \mathbb{Z}$.
-\end{itemize}
+\end{enumerate}
 \textbf{Duality with Cohomology:}
 There's a natural evaluation pairing (the Kronecker pairing) between cohomology and homology, $\langle \cdot, \cdot \rangle: H^k(M) \times H_k(M) \to \mathbb{Z}$.
 \begin{enumerate}

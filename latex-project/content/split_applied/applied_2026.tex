@@ -1,0 +1,631 @@
+\section{2026 Applied \& Computational Mathematics}
+
+\begin{exercise}
+\label{applied:2026:1}
+Consider the equation
+\[
+\alpha \partial_t u(t,x)+\beta \partial_x u(t,x)-\gamma \partial_{xx}u(t,x)=f(x),
+\]
+for $(t,x)\in (0,T)\times (0,1)$, with $f\in L^2(0,1)$, $T>0$, boundary condition
+$u(t,0)=u(t,1)=0$ for all $t>0$, and initial condition $u(0,x)=0$. The parameters satisfy
+$\alpha>0$, $\beta\in \mathbb{R}$ and $\gamma>0$. Let $\mathcal{T}_h$ be a uniform mesh
+partitioning $(0,1)$, namely the collection of intervals $[ih,(i+1)h]$ with
+$i=0,1,\ldots,N$ and $h=1/(N+1)$.
+
+(a) Write the fully discrete variational formulation of this problem using the continuous
+piecewise linear finite element method (P1 Lagrange FEM) in space and the implicit Euler
+method in time. Denote the time step by $\tau$ and $t_i=i\tau$ for all $i\in\mathbb{N}$.
+
+(b) Prove the $L^2$ stability estimate $\|u_h^n\|\leq C\|f\|$ with a constant $C>0$
+independent of $h$, $\tau$, and $n$.
+
+(c) Let $\{\phi_i\}_{1\leq i\leq N}$ be the global Lagrange shape functions associated with
+the nodes $x_i:=ih$ for $i=1,\ldots,N$. Denoting by
+\[
+u_h^i:=\sum_{1\leq j\leq N} U_j^i\phi_j
+\]
+the approximation of $u$ at $t_i$, write the algebraic linear system solved by
+$(U_1^i,\ldots,U_N^i)$.
+\end{exercise}
+
+\begin{solution}
+Let
+\[
+V_h=\{v_h\in C^0([0,1]): v_h|_K\in \mathbb{P}_1(K)\text{ for every }K\in\mathcal{T}_h,
+\ v_h(0)=v_h(1)=0\}.
+\]
+The natural weak form is obtained by multiplying by $v_h\in V_h$ and integrating by parts
+only in the diffusion term:
+\[
+\alpha(\partial_t u,v_h)+\beta(\partial_x u,v_h)+\gamma(\partial_x u,\partial_x v_h)
+=(f,v_h),
+\]
+where $(p,q)=\int_0^1 p(x)q(x)\,dx$.
+
+\textbf{(a) Fully discrete variational formulation.}
+Set $u_h^0=0$. For each $n\geq 1$, find $u_h^n\in V_h$ such that, for every $v_h\in V_h$,
+\[
+\alpha\left(\frac{u_h^n-u_h^{n-1}}{\tau},v_h\right)
++\beta(\partial_x u_h^n,v_h)
++\gamma(\partial_x u_h^n,\partial_x v_h)
+=(f,v_h).
+\]
+This is implicit Euler in time because all spatial operator terms are evaluated at the new
+time level $t_n$.
+
+\textbf{(b) $L^2$ stability.}
+Take $v_h=u_h^n$. Since $u_h^n(0)=u_h^n(1)=0$,
+\[
+(\partial_x u_h^n,u_h^n)
+=\frac{1}{2}\int_0^1 \partial_x\bigl((u_h^n)^2\bigr)\,dx
+=0.
+\]
+Thus
+\[
+\frac{\alpha}{\tau}(u_h^n-u_h^{n-1},u_h^n)+\gamma\|\partial_x u_h^n\|^2=(f,u_h^n).
+\]
+Let $r_n=\|u_h^n\|$. The Cauchy--Schwarz inequality gives
+\[
+(u_h^n-u_h^{n-1},u_h^n)\geq r_n(r_n-r_{n-1}),
+\]
+and the Poincare inequality on $(0,1)$ gives $\|v\|\leq C_P\|\partial_x v\|$ for
+$v\in H_0^1(0,1)$. Therefore, if $r_n>0$,
+\[
+\frac{\alpha}{\tau}(r_n-r_{n-1})+\frac{\gamma}{C_P^2}r_n\leq \|f\|.
+\]
+With $\mu=\gamma/C_P^2$, this implies
+\[
+r_n\leq \frac{\alpha}{\alpha+\mu\tau}r_{n-1}
++\frac{\tau}{\alpha+\mu\tau}\|f\|.
+\]
+Since $r_0=0$, induction yields
+\[
+\|u_h^n\|=r_n\leq \frac{1}{\mu}\|f\|
+=\frac{C_P^2}{\gamma}\|f\|.
+\]
+Hence the required estimate holds with $C=C_P^2/\gamma$, independent of $h$, $\tau$, and
+$n$.
+
+\textbf{(c) Algebraic system.}
+Write $U^n=(U_1^n,\ldots,U_N^n)^T$ and define
+\[
+M_{ij}=(\phi_j,\phi_i),\qquad
+C_{ij}=(\phi_j',\phi_i),\qquad
+K_{ij}=(\phi_j',\phi_i'),\qquad
+F_i=(f,\phi_i).
+\]
+Testing the fully discrete equation by $\phi_i$ gives
+\[
+\left(\frac{\alpha}{\tau}M+\beta C+\gamma K\right)U^n
+=\frac{\alpha}{\tau}M U^{n-1}+F.
+\]
+For the uniform P1 mesh, the standard entries are
+\[
+M_{ii}=\frac{2h}{3},\quad M_{i,i\pm 1}=\frac{h}{6},\qquad
+K_{ii}=\frac{2}{h},\quad K_{i,i\pm 1}=-\frac{1}{h},
+\]
+with omitted entries equal to zero, and
+\[
+C_{ii}=0,\qquad C_{i,i+1}=\frac{1}{2},\qquad C_{i,i-1}=-\frac{1}{2}.
+\]
+\end{solution}
+
+\begin{exercise}
+\label{applied:2026:2}
+Let $\Omega\subset \mathbb{R}^d$ be a bounded domain, $d\leq 3$. Consider the functional
+$J:H_0^1(\Omega)\to \mathbb{R}$:
+\[
+J(u)=\int_\Omega \left(\frac{1}{2}|\nabla u(x)|^2+\frac{1}{4}u(x)^4-f(x)u(x)\right)\,dx,
+\]
+where $f\in L^2(\Omega)$.
+
+(a) Compute the Frechet derivative (gradient) $\nabla J(u)$ and the second Frechet derivative
+(Hessian) $\nabla^2J(u)$. Prove that $J$ is strictly convex.
+
+(b) Write Newton's method for finding the minimizer $u^*$ of $J(u)$. Assuming the initial
+guess $u_0$ is sufficiently close to the solution $u^*$, prove the second order convergence of
+Newton's method:
+\[
+\|u_{k+1}-u^*\|_{H^1}\leq C\|u_k-u^*\|_{H^1}^2.
+\]
+
+(c) Let $s_k=u_{k+1}-u_k$ and $y_k=\nabla J(u_{k+1})-\nabla J(u_k)$. A Quasi-Newton method
+resorts to an approximate Hessian $B_{k+1}$ satisfying the secant equation
+$B_{k+1}s_k=y_k$. A BFGS update of $B_{k+1}$ is
+\[
+B_{k+1}v
+=B_kv-\frac{\langle B_ks_k,v\rangle}{\langle B_ks_k,s_k\rangle}B_ks_k
++\frac{\langle y_k,v\rangle}{\langle y_k,s_k\rangle}y_k,
+\]
+for any test function $v\in H_0^1(\Omega)$. Assuming $B_k$ is positive definite, prove that the
+above BFGS update is well-defined.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) First and second variations.}
+For $v,w\in H_0^1(\Omega)$,
+\[
+J'(u)[v]=\int_\Omega \nabla u\cdot \nabla v\,dx+\int_\Omega u^3v\,dx-\int_\Omega fv\,dx,
+\]
+and
+\[
+J''(u)[w,v]=\int_\Omega \nabla w\cdot \nabla v\,dx+3\int_\Omega u^2wv\,dx.
+\]
+The restriction $d\leq 3$ ensures the nonlinear terms are well-defined because
+$H_0^1(\Omega)\hookrightarrow L^6(\Omega)$.
+
+For $w\neq 0$,
+\[
+J''(u)[w,w]=\|\nabla w\|_{L^2}^2+3\int_\Omega u^2w^2\,dx>0.
+\]
+Thus $J$ has a positive definite second variation. Equivalently, the quadratic Dirichlet
+energy is strictly convex on $H_0^1(\Omega)$, the $u^4$ term is convex, and the $-fu$ term is
+linear. Hence $J$ is strictly convex and has at most one minimizer.
+
+\textbf{(b) Newton iteration and local quadratic convergence.}
+The minimizer $u^*$ satisfies
+\[
+J'(u^*)[v]=0\qquad \text{for all }v\in H_0^1(\Omega),
+\]
+or
+\[
+\int_\Omega \nabla u^*\cdot \nabla v\,dx+\int_\Omega (u^*)^3v\,dx
+=\int_\Omega fv\,dx.
+\]
+Given $u_k$, Newton's method solves for the correction $\delta_k\in H_0^1(\Omega)$:
+\[
+J''(u_k)[\delta_k,v]=-J'(u_k)[v]\qquad \text{for all }v\in H_0^1(\Omega),
+\]
+and sets
+\[
+u_{k+1}=u_k+\delta_k.
+\]
+Equivalently, $u_{k+1}$ is characterized by
+\[
+\int_\Omega \nabla u_{k+1}\cdot \nabla v\,dx
++3\int_\Omega u_k^2u_{k+1}v\,dx
+=\int_\Omega fv\,dx+2\int_\Omega u_k^3v\,dx.
+\]
+
+Let $F(u)=J'(u)$, interpreted as a map from $H_0^1(\Omega)$ to $H^{-1}(\Omega)$. Then
+\[
+F'(u)w=-\Delta w+3u^2w
+\]
+in weak form. The bilinear form
+\[
+a_u(w,v)=\int_\Omega \nabla w\cdot \nabla v\,dx+3\int_\Omega u^2wv\,dx
+\]
+is coercive because $a_u(w,w)\geq \|\nabla w\|_{L^2}^2$. By Lax--Milgram, $F'(u)$ is
+invertible with a locally uniform bound on its inverse.
+
+On bounded $H_0^1$ balls, $F'$ is Lipschitz as an operator $H_0^1\to H^{-1}$. Indeed,
+using Sobolev embedding,
+\[
+\|(F'(u)-F'(v))w\|_{H^{-1}}
+\leq C(\|u\|_{H^1}+\|v\|_{H^1})\|u-v\|_{H^1}\|w\|_{H^1}.
+\]
+For $e_k=u_k-u^*$, Newton's formula and $F(u^*)=0$ give
+\[
+e_{k+1}
+=F'(u_k)^{-1}\bigl(F(u^*)-F(u_k)+F'(u_k)e_k\bigr).
+\]
+The Lipschitz estimate for $F'$ implies
+\[
+\|F(u^*)-F(u_k)+F'(u_k)e_k\|_{H^{-1}}
+\leq C\|e_k\|_{H^1}^2.
+\]
+If $u_0$ is sufficiently close to $u^*$, all iterates remain in a neighborhood where
+$\|F'(u_k)^{-1}\|$ is uniformly bounded, and therefore
+\[
+\|u_{k+1}-u^*\|_{H^1}\leq C\|u_k-u^*\|_{H^1}^2.
+\]
+
+\textbf{(c) Well-definedness of the BFGS update.}
+Assume $s_k\neq 0$; if $s_k=0$, the secant update is unnecessary because the step has already
+stopped. Since $B_k$ is positive definite,
+\[
+\langle B_ks_k,s_k\rangle>0.
+\]
+It remains to check $\langle y_k,s_k\rangle>0$. By the fundamental theorem of calculus in
+Banach spaces,
+\[
+\langle y_k,s_k\rangle
+=\int_0^1 J''(u_k+ts_k)[s_k,s_k]\,dt.
+\]
+Using the expression for the Hessian,
+\[
+\langle y_k,s_k\rangle
+=\int_0^1\left(\|\nabla s_k\|_{L^2}^2
++3\int_\Omega (u_k+ts_k)^2s_k^2\,dx\right)\,dt>0.
+\]
+Both denominators in the BFGS formula are therefore strictly positive. Hence the update is
+well-defined for every nonzero step $s_k$.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2026:3}
+Consider the initial value problem over $\mathbb{R}^N$ in the form
+\[
+x'=f(t,x),\qquad x(0)=x_0\in \mathbb{R}^N,
+\]
+where $f:[0,T]\times \mathbb{R}^N\to \mathbb{R}^N$ is smooth. Consider the family of one-step
+methods
+\[
+x_{n+1}=x_n+(1-b)hf(t_n,x_n)+bhf(t_{n+1},x_{n+1}),
+\]
+where $h=t_{n+1}-t_n$ for any $n\geq 0$ is a uniform step size and $b\in[0,1]$ is a constant.
+
+(a) Find the value of $b$ so that the local truncation error is $O(h^3)$.
+
+(b) Apply the method to $x'=\lambda x$, $x(0)=x_0\in \mathbb{R}$. Find the function $g(\cdot)$
+such that $x_n=g(h\lambda)^n x_0$.
+
+(c) Determine the values of $b$ so that this method is A-stable.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Local truncation error.}
+Let $x(t)$ be the exact solution and suppress the time $t_n$ in the notation. The one-step
+defect obtained by inserting the exact solution is
+\[
+x(t+h)-x(t)-h\bigl((1-b)x'(t)+bx'(t+h)\bigr).
+\]
+Taylor expansion gives
+\[
+x(t+h)=x(t)+hx'(t)+\frac{h^2}{2}x''(t)+\frac{h^3}{6}x'''(t)+O(h^4),
+\]
+and
+\[
+x'(t+h)=x'(t)+hx''(t)+\frac{h^2}{2}x'''(t)+O(h^3).
+\]
+Hence the defect equals
+\[
+\left(\frac{1}{2}-b\right)h^2x''(t)
++\left(\frac{1}{6}-\frac{b}{2}\right)h^3x'''(t)+O(h^4).
+\]
+For the local truncation error to be $O(h^3)$, the $h^2$ term must vanish, so
+\[
+b=\frac{1}{2}.
+\]
+
+\textbf{(b) Stability function.}
+For $x'=\lambda x$, set $z=h\lambda$. The method becomes
+\[
+x_{n+1}=x_n+(1-b)zx_n+bzx_{n+1}.
+\]
+Thus
+\[
+(1-bz)x_{n+1}=(1+(1-b)z)x_n,
+\]
+and
+\[
+x_n=g(z)^n x_0,\qquad
+g(z)=\frac{1+(1-b)z}{1-bz}.
+\]
+
+\textbf{(c) A-stability.}
+The method is A-stable exactly when
+\[
+|g(z)|\leq 1\qquad \text{for all }\operatorname{Re}z\leq 0.
+\]
+Writing $z=x+iy$, the inequality $|1+(1-b)z|\leq |1-bz|$ is equivalent to
+\[
+|1-bz|^2-|1+(1-b)z|^2=-2x+(2b-1)|z|^2\geq 0.
+\]
+If $b\geq 1/2$, then $-2x\geq 0$ for $\operatorname{Re}z=x\leq 0$ and
+$(2b-1)|z|^2\geq 0$, so the whole left half-plane is contained in the stability region.
+
+If $b<1/2$, take $z=iy$ with $|y|$ large. Then
+\[
+-2\operatorname{Re}z+(2b-1)|z|^2=(2b-1)y^2<0,
+\]
+so the imaginary axis is not contained in the stability region. Therefore the method is
+A-stable precisely for
+\[
+b\in\left[\frac{1}{2},1\right].
+\]
+\end{solution}
+
+\begin{exercise}
+\label{applied:2026:4}
+Let $A$ be an invertible $N\times N$ matrix. The shifted QR iteration for a given sequence of
+shifts $\{\sigma_n\}$ is defined by
+\[
+A_0=A,\qquad A_n-\sigma_n I_N=Q_nR_n,\qquad
+A_{n+1}=R_nQ_n+\sigma_n I_N,
+\]
+where $I_N$ is the $N\times N$ identity matrix, $Q_n$ is orthogonal, and $R_n$ is upper
+triangular with positive diagonal entries.
+
+(a) Prove that if no $\sigma_n$ is an eigenvalue of $A$, then the sequences $\{A_n\}$,
+$\{Q_n\}$, and $\{R_n\}$ are uniquely defined and satisfy
+\[
+A_{n+1}=Q_n^T A_n Q_n,\qquad A_{n+1}=R_nA_nR_n^{-1}.
+\]
+
+(b) Suppose $A$ is a symmetric $2\times 2$ matrix with eigenvalues $\lambda_1$ and
+$\lambda_2$. Let $\sigma_0=\lambda_1$. Find $A_1$.
+
+(c) Let $\widehat{Q}_n=Q_0\cdots Q_{n-1}$ and
+$\widehat{R}_n=R_{n-1}\cdots R_0$ for $n\geq 1$. Prove
+\[
+\widehat{Q}_{k+1}\widehat{R}_{k+1}
+=\prod_{i=0}^k (A-\sigma_i I_N).
+\]
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Similarity identities and uniqueness.}
+Assume inductively that $A_n$ is orthogonally similar to $A$. Then $A_n$ and $A$ have the
+same eigenvalues. Since $\sigma_n$ is not an eigenvalue of $A$, the matrix
+$A_n-\sigma_n I_N$ is nonsingular. Every nonsingular square matrix has a unique QR
+factorization with $Q_n$ orthogonal and $R_n$ upper triangular with positive diagonal entries.
+Thus $Q_n$ and $R_n$ are uniquely defined, and so is $A_{n+1}$.
+
+From $A_n-\sigma_n I_N=Q_nR_n$, we have $A_n=Q_nR_n+\sigma_n I_N$. Therefore
+\[
+Q_n^TA_nQ_n
+=Q_n^T(Q_nR_n+\sigma_n I_N)Q_n
+=R_nQ_n+\sigma_n I_N
+=A_{n+1}.
+\]
+This proves that $A_{n+1}$ is orthogonally similar to $A_n$, hence to $A$, and closes the
+induction. Also,
+\[
+R_nA_nR_n^{-1}
+=R_n(Q_nR_n+\sigma_n I_N)R_n^{-1}
+=R_nQ_n+\sigma_n I_N
+=A_{n+1}.
+\]
+
+\textbf{(b) Exact eigenvalue shift.}
+Here $\sigma_0=\lambda_1$ is an eigenvalue of $A$, so the hypothesis in part (a) fails:
+$A-\lambda_1I$ is singular and the QR factorization with all diagonal entries of $R$ positive
+does not exist. Thus, under the literal definition stated in the problem, $A_1$ is not
+well-defined.
+
+If $\lambda_1\neq \lambda_2$ and one uses the standard rank-deficient extension of the QR
+step, the result is the familiar one-step deflation. For an unreduced symmetric $2\times 2$
+matrix, $A-\lambda_1I$ has rank one. The first QR vector can be chosen in the range of
+$A-\lambda_1I$, which is the eigenspace for $\lambda_2$, while the second QR vector spans the
+nullspace of $A-\lambda_1I$, the eigenspace for $\lambda_1$. With this convention,
+\[
+A_1=Q_0^TAQ_0=
+\begin{pmatrix}
+\lambda_2 & 0\\
+0 & \lambda_1
+\end{pmatrix}.
+\]
+The important point is that this conclusion uses an extra convention for the singular QR
+step; it is not forced by the positive-diagonal nonsingular QR definition in part (a).
+
+\textbf{(c) Product formula.}
+Assume the QR steps under discussion are defined, for example under the hypothesis of part
+(a).
+First note from part (a) that
+\[
+A_n=\widehat{Q}_n^T A\widehat{Q}_n.
+\]
+We prove the product identity by induction. For $k=0$,
+\[
+\widehat{Q}_1\widehat{R}_1=Q_0R_0=A-\sigma_0I_N.
+\]
+Assume
+\[
+\widehat{Q}_k\widehat{R}_k=\prod_{i=0}^{k-1}(A-\sigma_iI_N).
+\]
+Since
+\[
+Q_kR_k=A_k-\sigma_kI_N
+=\widehat{Q}_k^T(A-\sigma_kI_N)\widehat{Q}_k,
+\]
+we obtain
+\begin{align*}
+\widehat{Q}_{k+1}\widehat{R}_{k+1}
+&=\widehat{Q}_k Q_kR_k\widehat{R}_k\\
+&=\widehat{Q}_k\widehat{Q}_k^T(A-\sigma_kI_N)\widehat{Q}_k\widehat{R}_k\\
+&=(A-\sigma_kI_N)\prod_{i=0}^{k-1}(A-\sigma_iI_N).
+\end{align*}
+All factors are polynomials in $A$, hence commute. Therefore
+\[
+\widehat{Q}_{k+1}\widehat{R}_{k+1}
+=\prod_{i=0}^k(A-\sigma_iI_N).
+\]
+\end{solution}
+
+\begin{exercise}
+\label{applied:2026:5}
+Let $A\in \mathbb{R}^{n\times n}$ be an $n$ by $n$ real matrix and let $\sigma_i(A)$ be its
+$i$-th largest singular value. A vector $x\in \mathbb{R}^n$ such that $Ax=x$ is called a fixed
+point of $A$.
+
+(a) Assume $\sigma_1(A)\leq 1$. Show that every fixed point of $A$ is a fixed point of its
+transpose $A^T$.
+
+(b) Consider
+\[
+A=
+\begin{pmatrix}
+1 & 1\\
+0 & 0
+\end{pmatrix}
+\]
+to verify that the assertion in (a) is not generally true without assuming $\sigma_1(A)\leq 1$.
+
+(c) Assume $AA^T=A^TA$. Show that every fixed point of $A$ is a fixed point of its transpose
+$A^T$.
+\end{exercise}
+
+\begin{solution}
+\textbf{Statement-risk note.}
+The statement is consistent as written: part (b) is explicitly asking for a
+counterexample when the singular-value hypothesis in (a) is removed, while (c)
+uses normality as a different sufficient condition.
+
+\textbf{(a) Contraction case.}
+The assumption $\sigma_1(A)\leq 1$ means $\|A\|_2\leq 1$, or equivalently
+$I-A^TA$ is positive semidefinite. Let $Ax=x$. Then
+\[
+\|x\|_2^2=\|Ax\|_2^2=x^TA^TAx\leq x^Tx=\|x\|_2^2.
+\]
+Equality holds, so
+\[
+x^T(I-A^TA)x=0.
+\]
+Because $I-A^TA$ is positive semidefinite, this implies
+\[
+(I-A^TA)x=0.
+\]
+Using $Ax=x$,
+\[
+A^Tx=A^TAx=x.
+\]
+Thus every fixed point of $A$ is also a fixed point of $A^T$.
+
+\textbf{(b) Counterexample without the singular-value assumption.}
+For
+\[
+A=
+\begin{pmatrix}
+1 & 1\\
+0 & 0
+\end{pmatrix},
+\]
+the fixed point equation $Ax=x$ gives
+\[
+\begin{pmatrix}
+x_1+x_2\\
+0
+\end{pmatrix}
+=
+\begin{pmatrix}
+x_1\\
+x_2
+\end{pmatrix},
+\]
+so $x_2=0$. Hence every vector $(a,0)^T$ is a fixed point of $A$. But
+\[
+A^T
+\begin{pmatrix}
+a\\
+0
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0\\
+1 & 0
+\end{pmatrix}
+\begin{pmatrix}
+a\\
+0
+\end{pmatrix}
+=
+\begin{pmatrix}
+a\\
+a
+\end{pmatrix},
+\]
+which equals $(a,0)^T$ only when $a=0$. Thus a nonzero fixed point of $A$ need not be a fixed
+point of $A^T$. Indeed, $\sigma_1(A)=\sqrt{2}>1$.
+
+\textbf{(c) Normal real matrix case.}
+Let $B=A-I$. The condition $AA^T=A^TA$ implies
+\[
+BB^T=(A-I)(A^T-I)=AA^T-A-A^T+I
+\]
+and
+\[
+B^TB=(A^T-I)(A-I)=A^TA-A^T-A+I.
+\]
+Thus $BB^T=B^TB$, so $B$ is normal. For a real normal matrix $B$,
+\[
+\|Bx\|_2^2=x^TB^TBx=x^TBB^Tx=\|B^Tx\|_2^2.
+\]
+If $Ax=x$, then $Bx=(A-I)x=0$. The identity above gives $\|B^Tx\|_2=0$, hence
+\[
+B^Tx=(A^T-I)x=0.
+\]
+Therefore $A^Tx=x$.
+\end{solution}
+
+\begin{exercise}
+\label{applied:2026:6}
+Let the subdifferential of a convex function $f:\mathbb{R}^n\to \mathbb{R}\cup\{+\infty\}$
+at a point $x$ be denoted by $\partial f(x)$. Recall that a vector $x^*\in \mathbb{R}^n$ is a
+subgradient of $f$ at $x$ if it satisfies
+\[
+f(z)\geq f(x)+\langle x^*,z-x\rangle,\qquad \forall z\in \mathbb{R}^n.
+\]
+Namely,
+\[
+\partial f(x)=\{x^*: f(z)\geq f(x)+\langle x^*,z-x\rangle,\ \forall z\in \mathbb{R}^n\}.
+\]
+Here, $\langle x,y\rangle=x^Ty$ for any vectors $x$ and $y$ in $\mathbb{R}^n$. We assume
+$n\geq 2$; the $n=1$ case is trivial.
+
+(a) Let $f:\mathbb{R}^n\to \mathbb{R}$ be defined by
+\[
+f(x)=\max_{i=1,\ldots,n}x_i,\qquad x=(x_1,\ldots,x_n)^T\in \mathbb{R}^n.
+\]
+Compute the subdifferential $\partial f(0)$.
+
+(b) Let
+\[
+g(x)=\max_{i=1,\ldots,n}x_i+\delta_{\mathbb{R}_+^n}(x),
+\]
+where $\delta_{\mathbb{R}_+^n}$ is the indicator function of the non-negative orthant
+$\mathbb{R}_+^n$, namely $\delta_{\mathbb{R}_+^n}(x)=0$ if $x\geq 0$ and $+\infty$ otherwise.
+Show that
+\[
+\partial g(0)=\partial f(0)-\mathbb{R}_+^n.
+\]
+Here, one may use the fact that
+$\partial g(x)=\partial f(x)+\partial \delta_{\mathbb{R}_+^n}(x)$ for
+$g(x)=f(x)+\delta_{\mathbb{R}_+^n}(x)$.
+\end{exercise}
+
+\begin{solution}
+\textbf{(a) Subdifferential of the maximum at the origin.}
+The function can be written as
+\[
+f(x)=\max_{1\leq i\leq n}\langle e_i,x\rangle,
+\]
+where $e_i$ is the $i$-th standard basis vector. At $x=0$, every affine function
+$\langle e_i,x\rangle$ is active. The subdifferential of a pointwise maximum of finitely many
+linear functions is the convex hull of the active gradients, so
+\[
+\partial f(0)=\operatorname{conv}\{e_1,\ldots,e_n\}.
+\]
+Equivalently,
+\[
+\partial f(0)=\left\{p\in \mathbb{R}^n:\ p_i\geq 0\text{ for all }i,
+\sum_{i=1}^n p_i=1\right\}.
+\]
+To check this directly, if $p$ is in the simplex, then
+\[
+\langle p,z\rangle=\sum_{i=1}^n p_i z_i\leq \max_i z_i=f(z),
+\]
+and since $f(0)=0$, this is exactly the subgradient inequality at $0$. Conversely, the
+subgradient inequality with $z=t\mathbf{1}$ and
+$t>0$ gives $\sum_i p_i\leq 1$, while $t<0$ gives $\sum_i p_i\geq 1$, hence
+$\sum_i p_i=1$. Taking $z=-te_j$ with $t>0$ gives $0=f(z)\geq -tp_j$, so $p_j\geq 0$ for
+each $j$.
+
+\textbf{(b) Adding the non-negative orthant constraint.}
+The subdifferential of the indicator function is the normal cone. At the origin,
+\[
+\partial \delta_{\mathbb{R}_+^n}(0)
+=N_{\mathbb{R}_+^n}(0)
+=\{q\in \mathbb{R}^n:\langle q,z\rangle\leq 0\text{ for all }z\in \mathbb{R}_+^n\}.
+\]
+This cone is exactly the non-positive orthant:
+\[
+N_{\mathbb{R}_+^n}(0)=-\mathbb{R}_+^n.
+\]
+Using the stated sum rule,
+\[
+\partial g(0)
+=\partial f(0)+\partial \delta_{\mathbb{R}_+^n}(0)
+=\partial f(0)-\mathbb{R}_+^n.
+\]
+\end{solution}

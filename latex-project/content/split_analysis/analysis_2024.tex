@@ -228,19 +228,88 @@ Then there exists a universal constant $C$ such that
 \textbf{Steps:}
 
 \par\vspace{\baselineskip}
-1. \textbf{Define the Operator:} Let $T$ be the operator that turns our initial state $u_0$ into the entire history of the heat solution $u(t,x)$. We want to check if the total "energy" of the peak values over time is finite.
+1. \textbf{Define the Operator:} Let
+\[
+(Tu_0)(t,x)=e^{t\Delta}u_0(x),\qquad t>0.
+\]
+We need to prove
+\[
+\|Tu_0\|_{L_t^2L_x^\infty}\leq C\|u_0\|_{L_x^2}.
+\]
 
 \par\vspace{\baselineskip}
-2. \textbf{Use the $TT^*$ Trick:} We check how the heat flow behaves when we go from time $s$ to time $t$. The heat kernel $e^{(s+t)\Delta}$ links these two times.
+2. \textbf{Dualize the Target Norm:} It is enough to show that for every test function $F(t,x)$ with
+\[
+\int_0^\infty \|F(t,\cdot)\|_{L^1_x}^2\,dt\leq1,
+\]
+we have
+\[
+\left|\int_0^\infty\int_{\mathbb{R}^2}
+e^{t\Delta}u_0(x)F(t,x)\,dx\,dt\right|
+\leq C\|u_0\|_2.
+\]
+By self-adjointness of the heat semigroup, the left side is
+\[
+\left|\left\langle u_0,\int_0^\infty e^{t\Delta}F(t,\cdot)\,dt\right\rangle_{L^2_x}\right|.
+\]
+Thus it suffices to bound
+\[
+T^*F:=\int_0^\infty e^{t\Delta}F(t,\cdot)\,dt
+\]
+in $L^2_x$.
 
 \par\vspace{\baselineskip}
-3. \textbf{Estimate Peak Decay:} At any two times $s$ and $t$, the heat flow formula says the interaction is bounded by $1/(s+t)$. This is the decay rate of the heat kernel in 2D.
+3. \textbf{Use the $TT^*$ Computation:} We compute
+\[
+\begin{aligned}
+\|T^*F\|_2^2
+&=\int_0^\infty\int_0^\infty
+\left\langle e^{s\Delta}F(s),e^{t\Delta}F(t)\right\rangle_{L^2_x}\,ds\,dt\\
+&=\int_0^\infty\int_0^\infty
+\left\langle F(s),e^{(s+t)\Delta}F(t)\right\rangle\,ds\,dt.
+\end{aligned}
+\]
+The heat kernel in $\mathbb{R}^2$ is
+\[
+K_\tau(x)=\frac{1}{4\pi\tau}e^{-\frac{|x|^2}{4\tau}},
+\]
+so
+\[
+\|e^{(s+t)\Delta}F(t)\|_\infty
+\leq \frac{1}{4\pi(s+t)}\|F(t)\|_1.
+\]
+Hence, writing $a(t)=\|F(t)\|_1$,
+\[
+\|T^*F\|_2^2
+\leq
+\frac{1}{4\pi}
+\int_0^\infty\int_0^\infty
+\frac{a(s)a(t)}{s+t}\,ds\,dt.
+\]
 
 \par\vspace{\baselineskip}
-4. \textbf{Apply Hilbert's Inequality:} Our problem reduces to estimating a double integral of the form $\iint \frac{a(s)a(t)}{s+t} ds dt$. This is exactly the type of integral Hilbert's Inequality was built to bound! The inequality proves that the total interaction across all time $(s, t)$ is finite.
+4. \textbf{Apply Hilbert's Inequality:} Hilbert's integral inequality gives
+\[
+\int_0^\infty\int_0^\infty
+\frac{a(s)a(t)}{s+t}\,ds\,dt
+\leq \pi \|a\|_{L^2(0,\infty)}^2.
+\]
+Therefore
+\[
+\|T^*F\|_2^2\leq \frac14\|a\|_2^2.
+\]
+By the duality step,
+\[
+\|e^{t\Delta}u_0\|_{L_t^2L_x^\infty}
+\leq C\|u_0\|_2.
+\]
 
 \par\vspace{\baselineskip}
-5. \textbf{Conclude:} The constant $C$ comes directly from the constant in Hilbert's Inequality and the heat kernel factor.
+5. \textbf{Conclude:} Squaring this estimate gives
+\[
+\int_0^\infty \|u(t)\|_{L^\infty}^2\,dt
+\leq C\|u_0\|_{L^2}^2.
+\]
 
 \par\vspace{\baselineskip}
 \textbf{Intuition:}
@@ -269,13 +338,112 @@ where $\hat{B}(|\eta|,t) := \int_{\mathbb{R}^N}B(|q|,t)e^{-iq\cdot\eta}\,dq$, $\
 \end{exercise}
 
 \begin{solution}
-\textbf{Motivation:} This is known as Bobylev's Formula, a landmark result in kinetic theory. It is the "magic key" for solving the Boltzmann equation (which describes how particles collide). Instead of dealing with complicated collision integrals in physical space (where particles hit each other), it moves the problem into frequency space, where the math becomes much more transparent.
+\textbf{Motivation:} This is Bobylev's formula.  It says that the gain collision operator becomes, after Fourier transform, an averaged bilinear multiplier.
 
-The derivation follows three major steps:
+\par\vspace{\baselineskip}
+\textbf{Fourier convention and regularity convention.}
+Use the symmetric normalization
+\[
+\hat f(\xi)=(2\pi)^{-N/2}\int_{\mathbb{R}^N}f(x)e^{-ix\cdot\xi}\,dx,
+\qquad
+f(x)=(2\pi)^{-N/2}\int_{\mathbb{R}^N}\hat f(\xi)e^{ix\cdot\xi}\,d\xi.
+\]
+The computation is first justified for $f,g\in\mathcal{S}(\mathbb{R}^N)$ and for a smooth compactly supported collision kernel in the relative variable.  For rougher kernels, the same identity is then read by truncation and approximation, or distributionally, whenever both sides are defined.
 
-1. \textbf{Coordinate Transformation:} We switch from particle coordinates $(x, y)$ to center-of-mass and relative velocity. This separates the "averaging" effect of the collision from the particles' individual motions.
-2. \textbf{Fourier Analysis:} We apply the Fourier transform $\mathcal{F}$. A key trick is using the identity $\mathcal{F}[g(v-a)f(v+a)](\xi)$, which converts the collision into a convolution-like structure involving the frequency-shifted versions of $\hat{g}$ and $\hat{f}$.
-3. \textbf{Symmetry Utilization:} We leverage the symmetry of the unit sphere $S^{N-1}$ and the definition of $\hat{B}$. After a rotation and a change of variables ($\eta = \xi^- + \eta'$), the integral simplifies into the final, symmetric form that relates the collision kernel $\hat{B}$ to the pre-collision frequencies.
+\par\vspace{\baselineskip}
+\textbf{Step 1: Center and relative variables.}
+Put
+\[
+q=x-y,\qquad c=\frac{x+y}{2}.
+\]
+Then $dy=dq$, $x=c+q/2$, and
+\[
+x'=c+\frac{|q|\sigma}{2},
+\qquad
+y'=c-\frac{|q|\sigma}{2}.
+\]
+Hence
+\[
+\begin{aligned}
+\widehat{Q(g,f)}(\xi)
+&=(2\pi)^{-N/2}\int e^{-ix\cdot\xi}Q(g,f)(x)\,dx \\
+&=(2\pi)^{-N/2}
+\int_{S^{N-1}}\int_{\mathbb{R}^N}\int_{\mathbb{R}^N}
+B\left(|q|,\frac{q}{|q|}\cdot\sigma\right)
+g\left(c-\frac{|q|\sigma}{2}\right)
+f\left(c+\frac{|q|\sigma}{2}\right)
+e^{-i(c+q/2)\cdot\xi}\,dc\,dq\,d\sigma .
+\end{aligned}
+\]
 
-This formula shows that in frequency space, collisions are just a weighted average of product-pairs of the original distribution's frequency components.
+\par\vspace{\baselineskip}
+\textbf{Step 2: Insert inverse Fourier transforms.}
+Using the inverse transform for $g$ and $f$, the integration in $c$ gives the delta constraint that the two frequencies add to $\xi$:
+\[
+\zeta+\theta=\xi.
+\]
+After integrating out $\theta$, one obtains
+\[
+\widehat{Q(g,f)}(\xi)
+=(2\pi)^{-N/2}
+\int_{S^{N-1}}\int_{\mathbb{R}^N}
+K(\xi,\zeta,\sigma)\hat g(\zeta)\hat f(\xi-\zeta)\,d\zeta\,d\sigma,
+\]
+where the remaining relative-velocity factor is
+\[
+K(\xi,\zeta,\sigma)
+=
+\int_{\mathbb{R}^N}
+B\left(|q|,\frac{q}{|q|}\cdot\sigma\right)
+\exp\left(-\frac{i}{2}q\cdot\xi\right)
+\exp\left(\frac{i}{2}|q|\sigma\cdot(\xi-2\zeta)\right)
+dq.
+\]
+
+\par\vspace{\baselineskip}
+\textbf{Step 3: Bobylev's change-of-variables identity.}
+For $\xi\neq0$, set
+\[
+\xi^\pm=\frac{\xi\pm|\xi|\sigma}{2},
+\qquad
+\zeta=\xi^-+\eta.
+\]
+The non-obvious part of the computation is the following standard Bobylev identity:
+\[
+K(\xi,\xi^-+\eta,\sigma)
+=
+\hat B\left(|\eta|,\frac{\xi}{|\xi|}\cdot\sigma\right),
+\]
+where
+\[
+\hat B(|\eta|,t)
+:=
+\int_{\mathbb{R}^N}B(|q|,t)e^{-iq\cdot\eta}\,dq.
+\]
+Here is the exam-level way to justify it.  Use the weak form of the gain collision operator and test against the plane wave $e^{-ix\cdot\xi}$.  The elastic collision map
+\[
+(x,y)\longleftrightarrow (x',y')
+\]
+preserves the center of mass, preserves the relative speed $|x-y|$, and has Jacobian $1$.  After this change of variables the plane wave carries the post-collisional phase
+\[
+e^{-i(c+|q|\sigma/2)\cdot\xi},
+\]
+while the product $g(y)f(x)$ contributes frequencies $\zeta$ and $\xi-\zeta$.  The remaining relative-velocity Fourier variable is exactly
+\[
+\eta=\zeta-\xi^-.
+\]
+Thus the Fourier transform of the radial-in-speed kernel is evaluated at $|\eta|$, and the angular parameter is the fixed angle between the Fourier direction $\xi/|\xi|$ and $\sigma$.  This gives precisely the displayed identity.  In a fully rigorous proof one first inserts a compact cutoff in $q$, performs the preceding measure-preserving change of variables by Fubini, and then removes the cutoff by dominated convergence or distributional convergence.
+
+\par\vspace{\baselineskip}
+\textbf{Step 4: Finish.}
+The substitution $\zeta=\xi^-+\eta$ has unit Jacobian and gives $\xi-\zeta=\xi^+-\eta$.  Therefore
+\[
+\widehat{Q(g,f)}(\xi)
+=(2\pi)^{-N/2}
+\int_{\mathbb{R}^N\times S^{N-1}}
+\hat B\left(|\eta|,\frac{\xi}{|\xi|}\cdot\sigma\right)
+\hat g(\xi^-+\eta)\hat f(\xi^+-\eta)
+\,d\eta\,d\sigma.
+\]
+This is the stated formula for $\xi\neq0$.  The value at $\xi=0$ is obtained by taking the limit when the angular expression is meaningful, or by interpreting the formula distributionally.
 \end{solution}

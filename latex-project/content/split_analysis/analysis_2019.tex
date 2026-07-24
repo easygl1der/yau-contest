@@ -69,8 +69,19 @@ Can you provide constant $K$ so that $K<10$? In the problem, all the $L^p$-space
 
 \begin{solution}
 \textbf{Prerequisites:}
-1. \textbf{Plancherel Theorem:} $\|f\|_{L^2}^2 = \|\hat{f}\|_{L^2}^2$. The energy of a function in the spatial domain is equal to the energy in the frequency domain.
-2. \textbf{Fourier Transform Properties:} $|\hat{f}(\xi)| \leq \|f\|_{L^1}$ and the Fourier transform of a gradient corresponds to multiplying by frequency: $\mathcal{F}(\nabla f) = 2\pi i \xi \hat{f}(\xi)$.
+1. \textbf{Fourier convention:} In this solution we use
+\[
+\widehat f(\xi)=\int_{\mathbb{R}^2}f(x)e^{-2\pi ix\cdot\xi}\,dx.
+\]
+With this convention Plancherel reads $\|f\|_{L^2}=\|\widehat f\|_{L^2}$ and
+\[
+\widehat{\nabla f}(\xi)=2\pi i\xi\,\widehat f(\xi).
+\]
+2. \textbf{Fourier Transform Properties:} $|\hat{f}(\xi)| \leq \|f\|_{L^1}$ and high frequencies are controlled by the gradient through
+\[
+\int_{\mathbb{R}^2}|\xi|^2|\widehat f(\xi)|^2\,d\xi
+=\frac{1}{4\pi^2}\|\nabla f\|_{L^2}^2.
+\]
 3. \textbf{Optimizing a Split:} When an integral is difficult to bound globally, we split it into "low frequency" and "high frequency" regions and optimize the boundary.
 
 \textbf{Steps:}
@@ -192,6 +203,8 @@ Let $\Omega\subset\mathbb{R}^2$ be a bounded domain with smooth boundary. Prove 
 \end{exercise}
 
 \begin{solution}
+We use two standard facts on a bounded smooth planar domain: the Poincar\'e inequality makes $\|\nabla u\|_2$ an equivalent norm on $H_0^1(\Omega)$, and the two-dimensional Sobolev embedding gives $H_0^1(\Omega)\hookrightarrow L^s(\Omega)$ for every finite $s$.
+
 Consider the energy functional $J: H_0^1(\Omega) \to \mathbb{R}$ defined by:
 \[
 J(u) = \int_\Omega \left( \frac{1}{2}|\nabla u|^2 + \frac{1}{q+1}|u|^{q+1} + fu \right) dx.
@@ -214,7 +227,38 @@ Show that there is no non-zero $f\in C_0^{\infty}(\mathbb{R}^2)$ (compactly supp
 \end{exercise}
 
 \begin{solution}
-Suppose $f \in C_0^\infty(\mathbb{R}^2)$ has compact support. By the Paley-Wiener theorem, its Fourier transform $\hat{f}(\xi)$ can be extended to an entire function on $\mathbb{C}^2$. If $\hat{f}$ is also compactly supported on $\mathbb{R}^2$, then $\hat{f}$ must vanish on an open set in $\mathbb{R}^2$. By the identity theorem for holomorphic functions, an entire function that vanishes on an open subset of $\mathbb{R}^2$ must be identically zero. Therefore, $\hat{f} \equiv 0$, which implies $f \equiv 0$ by the Fourier inversion formula. Thus, no such non-zero function exists.
+This is the elementary Paley--Wiener mechanism, but we only need the special case below rather than the full theorem.
+
+Suppose $f \in C_0^\infty(\mathbb{R}^2)$ has compact support.  Choose $R>0$ such that $\operatorname{supp} f\subset B_R(0)$.  With the convention
+\[
+\widehat f(\zeta)=\int_{\mathbb{R}^2}f(x)e^{-ix\cdot \zeta}\,dx,
+\]
+the same integral makes sense for every $\zeta\in\mathbb{C}^2$, because
+\[
+|e^{-ix\cdot \zeta}|
+\leq e^{R|\operatorname{Im}\zeta|}
+\]
+on the support of $f$.  Differentiating under the integral sign shows that this extension is entire in the two complex variables $\zeta_1,\zeta_2$.
+
+Assume now that $\widehat f$ is compactly supported on the real plane $\mathbb{R}^2$.  Then there is $M>0$ such that
+\[
+\widehat f(\xi)=0,\qquad |\xi|>M,\quad \xi\in\mathbb{R}^2.
+\]
+In particular, for every fixed real $\xi_2$ with $|\xi_2|>M+1$, the one-variable entire function
+\[
+z_1\mapsto \widehat f(z_1,\xi_2)
+\]
+vanishes for all real $z_1$.  By the one-variable identity theorem it is identically zero.  Hence $\widehat f(z_1,\xi_2)=0$ for all $z_1\in\mathbb{C}$ and all such real $\xi_2$.
+
+Now fix any $z_1\in\mathbb{C}$.  The one-variable entire function
+\[
+z_2\mapsto \widehat f(z_1,z_2)
+\]
+vanishes on the real interval $\{|\xi_2|>M+1\}$, so the identity theorem gives
+\[
+\widehat f(z_1,z_2)\equiv 0
+\]
+for all $z_2\in\mathbb{C}$.  Since $z_1$ was arbitrary, $\widehat f\equiv 0$ on $\mathbb{C}^2$.  Restricting back to $\mathbb{R}^2$ and applying Fourier inversion gives $f\equiv0$, contradicting the assumption that $f$ is non-zero.  Therefore no such non-zero compactly supported smooth function exists.
 \end{solution}
 
 \begin{exercise}
@@ -302,5 +346,3 @@ Since $E(0) = 0$ (because the support of initial data is outside the base of the
 In particular, $E(|t_0|) = 0$, which implies $u(t_0, x_0) = 0$ and $u_t(t_0, x_0) = 0$.
 Thus the support of $u$ at time $t_0$ is contained in the set $\{ x : \text{dist}(x, K) \leq |t_0| \}$, which is compact.
 \end{solution}
-
-

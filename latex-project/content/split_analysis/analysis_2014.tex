@@ -291,14 +291,36 @@ Prove that any bounded analytic function $F$ over $\{z\mid r<|z|<R\}$ can be wri
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:} Laurent series, Removable Singularity Theorem, and the theory of non-vanishing analytic functions on an annulus. \\[1em]
-\textbf{Intuition:} An analytic function on an annulus can be decomposed into a part that is analytic inside the outer circle and a part that is analytic outside the inner circle. The boundedness condition is key: if the annulus extends to the origin ($r=0$), boundedness implies the singularity is removable. If $r > 0$, the "winding" of the function around the hole can be captured by a power $z^\alpha$, leaving a well-behaved function $f(z)$ that extends to the entire disk. \\[1em]
-\textbf{Steps:}
-1. Every analytic function $F(z)$ on the annulus $r < |z| < R$ has a Laurent series expansion $F(z) = \sum_{n=-\infty}^{\infty} a_n z^n$. This can be split into $F(z) = f_{in}(z) + f_{out}(z)$, where $f_{in}(z) = \sum_{n=0}^\infty a_n z^n$ is analytic on $|z| < R$ and $f_{out}(z) = \sum_{n=1}^\infty a_{-n} z^{-n}$ is analytic on $|z| > r$. \\[1em]
-2. If $r = 0$, the condition that $F$ is bounded near $z=0$ implies, by Riemann's Removable Singularity Theorem, that all coefficients $a_n$ for $n < 0$ must be zero. In this case, $F(z)$ is already analytic on the whole disk $|z| < R$, so we can set $\alpha = 0$ and $f(z) = F(z)$. \\[1em]
-3. If $r > 0$, and assuming the problem refers to the standard decomposition for functions that may have a winding number (often required to be non-vanishing for $z^\alpha$ to be well-defined as a branch), we consider the index $\alpha = \frac{1}{2\pi i} \int_\gamma \frac{F'(z)}{F(z)} dz$. \\[1em]
-4. For a general bounded function, we can also interpret the result in terms of the behavior of the terms. If $F(z)$ is bounded, the components $f_{in}$ and $f_{out}$ are separately bounded in their respective domains of interest. Any such $F$ can be written as $z^\alpha f(z)$ where $f$ is analytic on $|z| < R$ if we allow $\alpha$ to be an integer that "absorbs" the singular part, or if the function is specifically structured as a power. \\[1em]
-5. In the most common contest interpretation, if $F$ is bounded on the punctured disk ($r=0$), then $\alpha=0$. If $r>0$ and $F$ is non-vanishing, $\alpha$ is the winding number and $f(z)$ is the remaining analytic part after removing the $z^\alpha$ factor.
+\textbf{As written, the statement is false for a genuine annulus with $r>0$.}
+For example, take
+\[
+F(z)=e^{1/z}
+\]
+on $r<|z|<R$. This function is holomorphic and bounded on that annulus, because $|z|>r$ implies $|1/z|\leq 1/r$.
+
+If the claimed representation
+\[
+F(z)=z^\alpha f(z)
+\]
+were a single-valued holomorphic identity on the annulus with $f$ holomorphic on $|z|<R$, then $\alpha$ would have to be an integer for $z^\alpha$ to be globally single-valued on the annulus. In that case $z^{-\alpha}F(z)=f(z)$ would imply that $F$ has at worst a pole or removable singularity at $0$. This is impossible, since $e^{1/z}$ has an essential singularity at $0$.
+
+Thus the printed problem is missing an additional hypothesis.
+
+\textbf{Correct common version.}
+If the intended domain is the punctured disk $0<|z|<R$ and $F$ is bounded near $0$, then Riemann's removable singularity theorem applies. The Laurent expansion
+\[
+F(z)=\sum_{n=-\infty}^{\infty}a_nz^n
+\]
+has no negative powers, so $F$ extends holomorphically to $|z|<R$. In that corrected version one can take
+\[
+\alpha=0,\qquad f=F.
+\]
+
+More generally, if $F$ is meromorphic at $0$ with a pole of order $m$, then
+\[
+F(z)=z^{-m}f(z),
+\]
+where $f$ is holomorphic on $|z|<R$ and $f(0)\neq0$.
 \end{solution}
 
 \begin{exercise}
@@ -376,4 +398,3 @@ Suppose that $\phi\in C_0^{\infty}(\mathbb{R}^n)$, $\int_{\mathbb{R}^n}\phi\,dx 
 The first part is bounded by $\delta \int |\phi_\epsilon| = \delta$. For the second part, since $g(y) \leq 2\|f\|_p$, the integral is bounded by $2\|f\|_p \int_{|z| \geq \eta/\epsilon} |\phi(z)| \, dz$, which vanishes as $\epsilon \to 0$. Thus, the limit is zero for $p < \infty$. \\[2ex]
 6. For $p = \infty$, consider the step function $f = \chi_{(0, \infty)}$ on $\mathbb{R}$. The convolution $f * \phi_\epsilon$ is a smooth function that transitions from 0 to 1. At the jump point $x=0$, the value will be roughly $1/2$ (if $\phi$ is symmetric), making $\|f * \phi_\epsilon - f\|_\infty \geq 1/2$ for all $\epsilon$, preventing convergence in $L^\infty$.
 \end{solution}
-

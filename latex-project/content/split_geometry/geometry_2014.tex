@@ -281,7 +281,27 @@ where $H$ is the mean curvature of $M$ and $d\sigma$ is the area element of $M$.
 \begin{solution}
 \textbf{Geometric Intuition:} This is the Willmore inequality for the sphere (and a general bound for surfaces). It states that the "average" bending of a closed surface must be at least that of a sphere. The $4\pi$ comes from the fact that the Gauss map of a closed surface must cover the unit sphere at least once, and for a sphere, $H^2 = K$.
 
-\textbf{Proof:} For any point, $H^2 \ge K$. On the part of the surface where $K > 0$ (the "outer" shell), the integral of $H^2$ is bounded by the integral of $K$. For a compact surface in $\mathbb{R}^3$, the Gauss map $N: M \to S^2$ must be surjective, and the integral of $K$ over the region where $K>0$ must be at least the area of $S^2$, which is $4\pi$. Thus $\int H^2 \ge \int_{K>0} K \ge 4\pi$.
+\textbf{Proof:} Let $k_1,k_2$ be the principal curvatures and use the convention $H=(k_1+k_2)/2$. Then
+\[
+H^2-K=\frac{(k_1-k_2)^2}{4}\geq 0.
+\]
+In particular, on the set $M_+=\{K>0\}$ we have $H^2\geq K$, while outside $M_+$ we still have $H^2\geq 0$. Hence
+\[
+\int_M H^2\,d\sigma\geq \int_{M_+}K\,d\sigma.
+\]
+
+Let $N:M\to S^2$ be the Gauss map. Its Jacobian is $K$ with sign, so the area formula gives
+\[
+\int_{M_+}K\,d\sigma
+\]
+as the area of the positively oriented part of the Gauss image counted with multiplicity. Because $M$ is compact, for every $u\in S^2$ a supporting plane with outward normal $u$ touches $\Psi(M)$; at such a support point the Gauss map equals $u$ and $K\geq 0$ in the weak support sense. After a standard small perturbation, this implies that the positive Gauss image covers $S^2$ at least once. Therefore
+\[
+\int_{M_+}K\,d\sigma\geq \operatorname{area}(S^2)=4\pi.
+\]
+Combining the two inequalities gives
+\[
+\int_M H^2\,d\sigma\geq 4\pi.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -294,7 +314,40 @@ Show that it is a smooth submanifold of the tangent bundle $T(S^{2})$ of $S^{2}$
 \begin{solution}
 \textbf{Geometric Intuition:} A point in the unit tangent bundle of $S^2$ is an orthonormal pair of vectors $(p, v)$. Adding a third vector $p \times v$ gives a full rotation matrix in $SO(3)$. Thus $T^1(S^2)$ is naturally identified with the rotation group $SO(3)$. Since rotations can be represented by quaternions up to a sign, $SO(3) \cong \mathbb{R}P^3$.
 
-\textbf{Proof Sketch:} The three constraint equations have linearly independent gradients, confirming the submanifold status. The map $(p, v) \mapsto [p, v, p \times v] \in SO(3)$ is a diffeomorphism. Since $SO(3) \cong S^3 / \{\pm I\} \cong \mathbb{R}P^3$, the result follows.
+\textbf{Proof:}
+Inside $T(S^2)$, a tangent vector is a pair $(p,v)$ with
+\[
+|p|=1,\qquad \langle p,v\rangle=0.
+\]
+The unit tangent bundle is the level set
+\[
+T^1(S^2)=\{(p,v)\in T(S^2): |v|^2=1\}.
+\]
+The function $(p,v)\mapsto |v|^2$ has differential $2\langle v,\cdot\rangle$ in the fiber direction, which is nonzero on $|v|=1$. Hence $T^1(S^2)$ is a smooth hypersurface of $T(S^2)$.
+
+Define
+\[
+\Phi:T^1(S^2)\to SO(3),\qquad
+\Phi(p,v)=\begin{bmatrix}p&v&p\times v\end{bmatrix}.
+\]
+The columns form a positively oriented orthonormal basis of $\mathbb{R}^3$, so $\Phi(p,v)\in SO(3)$. Conversely, if $A\in SO(3)$ has columns $(a_1,a_2,a_3)$, then $(a_1,a_2)\in T^1(S^2)$ and
+\[
+\Phi(a_1,a_2)=A.
+\]
+Thus $\Phi$ is bijective with smooth inverse $A\mapsto (a_1,a_2)$. Therefore
+\[
+T^1(S^2)\cong SO(3).
+\]
+
+Finally, the standard double cover
+\[
+S^3\to SO(3)
+\]
+comes from unit quaternions acting on imaginary quaternions by conjugation. Its kernel is $\{\pm 1\}$, so
+\[
+SO(3)\cong S^3/\{\pm 1\}\cong \mathbb{R}P^3.
+\]
+Therefore $T^1(S^2)$ is diffeomorphic to $\mathbb{R}P^3$.
 \end{solution}
 
 \subsection{Team Exam}
@@ -307,7 +360,32 @@ Compute the fundamental and homology groups of the wedge sum of a circle $S^{1}$
 \begin{solution}
 \textbf{Geometric Intuition:} A wedge sum $X \vee Y$ is two spaces joined at a single point. Its fundamental group is the free product (you can loop around one or the other in any order), and its homology is the direct sum (the cycles in each stay independent).
 
-\textbf{Result:} $\pi_1 \cong \mathbb{Z} * (\mathbb{Z} \oplus \mathbb{Z})$. $H_0 \cong \mathbb{Z}, H_1 \cong \mathbb{Z}^3, H_2 \cong \mathbb{Z}$.
+\textbf{Proof:} Let
+\[
+X=S^1\vee T^2.
+\]
+The intersection point has a contractible neighborhood in each summand, so Seifert--van Kampen gives
+\[
+\pi_1(X)\cong \pi_1(S^1)*\pi_1(T^2)
+\cong \mathbb{Z}*(\mathbb{Z}\oplus \mathbb{Z}).
+\]
+
+For homology, reduced homology of a wedge of connected CW complexes splits:
+\[
+\widetilde H_k(S^1\vee T^2)
+\cong
+\widetilde H_k(S^1)\oplus \widetilde H_k(T^2).
+\]
+Thus
+\[
+H_0(X)\cong \mathbb{Z},\qquad
+H_1(X)\cong \mathbb{Z}\oplus \mathbb{Z}^2\cong \mathbb{Z}^3,
+\]
+\[
+H_2(X)\cong 0\oplus \mathbb{Z}\cong \mathbb{Z},
+\qquad
+H_k(X)=0\quad (k\geq 3).
+\]
 \end{solution}
 
 \begin{exercise}
@@ -318,25 +396,65 @@ Given a properly discontinuous action $F : G \times M \to M$ on a smooth manifol
 \begin{solution}
 \textbf{Geometric Intuition:} Orientation is about a consistent choice of "handedness." If you have a global choice on $M$, it descends to the quotient only if every symmetry in $G$ respects that choice. If a symmetry "flips" the handedness, the quotient becomes non-orientable.
 
+\textbf{Proof of the criterion:}
+Let $\pi:M\to M/G$ be the quotient map. Since the action is properly discontinuous, $\pi$ is a covering map locally modeled on diffeomorphisms from open subsets of $M$ to open subsets of $M/G$.
+
+If $M/G$ is orientable, then pulling back its orientation by $\pi$ orients $M$. Every deck transformation $F(g,\cdot)$ preserves this pulled-back orientation because
+\[
+\pi\circ F(g,\cdot)=\pi.
+\]
+Thus $M$ is orientable and every group element acts orientation-preservingly.
+
+Conversely, suppose $M$ is orientable and each $F(g,\cdot)$ preserves the chosen orientation. For a point $[p]\in M/G$, choose a small evenly covered neighborhood $U$ and one sheet $\widetilde U\subset M$ mapping diffeomorphically to $U$. Transport the orientation of $\widetilde U$ to $U$. If another sheet is chosen, it differs by some $g\in G$, and the orientation is unchanged because $F(g,\cdot)$ preserves orientation. Hence these local orientations on $M/G$ are well-defined and compatible.
+
 \textbf{Application:}
 \begin{enumerate}
-    \item Möbius band: The defining symmetry $(x, y) \mapsto (x+1, -y)$ has a determinant of $-1$ (a flip), so the result is non-orientable.
-    \item $\mathbb{R}P^n$: The antipodal map $x \mapsto -x$ flips $n+1$ coordinates. It is orientation-preserving iff $n+1$ is even, so $n$ must be odd.
+    \item The Möbius band is the quotient of $\mathbb{R}\times (-1,1)$ by the action generated by $(x,y)\mapsto (x+1,-y)$. This map has derivative determinant $-1$, so it reverses orientation. Therefore the quotient is not orientable.
+    \item $\mathbb{R}P^n=S^n/\{x\sim -x\}$. The antipodal map on $S^n$ has degree $(-1)^{n+1}$, so it preserves orientation exactly when $n$ is odd. Hence $\mathbb{R}P^n$ is orientable if and only if $n$ is odd.
 \end{enumerate}
 \end{solution}
 
 \begin{exercise}
 \label{geometry:2014:9}
-(a) Consider the space $Y$ obtained from $S^{2} \times [0, 1] by identifying $(x, 0)$ with $(-x, 0)$ and also identifying $(x, 1) \in S^{2} \times \{1\}$ with $(-x, 1)$, for all $x \in S^{2}$. Show that $Y$ is homeomorphic to the connected sum $\mathbb{R}P^{3} \# \mathbb{R}P^{3}$.
+(a) Consider the space $Y$ obtained from $S^{2} \times [0, 1]$ by identifying $(x, 0)$ with $(-x, 0)$ and also identifying $(x, 1) \in S^{2} \times \{1\}$ with $(-x, 1)$, for all $x \in S^{2}$. Show that $Y$ is homeomorphic to the connected sum $\mathbb{R}P^{3} \# \mathbb{R}P^{3}$.
 (b) Show that $S^{2} \times S^{1}$ is a double cover of the connected sum $\mathbb{R}P^{3} \# \mathbb{R}P^{3}$.
 \end{exercise}
 
 \begin{solution}
 \textbf{Geometric Intuition:} $\mathbb{R}P^3$ is a 3-ball with antipodal boundary points identified. Taking the connected sum $\mathbb{R}P^3 \# \mathbb{R}P^3$ is like taking a cylinder $S^2 \times [0, 1]$ and "capping" both ends with projective planes.
 
-\textbf{Proof Sketch:}
-(a) $S^2 \times [0,1]$ with the specified boundary identifications is exactly the result of removing a ball from two copies of $\mathbb{R}P^3$ and gluing them along the boundary spheres.
-(b) The action $(x, \theta) \mapsto (-x, -\theta)$ on $S^2 \times S^1$ is free and reverses orientation in a way that yields the connected sum of two projective spaces.
+\textbf{Proof of (a):}
+View $\mathbb{R}P^3$ as a closed $3$-ball $D^3$ with antipodal points on $\partial D^3=S^2$ identified. Remove a small open ball around the image of the center of $D^3$. The remaining manifold is homeomorphic to
+\[
+S^2\times [0,1]
+\]
+with antipodal identification on one boundary component only. Therefore, taking two copies of this punctured $\mathbb{R}P^3$ and gluing their new spherical boundary components gives exactly
+\[
+S^2\times[0,1]/\bigl((x,0)\sim(-x,0),\ (x,1)\sim(-x,1)\bigr).
+\]
+This is the space $Y$, so
+\[
+Y\cong \mathbb{R}P^3\#\mathbb{R}P^3.
+\]
+
+\textbf{Proof of (b):}
+Write $S^1$ as $[0,1]/(0\sim 1)$ and define an involution on $S^2\times S^1$ by
+\[
+\iota(x,[t])=(-x,[-t]).
+\]
+It is free, since a fixed point would require $x=-x$ on $S^2$, impossible. The quotient has a fundamental domain $S^2\times[0,1/2]$. At the two boundary components the identifications induced by $\iota$ are antipodal on the $S^2$ factor. Hence
+\[
+(S^2\times S^1)/\langle\iota\rangle
+\cong
+Y
+\cong
+\mathbb{R}P^3\#\mathbb{R}P^3.
+\]
+Thus the quotient map
+\[
+S^2\times S^1\to \mathbb{R}P^3\#\mathbb{R}P^3
+\]
+is a double cover.
 \end{solution}
 
 \begin{exercise}
@@ -347,7 +465,37 @@ Prove that a bi-invariant metric on a Lie group $G$ has nonnegative sectional cu
 \begin{solution}
 \textbf{Geometric Intuition:} Bi-invariant metrics on Lie groups are highly symmetric. The curvature is essentially determined by the Lie bracket $[X, Y]$, which measures the non-commutativity. The positive sectional curvature reflects the fact that these groups are "curved towards themselves" by the group operation.
 
-\textbf{Proof:} Using the Levi-Civita connection $\nabla_X Y = \frac{1}{2}[X, Y]$, the sectional curvature is $K(X, Y) = \frac{1}{4}\|[X, Y]\|^2$. Since the norm squared is always non-negative, $K \ge 0$.
+\textbf{Proof:}
+It suffices to compute on left-invariant vector fields. Bi-invariance of the metric implies ad-invariance:
+\[
+\langle [X,Y],Z\rangle+\langle Y,[X,Z]\rangle=0.
+\]
+The Koszul formula then gives
+\[
+\nabla_XY=\frac{1}{2}[X,Y].
+\]
+Hence
+\[
+R(X,Y)Y
+=\nabla_X\nabla_YY-\nabla_Y\nabla_XY-\nabla_{[X,Y]}Y
+=-\frac{1}{4}[Y,[X,Y]].
+\]
+Using ad-invariance once more,
+\[
+\langle R(X,Y)Y,X\rangle
+=\frac{1}{4}\langle [X,Y],[X,Y]\rangle.
+\]
+For a two-plane spanned by linearly independent $X,Y$,
+\[
+K(X,Y)
+=
+\frac{\langle R(X,Y)Y,X\rangle}
+{|X|^2|Y|^2-\langle X,Y\rangle^2}
+=
+\frac{\|[X,Y]\|^2}
+{4\bigl(|X|^2|Y|^2-\langle X,Y\rangle^2\bigr)}
+\geq 0.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -360,5 +508,44 @@ For which values of $k$ is $M$ complete?
 \begin{solution}
 \textbf{Geometric Intuition:} Completeness means you can never reach the "edge" in finite time. In the upper half plane, the "edges" are $y=0$ and $y=\infty$. The metric $y^{-k}$ acts as a "speed limit." If $k$ is too large, you reach infinity too fast; if $k$ is too small, you reach zero too fast. $k=2$ is the perfect balance (Hyperbolic space).
 
-\textbf{Result:} $k=2$.
+\textbf{Proof:}
+The metric is conformal to the Euclidean metric:
+\[
+ds=y^{-k/2}\sqrt{dx^2+dy^2}.
+\]
+Completeness can fail only by escaping either to the boundary $y=0$ or to infinity.
+
+First consider vertical curves approaching $y=0$:
+\[
+\gamma(t)=(0,t),\qquad 0<t\leq 1.
+\]
+Their length near $0$ is
+\[
+\int_0^1 t^{-k/2}\,dt.
+\]
+This integral diverges exactly when
+\[
+\frac{k}{2}\geq 1,
+\]
+that is, when $k\geq 2$. If $k<2$, the boundary $y=0$ is at finite distance, so the metric is incomplete.
+
+Next consider vertical curves escaping to $y=\infty$:
+\[
+\gamma(t)=(0,t),\qquad t\geq 1.
+\]
+Their length is
+\[
+\int_1^\infty t^{-k/2}\,dt.
+\]
+This integral diverges exactly when
+\[
+\frac{k}{2}\leq 1,
+\]
+that is, when $k\leq 2$. If $k>2$, infinity is at finite distance, so the metric is incomplete.
+
+Thus both ends are infinitely far away only when
+\[
+k=2.
+\]
+For $k=2$, the metric is the standard hyperbolic half-plane metric, which is complete. Therefore $M$ is complete exactly for $k=2$.
 \end{solution}

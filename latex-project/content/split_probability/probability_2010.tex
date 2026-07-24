@@ -680,48 +680,93 @@ Consider $u_t + A u_x = 0$, $u_t + B u_x = 0$, and $u_t + (A+B)u_x = 0$.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites / Core Concepts:}
-\begin{itemize}
-    \item \textbf{Hyperbolic Systems:} A system $u_t + A u_x = 0$ is strongly hyperbolic if the matrix $A$ is diagonalizable with real eigenvalues. This ensures well-posedness.
-    \item \textbf{Well-Posedness:} A PDE problem is well-posed if a solution exists, is unique, and depends continuously on the initial data.
-    \item \textbf{Operator Splitting:} A numerical technique where a complex problem like $u_t + (A+B)u_x = 0$ is solved by alternately applying solvers for the simpler parts $A$ and $B$.
-\end{itemize}
+\textbf{Statement-risk note.}
+As stated, the first assertion is true, but the two guarantee questions have negative
+answers. The stability question also needs a missing hypothesis: the two substeps must
+be stable in a common grid-uniform contraction sense, not merely stable as separate
+power-bounded updates.
 
-\textbf{Intuition / Motivation:}
+\textbf{(i) Well-posedness of the first two systems.}
+If $A=P\Lambda P^{-1}$ with real diagonal $\Lambda$, then $v=P^{-1}u$ satisfies
+\[
+v_t+\Lambda v_x=0.
+\]
+The components are scalar periodic advection equations, so
+\[
+\|v(\cdot,t)\|_2=\|v(\cdot,0)\|_2.
+\]
+Consequently
+\[
+\|u(\cdot,t)\|_2\leq \|P\|_2\|P^{-1}\|_2\|u(\cdot,0)\|_2.
+\]
+The same proof applies to $B$.
 
-This problem deals with the theoretical properties of systems of linear advection equations and how we solve them numerically. Part (i) focuses on the theory: if a matrix can be diagonalized, the system of equations can be perfectly uncoupled into independent scalar equations. Part (ii) asks a tricky linear algebra question: if $A$ and $B$ are "nice" matrices individually, is $A+B$ necessarily "nice"? (Spoiler: No). Part (iii) investigates the splitting method. Even if individual numerical steps for $A$ and $B$ are perfectly stable, alternating them might cause issues if the matrices do not share eigenvectors (i.e., they do not commute).
+\textbf{(ii) The sum is not guaranteed to be well-posed.}
+Take
+\[
+A=
+\begin{pmatrix}
+1&1\\
+0&-1
+\end{pmatrix},
+\qquad
+B=
+\begin{pmatrix}
+-1&0\\
+-2&1
+\end{pmatrix}.
+\]
+Both have distinct real eigenvalues $1,-1$. But
+\[
+A+B=
+\begin{pmatrix}
+0&1\\
+-2&0
+\end{pmatrix}
+\]
+has eigenvalues $\pm i\sqrt 2$. For a Fourier mode $e^{ikx}$, the equation
+$u_t+(A+B)u_x=0$ becomes
+\[
+\widehat u_t=-ik(A+B)\widehat u,
+\]
+which has a growing mode of size $e^{|k|\sqrt 2\,t}$. Therefore no $L^2$ well-posedness
+bound independent of the frequency can hold.
 
-\textbf{Logical Step-by-Step Breakdown:}
+\textbf{(iii) The splitting update is not automatically stable.}
+The assertion is false already for one grid mode. Let
+\[
+S=
+\begin{pmatrix}
+1&0\\
+0&-1
+\end{pmatrix},
+\qquad
+T=
+\begin{pmatrix}
+1&1\\
+0&-1
+\end{pmatrix}.
+\]
+Since $S^2=T^2=I$, the separate updates $u^{n+1}=Su^n$ and $u^{n+1}=Tu^n$ are stable.
+However,
+\[
+TS=
+\begin{pmatrix}
+1&-1\\
+0&1
+\end{pmatrix},
+\qquad
+(TS)^n=
+\begin{pmatrix}
+1&-n\\
+0&1
+\end{pmatrix},
+\]
+so the powers of the split update are unbounded in the $L^2$ operator norm.
 
-\textbf{Step 1: Prove well-posedness for diagonalizable matrices (Part i).}
-
-Consider the system $u_t + A u_x = 0$. We are given that $A$ is diagonalizable with real eigenvalues.
-This means we can write $A = P \Lambda P^{-1}$, where $P$ is an invertible matrix of eigenvectors and $\Lambda$ is a diagonal matrix of real eigenvalues $\lambda_i$.
-Substitute this into the PDE:
-\[ u_t + P \Lambda P^{-1} u_x = 0 \]
-Multiply the entire equation from the left by $P^{-1}$:
-\[ P^{-1} u_t + \Lambda P^{-1} u_x = 0 \]
-Define a new variable $w = P^{-1} u$. Since $P$ is constant, $w_t = P^{-1} u_t$ and $w_x = P^{-1} u_x$.
-The system becomes $w_t + \Lambda w_x = 0$.
-Because $\Lambda$ is diagonal, this is a set of $m$ completely decoupled scalar advection equations: $(w_i)_t + \lambda_i (w_i)_x = 0$.
-Each scalar advection equation with real speed $\lambda_i$ is classically well-posed (solutions simply translate along characteristics). Therefore, the original coupled system is also well-posed in $L^2$. The same logic applies to the system with matrix $B$.
-
-\textbf{Step 2: Evaluate the sum matrix $A+B$ (Part ii).}
-
-Is $A+B$ guaranteed to be diagonalizable with real eigenvalues?
-The answer is no. Even if two matrices are independently diagonalizable and have real eigenvalues, their sum does not inherit these properties unless they commute or satisfy specific structural conditions (like both being symmetric).
-For a counterexample, consider:
-\[ A = \begin{bmatrix} 1 & 5 \\ 0 & -1 \end{bmatrix}, \quad B = \begin{bmatrix} 1 & 0 \\ -1 & -1 \end{bmatrix} \]
-Both have eigenvalues $\pm 1$ and are diagonalizable.
-Their sum is $A+B = \begin{bmatrix} 2 & 5 \\ -1 & -2 \end{bmatrix}$. 
-The trace is 0. The determinant is $2(-2) - (-1)(5) = -4 + 5 = 1$.
-The characteristic equation is $\lambda^2 - (\text{trace})\lambda + \det = \lambda^2 + 1 = 0$.
-Thus, $A+B$ has complex eigenvalues $\pm i$, meaning it is not hyperbolic, and the system $u_t + (A+B)u_x = 0$ is ill-posed.
-
-\textbf{Step 3: Analyze the stability of the splitting scheme (Part iii).}
-
-Suppose we have stable numerical schemes for $A$ and $B$, represented by operators $A_h$ and $B_h$. Stability implies that their operator norms are bounded, e.g., $\|A_h\| \leq 1$ and $\|B_h\| \leq 1$ in some chosen norm.
-The splitting scheme applies them sequentially: $u^{n+1} = B_h A_h u^n$.
-While it is true that $\|B_h A_h\| \leq \|B_h\| \|A_h\| \leq 1$ in the specific norm where both are bounded by 1, problems arise because stability for $A$ and $B$ might only hold in different, equivalent norms, or the stability bound might be $1 + C\Delta t$.
-More fundamentally, if $A$ and $B$ do not commute, the eigenvectors of the discrete operators are different. Successive applications of non-commuting stable operators can cause artificial growth of certain mixed modes. The product operator $B_h A_h$ does not inherently guarantee stability for all grid parameter choices unless $A$ and $B$ commute or satisfy additional strict coercivity conditions.
+The statement would become true under the stronger common contraction assumption
+\[
+\|A_h\|_2\leq 1,\qquad \|B_h\|_2\leq 1
+\]
+uniformly in $h$, because then $\|B_hA_h\|_2\leq \|B_h\|_2\|A_h\|_2\leq 1$.
 \end{solution}

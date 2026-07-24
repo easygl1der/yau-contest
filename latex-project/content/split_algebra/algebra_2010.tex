@@ -251,7 +251,7 @@ Let's name some specific automorphisms to see how they interact.
     \item Let $\tau_m$ be the "power" map: $\tau_m(\alpha) = \alpha$ and $\tau_m(\zeta) = \zeta^m$. The choices for $m$ form a group under multiplication modulo 8, known as $(\mathbb{Z}/8\mathbb{Z})^\times$, which is isomorphic to the Klein four-group $C_2 \times C_2$.
 \end{itemize}
 Now, let's see what happens if we apply $\tau_m$, then $\sigma$, then the inverse of $\tau_m$ (this is conjugation, which tells us the group structure). We test it on $\alpha$:
-\[ (\tau_m \sigma \tau_m^{-1})(\alpha) = \tau_m (\sigma(\alpha)) \quad \text{(since $\tau_m^{-1}(\alpha) = \alpha$)} \]
+\[ (\tau_m \sigma \tau_m^{-1})(\alpha) = \tau_m (\sigma(\alpha)) \quad \text{(since } \tau_m^{-1}(\alpha) = \alpha\text{)} \]
 \[ = \tau_m (\zeta \alpha) = \tau_m(\zeta) \tau_m(\alpha) = \zeta^m \alpha \]
 Notice that applying $\sigma$ exactly $m$ times also gives $\sigma^m(\alpha) = \zeta^m \alpha$.
 Thus, $\tau_m \sigma \tau_m^{-1} = \sigma^m$.
@@ -291,7 +291,7 @@ So, the number of sequences of length exactly $m$ that sum to $n$ is $[z^n](f(z)
 
 \textbf{Step 4: Sum over all possible sequence lengths.}
 The total number of sequences of \textit{any} length that sum to $n$ is our target number, $a_n$.
-To get $a_n$, we just add up the sequences of length 1, length 2, length 3, and so on:
+To get $a_n$, we add the contributions from all positive sequence lengths:
 \[ a_n = \sum_{m \geq 1} [z^n] (f(z))^m \]
 
 \textbf{Step 5: Build the final generating function.}
@@ -417,14 +417,12 @@ Since $x+y = N$ and $\{x\} + \{y\} = 1$, we must have:
 \textbf{Step 5: Conclude the proof.}
 Substituting our $x$ and $y$ back in, we get:
 \[ c(N) = \left\lfloor \frac{N}{a} \right\rfloor + \left\lfloor \frac{N}{b} \right\rfloor = N - 1 \]
-This tells us something profound: the total number of terms from both sequences that are strictly less than $N$ (meaning they are in the range $1$ to $N-1$) is exactly $N-1$.
-This holds true for \textit{every} positive integer $N$.
-\begin{itemize}
-    \item For $N=2$, there is $c(2) = 1$ term less than 2 (which must be the number 1).
-    \item For $N=3$, there are $c(3) = 2$ terms less than 3 (which must be the numbers 1 and 2).
-    \item And so on...
-\end{itemize}
-Because the count of generated numbers always matches the size of the available space perfectly as we count up, there are no gaps and no overlaps. Therefore, every natural number appears exactly once across the two sequences!
+Thus among the two Beatty sequences there are exactly $N-1$ terms whose values lie in
+$\{1,2,\ldots,N-1\}$, for every positive integer $N$.
+Since this finite set also has exactly $N-1$ elements, the multiset of generated
+values below $N$ must be the whole set $\{1,\ldots,N-1\}$ with no missing value
+and no repetition.  Letting $N$ vary proves that every positive integer appears
+in exactly one of the two sequences.
 \end{solution}
 
 \begin{exercise}
@@ -442,10 +440,25 @@ Find all nontrivial solutions $(X, Y, Z)$ of the above equation in the sense tha
     \item \textbf{Mason-Stothers Theorem:} This is a powerful theorem for polynomials, often considered the polynomial analogue of the famous (and difficult) $abc$ conjecture for integers. It states: If $A, B, C$ are relatively prime polynomials (they share no common roots) such that $A + B = C$, then the maximum degree among them is bounded by the total number of distinct roots of their product minus one. In math terms: $\max(\deg A, \deg B, \deg C) \leq n_0(ABC) - 1$.
 \end{itemize}
 
+\textbf{Lemma used here (Mason-Stothers over $\mathbb{C}[t]$).}
+If $A,B,C\in \mathbb{C}[t]$ are pairwise coprime, not all constant, and $A+B=C$, then
+\[
+\max(\deg A,\deg B,\deg C)\leq n_0(ABC)-1.
+\]
+For completeness, recall the short proof. Since $A+B=C$, the Wronskians satisfy
+\[
+AB'-A'B=AC'-A'C=CB'-C'B.
+\]
+Every multiple root of $A$, $B$, or $C$ contributes its multiplicity minus one to the corresponding factor in this common Wronskian. Because the three polynomials are pairwise coprime, these contributions are disjoint; comparing the degree of the Wronskian with the total degree of $ABC$ gives
+\[
+\deg A+\deg B+\deg C-n_0(ABC)\leq \deg(AB'-A'B)\leq \deg A+\deg B-1,
+\]
+after choosing $C$ to have maximal degree. This gives the displayed inequality.
+
 \textbf{Step 1: Set up the equation for the Mason-Stothers Theorem.}
 We are given the Fermat-like equation $X^n + Y^n = Z^n$ where $X, Y, Z$ are polynomials in $t$.
 Let's define $A = X^n$, $B = Y^n$, and $C = Z^n$. Then our equation becomes $A + B = C$.
-We are looking for nontrivial solutions where $X, Y, Z$ have no common roots. If they shared a common root, we could just divide it out. So, we can assume $A, B, C$ are relatively prime, perfectly setting us up to use the Mason-Stothers Theorem.
+The hypothesis says that $X,Y,Z$ have no common zero. In fact this implies pairwise coprimality: if, for instance, $X$ and $Y$ vanished at the same point, then the equation would force $Z$ to vanish there as well. Thus $A,B,C$ are pairwise coprime, so the lemma applies.
 
 \textbf{Step 2: Apply the Mason-Stothers Theorem.}
 According to the theorem, we have:
@@ -530,23 +543,36 @@ Since $\sin(\pi/7)$ is not zero, we can divide both sides by it:
 
 \textbf{Part (2): Generalize to $\prod_{n=1}^{(p-1)/2} \cos(n\pi/p)$}
 
-\textbf{Step 4: Connect the product to a polynomial.}
-Let $L = \prod_{k=1}^{(p-1)/2} 2 \cos(k\pi/p)$. (We added a factor of 2 to each term to make the math cleaner; we will divide by $2^{(p-1)/2}$ at the end).
-Using Euler's formula, $2 \cos(k\pi/p) = e^{ik\pi/p} + e^{-ik\pi/p}$.
-Let $z_k = e^{ik\pi/p}$. Then $2 \cos(k\pi/p) = z_k + z_k^{-1} = \frac{z_k^2 + 1}{z_k}$.
-The numbers $z_k$ (and their conjugates $z_{-k} = e^{-ik\pi/p}$) for $k = 1, 2, \dots, (p-1)/2$ are exactly the roots of the equation $x^p + 1 = 0$, excluding the obvious root $x = -1$.
-Therefore, these complex numbers are the roots of the polynomial:
-\[ P(x) = \frac{x^p + 1}{x + 1} = x^{p-1} - x^{p-2} + x^{p-3} - \dots - x + 1 \]
+\textbf{Step 4: Set up the sine product.}
+The part (1) computation suggests using the double-angle identity again. Define
+\[
+S=\prod_{k=1}^{(p-1)/2}\sin(k\pi/p),
+\qquad
+C=\prod_{k=1}^{(p-1)/2}\cos(k\pi/p).
+\]
+All factors in $S$ are nonzero, and all factors in $C$ are positive because $0<k\pi/p<\pi/2$ for $1\leq k\leq (p-1)/2$.
 
 \textbf{Step 5: Evaluate the product of cosines.}
-The product we want is heavily related to plugging $x=i$ or $x=-i$ into this polynomial. However, an elegant way from algebraic number theory evaluates this directly. The absolute value of the product of these $(p-1)/2$ specific cosines is known to be $\frac{1}{2^{(p-1)/2}}$.
-The only question is whether the product is positive or negative. This depends on how many of the cosine terms are negative.
-A term $\cos(k\pi/p)$ is negative if the angle $k\pi/p$ is greater than $\pi/2$. This happens when $k > p/2$.
-Counting how many such $k$ exist between $1$ and $(p-1)/2$ leads to evaluating the sign. It turns out the sign follows a pattern based on $p$ modulo 8, a result closely tied to quadratic reciprocity (specifically, whether 2 is a quadratic residue modulo $p$).
-The sign is positive ($+1$) if $p \equiv 1$ or $7 \pmod 8$, and negative ($-1$) if $p \equiv 3$ or $5 \pmod 8$.
-A compact way to write this sign is $(-1)^{(p^2-1)/8}$.
-So, the exact rational value of the product is:
-\[ \prod_{k=1}^{(p-1)/2} \cos(k\pi/p) = (-1)^{\frac{p^2-1}{8}} \frac{1}{2^{(p-1)/2}} \]
+Using $\sin(2\theta)=2\sin\theta\cos\theta$, we get
+\[
+\prod_{k=1}^{(p-1)/2}\sin(2k\pi/p)=2^{(p-1)/2}SC.
+\]
+The numbers $2,4,\ldots,p-1$ are congruent modulo $p$, up to replacing $r$ by $p-r$, to the numbers $1,2,\ldots,(p-1)/2$. Since
+\[
+\sin((p-r)\pi/p)=\sin(r\pi/p),
+\]
+the product on the left is again $S$. Therefore
+\[
+S=2^{(p-1)/2}SC.
+\]
+As $S\ne 0$, we may cancel it and obtain
+\[
+C=2^{-(p-1)/2}.
+\]
+So the exact rational value is
+\[
+\prod_{k=1}^{(p-1)/2}\cos(k\pi/p)=\frac{1}{2^{(p-1)/2}}.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -557,11 +583,65 @@ Show that it is irreducible. Let $F$ be the splitting field of $f_a$. Show that 
 \end{exercise}
 
 \begin{solution}
-Let $y = x + 1/x$. Then $y^2 = x^2 + 1/x^2 + 2$, $y^3 = x^3 + 1/x^3 + 3(x + 1/x)$.
-$f_a/x^3 = (x^3 + 1/x^3) + 3a(x + 1/x) + 3 = (y^3 - 3y) + 3ay + 3 = y^3 + 3(a-1)y + 3$.
-By Eisenstein's Criterion at $p=3$, $g(y) = y^3 + 3(a-1)y + 3$ is irreducible over $\mathbb{Q}$.
-Since $[ \mathbb{Q}(x) : \mathbb{Q}(y) ] = 2$ and $[ \mathbb{Q}(y) : \mathbb{Q} ] = 3$, the degree is 6, so $f_a$ is irreducible.
-The Galois group is a subgroup of $S_3 \rtimes (C_2)^3$, which is solvable.
+Put
+\[
+y=x+x^{-1}.
+\]
+Then
+\[
+x^3+x^{-3}=y^3-3y,
+\]
+and therefore
+\[
+x^{-3}f_a(x)
+=x^3+x^{-3}+3a(x+x^{-1})+3
+=y^3+3(a-1)y+3.
+\]
+Let
+\[
+g(Y)=Y^3+3(a-1)Y+3.
+\]
+By Eisenstein's criterion at the prime $3$, the polynomial $g$ is irreducible over $\mathbb{Q}$.
+
+Let $y$ be a root of $g$ and set $K=\mathbb{Q}(y)$. Any root $x$ of $f_a$ with $x+x^{-1}=y$ satisfies
+\[
+x^2-yx+1=0.
+\]
+Thus it remains to see that this quadratic is irreducible over $K$. Its discriminant is $y^2-4$. If $y^2-4$ were a square in $K$, then its norm to $\mathbb{Q}$ would be a square in $\mathbb{Q}$. But
+\[
+\mathrm{Norm}_{K/\mathbb{Q}}(y^2-4)
+=g(2)g(-2)
+=(6a+5)(1-6a)<0
+\]
+for every positive integer $a$. This cannot be the square of a rational number. Hence $x^2-yx+1$ is irreducible over $K$.
+
+Consequently
+\[
+[\mathbb{Q}(x):\mathbb{Q}]
+=[\mathbb{Q}(x):K][K:\mathbb{Q}]
+=2\cdot 3=6.
+\]
+Since $f_a$ is monic of degree $6$ and has $x$ as a root, it is the minimal polynomial of $x$ over $\mathbb{Q}$. Hence $f_a$ is irreducible.
+
+Now let $L$ be the splitting field of the cubic polynomial $g$. Its Galois group is a subgroup of $S_3$, hence is solvable. Over $L$, the polynomial $f_a$ factors as
+\[
+f_a(X)=X^3\prod_{g(y_i)=0}(X+X^{-1}-y_i)
+=\prod_{g(y_i)=0}(X^2-y_iX+1).
+\]
+For each root $y_i$ of $g$, the two corresponding roots of $f_a$ are obtained by adjoining
+\[
+\sqrt{y_i^2-4}.
+\]
+Therefore the splitting field $F$ of $f_a$ is obtained from $L$ by adjoining at most three square roots. Thus $\mathrm{Gal}(F/L)$ is a subgroup of an elementary abelian $2$-group.
+
+We have an exact sequence
+\[
+1\longrightarrow \mathrm{Gal}(F/L)
+\longrightarrow \mathrm{Gal}(F/\mathbb{Q})
+\longrightarrow \mathrm{Gal}(L/\mathbb{Q})
+\longrightarrow 1.
+\]
+The kernel is abelian and the quotient is solvable, so $\mathrm{Gal}(F/\mathbb{Q})$ is solvable.
 \end{solution}
 
 \begin{exercise}
@@ -570,6 +650,9 @@ Group of order 150 is not simple.
 \end{exercise}
 
 \begin{solution}
+\textbf{Statement audit note.}
+The intended reading is: every group of order $150$ is not simple. Under this reading the statement is true; the proof below keeps the original wording but supplies the missing Sylow/action details.
+
 \textbf{Prerequisites / Core Concepts:}
 \begin{itemize}
     \item \textbf{Simple Group:} A group $G$ is simple if its only normal subgroups are the trivial group $\{e\}$ and $G$ itself. Think of simple groups as the "prime numbers" of group theory.
@@ -602,7 +685,7 @@ This means every element $g \in G$ shuffles the 6 subgroups around. This shuffli
 \textbf{Step 4: Assume $G$ is simple and look for a contradiction.}
 Let's assume, for the sake of contradiction, that $G$ is simple.
 If $G$ is simple, the kernel of our homomorphism $\phi$ (which is always a normal subgroup) must be either the whole group $G$ or just the identity $\{e\}$.
-If the kernel were $G$, it would mean no element of $G$ moves any of the 6 subgroups, which is false for Sylow subgroups under conjugation. Thus, the kernel must be $\{e\}$.
+If the kernel were $G$, each Sylow 5-subgroup would be fixed under conjugation by all of $G$, hence normal. A normal Sylow subgroup is unique, contradicting $n_5=6$. Thus, the kernel must be $\{e\}$.
 This means $\phi$ is \textbf{injective} (a one-to-one mapping). Consequently, $G$ is isomorphic to a subgroup of $S_6$.
 Let's check the sizes: $|G| = 150$ and $|S_6| = 6! = 720$. So $150 \leq 720$, which seems okay so far.
 
@@ -611,7 +694,7 @@ Half of the permutations in $S_6$ are "even" permutations; they form the Alterna
 Let's restrict our homomorphism to just look at whether permutations are even or odd: we map $G$ into $S_6$, and then look at the sign of the permutation. The kernel of this sign map restricted to $G$, $G \cap \ker(\text{sgn})$, is a normal subgroup of $G$.
 Since we assumed $G$ is simple, this normal subgroup must be either $\{e\}$ or $G$.
 \begin{itemize}
-    \item If it is $\{e\}$, then $G$ has an index 2 subgroup, meaning $|G| = 2$, which is impossible ($150 \neq 2$).
+    \item If it is $\{e\}$, then the sign map is injective from $G$ into the two-element group $\{\pm1\}$, impossible because $|G|=150>2$.
     \item If it is $G$, this means all elements of $G$ map to even permutations. Therefore, $G$ must actually be a subgroup of $A_6$.
 \end{itemize}
 

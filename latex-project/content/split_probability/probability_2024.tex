@@ -122,67 +122,60 @@ This proves the almost sure convergence of the sequence $V_n$.
 \end{solution}
 
 \begin{exercise}\label{probability:2024:3}
-$A_n = \{X_n = \max(X_1, \ldots, X_n)\}$, $R_n = \sum_{k=1}^n I(A_k)$.
-Compute $\lim_{n \to \infty} P\left(|R_n - \log n| > m_n \sqrt{\log n}\right)$.
+Let $X$ have a uniform distribution on $[0,1]$ and let $N_{m,k}$ be the digit in the $m$th place to the right of the decimal point in $X^k$.
+\begin{enumerate}
+    \item[(a)] Find $\lim_{m\to\infty}\mathbb{P}(N_{m,m}=i)$ for $i=0,1,\ldots,9$.
+    \item[(b)] Let $k(m)>1$. Find a necessary and sufficient condition on $k(m)$ such that
+    \[
+    \lim_{m\to\infty}\mathbb{P}(N_{m,k(m)}=i)=\frac{1}{10},
+    \qquad i=0,1,\ldots,9.
+    \]
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites / Core Concepts:}
-\begin{itemize}
-    \item \textbf{Record Values:} For a sequence of i.i.d. continuous random variables, the $k$-th value is a "record" (i.e., larger than all previous values) with probability $1/k$. Remarkably, the events of being a record at different times are mutually independent.
-    \item \textbf{Harmonic Series:} The sum $\sum_{k=1}^n \frac{1}{k}$ grows logarithmically, specifically $H_n = \ln n + \gamma + O(1/n)$.
-    \item \textbf{Chebyshev's Inequality:} For any random variable $X$ with finite variance, $\mathbb{P}(|X - \mu| > \epsilon) \leq \frac{\text{Var}(X)}{\epsilon^2}$.
-\end{itemize}
+Put $N=10^m$ and $a=1/k$. Since $X^k$ has distribution function $y^a$ on $[0,1]$,
+\[
+\mathbb{P}(N_{m,k}=i)
+=N^{-a}\sum_{\substack{0\leq q\leq N-1\\ q\equiv i\pmod {10}}}
+\left((q+1)^a-q^a\right),
+\]
+where $0^a=0$. This formula is just the partition of $[0,1]$ into the intervals on which $\lfloor 10^mX^k\rfloor\equiv i\pmod {10}$.
 
-\textbf{Intuition / Motivation:}
+For part (a), take $k=m$, so $a=1/m$ and $N^a=10$. The interval $0\leq X^m<10^{-m}$ contributes
+\[
+\mathbb{P}(X^m<10^{-m})=\mathbb{P}(X<1/10)=\frac{1}{10}
+\]
+to the digit $0$ and to no other digit. On the remaining intervals, the increments of $x^{1/m}$ over the ten residue classes are asymptotically equal. More explicitly, for
+\[
+d_q=(q+1)^{1/m}-q^{1/m},
+\]
+the difference between two residue-class sums over each complete block of length $10$ is bounded by the variation of the decreasing sequence $d_q$ over that block; summing over all blocks gives an $o(1)$ difference as $m\to\infty$. Since
+\[
+\sum_{q=1}^{10^m-1}d_q=10-1=9,
+\]
+each residue class receives limiting increment $9/10$ from $q\geq1$. Multiplying by $N^{-1/m}=1/10$, we obtain
+\[
+\lim_{m\to\infty}\mathbb{P}(N_{m,m}=0)=\frac{1}{10}+\frac{9}{100}=\frac{19}{100},
+\]
+and, for $i=1,\ldots,9$,
+\[
+\lim_{m\to\infty}\mathbb{P}(N_{m,m}=i)=\frac{9}{100}.
+\]
 
-Imagine rolling a million-sided die repeatedly. $A_n$ is the event that your $n$-th roll is strictly higher than all your previous rolls (a new record!).
-What is the probability that the 10th roll is a record? Since all first 10 rolls are independent and identically distributed, any of them is equally likely to be the maximum. So the chance that the *last* one is the maximum is simply $1/10$.
-$R_n$ is the total number of records broken in the first $n$ rolls.
-Because the probability of breaking a record is $1/k$, the expected total number of records is the sum $1/1 + 1/2 + 1/3 + \dots + 1/n$. This is the Harmonic series, which is approximately $\ln n$.
-The variance of $R_n$ also turns out to be very close to $\ln n$.
-We want to know the probability that the actual number of records $R_n$ deviates from its expected value $\ln n$ by more than $m_n \sqrt{\ln n}$. Because $m_n \to \infty$, this deviation threshold is growing much larger than the standard deviation (which is roughly $\sqrt{\ln n}$). By Chebyshev's inequality, the probability of exceeding a threshold that grows faster than the standard deviation must shrink to 0.
-
-\textbf{Logical Step-by-Step Breakdown:}
-
-\textbf{Step 1: Determine the properties of the record events $A_k$.}
-
-$A_k$ is the event that $X_k = \max(X_1, \dots, X_k)$.
-Because $X_1, \dots, X_k$ are independent and identically distributed (and assuming continuous distribution to avoid ties), by symmetry, any of the $k$ variables is equally likely to be the maximum.
-Therefore, the probability of $A_k$ is:
-\[ \mathbb{P}(A_k) = \frac{1}{k} \]
-A standard theorem in order statistics states that the indicator variables $I(A_k)$ are mutually independent for all $k \geq 1$.
-
-\textbf{Step 2: Calculate the mean and variance of $R_n$.}
-
-$R_n = \sum_{k=1}^n I(A_k)$ is the total number of records.
-By linearity of expectation:
-\[ \mathbb{E}[R_n] = \sum_{k=1}^n \mathbb{E}[I(A_k)] = \sum_{k=1}^n \frac{1}{k} = H_n \]
-Using the asymptotic expansion of the harmonic numbers, $H_n = \ln n + \gamma + O(1/n)$, where $\gamma$ is the Euler-Mascheroni constant.
-Because the events $A_k$ are independent, the variance of the sum is the sum of the variances:
-\[ \text{Var}(R_n) = \sum_{k=1}^n \text{Var}(I(A_k)) = \sum_{k=1}^n \frac{1}{k} \left(1 - \frac{1}{k}\right) = \sum_{k=1}^n \frac{1}{k} - \sum_{k=1}^n \frac{1}{k^2} \]
-This gives $\text{Var}(R_n) = H_n - c_n$, where $c_n \to \frac{\pi^2}{6}$.
-Thus, $\text{Var}(R_n) \approx \ln n + \gamma - \frac{\pi^2}{6} = O(\ln n)$.
-
-\textbf{Step 3: Apply Chebyshev's Inequality.}
-
-We want to bound the probability $P = \mathbb{P}(|R_n - \ln n| > m_n \sqrt{\ln n})$.
-Notice that the mean $\mathbb{E}[R_n] = \ln n + \gamma + O(1/n)$ is extremely close to $\ln n$.
-To be fully rigorous, we substitute the true mean:
-\[ |R_n - \ln n| = |R_n - \mathbb{E}[R_n] + \mathbb{E}[R_n] - \ln n| \leq |R_n - \mathbb{E}[R_n]| + |\gamma + O(1/n)| \]
-For large $n$, if $|R_n - \ln n| > m_n \sqrt{\ln n}$, then (because $m_n \to \infty$) we effectively have $|R_n - \mathbb{E}[R_n]| \gtrsim m_n \sqrt{\ln n}$.
-Applying Chebyshev's Inequality directly to the mean:
-\[ \mathbb{P}(|R_n - \mathbb{E}[R_n]| > \epsilon) \leq \frac{\text{Var}(R_n)}{\epsilon^2} \]
-Let $\epsilon = \frac{1}{2} m_n \sqrt{\ln n}$ (absorbing the small constant shift $\gamma$).
-\[ \mathbb{P}\left(|R_n - \mathbb{E}[R_n]| > \frac{1}{2} m_n \sqrt{\ln n}\right) \leq \frac{\ln n + O(1)}{(\frac{1}{2} m_n \sqrt{\ln n})^2} = \frac{\ln n + O(1)}{\frac{1}{4} m_n^2 \ln n} \]
-
-\textbf{Step 4: Evaluate the limit.}
-
-As $n \to \infty$, the $\ln n$ terms cancel out:
-\[ \frac{\ln n + O(1)}{\frac{1}{4} m_n^2 \ln n} = \frac{4}{m_n^2} \left( 1 + \frac{O(1)}{\ln n} \right) \]
-We are given that the sequence $m_n \to \infty$. Therefore, $\frac{4}{m_n^2} \to 0$.
-The probability is bounded above by a sequence that goes to 0.
-\[ \lim_{n \to \infty} \mathbb{P}(|R_n - \ln n| > m_n \sqrt{\ln n}) = 0 \]
+For part (b), let $a_m=1/k(m)$ and $L_m=10^{m/k(m)}=N^{a_m}$. The atom-like initial contribution to the digit $0$ is
+\[
+\mathbb{P}(X^{k(m)}<10^{-m})=N^{-a_m}=L_m^{-1}.
+\]
+The same block-variation argument shows that the remaining mass is asymptotically split equally among the ten residue classes whenever $L_m\to\infty$. Hence all ten limiting digit probabilities are $1/10$ if
+\[
+L_m\to\infty,
+\]
+which is equivalent to
+\[
+\frac{m}{k(m)}\to\infty.
+\]
+This condition is also necessary. If $m/k(m)$ does not tend to infinity, then along a subsequence $L_m$ stays bounded, and the digit $0$ keeps the additional contribution $L_m^{-1}$ from the interval $[0,10^{-m})$; the limiting distribution cannot be uniform over the ten digits.
 \end{solution}
 
 \begin{exercise}\label{probability:2024:4}
@@ -237,71 +230,81 @@ Because $Q(T, A)$ satisfies both properties of conditional expectation, it must 
 \end{solution}
 
 \begin{exercise}\label{probability:2024:5}
-Multinomial games. Stopping rule: I+II win $r$ OR III+IV win $r+1$.
-(a) Completeness of $T = (X_1+X_2, X_3+X_4)$.
-(b) UMVUE of $\theta$.
+Consider a random sample of size $n$, written as an $r=r_n$ by $c=c_n$ matrix $\{X_{ij}:1\leq i\leq r_n,\ 1\leq j\leq c_n\}$ with $n=r_nc_n$. The $X_{ij}$ are i.i.d. with c.d.f. $F$ and continuous density $f$. Let $\beta$ be the median, so $F(\beta)=1/2$, and define
+\[
+\widehat{\beta}_n=\min_{1\leq j\leq c_n}\max_{1\leq i\leq r_n}X_{ij}.
+\]
+\begin{enumerate}
+    \item[(a)] What condition on $r_n$ gives median-unbiasedness asymptotically, i.e. $\beta$ is the median of the limiting distribution of $\widehat{\beta}_n$?
+    \item[(b)] If $F$ is differentiable near $\beta$ and $f(\beta)>0$, find the limiting distribution of $r_n(\widehat{\beta}_n-\beta)$ under the condition in part (a).
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites / Core Concepts:}
-\begin{itemize}
-    \item \textbf{Sufficient and Complete Statistics:} A statistic $T$ is sufficient if it captures all information about the parameter $\theta$. It is complete if $\mathbb{E}_\theta[g(T)] = 0$ for all $\theta$ implies $g(T) = 0$ almost surely. In exponential families, natural sufficient statistics are usually complete.
-    \item \textbf{Rao-Blackwell Theorem:} If you have any unbiased estimator and a sufficient statistic, taking the conditional expectation of the estimator given the sufficient statistic yields a strictly better (lower variance) unbiased estimator.
-    \item \textbf{Inverse Binomial / Negative Binomial Sampling:} Sampling where the number of trials is random, stopping only when a specific number of successes (or failures) is achieved.
-\end{itemize}
-
-\textbf{Intuition / Motivation:}
-
-(a) We have four teams, but they are grouped into two super-teams: (I+II) vs (III+IV). A game is played. (III+IV) wins with probability $\theta$.
-We keep playing until (I+II) wins $r$ times, OR (III+IV) wins $r+1$ times.
-The total number of wins for each super-team, $S = X_3+X_4$ and $F = X_1+X_2$, tells us exactly what happened. The pair $T = (F, S)$ tells us everything about $\theta$ (Sufficiency). Because the boundaries of the stopping rule are fixed, the distribution of these final counts forms a complete family.
-(b) How do we guess the true probability $\theta$?
-A very simple, unbiased, but noisy guess is: "Did (III+IV) win the very first game?" Let's call this guess $Y_1$. If they won, guess 100\%. If they lost, guess 0\%. This is unbiased because the expected value of $Y_1$ is exactly $\theta$.
-But guessing 100\% or 0\% is terrible. Rao-Blackwell tells us how to upgrade this guess: Calculate the *average* value of $Y_1$, given the final score $(F, S)$.
-If the final score is $S = r+1$ (meaning III+IV won the series), what was the probability they won the first game? It's simply the proportion of successes in the games that weren't the fixed final game. This simple counting of permutations leads directly to the Minimum Variance Unbiased Estimator (UMVUE).
-
-\textbf{Logical Step-by-Step Breakdown:}
-
-\textbf{Step 1: Formulate the game as a sequence of Bernoulli trials.}
-Let a "success" be a win by team III or IV. The probability of success is $\theta = \frac{\theta}{2} + \frac{\theta}{2}$.
-Let a "failure" be a win by team I or II. The probability of failure is $1-\theta$.
-Let $S = X_3+X_4$ be the total number of successes, and $F = X_1+X_2$ be the total number of failures.
-The series stops when either $F = r$ or $S = r+1$.
-The total number of games played is $N = S + F$. The statistic $T = (F, S)$ completely captures the stopping state. Since $T$ determines the exact likelihood of the observed sequence, $T$ is a sufficient statistic.
-
-\textbf{Step 2: Argue the Completeness of $T$ (Part a).}
-The joint distribution of the trials up to the stopping time forms a curved exponential family.
-For inverse sampling schemes with bounded stopping boundaries (like reaching either $F=r$ or $S=r+1$), the minimal sufficient statistic $T = (F, S)$ tracks exactly which boundary was hit and the count of the other outcome.
-It is a standard result in sequential analysis (specifically for Negative Binomial-type stopping rules) that the sufficient statistic representing the final tallies at the boundaries of a closed stopping region is complete. Therefore, $T = (X_1+X_2, X_3+X_4)$ is a complete sufficient statistic.
-
-\textbf{Step 3: Construct a naive unbiased estimator (Part b).}
-We want the Uniformly Minimum Variance Unbiased Estimator (UMVUE) for $\theta$.
-By the Lehmann-Scheffé theorem, if we find any unbiased estimator and condition it on the complete sufficient statistic $T$, we obtain the unique UMVUE.
-Let $Y_1$ be the indicator that the very first game was a success (won by III or IV).
-Clearly, $\mathbb{E}[Y_1] = \mathbb{P}(\text{Success on game 1}) = \theta$.
-Thus, $Y_1$ is an unbiased estimator.
-
-\textbf{Step 4: Apply Rao-Blackwell to find the UMVUE.}
-The UMVUE is given by $\hat{\theta}_{UMVUE} = \mathbb{E}[Y_1 \mid T = (F, S)]$.
-Because the stopping rule dictates the final game, we must condition on which boundary was hit.
-\textbf{Case 1: The series ended because $S = r+1$.}
-This means the last game (game $N$) was a success. Out of the first $N-1$ games, exactly $S-1$ were successes and $F$ were failures.
-Since all $\binom{N-1}{S-1}$ possible orderings of these first $N-1$ games are equally likely, the probability that the very first game was a success is simply the proportion of successes in the first $N-1$ games:
-\[ \mathbb{E}[Y_1 \mid S=r+1, F] = \frac{S-1}{N-1} = \frac{r}{N-1} \]
-\textbf{Case 2: The series ended because $F = r$.}
-This means the last game (game $N$) was a failure. Out of the first $N-1$ games, exactly $S$ were successes and $F-1$ were failures.
-Again, all $\binom{N-1}{S}$ orderings of the first $N-1$ games are equally likely. The probability that the very first game was a success is the proportion of successes:
-\[ \mathbb{E}[Y_1 \mid S, F=r] = \frac{S}{N-1} \]
-
-\textbf{Step 5: Combine into a single formula.}
-The UMVUE for $\theta$ is the piecewise function:
-\[ \hat{\theta}_{UMVUE} =
-\begin{cases}
-\frac{S-1}{S+F-1} & \text{if } S = r+1 \\
-\frac{S}{S+F-1} & \text{if } F = r
-\end{cases}
+For one column, let
+\[
+M_j=\max_{1\leq i\leq r}X_{ij}.
 \]
-Substituting $S = X_3+X_4$ and $F = X_1+X_2$, this estimator depends only on the complete sufficient statistic $T$, confirming it is the UMVUE.
+Then
+\[
+\mathbb{P}(M_j\leq x)=F(x)^r.
+\]
+The column maxima are independent across $j$, and $\widehat{\beta}_n=\min_j M_j$. Hence
+\[
+\mathbb{P}(\widehat{\beta}_n\leq x)
+=1-\mathbb{P}(M_1>x,\ldots,M_c>x)
+=1-\left(1-F(x)^r\right)^c.
+\]
+At $x=\beta$ this gives
+\[
+\mathbb{P}(\widehat{\beta}_n\leq \beta)
+=1-\left(1-2^{-r}\right)^c.
+\]
+Therefore the asymptotic median-unbiasedness condition is
+\[
+\left(1-2^{-r_n}\right)^{c_n}\to\frac{1}{2}.
+\]
+Since $c_n=n/r_n$ and $\log(1-u)\sim -u$ as $u\downarrow0$, this is equivalently
+\[
+\frac{n}{r_n}2^{-r_n}\to \log 2.
+\]
+
+Now set
+\[
+x_n(t)=\beta+\frac{t}{r_n}.
+\]
+Using differentiability at $\beta$,
+\[
+F(x_n(t))
+=\frac{1}{2}+\frac{f(\beta)t}{r_n}+o(r_n^{-1})
+=\frac{1}{2}\left(1+\frac{2f(\beta)t}{r_n}+o(r_n^{-1})\right).
+\]
+Thus
+\[
+F(x_n(t))^{r_n}
+=2^{-r_n}\left(1+\frac{2f(\beta)t}{r_n}+o(r_n^{-1})\right)^{r_n}
+\to 2^{-r_n}e^{2f(\beta)t}
+\]
+in the sense needed after multiplication by $c_n$. By the condition above,
+\[
+c_nF(x_n(t))^{r_n}\to (\log 2)e^{2f(\beta)t}.
+\]
+Therefore
+\[
+\begin{aligned}
+\mathbb{P}\{r_n(\widehat{\beta}_n-\beta)\leq t\}
+&=1-\left(1-F(x_n(t))^{r_n}\right)^{c_n}\\
+&\to 1-\exp\left\{-(\log 2)e^{2f(\beta)t}\right\}.
+\end{aligned}
+\]
+The limiting distribution function is
+\[
+\boxed{
+G(t)=1-\exp\left\{-(\log 2)e^{2f(\beta)t}\right\}
+=1-2^{-e^{2f(\beta)t}}.
+}
+\]
+At $t=0$, $G(0)=1/2$, matching the median normalization.
 \end{solution}
 
 \begin{exercise}\label{probability:2024:6}

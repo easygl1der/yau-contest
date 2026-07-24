@@ -78,14 +78,22 @@ for $z$ near 0. Determine all such functions.
 \textbf{Prerequisites:}
 \begin{itemize}
     \item \textbf{Riemann's Removable Singularity Theorem:} A holomorphic function that is bounded near a point has a removable singularity there.
+    \item \textbf{Laurent Coefficients:} The negative Laurent coefficients can be estimated by Cauchy's integral formula on small circles.
     \item \textbf{Entire Function:} A function holomorphic on the whole complex plane.
 \end{itemize}
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Examine growth at 0:} The term $1/|z|^{1/2}$ blows up at 0, but $z f(z)$ remains bounded because $|z \cdot f(z)| \leq |z|^3 + |z|^{1/2} \to 0$.
-    \item \textbf{Apply Riemann's Theorem:} Since $z f(z)$ is bounded (and even goes to 0), $f$ has at most a removable singularity at $z=0$.
-    \item \textbf{Identify the Function:} Thus $f$ can be extended to an entire function. Any entire function will satisfy the bound $|f(z)| \leq |z|^2 + |z|^{-1/2}$ in a sufficiently small neighborhood of 0, because the right side tends to $\infty$ while the left side is bounded.
+    \item \textbf{Estimate the principal part:} Write the Laurent expansion near $0$ as $f(z)=\sum_{m=-\infty}^{\infty}a_mz^m$. For $k\geq 1$, Cauchy's formula on $|z|=r$ gives
+    \[
+    |a_{-k}|
+    \leq r^k\max_{|z|=r}|f(z)|
+    \leq r^k\left(r^2+r^{-1/2}\right)
+    =r^{k+2}+r^{k-1/2}.
+    \]
+    Letting $r\to 0$ gives $a_{-k}=0$ for every $k\geq 1$.
+    \item \textbf{Remove the singularity:} Since all negative Laurent coefficients vanish, the singularity at $0$ is removable. Thus $f$ extends holomorphically to all of $\mathbb{C}$.
+    \item \textbf{Identify all possibilities:} Conversely, any entire function is bounded in a sufficiently small disk around $0$, while $|z|^2+|z|^{-1/2}\to\infty$ as $z\to0$. Hence every entire function, restricted to $\mathbb{C}\setminus\{0\}$, satisfies the stated local bound near $0$.
 \end{enumerate}
 
 \textbf{Intuition:}
@@ -130,9 +138,10 @@ If $E$ is a compact set in a region $\Omega$, prove that there exists a constant
 
 \textbf{Steps:}
 \begin{enumerate}
+    \item \textbf{Connectedness convention:} We use the standard complex-analysis convention that a region is connected. This is needed. If $\Omega$ were allowed to be disconnected and $E$ met two different components, a positive harmonic function could be multiplied by an arbitrary positive constant on one component, so no uniform comparison between the two components would be possible.
     \item \textbf{Local bound:} Around any point in $E$, pick a small disk where $u(z) \leq C u(a)$.
     \item \textbf{Covering:} Cover the compact set $E$ with a finite number of such overlapping disks.
-    \item \textbf{Chaining:} For any $z_1, z_2 \in E$, there is a chain of at most $N$ disks connecting them. The ratio $u(z_2)/u(z_1)$ is bounded by the product of the constants from each step in the chain.
+    \item \textbf{Chaining:} Since $\Omega$ is connected and $E$ is compactly contained in $\Omega$, finitely many Harnack balls can be chosen so that any two points of $E$ are connected by a chain of at most $N$ balls staying a positive distance from $\partial\Omega$. The ratio $u(z_2)/u(z_1)$ is bounded by the product of the Harnack constants from each step in the chain.
 \end{enumerate}
 
 \textbf{Intuition:}
@@ -141,7 +150,23 @@ Harmonic functions are very smooth. If the function is positive, it can't drop t
 
 \begin{exercise}
 \label{analysis:2017:6}
-Smallest constant $C(\Omega)$ for Poincaré inequality.
+\begin{enumerate}
+\item For any bounded domain $\Omega\subset\mathbb{R}^n$, prove that there exists a smallest constant $C(\Omega)$ such that
+\[
+\int_{\Omega}|u|^2\,dx
+\leq C(\Omega)\int_{\Omega}\sum_{i=1}^n
+\left|\frac{\partial u}{\partial x_i}\right|^2\,dx
+\]
+for every $u\in H_0^1(\Omega)$.
+\item Let
+\[
+\Pi=\{(x,y):0<x<a,\ 0<y<b\}.
+\]
+Show that
+\[
+C(\Pi)\geq \frac{a^2b^2}{\pi^2(a^2+b^2)}.
+\]
+\end{enumerate}
 \end{exercise}
 
 \begin{solution}
@@ -153,10 +178,44 @@ Smallest constant $C(\Omega)$ for Poincaré inequality.
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Identity:} The smallest constant $C(\Omega)$ is exactly $1/\lambda_1(\Omega)$, where $\lambda_1$ is the first eigenvalue of the Laplacian.
-    \item \textbf{Rectangle Case:} For $\Pi = (0,a) \times (0,b)$, the eigenfunctions are $\sin(m\pi x/a)\sin(n\pi y/b)$.
-    \item \textbf{Smallest Eigenvalue:} The minimum is at $m=1, n=1$, giving $\lambda_1 = \pi^2(1/a^2 + 1/b^2)$.
-    \item \textbf{Result:} $C(\Pi) = 1/\lambda_1 = \frac{a^2 b^2}{\pi^2(a^2 + b^2)}$.
+    \item \textbf{Define the sharp constant:} The Poincar\'e inequality on a bounded domain says that some finite constant works. The sharp one is
+    \[
+    C(\Omega)
+    =
+    \sup_{u\in H_0^1(\Omega),\,u\neq0}
+    \frac{\int_\Omega |u|^2\,dx}{\int_\Omega |\nabla u|^2\,dx}.
+    \]
+    This is finite by the usual Poincar\'e inequality and is automatically the smallest admissible constant: any valid constant must dominate every quotient in the supremum, while the supremum itself gives the inequality.
+    \item \textbf{Spectral interpretation:} Equivalently,
+    \[
+    C(\Omega)=\frac{1}{\lambda_1(\Omega)},\qquad
+    \lambda_1(\Omega)=
+    \inf_{u\in H_0^1(\Omega),\,u\neq0}
+    \frac{\int_\Omega |\nabla u|^2\,dx}{\int_\Omega |u|^2\,dx}.
+    \]
+    Here $\lambda_1(\Omega)$ is the first Dirichlet eigenvalue of $-\Delta$.
+    \item \textbf{Rectangle case:} For $\Pi=(0,a)\times(0,b)$, take the test function
+    \[
+    u(x,y)=\sin\frac{\pi x}{a}\sin\frac{\pi y}{b}.
+    \]
+    Then $u\in H_0^1(\Pi)$ and
+    \[
+    -\Delta u=\pi^2\left(\frac1{a^2}+\frac1{b^2}\right)u.
+    \]
+    Hence
+    \[
+    \frac{\int_\Pi |\nabla u|^2}{\int_\Pi |u|^2}
+    =\pi^2\left(\frac1{a^2}+\frac1{b^2}\right).
+    \]
+    Therefore
+    \[
+    C(\Pi)
+    \geq
+    \frac{\int_\Pi |u|^2}{\int_\Pi |\nabla u|^2}
+    =
+    \frac{a^2b^2}{\pi^2(a^2+b^2)}.
+    \]
+    In fact this test function is the first eigenfunction, so equality holds.
 \end{enumerate}
 
 \textbf{Intuition:}
@@ -223,7 +282,17 @@ If the "slope" of a function is always pointing up (even in a weak sense like Di
 
 \begin{exercise}
 \label{analysis:2017:9}
-Holomorphic bound with multiple zeros.
+Let $f$ be holomorphic on $|z|<1$ and assume $|f(z)|<1$ for $|z|<1$. If $\alpha,\beta\in\mathbb{C}$ satisfy $|\alpha|<1$, $|\beta|<1$, $\alpha\neq\beta$, and
+\[
+f(\alpha)=f(\beta)=0,
+\]
+prove that
+\[
+|f(z)|\leq
+\left|\frac{z-\alpha}{1-\overline{\alpha}z}\right|
+\left|\frac{z-\beta}{1-\overline{\beta}z}\right|,
+\qquad |z|<1.
+\]
 \end{exercise}
 
 \begin{solution}
@@ -236,10 +305,22 @@ Holomorphic bound with multiple zeros.
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Construct the Blaschke Product:} Define $B(z) = \frac{z-\alpha}{1-\bar{\alpha}z} \frac{z-\beta}{1-\bar{\beta}z}$. 
-    \item \textbf{Define Auxiliary Function:} Let $g(z) = f(z) / B(z)$.
-    \item \textbf{Bound on Boundary:} On the unit circle $|z|=1$, $|B(z)| = 1$. Since $|f(z)| \leq 1$, we have $|g(z)| \leq 1$ on the boundary.
-    \item \textbf{Conclusion:} By the Maximum Modulus Principle, $|g(z)| \leq 1$ for all $|z| < 1$. Thus $|f(z)| \leq |B(z)|$.
+    \item \textbf{First zero:} Let
+    \[
+    B_\alpha(z)=\frac{z-\alpha}{1-\overline{\alpha}z}.
+    \]
+    Since $f(\alpha)=0$, the quotient $h(z)=f(z)/B_\alpha(z)$ has a removable singularity at $\alpha$.
+    \item \textbf{Bound the quotient:} The Schwarz--Pick lemma applied to $f$ and the point $\alpha$ gives
+    \[
+    |f(z)|\leq |B_\alpha(z)|.
+    \]
+    Hence $|h(z)|\leq1$ on the disk. Also $h(\beta)=0$, since $\beta\neq\alpha$ and $f(\beta)=0$.
+    \item \textbf{Second zero:} Apply Schwarz--Pick again to the holomorphic self-map $h$ with $h(\beta)=0$. We get
+    \[
+    |h(z)|\leq
+    \left|\frac{z-\beta}{1-\overline{\beta}z}\right|.
+    \]
+    Multiplying by $|B_\alpha(z)|$ gives the desired estimate.
 \end{enumerate}
 
 \textbf{Intuition:}
@@ -248,7 +329,11 @@ Each zero $\alpha$ of a function $f$ lets us "divide out" a factor $(z-\alpha)$ 
 
 \begin{exercise}
 \label{analysis:2017:10}
-Analytic branch of $\sqrt{1-z^2}$.
+Show that a single-valued analytic branch of $\sqrt{1-z^2}$ can be defined in any region such that the points $1$ and $-1$ are in the same component of the complement. What are the possible values of
+\[
+\int_\gamma \frac{dz}{\sqrt{1-z^2}}
+\]
+over a closed curve $\gamma$ in the region?
 \end{exercise}
 
 \begin{solution}
@@ -260,10 +345,33 @@ Analytic branch of $\sqrt{1-z^2}$.
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Branch Cuts:} The function $\sqrt{1-z^2} = \sqrt{(1-z)(1+z)}$ has branch points at $z=1$ and $z=-1$. A branch is well-defined if the path doesn't separate these two points. If they are in the same component of the complement, any loop either encloses both or neither.
-    \item \textbf{Logarithmic change:} Enclosing both points results in a phase change of $e^{i(\pi + \pi)} = e^{i2\pi} = 1$, returning to the same value.
-    \item \textbf{Integral values:} The integral $\int \frac{dz}{\sqrt{1-z^2}}$ is related to $\arcsin(z)$. For a closed loop, the value depends on how many times the loop winds around the segment $[-1, 1]$.
-    \item \textbf{Result:} The possible values are $2\pi k$ for $k \in \mathbb{Z}$.
+    \item \textbf{Branch criterion:} Write
+    \[
+    1-z^2=(1-z)(1+z).
+    \]
+    Along a closed curve $\gamma$ in the region, analytic continuation of the square root changes sign by
+    \[
+    (-1)^{\operatorname{Ind}(\gamma,1)+\operatorname{Ind}(\gamma,-1)}.
+    \]
+    Since $1$ and $-1$ lie in the same component of the complement, the winding number of $\gamma$ is constant on that component. Thus
+    \[
+    \operatorname{Ind}(\gamma,1)=\operatorname{Ind}(\gamma,-1),
+    \]
+    so the exponent is even and the continuation returns to the original value. Hence a single-valued analytic branch exists.
+    \item \textbf{Periods of the differential:} On the model domain $\mathbb{C}\setminus[-1,1]$, choose a branch. The differential $dz/\sqrt{1-z^2}$ has only one possible period generator, represented by a loop going once around the cut $[-1,1]$.
+    \item \textbf{Compute the generator:} Since
+    \[
+    \frac{d}{dz}\arcsin z=\frac{1}{\sqrt{1-z^2}}
+    \]
+    locally, analytic continuation once around both branch points changes the local inverse sine by $2\pi$ up to sign. Equivalently, integrating around a large circle and using the asymptotic
+    \[
+    \frac{1}{\sqrt{1-z^2}}\sim \frac{1}{\pm iz}
+    \]
+    gives a period $\pm 2\pi$. Therefore every closed curve has integral
+    \[
+    2\pi k,\qquad k\in\mathbb{Z},
+    \]
+    after choosing the sign of the branch; changing the branch only changes $k$ to $-k$.
 \end{enumerate}
 
 \textbf{Intuition:}
@@ -272,7 +380,11 @@ Taking a square root is like unrolling a double-covered surface. If you walk aro
 
 \begin{exercise}
 \label{analysis:2017:11}
-Invariance of Laplace equation.
+In $\mathbb{R}^n$, consider the Laplace equation
+\[
+u_{11}+u_{22}+\cdots+u_{nn}=0.
+\]
+Show that the equation is invariant under orthogonal transformations. Find all rotationally symmetric solutions to this equation.
 \end{exercise}
 
 \begin{solution}
@@ -284,11 +396,25 @@ Invariance of Laplace equation.
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Invariance:} The Laplacian $\Delta = \text{div}(\nabla)$ is defined entirely by the metric. Since orthogonal transformations preserve the metric (lengths and angles), they preserve the Laplacian.
+    \item \textbf{Invariance:} Let $A$ be an orthogonal matrix and set $v(x)=u(Ax)$. By the chain rule,
+    \[
+    \nabla v(x)=A^T(\nabla u)(Ax).
+    \]
+    Differentiating once more gives
+    \[
+    D^2v(x)=A^T(D^2u)(Ax)A.
+    \]
+    Taking traces and using $AA^T=I$,
+    \[
+    \Delta v(x)=\operatorname{tr}(A^T(D^2u)(Ax)A)
+    =\operatorname{tr}((D^2u)(Ax))=(\Delta u)(Ax).
+    \]
+    Thus $\Delta u=0$ if and only if $\Delta v=0$.
     \item \textbf{Radial Solutions:} For $u(r)$, the equation reduces to $u'' + \frac{n-1}{r} u' = 0$.
     \item \textbf{Solve ODE:} This is a separable ODE: $u''/u' = -(n-1)/r$. Integrating gives $\ln u' = -(n-1)\ln r + C$, so $u' = A r^{1-n}$.
     \item \textbf{Integrate again:}
     \begin{itemize}
+        \item If $n=1$, $u(r)=Ar+B$ on each interval away from $0$.
         \item If $n=2$, $u(r) = A \ln r + B$.
         \item If $n \geq 3$, $u(r) = A r^{2-n} + B$.
     \end{itemize}
@@ -300,7 +426,15 @@ The Laplace equation describes equilibrium states (like steady temperature). If 
 
 \begin{exercise}
 \label{analysis:2017:12}
-Compactness of integral operators.
+Let $A$ be an operator on $C[a,b]$ defined by
+\[
+(Af)(x)=\int_a^b K(x,y)f(y)\,dy,
+\]
+where $K(x,y)$ is continuous on $[a,b]\times[a,b]$ except at finitely many curves
+\[
+y=\phi_k(x),\qquad x\in[a,b],\qquad k=1,\ldots,n,
+\]
+with each $\phi_k$ continuous. Show that $A$ is a compact operator.
 \end{exercise}
 
 \begin{solution}
@@ -312,10 +446,26 @@ Compactness of integral operators.
 
 \textbf{Steps:}
 \begin{enumerate}
-    \item \textbf{Kernel Continuity:} Although $K(x, y)$ has discontinuities along curves $y=\phi(x)$, these are "measure zero" sets.
-    \item \textbf{Approximation:} We can approximate $K$ by a sequence of continuous kernels $K_n$.
-    \item \textbf{Operator Convergence:} The integral operators $A_n$ with continuous kernels are compact (by Arzelà-Ascoli).
-    \item \textbf{Conclusion:} Since the space of compact operators is closed, and $A_n \to A$ in the operator norm (because the singularities are integrable), the limit operator $A$ is also compact.
+    \item \textbf{Boundedness convention:} The statement is understood in the usual jump-discontinuity sense: $K$ is bounded on the compact square and has only finite discontinuities along the listed curves. Then $A$ is a bounded map from $C[a,b]$ to $C[a,b]$ once continuity of $Af$ is checked.
+    \item \textbf{$L^1$ continuity in the first variable:} If $x_j\to x$, then for every $y$ not equal to one of the finitely many values $\phi_k(x)$, the point $(x,y)$ is a continuity point of $K$, and hence
+    \[
+    K(x_j,y)\to K(x,y).
+    \]
+    Since $K$ is bounded and the exceptional set in $y$ has measure zero, dominated convergence gives
+    \[
+    \int_a^b |K(x_j,y)-K(x,y)|\,dy\to0.
+    \]
+    \item \textbf{Equicontinuity of the image of a bounded set:} If $\|f\|_\infty\leq 1$, then
+    \[
+    |Af(x_j)-Af(x)|
+    \leq \int_a^b |K(x_j,y)-K(x,y)|\,dy\to0.
+    \]
+    The convergence is independent of the particular $f$ in the unit ball. Thus $A$ maps the unit ball of $C[a,b]$ to an equicontinuous family.
+    \item \textbf{Uniform boundedness:} Also,
+    \[
+    |Af(x)|\leq (b-a)\|K\|_\infty\|f\|_\infty.
+    \]
+    Therefore the image of the unit ball is uniformly bounded and equicontinuous. By Arzel\`a--Ascoli, its closure in $C[a,b]$ is compact, so $A$ is compact.
 \end{enumerate}
 
 \textbf{Intuition:}

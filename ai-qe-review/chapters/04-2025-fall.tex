@@ -1,0 +1,901 @@
+\chapter{2025 秋季 QE-AI 真题解答}
+\label{ch:2025fall}
+
+\section{A. Machine Learning Theory}
+
+\begin{examproblem}[A1-A8：选择题]
+机器学习理论 warm-up 选择题。
+\source{官方卷：2025 Fall, p.~1--2（按原 PDF 复核）}
+\officialenglish{Part I: Warm-Up Questions [5 pts. + 1 bonus pt.]. Select only one answer; no justification is required.
+
+\textbf{1.} [0.5 pts] Which best describes the bias--variance tradeoff? (a) Increasing model bias reduces variance but increases approximation error. (b) Increasing model bias reduces both bias and variance. (c) Variance is always independent of bias. (d) The tradeoff only applies to neural networks.
+
+\textbf{2.} [0.5 pts] Why does the No Free Lunch theorem matter in machine learning? (a) Every algorithm performs optimally on all data sets. (b) All learning tasks require exponential time. (c) There is no universally superior learning algorithm across all tasks. (d) Only smooth loss functions can be optimised.
+
+\textbf{3.} [0.5 pts] Which is true about Rademacher complexity? (a) It measures how well a hypothesis class fits random labels. (b) It always equals the VC dimension. (c) It decreases with model complexity. (d) It is independent of sample size.
+
+\textbf{4.} [0.5 pts] In Empirical Risk Minimisation (ERM), what is being minimised? (a) The true risk on unseen data. (b) The average loss on the training sample. (c) The VC dimension of the hypothesis class. (d) The variance of the hypothesis.
+
+\textbf{5.} [1 pt] Which statement is true about VC dimension? (a) A class with infinite VC dimension can never be PAC learnable. (b) The VC dimension of halfspaces in \(\mathbb R^d\) is exactly \(d+1\). (c) VC dimension always equals the number of parameters. (d) Finite VC dimension implies zero generalisation error.
+
+\textbf{6.} [1 pt] In agnostic PAC, what changes compared with realizable PAC? (a) The learner must always find zero training error. (b) The class must contain the true labelling function. (c) The goal is to compete with the best hypothesis in the class, even if labels are noisy. (d) Sample complexity becomes independent of \(\varepsilon\).
+
+\textbf{7.} [1 pt] In SGD, why does a decreasing learning rate help? (a) It avoids overfitting completely. (b) It ensures convergence under certain convexity assumptions. (c) It increases variance in gradient estimates. (d) It eliminates the need for backpropagation.
+
+\textbf{8.} [Optional: 1-point bonus] What does Sauer's Lemma imply about a class \(\mathcal H\) with VC dimension \(d\)? (a) \(\mathcal H\) can shatter every set larger than \(d\). (b) \(\tau_{\mathcal H}(m)\) is bounded polynomially in \(m\) once \(m>d\). (c) ERM achieves zero risk for \(m\le d\). (d) Sample complexity is independent of \(d\).}
+\chinesetranslation{第一部分为八道单选题，且无需论证。1：偏差--方差权衡；2：No Free Lunch 的意义；3：Rademacher complexity；4：ERM 最小化的量；5：VC 维；6：agnostic PAC 相对 realizable PAC 的变化；7：递减学习率在 SGD 中的作用；8：Sauer 引理（可选 1 分加分题）。题干与每题四个英文选项如上逐项列出。}
+\end{examproblem}
+
+\solution
+答案为
+
+\[
+  1(a),\quad
+  2(c),\quad
+  3(a),\quad
+  4(b),\quad
+  5(b),\quad
+  6(c),\quad
+  7(b),\quad
+  8(b).
+\]
+
+理由简述：\conceptref{concept:bias-variance}{bias-variance tradeoff} 中增大偏差通常降低方差但增大 approximation error；No Free Lunch 说明不存在跨所有任务统一最优算法；Rademacher complexity 衡量拟合随机符号的能力；ERM 最小化训练样本平均损失；\(\R^d\) 中 halfspace 的 \conceptref{concept:vc-sauer}{VC 维}是 \(d+1\)；\conceptref{concept:agnostic-pac}{agnostic PAC} 与类内最优假设竞争；递减学习率在凸假设下帮助收敛；\conceptref{concept:vc-sauer}{Sauer 引理}说明有限 VC 维类的增长函数最终多项式有界。
+
+\begin{examproblem}[A9：signed intervals 的 VC 维]
+
+\[
+  h_{a,b,s}(x)=
+  \begin{cases}
+  s, & x\in [a,b],\\
+  -s, & x\notin [a,b],
+  \end{cases}
+  \qquad s\in\{-1,1\}.
+\]
+
+求 \(\operatorname{VCdim}(\Hcal)\)。
+\source{官方卷：2025 Fall, p.~2}
+\officialenglish{Let \(\mathcal H\) be the class of signed intervals \(\{h_{a,b,s}:a\le b,\ s\in\{-1,1\}\}\), where \(h_{a,b,s}(x)=s\) for \(x\in[a,b]\) and \(-s\) otherwise. Calculate \(\operatorname{VCdim}(\mathcal H)\).}
+\chinesetranslation{设 \(\mathcal H\) 为带符号区间类：区间内标记为 \(s\in\{-1,1\}\)，区间外标记为 \(-s\)。计算 \(\operatorname{VCdim}(\mathcal H)\)。}
+\end{examproblem}
+
+\solution
+先证下界。取三个有序点 \(x_1<x_2<x_3\)。若正类是一个连续块，用 \(s=1\) 和适当区间 \([a,b]\) 实现；若负类是一个连续块，用 \(s=-1\) 实现。长度为 \(3\) 的任意二进制序列，要么正类位置是一个连续块，要么负类位置是一个连续块。例如 \(101\) 可用 \(s=-1\)、区间只覆盖 \(x_2\) 实现。因此可 shatter 三点。
+
+再证上界。对四个有序点 \(x_1<x_2<x_3<x_4\)，标记模式 \(+,-,+,-\) 不能实现：若 \(s=1\)，正类必须是一个连续区间，但 \(x_1,x_3\) 分离；若 \(s=-1\)，负类必须是一个连续区间，但 \(x_2,x_4\) 分离。因此不能 shatter 四点。
+
+所以
+
+\[
+  \operatorname{VCdim}(\Hcal)=3.
+\]
+
+\begin{examproblem}[A10：强凸性的三个性质]
+证明 \(\lambda\|w\|^2\) 是 \(2\lambda\)-strongly convex；强凸函数加 convex 函数仍强凸；强凸函数相对最小点满足 quadratic growth。
+\source{官方卷：2025 Fall, p.~2--3}
+\officialenglish{Strong Convexity Properties. Let \(f:\mathbb R^d\to\mathbb R\). Show: (a) \(f(w)=\lambda\|w\|^2\) is \(2\lambda\)-strongly convex; (b) if \(f\) is \(\lambda\)-strongly convex and \(g\) is convex, then \(f+g\) is \(\lambda\)-strongly convex; (c) if \(u\) minimizes a \(\lambda\)-strongly convex \(f\), then \(f(w)-f(u)\ge\lambda\|w-u\|^2/2\) for every \(w\).}
+\chinesetranslation{证明三个强凸性质：(a) \(\lambda\|w\|^2\) 是 \(2\lambda\)-强凸；(b) 强凸函数与凸函数相加仍保留该强凸常数；(c) 最小点处满足二次增长下界。}
+\end{examproblem}
+
+\solution
+(a) \(f(w)=\lambda\|w\|^2\) 的 Hessian 为 \(2\lambda I\)，所以 \(f\) 是 \(2\lambda\)-strongly convex。
+
+(b) 若 \(f\) 是 \(\lambda\)-strongly convex，\(g\) convex，则对任意 \(x,y\) 和 \(t\in[0,1]\)，
+
+\[
+  f(tx+(1-t)y)
+  \le
+  tf(x)+(1-t)f(y)-\frac{\lambda}{2}t(1-t)\|x-y\|^2,
+\]
+
+而
+
+\[
+  g(tx+(1-t)y)\le tg(x)+(1-t)g(y).
+\]
+
+相加得到 \(f+g\) 是 \(\lambda\)-strongly convex。
+
+(c) 若 \(u\) 是 \(f\) 的 minimizer，则 \(0\in\partial f(u)\)。强凸的一阶形式给出
+
+\[
+  f(w)\ge f(u)+\langle 0,w-u\rangle+\frac{\lambda}{2}\|w-u\|^2,
+\]
+
+即
+
+\[
+  f(w)-f(u)\ge \frac{\lambda}{2}\|w-u\|^2.
+\]
+
+\begin{examproblem}[A11：同心圆类的 PAC 可学习性]
+
+\[
+  \Hcal=\{h_r(x)=\mathbf{1}[\|x\|\le r]:r\in \R_+\}.
+\]
+
+在 realizable 情形证明 PAC learnable，且样本复杂度至多 \(\log(1/\delta)/\varepsilon\)。
+\source{官方卷：2025 Fall, p.~3}
+\officialenglish{Let \(X=\mathbb R^2\), \(Y=\{0,1\}\), and \(\mathcal H=\{h_r:r\in\mathbb R_+\}\), where \(h_r(x)=\mathbf1\{\|x\|\le r\}\). Prove that \(\mathcal H\) is PAC learnable under realisability, with \(m_{\mathcal H}(\varepsilon,\delta)\le\log(1/\delta)/\varepsilon\).}
+\chinesetranslation{平面上以原点为圆心的圆盘分类器 \(h_r\) 在 realizable 情形下是 PAC 可学习的；证明其样本复杂度不超过 \(\log(1/\delta)/\varepsilon\)。}
+\end{examproblem}
+
+\solution
+同心圆分类只依赖半径 \(t=\|x\|\)，等价于一维阈值类 \(\mathbf{1}[t\le r]\)。在 realizable 情形，设真实半径为 \(r^*\)。ERM 可取与样本一致的最大正样本半径
+
+\[
+  \hat r=\max\{\|x_i\|:y_i=1\},
+\]
+
+并在无正样本时取 \(\hat r=0\) 或任意一致阈值。
+
+若真实误差大于 \(\varepsilon\)，说明在真实边界附近存在一个概率质量超过 \(\varepsilon\) 的 disagreement 区域没有被样本击中。由于样本独立，该事件概率不超过
+
+\[
+  (1-\varepsilon)^m\le e^{-\varepsilon m}.
+\]
+
+要求该概率 \(\le\delta\)，只需
+
+\[
+  m\ge \frac{\log(1/\delta)}{\varepsilon}.
+\]
+
+所以该类 PAC learnable，且满足题中样本复杂度。
+
+\begin{examproblem}[A12：投影 SGD 的一步不等式]
+给定
+
+\[
+  w_{t+1}=\Pi_W(w_t-\eta_t\hat g_t),
+  \qquad
+  \E[\hat g_t]=g_t\in\partial F(w_t),
+\]
+
+证明题中平方距离递推。
+\source{官方卷：2025 Fall, p.~3}
+\officialenglish{Initialize \(w_1\in W\). At round \(t\), obtain random \(\hat g_t\) with \(\mathbb E[\hat g_t]=g_t\in\partial F(w_t)\), and set \(w_{t+1}=\Pi_W(w_t-\eta_t\hat g_t)\). Assume \(F\) is \(\lambda\)-strongly convex, \(\mathbb E\|\hat g_t\|^2\le G^2\), and \(\eta_t=1/(\lambda t)\). Show for every \(w\in W\): \(\mathbb E\|w_{t+1}-w\|^2\le\mathbb E\|w_t-w\|^2-2\eta_t\mathbb E\langle g_t,w_t-w\rangle+\eta_t^2G^2\).}
+\chinesetranslation{投影 SGD：\(\hat g_t\) 是次梯度的无偏随机估计，二阶矩由 \(G^2\) 控制，步长为 \(1/(\lambda t)\)。证明题给出的到任意 \(w\in W\) 的平方距离一步递推。}
+\end{examproblem}
+
+\solution
+投影算子在闭凸集上非扩张，因此对任意 \(w\in W\)，
+
+\[
+  \|w_{t+1}-w\|^2
+  =
+  \|\Pi_W(w_t-\eta_t\hat g_t)-\Pi_W(w)\|^2
+  \le
+  \|w_t-\eta_t\hat g_t-w\|^2.
+\]
+
+展开右侧：
+
+\[
+  \|w_t-w\|^2
+  -
+  2\eta_t\langle \hat g_t,w_t-w\rangle
+  +
+  \eta_t^2\|\hat g_t\|^2.
+\]
+
+取期望并用 \(\E[\hat g_t]=g_t\)、\(\E\|\hat g_t\|^2\le G^2\)，得
+
+\[
+  \E\|w_{t+1}-w\|^2
+  \le
+  \E\|w_t-w\|^2
+  -
+  2\eta_t\E\langle g_t,w_t-w\rangle
+  +
+  \eta_t^2G^2.
+\]
+
+\begin{examproblem}[A13：Lipschitz 函数的 sigmoid 网络逼近]
+对任意 \(\rho\)-Lipschitz 的 \(f:[-1,1]^n\to[-1,1]\) 和 \(\varepsilon>0\)，构造 sigmoid 网络 \(N\) 使 \(|f(x)-N(x)|\le\varepsilon\)。
+\source{官方卷：2025 Fall, p.~3}
+\officialenglish{Neural networks are universal approximators: let \(f:[-1,1]^n\to[-1,1]\) be \(\rho\)-Lipschitz and fix \(\varepsilon>0\). Construct a sigmoid network \(N:[-1,1]^n\to[-1,1]\) with \(|f(x)-N(x)|\le\varepsilon\) for every \(x\). Hint: partition into small boxes, use Lipschitzness for approximate constancy, then let a network identify a box and predict its averaged value.}
+\chinesetranslation{对任意 \(\rho\)-Lipschitz 函数 \(f:[-1,1]^n\to[-1,1]\)，构造 sigmoid 网络在整个定义域上一致误差不超过 \(\varepsilon\)。提示是小方盒分割、盒内近似常数，再用网络近似盒的识别与取值。}
+\end{examproblem}
+
+\solution
+把 \([-1,1]^n\) 划分为边长
+
+\[
+  \Delta\le \frac{\varepsilon}{2\rho\sqrt n}
+\]
+
+的小方块。对每个小方块 \(Q_j\)，取代表点 \(c_j\)，令 \(v_j=f(c_j)\)。若 \(x\in Q_j\)，Lipschitz 性给出
+
+\[
+  |f(x)-v_j|\le \rho\|x-c_j\|\le \frac{\varepsilon}{2}.
+\]
+
+接着用 sigmoid 单元近似每个坐标区间的 indicator。因为
+
+\[
+  \sigma(\alpha(x-a))-\sigma(\alpha(x-b))
+\]
+
+在 \(\alpha\) 足够大时近似 \(\mathbf{1}_{[a,b]}(x)\)，多维方块 indicator 可由坐标 indicator 的近似乘积实现；乘积又可由小型前馈网络逼近。最后令
+
+\[
+  N(x)=\sum_j v_j\,\widetilde{\mathbf{1}}_{Q_j}(x).
+\]
+
+当每个 indicator 近似误差取得足够小，总误差由分块常值误差和 indicator 近似误差相加，控制在 \(\varepsilon\) 内。这给出构造性 universal approximation。
+
+\section{B. Deep Learning and Reinforcement Learning}
+
+\begin{examproblem}[B1：CNN、self-attention 与混合视觉 Transformer]
+计算卷积层参数量，写 scaled dot-product self-attention，并设计同时使用 patch attention 与 convolution 的最小 ViT。
+\source{官方卷：2025 Fall, p.~4}
+\officialenglish{Neural Network Architectures (CNNs \& Transformers). (a) Derive the number of trainable parameters in one convolutional layer with input \(H\times W\times C_{\rm in}\), kernel \(k\times k\), \(C_{\rm out}\) output channels and bias, and compare with a dense layer of the same input/output size. (b) Write scaled dot-product self-attention, defining \(Q,K,V\); explain positional information and one injection method. (c) Give one benefit each of convolution and self-attention, then design a minimal vision transformer using both: patch tokenization, attention location, and convolution location.}
+\chinesetranslation{CNN 与 Transformer 架构题：(a) 推导卷积层参数量并与同尺寸全连接层比较；(b) 写 scaled dot-product self-attention，说明位置编码；(c) 分别给出卷积与注意力的关键优势，并设计一个混合二者的最小 ViT。}
+\end{examproblem}
+
+\solution
+(a) 单个卷积层参数量为
+
+\[
+  k^2 C_{\mathrm{in}}C_{\mathrm{out}}+C_{\mathrm{out}}.
+\]
+
+若把同样输入输出展平成全连接，从 \(HWC_{\mathrm{in}}\) 到 \(HWC_{\mathrm{out}}\)，参数量是
+
+\[
+  (HWC_{\mathrm{in}})(HWC_{\mathrm{out}})+HWC_{\mathrm{out}},
+\]
+
+远大于卷积，因为卷积共享空间权重并利用局部性。
+
+(b) 给定输入 token matrix \(X\)，
+
+\[
+  Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
+\]
+
+\[
+  \operatorname{Attention}(Q,K,V)
+  =
+  \softmax\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.
+\]
+
+Self-attention 本身对 token 顺序置换等变，必须加入位置编码。可用正弦位置编码或可学习 absolute/relative positional embeddings。
+
+(c) 卷积的优势是局部平移等变和参数共享；\conceptref{concept:self-attention}{self-attention} 的优势是全局依赖建模。最小混合模型：先用 stride \(p\) 的 convolution 或 linear patch projection 把图像切成 patch tokens；加入 class token 和位置编码；在若干 Transformer blocks 中做 self-attention；在前端或每个 block 的 FFN 前后插入 depthwise convolution 捕获局部纹理；最后 class token 接 linear head。
+
+\begin{examproblem}[B2：likelihood、flow、VAE 与 diffusion ELBO]
+证明最大似然等价于最小化 \(\KL(p_{\mathrm{data}}\|p_\theta)\)，写 normalizing flow 目标、VAE ELBO 和 DDPM 的层级 VAE ELBO。
+\source{官方卷：2025 Fall, p.~4--5}
+\officialenglish{Generative Models and Likelihood-based Training. (a) Show maximizing likelihood of \(p_\theta(x)\) under \(p_{\rm data}\) is minimizing \(\operatorname{KL}(p_{\rm data}\|p_\theta)\). (b) For invertible flow \(z_0\sim p(z_0),z_\ell=f_\ell(z_{\ell-1}),x=z_L\), write the dataset training loss. (c) Explain why a VAE uses an ELBO; write it and explain reconstruction and regularization terms. (d) For the diffusion encoder \(q(x_{1:T}|x_0)=\prod_tq(x_t|x_{t-1})\), \(q(x_t|x_{t-1})=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_tI)\), write the decoder and derive the stated hierarchical-VAE ELBO decomposition for \(\log p_\theta(x_0)\).}
+\chinesetranslation{生成模型与似然训练：(a) 最大似然等价于最小化数据分布到模型分布的 KL；(b) 写 normalizing flow 的数据集负对数似然；(c) 写 VAE ELBO 并解释重构与正则项；(d) 将指定前向加噪链视为层级 VAE encoder，写反向 decoder 和 \(\log p_\theta(x_0)\) 的 ELBO 分解。}
+\end{examproblem}
+
+\solution
+本题的公式入口分别回查 \conceptref{concept:flow-likelihood}{normalizing flow likelihood}、\conceptref{concept:vae-elbo}{VAE ELBO} 和 \conceptref{concept:diffusion-score}{diffusion score/ELBO 背景}。
+
+(a) 因为
+
+\[
+  \KL(p_{\mathrm{data}}\|p_\theta)
+  =
+  \E_{p_{\mathrm{data}}}\log p_{\mathrm{data}}(x)
+  -
+  \E_{p_{\mathrm{data}}}\log p_\theta(x),
+\]
+
+第一项不依赖 \(\theta\)，所以最小化 KL 等价于最大化数据 log-likelihood。
+
+(b) Flow 中 \(x=z_L=f_L\circ\cdots\circ f_1(z_0)\)。令反向变量 \(z_{\ell-1}=f_\ell^{-1}(z_\ell)\)，训练损失为负对数似然：
+
+\[
+  \mathcal{J}(\theta)
+  =
+  -\frac1N\sum_{i=1}^{N}
+  \left[
+    \log p_0(z_0^{(i)})
+    -
+    \sum_{\ell=1}^{L}
+    \log
+    \left|
+      \det J_{f_\ell}(z_{\ell-1}^{(i)})
+    \right|
+  \right].
+\]
+
+(c) VAE 中真实后验 \(p_\theta(z|x)\) 难算，引入 \(q_\phi(z|x)\)：
+
+\[
+  \log p_\theta(x)
+  =
+  \Lcal_{\mathrm{ELBO}}(x)
+  +
+  \KL(q_\phi(z|x)\|p_\theta(z|x)).
+\]
+
+因此
+
+\[
+  \Lcal_{\mathrm{ELBO}}
+  =
+  \E_{q_\phi(z|x)}\log p_\theta(x|z)
+  -
+  \KL(q_\phi(z|x)\|p(z)).
+\]
+
+重构项鼓励 \(z\) 保留能解释 \(x\) 的信息；正则项让 approximate posterior 接近先验，便于采样。
+
+(d) Diffusion 作为层级 VAE：forward encoder 为
+
+\[
+  q(x_{1:T}|x_0)=\prod_{t=1}^{T}q(x_t|x_{t-1}),
+\]
+
+decoder 为
+
+\[
+  p_\theta(x_{0:T})
+  =
+  p(x_T)\prod_{t=1}^{T}p_\theta(x_{t-1}|x_t).
+\]
+
+对 \(\log p_\theta(x_0)\) 使用 ELBO：
+
+\[
+  \log p_\theta(x_0)
+  \ge
+  \E_q
+  \log
+  \frac{p(x_T)\prod_{t=1}^{T}p_\theta(x_{t-1}|x_t)}
+       {q(x_{1:T}|x_0)}.
+\]
+
+整理得到
+
+\[
+  \log p_\theta(x_0)
+  \ge
+  -
+  \KL(q(x_T|x_0)\|p(x_T))
+  -
+  \sum_{t=2}^{T}
+  \E_q
+  \KL(q(x_{t-1}|x_t,x_0)\|p_\theta(x_{t-1}|x_t))
+  +
+  \E_q\log p_\theta(x_0|x_1).
+\]
+
+\begin{examproblem}[B3：Policy Gradient Theorem 与 baseline]
+证明 discounted MDP 中 policy gradient theorem，并说明 baseline 不改变期望。
+\source{官方卷：2025 Fall, p.~5--6}
+\officialenglish{Policy Gradient Methods. For discounted MDP \((\mathcal S,\mathcal A,P,r,\gamma)\), differentiable stochastic \(\pi_\theta\), fixed start state, return \(G_0=\sum_{t\ge0}\gamma^tr(s_t,a_t)\), and \(J(\theta)=V^{\pi_\theta}(s_0)\): (a) prove the Policy Gradient Theorem \(\nabla_\theta J=\mathbb E_{\pi_\theta}[\sum_t\gamma^t\nabla_\theta\log\pi_\theta(a_t|s_t)Q^{\pi_\theta}(s_t,a_t)]\), including its discounted-state-visitation form. (b) Prove every state-only baseline \(b\) has zero score-function expectation; write the resulting formula, identify the advantage baseline, and state its benefit.}
+\chinesetranslation{在折扣 MDP 中证明 Policy Gradient Theorem（包括 discounted visitation 形式）；再证明任意仅依赖状态的 baseline 的 score-function 期望为零，写出带 baseline 的梯度式，说明 advantage 方法应取何种 \(b(s)\) 以及降方差收益。}
+\end{examproblem}
+
+\solution
+\conceptref{concept:policy-gradient}{Policy gradient theorem} 的完整推导回查第三章，这里按真题要求写可评分骨架。
+
+轨迹概率为
+
+\[
+  p_\theta(\tau)=
+  \prod_{t\ge0}
+  \pi_\theta(a_t|s_t)P(s_{t+1}|s_t,a_t).
+\]
+
+环境转移不含 \(\theta\)，所以
+
+\[
+  \nabla_\theta\log p_\theta(\tau)
+  =
+  \sum_{t\ge0}\nabla_\theta\log\pi_\theta(a_t|s_t).
+\]
+
+由 log-derivative trick，
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \E_{\tau\sim\pi_\theta}
+  \left[
+    G_0
+    \sum_{t\ge0}\nabla_\theta\log\pi_\theta(a_t|s_t)
+  \right].
+\]
+
+对时间 \(t\) 的 score，只保留从 \(t\) 开始的 return 不改变期望，因为过去 reward 与当前 action score 的条件期望为零。因此
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \E_{\pi_\theta}
+  \left[
+    \sum_{t\ge0}
+    \gamma^t
+    \nabla_\theta\log\pi_\theta(a_t|s_t)
+    Q^{\pi_\theta}(s_t,a_t)
+  \right].
+\]
+
+若使用未归一化 discounted visitation distribution
+
+\[
+  d^\pi(s)=\sum_{t\ge0}\gamma^t\Pbb(s_t=s|\pi),
+\]
+
+则可写为
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \sum_s d^\pi(s)\sum_a\pi_\theta(a|s)
+  \nabla_\theta\log\pi_\theta(a|s)Q^\pi(s,a).
+\]
+
+若题目把 \(d^\pi\) 归一化为概率分布，则前面出现 \(1/(1-\gamma)\) 因子。
+
+baseline 部分：
+
+\[
+  \E_{a\sim\pi_\theta(\cdot|s)}
+  [\nabla_\theta\log\pi_\theta(a|s)b(s)]
+  =
+  b(s)\sum_a \nabla_\theta\pi_\theta(a|s)
+  =
+  b(s)\nabla_\theta 1
+  =
+  0.
+\]
+
+因此 \(Q^\pi(s,a)\) 可替换为 \(Q^\pi(s,a)-b(s)\)。Advantage method 取
+
+\[
+  b(s)=V^\pi(s),
+\]
+
+得到 \(A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)\)，优点是降低梯度估计方差而不引入偏差。
+
+\section{C. Optimization Methods in Artificial Intelligence}
+
+\begin{examproblem}[C1-C9：重要性采样 minibatch prox-SGD]
+有限和问题 \(f=n^{-1}\sum_i f_i\)，采样概率 \(q_i\)，minibatch estimator
+
+\[
+  g(x)=\frac1\tau\sum_{t=1}^{\tau}\frac{1}{nq_{s_t}}\nabla f_{s_t}(x).
+\]
+
+证明 unbiasedness、expected smoothness、重要性采样设计、方差与收敛界。
+\source{官方卷：2025 Fall, p.~6--8}
+\officialenglish{For the regularized finite sum \(F(x)=f(x)+R(x)\), \(f=n^{-1}\sum_i f_i\), with convex \(L_i\)-smooth \(f_i\), \(L\)-smooth \(\mu\)-strongly convex \(f\), and multisampling estimator \(g(x)=\tau^{-1}\sum_{t=1}^\tau(nq_{s_t})^{-1}\nabla f_{s_t}(x)\): (1) define \(L\)-smoothness and \(\mu\)-strong convexity; (2) prove uniqueness of \(x^*\); (3) prove \(g\) is unbiased; (4) establish expected smoothness with \(A''(\tau,q)\); (5) compute its extremes, monotonicity, and interpolation; (6) optimize importance sampling \(q\) and compare uniform; (7) derive variance at the optimum and its \(1/\tau\) scaling; (8) specialize expected smoothness to AC constants; (9) use the SGD convergence theorem to give an admissible stepsize range and closed-form noise floor.}
+\chinesetranslation{有限和正则化问题上的重要性采样小批量 prox-SGD，共九问：定义与唯一极小点、梯度估计无偏性、expected-smoothness 常数、批大小的极限/单调性、最优重要性采样、最优点方差的 \(1/\tau\) 缩放、AC 不等式常数及最终步长和含噪收敛界。详细的 \(A''(\tau,q)\) 公式与提示以官方卷第 6--8 页为准。}
+\end{examproblem}
+
+\solution
+\textbf{基本定义与唯一性。} \conceptref{concept:smooth-strong-convex}{\(L\)-smooth 和 \(\mu\)-strong convex} 同前。因为 \(f\) \(\mu\)-strongly convex，\(R\) convex，所以 \(F=f+R\) \(\mu\)-strongly convex，因而最多一个 minimizer；proper closed convex 加上强凸增长保证 minimizer 存在时唯一。题设通常默认解存在，故 \(x^*\) 唯一。
+
+\textbf{无偏性。} 对单次采样 \(s\)，
+
+\[
+  \E\left[\frac{1}{nq_s}\nabla f_s(x)\right]
+  =
+  \sum_{i=1}^{n}q_i\frac{1}{nq_i}\nabla f_i(x)
+  =
+  \nabla f(x).
+\]
+
+minibatch 平均仍无偏。
+
+\textbf{Expected smoothness。} 令
+
+\[
+  a_s(x,y)=\frac{1}{nq_s}\bigl(\nabla f_s(x)-\nabla f_s(y)\bigr).
+\]
+
+则
+
+\[
+  g(x)-g(y)=\frac1\tau\sum_{t=1}^{\tau}a_{s_t}(x,y).
+\]
+
+独立同分布展开平方：
+
+\[
+  \E\|g(x)-g(y)\|^2
+  =
+  \frac1\tau\E\|a_s\|^2
+  +
+  \left(1-\frac1\tau\right)\|\E a_s\|^2.
+\]
+
+第一项用 convex \(L_i\)-smooth 的标准不等式
+
+\[
+  \|\nabla f_i(x)-\nabla f_i(y)\|^2
+  \le
+  2L_i
+  \left[
+    f_i(x)-f_i(y)-\langle\nabla f_i(y),x-y\rangle
+  \right]
+\]
+
+得到
+
+\[
+  \E\|a_s\|^2
+  =
+  \sum_i q_i
+  \frac{1}{n^2q_i^2}
+  \|\nabla f_i(x)-\nabla f_i(y)\|^2
+  \le
+  2\max_i\frac{L_i}{nq_i}D_f(x,y).
+\]
+
+第二项为
+
+\[
+  \|\nabla f(x)-\nabla f(y)\|^2
+  \le 2L D_f(x,y).
+\]
+
+合并得
+
+\[
+  \E\|g(x)-g(y)\|^2
+  \le
+  2
+  \left[
+    \frac1\tau \max_i\frac{L_i}{nq_i}
+    +
+    \left(1-\frac1\tau\right)L
+  \right]
+  D_f(x,y).
+\]
+
+所以
+
+\[
+  A''(\tau,q)=
+  \frac1\tau \max_i\frac{L_i}{nq_i}
+  +
+  \left(1-\frac1\tau\right)L.
+\]
+
+\textbf{极端情形。} 当 \(\tau=1\)，常数为
+
+\[
+  A''(1,q)=\max_i\frac{L_i}{nq_i},
+\]
+
+对应非均匀采样 SGD。令 \(\tau\to\infty\)，
+
+\[
+  A''(\tau,q)\to L,
+\]
+
+对应全梯度下降。由于
+
+\[
+  \max_i\frac{L_i}{nq_i}\ge \frac1n\sum_i L_i\ge L,
+\]
+
+\(A''(\tau,q)\) 随 \(\tau\) 非增。
+
+\textbf{最优重要性采样。} 最小化 \(\max_i L_i/(nq_i)\)。最优时各项平衡：
+
+\[
+  q_i^*=\frac{L_i}{\sum_{j=1}^{n}L_j}.
+\]
+
+此时
+
+\[
+  \max_i\frac{L_i}{nq_i^*}
+  =
+  \frac1n\sum_{j=1}^{n}L_j.
+\]
+
+均匀采样给出 \(\max_i L_i\)，可能显著更差。
+
+\textbf{最优点处方差。} 因为 \(g(x^*)\) 是 \(\tau\) 个独立估计的平均，
+
+\[
+  \E\|\xi(x^*)\|^2
+  =
+  \Var(g(x^*))
+  =
+  \frac1\tau
+  \Var\left(
+    \frac{1}{nq_s}\nabla f_s(x^*)
+  \right).
+\]
+
+显式写为
+
+\[
+  \Var(g(x^*))
+  =
+  \frac1\tau
+  \left[
+    \sum_{i=1}^{n}
+    q_i
+    \left\|
+      \frac{1}{nq_i}\nabla f_i(x^*)-\nabla f(x^*)
+    \right\|^2
+  \right].
+\]
+
+\textbf{AC inequality 与收敛。} 由 expected smoothness 得 \(C''(y)=0\)，取 \(y=x^*\)。题给 implication 给出
+
+\[
+  A=2A''(\tau,q),
+  \qquad
+  C=2\Var(g(x^*)).
+\]
+
+可接受步长范围为
+
+\[
+  0<\gamma\le \frac{1}{A}=\frac{1}{2A''(\tau,q)}.
+\]
+
+经典 SGD 定理给出
+
+\[
+  \E\|x_k-x^*\|^2
+  \le
+  (1-\gamma\mu)^k\|x_0-x^*\|^2
+  +
+  \frac{2\gamma}{\mu}\Var(g(x^*)).
+\]
+
+这说明 minibatch 通过 \(1/\tau\) 降低噪声地板，重要性采样通过降低 \(A''\) 放宽步长并改善收敛常数。
+
+\section{D. Natural Language Processing}
+
+\begin{examproblem}[D1：GloVe、Skip-gram、Node2Vec、TransE]
+分别说明数据信号、目标类型和归纳偏置。
+\source{官方卷：2025 Fall, p.~8}
+\officialenglish{Embedding for Texts and Graphs. In 2--3 sentences each, describe the data signal, learning-objective type, and key inductive bias for GloVe, Skip-gram, Node2Vec, and TransE.}
+\chinesetranslation{对 GloVe、Skip-gram、Node2Vec、TransE 各用 2--3 句说明：所利用的数据关系信号、学习目标类型和核心归纳偏置。}
+\end{examproblem}
+
+\solution
+GloVe 使用全局词-上下文共现矩阵，目标是加权最小二乘拟合内积与 log-count，偏置是假设词义可由全局共现比率的线性结构表达。Skip-gram 使用局部窗口共现，目标是预测上下文词或用 negative sampling 做二分类，偏置是相近上下文中的词语语义相近。
+
+Node2Vec 在图上采样 biased random walks，把节点序列当句子，用 skip-gram 学 node embedding；偏置由 BFS/DFS 控制，平衡同质性和结构等价。TransE 使用知识图谱三元组 \((s,r,o)\)，目标让 \(e_s+r\) 靠近 \(e_o\)，偏置是关系可近似为 embedding 空间平移。
+
+\begin{examproblem}[D2：Scaling law 与 LSTM/Transformer 架构偏置]
+给定
+
+\[
+  L_{\mathrm{arch}}(P,T)=L_\infty+A_{\mathrm{arch}}P^{-\alpha_{\mathrm{arch}}}
+  +B_{\mathrm{arch}}T^{-\beta_{\mathrm{arch}}},
+\]
+
+比较 LSTM 和 Transformer。
+\source{官方卷：2025 Fall, p.~8--9}
+\officialenglish{Scaling Laws and Architectural Bias (LSTM vs. Transformer). For autoregressive LMs on the same corpus, assume \(L_{\rm arch}(P,T)=L_\infty+A_{\rm arch}P^{-\alpha_{\rm arch}}+B_{\rm arch}T^{-\beta_{\rm arch}}\). Analyze fixed-data and fixed-model regimes, compare the architecture-specific exponents/constants, and explain how inductive bias can affect observed scaling without changing the task/data irreducible loss.}
+\chinesetranslation{给定 LSTM/Transformer 的幂律测试损失模型，分别分析固定数据量与固定模型量的标度，并解释架构归纳偏置如何通过常数和指数影响实证 scaling law，而不改变任务/数据共同的不可约损失。}
+\end{examproblem}
+
+\solution
+固定数据 \(T=T_0\) 时，log-log 图上主要看 \(A_{\mathrm{arch}}P^{-\alpha_{\mathrm{arch}}}\)。Transformer 通常有更低的 \(A\) 和更大的有效 \(\alpha\)，曲线更低、下降更快；LSTM 因长依赖路径长和并行性差，更容易出现优化瓶颈。
+
+固定参数 \(P=P_0\) 时，Transformer 也通常有更低的 \(B\) 和更大的有效 \(\beta\)，因为它更能利用长上下文和大规模数据吞吐。LSTM 的递归结构对局部顺序有强偏置，小数据时可能有样本效率优势，但在大规模语言建模中 parallel \conceptref{concept:self-attention}{self-attention} 更适合 \conceptref{concept:scaling-law}{scaling}。
+
+解释维度：\conceptref{concept:self-attention}{self-attention} 任意 token 间路径长度为 \(1\)，LSTM 为 \(O(L)\)；Transformer 可并行训练，优化更稳定；LSTM 的强顺序归纳偏置在某些小任务有利，但限制长程组合表达。
+
+\begin{examproblem}[D3：简单 MLN 分析]
+两个 paper、谓词 Cites 和 InTopic，两个加权公式：引用传播 \(w_1=1.5\)，AI topic 负先验 \(w_2=-1.0\)。分析 ground network、概率、权重影响和 MAP。
+\source{官方卷：2025 Fall, p.~9}
+\officialenglish{A simple Markov Logic Network has formulas and weights for an academic-domain knowledge graph. Given observed evidence and unknown ground atoms, write the conditional log-linear distribution, identify the sufficient statistics / satisfied groundings, and explain how rule weights influence inference and how a hard logical constraint is represented.}
+\chinesetranslation{给定一个学术领域知识图谱的简化 Markov Logic Network：写出在证据条件下的对数线性条件分布，说明满足 groundings 的充分统计量与权重如何影响推断，并说明硬逻辑约束如何表示。}
+\end{examproblem}
+
+\solution
+节点是所有 ground atoms，例如 \(\operatorname{Cites}(P_i,P_j)\) 与 \(\operatorname{InTopic}(P_i,\mathrm{AI})\)。每个 ground formula 形成 clique：引用传播公式把一个 citation atom 与两个 topic atoms 放入同一 clique；先验公式给每个 topic atom 一个 unary clique。
+
+给定世界 \(x_1\)：\(P_1\) cites \(P_2\)，\(P_1\) 是 AI，\(P_2\) 不是 AI，且 \(P_2\) 不 cites \(P_1\)。公式
+
+\[
+  \operatorname{Cites}(p_1,p_2)\wedge \operatorname{InTopic}(p_1,\mathrm{AI})
+  \Rightarrow
+  \operatorname{InTopic}(p_2,\mathrm{AI})
+\]
+
+在 \((P_1,P_2)\) grounding 下为假；在其他 citation antecedent 为假的 groundings 下为真。若只考虑两个有向 citation groundings，则 \(n_1(x_1)=1\)。先验公式 \(\operatorname{InTopic}(p,\mathrm{AI})\) 对 \(P_1\) 为真、对 \(P_2\) 为假，故 \(n_2(x_1)=1\)。未归一化概率是
+
+\[
+  \exp(1.5\cdot 1-1.0\cdot 1)=e^{0.5}.
+\]
+
+若把 \(w_1\) 改为 \(-1.5\)，模型偏好“AI 论文引用的论文不是 AI”或至少不满足同主题传播；两篇都是 AI 且存在引用的世界会显著降权，因为原本满足的传播公式从奖励变成惩罚。
+
+MAP：给定 \(\operatorname{Cites}(P_1,P_2)=\mathrm{true}\)，原始权重下若 \(P_1\) 是 AI，则 \(P_2\) 也应是 AI 才能获得传播奖励。但两个 AI 会付出两次负先验。比较：
+
+\[
+  (0,0):0,\quad
+  (1,0):-1,\quad
+  (0,1):-1,\quad
+  (1,1):1.5-2=-0.5.
+\]
+
+最大是 \((0,0)\)。所以 MAP 为两者都不是 AI。若证据还强烈支持 \(P_1\) 是 AI，才会把 \(P_2\) 一起推为 AI。
+
+\begin{examproblem}[D4：Topic-Ontology LDA for fact triples]
+为事实三元组 \((s,r,o)\) 设计 LDA-style generative model，写 joint probability，并说明自动命名。
+\source{官方卷：2025 Fall, p.~9--10}
+\officialenglish{Topic-Ontology LDA for fact triples. Design a probabilistic topic model for documents containing extracted triples, in which latent topics interact with an ontology / entity and relation types. Specify the random variables and generative process, write a factorized joint distribution, and explain how the model can use ontology structure to improve topic interpretability or triple prediction.}
+\chinesetranslation{为含有抽取事实三元组的文档设计 Topic--Ontology LDA：指定随机变量与生成过程，写出联合分布的分解，并说明如何借助本体、实体或关系类型改善主题可解释性或三元组预测。}
+\end{examproblem}
+
+\solution
+对每个文档 \(d\)，采样 topic mixture
+
+\[
+  \theta_d\sim \Dir(\alpha).
+\]
+
+对每个 topic \(k\)，采样 subject type、object type、relation type 分布：
+
+\[
+  \pi_k^{(s)}\sim\Dir(\beta_s),
+  \quad
+  \pi_k^{(o)}\sim\Dir(\beta_o),
+  \quad
+  \pi_k^{(r)}\sim\Dir(\beta_r).
+\]
+
+对每个 entity/relation type，采样 surface-form distribution：
+
+\[
+  \phi_c^{(s)}\sim\Dir(\eta_s),
+  \quad
+  \phi_c^{(o)}\sim\Dir(\eta_o),
+  \quad
+  \phi_t^{(r)}\sim\Dir(\eta_r).
+\]
+
+对文档 \(d\) 中每个 triple \(f\)，生成：
+
+\[
+  z_f\sim\Cat(\theta_d),
+  \quad
+  c_{s,f}\sim\Cat(\pi_{z_f}^{(s)}),
+  \quad
+  c_{o,f}\sim\Cat(\pi_{z_f}^{(o)}),
+  \quad
+  t_f\sim\Cat(\pi_{z_f}^{(r)}),
+\]
+
+\[
+  s_f\sim\Cat(\phi_{c_{s,f}}^{(s)}),
+  \quad
+  o_f\sim\Cat(\phi_{c_{o,f}}^{(o)}),
+  \quad
+  r_f\sim\Cat(\phi_{t_f}^{(r)}).
+\]
+
+joint probability 为
+
+\[
+\begin{aligned}
+&p(\Theta,\Pi,\Phi,Z,C_s,C_o,T,S,O,R|\alpha,\beta,\eta)\\
+&=
+\prod_d p(\theta_d|\alpha)
+\prod_k p(\pi_k^{(s)}|\beta_s)p(\pi_k^{(o)}|\beta_o)p(\pi_k^{(r)}|\beta_r)\\
+&\quad\cdot
+\prod_c p(\phi_c^{(s)}|\eta_s)p(\phi_c^{(o)}|\eta_o)
+\prod_t p(\phi_t^{(r)}|\eta_r)\\
+&\quad\cdot
+\prod_{d}\prod_{f\in d}
+p(z_f|\theta_d)
+p(c_{s,f}|\pi_{z_f}^{(s)})
+p(c_{o,f}|\pi_{z_f}^{(o)})
+p(t_f|\pi_{z_f}^{(r)})\\
+&\quad\cdot
+p(s_f|\phi_{c_{s,f}}^{(s)})
+p(o_f|\phi_{c_{o,f}}^{(o)})
+p(r_f|\phi_{t_f}^{(r)}).
+\end{aligned}
+\]
+
+自动命名可取每个 latent category 下 posterior probability 最高的 surface forms、PMI 最高的 mentions、代表三元组和最近的知识库 type label，再用模板或 LLM 生成短名，并保留 top evidence 供人工审查。
+
+\begin{examproblem}[D5：Text-to-image diffusion system]
+写 forward process 的闭式分布、ELBO、posterior mean，噪声预测训练损失，并设计 text-conditioned Transformer denoiser。
+\source{官方卷：2025 Fall, p.~10--11}
+\officialenglish{Text-to-image diffusion system. (a) For the forward noising process, derive the posterior and the variational training objective. (b) With fixed reverse variance, show the reverse mean may be parameterized by a noise-prediction network \(\varepsilon_\theta\), and that training reduces, up to constants and timestep weights, to the standard squared noise-prediction loss. (c) Design a Transformer-based conditional reverse process \(p_\theta(x_{t-1}\mid x_t,\mathrm{Text})\): specify the image denoiser and how text conditions it.}
+\chinesetranslation{文本到图像扩散系统：(a) 对前向加噪过程推导后验和变分训练目标；(b) 在固定反向方差下，证明反向均值可由噪声预测网络参数化，训练等价于标准噪声 MSE（差常数与每时刻权重）；(c) 用 Transformer 设计条件反向过程，说明图像去噪器及文本条件注入。}
+\end{examproblem}
+
+\solution
+本题的扩散 ELBO、噪声预测目标和 text-conditioned denoiser 设计入口分别回查 \conceptref{concept:diffusion-score}{diffusion/score} 与 \conceptref{concept:self-attention}{Transformer self-attention}。
+
+(a) 递推
+
+\[
+  q(x_t|x_{t-1})=\N(\sqrt{\alpha_t}x_{t-1},\beta_t I),
+  \qquad
+  \bar\alpha_t=\prod_{s=1}^{t}\alpha_s.
+\]
+
+归纳可得
+
+\[
+  q(x_t|x_0)
+  =
+  \N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I).
+\]
+
+ELBO 写作
+
+\[
+  \log p_\theta(x_0)
+  \ge
+  \E_q\log p_\theta(x_0|x_1)
+  -
+  \sum_{t=2}^{T}
+  \E_q\KL(q(x_{t-1}|x_t,x_0)\|p_\theta(x_{t-1}|x_t))
+  -
+  \KL(q(x_T|x_0)\|p(x_T)).
+\]
+
+精确后验为 Gaussian：
+
+\[
+  q(x_{t-1}|x_t,x_0)=\N(\tilde\mu_t(x_t,x_0),\tilde\beta_t I),
+\]
+
+\[
+  \tilde\beta_t=
+  \frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,
+\]
+
+\[
+  \tilde\mu_t
+  =
+  \frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}x_0
+  +
+  \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}x_t.
+\]
+
+(b) 若
+
+\[
+  x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\varepsilon,
+\]
+
+则可由 \(x_t\) 和预测噪声 \(\varepsilon_\theta(x_t,t)\) 估计 \(x_0\)。代入 posterior mean，得到
+
+\[
+  \mu_\theta(x_t,t)
+  =
+  \frac{1}{\sqrt{\alpha_t}}
+  \left(
+    x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\varepsilon_\theta(x_t,t)
+  \right).
+\]
+
+KL 项在固定方差时等价于加权噪声 MSE，因此训练目标可简化为
+
+\[
+  \E_{t,x_0,\varepsilon}
+  \left\|
+    \varepsilon-
+    \varepsilon_\theta(
+      \sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\varepsilon,
+      t)
+  \right\|^2.
+\]
+
+(c) 文生图系统可采用 DiT-style denoiser：把 noisy image \(x_t\) patchify 成 tokens，加入 timestep embedding；text encoder 产生 token embeddings。条件注入方式包括 cross-attention、adaptive layer norm 或把 text tokens 与 image tokens 拼接。反向过程为
+
+\[
+  p_\theta(x_{t-1}|x_t,T)
+  =
+  \N(\mu_\theta(x_t,t,\operatorname{Enc}(T)),\sigma_t^2I).
+\]
+
+训练时随机采样 \(t\)、加噪图像和 prompt，优化 conditional noise prediction；推理时从 \(x_T\sim\N(0,I)\) 逐步去噪，并可用 classifier-free guidance 提高文本一致性。

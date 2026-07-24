@@ -112,16 +112,42 @@ Hint: Consider separately two cases: $E [ X ^ { + } ] \geq E [ X ^ { - } ]$ and 
 \end{exercise}
 
 \begin{solution}
-By Jensen's inequality, $E[|X+Y| \mid X] \ge |X + E[Y]|$. Since $X, Y$ are iid, let $E[X] = E[Y] = \mu$. Thus $E[|X+Y|] \ge E[|X+\mu|]$.
-Assume $\mu \ge 0$ (which corresponds to $E[X^+] \ge E[X^-]$). We want to show $E[|X+\mu|] \ge E[|X|]$.
-Consider $\phi(x) = |x+\mu| - |x|$. We have:
+\textbf{Statement-risk note.}
+As stated, the inequality is true once the expectations are interpreted in the usual
+integrable sense, for example $E|X|<\infty$. The tempting Jensen reduction to
+$E|X+E X|$ is not sufficient; the following proof uses the iid symmetry directly.
+
+First compare $X+Y$ with $X-Y$. For real numbers $x,y$,
 \[
-\phi(x) = \begin{cases} \mu & x \ge 0 \\ 2x+\mu & -\mu \le x < 0 \\ -\mu & x < -\mu \end{cases}
+|x+y|-|x-y|=2\,\operatorname{sgn}(xy)\min\{|x|,|y|\},
 \]
-$\phi(x)$ is a non-decreasing function.
-By the property of expectations for non-decreasing functions and $E[X] = \mu \ge 0$, we have $E[|X+\mu|] \ge E[|X|]$.
-\sidenote{Specifically, for any $\mu \ge 0$, $\phi(x) \ge x$ is not true, but $E[|X+\mu| - |X|] \ge 0$ if $E[X] \ge 0$ can be shown by noting that $|x+y| \ge |x| + y \operatorname{sgn}(x)$ for all $x, y$. Taking expectation gives $E|X+Y| \ge E|X| + \mu E[\operatorname{sgn}(X)]$. If $\mu=0$ it holds. If $\mu>0$, a more careful treatment of the hint cases ensures the inequality.}
-The case $E[X^+] < E[X^-]$ follows by considering $-X$ and $-Y$.
+with the right side understood as $0$ if $xy=0$. Taking expectations and using the
+layer-cake representation for the minimum gives
+\[
+\begin{aligned}
+E|X+Y|-E|X-Y|
+&=2\int_0^\infty
+\Big(P(X>t)^2+P(X<-t)^2\\
+&\hspace{35mm}-2P(X>t)P(X<-t)\Big)\,dt\\
+&=2\int_0^\infty \big(P(X>t)-P(X<-t)\big)^2\,dt\geq 0.
+\end{aligned}
+\]
+Thus
+\[
+E|X-Y|\leq E|X+Y|.
+\]
+On the other hand, the triangle inequality gives, pointwise,
+\[
+2|X|=|(X+Y)+(X-Y)|\leq |X+Y|+|X-Y|.
+\]
+Taking expectations and using the previous inequality,
+\[
+2E|X|\leq E|X+Y|+E|X-Y|\leq 2E|X+Y|.
+\]
+Therefore
+\[
+E|X+Y|\geq E|X|.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -219,9 +245,45 @@ Show:
 \end{exercise}
 
 \begin{solution}
-(a) $\frac{\mathrm{d}}{\mathrm{d} \alpha} f(x_n + \alpha p_n) = (x_n + \alpha p_n)^T A p_n - b^T p_n = \alpha p_n^T A p_n - (b - A x_n)^T p_n = \alpha p_n^T A p_n - r_n^T p_n$.
-Setting to zero gives $\alpha = r_n^T p_n / p_n^T A p_n$. In CG, $p_n^T r_n = r_n^T r_n$ holds.
-(b) (c) (d) These are standard properties of the Conjugate Gradient algorithm. $K_n$ is the Krylov subspace $\operatorname{span}\{r_0, Ar_0, \dots, A^{n-1}r_0\}$. The directions $p_i$ are $A$-orthogonal, and the residuals $r_i$ are orthogonal to each other and to the subspace $K_i$.
+\textbf{(a)} Since $\nabla f(x)=Ax-b=-r(x)$, along the line $x_n+\alpha p_n$ we have
+\[
+\frac{\mathrm{d}}{\mathrm{d}\alpha}f(x_n+\alpha p_n)
+=p_n^T(Ax_n-b)+\alpha p_n^TAp_n
+=-p_n^Tr_n+\alpha p_n^TAp_n.
+\]
+Because $A$ is positive definite, $p_n^TAp_n>0$ whenever $p_n\neq0$, so the critical point is the unique minimizer:
+\[
+\alpha_n=\frac{p_n^Tr_n}{p_n^TAp_n}.
+\]
+The construction gives $p_n=r_n+\beta_{n-1}p_{n-1}$ and $p_{n-1}^Tr_n=0$, hence $p_n^Tr_n=r_n^Tr_n$, which is the stated formula.
+
+\textbf{(b)} We argue by induction.  The choice of $\beta_n$ gives
+\[
+p_{n+1}^TAp_n=(r_{n+1}+\beta_np_n)^TAp_n
+=r_{n+1}^TAp_n+\beta_np_n^TAp_n=0.
+\]
+For $i<n$, use $r_{n+1}=r_n-\alpha_nAp_n$ and the induction hypothesis $p_i^Tr_n=0$ and $p_i^TAp_n=0$ to get
+\[
+p_i^Tr_{n+1}=p_i^Tr_n-\alpha_np_i^TAp_n=0.
+\]
+Then $p_{n+1}=r_{n+1}+\beta_np_n$ is $A$-orthogonal to all earlier $p_i$: for $i<n$, both $r_{n+1}^TAp_i$ and $p_n^TAp_i$ vanish by the same induction relation applied to the residual recurrence.  Thus the search directions are mutually $A$-conjugate and $p_i^Tr_n=0$ for $i<n$.
+
+\textbf{(c)} Since
+\[
+p_{j}=r_j+\beta_{j-1}p_{j-1},
+\]
+each $p_j$ lies in $\operatorname{span}\{r_0,\dots,r_j\}$.  Conversely,
+\[
+r_j=p_j-\beta_{j-1}p_{j-1},
+\]
+so each $r_j$ lies in $\operatorname{span}\{p_0,\dots,p_j\}$.  Therefore
+\[
+\operatorname{span}\{p_0,\dots,p_{n-1}\}
+=\operatorname{span}\{r_0,\dots,r_{n-1}\}
+=K_n.
+\]
+
+\textbf{(d)} Part (b) gives $p_i^Tr_n=0$ for every $i<n$.  Since $K_n$ is spanned by $p_0,\dots,p_{n-1}$, it follows immediately that $r_n$ is orthogonal to $K_n$.
 \end{solution}
 
 \begin{exercise}
@@ -293,12 +355,29 @@ if and only if $a$ is a median of $X$.
 \end{exercise}
 
 \begin{solution}
-Let $g(x) = E|X-x|$. For any $x, a$:
-$|X-x| - |X-a| \ge (a-x) \operatorname{sgn}(X-a)$.
-$E|X-x| - E|X-a| \ge (a-x) E[\operatorname{sgn}(X-a)] = (a-x) [P(X>a) - P(X<a)]$.
-If $a$ is the median, then $P(X \ge a) \ge 1/2$ and $P(X \le a) \ge 1/2$.
-More precisely, $g(x)$ is convex and $g'(x) = P(X \le x) - P(X \ge x)$.
-$g'(x) = 0$ implies $P(X \le x) = P(X \ge x) = 1/2$, which is the definition of the median.
+Let
+\[
+g(x)=E|X-x|.
+\]
+The function $g$ is convex as an expectation of convex functions.  Its one-sided derivatives are
+\[
+g'_-(x)=P(X<x)-P(X\geq x),
+\qquad
+g'_+(x)=P(X\leq x)-P(X>x).
+\]
+A point $a$ minimizes a convex function if and only if $0$ lies between its left and right derivatives:
+\[
+g'_-(a)\leq0\leq g'_+(a).
+\]
+These inequalities are exactly
+\[
+P(X<a)\leq \frac12,\qquad P(X\leq a)\geq \frac12.
+\]
+Equivalently,
+\[
+P(X\geq a)\geq \frac12,\qquad P(X\leq a)\geq \frac12,
+\]
+which is the usual definition of a median.  Hence $a$ minimizes $E|X-x|$ if and only if $a$ is a median of $X$.
 \end{solution}
 
 \begin{exercise}
@@ -308,9 +387,34 @@ Suppose a priori that $\theta$ has the improper prior $\theta \sim \text{Lebesgu
 \end{exercise}
 
 \begin{solution}
-The posterior is $p(\theta \mid y) \propto \prod_{i=1}^n f(y_i - \theta)$.
-Noninformative: The flat prior is invariant under translations $\theta \to \theta + c$. It reflects total ignorance about the location.
-Confidence Interval: Let $P(\theta \in [L(y), U(y)] \mid y) = 0.95$. Since $f$ is a location family and the prior is flat, the distribution of $\theta - \bar{y}$ depends only on the data through the residuals $y_i - \bar{y}$. This implies the Bayesian credible interval is numerically identical to the frequentist confidence interval derived from the location invariant pivotal quantity.
+The likelihood is
+\[
+L(\theta;y)=\prod_{i=1}^n f(y_i-\theta).
+\]
+With the improper flat prior $\pi(\theta)\propto1$, the posterior density is
+\[
+\pi(\theta\mid y)=
+\frac{\prod_{i=1}^n f(y_i-\theta)}
+{\int_{-\infty}^{\infty}\prod_{i=1}^n f(y_i-t)\,dt},
+\]
+provided the normalizing integral is finite.
+
+The prior is noninformative in the standard location-family sense because it is invariant under translations: shifting all observations and the parameter by the same constant does not change the prior density or the form of the posterior.  It is the right Haar measure for the translation group.
+
+For the confidence statement, let a credible interval be equivariant:
+\[
+C(y+c)=C(y)+c.
+\]
+If
+\[
+P(\theta\in C(Y)\mid Y=y)=0.95
+\]
+under the flat-prior posterior, then by the change of variables $z_i=y_i-\theta$ the posterior probability can be rewritten as
+\[
+\frac{\int I(0\in C(z))\prod_i f(z_i)\,d\theta}
+{\int \prod_i f(z_i)\,d\theta}.
+\]
+The same integral is the frequentist coverage probability $P_\theta(\theta\in C(Y))$, and translation invariance makes it independent of $\theta$.  Thus such a 95\% posterior probability interval is also a 95\% confidence interval.  The symmetry of $f$ justifies the usual centered equal-tail choice, but the key point is location equivariance.
 \end{solution}
 
 \begin{exercise}
@@ -328,9 +432,33 @@ Suppose we have two independent random samples $\{Y_i, i = 1 , \ldots , n \}$ fr
 (a) Let $S_1 = \sum_{i=1}^n Y_i$ and $S_2 = \sum_{i=n+1}^{2n} Y_i$. $S_1 \sim \text{Pois}(n\lambda_1)$, $S_2 \sim \text{Pois}(n\lambda_2)$.
 Conditional on $S_1 + S_2 = m$, $S_1 \sim \operatorname{Bin}(m, \theta)$.
 Thus $E[S_1 / m \mid S_1+S_2=m, m>0] = \theta$.
-The estimator $\hat{\theta} = \frac{S_1}{S_1+S_2}$ is unbiased (conditional on $S_1+S_2 > 0$).
+Therefore, in the conditional experiment given $S_1+S_2>0$,
+\[
+\hat{\theta}=\frac{S_1}{S_1+S_2}
+\]
+is unbiased.  Unconditionally, defining the ratio to be $0$ when $S_1+S_2=0$ gives expectation
+\[
+\theta\,P(S_1+S_2>0),
+\]
+so the usual ratio is not unconditionally unbiased unless the zero-total event is excluded by design.
 
-(b) Yes, $S_1$ and $S_2$ are complete sufficient statistics for the Poisson family. By the Lehmann-Scheffé theorem, $\hat{\theta}$ is the UMVU estimator.
+(b) For the conditional experiment with total count $m>0$, $S_1$ is sufficient for the binomial parameter $\theta$ by the factorization criterion.  It is also complete in this finite-sample binomial model.  Indeed, if
+\[
+E_\theta h(S_1)=0
+\]
+for every $0<\theta<1$, then
+\[
+\sum_{s=0}^m h(s){m\choose s}\theta^s(1-\theta)^{m-s}=0
+\]
+for every $0<\theta<1$.  Dividing by $(1-\theta)^m$ and putting $u=\theta/(1-\theta)$ gives the polynomial identity
+\[
+\sum_{s=0}^m h(s){m\choose s}u^s=0
+\]
+for all $u>0$.  Hence every coefficient is zero, so $h(s)=0$ for all $s=0,\ldots,m$.  Thus $S_1/m$ is the UMVU estimator in the conditional experiment by the Lehmann-Scheffé theorem.  For the original two-Poisson experiment without conditioning, the question needs this qualification because the zero-total event prevents the displayed ratio from being exactly unbiased.
 
-(c) No. In general, estimators of ratios of parameters do not attain the Cramer-Rao bound unless the model is very specific (e.g., linear).
+(c) In the conditional binomial model,
+\[
+\operatorname{Var}\left(\frac{S_1}{m}\mid S_1+S_2=m\right)=\frac{\theta(1-\theta)}{m},
+\]
+which attains the Cramer-Rao lower bound for estimating $\theta$ from $m$ binomial trials.  In the unconditional two-Poisson model, after the qualification above, the ratio estimator should not be claimed to attain an unconditional Fisher-information bound without separately specifying how the zero-total event is handled.
 \end{solution}

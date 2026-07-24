@@ -11,50 +11,33 @@ F(b) - F(a) = \int_a^b F'(x)\,dx.
 \end{exercise}
 
 \begin{solution}
-\textbf{Prerequisites:}
-\begin{itemize}
-    \item \textbf{Fundamental Theorem of Calculus (FTC):} In its simplest form, it relates differentiation and integration. Here we use the Lebesgue version.
-    \item \textbf{Absolute Continuity:} A function $F$ is absolutely continuous if it can be written as the integral of its derivative.
-    \item \textbf{Luzin N Property:} A function has this property if it maps sets of measure zero to sets of measure zero. Absolutely continuous functions possess this property.
-    \item \textbf{Lebesgue Integrability:} The derivative $F'$ is given as integrable, which is a necessary condition for the integral to be well-defined.
-\end{itemize}
+\textbf{Proof.}
+We use the standard contest interpretation that $F'$ is Riemann integrable on $[a,b]$. Then $F'$ is bounded; choose $M$ such that $|F'(x)|\leq M$ on $(a,b)$. By the mean value theorem,
+\[
+|F(y)-F(x)|\leq M|y-x|
+\]
+for all $x,y\in[a,b]$. Hence $F$ is Lipschitz, and in particular absolutely continuous.
 
-\textbf{Intuition:}
-The goal is to show that a function is completely determined by its derivative if that derivative exists everywhere and is "well-behaved" (integrable). The "Intuition" here is that if two functions have the same derivative almost everywhere and don't "jump" or "wiggle" too much (the Luzin N property), they must differ only by a constant. Since we can construct a function $G(x)$ that is the integral of $F'$, we just need to prove that $F(x) - G(x)$ is a constant.
-
-\textbf{Steps:}
-
-\begin{enumerate}
-    \item \textbf{Construct an auxiliary function:}
-    Define $G(x) = \int_a^x F'(t) dt$ for $x \in [a, b]$. 
-    Because $F'$ is integrable (given), this function $G(x)$ is well-defined. According to the properties of the Lebesgue integral, any function defined as an indefinite integral is automatically \textit{absolutely continuous}.
-
-    \item \textbf{Examine the derivatives:}
-    A key property of $G(x)$ is that $G'(x) = F'(x)$ for \textit{almost every} $x \in [a, b]$. 
-    We are given that $F'(x)$ exists for \textit{every} $x \in (a, b)$.
-    Now, consider the difference function $H(x) = F(x) - G(x)$.
-    This function $H$ is continuous because both $F$ and $G$ are continuous.
-    Furthermore, $H'(x) = F'(x) - G'(x) = 0$ for almost every $x \in [a, b]$.
-
-    \item \textbf{Apply the Luzin N property:}
-    $F(x)$ has a derivative everywhere in $(a, b)$. A theorem by Banach and Zarecki states that if a continuous function has a derivative everywhere (or even except on a countable set), it satisfies the \textit{Luzin N property}.
-    Since $G$ is absolutely continuous, it also satisfies the Luzin N property.
-    Therefore, their difference $H = F - G$ also satisfies the Luzin N property.
-
-    \item \textbf{Conclude the constant nature of H:}
-    We have a continuous function $H$ that:
-    (a) Has a derivative equal to zero almost everywhere.
-    (b) Satisfies the Luzin N property.
-    A fundamental result in real analysis states that any such function must be \textit{constant}.
-    Thus, $H(x) = C$ for some constant $C$.
-
-    \item \textbf{Final Result:}
-    To find $C$, we plug in $x = a$:
-    $H(a) = F(a) - G(a) = F(a) - 0 = F(a)$.
-    So, $H(x) = F(a)$ for all $x$.
-    This means $F(x) - G(x) = F(a)$, or $F(x) = F(a) + \int_a^x F'(t) dt$.
-    This identity confirms that $F$ is absolutely continuous and that $F(b) - F(a) = \int_a^b F'(x) dx$.
-\end{enumerate}
+It remains to prove the integral identity. Let
+\[
+P:\quad a=x_0<x_1<\cdots <x_N=b
+\]
+be any partition. For each interval $[x_{j-1},x_j]$, the mean value theorem gives a point $\xi_j\in(x_{j-1},x_j)$ such that
+\[
+F(x_j)-F(x_{j-1})=F'(\xi_j)(x_j-x_{j-1}).
+\]
+Summing over $j$,
+\[
+F(b)-F(a)=\sum_{j=1}^N F'(\xi_j)(x_j-x_{j-1}).
+\]
+The right-hand side is a Riemann sum for $F'$. Since $F'$ is Riemann integrable, taking partitions with mesh tending to zero gives
+\[
+F(b)-F(a)=\int_a^b F'(x)\,dx.
+\]
+This also agrees with the absolute-continuity representation
+\[
+F(x)=F(a)+\int_a^x F'(t)\,dt.
+\]
 \end{solution}
 
 \begin{exercise}
@@ -230,13 +213,21 @@ Let $f$ be a doubly periodic meromorphic function. Prove that the number of zero
 \end{exercise}
 
 \begin{solution}
-By the Argument Principle, the number of zeros minus the number of poles in the fundamental parallelogram $\Omega$ is:
-$Z - P = \frac{1}{2\pi i} \int_{\partial \Omega} \frac{f'(z)}{f(z)} dz$.
-Since $f$ is doubly periodic, $f'/f$ is also doubly periodic.
-The integral over opposite sides of the parallelogram cancel out because the path is in opposite directions and the function values are the same.
-$\int_{\text{side } 1} + \int_{\text{side } 3} = \int_{z_0}^{z_0+\omega_1} \frac{f'(z)}{f(z)} dz + \int_{z_0+\omega_1+\omega_2}^{z_0+\omega_2} \frac{f'(z)}{f(z)} dz = 0$.
-Similarly for the other pair of sides.
-Thus $Z - P = 0 \implies Z = P$.
+Choose a fundamental parallelogram
+\[
+Q=z_0+[0,1]+i[0,1]
+\]
+whose boundary contains no zero or pole of $f$; this is possible after a small translation because zeros and poles are discrete modulo the lattice. Count zeros and poles in $Q$ with multiplicity.
+
+By the argument principle,
+\[
+Z-P=\frac{1}{2\pi i}\int_{\partial Q}\frac{f'(z)}{f(z)}\,dz.
+\]
+The logarithmic derivative $f'/f$ has the same periods as $f$, namely $1$ and $i$. Therefore the integrals over opposite sides of $\partial Q$ cancel: the two horizontal sides are translates by $i$ and are traversed in opposite directions, and the same is true for the vertical sides, which are translates by $1$. Hence
+\[
+\int_{\partial Q}\frac{f'(z)}{f(z)}\,dz=0.
+\]
+Thus $Z-P=0$, so the number of zeros equals the number of poles in a fundamental parallelogram. Equivalently, a nonzero doubly periodic meromorphic function on the torus $\mathbb C/(\mathbb Z+i\mathbb Z)$ has divisor of degree zero.
 \end{solution}
 
 \begin{exercise}
@@ -245,15 +236,39 @@ Prove that the spectrum of a bounded self-adjoint operator is a bounded closed s
 \end{exercise}
 
 \begin{solution}
-1) \textbf{Bounded and Closed:} The spectrum $\sigma(A)$ is always closed and contained in $\{|\lambda| \leq \|A\|\}$ for any bounded operator.
-2) \textbf{Real Line:} Let $\lambda = a + ib$ with $b \neq 0$.
-$\|(A-\lambda I)x\|^2 = \|(A-aI)x - ibx\|^2 = \|(A-aI)x\|^2 + b^2\|x\|^2$ (since $A-aI$ is self-adjoint, cross terms cancel).
-Thus $\|(A-\lambda I)x\| \geq |b|\|x\|$.
-This implies $A-\lambda I$ is injective and has a closed range.
-Since $(A-\lambda I)^* = A - \bar{\lambda} I$ also satisfies the same estimate, its kernel is $\{0\}$.
-So the range of $A-\lambda I$ is dense.
-A dense closed range is the whole space, so $A-\lambda I$ is invertible.
-Thus $\lambda \notin \sigma(A)$, so $\sigma(A) \subset \mathbb{R}$.
+\textbf{Boundedness and closedness.}
+For every bounded operator $A$,
+\[
+\sigma(A)\subset \{\lambda\in\mathbb C:|\lambda|\leq \|A\|\}.
+\]
+Indeed, if $|\lambda|>\|A\|$, then
+\[
+A-\lambda I=-\lambda\left(I-\frac{A}{\lambda}\right)
+\]
+is invertible by the Neumann series. The resolvent set is open because invertibility is stable under sufficiently small bounded perturbations. Therefore $\sigma(A)$ is closed and bounded.
+
+\textbf{Reality of the spectrum.}
+Let $\lambda=a+ib$ with $b\neq 0$. Since $A$ is self-adjoint, $A-aI$ is self-adjoint. For every $x$,
+\[
+\|(A-\lambda I)x\|^2
+=\|(A-aI)x-ibx\|^2
+=\|(A-aI)x\|^2+b^2\|x\|^2.
+\]
+The cross terms cancel because $\langle (A-aI)x,x\rangle$ is real. Hence
+\[
+\|(A-\lambda I)x\|\geq |b|\|x\|.
+\]
+Thus $A-\lambda I$ is injective and has closed range.
+
+To show the range is all of $H$, use
+\[
+\operatorname{Ran}(A-\lambda I)^\perp=\ker((A-\lambda I)^*)=\ker(A-\overline{\lambda}I).
+\]
+The same estimate with $\overline{\lambda}$ shows that this kernel is $\{0\}$. Therefore the range is dense; being both dense and closed, it is the whole space. The inverse exists and is bounded by the estimate above. Hence every nonreal $\lambda$ lies in the resolvent set, and
+\[
+\sigma(A)\subset\mathbb R.
+\]
+Combining the two parts, $\sigma(A)$ is a bounded closed subset of the real line.
 \end{solution}
 
 \subsection*{Team}
@@ -266,6 +281,52 @@ Let $D \subset \mathbb{R}^d, d \geq 2$ be a compact convex set with smooth bound
 \]
 where $d\sigma$ denotes the surface measure on $\partial D$.
 \end{exercise}
+
+\begin{solution}
+The answer is $1$.
+
+Let
+\[
+X(x)=\frac{x}{|x|^d},\qquad x\neq 0.
+\]
+Then
+\[
+X(x)\cdot n(x)=\frac{x\cdot n(x)}{|x|^d}
+=\frac{\cos(\alpha(x))}{|x|^{d-1}},
+\]
+because $\cos(\alpha(x))=(x\cdot n(x))/|x|$.
+
+The vector field $X$ is divergence-free away from the origin:
+\[
+\operatorname{div}\left(\frac{x}{|x|^d}\right)=0,\qquad x\neq 0.
+\]
+Since $0$ lies in the interior of $D$, remove a small ball $B_\rho(0)\subset D$ and apply the divergence theorem to $D\setminus B_\rho(0)$:
+\[
+0=\int_{\partial D} X\cdot n\,d\sigma
+\;+\;\int_{\partial B_\rho(0)}X\cdot n_{D\setminus B_\rho}\,d\sigma .
+\]
+On the inner boundary, the outward normal for $D\setminus B_\rho(0)$ is $-\frac{x}{|x|}$, so
+\[
+X\cdot n_{D\setminus B_\rho}
+=-\frac{1}{\rho^{d-1}}.
+\]
+Therefore
+\[
+\int_{\partial B_\rho(0)}X\cdot n_{D\setminus B_\rho}\,d\sigma
+=-\omega_d.
+\]
+Hence
+\[
+\int_{\partial D}\frac{\cos(\alpha(x))}{|x|^{d-1}}\,d\sigma(x)
+=\int_{\partial D}X\cdot n\,d\sigma
+=\omega_d.
+\]
+Dividing by $\omega_d$ gives the required value:
+\[
+\frac{1}{\omega_d}\int_{\partial D}
+\frac{\cos(\alpha(x))}{|x|^{d-1}}\,d\sigma(x)=1.
+\]
+\end{solution}
 
 \begin{exercise}
 \label{analysis:2016:8}
@@ -280,6 +341,51 @@ Let $p > 0$ and suppose $f_n, f \in L^p[0,1]$ and $\|f_n - f\|_p = (\int_0^1 |f_
 \end{itemize}
 \end{exercise}
 
+\begin{solution}
+Let
+\[
+g_n(x)=|f_n(x)-f(x)|^p.
+\]
+The hypothesis says
+\[
+\int_0^1 g_n(x)\,dx\to 0.
+\]
+This argument works for every $p>0$; no convexity of the $L^p$ norm is needed.
+
+\textbf{Part (a).}
+For every $\epsilon>0$,
+\[
+\{|f_n-f|>\epsilon\}=\{g_n>\epsilon^p\}.
+\]
+By Chebyshev's inequality,
+\[
+m(\{|f_n-f|>\epsilon\})
+\leq \epsilon^{-p}\int_0^1 |f_n-f|^p\,dx.
+\]
+The right-hand side tends to $0$, proving convergence in measure.
+
+\textbf{Part (b).}
+Choose a subsequence $f_{n_j}$ so fast that
+\[
+\int_0^1 |f_{n_j}-f|^p\,dx<2^{-2j}.
+\]
+Then, by part (a) with $\epsilon_j=2^{-j/p}$,
+\[
+m\left(\{|f_{n_j}-f|>2^{-j/p}\}\right)
+\leq 2^j\int_0^1 |f_{n_j}-f|^p\,dx
+<2^{-j}.
+\]
+The series of these measures is finite. By the Borel--Cantelli lemma, for almost every $x$ only finitely many of the events
+\[
+\{|f_{n_j}(x)-f(x)|>2^{-j/p}\}
+\]
+occur. Hence for almost every $x$ there exists $j_0(x)$ such that for all $j\geq j_0(x)$,
+\[
+|f_{n_j}(x)-f(x)|\leq 2^{-j/p}\to 0.
+\]
+Thus $f_{n_j}(x)\to f(x)$ almost everywhere.
+\end{solution}
+
 \begin{exercise}
 \label{analysis:2016:9}
 \begin{itemize}
@@ -288,15 +394,168 @@ Let $p > 0$ and suppose $f_n, f \in L^p[0,1]$ and $\|f_n - f\|_p = (\int_0^1 |f_
 \end{itemize}
 \end{exercise}
 
+\begin{solution}
+\textbf{Part 1.}
+Write the Laurent expansion of $f$ in the punctured disk:
+\[
+f(z)=\sum_{n=-\infty}^{\infty}a_n z^n,\qquad 0<|z|<1.
+\]
+Fix $0<r<R<1$. Orthogonality of the exponentials on circles gives
+\[
+\int_{r<|z|<R}|f(z)|^2\,dA(z)
+=2\pi\sum_{n=-\infty}^{\infty}|a_n|^2
+\int_r^R \rho^{2n+1}\,d\rho.
+\]
+Here the identity is first applied on the fixed annulus $r<|z|<R$, where the Laurent series converges uniformly on compact subannuli, and then follows by Parseval on each circle. If some negative coefficient $a_n$ with $n<0$ were nonzero, then the corresponding radial integral would diverge as $r\to 0$: for $n=-1$ it is logarithmic, and for $n\leq -2$ it diverges as a negative power of $r$. This contradicts $f\in L^2(D)$.
+
+Therefore all negative Laurent coefficients vanish. The Laurent series is actually a Taylor series,
+\[
+f(z)=\sum_{n=0}^{\infty}a_n z^n,
+\]
+so $f$ extends holomorphically to $0$. Thus the singularity is removable.
+
+\textbf{Part 2.}
+Yes. Let $K\Subset\Omega$ be compact. Choose a slightly larger compact set $K'\Subset\Omega$ and a radius $r>0$ such that every circle $\{|\zeta-z|=r\}$ with $z\in K$ is contained in $K'$. By Cauchy's integral formula,
+\[
+f_n'(z)-f'(z)
+=\frac{1}{2\pi i}\int_{|\zeta-z|=r}
+\frac{f_n(\zeta)-f(\zeta)}{(\zeta-z)^2}\,d\zeta.
+\]
+Hence
+\[
+|f_n'(z)-f'(z)|
+\leq \frac{1}{r}\sup_{\zeta\in K'}|f_n(\zeta)-f(\zeta)|.
+\]
+The supremum on $K'$ tends to $0$ by compact-uniform convergence. Therefore $f_n'\to f'$ uniformly on $K$. Since $K$ was arbitrary, the derivatives converge uniformly on compact subsets of $\Omega$.
+\end{solution}
+
 \begin{exercise}
 \label{analysis:2016:10}
 Consider the torus $T^2 = \mathbb{C} / \Lambda, \Lambda = \{ m + in \mid m, n \in \mathbb{Z} \}$, i.e., $z_1, z_2 \in \mathbb{C}$ are equivalent if and only if there are integers $m, n$ such that $z_2 = z_1 + m + in$ and $T^2$ is the space of equivalence classes. Show that the group of holomorphic automorphisms of $T^2$ is $SL(2, \mathbb{Z})$ of $2 \times 2$ integer matrices of determinant 1.
 \end{exercise}
 
+\begin{solution}
+As written, the statement is not correct for the complex torus
+\[
+T^2=\mathbb C/(\mathbb Z+i\mathbb Z).
+\]
+The group $SL(2,\mathbb Z)$ is the orientation-preserving mapping class group of the underlying smooth torus, not the group of holomorphic automorphisms for this fixed complex structure.
+
+There are two quick obstructions.
+
+First, every translation
+\[
+\tau_b([z])=[z+b],\qquad b\in T^2,
+\]
+is a holomorphic automorphism. Thus the full holomorphic automorphism group is uncountable, while $SL(2,\mathbb Z)$ is countable.
+
+Second, if we restrict to automorphisms fixing the origin, a holomorphic lift has the form
+\[
+F(z)=az
+\]
+with $a\Lambda=\Lambda$. For the square lattice $\Lambda=\mathbb Z+i\mathbb Z$, this forces
+\[
+a\in\{\pm 1,\pm i\}.
+\]
+Equivalently, viewing a real torus map as an integer matrix
+\[
+A=\begin{pmatrix}p&q\\ r&s\end{pmatrix},
+\]
+holomorphicity means that $A$ commutes with the complex structure
+\[
+J=\begin{pmatrix}0&-1\\ 1&0\end{pmatrix}.
+\]
+This gives $s=p$ and $r=-q$, so
+\[
+A=\begin{pmatrix}p&q\\ -q&p\end{pmatrix}.
+\]
+The determinant condition is
+\[
+p^2+q^2=1,
+\]
+and the integer solutions are exactly
+\[
+(p,q)=(\pm 1,0),(0,\pm 1),
+\]
+corresponding to multiplication by $\pm1$ and $\pm i$.
+
+Thus the correct holomorphic automorphism group is
+\[
+\operatorname{Aut}_{hol}(T^2)\cong T^2\rtimes\{\pm1,\pm i\}.
+\]
+If the intended problem was about orientation-preserving diffeomorphism classes of the real torus, then $SL(2,\mathbb Z)$ is the correct answer; but it is not the holomorphic automorphism group of the fixed complex torus stated here.
+\end{solution}
+
 \begin{exercise}
 \label{analysis:2016:11}
 Let $\{e_n\}$ be an orthonormal basis of $l_2$ of square integrable functions over a circle. Let $A: l_2 \to l_2$ be a linear operator defined by $A e_1 = 0, A e_n = \frac{e_{n-1}}{n-1}$ for $n > 1$. Show that $A$ is a compact operator and $A$ has no eigenvectors. What is the spectrum of $A$?
 \end{exercise}
+
+\begin{solution}
+The compactness and spectrum can be computed explicitly. However, the sentence ``$A$ has no eigenvectors'' is false as written, because
+\[
+Ae_1=0.
+\]
+Thus $e_1$ is an eigenvector with eigenvalue $0$. The correct statement is that $A$ has no nonzero eigenvalues.
+
+\textbf{Compactness.}
+The operator is a weighted backward shift:
+\[
+Ae_n=w_n e_{n-1},\qquad n>1,\qquad w_n=\frac{1}{n-1},
+\]
+and $Ae_1=0$. Let $A_N$ be the finite-rank truncation defined by
+\[
+A_Ne_n=
+\begin{cases}
+Ae_n,& n\leq N,\\
+0,& n>N.
+\end{cases}
+\]
+Then
+\[
+\|A-A_N\|=\sup_{n>N} w_n=\frac{1}{N}.
+\]
+Thus $A$ is the operator-norm limit of finite-rank operators, so $A$ is compact.
+
+\textbf{Eigenvalues.}
+Let $x=\sum_{n\geq1}c_ne_n$ and suppose $Ax=\lambda x$. Comparing coefficients of $e_k$ gives
+\[
+\frac{c_{k+1}}{k}=\lambda c_k,\qquad k\geq1.
+\]
+Hence
+\[
+c_{k+1}=\lambda k c_k
+\]
+and therefore
+\[
+c_n=\lambda^{n-1}(n-1)!c_1.
+\]
+If $\lambda\neq0$ and $c_1\neq0$, the coefficients do not form a square-summable sequence. If $c_1=0$, all $c_n=0$. Hence there are no nonzero eigenvalues. For $\lambda=0$, the equation gives $c_n=0$ for $n\geq2$, while $c_1$ is arbitrary, so
+\[
+\ker A=\operatorname{span}\{e_1\}.
+\]
+
+\textbf{Spectrum.}
+For $m>n$,
+\[
+A^n e_m=
+\frac{1}{(m-1)(m-2)\cdots(m-n)}e_{m-n}.
+\]
+The largest coefficient occurs at $m=n+1$, so
+\[
+\|A^n\|=\frac{1}{n!}.
+\]
+The spectral radius formula gives
+\[
+r(A)=\lim_{n\to\infty}\|A^n\|^{1/n}
+=\lim_{n\to\infty}(n!)^{-1/n}=0.
+\]
+Since the spectrum is nonempty and compact, and every spectral value has modulus at most $r(A)$, we get
+\[
+\sigma(A)=\{0\}.
+\]
+Thus the accurate conclusion is: $A$ is compact, its spectrum is $\{0\}$, $0$ is an eigenvalue with eigenvector $e_1$, and there are no nonzero eigenvalues.
+\end{solution}
 
 \begin{exercise}
 \label{analysis:2016:12}
@@ -314,3 +573,56 @@ where $\{\lambda_k\}$ is an enumeration of the eigenvalues of $\Delta = \frac{d^
     \]
 \end{itemize}
 \end{exercise}
+
+\begin{solution}
+We impose the Dirichlet boundary condition $\phi(0)=\phi(1)=0$. The eigenvalue problem is
+\[
+\phi''(x)=\lambda\phi(x),\qquad \phi(0)=\phi(1)=0.
+\]
+The nonzero solutions are
+\[
+\lambda_k=-k^2\pi^2,\qquad
+\phi_k(x)=\sqrt2\sin(k\pi x),\qquad k=1,2,\dots,
+\]
+where the factor $\sqrt2$ normalizes the eigenfunctions in $L^2[0,1]$.
+
+Thus
+\[
+p(x,y,t)=2\sum_{k=1}^\infty
+\sin(k\pi x)\sin(k\pi y)e^{-k^2\pi^2t}.
+\]
+
+\textbf{The small-time bound.}
+Since $|\sin(k\pi x)\sin(k\pi y)|\leq1$,
+\[
+|p(x,y,t)|\leq 2\sum_{k=1}^\infty e^{-k^2\pi^2t}.
+\]
+For $0<t<1$, compare the sum with a Gaussian integral:
+\[
+\sum_{k=1}^\infty e^{-k^2\pi^2t}
+\leq \int_0^\infty e^{-\pi^2t s^2}\,ds
+=\frac{1}{2\sqrt{\pi t}}.
+\]
+This gives
+\[
+|p(x,y,t)|\leq C t^{-1/2}
+\]
+for a universal constant $C$.
+
+\textbf{Large-time decay.}
+For $x,y\in(0,1)$, the first eigenfunction term dominates:
+\[
+p(x,y,t)
+=2\sin(\pi x)\sin(\pi y)e^{-\pi^2t}
++O(e^{-4\pi^2t}).
+\]
+Therefore the exponential decay rate is
+\[
+\lim_{t\to\infty}\frac{1}{t}\log p(x,y,t)=-\pi^2.
+\]
+If one reads the displayed expression in the problem literally, without the factor $1/t$, then
+\[
+\lim_{t\to\infty}\log p(x,y,t)=-\infty
+\]
+for interior $x,y$. At boundary points the Dirichlet heat kernel is identically zero, so the logarithm is not finite there.
+\end{solution}

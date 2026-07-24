@@ -1,0 +1,237 @@
+      QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE
+                        SPRING 2025
+
+
+
+                                          Instructions
+           • This exam consists of four sections, each with a total of 33 points. You are
+             required to choose three out of the four sections and answer the questions
+             in the selected sections. You will earn an additional point for writing your
+             name and student ID number on your answer sheet. The maximum possible
+             score you can achieve is 100.
+           • Please clearly indicate your section choices at the very beginning of your
+             answer sheet. If you answer questions in more than three sections, only the
+             first three sections will be graded.
+
+
+                              A. Machine Learning Theory
+
+1. [7 pts.] Let H be a class of binary classifiers over a domain X . Let D be an unknown
+   distribution over X , and let f be the target hypothesis in H. Fix some h ∈ H. Show
+   that the variance of the empirical loss LS (h), over all possible samples S of size m drawn
+   from D, is inversely proportional to m. That is, show the following relationship:
+                                                       1
+                                      Var m LS (h) ∝ .
+                                   S|x∼D                m
+   More specifically, prove the exact expression:
+                                       LD,f (h) · (1 − LD,f (h))
+                           Var m LS (h) =                          .
+                         S|x∼D                       m
+
+2. [7 pts.] Let X be a domain, and let D1 , D2 , . . . , Dm be a sequence of distributions over X .
+   Let H be a finite class of binary classifiers over X , and let f ∈ H. Suppose we obtain a
+   sample S = {(x1 , y1 ), ..., (xm , ym )}, where the i−th instance xi is sampled from Di , and
+   yi = f (xi ) Let Dm denote the average as:
+                                               D1 + · · · + Dm
+                                       Dm =                    .
+                                                     m
+      Fix an accuracy parameter  = 14 . Show that
+                   h                                                 i         −m
+                  P ∃h ∈ H s.t. L(Dm ,f ) (h) >  and L(S,f ) (h) = 0 ≤ |H|e 4 .
+
+   Hint: ln 34 < − 14 .
+                
+
+                                                 1
+2           QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE SPRING 2025
+
+
+3. [9 pts.] Let H and H 0 be two families of functions mapping from X to {0, 1} with finite
+   VC dimensions.
+    (a) [5 pts.] Show that
+                    VCdim(H ∪ H 0 ) ⩽ VCdim(H) + VCdim(H 0 ) + 1.
+    (b) [4 pts.] Use this to determine the VC dimension of the hypothesis set formed by
+        the union of axis-aligned rectangles and triangles in dimension 2. You may use the
+        fact that the VC dimension of the hypothesis set formed by the union of triangles
+        in dimension 2 is 7, without any proof.
+
+4. [10 pts.] Prove the following two statements:
+    (a) [5 pts.] Let D be a distribution. Let S = (z1 , . . . , zm ) be an i.i.d. sequence of
+        examples. Let A be a learning algorithm that is on-average replace-one stable with
+        rate (m). Then:
+                                                    
+                            E LD A(S) − LS A(S) ⩽ (m).
+                          S∼D m
+
+    (b) [5 pts.] Let ` be a convex ρ-Lipschitz loss function. The regularised Empirial Risk
+        Minimisation (ERM) satisfies:
+                                                            2ρ2
+                       ES LD (A(S)) ⩽ LD (w∗ ) + λ kw∗ k2 +
+                                  
+                                                                ,
+                                                            λm
+        where
+                                    w∗ = arg min LD (w).
+                                                w∈H
+
+
+
+                   B. Deep Learning and Reinforcement Learning
+
+1. [18 pts.] Consider a classification problem: the training dataset is given as {(xi , yi )}N
+                                                                                             i=1 ,
+   where xi ∈ Rd represents the input features, and yi ∈ {1, 2, . . . , C} represents the class
+   labels. A supervised deep learning pipeline typically includes preparing training data,
+   defining a hypothesis space, designing a training scheme, and optimizing the network.
+   Answer the following questions :
+   (a) [4 pts.] Define the hypothesis space consisting of all neural networks structured with
+            • a feature extractor: a multi-layer perceptron (MLP) that maps the inputs
+              to a learned feature representation,
+            • a classifier: a multi-layer perceptron (MLP) that maps the feature represen-
+              tation to class probabilities.
+       Please specify the input, output and the parameters for training.
+   (b) [4 pts.] Specify an appropriate loss function for this classification problem and explain
+       how stochastic gradient descent (SGD) is used to optimize the neural network.
+   (c) [4 pts.] To stabilize training, batch normalization is often applied. Describe how
+       batch normalization works during the training and testing phase.
+        QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                            SPRING 2025        3
+
+
+  (d) [3 pts.] If the training error is unsatisfactory, describe what adjustments you can make
+      to improve the expressivity of the neural network. Discuss at least two approaches.
+  (e) [3 pts.] If the training error is low but the testing error is high, propose strategies to
+      reduce overfitting. Discuss at least two approaches.
+
+2. [15 pts.] Generative models aim to train a neural network generator to produce samples
+   similar to the training data. The forward process of a diffusion model progressively adds
+   noise to the data, transforming the data distribution into a normal distribution. The
+   reverse process gradually denoises the data, reverting the normal distribution back to the
+   data distribution. In score-based diffusion models, the forward process can be represented
+   as a Stochastic Differential Equation (SDE). Consider the Variance Preserving (VP) SDE:
+                                       1           p
+                                dx = − β(t)x dt + β(t) dWt ,
+                                       2
+   where Wt is a standard Wiener process, and β(t) is a time-dependent noise schedule.
+   (a) [4 pts.] Write down the reverse-time SDE corresponding to the forward process and
+        explain why training the diffusion model requires score matching as follows
+                           min Et λ(t)Ext ksθ (xt , t) − ∇xt log pt (xt )k22 ,
+                             θ
+
+      where λ(t) is a weighting function, sθ (xt , t) is the neural network to train and pt is
+      the marginal distribution of xt .
+  (b) [6 pts.] Prove that
+       Ext ks(θ, t) − ∇xt log pt (xt )k22 = E(x0 ,xt ) ksθ (xt , t) − ∇xt log pt|0 (xt |x0 )k22 + C,
+       where C is a constant, pt (xt ) is the marginal distribution of xt , and pt|0 (xt |x0 ) is the
+       conditional distribution of xt given the original data x0 .
+   (c) [5 pts.] For the given VP SDE, what is the conditional distribution pt|0 (xt |x0 )?
+       Based on this, derive the final denoising score-matching loss function for training
+       score-based diffusion models.
+
+
+                C. Optimization Methods in Artificial Intelligence
+
+   Let f : Rd → R be an L-smooth and µ-strongly convex function. The stochastic gradient
+is defined as:
+                                         g(x, ξ) = ∇f (x) + ξ,
+where ξ is a zero-mean random variable with E[kξk2 ] ≤ σ 2 . Consider the SGD method:
+                                 xk+1 = proxγR (xk − γg(xk , ξ k )),
+used to solve the optimization problem:
+                                           min f (x) + R(x).
+                                            x
+4             QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE SPRING 2025
+
+
+1. [5 pts.] L-Smoothness and µ-Strong Convexity: Provide the definitions of L-smoothness
+   and µ-strong convexity, respectively.
+
+2. [6 pts.] Combining Smoothness and Strong Convexity: Suppose that f (x) is continuously
+   differentiable L-smooth and µ-convex.
+      • Show that g(x) = f (x) − µ2 kxk2 is continuously differentiable, convex and (L − µ)-
+         smooth.
+      • Using the fact
+                        1
+                           k∇g(x) − ∇g(y)k2 ≤ h∇g(x) − ∇g(y), x − yi,
+                       L−µ
+         show that
+                           1                         µ
+            µkx − yk2 +      k∇f (x) − ∇f (y)k2 ≤ 1 +    h∇f (x) − ∇f (y), x − yi.
+                           L                          L
+
+3. [6 pts.] Recurrence Relation: Using the non-expansiveness property of prox and the
+   optimality condition of proxγR , derive the recurrence relation for kxk+1 − x? k2 :
+                    kxk+1 − x? k2 ≤ kxk − x? − γ(∇f (xk ) − ∇f (x? ) + ξ k )k2 .
+
+4. [6 pts.] Variance Decomposition: What is variance decomposition? Explain how it is
+   applied to kxk+1 − x? k2 , and derive:
+                Ek [kxk+1 − x? k2 ] ≤ kxk − x? − γ(∇f (xk ) − ∇f (x? ))k2 + γ 2 σ 2 ,
+    where Ek [·] denotes the conditional expectation given ξ k , . . . , ξ 0 .
+
+                                                                                  2
+5. [5 pts.] Simplified Recurrence: Using the tower property, prove that when γ = µ+L , the
+   recurrence simplifies to:
+                         E[kxk+1 − x? k2 ] ≤ (1 − ρ)E[kxk − x? k2 ] + γ 2 σ 2 ,
+                4µL
+    where ρ = (µ+L) 2.
+
+
+
+
+6. [5 pts.] Complexity: Prove that for any desired precision ε > 0, there exists a step size γ
+   such that:
+                                         L/µ + 3      1
+                                     k≥           log
+                                            4         ε
+   implies:
+                                                                    γσ 2
+                                E[kxk − x? k2 ] ≤ εkx0 − x? k2 +         .
+                                                                     µ
+        QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE                SPRING 2025         5
+
+
+                          D. Natural Language Processing
+
+
+Short Answer Questions on Concepts.
+1. [3 pts.] In a trigram language model, how is p(w3 | w1 , w2 ) learned from a training
+   corpus? In real-world applications, we may encounter situations where (w1 , w2 ) , or even
+   w1 or w2 , do not appear in the training corpus. How can we estimate p(w3 | w1 , w2 ) in
+   such cases?
+
+2. [3 pts.]What is the central idea behind representation learning? Which algorithms im-
+   plement this concept?
+
+3. [3 pts.] Why do current large language models (LLMs) use top-P sampling during infer-
+   ence instead of greedy or beam search? Additionally, why is top-P sampling considered
+   superior to other methods, such as top-K sampling?
+
+4. [3 pts.] List several key points that contribute to the success of current LLM based
+   approach of Artificial General Intelligence and explain their importance.
+
+5. [3 pts.] Identify at least two advantages of the Transformer architecture compared to
+   recurrent-based models (e.g., LSTM, GRU) for sequence-to-sequence tasks.
+
+
+Questions on Algorithm Analysis.
+6. [5 pts.] Explain why the data scaling law, which describes the relationship between
+   performance and sample size, holds true from the perspective of statistical learning.
+   Please provide a detailed analysis process, avoiding overly simplistic assumptions (such
+   as assuming the data follows a Gaussian distribution).
+
+7. [5 pts.] We are implementing the Reinforcement Learning with Human Feedback (RLHF)
+   procedure to train a Large Language Model (LLM). Assuming that a reward model has
+   already been trained, explain how reinforcement learning is used to align the model
+   with human preferences. The explanation should include details about data usage, the
+   reinforcement learning loss function, and the gradient of the loss.
+
+
+Questions on Applied System Design.
+8. [8 pts.] We have a general-purpose Large Language Model (LLM), but it performs poorly
+   on question-answering tasks in a specific problem domain due to a lack of domain-specific
+   knowledge. Although we have collected a large corpus of documents in this domain, we do
+   not have labeled question-answering pairs. Design a system that can accurately answer
+6           QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE SPRING 2025
+
+
+    questions within this domain. You may incorporate additional components, such as
+    embedding models, into the system.
+
