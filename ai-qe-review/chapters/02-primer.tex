@@ -11,9 +11,34 @@
 
 \source{结构依据：求真书院 AI 方向博士生资格考试大纲 \parencite{qzc-ai-syllabus-2026}。机器学习理论主要参考 \textcite{shalev2014uml} 与 \textcite{mohri2018foundations}；深度学习参考 \textcite{goodfellow2016deep} 与 \textcite{bishop2023deep}；优化参考 \textcite{nesterov2018convex,beck2017first}；NLP 参考 \textcite{jurafsky2026slp,goldberg2017nnnlp}。}
 
+\paragraph{陈述层级}
+
+本章用 \definitionlabel、\theoremlabel、\proofsketchlabel、\heuristiclabel 与 \engineeringlabel 区分形式结论、证明路线、直觉与工程经验。没有标签的连续正文仅承担叙述和衔接，不应被误读为无条件定理；每个带条件的结论以其所在段落的假设为准。
+
 \paragraph{本章符号约定}
 
-向量默认用小写字母，例如 \(x,w,z\)；矩阵默认用大写字母，例如 \(X,Q,K,V\)。训练集样本量用 \(m\)，特征维度用 \(d\)，序列长度或上下文长度用 \(N\)。概率分布用花体或罗马体，例如 \(\Dcal\) 和 \(p_\theta\)。经验风险用 \(L_S\)，真实风险用 \(L_{\Dcal}\)。当 \(y\) 同时可能表示单个标签和标签向量时，单个标签写作 \(y_i\)，标签向量写作 \(\mathbf{y}\)。指示函数统一写作 \(\mathbb{I}\{\cdot\}\)。
+向量默认用小写字母，例如 \(x,w,z\)；矩阵默认用大写字母，例如 \(X,Q,K\)。概率分布用花体或罗马体，例如 \(\Dcal\) 和 \(p_\theta\)；训练样本统一写为 \(S=(z_i)_{i=1}^m\)，其中 \(z_i=(x_i,y_i)\)。经验风险与真实风险分别为 \(L_S\) 与 \(L_{\Dcal}\)。当 \(y\) 同时可能表示单个标签和标签向量时，单个标签写作 \(y_i\)，标签向量写作 \(\mathbf{y}\)。指示函数统一写作 \(\mathbb{I}\{\cdot\}\)。
+
+跨模块处采用下表的消歧约定；局部推导沿用其上下文中已经定义的符号，但不得借用同一符号表示表中两个不同对象。
+
+\begin{longtable}{L{0.25\textwidth}L{0.20\textwidth}L{0.45\textwidth}}
+\toprule
+对象 & 记号 & 说明 \\
+\midrule
+\endfirsthead
+\toprule
+对象 & 记号 & 说明 \\
+\midrule
+\endhead
+数据分布与样本 & \(\Dcal\), \(S=(z_i)_{i=1}^m\) & \(z_i=(x_i,y_i)\)，训练样本量为 \(m\) \\
+VC 维与输入维数 & \(d_{\mathrm{VC}}\), \(d_{\mathrm{in}}\) & 不再用同一 \(d\) 同时指代二者 \\
+模型维数与网络深度 & \(d_{\mathrm{model}}\), \(L_{\mathrm{net}}\) & Transformer 宽度与网络层数 \\
+平滑常数与损失 & \(L_{\mathrm{sm}}\), \(\ell\) 或 \(\Lcal\) & \(L_{\Dcal}\) 保留给风险，避免混淆 \\
+注意力 value 矩阵 & \(V_{\mathrm{attn}}\) & 与强化学习价值函数 \(V^\pi\) 区分 \\
+核函数与测量数 & \(k(x,x')\), \(M\) & \(M\) 为压缩感知测量数 \\
+稀疏度、参数量、token 数 & \(s\), \(N_{\mathrm{param}}\), \(N_{\mathrm{tok}}\) & 避免与样本量、状态或矩阵列数混用 \\
+\bottomrule
+\end{longtable}
 
 \paragraph{考纲覆盖索引}
 
@@ -218,7 +243,7 @@ PAC 是 Probably Approximately Correct 的缩写。它把“学会”写成一�
   \inf_{h\in\Hcal}L_{\Dcal}(h)+\varepsilon
 \]
 
-以至少 \(1-\delta\) 的概率成立。这里的 \(\inf_{h\in\Hcal}L_{\Dcal}(h)\) 是 approximation error，也就是模型类本身的表达能力上限。ERM 的困难变成证明统一收敛：
+以至少 \(1-\delta\) 的概率成立。这里 \(\inf_{h\in\Hcal}L_{\Dcal}(h)\) 是\emph{类内最优风险}（class-optimal risk），并不是 approximation error。相对于 Bayes 风险 \(L^*_{\mathrm{Bayes}}\) 的近似误差应写作 \(\inf_{h\in\Hcal}L_{\Dcal}(h)-L^*_{\mathrm{Bayes}}\)。下文若使用近似 ERM，还须把优化误差单列；本段先分析精确 ERM。ERM 的困难变成证明统一收敛：
 
 \[
   \sup_{h\in\Hcal}
@@ -261,7 +286,7 @@ PAC 是 Probably Approximately Correct 的缩写。它把“学会”写成一�
 
 当 \(\Hcal\) 无限时，不能再用 \(|\Hcal|\) 直接度量复杂度。VC 理论度量的是假设类在有限点集上实现任意标记的能力。
 
-给定 \(m\) 个点 \(x_1,\ldots,x_m\)，增长函数定义为
+\definitionlabel 给定 \(m\) 个点 \(x_1,\ldots,x_m\)，增长函数定义为
 
 \[
   \tau_{\Hcal}(m)
@@ -274,12 +299,12 @@ PAC 是 Probably Approximately Correct 的缩写。它把“学会”写成一�
   \right|.
 \]
 
-如果某个 \(m\) 点集上的所有 \(2^m\) 种二值标记都能由 \(\Hcal\) 实现，就说该点集被 \(\Hcal\) shatter。VC 维定义为
+如果\emph{存在}一个 \(m\) 点集，其所有 \(2^m\) 种二值标记都能由 \(\Hcal\) 实现，就说该点集被 \(\Hcal\) shatter。用上确界而不是最大值，VC 维的严格定义为
 
 \[
-  \operatorname{VCdim}(\Hcal)
+  d_{\mathrm{VC}}(\Hcal)
   =
-  \max\{m:\tau_{\Hcal}(m)=2^m\}.
+  \sup\{m\in\mathbb{N}:\tau_{\Hcal}(m)=2^m\},
 \]
 
 Sauer 引理说明有限 VC 维会把指数级增长压成多项式增长：若 \(\operatorname{VCdim}(\Hcal)=d<\infty\)，则
@@ -293,11 +318,11 @@ Sauer 引理说明有限 VC 维会把指数级增长压成多项式增长：若 
   \quad (m\ge d).
 \]
 
-这条引理的意义是：即使 \(\Hcal\) 无限，只要 VC 维有限，在 \(m\) 个样本上它能产生的标记模式也只有多项式多，因此可以像有限假设类一样做 union bound，只是把 \(|\Hcal|\) 换成 \(\tau_{\Hcal}(m)\)。
+并约定集合无上界时 \(d_{\mathrm{VC}}(\Hcal)=\infty\)。这条引理的意义是：即使 \(\Hcal\) 无限，只要 VC 维有限，在 \(m\) 个样本上它能产生的标记模式也只有多项式多；但要得到随机样本上的统一收敛，不能直接把有限类证明中的 \(|\Hcal|\) 替换成 \(\tau_{\Hcal}(m)\)。
 
 \paragraph{从 Sauer 到 VC 泛化界}
 
-推导的关键是“只看样本上可能出现的标记模式”。对固定 \(x_1,\ldots,x_m\)，\(\Hcal\) 在这些点上至多产生 \(\tau_{\Hcal}(m)\) 种二值向量。把有限类 union bound 中的 \(|\Hcal|\) 替换为 \(\tau_{\Hcal}(m)\)，得到
+\proofsketchlabel 以下骨架针对二值类的 \(0\)--\(1\) 损失（更一般地，可替换为有界损失并相应调整常数），并取 \(S,S'\overset{\mathrm{iid}}{\sim}\Dcal^m\)。令 \(S'\) 是独立 ghost sample。先把 \(L_{\Dcal}\) 与 \(L_{S'}\) 比较，再经 symmetrization 把偏差写成 \(S\cup S'\) 上的两份经验风险之差。给定这 \(2m\) 个点后，\(\Hcal\) 只会产生至多 \(\tau_{\Hcal}(2m)\) 个标记模式，最后才对这些模式使用 union bound。因此在常数与满足 symmetrization 前提的样本量范围内，有
 
 \[
   \Pbb\left[
@@ -305,21 +330,21 @@ Sauer 引理说明有限 VC 维会把指数级增长压成多项式增长：若 
     |L_S(h)-L_{\Dcal}(h)|>\varepsilon
   \right]
   \lesssim
-  \tau_{\Hcal}(m)\exp(-c m\varepsilon^2),
+  \tau_{\Hcal}(2m)\exp(-c m\varepsilon^2),
 \]
 
 其中 \(c>0\) 是集中不等式给出的常数。若 \(\operatorname{VCdim}(\Hcal)=d\)，Sauer 引理给出
 
 \[
-  \log \tau_{\Hcal}(m)
+  \log \tau_{\Hcal}(2m)
   \le
-  d\log\left(\frac{em}{d}\right).
+  d\log\left(\frac{2em}{d}\right).
 \]
 
 令失败概率不超过 \(\delta\)，需要
 
 \[
-  d\log\left(\frac{em}{d}\right)
+  d\log\left(\frac{2em}{d}\right)
   -
   c m\varepsilon^2
   \le
@@ -333,12 +358,12 @@ Sauer 引理说明有限 VC 维会把指数级增长压成多项式增长：若 
   \gtrsim
   \sqrt{
     \frac{
-      d\log(em/d)+\log(1/\delta)
+      d\log(2em/d)+\log(1/\delta)
     }{m}
   }.
 \]
 
-这就是 VC 泛化界的来源。考试若要求“说明样本复杂度和 VC 维的关系”，应写出这条从增长函数到对数增长函数的过渡，而不是只报最终大 \(O\)。
+这就是 VC 泛化界的来源。考试若要求“说明样本复杂度和 VC 维的关系”，应写出 ghost sample、symmetrization、\(\tau_{\Hcal}(2m)\) 与 Sauer 引理这条链，而不是把增长函数直接代入固定假设的 Hoeffding 界。
 
 典型的 VC 泛化界写作
 
@@ -803,13 +828,19 @@ Gini impurity 为
   K(x,x')=\langle \Phi(x),\Phi(x')\rangle.
 \]
 
-有效核通常要求 Gram 矩阵
+严格地说，实值核 \(k:\mathcal{X}\times\mathcal{X}\to\R\) 必须对称，即 \(k(x,x')=k(x',x)\)，并对任意有限点集 \(x_1,\ldots,x_m\) 以及任意系数 \(c\in\R^m\) 满足
+
+\[
+  \sum_{i,j=1}^{m}c_i c_j k(x_i,x_j)\ge 0.
+\]
+
+等价地，每一个有限 Gram 矩阵
 
 \[
   [K(x_i,x_j)]_{i,j=1}^{m}
 \]
 
-半正定。核技巧的考试重点是两点：第一，非线性边界可以变成高维空间线性分隔；第二，泛化不单由高维维数决定，margin 与正则化才是关键。
+半正定。在这一条件下，存在某个 Hilbert 空间及特征映射 \(\Phi\)，使 \(k(x,x')=\langle\Phi(x),\Phi(x')\rangle\)。这不是“任意相似度函数都可用”的许可；Mercer 型连续性与紧性假设只在需要积分算子谱展开时才额外出现。核技巧的考试重点是两点：第一，非线性边界可以变成高维空间线性分隔；第二，泛化不单由高维维数决定，margin 与正则化才是关键。
 
 \paragraph{SVM 对偶与 kernel trick 推导}
 
@@ -898,14 +929,14 @@ Gini impurity 为
 
 \concepttarget{concept:compressed-sensing}
 
-压缩感知回答一个看似不可能的问题：如果未知信号 \(x\in\R^N\) 维度很高，但只有 \(S\) 个非零或近似非零分量，能否用远少于 \(N\) 个线性测量恢复它？
+压缩感知回答一个看似不可能的问题：如果未知信号 \(x\in\R^N\) 维度很高，但只有 \(s\) 个非零或近似非零分量，能否用远少于 \(N\) 个线性测量恢复它？
 
 测量模型为
 
 \[
-  y=\Phi x,
+  y=Mx,
   \qquad
-  \Phi\in\R^{K\times N},
+  M\in\R^{K\times N},
   \qquad
   K\ll N.
 \]
@@ -917,54 +948,60 @@ Gini impurity 为
   \quad
   \text{s.t.}
   \quad
-  \Phi z=y,
+  Mz=y,
 \]
 
-但这是组合优化。压缩感知的核心结果是，在随机测量或满足 RIP 的测量矩阵下，可以用凸松弛
+但这是组合优化。压缩感知的核心结果是，在随机测量或满足 null-space property，或满足具体定理所要求的足够强 RIP 条件的测量矩阵下，可以用凸松弛
 
 \[
   \min_z \|z\|_1
   \quad
   \text{s.t.}
   \quad
-  \Phi z=y
+  Mz=y
 \]
 
-精确或稳定恢复稀疏信号。RIP 的形式为：对所有 \(S\)-稀疏向量 \(z\)，
+精确或稳定恢复稀疏信号。RIP 的形式为：对所有 \(s\)-稀疏向量 \(z\)，
 
 \[
   (1-\delta_S)\|z\|_2^2
   \le
-  \|\Phi z\|_2^2
+  \|Mz\|_2^2
   \le
   (1+\delta_S)\|z\|_2^2.
 \]
 
-这表示 \(\Phi\) 在所有稀疏子空间上近似保持距离，因此不会把两个不同的稀疏向量压到同一个测量。考纲中把压缩感知放在机器学习理论内，通常是考“稀疏性 + 凸松弛 + 随机测量 + 样本/测量复杂度”的基本思想，而不是完整调和分析。
+这表示 \(M\) 在所有稀疏子空间上近似保持距离，因此不会把两个不同的稀疏向量压到同一个测量。考纲中把压缩感知放在机器学习理论内，通常是考“稀疏性 + 凸松弛 + 随机测量 + 样本/测量复杂度”的基本思想，而不是完整调和分析。
 
 \paragraph{RIP 为什么给唯一性}
 
-设 \(z_1,z_2\) 都是 \(S\)-稀疏向量，且有同样测量：
+设 \(z_1,z_2\) 都是 \(s\)-稀疏向量，且有同样测量：
 
 \[
-  \Phi z_1=\Phi z_2.
+  Mz_1=Mz_2.
 \]
 
-令 \(u=z_1-z_2\)。两个 \(S\)-稀疏向量之差至多是 \(2S\)-稀疏，因此若 \(\Phi\) 满足 \(2S\)-RIP，且 \(\delta_{2S}<1\)，则
+令 \(u=z_1-z_2\)。两个 \(s\)-稀疏向量之差至多是 \(2s\)-稀疏，因此若 \(M\) 满足 \(2s\)-RIP，且 \(\delta_{2s}<1\)，则
 
 \[
-  (1-\delta_{2S})\|u\|_2^2
+  (1-\delta_{2s})\|u\|_2^2
   \le
-  \|\Phi u\|_2^2.
+  \|Mu\|_2^2.
 \]
 
-但 \(\Phi u=\Phi z_1-\Phi z_2=0\)，于是
+但 \(Mu=Mz_1-Mz_2=0\)，于是
 
 \[
-  (1-\delta_{2S})\|u\|_2^2\le 0.
+  (1-\delta_{2s})\|u\|_2^2\le 0.
 \]
 
-由于 \(1-\delta_{2S}>0\)，只能有 \(u=0\)，即 \(z_1=z_2\)。所以 RIP 至少保证了稀疏解的可识别性。更深的压缩感知定理进一步说明，在更强 RIP 条件下，\(\ell_1\) 凸松弛不仅唯一，而且等于真正稀疏解 \parencite{candes2006compressive}。
+由于 \(1-\delta_{2s}>0\)，只能有 \(u=0\)，即 \(z_1=z_2\)。所以 \(2s\)-RIP 至少保证了 \(\ell_0\) 问题中 \(s\)-稀疏解的可识别性；它本身并不自动推出 \(\ell_1\) 解的恢复。后者通常由 null-space property，或足够强的 RIP 条件推出。带噪观测 \(y=Mx+e\)、\(\|e\|_2\le\eta\) 时，BPDN
+
+\[
+  \min_z\|z\|_1\quad\text{s.t.}\quad\|Mz-y\|_2\le\eta
+\]
+
+在相应 RIP 条件下满足 \(\|\hat x-x\|_2\le C_0\eta+C_1\sigma_s(x)_1/\sqrt{s}\)，其中 \(\sigma_s(x)_1=\inf_{\|z\|_0\le s}\|x-z\|_1\)。这才是“稳定且近似稀疏”的精确定义 \parencite{candes2006compressive}。
 
 \paragraph{考核内容}
 
@@ -1150,7 +1187,7 @@ Gini impurity 为
   +\frac{\mu}{2}\|y-x\|^2.
 \]
 
-强凸性给唯一最优解和线性收敛。若 \(f\) 同时 \(L\)-smooth 与 \(\mu\)-strongly convex，梯度下降取 \(\eta=1/L\) 时有
+强凸性至多说明\emph{若}极小点存在则它唯一；存在性还可由例如闭且有界的可行域上的下半连续性，或无约束情形中 \(f\) proper、lower-semicontinuous 且 coercive 保证。若 \(f\) 同时 \(L\)-smooth、\(\mu\)-strongly convex，且极小点 \(x^*\) 存在，梯度下降取 \(\eta=1/L\) 时有
 
 \[
   f(x_t)-f(x^*)
@@ -2773,18 +2810,18 @@ Transformer 的输入是 token embedding 矩阵
   \qquad
   K=XW_K,
   \qquad
-  V=XW_V.
+  V_{\mathrm{attn}}=XW_V.
 \]
 
 然后
 
 \[
-  \operatorname{Attention}(Q,K,V)
+  \operatorname{Attention}(Q,K,V_{\mathrm{attn}})
   =
   \softmax
   \left(
     \frac{QK^\top}{\sqrt{d_k}}
-  \right)V.
+  \right)V_{\mathrm{attn}}.
 \]
 
 每个 query 与所有 key 做相似度，softmax 得到权重，再对 value 加权平均。缩放因子 \(1/\sqrt{d_k}\) 防止点积方差随维度增大，使 softmax 过早饱和。
@@ -2796,7 +2833,7 @@ Transformer 的输入是 token embedding 矩阵
 \[
   Q,K\in\R^{N\times d_k},
   \qquad
-  V\in\R^{N\times d_v}.
+  V_{\mathrm{attn}}\in\R^{N\times d_v}.
 \]
 
 所以
@@ -2804,7 +2841,7 @@ Transformer 的输入是 token embedding 矩阵
 \[
   QK^\top\in\R^{N\times N},
   \qquad
-  \softmax(QK^\top/\sqrt{d_k})V\in\R^{N\times d_v}.
+  \softmax(QK^\top/\sqrt{d_k})V_{\mathrm{attn}}\in\R^{N\times d_v}.
 \]
 
 若 query 和 key 的各坐标近似独立、均值为 \(0\)、方差为 \(1\)，则一个点积
@@ -2841,11 +2878,11 @@ Transformer 的输入是 token embedding 矩阵
 \[
   \softmax
   \left(
-    \frac{QK^\top+M}{\sqrt{d_k}}
-  \right)V,
+    \frac{QK^\top}{\sqrt{d_k}}+M
+  \right)V_{\mathrm{attn}},
 \]
 
-保证第 \(i\) 个位置不能偷看未来 token。多头 attention 把多个 head 的输出拼接后再线性投影。Transformer block 通常包括 attention、feed-forward network、residual connection 和 layer norm。
+保证第 \(i\) 个位置不能偷看未来 token。这里 \(M\) 是加到 logits 上的 causal mask；padding mask 则遮蔽序列填充位置，二者不可混用。实现时还要核对标签是否已右移：若预测第 \(i\) 个目标 token，严格下三角掩码与输入/标签的移位约定必须匹配。多头 attention 把多个 head 的输出拼接后再线性投影。Transformer block 通常包括 attention、feed-forward network、residual connection 和 layer norm。
 
 \subsection{LLM 预训练、指令微调与对齐}
 
@@ -2984,6 +3021,20 @@ Markov Logic Network（MLN）用加权一阶逻辑公式定义 log-linear 分布
   \item 说明 scaling law 的经验形式和 compute-optimal trade-off。
   \item 比较知识库 embedding、RAG 和 MLN 的能力边界。
 \end{itemize}
+
+\section{第三章自测：定义、条件与反例}
+
+以下问题用于检查是否真正掌握了“对象--假设--结论”链条。每题应先写定义，再列出所需条件，最后给出一行反例或失败模式；这样写出的答案也更接近资格考试的评分点。
+
+\begin{enumerate}
+  \item \textbf{泛化与模型选择。} 为什么有限类的 union bound 不能直接替代 VC 证明？请写出 ghost sample 的作用；再区分类内最优风险、近似误差和近似 ERM 的优化误差。
+  \item \textbf{经典模型。} 在线性回归中何时正规方程不可逆？岭回归怎样改变该问题？给出一个在高维未缩放特征下 \(k\)-NN 距离失真的例子。
+  \item \textbf{核与压缩感知。} 为什么“某个 Gram 矩阵半正定”不足以定义核？\(2s\)-RIP 保证的唯一性是什么，为什么它仍不足以单独证明 \(\ell_1\) 恢复？
+  \item \textbf{优化。} 强凸性与极小点存在性分别提供什么？请比较 GD、SGD 和随机坐标下降的随机来源，并列出 Adam 的一阶矩、二阶矩、偏差修正与数值稳定项。
+  \item \textbf{深度学习。} 万能逼近定理没有保证哪两件事？任选视觉任务，写出其输入、输出、训练损失与一个常见失效模式。
+  \item \textbf{强化学习。} Bellman 最优算子在哪个范数下是压缩映射？表格型 Q-learning 的收敛需要哪些访问、步长与噪声条件？
+  \item \textbf{NLP/LLM。} 写出 attention logits、causal mask 与 padding mask 的区别；再说明预训练、SFT、偏好优化分别改变什么目标，以及 RAG 不能自动消除的失败模式。
+\end{enumerate}
 
 \section{从第三章到真题的使用方法}
 

@@ -10,6 +10,12 @@
 - `main.tex`: LaTeX 入口。
 - `refs.bib`: 官方来源和教材引用。
 - `build/`: 编译输出目录。
+- `notes/`: 中文 Obsidian 阅读版。
+- `notes-en/`: 与 `notes/` 保持文件与章节顺序平行的专业英文 Obsidian 阅读版。
+
+## Obsidian 阅读入口
+
+中文版本从 [notes/README.md](notes/README.md) 开始；英文版本从 [notes-en/README.md](notes-en/README.md) 开始。两者都以 LaTeX 源码、官方试卷 PDF 和大纲为准。
 
 ## 编译
 
