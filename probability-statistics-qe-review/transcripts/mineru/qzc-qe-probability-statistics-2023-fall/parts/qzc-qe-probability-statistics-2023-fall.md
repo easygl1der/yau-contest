@@ -1,0 +1,88 @@
+# Qualifying Exam: 2023 Fall
+
+考试课程: Probability & Statistics 姓名: 学号:
+
+• 本试卷共3页, 8道大题, 总分为100分.
+
+• 考生默认遵守考试纪律, 不遵守者后果自负.
+
+• 所有的解答请写出必要的细节,推理依据和推理过程.
+
+1. (10 points) Let (X, Y ) be a random vector of joint density
+
+$$
+f(x, y) = \frac{1}{2 \pi \sqrt{1 - \rho^{2}}} \exp \left(- \frac{x^{2} - 2 \rho xy + y^{2}}{2(1 - \rho^{2})}\right).
+$$
+
+(a) Prove that f is a probability density. Calculate the marginal distributions of X and Y . Determine the condition of $\rho$ such that X and Y are independent.
+
+(b) Define $R = \sqrt{X^{2} + Y^{2}}$ and $\Phi \in[0, 2 \pi]$ by
+
+$$
+\cos \Phi = \frac{X}{R}, \quad \sin \Phi = \frac{Y}{R}.
+$$
+
+Determine the law of (R, Φ) and then the law of Φ.
+
+2. (10 points) Let $(X_{n})_{n \in \mathbb{N}_{+}}$ be i.i.d. random variables of density
+
+$$
+f(x) = \frac{1}{2} e^{- | x |}, \qquad x \in \mathbb{R},
+$$
+
+and we denote by ${\mathcal{F}}_{n}$ its natural filtration $\mathcal{F}_{n} = \sigma((X_{i})_{1 \leq i \leq n})$ . We define $M_{n}(\theta)$ as
+
+$$
+M_{n}(\theta) := \exp \left(\theta \sum_{k = 1}^{n} X_{k} - A_{n}(\theta)\right).
+$$
+
+Determine $(A_{n}(\theta))_{n \in \mathbb{N}_{+}}$ such that for any $| \theta | < 1$ , the sequence $(M_{n}(\theta))_{n \in \mathbb{N}_{+}}$ is a martingale with respect to the natural filtration $(\mathcal{F}_{n})_{n \in \mathbb{N}_{+}}$
+
+3. (10 points) There are N identical coins and every coin has two sides, which are denoted by “Head” and $\text{Tail}$ . Every round we draw a coin uniformly and flip it. Suppose that every draw is independent and let $X_{n}$ be the number of heads after n-th round.
+
+(a) Prove that $(X_{n})_{n \in \mathbb{N}_{+}}$ is a Markov chain and write down the transition probabilities.
+
+(b) Prove that there exists a unique stationary distribution $\mu$ for this Markov chain. Determine the law of $\mu.$
+
+4. (10 points) Alice has 3 identical dices. Every dice has faces marked {1, 2, 3, 4, 5, 6} and can sample value uniformly from these faces. Alice plays the following game: in every round, she can choose any subset of dices and resample their values, while keep the other dices as last round. All the samplings of dices are independent, and Alice’s decision does not change the law of dices. Let T be the number of rounds that Alice realizes the 3 dices of configuration $"(6,6,6)"$ for the first time.
+
+(a) What is the optimal strategy of Alice to minimize the waiting time $T$?
+
+(b) Under the optimal strategy, calculate the expectation of $T.$
+
+5. (15 points) Consider the Bernoulli percolation on an infinite d-regular $(d \in \mathbb{N}$ and $d \geq 3)$ tree $\mathbb{T}$ with root o. More precisely, $\mathbb{T}$ is an infinite tree where each vertex has d neighborhoods. Each edge is open with probability $p,$ and closed with probability $1 - p,$ independently of the states of other edges. Let $\mathcal{C}(o)$ be the connected component (called cluster ) containing $o$ i.e., ${\mathcal{C}}(o)$ is the subset of all vertices that can be reached from o through open edges. Let $\theta(p)$ be the probability that o is in an infinite cluster, i.e., $\theta(p) = \mathbb{P}(| \mathcal{C}(o) | = \infty)$
+
+(a) Prove that there exists a $p_{c} \in(0, 1)$ such that if $p>p_c$, then $\theta(p)>0$, while if $p<p_c$, then $\theta(p)=0$ . Give the value of $p_{c}$
+
+(b) Fix any $p \in(0, p_{c})$ , prove that there exist constants $c, C > 0$ (which may depend on $p$ but do not depend on $k)$ such that for all $k \geq 2$ , there is
+
+$$
+\mathbb{P}(| \mathcal{C}(o) | \geq k) \leq C \exp(- ck).
+$$
+
+![](images/225d32cbba57949e95cd102f13da029ae51258a51a09fe1875e723306b53920b.jpg)  
+图 1: An illustration of a 3-regular tree.
+
+6. (15 points) Let X be an $n \times n$ random matrix with i.i.d. standard Gaussian entries, i.e., the entries $X_{ij}$ are independent standard normal random variables.
+
+(a) Given any deterministic orthogonal matrices U and V , prove that UXV has the same law as $X$
+
+(b) Given any deterministic unit vector $u \in \mathbb{R}^{n}$ , calculate the mean and variance of $Y_{n} =$ $u^{T} X^{T} Xu.$ , and prove the central limit theorem for $Y_{n}$ as $n\to\infty$ (i.e., $Y_n$ , after proper shift and rescaling, converges in law to the standard normal distribution).
+
+(c) Given any deterministic unit vectors $u, v \in \mathbb{R}^{n}$ , calculate the mean and variance of $Z_{n} =$ $u^TX^TXu+\sqrt{n},v^TXv$. , and prove the central limit theorem for $Z_{n}$ as $n \to \infty$ . (Hint: You may try the moment method or Stein’s method, i.e., a random variable $x_{n}$ converges in law to the standard normal distribution if for any diferentiable function $f$ with bounded derivatives, $\mathbb{E}(f'(x_n)-x_nf(x_n)\to0$ as $n\to\infty.)$
+
+7. (15 points) Assume that $X_{1},..., X_{n}$ are i.i.d. $N(\mu, \sigma^{2})$ and consider testing the hypotheses $H_{0} : \mu = \mu_{0}, \sigma^{2} = \sigma_{0}^{2}$ versus $H_{1} : \mu = \mu_{1}, \sigma^{2} = \sigma_{1}^{2}$ . Note that the density for $N(\mu, \sigma^{2})$ is ${\frac{1}{\sqrt{2 \pi} \sigma}} e^{-{\frac{(x - \mu)^{2}}{2 \sigma^{2}}}}, - \infty < x < \infty, - \infty < \mu < \infty, \sigma > 0.$
+
+(a) Find the uniformly most powerful (UMP) size α test of testing $H_{0}$ vs $H_{1}$ if $\mu_{0} < \mu_{1}$ and $\sigma_{0}^{2} = \sigma_{1}^{2}$
+
+(b) Find the UMP size α test of testing $H_{0}$ vs $H_{1}$ if $\mu_{0} = \mu_{1}$ and $\sigma_{0}^{2} < \sigma_{1}^{2}$
+
+(c) Assume $\sigma^{2} = 1$ , find the UMP level α test of testing $H_{0}^{\prime} : \mu \geq 1$ versus $H_{1}^{\prime} : \mu < 1$
+
+8. (15 points) Consider the following distribution (Cauchy) $f(x\mid\theta)=\frac{1}{\pi[1+(x-\theta)^2]},\quad -\infty<x<\infty,\ -\infty<\theta<\infty$$
+
+(a) Let $X_{1},..., X_{n}$ be a random sample from the above distribution, find a minimal suficient statistic for θ.
+
+(b) Let $X_{1}$ and $X_{2}$ be i.i.d with the above density. Let $x_{1}$ and $x_{2}$ be the observations and set $\begin{array}{r}{\Delta = \frac{1}{2}(x_{1} - x_{2})} \end{array}$ . Let $\hat{\theta}$ denote the maximum likelihood estimator (MLE). Show that if $| \Delta | \leq 1$ , then the MLE exists and is unique. Give the MLE when $| \Delta | \leq 1$
+
+(c) Show that if $|\Delta|>1$ , then the MLE is not unique. Find the values of θ that maximize the likelihood when $| \Delta | > 1$

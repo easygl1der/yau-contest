@@ -1,0 +1,3 @@
+## S.-T. Yau College Student Mathematics Contests 2016 Oral Exam of Computational and Applied Math
+
+1. Consider n scalars: $a(1), a(2), \dots, a(n)$ . Our goal is to find the max partial sum, that is, find two indices p and $q,$ , where $p \leq q,$ , such that the partial sum, $a(p : q) =$ $a(p) + a(p + 1) + \cdot \cdot \cdot + a(q)$ , is maximized. Develop an algorithm that finds $p, q.$ , and $a(p : q)$ by accessing each $\mathrm{a(i)}$ only once. For solution existence, assume that not all scalars are negative. Please provide a convincing oral proof to the correctness of your algorithm

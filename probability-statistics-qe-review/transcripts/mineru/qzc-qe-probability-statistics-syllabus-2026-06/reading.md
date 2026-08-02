@@ -1,0 +1,73 @@
+## Probability & Statistics
+
+## Syllabus
+
+## Probability:
+
+·Random variable, Expectation, Independence
+
+·Variance and covariance, correlation, moment
+
+·Various distribution functions
+
+·Multivariate distribution
+
+·Characteristic function, Generating function
+
+·Various modes of convergence of random variables
+
+·Bayes formula, Conditional probability
+
+·Conditional expectation given a sigma-algebra
+
+·Laws of large numbers
+
+·Central limit theorems
+
+·Martingales
+
+·Markov chains
+
+·Basic properties of Poisson processes
+
+·Basic properties of Brownian motion
+
+·Basic properties of random walks
+
+## Statistics:
+
+· Distribution Theory. Families of continuous distributions: normal, chi-sq, t, F, gamma, beta; Families of discrete distributions: multinomial, Poisson, negative binomial; Exponential Families; Distributions of functions of a Random Variable.
+
+·Properties of a Random Sample: order statistics, sample mean, variance, median and quantiles; the Delta Method.
+
+·Data Reduction: sufficient statistics, minimal sufficient statistics, ancillary statistics, complete statistics, Basu’s Theorem.
+
+·Estimation: Parameter estimation, method of moments, maximum likelihood estimation, criteria for evaluation of estimators, Fisher information and its use, confidence interval.
+
+·Testing: Null and alternative hypotheses, simple and composite hypotheses, type I and type II errors, power, uniformly most powerful test, likelihood ratio test, Neyman-Pearson Lemma, Karlin-Rubin Theorem, generalized likelihood ratio test.
+
+·Bayesian Statistics: Prior, posterior, conjugate priors, Bayesian estimator.
+
+·Large sample properties: Consistency, asymptotic normality, chi-sq approximation to likelihood ratio statistic.
+
+· Linear model theory: least squares estimation, estimability, Gauss-Markov, inference on parameters (point and interval estimations and testing), prediction, confidence region and simultaneous confidence intervals, model comparison and selection, and goodness of fitness test under normal errors.
+
+## Written examination
+
+## Reference：
+
+[1] Rick Durrett: Probability: Theory and Examples, Cambridge University Press, 2010.
+
+[2] Kai-Lai Chung: A Course in Probability Theory, New York, 1968.
+
+[3] G. Casella and R.L. Berger: Statistical Inference (2nd Ed.), Duxbury Press, 2002.
+
+[4] 茆诗松，程依明，濮晓龙: 概率论与数理统计教程（第二版），高等教育出版社，2008.
+
+[5] 陈家鼎，孙山泽，李东风，刘力平: 数理统计学讲义，高等教育出版社，2006.
+
+[6] 郑明，陈子毅，汪嘉冈: 数理统计讲义，复旦大学出版社，2006.
+
+[7] 陈希孺，倪国熙: 数理统计学教程，中国科学技术大学出版社，2009.
+
+[8] 吴密霞、王松桂：线性模型引论（第二版），科学出版社，2024.

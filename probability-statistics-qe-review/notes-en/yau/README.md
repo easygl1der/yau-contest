@@ -1,0 +1,75 @@
+# S.-T. Yau College Student Mathematics Competition Materials
+
+This directory collects S.-T. Yau College Student Mathematics Competition materials relevant to Probability and Statistics preparation. Semifinal written examinations and final interviews are distinct competition stages; question papers, transcriptions, and solutions are archived separately.
+
+- Semifinal written examinations: from the local historical question bank; the original upstream publication pages have yet to be recorded individually.
+- Final interviews: archived ZIP materials for 2012--2025 from the [official download page](https://yau-contest.com/lists-jxxg.html).
+- The 2026 final-interview questions are absent from the currently available official archive; participant lists or announcements are not substitutes for question papers.
+- The archive currently contains 62 items, all with a MinerU reading transcript.
+
+## Archive Inventory
+
+| Year | Stage | Category | Question Paper | Solution | Source Format | MinerU | Solution Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2012 | final-interview | individual | [[yau-2012-final-interview-individual-probability-1|Question]] | [Solution](../../solutions/yau/yau-2012-final-interview-individual-probability-1-solutions.md) | pdf | Complete | Pending |
+| 2012 | final-interview | individual | [[yau-2012-final-interview-individual-probability-2|Question]] | [Solution](../../solutions/yau/yau-2012-final-interview-individual-probability-2-solutions.md) | pdf | Complete | Pending |
+| 2013 | final-interview | individual | [[yau-2013-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2013-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2013 | final-interview | overall | [[yau-2013-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2013-final-interview-overall-probability-overall-solutions.md) | pdf | Complete | Pending |
+| 2013 | final-interview | team | [[yau-2013-final-interview-team-probability-team|Question]] | [Answer](../../solutions/yau/yau-2013-final-interview-team-probability-team-solutions.md) | pdf | Completed | to be written |
+| 2014 | final-interview | individual | [[yau-2014-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2014-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2014 | final-interview | overall | [[yau-2014-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2014-final-interview-overall-probability-overall-solutions.md) | jpg | Complete | Pending |
+| 2014 | final-interview | team | [[yau-2014-final-interview-team-probability-team|Question]] | [Answer](../../solutions/yau/yau-2014-final-interview-team-probability-team-solutions.md) | pdf | Completed | to be written |
+| 2015 | final-interview | individual | [[yau-2015-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2015-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2015 | final-interview | overall | [[yau-2015-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2015-final-interview-overall-probability-overall-solutions.md) | pdf | Complete | Pending |
+| 2015 | final-interview | team | [[yau-2015-final-interview-team-probability-team|Question]] | [Answer](../../solutions/yau/yau-2015-final-interview-team-probability-team-solutions.md) | pdf | Completed | to be written |
+| 2016 | final-interview | individual | [[yau-2016-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2016-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2016 | final-interview | overall | [[yau-2016-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2016-final-interview-overall-probability-overall-solutions.md) | pdf | Complete | Pending |
+| 2016 | final-interview | team | [[yau-2016-final-interview-team-probability-team|Question]] | [Answer](../../solutions/yau/yau-2016-final-interview-team-probability-team-solutions.md) | pdf | Completed | to be written |
+| 2017 | final-interview | individual | [[yau-2017-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2017-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2017 | final-interview | overall | [[yau-2017-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2017-final-interview-overall-probability-overall-solutions.md) | pdf | Complete | Pending |
+| 2017 | final-interview | team | [[yau-2017-final-interview-team-probability-team|Question]] | [Answer](../../solutions/yau/yau-2017-final-interview-team-probability-team-solutions.md) | pdf | Completed | to be written |
+| 2018 | final-interview | individual | [[yau-2018-final-interview-individual-probability-and-statistics-individual|Question]] | [Solution](../../solutions/yau/yau-2018-final-interview-individual-probability-and-statistics-individual-solutions.md) | pdf | Complete | Pending |
+| 2018 | final-interview | overall | [[yau-2018-final-interview-overall-probability-and-statistics-overall|Question]] | [Solution](../../solutions/yau/yau-2018-final-interview-overall-probability-and-statistics-overall-solutions.md) | pdf | Complete | Pending |
+| 2018 | final-interview | team | [[yau-2018-final-interview-team-probability-and-statistics-team|Question]] | [Answer](../../solutions/yau/yau-2018-final-interview-team-probability-and-statistics-team-solutions.md) | pdf | Completed | to be written |
+| 2019 | final-interview | individual | [[yau-2019-final-interview-individual-prob-individual|Question]] | [Solution](../../solutions/yau/yau-2019-final-interview-individual-prob-individual-solutions.md) | pdf | Complete | Pending |
+| 2019 | final-interview | individual | [[yau-2019-final-interview-individual-stat-individual|Question]] | [Solution](../../solutions/yau/yau-2019-final-interview-individual-stat-individual-solutions.md) | pdf | Complete | Pending |
+| 2019 | final-interview | overall | [[yau-2019-final-interview-overall-prob-personal-overall|Question]] | [Solution](../../solutions/yau/yau-2019-final-interview-overall-prob-personal-overall-solutions.md) | pdf | Complete | Pending |
+| 2019 | final-interview | overall | [[yau-2019-final-interview-overall-stat-personal-overall|Question]] | [Solution](../../solutions/yau/yau-2019-final-interview-overall-stat-personal-overall-solutions.md) | pdf | Complete | Pending |
+| 2019 | final-interview | team | [[yau-2019-final-interview-team-prob-team|Question]] | [Answer](../../solutions/yau/yau-2019-final-interview-team-prob-team-solutions.md) | pdf | Completed | to be written |
+| 2019 | final-interview | team | [[yau-2019-final-interview-team-stat-team|Question]] | [Answer](../../solutions/yau/yau-2019-final-interview-team-stat-team-solutions.md) | pdf | Completed | to be written |
+| 2020 | final-interview | individual | [[yau-2020-final-interview-individual-probability-and-statistics-individual|Question]] | [Answer](../../solutions/yau/yau-2020-final-interview-individual-probability-and-statistics-individual-solutions.md) | pdf | Complete | to be written |
+| 2020 | final-interview | overall | [[yau-2020-final-interview-overall-probability-and-statistics-overall|Question]] | [Solution](../../solutions/yau/yau-2020-final-interview-overall-probability-and-statistics-overall-solutions.md) | pdf | Complete | Pending |
+| 2021 | final-interview | individual | [[yau-2021-final-interview-individual-probability-individual-solutions|Question]] | [Solution](../../solutions/yau/yau-2021-final-interview-individual-probability-individual-solutions-solutions.md) | pdf | Complete | Pending |
+| 2021 | final-interview | overall | [[yau-2021-final-interview-overall-probability-overall-s|Question]] | [Solution](../../solutions/yau/yau-2021-final-interview-overall-probability-overall-s-solutions.md) | pdf | Complete | Pending |
+| 2022 | final-interview | individual | [[yau-2022-final-interview-individual-probability-individual|Question]] | [Solution](../../solutions/yau/yau-2022-final-interview-individual-probability-individual-solutions.md) | pdf | Complete | Pending |
+| 2022 | final-interview | overall | [[yau-2022-final-interview-overall-probability-overall|Question]] | [Solution](../../solutions/yau/yau-2022-final-interview-overall-probability-overall-solutions.md) | pdf | Complete | Pending |
+| 2023 | final-interview | individual | [[yau-2023-final-interview-individual-prob-stat-individual|Question]] | [Solution](../../solutions/yau/yau-2023-final-interview-individual-prob-stat-individual-solutions.md) | pdf | Complete | Pending |
+| 2023 | final-interview | overall | [[yau-2023-final-interview-overall-prob-stat-overall|Question]] | [Solution](../../solutions/yau/yau-2023-final-interview-overall-prob-stat-overall-solutions.md) | pdf | Complete | Pending |
+| 2023 | final-interview | team | [[yau-2023-final-interview-team-prob-stat-team|Question]] | [Answer](../../solutions/yau/yau-2023-final-interview-team-prob-stat-team-solutions.md) | pdf | Completed | to be written |
+| 2024 | final-interview | individual | [[yau-2024-final-interview-individual-prob-stat-individual|Question]] | [Solution](../../solutions/yau/yau-2024-final-interview-individual-prob-stat-individual-solutions.md) | pdf | Complete | Pending |
+| 2024 | final-interview | overall | [[yau-2024-final-interview-overall-prob-stat-overall|Question]] | [Solution](../../solutions/yau/yau-2024-final-interview-overall-prob-stat-overall-solutions.md) | pdf | Complete | Pending |
+| 2024 | final-interview | team | [[yau-2024-final-interview-team-prob-stat-team|Question]] | [Answer](../../solutions/yau/yau-2024-final-interview-team-prob-stat-team-solutions.md) | pdf | Completed | to be written |
+| 2025 | final-interview | individual | [[yau-2025-final-interview-individual-prob-stat-individual|Question]] | [Solution](../../solutions/yau/yau-2025-final-interview-individual-prob-stat-individual-solutions.md) | pdf | completed | Completed |
+| 2025 | final-interview | overall | [[yau-2025-final-interview-overall-prob-stat-overall|Question]] | [Solution](../../solutions/yau/yau-2025-final-interview-overall-prob-stat-overall-solutions.md) | pdf | Complete | Pending |
+| 2025 | final-interview | team | [[yau-2025-final-interview-team-prob-stat-team|Question]] | [Solution](../../solutions/yau/yau-2025-final-interview-team-prob-stat-team-solutions.md) | pdf | Complete | Pending |
+| 2010 | semifinal-written | individual | [[yau-2010-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2010-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2010 | semifinal-written | team | [[yau-2010-semifinal-written-team|Question]] | [Answer](../../solutions/yau/yau-2010-semifinal-written-team-solutions.md) | pdf | Completed | to be written |
+| 2012 | semifinal-written | individual | [[yau-2012-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2012-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2012 | semifinal-written | team | [[yau-2012-semifinal-written-team|Question]] | [Answer](../../solutions/yau/yau-2012-semifinal-written-team-solutions.md) | pdf | Completed | to be written |
+| 2013 | semifinal-written | individual | [[yau-2013-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2013-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2014 | semifinal-written | individual | [[yau-2014-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2014-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2014 | semifinal-written | team | [[yau-2014-semifinal-written-team|Question]] | [Answer](../../solutions/yau/yau-2014-semifinal-written-team-solutions.md) | pdf | Completed | to be written |
+| 2015 | semifinal-written | individual | [[yau-2015-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2015-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2015 | semifinal-written | team | [[yau-2015-semifinal-written-team|Question]] | [Answer](../../solutions/yau/yau-2015-semifinal-written-team-solutions.md) | pdf | Completed | to be written |
+| 2016 | semifinal-written | individual | [[yau-2016-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2016-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2017 | semifinal-written | individual | [[yau-2017-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2017-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2018 | semifinal-written | individual | [[yau-2018-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2018-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2019 | semifinal-written | individual | [[yau-2019-semifinal-written-individual|Question]] | [Answer](../../solutions/yau/yau-2019-semifinal-written-individual-solutions.md) | pdf | Complete | to be written |
+| 2019 | semifinal-written | team | [[yau-2019-semifinal-written-team|Question]] | [Answer](../../solutions/yau/yau-2019-semifinal-written-team-solutions.md) | pdf | Completed | to be written |
+| 2020 | semifinal-written | written | [[yau-2020-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2020-semifinal-written-written-solutions.md) | pdf | Complete | to be written |
+| 2021 | semifinal-written | written | [[yau-2021-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2021-semifinal-written-written-solutions.md) | pdf | Complete | to be written |
+| 2022 | semifinal-written | written | [[yau-2022-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2022-semifinal-written-written-solutions.md) | pdf | Complete | to be written |
+| 2023 | semifinal-written | written | [[yau-2023-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2023-semifinal-written-written-solutions.md) | pdf | Complete | to be written |
+| 2024 | semifinal-written | written | [[yau-2024-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2024-semifinal-written-written-solutions.md) | pdf | Completed | to be written |
+| 2025 | semifinal-written | written | [[yau-2025-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2025-semifinal-written-written-solutions.md) | pdf | Complete | to be written |
+| 2026 | semifinal-written | written | [[yau-2026-semifinal-written-written|Question]] | [Answer](../../solutions/yau/yau-2026-semifinal-written-written-solutions.md) | pdf | Complete | to be written |

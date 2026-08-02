@@ -1,0 +1,22 @@
+# 2013 丘赛 总决赛面试 individual
+
+> [!info] 来源与转录
+> - 原始文件：[本地原件](../../sources/yau-contest/final-interview/yau-2013-final-interview-individual-probability-individual.pdf)。
+> - 来源：[官方题库下载页](https://yau-contest.com/lists-jxxg.html)。
+> - MinerU 阅读稿：[完整转录](../../transcripts/mineru/yau-2013-final-interview-individual-probability-individual/reading.md)；原始 Markdown、JSON 和图像资产位于 `parts/`。
+> - 对应解答：[逐题参考解](../../solutions/yau/yau-2013-final-interview-individual-probability-individual-solutions.md)。
+> - 数学公式、图形、版式及任何 OCR 歧义均以原始文件为准。
+
+## 2013 概率统计个人竞赛复试题
+
+1. 甲乙二人各出资 100 元反复掷一枚均匀硬币玩公平游戏，正面甲赢，负面乙赢。双方约定谁先赢三次将获得全部赌资 200 元。当硬币掷到第三次时因故停止，结果是甲方赢两次，乙方赢一次。在这种情况下，应该如何在甲乙之间公平分配 200 元赌资。
+
+2. 设 X 与 Y 为独立并且二维随机变量 $Z =(X, Y)$ 的分布旋转不变（即对于任何正交矩阵 O，二维随机变量 OZ 与 Z 同分布。证明 X 和 Y 是均值为零且方差相同的正态随机变量。
+
+3. 考虑一元线性回归模型
+
+$$
+Y_{k} = aX_{k} + \epsilon_{k}, k = 1, 2, \dots, n,
+$$
+
+其中 $\{\epsilon_k:k = 1,2,\dots,n,\}$ 是独立同分布正态 $N(0,\sigma^2)$ 随机变量序列， $\{X_{k}:k = 1,2,\dots,n,\}$ 是非随机、人为设计的自变元序列。请给出一种估计方法，并找出估计量的均值及方差。
