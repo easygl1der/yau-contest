@@ -1,0 +1,136 @@
+%!TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xeCJK}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Qiuzhen QE Probability \& Statistics --- Fall 2025}
+\lhead{\small Official Qualifying Exam}
+\rfoot{\small Page \thepage}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Pbb}{\mathbb{P}}
+\DeclareMathOperator{\Cov}{Cov}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+
+\title{\textbf{QUALIFYING EXAM: PROBABILITY \& STATISTICS}\\[0.5em]\Large FALL 2025}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-3em}
+
+\section*{Instructions}
+\begin{itemize}
+    \item There are 11 problems in this exam. You need to choose 8 of them to solve. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
+    \item You must follow all the rules of exam taking. Misconducts will be subject to proper disciplinary actions by the Center.
+    \item You must provide all necessary details for full credits. A final answer with no or little explanation/derivation, even if correct, receives a minimal credit.
+    \item $\mathbb{R}$ denotes the set of real numbers and $\mathbb{N} = \{1, 2, 3, \dots\}$ denotes the set of positive integers. $\xrightarrow{(d)}$ and $\stackrel{(d)}{=}$ mean ``converges in distribution'' and ``equal in distribution'', respectively.
+    \item Beta function $\mathrm{Beta}(\alpha, \beta) = \int_0^1 x^{\alpha-1}(1-x)^{\beta-1} dx = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$.
+    \item For $\mu \in \mathbb{R}, \sigma > 0$, $\mathcal{N}(\mu, \sigma^2)$ density is $f(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$.
+\end{itemize}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{(10 points)} Let $X$ and $N$ be independent random variables. $X \sim \mathrm{Exp}(1)$ (density $e^{-x}\mathbf{1}_{\{x > 0\}}$) and $N \sim \mathrm{Poisson}(\lambda)$ for $\lambda > 0$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Find all $\lambda > 0$ such that $\E[X^N] < \infty$.
+        \item Calculate $\E[X^N]$ under the above condition on $\lambda$.
+        \item Is there any $\lambda > 0$ such that $\Var[X^N] < \infty$? Justify your answer.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $X, Y$ be independent uniform on $[0, 1]$, and $Z \coloneqq \max\{X, Y\}$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Determine the distribution of $Z$ conditioned on $\{X + Y \in [0, 1]\}$.
+        \item Determine the distribution of $Z$ conditioned on $\{X + Y \in [1, 2]\}$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $(X_n, \mathcal{F}_n)$ be a martingale.
+    \begin{enumerate}[label=(\alph*)]
+        \item Prove that if $(X_n^2, \mathcal{F}_n)$ is also a martingale, then $X_m = X_n$ a.s.\ for any $m, n \in \mathbb{N}$.
+        \item Prove that if $(|X_n|^p, \mathcal{F}_n)$ is a martingale for some $p > 1$, then $(|X_n|^q, \mathcal{F}_n)$ is also a martingale for every $1 \le q \le p$.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Given independent random variables $(X_n)_{n \in \mathbb{N}}$ satisfying
+    \[
+    \forall n \in \mathbb{N}, \qquad \Pbb(X_n = -1) = \frac{1}{2}, \qquad \Pbb(X_n = 4n) = \frac{1}{8n}, \qquad \Pbb(X_n = 0) = \frac{1}{2} - \frac{1}{8n},
+    \]
+    and denote $S_n \coloneqq \sum_{k=1}^n X_k$. Prove that almost surely
+    \[
+    \liminf_{n \to \infty} \frac{S_n}{n} < 0 < \limsup_{n \to \infty} \frac{S_n}{n}.
+    \]
+
+    \item \textbf{(10 points)} Let $B_t$ be 1D standard Brownian motion with $B_0 = 0$. Define $X_t = \exp(B_t - \frac{1}{2}t)$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Prove that $X_t$ converges almost surely as $t \to \infty$.
+        \item For $t > 0$, calculate $\E \int_0^t X_s ds$ and $\Var \int_0^t X_s ds$.
+        \item Show that $\int_0^\infty X_t dt < \infty$ a.s.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $M = \begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix}$ be a symmetric random matrix, where $X_1, X_2 \stackrel{\text{i.i.d.}}{\sim} \mathcal{N}(0, 2)$ and $Y \sim \mathcal{N}(0, 1)$ are independent. Let $\lambda_1 \ge \lambda_2$ be eigenvalues of $M$, and $\mathbf{v}_1, \mathbf{v}_2$ unit eigenvectors.
+    \begin{enumerate}[label=(\alph*)]
+        \item Find the distribution of $\lambda_1 + \lambda_2$.
+        \item Find the distribution of $\lambda_1 - \lambda_2$.
+        \item Are $\lambda_1$ and $\lambda_2$ independent? Prove your claim.
+        \item Prove that the joint distribution of $(\mathbf{v}_1, \mathbf{v}_2)$ is invariant under orthogonal transformations.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Suppose $\hat{\theta}_n$ is a real-valued consistent estimator of $\theta \in [-1, 1]$ based on $n$ observations. Let $T_n$ be a sufficient statistic for $\theta$. Show there exists a consistent estimator of $\theta$ based on $T_n$.
+
+    \item \textbf{(15 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Exp}(\lambda)$ (pdf $\lambda e^{-\lambda x}$ for $x > 0$). Let $\phi = P_\lambda(X_1 > x) = e^{-\lambda x}$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Find a complete and sufficient statistic for $\lambda$.
+        \item Find the UMVUE of $\phi$.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Bernoulli}(p)$ with $0 < p < 1$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Let $g(p) = p^k + (1-p)^{n-k}$ ($0 \le k \le n$). Find the UMVUE for $g(p)$.
+        \item Prove that $\overline{X}$ is admissible for $p$ under loss $l(p, a) = \frac{(p-a)^2}{p(1-p)}$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Uniform}(0, \theta)$ with $\theta > 0$. Prior on $\theta$ is lognormal ($\ln\theta \sim \mathcal{N}(\mu_0, \sigma_0^2)$).
+    \begin{enumerate}[label=(\alph*)]
+        \item Find the posterior density of $\ln\theta$.
+        \item Find the MAP (mode) estimator of $\theta$. Is it consistent? Explain.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $X_1, \dots, X_n$ be i.i.d.\ Discrete Uniform on $\{1, 2, \dots, \theta\}$.
+    \begin{enumerate}[label=(\alph*)]
+        \item For testing $H_0 : \theta \le \theta_0$ vs. $H_1 : \theta > \theta_0$, show that
+        \[
+        \phi(\mathbf{x}) = \begin{cases} 1, & \text{if } x_{(n)} > \theta_0, \\ \alpha, & \text{if } x_{(n)} \le \theta_0 \end{cases}
+        \]
+        is a randomized UMP test of size $\alpha$.
+        \item For testing $H_0 : \theta = \theta_0$ vs. $H_1 : \theta \neq \theta_0$, show that
+        \[
+        \phi(\mathbf{x}) = \begin{cases} 1, & \text{if } x_{(n)} > \theta_0 \text{ or } x_{(n)} \le \theta_0 \alpha^{1/n}, \\ 0, & \text{otherwise} \end{cases}
+        \]
+        is a UMP test of size $\alpha$ when $\theta_0 \alpha^{1/n}$ is an integer.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

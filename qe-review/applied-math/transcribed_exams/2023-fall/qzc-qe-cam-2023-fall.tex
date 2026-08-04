@@ -1,0 +1,129 @@
+%!TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xeCJK}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Qiuzhen QE Computational \& Applied Math --- Fall 2023}
+\lhead{\small Official Qualifying Exam}
+\rfoot{\small Page \thepage}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+
+\title{\textbf{QUALIFYING EXAM: APPLIED MATHEMATICS}\\[0.5em]\Large SEPTEMBER 2023}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-3em}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item Consider Newton's method for finding a solution $x_*$ to $f(x) = 0$, where $f \in C^2(a, b), x_* \in (a, b)$.
+    \begin{align*}
+    1: & \quad \text{Determine } x_0 \in (a, b) \\
+    2: & \quad \text{for } k = 0, 1, 2, \dots \text{ do} \\
+    3: & \qquad x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)} \\
+    4: & \quad \text{end for}
+    \end{align*}
+    \begin{enumerate}[label=(\arabic*)]
+        \item Prove that if $x_0$ is sufficiently close to $x_*$ and $f'(x_*) \neq 0$, then $\lim_{k \to \infty} x_k = x_*$ and
+        \[
+        \lim_{k \to \infty} \frac{x_{k+1} - x_*}{(x_k - x_*)^2} = \frac{f''(x_*)}{2 f'(x_*)}.
+        \]
+        \item In practice, the derivative is sometimes not easy to obtain. As a result, secant differences are used instead:
+        \[
+        x_{k+1} = x_k - \frac{x_k - x_{k-1}}{f(x_k) - f(x_{k-1})} f(x_k).
+        \]
+        Prove that if $x_0, x_1$ are sufficiently close to $x_*$, then $x_k \to x_*$ and
+        \[
+        \lim_{k \to \infty} \frac{x_{k+1} - x_*}{(x_k - x_*)(x_{k-1} - x_*)} = \frac{f''(x_*)}{2 f'(x_*)}.
+        \]
+    \end{enumerate}
+
+    \item Consider the explicit shifted QR method for computing eigenvalues of $A \in \mathbb{C}^{n \times n}$:
+    \begin{align*}
+    1: & \quad \text{Find upper Hessenberg } H_0 \text{ and unitary } U_0 \text{ such that } H_0 = U_0^H A U_0 \\
+    2: & \quad \text{for } k = 0, 1, 2, \dots \text{ do} \\
+    3: & \qquad \text{Determine a scalar } \mu_k \\
+    4: & \qquad \text{Compute QR factorization } Q_k R_k = H_k - \mu_k I \\
+    5: & \qquad H_{k+1} = R_k Q_k + \mu_k I \\
+    6: & \quad \text{end for}
+    \end{align*}
+    \begin{enumerate}[label=(\arabic*)]
+        \item Prove that $H_i, i = 1, 2, \dots$ are all upper Hessenberg matrices.
+        \item Interpret the purpose of using $H_0$ rather than $A$ in the iteration.
+        \item Suppose $A$ has $n$ distinct eigenvalues and none of the shifts $\mu_i$ is an eigenvalue of $A$. Prove that $H_i$ are unreduced upper Hessenberg matrices.
+        \item Write $H_k = \begin{bmatrix} G_k & u_k \\ \varepsilon_k e^T & \alpha_k \end{bmatrix}$ where $\alpha_k, \varepsilon_k \in \mathbb{C}$, $u_k, e \in \mathbb{C}^{n-1}$ with $e = [0, \dots, 0, 1]^T$. Prove that
+        \[
+        |\varepsilon_{k+1}| \le \rho_k^2 \|u_k\|_2 |\varepsilon_k|^2 + \rho_k |\alpha_k - \mu_k| |\varepsilon_k|,
+        \]
+        where $\rho_k = \|(G_k - \mu_k I)^{-1}\|_2$, provided $\mu_k$ is not an eigenvalue of $G_k$.
+    \end{enumerate}
+
+    \item If $p$ is a polynomial of degree $n$ on $[-1, 1]$, it is determined by its values on an $(n+1)$-point grid on $[-1, 1]$. The derivative $p'$, a polynomial of degree $n-1$, is determined on the same grid. The differentiation matrix $D = (D_{ij}) \in \mathbb{R}^{(n+1) \times (n+1)}$ represents the linear map $p'(x_i) = \sum_{j=0}^n D_{ij} p(x_j)$.
+    \begin{enumerate}[label=(\arabic*)]
+        \item Prove that $D_{ij} = l_j'(x_i)$, where $l_j(x)$ is the $j$-th Lagrange basis function.
+        \item If a Chebyshev grid $x_j = \cos(j\pi/n), 0 \le j \le n$ is adopted, derive explicit formulas for $D_{ij}$.
+    \end{enumerate}
+
+    \item Consider a Runge-Kutta method for $y' = f(t, y)$ with Butcher tableau:
+    \[
+    \begin{array}{c|cc}
+    0 & 0 & 0 \\
+    1 & 1 & 0 \\
+    \hline
+    & 1/2 & 1/2
+    \end{array}
+    \]
+    \begin{enumerate}[label=(\arabic*)]
+        \item Rewrite the scheme in the form $u_{n+1} = u_n + h F(t_n, u_n, h; f)$.
+        \item Assume $f$ is sufficiently smooth. Prove that this method is convergent and determine the order of convergence.
+        \item What is the region of absolute stability of this method? Give an explicit description.
+    \end{enumerate}
+
+    \item For $u_t + a u_{xxx} = 0$ ($a$ constant), applying Lax-Friedrichs idea yields:
+    \[
+    u_m^{n+1} = \frac{1}{2}(u_{m+1}^n + u_{m-1}^n) - \frac{1}{2} a k h^{-3} (u_{m+2}^n - 2u_{m+1}^n + 2u_{m-1}^n - u_{m-2}^n).
+    \]
+    \begin{enumerate}[label=(\arabic*)]
+        \item Give the leading order term of the local truncation error.
+        \item Analyze the stability of this scheme.
+    \end{enumerate}
+
+    \item Consider linear programming $\max_{\mathbf{x}} \langle \mathbf{c}, \mathbf{x} \rangle$ s.t. $A\mathbf{x} = \mathbf{b}, \mathbf{x} \ge 0$, where $\mathbf{b} \ge 0$, $A \in \mathbb{R}^{m \times n}$ has full rank ($m < n$).
+    \begin{enumerate}[label=(\arabic*)]
+        \item Prove that basic feasible solutions are equivalent to the vertices of its feasible region.
+        \item Write down the dual problem, and prove strong duality when an optimal solution exists.
+    \end{enumerate}
+
+    \item Consider the eigenvalue problem with $0 < \epsilon \ll 1$:
+    \[
+    u'' + (\lambda + \epsilon f(x))u = 0, \quad 0 < x < 1; \qquad u(0) = 0, \quad u'(1) = 0.
+    \]
+    Give the asymptotic expansion of $\lambda$ up to $O(\epsilon)$.
+\end{enumerate}
+
+\end{document}

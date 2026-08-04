@@ -1,0 +1,115 @@
+# Qualifying Exam: 2025 Spring
+
+考试课程: Probability & Statistics 姓名: 学号:
+
+ There are 11 problems in this exam (3 pages). You need to choose 8 of them to solve. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
+
+ You must follow all the rules of exam taking. Misconducts will be subject to proper disciplinary actions by the Center.
+
+ You must provide all necessary details for full credits. A final answer with no or little explanation/derivation, even if correct, receives a minimal credit.
+
+1. (10 points) Let $\left\{ U _ { n } \right\}$ be i.i.d. with uniform distribution on [0, 1]. For $n \geq 2$ , define
+
+$$
+X _ {n} := \min \{U _ {1}, \dots , U _ {n} \}, \quad Y _ {n} = \max \{U _ {1}, \dots , U _ {n} \}.
+$$
+
+(1) Derive the joint distribution of $( X _ { n } , Y _ { n } )$
+
+(2) Calculate $\mathbb { E } [ X _ { n } \mid \sigma ( Y _ { n } ) ]$
+
+2. (10 points) Suppose (X, Y, Z) is three-dimensional mean-zero Gaussian vector with covariance matrix given by
+
+$$
+\left( \begin{array}{c c c} 1 & \rho & \tau \\ \rho & 1 & 0 \\ \tau & 0 & 1 \end{array} \right)  .
+$$
+
+(1) Show that $\rho ^ { 2 } + \tau ^ { 2 } \leq 1$
+
+(2) Show that there exist real numbers $a , b ,$ c and a standard Gaussian random variable W independent of $( Y , Z )$ such that $X = a Y + b Z + c W$ and derive a, b, c.
+
+3. (15 points) Suppose {ξ } are i.i.d. Bernoulli random variables with $\mathbb { P } [ \xi _ { 1 } = 1 ] = \mathbb { P } [ \xi _ { 1 } = - 1 ] =$ $1 / 2 .$ Set $\begin{array} { r } { S _ { n } = \sum _ { j = 1 } ^ { n } \xi _ { j } } \end{array}$ and define $\tau = \operatorname* { m i n } \{ n : S _ { n } = - a \ \mathrm { o r } \ b \}$ for $a , b \in \mathbb { Z } _ { > 0 }$
+
+(1) Calculate $\mathbb { E } \left[ e ^ { \lambda S _ { n } } \right]$ for $\lambda \in \mathbb { R } .$
+
+(2) Calculate $\mathbb { E } \left[ s ^ { \tau } \right]$ for $s \in ( 0 , 1 )$
+
+4. (10 points) Suppose {ξ } are i.i.d. Bernoulli random variables with $\mathbb { P } [ \xi _ { 1 } = 1 ] = \mathbb { P } [ \xi _ { 1 } = - 1 ] =$ $1 / 2$ . Set
+
+$$
+X _ {n} = \sum_ {j = 1} ^ {n} 2 ^ {j - 1} \xi_ {j}.
+$$
+
+(1) Define T = min $\{ j \geq 1 : \xi _ { j } = + 1 \}$ . Derive the law of T and calculate E[T].
+
+(2) Show that $\{ X _ { n } \}$ is a martingale and calculate $\mathbb { E } [ X _ { T } ]$
+
+5. (10 points) Let $\{ B _ { t } \} _ { t \ge 0 }$ be a one-dimensional Brownian motion starting from the origin (i.e, $B _ { 0 } = 0 )$ . For $a \in ( 0 , \infty )$ , define $T _ { a } : = \operatorname* { i n f } \{ t \geq 0 : | B _ { t } | = a \}$
+
+(1) Prove that $T _ { a } < \infty \mathrm { a . s . }$
+
+(2) Prove that $T _ { a }$ and $\mathbf { 1 } _ { \{ B _ { T _ { a } } = a \} }$ are independent.
+
+6. (15 points) Suppose X and $Y$ are i.i.d with $\mathbb { E } [ X ] = 0$ and $\operatorname { v a r } ( X ) = 1$ . Suppose further that
+
+$$
+\mathbb {E} [ (X - Y) ^ {2} \mid \sigma (X + Y) ] = 2.
+$$
+
+Show that X and Y are independent standard Gaussian random variables.
+
+7. (10 points) Let $X _ { 1 } , . . . , X _ { n } \ ( n \geq 2 )$ be iid uniform $U ( 0 , \theta )$ where $0 < \theta < \infty ,$
+
+(a) Under squared error loss $l ( \theta , \delta ( \mathbf { X } ) ) = ( \delta ( \mathbf { X } ) - \theta ) ^ { 2 }$ , derive the generalized Bayes rule for the improper prior
+
+$$
+\pi (\theta) = 1, 0 <   \theta <   + \infty .
+$$
+
+(b) Is the Bayes rule derived in (a) consistent for $\theta ?$
+
+8. (10 points) Let $X _ { 1 } , . . . , X _ { n }$ be iid Gamma(2025, θ) with $\theta ~ > ~ 0$ unknown. Recall that the probability density function of a Gamma $, ( \alpha , \theta )$ is $\begin{array} { r } { f ( x \mid \alpha , \theta ) = \frac { 1 } { \Gamma ( \alpha ) \theta ^ { \alpha } } x ^ { \alpha - 1 } e ^ { \frac { - x } { \theta } } , x > 0 } \end{array}$ , where $\Gamma ( \alpha ) = ( \alpha - 1 ) !$ for a positve integer α.
+
+(a) Consider the hypothesis testing problem $H _ { 0 } : \theta = 1 \mathrm { v s . } H _ { 1 } : \theta \neq 1$ . Derive the UMP level $\alpha = 0 . 0 5$ test if it exists. If it doesn’t exist, please argue why it does not exist.
+
+(b) Derive the MLE for $\textstyle { \frac { 1 } { \theta } } ,$ what is the asymptotic distribution of this MLE for $\textstyle { \frac { 1 } { \theta } } ?$
+
+9. (15 points) Let $( X _ { 1 } , Y _ { 1 } ) , . . . , ( X _ { n } , Y _ { n } )$ be iid random bivariate vectors. Let $\rho$ be the correlation coeficient between $X _ { i }$ and $Y _ { i }$ . Let
+
+$$
+\hat {\rho} = \frac {1}{(n - 1) \sqrt {S _ {X} ^ {2} S _ {Y} ^ {2}}} \sum_ {i = 1} ^ {n} (X _ {i} - \bar {X}) (Y _ {i} - \bar {Y}),
+$$
+
+where $\begin{array} { r } { \bar { X } = \frac { \sum _ { i = 1 } ^ { n } X _ { i } } { n } , \ \bar { Y } = \frac { \sum _ { i = 1 } ^ { n } Y _ { i } } { n } , \ S _ { X } ^ { 2 } = \frac { \sum _ { i = 1 } ^ { n } ( X _ { i } - \bar { X } ) ^ { 2 } } { n - 1 } , \ S _ { Y } ^ { 2 } = \frac { \sum _ { i = 1 } ^ { n } ( Y _ { i } - \bar { Y } ) ^ { 2 } } { n - 1 } . } \end{array}$
+
+(a) Assume that $\mathrm { E } | X _ { i } | ^ { 4 } < \infty$ and $\mathrm { E } | Y _ { i } | ^ { 4 } < \infty$ , prove that $\sqrt { n } ( { \hat { \rho } } - \rho ) \longrightarrow \mathrm { N } ( 0 , c )$ for some value c. Please identify c in terms of moments of $( X _ { i } , Y _ { i } )$ , however, there is no need to simplify your calculation on c.
+
+(b) Further, assume that $( X _ { i } , Y _ { i } )$ follows a bivariate normal distribution that
+
+$$
+\binom{X _ {i}}{Y _ {i}} \sim N \left(\binom{0}{0}, \left( \begin{array}{c c} 1 & \rho \\ \rho & 1 \end{array} \right)\right).
+$$
+
+The probability density function of the above bivariate normal distribution is given by
+
+$$
+f (x, y \mid \rho) = \frac {1}{2 \pi \sqrt {1 - \rho^ {2}}} \mathrm{exp} \{- \frac {1}{2 (1 - \rho^ {2})} [ x ^ {2} - 2 \rho x y + y ^ {2} ] \}.
+$$
+
+Find a minimal suficient statistic for $\rho .$ Is this minimal suficient statistic complete or not? Please explain.
+
+10. (10 points) Let $X _ { 1 } , . . . , X _ { n }$ be iid from $N ( 0 , \sigma ^ { 2 } )$ with $\sigma > 0$ unknown. Let $\begin{array} { r } { W = \frac { 1 } { n } \sum _ { i = 1 } ^ { n } \left| X _ { i } \right| } \end{array}$ Recall $\chi _ { k } ^ { 2 }$ has probability density function
+
+$$
+\frac {1}{2 ^ {\frac {k}{2}} \Gamma \left(\frac {k}{2}\right)} x ^ {\frac {k}{2} - 1} e ^ {- \frac {x}{2}}, x \geq 0.
+$$
+
+(a) Find an unbiased estimator of σ based on W and identify its limiting distribution.
+
+(b) Is it admissible under the square error loss? Justify your answer.
+
+11. (15 points) Let $X _ { 1 } , . . . , X _ { n }$ be iid from exponential distribution with density $f ( x ; \lambda , \alpha ) = \lambda e ^ { - \lambda ( x - \alpha ) } I _ { \{ x \geq \alpha \} }$ 2 where $\lambda > 0$ and $- \infty < \alpha <$ ∞ are unknown parameters.
+
+(a) Find the MLE of $( \lambda , \alpha )$ , say $( \hat { \lambda } , \hat { \alpha } )$
+
+(b) What distribution does $\frac { \sqrt { n } ( \hat { \lambda } - \lambda ) } { n ( \hat { \alpha } - \alpha ) }$ converge to? You will receive partial credits if you can identify the distribution(s) of the numerator and/or denominator.

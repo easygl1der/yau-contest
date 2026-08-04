@@ -1,0 +1,142 @@
+%!TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xeCJK}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Qiuzhen QE Probability \& Statistics --- Fall 2024}
+\lhead{\small Official Qualifying Exam}
+\rfoot{\small Page \thepage}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Pbb}{\mathbb{P}}
+\DeclareMathOperator{\Cov}{Cov}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+
+\title{\textbf{QUALIFYING EXAM: PROBABILITY \& STATISTICS}\\[0.5em]\Large FALL 2024}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-3em}
+
+\section*{Instructions}
+\begin{itemize}
+    \item There are 11 problems in this exam. You need to choose 8 of them to solve. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
+    \item You must follow all the rules of exam taking. Misconducts will be subject to proper disciplinary actions by the Center.
+    \item You must provide all necessary details for full credits. A final answer with no or little explanation/derivation, even if correct, receives a minimal credit.
+    \item $\mathbb{R}$ denotes the set of real numbers and $\mathbb{N} = \{1, 2, 3, \dots\}$ denotes the set of positive integers. $\xrightarrow{(d)}$ and $\stackrel{(d)}{=}$ mean ``converges in distribution'' and ``equal in distribution'', respectively.
+\end{itemize}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{(10 points)} Let $U_1, U_2, \dots$ be independent identically distributed (i.i.d.) random variables uniformly distributed on $[0, 1]$, and define $S_n = \sum_{k=1}^n U_k$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Calculate $\E[(S_n)^4]$.
+        \item Determine the distribution of $S_3$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $(Y_n)_{n \ge 1}$ be a sequence of real-valued random variables such that
+    \[
+    \sqrt{n}(Y_n - a) \xrightarrow[n \to \infty]{(d)} \mathcal{N}(0, \sigma^2),
+    \]
+    where $\mathcal{N}(0, \sigma^2)$ stands for the normal distribution with $\sigma \neq 0$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Let $g : \mathbb{R} \to \mathbb{R}$ be a function differentiable at $a$ with $g'(a) \neq 0$. Prove that
+        \[
+        \sqrt{n}(g(Y_n) - g(a)) \xrightarrow[n \to \infty]{(d)} \mathcal{N}\left(0, [g'(a)]^2 \sigma^2\right).
+        \]
+        \item Fix $p \in (0, 1)$. For $n \in \mathbb{N}$, let $Z_n \stackrel{(d)}{=} \mathrm{Bin}(n, p)$ be a binomial random variable. Prove that
+        \[
+        \sqrt{n} \left( \ln\left(\frac{Z_n}{n}\right) - \ln p \right) \xrightarrow[n \to \infty]{(d)} \mathcal{N}\left(0, \frac{1 - p}{p}\right).
+        \]
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $X$ be a real-valued random variable. Prove that the following properties are equivalent in the sense that the parameters $K_i > 0$ appearing in these properties differ from each other by at most an absolute constant factor:
+    \begin{enumerate}[label=(\alph*)]
+        \item The tails of $X$ satisfy $\Pbb(|X| \ge t) \le 2 \exp(-t / K_1)$ for all $t \ge 0$.
+        \item The moments of $X$ satisfy $\E(|X|^p) \le (K_2 p)^p$ for all $p \in \mathbb{N}$.
+        \item The moment generating function of $|X|$ is bounded at some point, i.e., $\E \exp(|X| / K_3) \le 2$ for some $K_3 > 0$.
+    \end{enumerate}
+    (\textit{Hint:} You can use Stirling's approximation: $e(n/e)^n \le n! \le e n (n/e)^n$ for all $n \in \mathbb{N}$.)
+
+    \item \textbf{(10 points)} Let $\mathbb{T}_d$ be an infinite $d$-regular tree, where every node has degree $d$. On the other hand, let $\mathcal{T}_b$ be an infinite $b$-ary tree with root $o$. Consider simple random walk $X_n$ on $\mathbb{T}_d$ and simple random walk $Y_n$ on $\mathcal{T}_b$.
+    \begin{enumerate}[label=(\alph*)]
+        \item For each $d \in \mathbb{N}$ with $d \ge 2$, determine whether $X_n$ on $\mathbb{T}_d$ is recurrent or transient. Prove your claim.
+        \item For each $b \in \mathbb{N}$, determine whether $Y_n$ on $\mathcal{T}_b$ is recurrent or transient. Prove your claim.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $X_1, X_2, \dots$ be i.i.d.\ random variables with exponential distribution: $\Pbb(X_k > x) = e^{-x}$ for $x \ge 0$. Define $M_n \coloneqq \sum_{k=1}^n \frac{X_k}{k}$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Prove that $(M_n - \ln n)_{n \in \mathbb{N}}$ converges to a limit $Y$ almost surely.
+        \item Prove that, for every $p \in (0, 1)$, $\left( \frac{\exp(p M_n)}{n^p} \right)_{n \in \mathbb{N}}$ converges to a limit $Z$ in $L^1$.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $B_t$ be a 1D standard Brownian motion started from 0.
+    \begin{enumerate}[label=(\alph*)]
+        \item Consider $X_t = x + B_t$ started at $x > 0$. For any $t > 0$ and $b > a > 0$, compute
+        \[
+        \Pbb \left( X_t \in [a, b] \;\Big|\; \min_{0 \le s \le t} X_s > 0 \right).
+        \]
+        \item A Brownian bridge $W_t$ on $[0, 1]$ is $B_t$ conditioned on $B_1 = 0$. A 1D Gaussian free field $h_t$ on $[0, 1]$ with zero boundary has covariance given by the Green's function $G(t, s)$ of $-\Delta$. Prove that $(W_t : t \in [0, 1])$ has the same distribution as $(h_t : t \in [0, 1])$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Let $X_1, \dots, X_n$ be an i.i.d.\ sample from $\mathcal{N}(\mu, 1)$ with $\mu$ unknown. One only records $\mathbf{Y} = (Y_1, \dots, Y_n)$ where $Y_i = I(X_i < 0)$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Derive the MLE of $\mu$ based on the observed data $\mathbf{Y}$.
+        \item Construct a size $\alpha$ uniformly most powerful (UMP) test for testing $H_0 : \mu \le \mu_0$ versus $H_1 : \mu > \mu_0$ based on $\mathbf{Y}$.
+        \item Describe how to construct a $(1 - \alpha)$ confidence interval for $\mu$ based on $\mathbf{Y}$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Consider the linear model $Y_i = \mathbf{z}_i^T \bm{\beta} + \epsilon_i$, $i = 1, \dots, n$, under Gauss-Markov assumptions ($\E[\epsilon_i] = 0$, $\Var[\epsilon_i] = \sigma^2$, $\Cov(\epsilon_i, \epsilon_j) = 0$ for $i \neq j$).
+    \begin{enumerate}[label=(\alph*)]
+        \item Let $\hat{\bm{\beta}} = (\mathbf{Z}^T \mathbf{Z})^{-1} \mathbf{Z}^T \mathbf{Y}$ be the least squares estimate. Let $\theta = \mathbf{b}^T \bm{\beta}$. Write down the mean and variance of $\hat{\theta} = \mathbf{b}^T \hat{\bm{\beta}}$, and prove that $\hat{\theta}$ is the best linear unbiased estimator (BLUE) of $\theta$.
+        \item Further assume $\epsilon_i \stackrel{\text{i.i.d.}}{\sim} \mathcal{N}(0, \sigma^2)$ with $\sigma^2$ known. Derive the Fisher information matrix $I(\bm{\beta})$.
+    \end{enumerate}
+
+    \item \textbf{(10 points)} Suppose $X_1, \dots, X_n$ are i.i.d.\ Uniform$[0, \theta]$ with $\theta > 0$. Fix $t \in (0, \theta)$. Consider $F_n(t) = \frac{1}{n} \sum_{i=1}^n I_{\{X_i \le t\}}$ and $T_n(t) = t / (2\overline{X})$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Find the asymptotic distributions of the two estimators.
+        \item For what value of $t$ will the first estimator have a smaller asymptotic variance than the second estimator?
+        \item Let $\theta = 1$. Find the asymptotic distribution of $n F_n(n^{-1/2}) - \sqrt{n}$.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $X_1, \dots, X_n$ ($n \ge 2$) be i.i.d.\ $\mathcal{N}(\mu, \sigma^2)$ with $\mu \ge 0, \sigma > 0$ unknown.
+    \begin{enumerate}[label=(\alph*)]
+        \item Show $\overline{X}$ and $S^2$ are independent.
+        \item Find UMVUE of $\mu / \sigma$ if it exists.
+        \item Is $\overline{X}$ admissible for estimating $\mu$ under squared error loss? Prove your assertion.
+    \end{enumerate}
+
+    \item \textbf{(15 points)} Let $X_1, \dots, X_n$ be an i.i.d.\ sample from Uniform$[\theta, \theta + |\theta|]$ where $\theta \neq 0$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Derive the method of moments estimator of $\theta$.
+        \item Derive the MLE of $\theta$, $\hat{\theta}$.
+        \item Is $\hat{\theta}$ a consistent estimator of $\theta$? Explain.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}
