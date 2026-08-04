@@ -1,0 +1,370 @@
+\chapter{考点方向四：自然语言处理与大模型理论 (Natural Language Understanding \& LLM)}
+\label{ch:nlu}
+
+\section{自然语言处理与大模型理论}
+
+\source{本节对应考纲“统计建模、Word2vec、self-attention、LLM 预训练对齐、Scaling Law、基于 Embedding 的知识库推理”。主要参考 \textcite{jurafsky2026slp,goldberg2017nnnlp}；Transformer、Scaling Law、RAG、DPO 等补充参考 \textcite{vaswani2017attention,kaplan2020scaling,hoffmann2022training,lewis2020rag,rafailov2023dpo}。}
+
+\subsection{统计语言模型}
+
+\concepttarget{concept:ngram}
+
+语言模型给序列 \(w_{1:n}\) 分配概率。链式法则给出
+
+\[
+  P(w_{1:n})
+  =
+  \prod_{i=1}^{n}P(w_i\mid w_{1:i-1}).
+\]
+
+\(n\)-gram 模型用 Markov 假设截断历史：
+
+\[
+  P(w_i\mid w_{1:i-1})
+  \approx
+  P(w_i\mid w_{i-n+1:i-1}).
+\]
+
+最大似然估计为
+
+\[
+  \widehat P(w_i\mid c)
+  =
+  \frac{\operatorname{count}(c,w_i)}
+  {\operatorname{count}(c)}.
+\]
+
+问题是稀疏性：很多合理短语在训练集中没出现，MLE 会给零概率。因此需要 smoothing、backoff 或 interpolation。困惑度（perplexity）衡量测试序列平均预测难度：
+
+\[
+  \operatorname{PPL}(w_{1:n})
+  =
+  P(w_{1:n})^{-1/n}.
+\]
+
+PPL 越低，模型对测试文本赋予的平均概率越高。
+
+\paragraph{\(n\)-gram MLE 的推导}
+
+固定一个上下文 \(c\)。设词表为 \(\mathcal{V}\)，参数为
+
+\[
+  \theta_w=P(w\mid c),
+  \qquad
+  \sum_{w\in\mathcal{V}}\theta_w=1.
+\]
+
+给定计数 \(n(c,w)=\operatorname{count}(c,w)\)，该上下文相关的 log-likelihood 为
+
+\[
+  \sum_{w\in\mathcal{V}}
+  n(c,w)\log\theta_w.
+\]
+
+引入拉格朗日乘子 \(\lambda\)：
+
+\[
+  \mathcal{J}(\theta,\lambda)
+  =
+  \sum_w n(c,w)\log\theta_w
+  +
+  \lambda\left(\sum_w\theta_w-1\right).
+\]
+
+一阶条件为
+
+\[
+  \frac{n(c,w)}{\theta_w}+\lambda=0,
+  \qquad
+  \theta_w=-\frac{n(c,w)}{\lambda}.
+\]
+
+对 \(w\) 求和并使用归一化约束：
+
+\[
+  1=\sum_w\theta_w
+  =
+  -\frac{1}{\lambda}
+  \sum_w n(c,w)
+  =
+  -\frac{\operatorname{count}(c)}{\lambda}.
+\]
+
+所以 \(\lambda=-\operatorname{count}(c)\)，得到
+
+\[
+  \widehat P(w\mid c)
+  =
+  \frac{\operatorname{count}(c,w)}{\operatorname{count}(c)}.
+\]
+
+\subsection{Word2vec、GloVe 与 embedding}
+
+\concepttarget{concept:word2vec}
+
+Embedding 把离散词、实体或节点映射到向量空间：
+
+\[
+  e:\mathcal{V}\to\R^d.
+\]
+
+Word2vec skip-gram 用中心词预测上下文。给中心词 \(w\) 和上下文词 \(c\)，softmax 概率为
+
+\[
+  P(c\mid w)
+  =
+  \frac{\exp(u_c^\top v_w)}
+  {\sum_{c'}\exp(u_{c'}^\top v_w)}.
+\]
+
+完整 softmax 太贵，negative sampling 用二分类目标近似：
+
+\[
+  \log\sigma(u_c^\top v_w)
+  +
+  \sum_{j=1}^{k}
+  \E_{c_j\sim P_n}
+  \log\sigma(-u_{c_j}^\top v_w).
+\]
+
+GloVe 从全局共现矩阵出发，使
+
+\[
+  u_i^\top v_j+b_i+\tilde b_j
+  \approx
+  \log X_{ij}.
+\]
+
+二者共同直觉是 distributional hypothesis：上下文相似的词语语义相似。
+
+在 skip-gram 公式中，\(v_w\in\R^d\) 是中心词 \(w\) 的输入向量，\(u_c\in\R^d\) 是上下文词 \(c\) 的输出向量，\(P_n\) 是负采样分布，\(k\) 是每个正样本配多少个负样本。考试如果要求解释 negative sampling，应说明它把多分类 softmax 近似成“真实共现对 vs. 噪声共现对”的二分类问题，从而避免每次更新遍历整个词表 \(\mathcal{V}\)。
+
+\subsection{Transformer self-attention}
+
+\concepttarget{concept:self-attention}
+
+Transformer 的输入是 token embedding 矩阵
+
+\[
+  X\in\R^{N\times d},
+\]
+
+其中 \(N\) 是上下文长度，\(d\) 是模型维度。单头 attention 先计算
+
+\[
+  Q=XW_Q,
+  \qquad
+  K=XW_K,
+  \qquad
+  V_{\mathrm{attn}}=XW_V.
+\]
+
+然后
+
+\[
+  \operatorname{Attention}(Q,K,V_{\mathrm{attn}})
+  =
+  \softmax
+  \left(
+    \frac{QK^\top}{\sqrt{d_k}}
+  \right)V_{\mathrm{attn}}.
+\]
+
+每个 query 与所有 key 做相似度，softmax 得到权重，再对 value 加权平均。缩放因子 \(1/\sqrt{d_k}\) 防止点积方差随维度增大，使 softmax 过早饱和。
+
+\paragraph{Attention 维度和缩放因子的推导}
+
+设 \(W_Q,W_K\in\R^{d\times d_k}\)，\(W_V\in\R^{d\times d_v}\)。则
+
+\[
+  Q,K\in\R^{N\times d_k},
+  \qquad
+  V_{\mathrm{attn}}\in\R^{N\times d_v}.
+\]
+
+所以
+
+\[
+  QK^\top\in\R^{N\times N},
+  \qquad
+  \softmax(QK^\top/\sqrt{d_k})V_{\mathrm{attn}}\in\R^{N\times d_v}.
+\]
+
+若 query 和 key 的各坐标近似独立、均值为 \(0\)、方差为 \(1\)，则一个点积
+
+\[
+  q^\top k=\sum_{r=1}^{d_k}q_r k_r
+\]
+
+的方差为
+
+\[
+  \Var(q^\top k)
+  =
+  \sum_{r=1}^{d_k}\Var(q_r k_r)
+  =
+  d_k.
+\]
+
+因此未缩放的 logits 会随 \(d_k\) 变大，softmax 进入饱和区后梯度变小。除以 \(\sqrt{d_k}\) 后，点积方差回到常数量级，这是 scaled dot-product attention 的动机 \parencite{vaswani2017attention,jurafsky2026slp}。
+
+自回归语言模型必须加 causal mask：
+
+\[
+  M_{ij}
+  =
+  \begin{cases}
+    0, & j\le i,\\
+    -\infty, & j>i.
+  \end{cases}
+\]
+
+此时 attention 变成
+
+\[
+  \softmax
+  \left(
+    \frac{QK^\top}{\sqrt{d_k}}+M
+  \right)V_{\mathrm{attn}},
+\]
+
+保证第 \(i\) 个位置不能偷看未来 token。这里 \(M\) 是加到 logits 上的 causal mask；padding mask 则遮蔽序列填充位置，二者不可混用。实现时还要核对标签是否已右移：若预测第 \(i\) 个目标 token，严格下三角掩码与输入/标签的移位约定必须匹配。多头 attention 把多个 head 的输出拼接后再线性投影。Transformer block 通常包括 attention、feed-forward network、residual connection 和 layer norm。
+
+\subsection{LLM 预训练、指令微调与对齐}
+
+\concepttarget{concept:pretraining-alignment}
+
+自回归 LLM 的预训练目标是 next-token prediction：
+
+\[
+  \Lcal_{\mathrm{pretrain}}
+  =
+  -
+  \sum_{i=1}^{n}
+  \log p_\theta(w_i\mid w_{<i}).
+\]
+
+这就是交叉熵损失。它使模型学习语言统计、事实模式和许多任务的隐式格式，但目标本身只是预测文本，不保证有帮助、真实或安全。
+
+这个目标同样来自最大似然。给定语料序列 \(w_{1:n}\)，自回归分解为
+
+\[
+  p_\theta(w_{1:n})
+  =
+  \prod_{i=1}^{n}p_\theta(w_i\mid w_{<i}).
+\]
+
+最大化 log-likelihood 等价于最小化
+
+\[
+  -\log p_\theta(w_{1:n})
+  =
+  -
+  \sum_{i=1}^{n}
+  \log p_\theta(w_i\mid w_{<i}).
+\]
+
+如果把真实下一个 token 写成 one-hot 分布 \(q_i\)，模型预测分布写成 \(p_i\)，单 token 损失就是交叉熵
+
+\[
+  H(q_i,p_i)
+  =
+  -
+  \sum_{v\in\mathcal{V}}q_i(v)\log p_i(v)
+  =
+  -\log p_\theta(w_i\mid w_{<i}).
+\]
+
+指令微调（SFT）继续用交叉熵训练，但数据变成 instruction-response pairs：
+
+\[
+  \Lcal_{\mathrm{SFT}}
+  =
+  -
+  \sum_{(x,y)}
+  \sum_{t}
+  \log p_\theta(y_t\mid x,y_{<t}).
+\]
+
+偏好对齐在上一节已给出 RLHF 与 DPO。它的局限包括 reward model 偏差、偏好数据覆盖不足、过度优化导致 reward hacking、长程事实性仍依赖检索或工具。
+
+\subsection{Scaling Law}
+
+\concepttarget{concept:scaling-law}
+
+Scaling law 研究模型性能如何随参数量 \(N\)、数据 token 数 \(D\)、训练计算量 \(C\) 缩放。经验上，交叉熵损失常近似满足幂律：
+
+\[
+  L(N,D)
+  \approx
+  L_\infty
+  +
+  aN^{-\alpha}
+  +
+  bD^{-\beta}.
+\]
+
+这里 \(L_\infty\) 是不可约损失水平，\(a,b>0\) 是经验拟合常数，\(\alpha,\beta>0\) 是参数量和数据量对应的幂律指数。
+
+这不是一个第一性原理定理，而是大规模实验规律。它的考试价值在于解释资源分配：固定 compute 时，参数量和数据量要平衡；只增大模型但数据不足会 data-limited，只增加数据但模型太小会 model-limited。Chinchilla 系列结果强调 compute-optimal 训练往往需要比早期大模型更多 token、更少参数。
+
+\subsection{Embedding 知识库推理、RAG 与 MLN}
+
+\concepttarget{concept:rag-mln}
+
+知识库 embedding 把实体和关系映射到向量空间。TransE 的基本约束是
+
+\[
+  e_s+r\approx e_o
+\]
+
+对三元组 \((s,r,o)\) 成立。评分函数可写为
+
+\[
+  f(s,r,o)=-\|e_s+r-e_o\|.
+\]
+
+局限是多对多关系、组合逻辑、否定和量词难以表达。图神经网络、规则增强、路径推理和神经符号方法都是常见改进方向。
+
+RAG 把检索器和生成器组合。给定查询 \(q\)，检索器从文档库 \(D\) 返回
+
+\[
+  R(q)=\{d_1,\ldots,d_k\},
+\]
+
+生成器根据 \(q\) 和检索文档生成答案：
+
+\[
+  p(x_{1:n}\mid q,R(q))
+  =
+  \prod_{i=1}^{n}
+  p(x_i\mid q,R(q),x_{<i}).
+\]
+
+RAG 的价值是缓解幻觉、接入私有或时效知识、提供引用证据。主要风险是检索失败、检索噪声、上下文污染、重排错误和引用不忠实。工程闭环通常包括 chunking、embedding、向量索引、召回、重排、生成、引用和评估。
+
+Markov Logic Network（MLN）用加权一阶逻辑公式定义 log-linear 分布：
+
+\[
+  P(X=x\mid E)
+  =
+  \frac{1}{Z(E)}
+  \exp
+  \left(
+    \sum_j w_j n_j(x,E)
+  \right).
+\]
+
+其中 \(n_j(x,E)\) 是第 \(j\) 个公式在世界 \(x\) 与证据 \(E\) 下满足的 groundings 数，\(w_j\) 是该公式的权重，\(Z(E)=\sum_x \exp(\sum_j w_j n_j(x,E))\) 是在证据 \(E\) 下的配分函数，用来保证概率和为 \(1\)。权重大表示强偏好；无限大权重可视为 hard constraint。它和 embedding 方法的差别是：MLN 显式编码逻辑约束，embedding 方法更擅长连续相似性和大规模近似。
+
+\paragraph{考核内容}
+
+\begin{itemize}
+  \item 从链式法则写出语言模型目标，解释 \(n\)-gram 的 Markov 假设与 smoothing。
+  \item 推 Word2vec skip-gram 或 negative sampling 目标，解释 embedding 的语义来源。
+  \item 写出 self-attention 的 \(Q,K,V\) 公式、维度、mask 和复杂度。
+  \item 解释 next-token pretraining、SFT、RLHF、DPO 的目标差异。
+  \item 说明 scaling law 的经验形式和 compute-optimal trade-off。
+  \item 比较知识库 embedding、RAG 和 MLN 的能力边界。
+\end{itemize}
+

@@ -1,0 +1,248 @@
+%!TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xeCJK}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Qiuzhen QE AI --- Spring 2026}
+\lhead{\small Official Qualifying Exam}
+\rfoot{\small Page \thepage}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Pbb}{\mathbb{P}}
+\DeclareMathOperator{\VCdim}{VCdim}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\KL}{KL}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+
+\title{\textbf{QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE}\\[0.5em]\Large SPRING 2026}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-3em}
+
+\section*{Instructions}
+\begin{itemize}
+    \item This exam consists of four sections, each with a total of 33 points. You are required to choose three out of the four sections and answer the questions in the selected sections. You will earn an additional point for writing your name and student ID number on your answer sheet. The maximum possible score you can achieve is 100.
+    \item Please clearly indicate your section choices at the very beginning of your answer sheet. If you answer questions in more than three sections, only the first three sections will be graded.
+\end{itemize}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\section*{A. Machine Learning Theory}
+
+\subsection*{Part I: Warm-Up Questions [3 pts.]}
+This section contains multiple-choice questions. Please select only one answer for each question. No justification is required.
+
+\begin{enumerate}[label=\textbf{MQ\arabic*.}]
+    \item \textbf{[0.5 pts.]} In the agnostic PAC learning setting, what quantity does a learning algorithm aim to compete with?
+    \begin{enumerate}[label=(\alph*)]
+        \item The Bayes optimal classifier.
+        \item The hypothesis with zero training error.
+        \item The best hypothesis in the class $\mathcal{H}$.
+        \item The hypothesis minimising validation error.
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Let $\mathcal{H}$ be a binary hypothesis class with VC dimension $d < \infty$. Which statement about its growth function $\tau_{\mathcal{H}}(m)$ is necessarily true?
+    \begin{enumerate}[label=(\alph*)]
+        \item $\tau_{\mathcal{H}}(m) = 2^m$ for all $m$.
+        \item $\tau_{\mathcal{H}}(m) = O(m^d)$ for all $m$.
+        \item $\tau_{\mathcal{H}}(m) \le \sum_{i=0}^d \binom{m}{i}$ for all $m$.
+        \item $\tau_{\mathcal{H}}(m)$ is constant for $m > d$.
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Which statement about ReLU neural networks is correct from a learning-theoretic perspective?
+    \begin{enumerate}[label=(\alph*)]
+        \item ReLU networks represent smooth functions on $\mathbb{R}^d$.
+        \item Increasing depth always decreases the VC dimension.
+        \item ReLU networks compute piecewise linear functions whose complexity depends on depth and width.
+        \item Universal approximation of ReLU networks implies PAC learnability.
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Which statement about empirical risk minimisation (ERM) is correct?
+    \begin{enumerate}[label=(\alph*)]
+        \item ERM is guaranteed to be consistent for any hypothesis class.
+        \item ERM always finds a hypothesis with minimum true risk.
+        \item If $\mathcal{H}$ has finite VC dimension, ERM is PAC learnable in the realisable setting.
+        \item ERM is PAC learnable only if $\mathcal{H}$ is finite.
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Which statement is a correct consequence of the No Free Lunch theorem?
+    \begin{enumerate}[label=(\alph*)]
+        \item Restricting the hypothesis class always improves generalization.
+        \item There exists a universally optimal learning algorithm.
+        \item Inductive bias is necessary to obtain non-trivial learning guarantees.
+        \item Random guessing is optimal for all supervised learning problems.
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Let $K : \mathcal{X} \times \mathcal{X} \to \mathbb{R}$ be a symmetric function. Which of the following statements is correct?
+    \begin{enumerate}[label=(\alph*)]
+        \item $K$ is a valid kernel if and only if $K(x, x) \ge 0$ for all $x \in \mathcal{X}$.
+        \item $K$ is a valid kernel if and only if there exists a finite-dimensional feature map $\psi$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle$.
+        \item If $K$ is positive semidefinite, then there exists a Hilbert space $\mathcal{H}$ and a feature map $\psi : \mathcal{X} \to \mathcal{H}$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle_{\mathcal{H}}$.
+        \item Every kernel corresponds to a unique feature map.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection*{Part II: Theoretical Exercises [30 pts.]}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item \textbf{[6 pts.]} Let $\mathcal{H}$ be a hypothesis class of binary classifiers $h : \mathcal{X} \to \{0, 1\}$. Let $\mathcal{D}$ be an unknown distribution over $\mathcal{X}$, and let $f \in \mathcal{H}$ be the target hypothesis. For a fixed $h \in \mathcal{H}$, define the empirical loss on $S = \{x_1, \dots, x_m\} \sim \mathcal{D}^m$ by
+    \[
+    L_S(h) = \frac{1}{m} \sum_{i=1}^m \mathbf{1}[h(x_i) \neq f(x_i)].
+    \]
+    \begin{enumerate}[label=(\a*)]
+        \item Let $p \coloneqq L_{\mathcal{D}, f}(h)$. Show that
+        \[
+        \E_{S \sim \mathcal{D}^m} \left[ (L_S(h) - p)^2 \right] = \frac{p(1 - p)}{m}.
+        \]
+        \item Deduce that
+        \[
+        \E \left[ (L_S(h) - p)^2 \right] \le \frac{1}{4m},
+        \]
+        and therefore it decreases at rate $O(1/m)$.
+    \end{enumerate}
+
+    \item \textbf{[4 pts.]} Let $f : \mathbb{R}^d \to \mathbb{R}$ be twice continuously differentiable and $\lambda$-strongly convex. Prove that $f$ admits a unique global minimiser.
+
+    \item \textbf{[8 pts.]} Let $\mathcal{X} = \mathbb{R}$ and consider the hypothesis class
+    \[
+    \mathcal{H} = \left\{ h_{a,b,c}(x) = \mathbf{1}_{[a,b]}(x) \lor \mathbf{1}_{[c,\infty)}(x) \mid a \le b < c, \, a, b, c \in \mathbb{R} \right\},
+    \]
+    where $\lor$ denotes logical OR.
+    \begin{enumerate}[label=(\a*)]
+        \item Let $x_1, \dots, x_n$ be $n$ distinct points in $\mathbb{R}$. Give an upper bound on the growth function $\tau(\mathcal{H}, n)$.
+        \item Determine the VC dimension of $\mathcal{H}$.
+    \end{enumerate}
+
+    \item \textbf{[7 pts.]} Consider a set $S$ of examples in $\mathbb{R}^n \times [k]$ for which there exist vectors $\mu_1, \dots, \mu_k \in \mathbb{R}^n$ such that every example $(x, y) \in S$ falls within a ball centered at $\mu_y$ with radius $r \ge 1$. Assume also that for every $i \neq j$, $\|\mu_i - \mu_j\| \ge 4r$. Concatenate each instance by constant $1$ and apply multivector construction:
+    \[
+    \Psi(x, y) = \bigl[ \underbrace{0, \dots, 0}_{(y-1)(n+1)}, \underbrace{x_1, \dots, x_n, 1}_{n+1}, \underbrace{0, \dots, 0}_{(k-y)(n+1)} \bigr] \in \mathbb{R}^{k(n+1)}.
+    \]
+    Show that there exists a vector $w \in \mathbb{R}^{k(n+1)}$ such that $\ell(w, (x, y)) = 0$ for every $(x, y) \in S$.
+    \textit{Hint:} Write $x = \mu_y + v$ with $\|v\| \le r$, and take $\mathbf{w} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$ where $\mathbf{w}_i = [\bm{\mu}_i, -\frac{\|\bm{\mu}_i\|^2}{2}]$.
+
+    \item \textbf{[5 pts.]} Let $d \in \mathbb{N}$. Consider two feedforward neural networks with input dimension $d$ and scalar output. Assume $\Phi_{\text{ReLU}}$ uses ReLU activation in all hidden layers, while $\Phi_\sigma$ uses sigmoid activation. Suppose $\Phi_{\text{ReLU}}(x) = \Phi_\sigma(x)$ for all $x \in \mathbb{R}^d$. Show that the function represented by $\Phi_{\text{ReLU}}$ (and hence $\Phi_\sigma$) must be constant.
+\end{enumerate}
+
+\section*{B. Deep Learning and Reinforcement Learning}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item \textbf{[10 pts.]}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} MLP layerwise relation $x_\ell = f_\ell(x_{\ell-1}, \theta_\ell)$ for $\ell = 1, \dots, L$ and loss $\mathcal{J} = \mathcal{L}(x_L, y)$.
+        \begin{enumerate}[label=(\roman*)]
+            \item Derive $\frac{\partial \mathcal{J}}{\partial \theta_\ell}$ using chain rule.
+            \item State why backpropagation complexity is $O(\text{forward pass})$.
+        \end{enumerate}
+        \item \textbf{[2 pts.]} Explain why sigmoid activation $\sigma(z) = \frac{1}{1 + e^{-z}}$ causes vanishing gradients in deep networks, and contrast with ReLU.
+        \item \textbf{[2 pts.]} Write update rules for SGD with momentum ($v_{k+1}$ and $x_{k+1}$). Explain how momentum improves optimization in oscillatory landscapes.
+        \item \textbf{[2 pts.]} Scaled dot-product attention $W = \softmax\left(\frac{Q K^\top}{\sqrt{d_k}}\right)$. Explain the purpose of $\frac{1}{\sqrt{d_k}}$ and what happens when $d_k$ is large without scaling.
+        \item \textbf{[2 pts.]} Compare computational structure of RNNs and Transformers. Why are Transformers more efficient on modern hardware?
+    \end{enumerate}
+
+    \item \textbf{[15 pts.]} Let $\pi_0$ be base distribution on $\mathbb{R}^d$ and $\pi_1$ data distribution. We seek vector field $v_t(x)$ such that $\frac{d}{dt} x_t = v_t(x_t)$ transports $\pi_0$ to $\pi_1$ at $t = 1$.
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} Prescribed coupling $(x_0, x_1) \sim \gamma$ and linear interpolation $x_t = (1-t)x_0 + t x_1$. Compute conditional velocity $v_t(x_t \mid x_0, x_1) \coloneqq \frac{d}{dt} x_t$.
+        \item \textbf{[3 pts.]} Population velocity field $v_t(x) = \E [v_t(x_t \mid x_0, x_1) \mid x_t = x]$. Show that density $\pi_t$ satisfies the continuity equation $\partial_t \pi_t + \nabla \cdot (\pi_t v_t) = 0$.
+        \item \textbf{[5 pts.]} For parametric model $v_\theta(t, \mathbf{x})$, propose a squared-loss regression objective using training pairs $(t, x_t)$ and $v_t(x_t \mid x_0, x_1)$. Prove minimizer recovers $v_t(x)$.
+        \item \textbf{[5 pts.]} For SDE $d x_t = (v_t(x_t) + \beta_t \nabla_x \log \pi_t(x_t)) dt + \sqrt{2\beta_t} dW_t$, derive Fokker--Planck equation and show it shares marginals $\pi_t$ with ODE. How is $\nabla_x \log \pi_t(x)$ approximated via score matching?
+    \end{enumerate}
+
+    \item \textbf{[8 pts.]} Discounted MDP $(\mathcal{S}, \mathcal{A}, P, r, \gamma)$.
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} Derive Bellman equation for value function $V^\pi(s)$.
+        \item \textbf{[2 pts.]} Specify Policy Iteration (Policy Evaluation step and Policy Improvement step).
+        \item \textbf{[2 pts.]} Explain Actor--Critic adaptation when model $P$ is unknown.
+        \item \textbf{[2 pts.]} RLHF alignment: write down objective for updating policy $\pi_\theta(y \mid x)$ using preference data $(x, y^+, y^-)$ (using reward-model RLHF or DPO).
+    \end{enumerate}
+\end{enumerate}
+
+\section*{C. Optimization Methods in Artificial Intelligence}
+
+Composite optimization: $\min_{x \in \mathbb{R}^d} F(x) \coloneqq f(x) + R(x)$, $f$ is $L$-smooth and $\mu$-strongly convex ($\mu > 0$), $R$ is proper, closed, convex. Unbiased stochastic gradient $g(x, \xi) = \nabla f(x) + \xi$ with $\E[\xi] = 0, \E[\|\xi\|^2] \le \sigma^2$. Proximal SGD: $x^{k+1} = \prox_{\gamma R}(x^k - \gamma g^k)$, $\bar{x}^k \coloneqq \frac{1}{k} \sum_{t=1}^k x^t$.
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item \textbf{[2 pts.] Basic definitions:} Definitions of $L$-smoothness and $\mu$-strong convexity.
+    \item \textbf{[3 pts.] Optimality condition of prox:} Show $x^+ = \prox_{\gamma R}(u) \iff \frac{1}{\gamma}(u - x^+) \in \partial R(x^+)$.
+    \item \textbf{[3 pts.] Uniqueness \& fixed point:} Show $F$ has unique minimizer $x^*$ and $x^* = \prox_{\gamma R}(x^* - \gamma \nabla f(x^*))$.
+    \item \textbf{[2 pts.] Monotonicity of subdifferential:} Show $\langle r_x - r_y, x - y \rangle \ge 0$ for $r_x \in \partial R(x), r_y \in \partial R(y)$.
+    \item \textbf{[3 pts.] Nonexpansiveness of prox:} Show $\|\prox_{\gamma R}(u) - \prox_{\gamma R}(v)\| \le \|u - v\|$.
+    \item \textbf{[3 pts.] One-step inequality:} Show $\|x^{k+1} - x^*\|^2 \le \|x^k - x^* - \gamma (g^k - \nabla f(x^*))\|^2$.
+    \item \textbf{[5 pts.] Conditional expectation \& variance decomposition:} Prove $\E_k \|x^{k+1} - x^*\|^2 \le \|x^k - x^* - \gamma(\nabla f(x^k) - \nabla f(x^*))\|^2 + \gamma^2 \sigma^2$.
+    \item \textbf{[4 pts.] Linear contraction \& noise floor:} For $\gamma = \frac{2}{L + \mu}$, show $\E \|x^{k+1} - x^*\|^2 \le (1 - \rho)\E \|x^k - x^*\|^2 + \gamma^2 \sigma^2$ with $\rho = \frac{4\mu L}{(L+\mu)^2}$. Explain noise floor.
+    \item \textbf{[3 pts.] Averaging reduces variance:} For uncorrelated errors $e^t = x^t - \E[x^t]$ with $\E[\|e^t\|^2] \le V$, show $\E[\|\bar{e}^k\|^2] \le V/k$.
+    \item \textbf{[5 pts.] Convergence rate of averaging ($R \equiv 0$):}
+    \begin{enumerate}[label=(\a*)]
+        \item Show $\E_k \|x^{t+1} - x^*\|^2 \le \|x^t - x^*\|^2 - 2\gamma_t (1 - L\gamma_t) \E_k(f(x^t) - f^*) + \gamma_t^2 \sigma^2$, and for $\gamma_t \le \frac{1}{2L}$, simplify to $\E_k \|x^{t+1} - x^*\|^2 \le \|x^t - x^*\|^2 - \gamma_t \E_k(f(x^t) - f^*) + \gamma_t^2 \sigma^2$.
+        \item For $\gamma_t = \frac{1}{\mu t}$, show $\E[f(\bar{x}^k) - f^*] \le \mathcal{O}\left( \frac{\log k}{k} \right)$.
+    \end{enumerate}
+\end{enumerate}
+
+\section*{D. Natural Language Processing}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item \textbf{[6 pts.] InfoNCE Contrastive Loss \& Gradient}
+    \[
+    \mathcal{L} = -\log \frac{\exp(\langle z, z^+ \rangle / \tau)}{\exp(\langle z, z^+ \rangle / \tau) + \sum_{i=1}^n \exp(\langle z, z_i^- \rangle / \tau)}.
+    \]
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[3 pts.]} Compute $\nabla_z \mathcal{L}$. Interpret result as pulling towards $z^+$ and pushing away from $z_i^-$.
+        \item \textbf{[3 pts.]} High-dimensional heuristic ($d \gg 1$): scale of $\langle z, z_i^- \rangle$ and max similarity among $n$ negatives. Explain impact of false negatives.
+    \end{enumerate}
+
+    \item \textbf{[6 pts.] Supervised Topic Model (sLDA) for Tickets}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} Why adding priority label $y_d$ changes learned topics vs.\ unsupervised LDA; failure mode of unsupervised LDA.
+        \item \textbf{[2 pts.]} Label model $p(y_d \mid \bar{z}_d, \beta)$ using logistic regression $\sigma(u)$ and interpretation of $\beta$.
+        \item \textbf{[2 pts.]} Generative sampling steps and full factorized joint probability $p(\mathbf{w}, \mathbf{z}, \bm{\Theta}, \Phi, \mathbf{y} \mid \alpha, \eta, \beta)$.
+    \end{enumerate}
+
+    \item \textbf{[7 pts.] Efficient Transformer Architecture for Long Sequences ($L \gg 10^4$)}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[3 pts.]} Mechanism definition (block-sparse / sliding window + global / linear / memory).
+        \item \textbf{[2 pts.]} Per-layer time and memory complexity analysis.
+        \item \textbf{[2 pts.]} Expressivity for long-range interactions (graph diameter / global tokens).
+    \end{enumerate}
+
+    \item \textbf{[7 pts.] Information Extraction with Markov Logic Networks (MLNs)}
+    $P(X \mid E) = \frac{1}{Z(E)} \exp\left( \sum_{j=1}^J w_j n_j(X, E) \right)$.
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} Write MLN formulas for (i) propagation of HighLink/HighRel, (ii) at most one linked entity per mention, (iii) relation--type consistency. Discuss weights (hard vs.\ soft constraints).
+        \item \textbf{[2 pts.]} Upstream ML model architectures to produce HighLink / HighRel evidence signals.
+        \item \textbf{[3 pts.]} Name disambiguation with birth-year attribute \& contemporaneity constraint ($e_{\text{old}}$ vs.\ $e_{\text{new}}$).
+    \end{enumerate}
+
+    \item \textbf{[7 pts.] RAG as External Memory for Dialog QA}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[3 pts.]} Memory Gain: derive necessary \& sufficient condition for total gain $\Delta > 0$ in terms of $\epsilon, g_c, g_{\neg c}$. Show equivalence to $\epsilon < \frac{g_c}{g_c - g_{\neg c}}$ when $g_c > g_{\neg c}$.
+        \item \textbf{[4 pts.]} MDP formulation: define state $s_t$, action $a_t$ (write/evict \& retrieval decisions), reward $r_t = \Delta_t - \lambda \cdot \text{Cost}(a_t)$, and optimization objective.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

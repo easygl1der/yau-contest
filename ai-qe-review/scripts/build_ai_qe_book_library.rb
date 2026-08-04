@@ -103,7 +103,11 @@ PDF_CONFIRMED_CONTROL_LINE_REPAIRS = {
       "pdf_page" => 326
     }, {
       "source" => "<sup>Fei-Fei</sup> <sup>Li</sup> <sup>&</sup> <sup>Justin</sup> <sup>Johnson</sup> <sup>&</sup> <sup>Serena</sup> <sup>Yeung</sup> <sup>Lecture</sup> <sup>9</sup> <sup>-</sup> 34 <sup>April</sup> <sup>30,</sup> <sup>2019</sup>Figure 5.40 Top-5 error rate and network depths of winning entries from the ImageNet Large Scale Visual Recognition Challenge (ILSVRC) © Li, Johnson, and Yeung (2019).",
-      "replacement" => "Figure 5.40 *Top-5 error rate and network depths of winning entries from the ImageNet Large Scale Visual Recognition Challenge (ILSVRC)* © Li, Johnson, and Yeung (2019).",
+      # Keep the lecture-slide credit before the figure label.  If the
+      # repaired line starts with `Figure`, the caption-derivation pass mistakes
+      # this page header for a transcript-adjacent caption and the audit then
+      # compares the repaired text with the unrepaired source line.
+      "replacement" => "Lecture 9 — 34, April 30, 2019. Figure 5.40 *Top-5 error rate and network depths of winning entries from the ImageNet Large Scale Visual Recognition Challenge (ILSVRC)* © Li, Johnson, and Yeung (2019).",
       "pdf_page" => 326
     }],
     4 => [{

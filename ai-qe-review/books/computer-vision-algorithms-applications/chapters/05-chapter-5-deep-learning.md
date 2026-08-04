@@ -14,8 +14,8 @@ source_pdf_page_range: null
 review_status: needs-manual-review
 image_count: 110
 source_empty_image_alt: 110
-non_semantic_image_alt: 64
-caption_derived_image_alt: 46
+non_semantic_image_alt: 65
+caption_derived_image_alt: 45
 formula_check:
   unbalanced_dollar_markers: false
   unbalanced_display_math: false
@@ -1236,8 +1236,8 @@ While modern convolutional neural networks were first developed and deployed in 
 
 Figure 5.39 shows the architecture of the SuperVision network, which contains a series of convolutional layers with ReLU (rectified linear) non-linearities, max pooling, some fully connected layers, and a final softmax layer, which is fed into a multi-class cross-entropy loss. Krizhevsky, Sutskever, and Hinton (2012) also used dropout (Figure 5.29), small translation and color manipulation for data augmentation, momentum, and weight decay ($L_2$ weight penalties).
 
-![Figure 5.40](../../../transcripts/mineru/computer-vision-algorithms-applications/parts/201-400/images/b33caad11b70c871c521f277261e93b52f8c7ca1e9a6c1314a60e8806203f3fc.jpg)  
-Figure 5.40 *Top-5 error rate and network depths of winning entries from the ImageNet Large Scale Visual Recognition Challenge (ILSVRC)* © Li, Johnson, and Yeung (2019).
+![原书图像；请以 source.pdf 为准](../../../transcripts/mineru/computer-vision-algorithms-applications/parts/201-400/images/b33caad11b70c871c521f277261e93b52f8c7ca1e9a6c1314a60e8806203f3fc.jpg)  
+Lecture 9 — 34, April 30, 2019. Figure 5.40 *Top-5 error rate and network depths of winning entries from the ImageNet Large Scale Visual Recognition Challenge (ILSVRC)* © Li, Johnson, and Yeung (2019).
 
 The next few years after the publication of this paper saw dramatic improvement in the classification performance on the ImageNet Large Scale Visual Recognition Challenge (Russakovsky, Deng et al. 2015), as shown in Figure 5.40. A nice description of the innovations in these various networks, as well as their capacities and computational cost, can be found in the lecture slides by Justin Johnson (2020, Lecture 8).
 

@@ -22,7 +22,7 @@ tags:
 
 - 已生成 11 册教材和 190 个章节入口；每个可用章节保留连续、严格递增的 `reading.md` 源行区间。
 - 结构门通过；原始 PDF、MinerU Markdown、JSON 和图片资产均保留在证据层。
-- 911 张图已按“图后首个非空行是带正文的 `Figure` 图注”这一单向规则生成短 alt；另有 2248 张图仍只有 PDF 回看提示。两类均不等于视觉内容已人工确认，相关章节保持 `needs-manual-review`。
+- 910 张图已按“图后首个非空行是带正文的 `Figure` 图注”这一单向规则生成短 alt；另有 2249 张图仍只有 PDF 回看提示。两类均不等于视觉内容已人工确认，相关章节保持 `needs-manual-review`。
 - 各书的 `image-review-queue.json` 合计记录 3159 张章节内图像，每项均可回到图片源行；其中高置信图注的源行再由 `image-caption-audit.json` 复核。
 - `control-character-review-queue.json` 合计记录 1204 个可能丢失符号；其中 1172 个已按 PDF 视觉确认的受限模式恢复（其中 533 个来自 FOML 的书内 `U+000F` 至 `ε` 规则），32 个已逐行 PDF 确认修复，415 个已找到同一 MinerU JSON 块及 PDF 候选页；其余不得猜测补写。
 - `render-risk-review-queue.json` 合计记录 193 个 OCR 渲染风险源行；其中 57 个已由 PDF 确认修复，131 个拥有唯一 JSON/PDF 页候选。其余 `(...)` 占位符与连续 HTML 上标均须按页视觉核对后再修复。

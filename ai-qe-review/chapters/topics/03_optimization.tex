@@ -1,0 +1,751 @@
+\chapter{考点方向三：人工智能中的优化方法 (Optimization Methods for AI)}
+\label{ch:optimization}
+
+\section{优化方法：从凸性到现代一阶算法}
+
+\source{本节对应考纲“凸集和凸函数、次微分、梯度下降、随机梯度下降、随机坐标下降、动量加速、自适应学习率”。基础参考 \textcite{nesterov2018convex,beck2017first,shalev2014uml}。}
+
+\begin{teaching}[学习路线、记号与先修工具]
+本章严格按考纲的四项顺序组织：凸集/凸函数，次微分与重要性质，三类一阶算法，动量与自适应学习率。默认研究
+\[
+  \min_{x\in C}f(x),
+\]
+其中 \(C\subseteq\R^d\) 是可行域，\(x\) 是参数，\(f\) 是目标函数。无约束问题即 \(C=\R^d\)。内积和范数分别记为 \(\langle x,y\rangle\) 与 \(\|x\|\)；\(\nabla f(x)\) 是梯度，\(\nabla^2f(x)\) 是 Hessian，\(\argmin f\) 是所有全局最小点的集合。
+\end{teaching}
+
+\begin{remark}[怎样使用本章]
+零基础学习时先掌握每个定义后的例子与“考核内容”；资格考试复习时应能从定义推出标出的最优性条件、下降不等式和收敛率。所有速率结论都依赖明确假设，不能把凸、强凸、光滑和随机噪声的结论混用。
+\end{remark}
+
+\subsection{第一部分：凸集和凸函数的相关理论}
+
+\concepttarget{concept:convex-first-order}
+
+集合 \(C\subseteq\R^d\) 是凸的，表示任意 \(x,y\in C\) 和 \(\theta\in[0,1]\)，都有
+
+\[
+  \theta x+(1-\theta)y\in C.
+\]
+
+函数 \(f:C\to\R\) 是凸的，表示
+
+\[
+  f(\theta x+(1-\theta)y)
+  \le
+  \theta f(x)+(1-\theta)f(y).
+\]
+
+集合的凸包是包含给定集合的最小凸集；函数的上图（epigraph）为
+\[
+  \operatorname{epi}(f)=\{(x,t):x\in C,\ t\ge f(x)\}.
+\]
+函数凸当且仅当其上图凸。半空间、范数球、椭球和仿射子空间是典型凸集；两个凸集的并集一般不凸。非负加权和、点态最大值和仿射复合保持凸性，凸集的交、线性逆像也保持凸性。
+
+\begin{example}[一维判断]
+\(x\mapsto x^2\)、\(x\mapsto |x|\) 和 \(x\mapsto\log(1+e^x)\) 是凸函数，而 \(x\mapsto-x^2\) 非凸。若 \(f\) 在开凸域上二阶连续可微，常用判据是
+\[
+  f\text{ 凸}\quad\Longleftrightarrow\quad \nabla^2f(x)\succeq0\quad(\forall x).
+\]
+\end{example}
+
+如果 \(f\) 可微，凸性等价于一阶下界
+
+\[
+  f(y)\ge f(x)+\langle \nabla f(x),y-x\rangle.
+\]
+
+这条式子的几何意义是：凸函数图像永远在任一点切平面之上。因此在无约束问题（或 \(x^*\) 是可行域内点）中，若 \(\nabla f(x^*)=0\)，就有
+
+\[
+  f(y)\ge f(x^*)
+\]
+
+对所有 \(y\) 成立，即任意 stationary point 都是全局最优点。这是凸优化和非凸深度学习优化的关键区别。
+
+\paragraph{一阶条件的推导}
+
+设 \(f\) 可微且凸。由凸性，对任意 \(t\in(0,1]\)，有
+
+\[
+  f((1-t)x+ty)
+  \le
+  (1-t)f(x)+tf(y).
+\]
+
+整理得
+
+\[
+  \frac{f(x+t(y-x))-f(x)}{t}
+  \le
+  f(y)-f(x).
+\]
+
+令 \(t\downarrow0\)，左边收敛到方向导数
+
+\[
+  \langle\nabla f(x),y-x\rangle.
+\]
+
+因此
+
+\[
+  f(y)\ge f(x)+\langle\nabla f(x),y-x\rangle.
+\]
+
+这说明凸函数的任意切平面都是全局下界。考试中若要求证明“局部最优就是全局最优”，通常就是把这个一阶下界用于 \(x=x^*\)。
+
+\subsection{第二部分：次微分理论与凸函数的重要性质}
+
+若函数不可微，使用次梯度。向量 \(g\in\R^d\) 是 \(f\) 在 \(x\) 的次梯度，若
+
+\[
+  f(y)\ge f(x)+\langle g,y-x\rangle
+  \quad
+  \forall y.
+\]
+
+所有次梯度构成次微分 \(\partial f(x)\)。最优性条件变成
+
+\[
+  0\in \partial f(x^*).
+\]
+
+这叫 Fermat rule，是不可微凸优化里最常考的最优性条件。对 proper closed convex 函数，\(\partial f(x)\) 是凸闭集，并且次微分映射单调：
+
+\[
+  g_x\in\partial f(x),\quad g_y\in\partial f(y)
+  \quad\Longrightarrow\quad
+  \langle g_x-g_y,x-y\rangle\ge0.
+\]
+
+若 \(f\) 和 \(g\) 是 proper convex 函数，且
+\(\operatorname{ri}(\operatorname{dom}f)\cap\operatorname{ri}(\operatorname{dom}g)\ne\varnothing\)，则有和法则
+
+\[
+  \partial(f+g)(x)
+  =
+  \partial f(x)+\partial g(x).
+\]
+
+若 \(A\in\R^{m\times d}\)、\(b\in\R^m\)，总有包含关系
+
+\[
+  A^\top\partial f(Ax+b)
+  \subseteq
+  \partial(f(Ax+b)).
+\]
+
+在 \(f\) 于 \(Ax+b\) 连续等标准资格条件下等号成立。考试作答时不能省略这些条件；若只需使用规则，应明确声明在上述正则条件下。
+
+这些性质解释了为什么 Lasso、hinge loss 和复合优化能用“光滑梯度 + 非光滑次梯度/prox”的形式处理 \parencite{nesterov2018convex,beck2017first}。
+
+例如 \(f(x)=|x|\) 在 \(0\) 处不可微，但
+
+\[
+  \partial |0|=[-1,1],
+\]
+
+所以 \(0\in\partial |0|\)，\(0\) 是最小点。
+
+\begin{example}[约束与法锥]
+把约束 \(x\in C\) 写成指标函数 \(\iota_C(x)\)：在 \(C\) 上为零、在 \(C\) 外为 \(+\infty\)。它的次微分是法锥 \(N_C(x)\)，故凸约束问题的正确一阶条件为
+
+\[
+  0\in\partial f(x^*)+N_C(x^*).
+\]
+
+无约束的 Fermat rule 只是这里 \(C=\R^d\) 的特例。
+\end{example}
+
+\subsubsection{光滑性、强凸性与下降引理}
+
+\concepttarget{concept:smooth-strong-convex}
+
+函数 \(f\) 是 \(L\)-smooth，表示梯度 Lipschitz：
+
+\[
+  \|\nabla f(x)-\nabla f(y)\|
+  \le
+  L\|x-y\|.
+\]
+
+等价地，
+
+\[
+  f(y)
+  \le
+  f(x)+\langle\nabla f(x),y-x\rangle
+  +\frac{L}{2}\|y-x\|^2.
+\]
+
+这叫 descent lemma。把 \(y=x-\eta\nabla f(x)\) 代入，得到
+
+\[
+  f(x-\eta\nabla f(x))
+  \le
+  f(x)
+  -
+  \eta\left(1-\frac{L\eta}{2}\right)
+  \|\nabla f(x)\|^2.
+\]
+
+只要 \(0<\eta<2/L\)，函数值下降。考试里常用它证明梯度下降收敛。
+
+这一步的完整代入如下：
+
+\[
+  f(x-\eta\nabla f(x))
+  \le
+  f(x)
+  +
+  \langle\nabla f(x),-\eta\nabla f(x)\rangle
+  +
+  \frac{L}{2}\|-\eta\nabla f(x)\|^2.
+\]
+
+内积项为 \(-\eta\|\nabla f(x)\|^2\)，二次项为 \((L\eta^2/2)\|\nabla f(x)\|^2\)，合并后得到
+
+\[
+  f(x-\eta\nabla f(x))
+  \le
+  f(x)
+  -
+  \eta\left(1-\frac{L\eta}{2}\right)\|\nabla f(x)\|^2.
+\]
+
+函数 \(f\) 是 \(\mu\)-strongly convex，表示
+
+\[
+  f(y)\ge
+  f(x)+\langle\nabla f(x),y-x\rangle
+  +\frac{\mu}{2}\|y-x\|^2.
+\]
+
+强凸性至多说明\emph{若}极小点存在则它唯一；存在性还可由例如闭且有界的可行域上的下半连续性，或无约束情形中 \(f\) proper、lower-semicontinuous 且 coercive 保证。若 \(f\) 同时 \(L\)-smooth、\(\mu\)-strongly convex，且极小点 \(x^*\) 存在，梯度下降取 \(\eta=1/L\) 时有
+
+\[
+  f(x_t)-f(x^*)
+  \le
+  \left(1-\frac{\mu}{L}\right)^t
+  \left(f(x_0)-f(x^*)\right).
+\]
+
+这里的 \(L/\mu\) 是 condition number，越大越病态，收敛越慢。
+
+\paragraph{强凸线性收敛的推导}
+
+取 \(x_{t+1}=x_t-\frac1L\nabla f(x_t)\)。由下降引理，
+
+\[
+  f(x_{t+1})
+  \le
+  f(x_t)
+  -
+  \frac{1}{2L}\|\nabla f(x_t)\|^2.
+\]
+
+对 \(\mu\)-strongly convex 函数，有
+
+\[
+  \|\nabla f(x)\|^2
+  \ge
+  2\mu(f(x)-f(x^*)).
+\]
+
+把它代入上式，得到
+
+\[
+  f(x_{t+1})-f(x^*)
+  \le
+  \left(1-\frac{\mu}{L}\right)
+  (f(x_t)-f(x^*)).
+\]
+
+递推 \(t\) 次便得到
+
+\[
+  f(x_t)-f(x^*)
+  \le
+  \left(1-\frac{\mu}{L}\right)^t
+  (f(x_0)-f(x^*)).
+\]
+
+这里每一步都在用同一个结构：smoothness 给下降，strong convexity 把梯度范数和函数值差联系起来。
+
+\subsection{第三部分：梯度下降、随机梯度下降与随机坐标下降}
+
+\concepttarget{concept:sgd}
+
+全批量梯度下降为
+
+\[
+  x_{t+1}=x_t-\eta_t\nabla f(x_t).
+\]
+
+它每一步沿最陡下降方向移动。对 \(L\)-smooth 凸函数，取 \(\eta=1/L\) 并输出迭代平均点可得函数值误差 \(O(1/T)\)；若再 \(\mu\)-strongly convex，则前节已证明线性收敛。步长未知时可用 backtracking line search；在光滑非凸情形，下降引理仍给出平均梯度范数的 \(O(1/T)\) 界，但这只保证趋向 stationary point，不保证全局最优。
+\begin{examnote}[GD 的解题模板]
+先写更新式；再代入 descent lemma；最后根据凸性、强凸性或下界把 \(\|\nabla f(x_t)\|^2\) 转成所要求的误差量。不要在没有强凸性的情况下宣称线性收敛。
+\end{examnote}
+
+若目标是经验风险
+
+\[
+  f(w)=\frac1m\sum_{i=1}^{m}\ell_i(w),
+\]
+
+则全梯度需要遍历全部样本。随机梯度下降用无偏估计
+
+\[
+  g_t=\nabla \ell_{i_t}(w_t),
+  \qquad
+  \E[g_t\mid w_t]=\nabla f(w_t),
+\]
+
+并更新
+
+\[
+  w_{t+1}=w_t-\eta_t g_t.
+\]
+
+SGD 的优势是单步便宜，可以在线学习；代价是方差大，需要学习率调度、mini-batch、动量或自适应方法。证明中最重要的一步是展开平方距离：
+
+\[
+  \|w_{t+1}-w^*\|^2
+  =
+  \|w_t-w^*\|^2
+  -
+  2\eta_t\langle g_t,w_t-w^*\rangle
+  +
+  \eta_t^2\|g_t\|^2.
+\]
+
+对条件期望取平均，再用凸性把内积下界为函数值差，即可得到收敛界。
+
+\paragraph{SGD 收敛不等式的标准推导}
+
+假设 \(f\) 凸，\(w^*\in\argmin_w f(w)\)，并且随机梯度满足
+
+\[
+  \E[g_t\mid w_t]=\nabla f(w_t),
+  \qquad
+  \E[\|g_t\|^2\mid w_t]\le G^2.
+\]
+
+从平方距离展开式出发，对 \(w_t\) 条件取期望：
+
+\[
+  \E[\|w_{t+1}-w^*\|^2\mid w_t]
+  \le
+  \|w_t-w^*\|^2
+  -
+  2\eta_t\langle\nabla f(w_t),w_t-w^*\rangle
+  +
+  \eta_t^2G^2.
+\]
+
+由凸性一阶条件，
+
+\[
+  f(w_t)-f(w^*)
+  \le
+  \langle\nabla f(w_t),w_t-w^*\rangle.
+\]
+
+于是
+
+\[
+  2\eta_t(f(w_t)-f(w^*))
+  \le
+  \|w_t-w^*\|^2
+  -
+  \E[\|w_{t+1}-w^*\|^2\mid w_t]
+  +
+  \eta_t^2G^2.
+\]
+
+对 \(t=0,\ldots,T-1\) 求和，距离项 telescoping：
+
+\[
+  \sum_{t=0}^{T-1}
+  2\eta_t\E[f(w_t)-f(w^*)]
+  \le
+  \|w_0-w^*\|^2
+  +
+  G^2\sum_{t=0}^{T-1}\eta_t^2.
+\]
+
+若取常步长 \(\eta_t=\eta\)，并输出平均点
+
+\[
+  \bar w_T=\frac1T\sum_{t=0}^{T-1}w_t,
+\]
+
+由凸性 \(f(\bar w_T)\le T^{-1}\sum_t f(w_t)\)，得到
+
+\[
+  \E[f(\bar w_T)-f(w^*)]
+  \le
+  \frac{\|w_0-w^*\|^2}{2\eta T}
+  +
+  \frac{\eta G^2}{2}.
+\]
+
+这条推导说明 SGD 的步长选择本质是在优化误差项和噪声项之间折中。
+
+mini-batch SGD 用一批独立样本的梯度平均替代 \(g_t\)，在近似独立时把方差约降为原来的批大小的倒数。常步长会停在一个由噪声决定的邻域；经典 Robbins--Monro 条件
+\[
+  \sum_t\eta_t=\infty,\qquad \sum_t\eta_t^2<\infty
+\]
+则在适当无偏、有界二阶矩等条件下允许随机近似收敛。实践中常用 warmup 后衰减学习率；证明题要说明输出平均点还是最后一点，因为一般凸 SGD 的上述推导控制的是平均点。
+
+\paragraph{随机坐标下降}
+
+随机坐标下降每次只更新一个坐标：
+
+\[
+  x_{t+1}
+  =
+  x_t-\eta_t e_{j_t}\nabla_{j_t}f(x_t).
+\]
+
+这里 \(j_t\in\{1,\ldots,d\}\) 是第 \(t\) 步随机选到的坐标，\(e_{j_t}\in\R^d\) 是第 \(j_t\) 个标准基向量，\(\nabla_{j_t}f(x_t)\) 是梯度的第 \(j_t\) 个分量。
+
+当特征维度大、单坐标梯度便宜，或目标可分解时它很有用。若第 \(j\) 个偏导满足坐标光滑性
+\[
+  |\nabla_jf(x+he_j)-\nabla_jf(x)|\le L_j|h|,
+\]
+自然步长是 \(\eta_t=1/L_{j_t}\)。均匀抽样时 \(e_j\nabla_jf(x)\) 的期望是 \(\nabla f(x)/d\)，所以它不是无偏全梯度估计；这不妨碍坐标下降分析，但若要改写成无偏估计，必须乘以 \(d\)。重要性抽样常取概率与 \(L_j\) 成比例。
+考试重点是说明它与 SGD 的随机性不同：SGD 随机抽样本或 mini-batch，从而产生梯度估计方差；坐标下降随机抽参数坐标、随机性来自计算预算的分配。循环坐标下降是确定性的 Gauss--Seidel 型方法，随机坐标下降则便于期望收敛分析。
+
+\subsection{补充：proximal operator 与复合优化（次微分的直接应用）}
+
+\concepttarget{concept:prox}
+
+很多机器学习目标是光滑项加非光滑正则项：
+
+\[
+  \min_x F(x)=f(x)+R(x),
+\]
+
+例如 Lasso 中 \(R(x)=\lambda\|x\|_1\)。proximal operator 定义为
+
+\[
+  \prox_{\gamma R}(u)
+  =
+  \argmin_x
+  \left\{
+    R(x)+\frac{1}{2\gamma}\|x-u\|^2
+  \right\}.
+\]
+
+prox-gradient 更新为
+
+\[
+  x_{t+1}
+  =
+  \prox_{\eta R}
+  \left(x_t-\eta\nabla f(x_t)\right).
+\]
+
+这可以理解为：先按光滑项做一步梯度下降，再用 \(R\) 的 prox 把解拉回具有结构的区域。对 \(\ell_1\) 正则，prox 是 soft-thresholding：
+
+\[
+  [\prox_{\eta\lambda\|\cdot\|_1}(u)]_j
+  =
+  \operatorname{sgn}(u_j)\max\{|u_j|-\eta\lambda,0\}.
+\]
+
+因此 \(\ell_1\) 正则会产生稀疏解，不只是“让参数小”。
+
+\paragraph{\(\ell_1\) prox 的逐坐标推导}
+
+因为 \(\ell_1\) 正则和平方项都是逐坐标可分的，只需解一维问题
+
+\[
+  \min_x
+  \lambda |x|
+  +
+  \frac{1}{2\eta}(x-u)^2.
+\]
+
+若 \(x>0\)，目标函数可写成
+
+\[
+  \lambda x+\frac{1}{2\eta}(x-u)^2,
+\]
+
+一阶条件为
+
+\[
+  \lambda+\frac{1}{\eta}(x-u)=0,
+\]
+
+所以 \(x=u-\eta\lambda\)。该解位于 \(x>0\) 区域，当且仅当 \(u>\eta\lambda\)。
+
+若 \(x<0\)，目标函数可写成
+
+\[
+  -\lambda x+\frac{1}{2\eta}(x-u)^2,
+\]
+
+一阶条件为
+
+\[
+  -\lambda+\frac{1}{\eta}(x-u)=0,
+\]
+
+所以 \(x=u+\eta\lambda\)。该解位于 \(x<0\) 区域，当且仅当 \(u<-\eta\lambda\)。
+
+若 \(|u|\le\eta\lambda\)，最优点位于不可微点 \(x=0\)。这是因为次梯度条件为
+
+\[
+  0\in
+  \lambda[-1,1]
+  -
+  \frac{u}{\eta},
+\]
+
+等价于 \(u/\eta\in\lambda[-1,1]\)。三种情况合并得到
+
+\[
+  x^*
+  =
+  \operatorname{sgn}(u)\max\{|u|-\eta\lambda,0\}.
+\]
+
+\paragraph{prox 最优性、单调性与非扩张}
+
+\concepttarget{concept:prox-nonexpansive}
+
+考试中的 prox-SGD 递推经常不是只用 prox 的定义，而是用它的最优性条件和非扩张性。先设 \(R:\R^d\to(-\infty,+\infty]\) 是 proper closed convex 函数，步长 \(\gamma>0\)，并定义
+
+\[
+  x^+
+  =
+  \prox_{\gamma R}(u)
+  =
+  \argmin_x
+  \left\{
+    R(x)+\frac{1}{2\gamma}\|x-u\|^2
+  \right\}.
+\]
+
+由于目标是 convex，Fermat rule 给出一阶最优性条件
+
+\[
+  0
+  \in
+  \partial R(x^+)
+  +
+  \frac1\gamma(x^+-u).
+\]
+
+移项后得到常用形式
+
+\[
+  \frac{u-x^+}{\gamma}
+  \in
+  \partial R(x^+).
+\]
+
+这一步是后面 fixed point 的来源。如果 \(x^*\) 是复合目标 \(F(x)=f(x)+R(x)\) 的最优点，且 \(f\) 可微、\(R\) convex，则
+
+\[
+  0\in\nabla f(x^*)+\partial R(x^*).
+\]
+
+也就是说存在 \(r^*\in\partial R(x^*)\) 使得 \(r^*=-\nabla f(x^*)\)。把 \(u=x^*-\gamma\nabla f(x^*)\) 和 \(x^+=x^*\) 代入上面的 prox 最优性条件，就得到
+
+\[
+  x^*
+  =
+  \prox_{\gamma R}
+  \left(x^*-\gamma\nabla f(x^*)\right).
+\]
+
+接下来证明非扩张性。设
+
+\[
+  x^+=\prox_{\gamma R}(u),
+  \qquad
+  y^+=\prox_{\gamma R}(v).
+\]
+
+由 prox 最优性，
+
+\[
+  \frac{u-x^+}{\gamma}\in\partial R(x^+),
+  \qquad
+  \frac{v-y^+}{\gamma}\in\partial R(y^+).
+\]
+
+凸函数次微分的单调性说明，对任意 \(r_x\in\partial R(x)\) 和 \(r_y\in\partial R(y)\)，有
+
+\[
+  \langle r_x-r_y,x-y\rangle\ge0.
+\]
+
+把 \(x=x^+\)、\(y=y^+\)、\(r_x=(u-x^+)/\gamma\)、\(r_y=(v-y^+)/\gamma\) 代入，得到
+
+\[
+  \left\langle
+    (u-x^+)-(v-y^+),
+    x^+-y^+
+  \right\rangle
+  \ge0.
+\]
+
+展开括号：
+
+\[
+  \left\langle
+    u-v,
+    x^+-y^+
+  \right\rangle
+  -
+  \|x^+-y^+\|^2
+  \ge0.
+\]
+
+因此
+
+\[
+  \|x^+-y^+\|^2
+  \le
+  \langle u-v,x^+-y^+\rangle.
+\]
+
+这比普通非扩张更强，称为 firm nonexpansiveness。再用 Cauchy--Schwarz 不等式，
+
+\[
+  \|x^+-y^+\|^2
+  \le
+  \|u-v\|\,\|x^+-y^+\|.
+\]
+
+若 \(x^+\ne y^+\)，两边除以 \(\|x^+-y^+\|\)；若 \(x^+=y^+\)，结论平凡成立。于是
+
+\[
+  \|\prox_{\gamma R}(u)-\prox_{\gamma R}(v)\|
+  \le
+  \|u-v\|.
+\]
+
+这就是 prox 非扩张。它在考试中的作用是把含 prox 的一步递推转化为普通欧氏距离递推，例如
+
+\[
+  \|x_{k+1}-x^*\|
+  \le
+  \left\|
+    x_k-\gamma g_k
+    -
+    \left(x^*-\gamma\nabla f(x^*)\right)
+  \right\|.
+\]
+
+这里 \(g_k\) 是第 \(k\) 步的梯度或随机梯度估计。后续再展开平方、取条件期望，就进入 SGD 方差分解和强凸收敛分析 \parencite{beck2017first,nesterov2018convex}。
+
+\subsection{第四部分：动量加速方法与自适应学习率技术}
+
+动量法维护速度变量：
+
+\[
+  v_{t+1}=\beta v_t+\nabla f(x_t),
+  \qquad
+  x_{t+1}=x_t-\eta v_{t+1}.
+\]
+
+直觉是沿稳定下降方向累积速度，抵消高曲率方向的来回震荡。Nesterov 加速在“前瞻点”计算梯度：
+
+\[
+  v_{t+1}
+  =
+  \beta v_t+\nabla f(x_t-\eta\beta v_t),
+  \qquad
+  x_{t+1}=x_t-\eta v_{t+1}.
+\]
+
+\begin{remark}[动量与加速的边界]
+初始值通常取 \(v_0=0\)，\(0\le\beta<1\)。Heavy-ball 在当前位置取梯度，NAG 在前瞻点取梯度；二者不能混写。对强凸光滑问题，合适参数下 NAG 可把对条件数的依赖从 \(O(\kappa)\) 改善到 \(O(\sqrt{\kappa})\) 的迭代量级；对非凸深度网络，它们是有效启发式方法而非自动的全局加速定理。
+\end{remark}
+
+\paragraph{AdaGrad、RMSProp 与 Adam}
+
+AdaGrad 为每个坐标累计历史平方梯度：
+
+\[
+  s_t=s_{t-1}+g_t\odot g_t,
+  \qquad
+  w_{t+1}=w_t-\eta\,\frac{g_t}{\sqrt{s_t}+\epsilon}.
+\]
+
+稀疏或尺度差异大的坐标会得到不同步长，但 \(s_t\) 单调增大，学习率可能过早变小。RMSProp 将累计和改为指数滑动平均：
+
+\[
+  s_t=\rho s_{t-1}+(1-\rho)g_t\odot g_t,
+  \qquad
+  w_{t+1}=w_t-\eta\,\frac{g_t}{\sqrt{s_t}+\epsilon}.
+\]
+
+Adam 同时平滑一阶矩和二阶矩：
+
+\[
+  m_t=\beta_1m_{t-1}+(1-\beta_1)g_t,
+  \qquad
+  v_t=\beta_2v_{t-1}+(1-\beta_2)g_t\odot g_t,
+\]
+
+\[
+  \widehat m_t=\frac{m_t}{1-\beta_1^t},
+  \qquad
+  \widehat v_t=\frac{v_t}{1-\beta_2^t},
+\]
+
+\[
+  w_{t+1}
+  =
+  w_t
+  -
+  \eta
+  \frac{\widehat m_t}{\sqrt{\widehat v_t}+\epsilon}.
+\]
+
+其中 \(\widehat m_t,\widehat v_t\) 是从零初始化导致的偏差修正，\(\odot\) 为逐坐标乘法，\(\epsilon\) 防止除零并抑制数值爆炸。自适应方法并非无条件优于 SGD：其收敛需额外假设或采用修正变体，且泛化表现可能不如调参充分的 SGD+动量。答题时应区分“坐标尺度自适应”与“保证更快全局收敛”。
+
+\paragraph{考核内容}
+
+\begin{itemize}
+  \item 凸集：给出线段定义、典型例子/反例、交与仿射像的保凸性；凸函数：写出 Jensen、不等式一阶条件和 Hessian 判据。
+  \item 次微分：计算 \(|x|\)、\(\ell_1\)、最大值和指标函数的次微分，并用 \(0\in\partial f(x^*)+N_C(x^*)\) 写约束最优性。
+  \item GD：从 descent lemma 推一步下降量，并区分一般凸 \(O(1/T)\)、强凸线性和非凸 stationary-point 结论。
+  \item SGD：说明无偏性、方差、mini-batch、步长条件及平均点；比较其与随机坐标下降的随机性来源。
+  \item 随机坐标下降：写坐标光滑性、均匀/重要性采样、\(1/L_j\) 步长，并注意均匀坐标更新不是无偏全梯度。
+  \item 写出 prox 与 \(\ell_1\) soft-thresholding；解释 Heavy-ball、NAG、AdaGrad、RMSProp、Adam 的状态变量、偏差修正和适用边界。
+\end{itemize}
+
+\begin{center}
+\small
+\begin{tabular}{p{2.4cm}p{2.7cm}p{2.6cm}p{3.4cm}}
+\toprule
+方法 & 单步主要成本 & 额外状态 & 典型理论/优缺点\\
+\midrule
+GD & 全数据梯度 & 无 & 光滑凸；稳定但单步昂贵\\
+SGD/mini-batch & 一小批样本 & 无（可叠加动量） & 便宜但有方差；常需衰减步长\\
+随机坐标 & 一个坐标/块 & 无 & 高维稀疏问题便宜；需坐标光滑常数\\
+NAG & 全梯度或随机梯度 & 速度 & 强凸光滑下可加速；参数敏感\\
+Adam & 一小批样本 & 一阶/二阶矩 & 坐标尺度自适应；非无条件收敛\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{examproblem}[分层自测]
+基础：判断 \(C=\{x:\|x\|_2\le1\}\) 与 \(C'=\{x:x_1x_2\le0\}\) 是否凸；求 \(\partial |x|\) 在 \(0\) 的值。
+
+证明：用 descent lemma 证明 \(0<\eta\le1/L\) 时 GD 的函数值不增；解释为什么强凸性才能推出唯一极小点。
+
+综合：对经验风险写出 mini-batch SGD 的条件无偏性与方差缩减关系；说明随机坐标更新何时需要乘以维数 \(d\)；写出 Adam 的 bias correction。
+\end{examproblem}
+
+\begin{remark}[最后的答题清单]
+看到优化题先标注四件事：目标是否凸、是否 \(L\)-smooth、是否 \(\mu\)-strongly convex、梯度是精确还是随机。然后选对应的一条基本不等式，再声明步长和输出迭代点。这个顺序能避免把不同假设下的速率混在一起。
+\end{remark}

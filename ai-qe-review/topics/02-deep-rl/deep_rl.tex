@@ -1,0 +1,1391 @@
+%!TEX program = xelatex
+\documentclass[11pt]{ctexart}
+\input{../article-preamble}
+
+\title{\bfseries 求真书院 AI 博士生资格考试\\考点方向二：高级深度学习与强化学习 (Advanced Deep Learning \& RL)}
+\author{清华大学求真书院 AI 方向博士生资格考试备考资料}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\label{sec:deep_rl}
+\section*{学习导航：从零基础到博资考作答}
+
+本讲义严格按官方考纲的五个条目编排；每一单元先给对象、输入输出和直觉，再给训练目标或递推式，最后落到可在答卷上写出的定义、推导和比较。第一次学习时按顺序阅读，第二轮以每单元的“自检”为单位闭卷复写，第三轮再用真题训练限时表述。
+
+\begin{teaching}[统一答题框架]
+对任何模型或任务，都按四步组织答案：\textbf{(i)} 定义输入、输出、参数和随机性；\textbf{(ii)} 写目标函数、Bellman 递推或训练损失；\textbf{(iii)} 说明优化/推断怎样进行；\textbf{(iv)} 给出适用条件、失败模式或与相邻模型的差别。
+\end{teaching}
+
+\begin{center}
+\small
+\begin{tabular}{p{0.09\textwidth}p{0.29\textwidth}p{0.48\textwidth}}
+\toprule
+单元 & 官方考纲条目 & 本讲义的可验收输出 \\
+\midrule
+1 & 神经网络框架、训练方法、逼近和泛化 & 能写前向/反向递推，区分表示、优化与泛化 \\
+2 & 特征、恢复、三维、光流、识别和分割 & 能按输入、输出、损失与指标比较六类视觉任务 \\
+3 & 自编码器、对比、隐式正则、迁移和元学习 & 能写表示学习目标并区分五个问题各自解决什么 \\
+4 & GAN、VAE、扩散、流模型、表达力分析 & 能写核心目标，并按 likelihood、采样、稳定性比较 \\
+5 & Bellman、Q-learning、Policy gradient & 能从 return 推 Bellman，写 TD update，推 score-function 梯度 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{深度学习基础：神经网络框架、训练、逼近与泛化}
+
+\source{本节对应考纲“深度学习基础、视觉任务、无监督学习、视觉生成模型、表达力分析”。基础神经网络参考 \textcite{goodfellow2016deep,bishop2023deep,jurafsky2026slp}；视觉任务参考 \textcite{szeliski2022vision}；生成模型参考 \textcite{goodfellow2014gan,kingma2014vae,dinh2017realnvp,ho2020ddpm,song2021score}。}
+
+\subsection{神经网络框架}
+
+一个多层感知机（MLP）可以写成函数复合：
+
+\[
+  h_0=x,
+  \qquad
+  a_\ell=W_\ell h_{\ell-1}+b_\ell,
+  \qquad
+  h_\ell=\phi(a_\ell),
+  \qquad \ell=1,\ldots,L-1,
+  \qquad
+  o=W_Lh_{L-1}+b_L.
+\]
+
+最后一层输出 logits \(o\)，分类任务通常用 softmax
+
+\[
+  p_\theta(y=k\mid x)
+  =
+  \frac{\exp(o_k)}{\sum_{j}\exp(o_j)}
+\]
+
+和交叉熵损失
+
+\[
+  \Lcal(\theta)
+  =
+  -\log p_\theta(y\mid x).
+\]
+
+若真实类别的 one-hot 向量为 \(e_y\)，则 softmax--cross-entropy 的关键起点是
+
+\[
+  \frac{\partial\Lcal}{\partial o}=p-e_y.
+\]
+
+神经网络的参数是所有 \(W_\ell,b_\ell\)。训练就是在样本平均损失上做随机优化。和线性模型相比，深度网络的关键变化是：特征不再固定，而是由前面层共同学习。
+
+这里 \(h_\ell\in\R^{d_\ell}\) 是第 \(\ell\) 层激活向量，\(a_\ell\in\R^{d_\ell}\) 是激活前向量，\(W_\ell\in\R^{d_\ell\times d_{\ell-1}}\)，\(b_\ell\in\R^{d_\ell}\)，非线性函数 \(\phi\) 按坐标作用。考试推导时先写清这些维度，可以避免把 \(W_\ell^\top\) 和 \(W_\ell\) 的方向写反。
+
+训练、验证与测试集承担不同职责：训练集决定参数更新，验证集选择超参数/停止时刻，测试集只用于最终泛化报告。训练时的 BatchNorm 使用 batch statistics 并维护 running mean/variance；推理时使用累计统计量。
+
+\subsection{从全连接网络到 CNN 与注意力}
+
+MLP 不显式利用图像的局部性与平移结构。卷积层以共享核 \(K\) 在空间位置滑动：
+
+\[
+  y_{c'}(u,v)=\sum_{c,i,j}K_{c',c}(i,j)x_c(u-i,v-j)+b_{c'}.
+\]
+
+若卷积核大小为 \(k\times k\)，输入/输出通道数为 \(C_{\mathrm{in}},C_{\mathrm{out}}\)，参数量为 \(k^2C_{\mathrm{in}}C_{\mathrm{out}}+C_{\mathrm{out}}\)。权重共享降低参数量，并给出平移等变的特征图。
+
+注意力层让 token 之间按内容相互读取。给 \(Q=XW_Q\)、\(K=XW_K\)、\(V=XW_V\)，单头 self-attention 为
+
+\[
+  \operatorname{Attn}(Q,K,V)=\operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.
+\]
+
+缩放 \(1/\sqrt{d_k}\) 防止 logits 方差随维度增大而使 softmax 饱和；纯 self-attention 对 token 顺序置换等变，故序列任务还必须注入 positional encoding。
+
+\subsection{反向传播}
+
+\concepttarget{concept:backprop}
+\concepttarget{concept:jacobian-adjoint}
+
+反向传播只是链式法则的动态规划。
+
+\begin{definition}[层误差 / adjoint]
+设单样本损失为 \(J=\Lcal(h_L,y)\)，定义
+
+\[
+  \delta_\ell=\frac{\partial J}{\partial a_\ell}.
+\]
+\end{definition}
+
+若 \(h_\ell=\phi(a_\ell)\)，则
+
+\[
+  \delta_\ell
+  =
+  (W_{\ell+1}^\top \delta_{\ell+1})
+  \odot
+  \phi'(a_\ell),
+\]
+
+并且
+
+\[
+  \frac{\partial J}{\partial W_\ell}
+  =
+  \delta_\ell h_{\ell-1}^\top,
+  \qquad
+  \frac{\partial J}{\partial b_\ell}
+  =
+  \delta_\ell.
+\]
+
+这里 \(\odot\) 表示 Hadamard product，也就是按坐标相乘。
+
+考试若要求推反向传播，不要把它神秘化：先画出计算图，确定局部 Jacobian，再把上游梯度乘下来即可。
+
+从自动微分语言看，\(\delta_\ell\) 是中间变量 \(a_\ell\) 的 adjoint，也就是损失 \(J\) 对该变量的上游敏感度。若 \(J_\ell=\partial a_{\ell+1}/\partial a_\ell\) 是从第 \(\ell\) 层到第 \(\ell+1\) 层的局部 Jacobian，则反向传播的抽象形式是
+
+\[
+  \delta_\ell
+  =
+  J_\ell^\top \delta_{\ell+1}.
+\]
+
+这句话把“链式法则”翻译成可评分答案：先写局部 Jacobian，再写 adjoint 递推，最后给出各参数梯度。
+
+\paragraph{反向传播递推的推导}
+
+由
+
+\[
+  a_{\ell+1}=W_{\ell+1}h_\ell+b_{\ell+1},
+  \qquad
+  h_\ell=\phi(a_\ell),
+\]
+
+链式法则给出
+
+\[
+  \frac{\partial J}{\partial h_\ell}
+  =
+  W_{\ell+1}^\top
+  \frac{\partial J}{\partial a_{\ell+1}}
+  =
+  W_{\ell+1}^\top\delta_{\ell+1}.
+\]
+
+由于 \(h_\ell=\phi(a_\ell)\) 是按坐标作用，
+
+\[
+  \frac{\partial J}{\partial a_\ell}
+  =
+  \frac{\partial J}{\partial h_\ell}
+  \odot
+  \phi'(a_\ell).
+\]
+
+合并得到
+
+\[
+  \delta_\ell
+  =
+  (W_{\ell+1}^\top\delta_{\ell+1})
+  \odot
+  \phi'(a_\ell).
+\]
+
+对权重矩阵的单个元素 \(W_{\ell,jk}\)，有
+
+\[
+  a_{\ell,j}
+  =
+  \sum_k W_{\ell,jk}h_{\ell-1,k}+b_{\ell,j}.
+\]
+
+因此
+
+\[
+  \frac{\partial J}{\partial W_{\ell,jk}}
+  =
+  \frac{\partial J}{\partial a_{\ell,j}}
+  \frac{\partial a_{\ell,j}}{\partial W_{\ell,jk}}
+  =
+  \delta_{\ell,j}h_{\ell-1,k}.
+\]
+
+写成矩阵形式就是
+
+\[
+  \frac{\partial J}{\partial W_\ell}
+  =
+  \delta_\ell h_{\ell-1}^\top.
+\]
+
+sigmoid 的导数为
+
+\[
+  \sigma'(z)=\sigma(z)(1-\sigma(z))\le\frac14.
+\]
+
+深层网络反传时反复乘小因子，容易出现 vanishing gradient。ReLU
+
+\[
+  \operatorname{ReLU}(z)=\max\{z,0\}
+\]
+
+在正半轴导数为 \(1\)，缓解了系统性梯度缩小，但负半轴导数为 \(0\)，可能出现 dead ReLU。
+
+\subsection{逼近能力、训练方法与泛化分析}
+
+考纲把“神经网络框架、训练方法、逼近和泛化分析”放在同一条，是因为这三件事经常被混淆。逼近能力问的是“是否存在参数能表示目标函数”；训练方法问的是“优化算法能否找到好参数”；泛化分析问的是“找到的参数在未见样本上是否可靠”。三者都重要，但任何一个都不能单独推出另外两个。
+
+经典 universal approximation 结论可以概括为：若 \(K\subset\R^d\) 是 compact set，\(f:K\to\R\) 连续，那么在适当非线性激活下，对任意 \(\varepsilon>0\)，存在足够宽的神经网络 \(F_\theta\)，使得
+
+\[
+  \sup_{x\in K}|F_\theta(x)-f(x)|<\varepsilon.
+\]
+
+这里的 \(K\) 是输入被限制的紧集，\(\theta\) 是网络参数，\(\varepsilon\) 是允许的 uniform approximation error。这条定理说明网络类表达能力很强，但它不说明 SGD 一定能找到这组参数，也不说明有限样本训练出的模型一定泛化 \parencite{goodfellow2016deep,bishop2023deep}。
+
+训练方法通常可以抽象成随机一阶迭代：
+
+\[
+  \theta_{t+1}
+  =
+  \theta_t-\eta_t \widehat{\nabla}\Lcal(\theta_t),
+\]
+
+其中 \(\eta_t>0\) 是学习率，\(\widehat{\nabla}\Lcal(\theta_t)\) 是由 mini-batch、动量、归一化或自适应学习率修正后的梯度估计。考试里如果问“训练方法”，不要只写 backprop；backprop 计算梯度，SGD/Adam 这类优化器决定如何用梯度更新参数。
+
+最基本的 mini-batch SGD 用一批 \(B_t\) 近似全数据梯度：
+
+\[
+  g_t=\frac{1}{|B_t|}\sum_{(x_i,y_i)\in B_t}\nabla_\theta\ell(f_\theta(x_i),y_i),
+  \qquad
+  \theta_{t+1}=\theta_t-\eta_t g_t.
+\]
+
+Momentum 用速度平均降低梯度噪声：
+
+\[
+  v_{t+1}=\mu v_t+g_t,
+  \qquad
+  \theta_{t+1}=\theta_t-\eta v_{t+1}.
+\]
+
+weight decay、dropout、数据增强和 early stopping 控制有效容量；SGD 的噪声、初始化和参数化带来的偏好属于隐式正则化。
+
+泛化分析则需要回到第三章开头的语言：模型类越大，approximation error 可能越小，但 estimation error 和过拟合风险可能变大。深度学习的特殊性在于，过参数化网络常常能同时插值训练数据并泛化，这通常要用隐式正则化、margin、数据增强、早停、归一化和优化偏置来解释，而不能只靠参数个数解释。
+
+\subsection{归一化、残差与泛化}
+
+Batch normalization 对 mini-batch 内激活做标准化：
+
+\[
+  \widehat a
+  =
+  \frac{a-\mu_B}{\sqrt{\sigma_B^2+\epsilon}},
+  \qquad
+  y=\gamma \widehat a+\beta.
+\]
+
+它的作用不是单纯“归一化数据”，而是改善优化几何，使各层输入尺度更稳定。Layer normalization 则在单个样本的特征维度上归一化，常用于 Transformer。
+
+这里 \(\mu_B\) 和 \(\sigma_B^2\) 分别是当前 mini-batch 中某个通道或特征的均值和方差，\(\epsilon>0\) 用于数值稳定，\(\gamma\) 和 \(\beta\) 是可学习的缩放和平移参数。引入 \(\gamma,\beta\) 的原因是：标准化不应永久限制网络表达任意均值和尺度的能力。
+
+残差连接写作
+
+\[
+  h_{\ell+1}=h_\ell+F_\ell(h_\ell).
+\]
+
+它让网络可以容易学习恒等映射，也让梯度有直接通路。Transformer、ResNet 都依赖这种结构。
+
+深度网络泛化不能只用参数数目解释，因为过参数化网络也能泛化。常见解释包括隐式正则化、margin、数据增强、早停、归一化和优化算法偏置。考试若问“为什么深度网络参数很多仍能泛化”，不要回答成一句“正则化”，而要区分显式正则化和隐式正则化。
+
+\section{视觉任务：特征提取、恢复、三维、光流、识别与分割}
+
+\source{本节逐项对应考纲中的视觉任务。共同原则是：先声明观测 \(x\)、预测 \(\hat y=f_\theta(x)\)、监督信号或物理约束，再选择与输出结构匹配的损失和指标。}
+
+视觉任务可以按输出结构分类：
+
+\begin{itemize}
+  \item 特征提取：把图像映射为向量表示，用于检索、分类或下游任务。
+  \item 图像恢复：去噪、超分辨率、去模糊，本质是从退化观测恢复干净图像。
+  \item 三维重构：从多视角、深度或隐式表示恢复几何结构。
+  \item 光流估计：估计相邻帧中像素或特征点的运动场。
+  \item 识别和分割：分类给整图标签，检测给框，语义分割给每像素类别，实例分割区分对象实例。
+\end{itemize}
+
+考试若要求比较视觉任务，最稳妥的写法是先写输出对象，再写损失或评价指标：
+
+\begingroup
+\small
+\begin{longtable}{L{0.22\textwidth}L{0.35\textwidth}L{0.32\textwidth}}
+\toprule
+任务 & 输出对象 & 常见训练信号 \\
+\midrule
+\endfirsthead
+\toprule
+任务 & 输出对象 & 常见训练信号 \\
+\midrule
+\endhead
+特征提取 & 表示向量 \(z=f_\theta(x)\) & 分类损失、对比损失、检索排序损失 \\
+图像恢复 & 干净图像或残差图像 \(\hat x\) & 像素损失、perceptual loss、扩散去噪损失 \\
+三维重构 & 深度、点云、mesh、NeRF 或隐式场 & 重投影误差、几何一致性、体渲染损失 \\
+光流估计 & 像素运动场 \(\mathbf w(x)\in\R^2\) & 端点误差、亮度一致性、平滑正则 \\
+识别 & 整图类别概率或对象类别 & 交叉熵、accuracy、检索 Recall@K/mAP \\
+检测与分割 & 框、每像素类别或实例 mask & box 回归、IoU/mAP、交叉熵、Dice \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+图像恢复可写成退化逆问题 \(y=Ax+\varepsilon\)：给定退化观测 \(y\)，恢复干净图像 \(x\)。三维重构需要把三维点 \(X\) 与图像像素 \(u\) 通过相机模型 \(u\sim K[R\mid t]X\) 对齐，因此重投影误差与多视角几何一致性是核心。光流估计预测位移场 \(\mathbf w(p)\)，亮度恒常近似 \(I_t(p)\approx I_{t+1}(p+\mathbf w(p))\) 给出自监督信号，但遮挡和非刚体运动会破坏该假设。
+
+识别、检测与分割必须区分：分类输出整图标签，检测输出对象类别和边界框，语义分割输出每个像素类别，实例分割还要区分同类的不同对象。答题时不能把 IoU、mAP 和 accuracy 混为同一指标。
+
+下面按“输入与输出 → 数学模型 → 训练/估计 → 指标与失败模式”的统一模板展开。教材回查路径为：特征与匹配回查 Szeliski 第 7--8 章，恢复回查第 3、10 章，运动回查第 9 章，三维回查第 11--14 章，识别回查第 6 章，深度学习骨干回查第 5 章。
+
+\subsection{特征提取：从局部结构到可匹配表示}
+
+特征提取的输入是图像 \(I\)，输出可以是稠密特征图 \(F(I)\) 或局部关键点集合
+
+\[
+  \mathcal{K}(I)=\{(p_i,s_i,d_i)\}_{i=1}^{n},
+\]
+
+其中 \(p_i\) 是位置，\(s_i\) 是尺度/方向等几何属性，\(d_i\) 是可比较的描述子。检测器追求重复性（同一物理点在视角、尺度和光照变化下仍被检测），描述子追求区分性与匹配稳定性。传统路线是 Harris/DoG 等关键点加 SIFT/ORB 描述子；深度路线则学习局部或全局 embedding，并以对比损失或匹配损失训练。
+
+Harris 角点的局部结构张量为
+
+\[
+  M(p)=\sum_{q\in W(p)} w(q)\nabla I(q)\nabla I(q)^\top,
+  \qquad
+  R(p)=\det M(p)-k\,\operatorname{tr}(M(p))^2.
+\]
+
+若两个特征值都大，窗口在两个方向都发生明显变化，适合定位；若一个特征值很大而另一个接近零，则更像单方向边缘；两个都小则是平坦区。这个判别把“为什么角点可重复”落实为可计算的局部统计量。
+
+给两幅图像的描述子 \(d_i,d'_j\)，最基本的匹配代价为
+
+\[
+  c_{ij}=\|d_i-d'_j\|_2^2,
+  \qquad
+  j^*(i)=\argmin_j c_{ij}.
+\]
+
+实际匹配还要做 ratio test、双向一致性和 RANSAC 几何验证；否则最近邻可能只是纹理重复造成的偶然相似。考试若问“特征提取和识别有什么区别”，要强调特征是中间表示，识别才是把表示映射为语义标签或对象。
+
+有配对标签时，可用三元组损失拉近正匹配、推远负匹配：
+
+\[
+  \mathcal L_{\mathrm{triplet}}
+  =\bigl[\|z_a-z_p\|_2^2-\|z_a-z_n\|_2^2+m\bigr]_+.
+\]
+
+评价不只看分类准确率，还应报告关键点重复率、matching precision/recall、RANSAC 内点率或检索 Recall@K。无纹理、重复纹理、强视角变化和描述子塌缩是典型失败模式。
+
+\begin{examnote}[特征题答题骨架]
+先写局部点/描述子是什么，再说明不变性与区分性，最后给出距离匹配和几何一致性检验。只写“CNN 提取 feature”不能解释为什么能匹配。
+\end{examnote}
+
+\subsection{图像恢复：退化模型、先验与评价}
+
+图像恢复从退化观测 \(y\) 估计干净图像 \(x\)。统一的 forward model 是
+
+\[
+  y=Ax+\varepsilon,
+\]
+
+其中 \(A\) 可以表示模糊、下采样或遮挡，\(\varepsilon\) 是噪声。若噪声为高斯，最小二乘数据项为 \(\|Ax-y\|_2^2\)；加入先验 \(R(x)\) 后得到 MAP/正则化问题
+
+\[
+  \hat x
+  \in
+  \argmin_x
+  \frac{1}{2\sigma^2}\|Ax-y\|_2^2+\lambda R(x).
+\]
+
+传统方法用 total variation、稀疏小波或显式图像先验；监督深度恢复直接学习 \(f_\theta(y)\approx x\)，自监督方法则利用噪声独立性、遮挡重建或跨帧一致性构造目标。像素 MSE 与 PSNR 偏好平均意义上的准确，perceptual loss 更关注视觉结构，但可能牺牲逐像素保真。
+
+无干净标签时，可以利用两个独立噪声观测 \(y_1=x+\varepsilon_1\)、\(y_2=x+\varepsilon_2\) 做 Noise2Noise；在条件独立且噪声零均值时，最小化 \(\mathbb E\|f_\theta(y_1)-y_2\|^2\) 的条件期望仍以 \(x\) 为目标。Noise2Void 则用 blind-spot 或掩码避免网络直接复制待预测像素。超分辨率可写成 \(y=Dx+\varepsilon\)，其中 \(D\) 包含下采样；不可观测的高频只能由先验补全，因此感知损失或生成式先验可能提高视觉质量，却会引入 hallucination。
+
+常见评价包括
+
+\[
+  \operatorname{PSNR}=10\log_{10}\frac{MAX_I^2}{\operatorname{MSE}(x,\hat x)}
+\]
+
+恢复题要主动说明退化模型是否已知、评价是像素级还是感知级；否则同一个网络可能在 PSNR 提升时产生更模糊的图像。可进一步报告 SSIM、LPIPS 或恢复结果对下游识别/OCR 的影响；退化失配、ringing、边缘伪影和 \(L_2\) 过度平滑都是常见失败模式。
+
+\subsection{三维重构：相机模型、深度与几何一致性}
+
+针孔相机把三维点 \(X=(X,Y,Z)^\top\) 投影到像素 \(\tilde u\sim K[R\mid t]\tilde X\)，其中波浪号表示齐次坐标。对整幅图像，三维重构的目标不是直接预测任意点云，而是让预测几何重新投影到观测视图：
+
+\[
+  \mathcal{L}_{\mathrm{reproj}}
+  =
+  \sum_{i,v}
+  \left\|
+    u_{iv}-\pi(K_v,T_v,X_i)
+  \right\|_2^2.
+\]
+
+双目是最小可算例。校正双目或一般多视几何还满足极线约束
+
+\[
+  \tilde u'^{\top}F\tilde u=0,
+\]
+
+它把第二幅图中的二维搜索约束到一条极线上。基线为 \(B\)、焦距为 \(f\)、视差为 \(d=u_l-u_r\) 时，深度近似为
+
+\[
+  Z=\frac{fB}{d}.
+\]
+
+因此远处点的视差小、深度误差更敏感；遮挡、纹理缺失和错误对应会使三角化不稳定。Structure from Motion/SLAM 还要同时估计相机位姿和场景结构，通常交替做匹配、PnP/三角化与 bundle adjustment。纯旋转、低基线、共面点和动态物体会造成尺度或几何退化；单目深度还存在整体尺度不可辨识。NeRF/隐式场则用连续函数表示密度和颜色，通过体渲染重建多视图像。
+
+\begin{examnote}[三维题答题骨架]
+写清坐标系、相机内外参、投影关系和重投影误差；若问 stereo，再补 \(Z=fB/d\) 及视差/遮挡边界。不要把“深度预测”与“完整三维重构”混为同一输出。
+\end{examnote}
+
+\subsection{光流估计：运动约束与病态性}
+
+光流输入相邻帧 \(I_t,I_{t+1}\)，输出每个像素的二维位移 \(\mathbf w(p)=(u(p),v(p))\)。亮度恒常假设为
+
+\[
+  I_t(p)\approx I_{t+1}(p+\mathbf w(p)).
+\]
+
+对小位移一阶展开得到经典 optical-flow constraint equation：
+
+\[
+  I_xu+I_yv+I_t=0.
+\]
+
+单个像素只有一个方程却有两个未知量，这就是 aperture problem；Horn--Schunck 一类方法再加入空间平滑：
+
+\[
+  \min_{u,v}
+  \int
+  (I_xu+I_yv+I_t)^2
+  +\lambda(\|\nabla u\|_2^2+\|\nabla v\|_2^2)\,dp.
+\]
+
+Lucas--Kanade 在窗口 \(W(p)\) 内假设位移近似恒定，解
+
+\[
+  \min_{u,v}\sum_{q\in W(p)}
+  \bigl(I_x(q)u+I_y(q)v+I_t(q)\bigr)^2,
+  \qquad
+  (A^\top A)\begin{bmatrix}u\\v\end{bmatrix}
+  =-A^\top b.
+\]
+
+当 \(A^\top A\) 病态时就是局部孔径问题；大位移通常采用图像金字塔 coarse-to-fine。深度光流网络通常用多尺度 warping、亮度/特征一致性、平滑正则和遮挡 mask 训练。监督场景常报告 endpoint error（EPE）
+
+\[
+  \operatorname{EPE}=\frac1N\sum_{p}\|\mathbf w(p)-\mathbf w^*(p)\|_2.
+\]
+
+考试应说明亮度恒常只是近似：光照变化、遮挡、反射和大位移都会破坏它；多尺度和 feature matching 是工程上的补救，而不是对方程的数学证明。
+
+\subsection{识别、检测与分割：输出结构决定损失}
+
+分类把整幅图像映射为类别概率 \(p_\theta(y\mid x)\)，训练常用交叉熵。目标检测同时预测类别和框 \(b=(x,y,w,h)\)，因此损失通常分为分类项与 box regression 项；评价用 IoU 与按置信度排序的 precision--recall/mAP。语义分割输出每个像素的类别分布 \(p_{\theta}(y_p\mid x)\)，实例分割还需输出实例区分的 mask。
+
+像素级交叉熵可写为
+
+\[
+  \mathcal{L}_{\mathrm{seg}}
+  =
+  -\sum_{p}\sum_{c}y_{p,c}\log p_{\theta}(y_p=c\mid x),
+\]
+
+类别极不平衡时可配合 Dice loss：
+
+\[
+  \operatorname{Dice}(P,Y)
+  =
+  \frac{2\sum_pP_pY_p+\epsilon}{\sum_pP_p+\sum_pY_p+\epsilon}.
+\]
+
+分割常用每类交并比及其平均值：
+
+\[
+  \operatorname{IoU}_c
+  =\frac{TP_c}{TP_c+FP_c+FN_c},
+  \qquad
+  \operatorname{mIoU}=\frac1C\sum_{c=1}^{C}\operatorname{IoU}_c.
+\]
+
+前景稀疏或类别极不平衡时，focal/Dice 与边界指标比 pixel accuracy 更有解释力；检测则可用 focal loss、GIoU/DIoU 改善难例和框重叠。识别题的关键不是罗列 ResNet、ViT、Mask R-CNN，而是把任务的输出张量、监督粒度和评价指标配对；分割还要说明边界质量与小目标不平衡会使 accuracy 失真。
+
+\begin{checkpoint}[视觉单元闭卷验收]
+闭卷完成五个最小推导：\(Z=fB/d\)、\(I_xu+I_yv+I_t=0\)、重投影误差、恢复的 MAP 目标、分割的交叉熵/Dice。再用一张表比较六项任务的输入、输出、损失和指标。
+\end{checkpoint}
+
+\begin{checkpoint}[视觉任务自检]
+对六类任务，能否各用一句话说出“输入 \(\to\) 输出 \(\to\) 一个训练信号或评价指标”？若不能，应先回到本节表格补齐。
+\end{checkpoint}
+
+\section{无监督学习：表征、正则化、迁移与快速适配}
+
+\source{本节逐项对应考纲中的自编码器、对比学习、网络隐式正则化、迁移学习和元学习。}
+
+无监督学习不依赖人工标签。自编码器（autoencoder）学习
+
+\[
+  z=f_\phi(x),
+  \qquad
+  \hat x=g_\theta(z),
+\]
+
+并最小化重构误差
+
+\[
+  \|x-\hat x\|^2.
+\]
+
+对比学习则构造正负样本，使同一实例的不同增强表示接近，不同实例远离。典型损失为
+
+\[
+  \ell_i
+  =
+  -
+  \log
+  \frac{
+    \exp(\operatorname{sim}(z_i,z_i^+)/\tau)
+  }{
+    \exp(\operatorname{sim}(z_i,z_i^+)/\tau)
+    +
+    \sum_{j}
+    \exp(\operatorname{sim}(z_i,z_j^-)/\tau)
+  }.
+\]
+
+这里 \(z_i\) 是 anchor 表示，\(z_i^+\) 是与它语义相同或来自同一实例增强的 positive 表示，\(z_j^-\) 是 negative 表示，\(\operatorname{sim}\) 通常是内积或 cosine similarity；\(\tau>0\) 是温度参数，控制 softmax 分布尖锐程度。
+
+\subsection{隐式正则化、迁移学习与元学习}
+
+隐式正则化指优化过程本身偏向某些解，即使目标函数里没有显式正则项。例如同样能插值训练集的多个参数中，SGD、初始化、batch size、数据增强和归一化可能偏向 margin 更大或表示更平滑的解。它解释的是“为什么过参数化模型不一定按参数数目简单过拟合”。
+
+迁移学习先在大数据源任务上学习表示 \(f_{\theta_0}\)，再在目标任务上微调：
+
+\[
+  \theta^*
+  \in
+  \argmin_\theta
+  \frac1m
+  \sum_{i=1}^{m}
+  \ell(g_\theta(x_i),y_i),
+  \qquad
+  \theta\ \text{从}\ \theta_0\ \text{初始化}.
+\]
+
+这里 \(g_\theta\) 是迁移后的预测器，\(\theta_0\) 是预训练参数。元学习则把“快速适配”写进训练目标：给任务分布 \(\mathcal{T}\)，希望初始化参数 \(\theta\) 经过少量内层更新 \(U_T(\theta)\) 后在任务 \(T\) 上表现好：
+
+\[
+  \min_\theta
+  \E_{T\sim\mathcal{T}}
+  L_T(U_T(\theta)).
+\]
+
+这三类主题不一定要求长证明，但考试常要求区分它们的目标：隐式正则化解释泛化，迁移学习复用已有表示，元学习优化适配过程。
+
+以 MAML 为例，每个任务 \(T\) 划分 support set \(S_T\) 与 query set \(Q_T\)。一次内层适配为 \(U_T(\theta)=\theta-\alpha\nabla_\theta L_{S_T}(\theta)\)，外层最小化 \(L_{Q_T}(U_T(\theta))\)。support 用于适配，query 用于评价这次适配能否泛化。
+
+\section{视觉生成模型：GAN、VAE、扩散、流与表达力}
+
+\concepttarget{concept:generative-models}
+
+生成模型的目标是学习数据分布 \(p_{\mathrm{data}}\)，并能采样新样本。不同模型族的差别在于如何表示 \(p_\theta(x)\) 或如何生成 \(x\)。
+
+\subsection{共同语言：likelihood 与隐变量}
+
+生成模型先统一使用 likelihood、KL、潜变量和采样这套语言；模型之间的表达力比较放在本节最后。
+
+\paragraph{极大似然}
+
+若模型给出显式密度，训练常用最大似然：
+
+\[
+  \max_\theta
+  \E_{x\sim p_{\mathrm{data}}}
+  \log p_\theta(x).
+\]
+
+等价于最小化
+
+\[
+  \KL(p_{\mathrm{data}}\|p_\theta)
+  =
+  \E_{p_{\mathrm{data}}}
+  \log
+  \frac{p_{\mathrm{data}}(x)}{p_\theta(x)},
+\]
+
+因为 \(\E_{p_{\mathrm{data}}}\log p_{\mathrm{data}}(x)\) 与 \(\theta\) 无关。
+
+\subsection{变分自编码器 (VAE)}
+
+\concepttarget{concept:vae-elbo}
+
+VAE 使用潜变量 \(z\)，生成模型为 \(p_\theta(x,z)=p(z)p_\theta(x\mid z)\)。由于真实后验 \(p_\theta(z\mid x)\) 难算，引入近似后验 \(q_\phi(z\mid x)\)。ELBO 为
+
+\[
+  \log p_\theta(x)
+  \ge
+  \E_{q_\phi(z\mid x)}
+  \log p_\theta(x\mid z)
+  -
+  \KL(q_\phi(z\mid x)\|p(z)).
+\]
+
+第一项鼓励重构，第二项把编码分布拉向先验。
+
+下界的松弛量是精确的后验 KL：
+
+\[
+  \log p_\theta(x)=\operatorname{ELBO}(x;\theta,\phi)+\KL\!\left(q_\phi(z\mid x)\,\middle\|\,p_\theta(z\mid x)\right).
+\]
+
+\paragraph{ELBO 的推导}
+
+从边缘似然开始：
+
+\[
+  \log p_\theta(x)
+  =
+  \log
+  \int p_\theta(x,z)\,dz.
+\]
+
+乘除同一个近似后验 \(q_\phi(z\mid x)\)：
+
+\[
+  \log p_\theta(x)
+  =
+  \log
+  \int
+  q_\phi(z\mid x)
+  \frac{p_\theta(x,z)}{q_\phi(z\mid x)}
+  \,dz.
+\]
+
+把积分看成关于 \(q_\phi(z\mid x)\) 的期望，并用 Jensen 不等式：
+
+\[
+  \log p_\theta(x)
+  \ge
+  \E_{q_\phi(z\mid x)}
+  \log
+  \frac{p_\theta(x,z)}{q_\phi(z\mid x)}.
+\]
+
+展开 \(p_\theta(x,z)=p(z)p_\theta(x\mid z)\)，得到
+
+\[
+\begin{aligned}
+  &\E_{q_\phi(z\mid x)}\log p_\theta(x\mid z)
+  +
+  \E_{q_\phi(z\mid x)}\log p(z)
+  -
+  \E_{q_\phi(z\mid x)}\log q_\phi(z\mid x)
+  \\
+  &\qquad =
+  \E_{q_\phi(z\mid x)}\log p_\theta(x\mid z)
+  -
+  \KL(q_\phi(z\mid x)\|p(z)).
+\end{aligned}
+\]
+
+这就是 ELBO。考试若要求解释 VAE，必须同时说明：ELBO 是 likelihood 的下界，KL 项来自近似后验与先验之间的差距，重构项来自条件生成模型 \(p_\theta(x\mid z)\)。
+
+重参数化技巧把
+
+\[
+  z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon,
+  \qquad
+  \epsilon\sim\N(0,I)
+\]
+
+写成可反传形式。
+
+\subsection{生成对抗网络 (GAN)}
+
+GAN 有生成器 \(G_\theta(z)\) 和判别器 \(D_\psi(x)\)。经典 minimax 目标为
+
+\[
+  \min_\theta\max_\psi
+  \E_{x\sim p_{\mathrm{data}}}\log D_\psi(x)
+  +
+  \E_{z\sim p(z)}
+  \log(1-D_\psi(G_\theta(z))).
+\]
+
+直觉是判别器学习区分真样本和生成样本，生成器学习骗过判别器。优点是样本锐利；缺点是训练不稳定、mode collapse、缺少显式 likelihood。
+
+固定生成分布 \(p_g\) 时，最优判别器为
+
+\[
+  D^*(x)=\frac{p_{\mathrm{data}}(x)}{p_{\mathrm{data}}(x)+p_g(x)}.
+\]
+
+代回 minimax 目标得到与 Jensen--Shannon divergence 对应的分布差异；实践中生成器常用 non-saturating loss \(-\E_z\log D_\psi(G_\theta(z))\)。
+
+\subsection{流模型 (Normalizing Flow)}
+
+\concepttarget{concept:flow-likelihood}
+
+Flow 用可逆映射 \(x=f_\theta(z)\) 把简单分布 \(p_0(z)\) 推到数据空间。变量替换公式为
+
+\[
+  \log p_\theta(x)
+  =
+  \log p_0(z)
+  -
+  \log\left|\det J_{f_\theta}(z)\right|,
+  \qquad
+  z=f_\theta^{-1}(x).
+\]
+
+多层 flow 把 log determinant 累加。考试重点是“可逆性 + Jacobian determinant + 显式 likelihood”。
+
+\paragraph{变量替换公式的推导}
+
+设 \(x=f_\theta(z)\)，且 \(f_\theta\) 可逆。概率质量在变量变换下保持：
+
+\[
+  p_\theta(x)\,dx
+  =
+  p_0(z)\,dz.
+\]
+
+多维情形中体积元满足
+
+\[
+  dx
+  =
+  \left|\det J_{f_\theta}(z)\right|dz.
+\]
+
+因此
+
+\[
+  p_\theta(x)
+  =
+  p_0(z)
+  \left|
+    \det J_{f_\theta}(z)
+  \right|^{-1}.
+\]
+
+取对数得到
+
+\[
+  \log p_\theta(x)
+  =
+  \log p_0(z)
+  -
+  \log\left|\det J_{f_\theta}(z)\right|.
+\]
+
+如果 \(f_\theta=f_L\circ\cdots\circ f_1\)，Jacobian determinant 由链式法则相乘，log determinant 因而相加。
+
+\subsection{扩散模型与 Score-based Model}
+
+\concepttarget{concept:diffusion-score}
+
+扩散模型先定义加噪 forward process，把 \(x_0\) 逐步变成近似高斯噪声，再学习 reverse process 去噪。离散 DDPM 常写为
+
+\[
+  q(x_t\mid x_{t-1})
+  =
+  \N(\sqrt{1-\beta_t}x_{t-1},\beta_t I).
+\]
+
+连续时间 VP SDE 可写作
+
+\[
+  dx=-\frac12\beta(t)x\,dt+\sqrt{\beta(t)}\,dW_t.
+\]
+
+其中 \(W_t\) 是标准 Brownian motion，\(\beta(t)>0\) 是时间 \(t\) 的噪声日程。
+
+一般 forward SDE
+
+\[
+  dx=f(x,t)\,dt+g(t)\,dW_t
+\]
+
+的 reverse-time SDE 为
+
+\[
+  dx=
+  \left[
+    f(x,t)-g(t)^2\nabla_x\log p_t(x)
+  \right]dt
+  +
+  g(t)\,d\bar W_t.
+\]
+
+这里 \(\bar W_t\) 表示反向时间下的 Brownian motion。score
+
+\[
+  \nabla_x\log p_t(x)
+\]
+
+描述当前噪声水平下密度上升最快方向。训练 score model 后，就能从噪声逐步反向采样。
+
+离散扩散里还常用闭式边缘分布。令
+
+\[
+  \alpha_t=1-\beta_t,
+  \qquad
+  \bar\alpha_t=\prod_{s=1}^{t}\alpha_s.
+\]
+
+反复代入 forward process 可得
+
+\[
+  q(x_t\mid x_0)
+  =
+  \N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I).
+\]
+
+因此可以直接采样
+
+\[
+  x_t
+  =
+  \sqrt{\bar\alpha_t}x_0
+  +
+  \sqrt{1-\bar\alpha_t}\epsilon,
+  \qquad
+  \epsilon\sim\N(0,I).
+\]
+
+DDPM 常训练网络 \(\epsilon_\theta(x_t,t)\) 预测噪声，目标近似为
+
+\[
+  \E_{t,x_0,\epsilon}
+  \left[
+    \|\epsilon-\epsilon_\theta(x_t,t)\|^2
+  \right].
+\]
+
+这解释了为什么扩散模型的训练看起来像 denoising regression：模型学习每个噪声水平下应当去掉的噪声方向。
+
+从概率模型角度，DDPM 是层级 latent-variable model，具有变分下界
+
+\[
+  -\log p_\theta(x_0)\le
+  \E_{q(x_{1:T}\mid x_0)}
+  \left[-\log p_\theta(x_{0:T})+\log q(x_{1:T}\mid x_0)\right].
+\]
+
+按时间分解后，每一步比较真实反向条件分布与模型反向条件分布的 KL；常用高斯参数化下，最小化这些 KL 等价于带时间权重的噪声预测平方误差。
+
+连续 score model 拟合 \(s_\theta(x_t,t)\approx\nabla_{x_t}\log p_t(x_t)\)。用已知条件核进行 denoising score matching：
+
+\[
+  \min_\theta\E_{t,x_0,x_t}
+  \left[\lambda(t)\left\|s_\theta(x_t,t)-\nabla_{x_t}\log q_t(x_t\mid x_0)\right\|^2\right].
+\]
+
+该条件目标与不可观测边缘 score 的平方误差只差一个与 \(\theta\) 无关的常数。
+
+\paragraph{真题扩展：flow matching}
+
+若 \(x_0\sim\pi_0\)、\(x_1\sim\pi_1\)，取插值 \(x_t=(1-t)x_0+tx_1\)，则条件速度为 \(x_1-x_0\)，可通过回归学习边缘速度场：
+
+\[
+  \min_\theta\E\left[\left\|v_\theta(t,x_t)-(x_1-x_0)\right\|^2\right].
+\]
+
+最优解 \(v_t(x)=\E[x_1-x_0\mid x_t=x]\) 满足连续性方程 \(\partial_t\pi_t+\nabla\cdot(\pi_t v_t)=0\)。
+
+\subsection{表达力分析：从考纲顺序回到模型取舍}
+
+GAN 的隐式分布通常带来锐利样本，但训练可能不稳定且没有显式 likelihood；VAE 有 ELBO 和可解释潜变量，但可能模糊或 posterior collapse；扩散/score 以多步去噪换取稳定训练和高质量样本，但采样成本较高；normalizing flow 有精确 likelihood 和可逆采样，但可逆性与 Jacobian 计算限制结构。
+
+\paragraph{考核内容}
+
+\begin{itemize}
+  \item 写出 MLP 前向传播和反向传播递推，解释 vanishing gradient。
+  \item 比较 batch normalization、layer normalization 和 residual connection 的作用。
+  \item 说明表达力、优化、泛化三者不是同一个问题。
+  \item 按输出结构区分视觉任务。
+  \item 写出 autoencoder、contrastive learning、VAE、GAN、flow、diffusion 的核心目标。
+  \item 比较四类生成模型：VAE 有 ELBO，GAN 有对抗目标，flow 有显式可逆 likelihood，diffusion 学去噪或 score。
+\end{itemize}
+
+\section{强化学习：Bellman 方程、Q-learning 与 Policy Gradient}
+
+\source{本节对应考纲“贝尔曼方程、Q-learning、Policy gradient”。\textcite{sutton2018rl} 是补充参考；LLM 偏好对齐作为 2026 春公开题相关扩展。}
+
+\subsection{MDP、return 与值函数}
+
+\concepttarget{concept:mdp}
+
+强化学习研究 agent 与 environment 的交互。Markov decision process（MDP）由状态空间 \(\mathcal{S}\)、动作空间 \(\mathcal{A}\)、转移概率 \(P(s'\mid s,a)\)、奖励 \(r(s,a)\)、折扣因子 \(\gamma\in[0,1)\) 构成。
+
+策略 \(\pi(a\mid s)\) 给出在状态 \(s\) 下选择动作 \(a\) 的概率。折扣 return 为
+
+\[
+  G_t=\sum_{k=0}^{\infty}\gamma^k r(s_{t+k},a_{t+k}).
+\]
+
+\begin{definition}[值函数与动作值函数]
+值函数和动作值函数定义为
+
+\[
+  V^\pi(s)=\E_\pi[G_t\mid s_t=s],
+  \qquad
+  Q^\pi(s,a)=\E_\pi[G_t\mid s_t=s,a_t=a].
+\]
+\end{definition}
+
+值函数不是一个普通监督标签，而是对未来随机轨迹的期望。它依赖策略，因为策略决定后续会访问哪些状态。
+
+\subsection{Bellman 方程}
+
+\concepttarget{concept:bellman}
+
+Bellman 方程是 return 的递归展开：
+
+\[
+  V^\pi(s)
+  =
+  \sum_a\pi(a\mid s)
+  \left[
+    r(s,a)
+    +
+    \gamma
+    \sum_{s'}P(s'\mid s,a)V^\pi(s')
+  \right].
+\]
+
+最优值函数满足 Bellman optimality equation：
+
+\[
+  V^*(s)
+  =
+  \max_{a}
+  \left[
+    r(s,a)
+    +
+    \gamma
+    \sum_{s'}P(s'\mid s,a)V^*(s')
+  \right].
+\]
+
+动作值版本为
+
+\[
+  Q^*(s,a)
+  =
+  r(s,a)
+  +
+  \gamma
+  \sum_{s'}P(s'\mid s,a)
+  \max_{a'}Q^*(s',a').
+\]
+
+若知道 \(Q^*\)，最优策略就是
+
+\[
+  \pi^*(s)\in\argmax_a Q^*(s,a).
+\]
+
+\paragraph{Bellman 方程的推导}
+
+从 return 定义出发：
+
+\[
+  G_t
+  =
+  r(s_t,a_t)
+  +
+  \gamma
+  \sum_{k=0}^{\infty}\gamma^k r(s_{t+1+k},a_{t+1+k})
+  =
+  r(s_t,a_t)+\gamma G_{t+1}.
+\]
+
+在 \(s_t=s\) 条件下取期望：
+
+\[
+  V^\pi(s)
+  =
+  \E_\pi[r(s_t,a_t)+\gamma G_{t+1}\mid s_t=s].
+\]
+
+先对动作 \(a\sim\pi(\cdot\mid s)\) 求和，再对下一状态 \(s'\sim P(\cdot\mid s,a)\) 求和：
+
+\[
+  V^\pi(s)
+  =
+  \sum_a\pi(a\mid s)
+  \left[
+    r(s,a)
+    +
+    \gamma\sum_{s'}P(s'\mid s,a)V^\pi(s')
+  \right].
+\]
+
+最优 Bellman 方程只是把“按当前策略平均动作”替换成“选最优动作”。因此 expectation equation 用于评估固定策略，optimality equation 用于求最优策略。
+
+\subsection{Policy iteration：有模型时的基准算法}
+
+当 \(P\) 与 \(r\) 已知且状态、动作空间有限时，policy iteration 交替执行
+
+\[
+  \begin{aligned}
+    V^{\pi_k}&=T^{\pi_k}V^{\pi_k}
+      &&\text{(policy evaluation)},\\
+    \pi_{k+1}(s)&\in\argmax_a
+      \left[r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V^{\pi_k}(s')\right]
+      &&\text{(policy improvement)}.
+  \end{aligned}
+\]
+
+Q-learning 以采样 Bellman backup 代替显式模型和精确评估；actor--critic 以 critic 近似评估、以 actor 做改进。
+
+\subsection{Q-learning}
+
+\concepttarget{concept:q-learning}
+
+Q-learning 是 model-free 方法，不需要知道转移概率。它用采样转移 \((s_t,a_t,r_t,s_{t+1})\) 更新
+
+\[
+  Q_{t+1}(s_t,a_t)
+  =
+  Q_t(s_t,a_t)
+  +
+  \alpha_t
+  \left[
+    r_t
+    +
+    \gamma\max_{a'}Q_t(s_{t+1},a')
+    -
+    Q_t(s_t,a_t)
+  \right].
+\]
+
+中括号内是 temporal-difference error：
+
+\[
+  \delta_t
+  =
+  r_t
+  +
+  \gamma\max_{a'}Q_t(s_{t+1},a')
+  -
+  Q_t(s_t,a_t).
+\]
+
+它衡量当前 \(Q\) 估计和 Bellman backup 之间的不一致。Q-learning 是 off-policy，因为目标里用的是 \(\max_{a'}\)，不一定等于实际采样动作来自的行为策略。
+
+这个更新式来自 Bellman optimality equation 的随机近似。若 \(Q_t\) 已接近 \(Q^*\)，则理想目标应满足
+
+\[
+  Q_t(s_t,a_t)
+  \approx
+  r_t+\gamma\max_{a'}Q_t(s_{t+1},a').
+\]
+
+因此把右侧视为 one-step target：
+
+\[
+  Y_t=r_t+\gamma\max_{a'}Q_t(s_{t+1},a'),
+\]
+
+再对当前估计做指数移动平均：
+
+\[
+  Q_{t+1}(s_t,a_t)
+  =
+  (1-\alpha_t)Q_t(s_t,a_t)+\alpha_tY_t.
+\]
+
+展开即可得到前面的 Q-learning 更新式。
+
+\paragraph{收敛边界与探索}
+
+表格型 Q-learning 的经典收敛结论依赖有限 MDP、每个 \((s,a)\) 被无限次访问、奖励二阶矩受控，以及
+
+\[
+  \sum_t\alpha_t=\infty,
+  \qquad
+  \sum_t\alpha_t^2<\infty.
+\]
+
+因此 \(\epsilon\)-greedy 等探索不是实现细节。把非线性函数逼近、bootstrapping 和 off-policy 同时加入时，表格收敛定理不再自动成立，这正是 DQN 需要 replay buffer 与 target network 的动机。
+
+\subsection{Policy gradient 与 baseline}
+
+\concepttarget{concept:policy-gradient}
+
+当动作空间大或策略需要可微参数化时，直接优化策略更自然。设
+
+\[
+  J(\theta)=\E_{\tau\sim\pi_\theta}\left[\sum_{t\ge0}\gamma^t r(s_t,a_t)\right].
+\]
+
+利用 log-derivative trick：
+
+\[
+  \nabla_\theta p_\theta(\tau)
+  =
+  p_\theta(\tau)\nabla_\theta\log p_\theta(\tau),
+\]
+
+得到 policy gradient 形式
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \E_{\pi_\theta}
+  \left[
+    \sum_{t\ge0}
+    \gamma^t
+    \nabla_\theta\log\pi_\theta(a_t\mid s_t)
+    Q^{\pi_\theta}(s_t,a_t)
+  \right].
+\]
+
+其中 \(\gamma^t\) 来自原始目标的折扣；可用 advantage \(A^\pi=Q^\pi-V^\pi\) 降低方差。baseline \(b(s)\) 不改变期望，因为
+
+\[
+  \E_{a\sim\pi_\theta(\cdot\mid s)}
+  \left[
+    \nabla_\theta\log\pi_\theta(a\mid s)b(s)
+  \right]
+  =
+  b(s)\nabla_\theta\sum_a\pi_\theta(a\mid s)
+  =
+  0.
+\]
+
+Actor-critic 用 actor 表示策略，用 critic 估计值函数或 advantage。它把 policy gradient 的可优化性和 value learning 的低方差结合起来。
+
+令未归一化 discounted visitation measure 为
+
+\[
+  d^\pi_\gamma(s)=\sum_{t\ge0}\gamma^t\Pbb(s_t=s\mid\pi).
+\]
+
+则 policy gradient theorem 也可写为 \(\nabla_\theta J=\sum_s d^\pi_\gamma(s)\sum_a\nabla_\theta\pi_\theta(a\mid s)Q^\pi(s,a)\)。
+
+\paragraph{Policy gradient 的完整推导}
+
+设一条轨迹为
+
+\[
+  \tau=(s_0,a_0,s_1,a_1,\ldots),
+\]
+
+轨迹回报为 \(R(\tau)\)。轨迹概率可分解为
+
+\[
+  p_\theta(\tau)
+  =
+  p(s_0)
+  \prod_{t\ge0}
+  \pi_\theta(a_t\mid s_t)
+  P(s_{t+1}\mid s_t,a_t).
+\]
+
+环境转移 \(P(s_{t+1}\mid s_t,a_t)\) 不含 \(\theta\)，所以
+
+\[
+  \nabla_\theta\log p_\theta(\tau)
+  =
+  \sum_{t\ge0}
+  \nabla_\theta\log\pi_\theta(a_t\mid s_t).
+\]
+
+目标函数为
+
+\[
+  J(\theta)
+  =
+  \int p_\theta(\tau)R(\tau)\,d\tau.
+\]
+
+对 \(\theta\) 求梯度：
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \int
+  \nabla_\theta p_\theta(\tau)R(\tau)\,d\tau.
+\]
+
+使用 log-derivative trick，
+
+\[
+  \nabla_\theta p_\theta(\tau)
+  =
+  p_\theta(\tau)\nabla_\theta\log p_\theta(\tau),
+\]
+
+得到
+
+\[
+  \nabla_\theta J(\theta)
+  =
+  \E_{\tau\sim p_\theta}
+  \left[
+    R(\tau)
+    \sum_{t\ge0}
+    \nabla_\theta\log\pi_\theta(a_t\mid s_t)
+  \right].
+\]
+
+采用 \(G_t=\sum_{k\ge0}\gamma^k r_{t+k}\) 的约定，因时刻 \(t\) 的动作不影响过去奖励，有
+
+\[
+  \nabla_\theta J(\theta)=\E\left[\sum_{t\ge0}\gamma^t\nabla_\theta\log\pi_\theta(a_t\mid s_t)G_t\right].
+\]
+
+Actor--critic 中 critic 用 \(\delta_t=r_t+\gamma V_\phi(s_{t+1})-V_\phi(s_t)\) 估计 advantage，actor 沿 \(\nabla_\theta\log\pi_\theta(a_t\mid s_t)\widehat A_t\) 更新。
+
+\subsection{LLM 偏好对齐}
+
+\concepttarget{concept:rlhf-dpo}
+
+LLM 对齐可以看成特殊的序列决策问题。prompt 是初始状态，动作是逐 token 生成，策略是语言模型 \(\pi_\theta(o\mid x)\)，奖励来自人类或模型偏好。
+
+RLHF 常先用偏好数据训练 reward model。若对同一 prompt \(x\) 有 preferred output \(o_w\) 和 rejected output \(o_l\)，Bradley-Terry 模型写作
+
+\[
+  P(o_w\succ o_l\mid x)
+  =
+  \sigma(r_\phi(x,o_w)-r_\phi(x,o_l)).
+\]
+
+奖励模型损失为
+
+\[
+  \Lcal_{\mathrm{RM}}
+  =
+  -
+  \E
+  \log
+  \sigma(r_\phi(x,o_w)-r_\phi(x,o_l)).
+\]
+
+随后优化带 KL 正则的策略目标：
+
+\[
+  \max_{\pi_\theta}
+  \E_{x,o\sim\pi_\theta}
+  \left[
+    r_\phi(x,o)
+    -
+    \beta
+    \log
+    \frac{\pi_\theta(o\mid x)}{\pi_{\mathrm{ref}}(o\mid x)}
+  \right].
+\]
+
+KL 项防止模型为了 reward hacking 远离参考模型。DPO 则把奖励函数消去，直接用偏好对训练策略：
+
+\[
+  \Lcal_{\mathrm{DPO}}
+  =
+  -
+  \E
+  \log
+  \sigma
+  \left(
+    \beta
+    \log
+    \frac{\pi_\theta(o_w\mid x)}{\pi_{\mathrm{ref}}(o_w\mid x)}
+    -
+    \beta
+    \log
+    \frac{\pi_\theta(o_l\mid x)}{\pi_{\mathrm{ref}}(o_l\mid x)}
+  \right).
+\]
+
+考试若问“RLHF 和 DPO 差别”，重点是：RLHF 显式训练 reward model 并做策略优化；DPO 直接从偏好对构造监督式目标，不需要在线采样和独立 reward model。
+
+\paragraph{DPO 目标的推导背景}
+
+KL 正则 RLHF 的单个 prompt 目标可写成
+
+\[
+  \max_{\pi}
+  \E_{o\sim\pi(\cdot\mid x)}
+  \left[
+    r(x,o)
+    -
+    \beta
+    \log
+    \frac{\pi(o\mid x)}{\pi_{\mathrm{ref}}(o\mid x)}
+  \right].
+\]
+
+这个优化问题的闭式最优策略满足
+
+\[
+  \pi^*(o\mid x)
+  =
+  \frac{1}{Z(x)}
+  \pi_{\mathrm{ref}}(o\mid x)
+  \exp\left(\frac{1}{\beta}r(x,o)\right),
+\]
+
+其中 \(Z(x)\) 是归一化常数。移项得到
+
+\[
+  r(x,o)
+  =
+  \beta
+  \log
+  \frac{\pi^*(o\mid x)}{\pi_{\mathrm{ref}}(o\mid x)}
+  +
+  \beta\log Z(x).
+\]
+
+Bradley-Terry 偏好模型只使用奖励差：
+
+\[
+  r(x,o_w)-r(x,o_l).
+\]
+
+代入上式时，\(\beta\log Z(x)\) 在 winner 和 loser 之间相消，因此可用策略 log-ratio 直接表达偏好概率：
+
+\[
+  P(o_w\succ o_l\mid x)
+  =
+  \sigma
+  \left(
+    \beta
+    \log
+    \frac{\pi_\theta(o_w\mid x)}{\pi_{\mathrm{ref}}(o_w\mid x)}
+    -
+    \beta
+    \log
+    \frac{\pi_\theta(o_l\mid x)}{\pi_{\mathrm{ref}}(o_l\mid x)}
+  \right).
+\]
+
+对这个概率取负对数似然，就是前面的 DPO loss \parencite{rafailov2023dpo,jurafsky2026slp}。
+
+\paragraph{考核内容}
+
+\begin{itemize}
+  \item 定义 MDP、policy、return、\(V^\pi\)、\(Q^\pi\)。
+  \item 从 return 递归推 Bellman expectation equation 和 optimality equation。
+  \item 写出 Q-learning 更新式并解释 TD error。
+  \item 用 log-derivative trick 推 policy gradient。
+  \item 证明 baseline 不改变 policy gradient 期望。
+  \item 解释 RLHF、KL 正则和 DPO 的数学目标及局限。
+\end{itemize}
+
+\printbibliography[heading=bibintoc,title={参考文献与官方来源}]
+
+\end{document}

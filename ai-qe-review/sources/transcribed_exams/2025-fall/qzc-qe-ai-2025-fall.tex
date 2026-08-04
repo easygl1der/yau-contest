@@ -1,0 +1,329 @@
+%!TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xeCJK}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Qiuzhen QE AI --- Fall 2025}
+\lhead{\small Official Qualifying Exam}
+\rfoot{\small Page \thepage}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Pbb}{\mathbb{P}}
+\DeclareMathOperator{\VCdim}{VCdim}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\KL}{KL}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+
+\title{\textbf{QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE}\\[0.5em]\Large FALL 2025}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-3em}
+
+\section*{Instructions}
+\begin{itemize}
+    \item This exam consists of four sections, each with a total of 33 points. You are required to choose three out of the four sections and answer the questions in the selected sections. You will earn an additional point for writing your name and student ID number on your answer sheet. The maximum possible score you can achieve is 100.
+    \item Please clearly indicate your section choices at the very beginning of your answer sheet. If you answer questions in more than three sections, only the first three sections will be graded.
+\end{itemize}
+
+\noindent\rule{\linewidth}{0.4pt}
+
+\section*{A. Machine Learning Theory}
+
+\subsection*{Part I: Warm-Up Questions [5 pts. + 1 bonus pts.]}
+This section contains multiple-choice questions. Please select only one answer for each question. No justification is required.
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{[0.5 pts.]} Which of the following best describes the bias--variance tradeoff?
+    \begin{enumerate}[label=(\alph*)]
+        \item Increasing model bias reduces variance but increases approximation error
+        \item Increasing model bias reduces both bias and variance
+        \item Variance is always independent of bias
+        \item The tradeoff only applies to neural networks
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Why does the `No Free Lunch' theorem matter in machine learning?
+    \begin{enumerate}[label=(\alph*)]
+        \item Every algorithm performs optimally on all data sets
+        \item All learning tasks require exponential time
+        \item There is no universally superior learning algorithm across all tasks
+        \item Only smooth loss functions can be optimised
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} Which of the following is true about Rademacher complexity?
+    \begin{enumerate}[label=(\alph*)]
+        \item It measures how well a hypothesis class fits random labels
+        \item It always equals the VC dimension
+        \item It decreases with model complexity
+        \item It is independent of sample size
+    \end{enumerate}
+
+    \item \textbf{[0.5 pts.]} In Empirical Risk Minimisation (ERM), what is being minimised?
+    \begin{enumerate}[label=(\alph*)]
+        \item The true risk on unseen data
+        \item The average loss on the training sample
+        \item The VC dimension of the hypothesis class
+        \item The variance of the hypothesis
+    \end{enumerate}
+
+    \item \textbf{[1 pts.]} Which statement is true about the VC dimension?
+    \begin{enumerate}[label=(\alph*)]
+        \item A class with infinite VC dimension can never be PAC learnable
+        \item The VC dimension of halfspaces in $\mathbb{R}^d$ is exactly $d + 1$
+        \item VC dimension always equals the number of parameters of the hypothesis class
+        \item Finite VC dimension implies zero generalisation error
+    \end{enumerate}
+
+    \item \textbf{[1 pts.]} In the agnostic PAC learning model, what changes compared to the realisable PAC model?
+    \begin{enumerate}[label=(\alph*)]
+        \item The learner must always find a hypothesis with zero training error
+        \item The hypothesis class must contain the true labelling function
+        \item The goal is to compete with the best hypothesis in the class, even if labels are noisy
+        \item The sample complexity becomes independent of $\epsilon$
+    \end{enumerate}
+
+    \item \textbf{[1 pts.]} In stochastic gradient descent (SGD), why does using a decreasing learning rate help?
+    \begin{enumerate}[label=(\alph*)]
+        \item It avoids overfitting completely
+        \item It ensures convergence under certain convexity assumptions
+        \item It increases variance in gradient estimates
+        \item It eliminates the need for backpropagation
+    \end{enumerate}
+
+    \item \textbf{[Optional: 1-Point Bonus!]} What does Sauer's Lemma imply about a hypothesis class $\mathcal{H}$ with VC-dimension $d$?
+    \begin{enumerate}[label=(\alph*)]
+        \item $\mathcal{H}$ can shatter any set of size larger than $d$
+        \item The growth function $\tau_{\mathcal{H}}(m)$ is bounded polynomially in $m$ once $m > d$
+        \item The empirical risk minimiser achieves zero risk for $m \le d$
+        \item The sample complexity is independent of $d$
+    \end{enumerate}
+\end{enumerate}
+
+\subsection*{Part II: Theoretical Exercises [28 pts.]}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]\setcounter{enumii}{8}
+    \item \textbf{[5 pts.]} Let $\mathcal{H}$ be the class of signed intervals, that is,
+    \[
+    \mathcal{H} = \left\{ h_{a, b, s} : a \le b, \, s \in \{-1, 1\} \right\},
+    \]
+    where
+    \[
+    h_{a, b, s}(x) = \begin{cases} s & \text{if } x \in [a, b], \\ -s & \text{if } x \notin [a, b]. \end{cases}
+    \]
+    Calculate $\VCdim(\mathcal{H})$.
+
+    \item \textbf{[6 pts.] Strong Convexity Properties.} Show the following properties hold for a function $f : \mathbb{R}^d \to \mathbb{R}$:
+    \begin{enumerate}[label=(\a*)]
+        \item The function $f(\mathbf{w}) = \lambda \|\mathbf{w}\|^2$ is $2\lambda$-strongly convex.
+        \item If $f$ is $\lambda$-strongly convex and $g$ is convex, then $f + g$ is $\lambda$-strongly convex.
+        \item If $f$ is $\lambda$-strongly convex and $\mathbf{u}$ is a minimiser of $f$, then for any $\mathbf{w}$:
+        \[
+        f(\mathbf{w}) - f(\mathbf{u}) \ge \frac{\lambda}{2} \|\mathbf{w} - \mathbf{u}\|^2.
+        \]
+    \end{enumerate}
+
+    \item \textbf{[5 pts.]} Let $\mathcal{X} = \mathbb{R}^2$, $\mathcal{Y} = \{0, 1\}$, and let $\mathcal{H}$ be the class of concentric circles in the plane, that is,
+    \[
+    \mathcal{H} = \left\{ h_r : r \in \mathbb{R}_+ \right\}, \quad \text{where } h_r(x) = \mathbf{1}_{\{\|x\| \le r\}}.
+    \]
+    Prove that $\mathcal{H}$ is PAC learnable (assume realisability), and its sample complexity is bounded by
+    \[
+    m_{\mathcal{H}}(\epsilon, \delta) \le \frac{\log(1 / \delta)}{\epsilon}.
+    \]
+
+    \item \textbf{[7 pts.]} We initialise $\mathbf{w}_1 \in \mathcal{W}$. At round $t = 1, 2, \dots$, we obtain a random estimate $\hat{\mathbf{g}}_t$ of a subgradient $\mathbf{g}_t \in \partial F(\mathbf{w}_t)$ so that $\E[\hat{\mathbf{g}}_t] = \mathbf{g}_t$, and update the iterate $\mathbf{w}_t$ as follows:
+    \[
+    \mathbf{w}_{t+1} = \Pi_{\mathcal{W}}(\mathbf{w}_t - \eta_t \hat{\mathbf{g}}_t),
+    \]
+    where $\eta_t$ is a step-size parameter, and $\Pi_{\mathcal{W}}$ denotes projection on $\mathcal{W}$. Assume $F$ is $\lambda$-strongly convex, and that
+    \[
+    \E\left[ \|\hat{\mathbf{g}}_t\|^2 \right] \le G^2
+    \]
+    for all $t$. Consider Stochastic Gradient Descent with step sizes $\eta_t = \frac{1}{\lambda t}$. Show that for any $w \in \mathcal{W}$, the following inequality holds:
+    \[
+    \E\left[ \|\mathbf{w}_{t+1} - w\|^2 \right] \le \E\left[ \|\mathbf{w}_t - w\|^2 \right] - 2\eta_t \E\left[ \langle \mathbf{g}_t, \mathbf{w}_t - w \rangle \right] + \eta_t^2 G^2.
+    \]
+
+    \item \textbf{[5 pts.] Neural Networks as Universal Approximators:} Let $f : [-1, 1]^n \to [-1, 1]$ be a $\rho$-Lipschitz function. Fix some $\epsilon > 0$. Construct a neural network $N : [-1, 1]^n \to [-1, 1]$, with the sigmoid activation function, such that for every $\mathbf{x} \in [-1, 1]^n$ it holds that
+    \[
+    |f(\mathbf{x}) - N(\mathbf{x})| \le \epsilon.
+    \]
+    \textit{Hint:} Partition $[-1, 1]^n$ into small boxes. Use the Lipschitzness of $f$ to show that it is approximately constant on each box. Finally, show that a neural network can first decide which box the input vector belongs to, and then predict the averaged value of $f$ at that box.
+\end{enumerate}
+
+\section*{B. Deep Learning and Reinforcement Learning}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{[9 pts.] Neural Network Architectures (CNNs \& Transformers)}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[3 pts.]} Derive the number of trainable parameters in a single convolutional layer with input size $H \times W \times C_{\text{in}}$, kernel size $k \times k$, and $C_{\text{out}}$ output channels (assume bias), and compare it with a fully connected (dense) layer of the same input and output size.
+        \item \textbf{[3 pts.]} Write the scaled dot-product self-attention formula (defining $Q, K, V$). Explain why positional information is necessary in Transformers and describe one method to inject positional information.
+        \item \textbf{[3 pts.]} State one key benefit of (i) convolution for vision and (ii) self-attention. Then design a minimal vision transformer for images that uses both structures: specify how to tokenize the image into patch embeddings, where self-attention is applied, and where convolution is introduced.
+    \end{enumerate}
+
+    \item \textbf{[14 pts.] Generative Models and Likelihood-based Training}
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[2 pts.]} Show that maximizing the likelihood of a generative model $p_\theta(x)$ given data distribution $p_{\text{data}}(x)$ is equivalent to minimizing the KL divergence $\KL(p_{\text{data}} \parallel p_\theta)$.
+        \item \textbf{[4 pts.]} Consider a normalizing flow model composed of $L$ invertible transformations:
+        \[
+        z_0 \sim p(z_0), \qquad z_\ell = f_\ell(z_{\ell-1}), \; \ell = 1, \dots, L, \qquad x = z_L,
+        \]
+        where each $f_\ell$ is bijective and differentiable, and $p(z_0)$ is a simple base density. Write down the training objective (loss) for normalizing flows on a dataset $\{x^{(i)}\}_{i=1}^N$ sampled from the data distribution.
+        \item \textbf{[4 pts.]} Explain why the variational autoencoder (VAE) uses the evidence lower bound (ELBO) to approximate maximum likelihood training. Write down the ELBO expression and explain the roles of the reconstruction term and the regularization term.
+        \item \textbf{[4 pts.]} We can interpret diffusion probabilistic models as a form of hierarchical VAEs. Let $x_0 \sim p_{\text{data}}$ denote a data sample. The forward process (encoder) is defined as:
+        \[
+        q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1}), \quad q(x_t \mid x_{t-1}) = \mathcal{N}\left(\sqrt{\alpha_t} x_{t-1}, \beta_t I\right),
+        \]
+        where $\alpha_t = 1 - \beta_t \in (0, 1)$ and $\bar{\alpha}_t = \prod_{s=1}^t \alpha_s$.
+        Write down the probabilistic model of the backward process (decoder), and show that the ELBO for $\log p_\theta(x_0)$ can be written as:
+        \begin{align*}
+        \log p_\theta(x_0) &\ge -\KL\left(q(x_T \mid x_0) \parallel p(x_T)\right) \\
+        &\quad - \sum_{t=2}^T \E_q \left[ \KL\left(q(x_{t-1} \mid x_t, x_0) \parallel p_\theta(x_{t-1} \mid x_t)\right) \right] + \E_q \left[ \log p_\theta(x_0 \mid x_1) \right].
+        \end{align*}
+    \end{enumerate}
+
+    \item \textbf{[10 pts.] Policy Gradient Methods}
+    Consider a discounted Markov Decision Process (MDP) $(\mathcal{S}, \mathcal{A}, P, r, \gamma)$ with state space $\mathcal{S}$, action space $\mathcal{A}$, transition kernel $P(s' \mid s, a)$, bounded reward $r(s, a)$, and discount factor $\gamma \in (0, 1)$. Let $\pi_\theta(a \mid s)$ be a differentiable stochastic policy with parameters $\theta$, and $s_0$ a fixed start state. Define return $G_0 = \sum_{t=0}^\infty \gamma^t r(s_t, a_t)$ and performance $J(\theta) = V^{\pi_\theta}(s_0) = \E_{\tau \sim \pi_\theta}[G_0]$. Let $d^{\pi}(s) = \sum_{t=0}^\infty \gamma^t \Pr(s_t = s \mid \pi)$ be the discounted state visitation distribution.
+    \begin{enumerate}[label=(\a*)]
+        \item \textbf{[6 pts.]} Prove the Policy Gradient Theorem:
+        \begin{align*}
+        \nabla_\theta J(\theta) &= \E_{\pi_\theta} \left[ \sum_{t=0}^\infty \gamma^t \nabla_\theta \log \pi_\theta(a_t \mid s_t) Q^{\pi_\theta}(s_t, a_t) \right] \\
+        &= \frac{1}{1 - \gamma} \E_{s \sim d^{\pi_\theta}, a \sim \pi_\theta} \left[ \nabla_\theta \log \pi_\theta(a \mid s) Q^{\pi_\theta}(s, a) \right].
+        \end{align*}
+        \item \textbf{[4 pts.]} Show that for any baseline function $b : \mathcal{S} \to \mathbb{R}$:
+        \[
+        \E_{\pi_\theta} \left[ \sum_{t=0}^\infty \gamma^t \nabla_\theta \log \pi_\theta(a_t \mid s_t) b(s_t) \right] = 0,
+        \]
+        and hence $\nabla_\theta J(\theta) = \E_{\pi_\theta} \left[ \sum_{t=0}^\infty \gamma^t \nabla_\theta \log \pi_\theta(a_t \mid s_t) (Q^{\pi_\theta}(s_t, a_t) - b(s_t)) \right]$. How should $b(s)$ be chosen in advantage methods, and what is its benefit?
+    \end{enumerate}
+\end{enumerate}
+
+\section*{C. Optimization Methods in Artificial Intelligence}
+
+Consider the regularized finite-sum problem:
+\[
+\min_{x \in \mathbb{R}^d} F(x) \coloneqq f(x) + R(x), \quad f(x) \coloneqq \frac{1}{n} \sum_{i=1}^n f_i(x),
+\]
+where each $f_i : \mathbb{R}^d \to \mathbb{R}$ is convex and $L_i$-smooth, the aggregate $f$ is $L$-smooth and $\mu$-strongly convex ($\mu > 0$), and $R : \mathbb{R}^d \to (-\infty, +\infty]$ is proper, closed, and convex. For a probability vector $q = (q_1, \dots, q_n)$ with $q_i > 0$ and $\sum_i q_i = 1$, draw $s \in \{1, \dots, n\}$ with $\Pbb(s = i) = q_i$. Fix a minibatch size $\tau \in \{1, 2, \dots\}$, draw i.i.d.\ copies $s_1, \dots, s_\tau$ of $s$. Define the multisampling gradient estimator:
+\[
+g(x) \coloneqq \frac{1}{\tau} \sum_{t=1}^\tau \frac{1}{n q_{s_t}} \nabla f_{s_t}(x),
+\]
+and proximal SGD iteration $x^{k+1} = \prox_{\gamma R}(x^k - \gamma g^k)$, where $g^k \coloneqq g(x^k)$.
+The Bregman divergence of $f$ is $D_f(x, y) \coloneqq f(x) - f(y) - \langle \nabla f(y), x - y \rangle$.
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{[3 pts.] Basic Definitions:} Give the definitions of $L$-smoothness and $\mu$-strongly convexity.
+    \item \textbf{[2 pts.] Uniqueness of Minimizer:} Show that $F$ admits a unique minimizer $x^*$.
+    \item \textbf{[5 pts.] Unbiasedness:} Prove that $g(x)$ is unbiased, i.e., $\E[g(x)] = \nabla f(x)$.
+    \item \textbf{[8 pts.] Expected Smoothness Bound:} Assuming each $f_i$ is $L_i$-smooth and convex, and $f$ is $L$-smooth, show that for all $x, y \in \mathbb{R}^d$:
+    \[
+    \E \left[ \|g(x) - g(y)\|^2 \right] \le 2 A''(\tau, q) D_f(x, y),
+    \]
+    where the expected-smoothness constant $A''(\tau, q)$ is:
+    \[
+    A''(\tau, q) \coloneqq \frac{1}{\tau} \left( \max_i \frac{L_i}{n q_i} \right) + \left(1 - \frac{1}{\tau}\right) L.
+    \]
+    \item \textbf{[4 pts.] Extremes, Monotonicity, and Interpolation:}
+    \begin{enumerate}[label=(\a*)]
+        \item Evaluate $A''(\tau, q)$ at $\tau = 1$ and as $\tau \to +\infty$. Identify the limiting algorithms (SGD-NS vs.\ GD) and corresponding constants.
+        \item Show that $A''(\tau, q)$ is nonincreasing in $\tau$, and interpret how $\tau$ interpolates between SGD-NS and GD.
+    \end{enumerate}
+
+    \item \textbf{[4 pts.] Design of Importance Sampling $q$:} For a fixed $\tau$, minimize the first term of $A''(\tau, q)$:
+    \[
+    \min_{q \in \Delta_n} \max_i \frac{L_i}{n q_i}, \quad \text{where } \Delta_n = \left\{ q \in \mathbb{R}_{++}^n : \sum_i q_i = 1 \right\}.
+    \]
+    Derive the optimal $q^*$ and the attained value. Compare with uniform sampling $q_i^{\text{uni}} = 1/n$.
+
+    \item \textbf{[3 pts.] Variance at Optimum:} Let $\xi(x) \coloneqq g(x) - \nabla f(x)$. Show that
+    \[
+    \E \left[ \|\xi(x^*)\|^2 \right] = \frac{1}{\tau} \Var\left( \frac{1}{n q_s} \nabla f_s(x^*) \right).
+    \]
+
+    \item \textbf{[2 pts.] AC Inequality:} Given $\E \left[ \|g^k - \nabla f(x^*)\|^2 \mid x^k \right] \le 2A D_f(x^k, x^*) + C$, specialize expected smoothness to obtain AC constants $(A, C)$ and write explicit formula for $\Var[g(x^*)]$.
+
+    \item \textbf{[2 pts.] Stepsize and Convergence:} Using the convergence bound $\E \|x^k - x^*\|^2 \le (1 - \gamma \mu)^k \|x^0 - x^*\|^2 + \frac{\gamma C}{\mu}$ for $0 < \gamma \le \frac{1}{A}$, compute admissible stepsize range and explicit convergence bound.
+\end{enumerate}
+
+\section*{D. Natural Language Processing}
+
+\subsection*{Part I: Questions on Concepts and Algorithm Analysis [13 pts.]}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{[3 pts.] Embedding for Texts and Graphs.} In 2--3 sentences each, succinctly describe the data signal, the learning objective type, and the key inductive bias for: GloVe, Skip-gram, Node2Vec, and TransE.
+
+    \item \textbf{[5 pts.] Scaling Laws and Architectural Bias (LSTM vs. Transformer).}
+    Assume loss obeys $L_{\text{arch}}(P, T) = L_\infty + A_{\text{arch}} P^{-\alpha_{\text{arch}}} + B_{\text{arch}} T^{-\beta_{\text{arch}}}$.
+    \begin{enumerate}[label=(\a*)]
+        \item Fixed-data regime ($T = T_0$): state qualitative relationship between $(\alpha_{\text{arch}}, A_{\text{arch}})$ for LSTM vs.\ Transformer and resulting P--L curves.
+        \item Fixed-parameter regime ($P = P_0$): state qualitative relationship between $(\beta_{\text{arch}}, B_{\text{arch}})$ for LSTM vs.\ Transformer and resulting T--L curves.
+        \item Justification from (i) long-range dependency, (ii) parallelizability/throughput, (iii) inductive bias.
+    \end{enumerate}
+
+    \item \textbf{[5 pts.] Analysis of a Markov Logic Network (MLN).}
+    MLN probability: $P(X = x) = \frac{1}{Z} \exp\left(\sum_i w_i n_i(x)\right)$.
+    Formulas:
+    (a) $\forall p_1, p_2 \, \text{Cites}(p_1, p_2) \land \text{InTopic}(p_1, \text{``AI''}) \Rightarrow \text{InTopic}(p_2, \text{``AI''})$ ($w_1 = 1.5$).
+    (b) $\forall p \, \text{InTopic}(p, \text{``AI''})$ ($w_2 = -1.0$).
+    \begin{enumerate}[label=(\alph*)]
+        \item Model Structure Analysis: describe ground Markov network nodes and cliques for two papers $P_1, P_2$.
+        \item Probability Calculation for world $x_1$: $n_1(x_1), n_2(x_1)$ and un-normalized probability.
+        \item Parameter Impact Analysis: changing $w_1$ to $-1.5$.
+        \item MAP Inference: given $\text{Cites}(P_1, P_2) = \text{true}$, find MAP assignments for $\text{InTopic}(P_1, \text{``AI''})$ and $\text{InTopic}(P_2, \text{``AI''})$.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection*{Part II: Questions on Algorithm and System Design [20 pts.]}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]\setcounter{enumii}{3}
+    \item \textbf{[10 pts.] Topic--Ontology LDA for Fact Triples.}
+    Fact triples $\mathcal{F}_d = \{f = (s, r, o)\}$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Design LDA-style generative model with document topic mixtures $\theta_d \sim \operatorname{Dir}(\alpha)$, topic distributions over ontology variables, and surface-form distributions.
+        \item Write factorized joint probability $p(\Theta, \Pi, \Phi, Z, C_s, C_o, T, S, O, R \mid \text{hyperparameters})$.
+        \item Design an automatic naming method for discovered latent ontology categories.
+    \end{enumerate}
+
+    \item \textbf{[10 pts.] Text-to-Image Diffusion System.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Forward process, ELBO, and closed-form posteriors:
+        \begin{enumerate}[label=(\roman*)]
+            \item Show $q(\mathbf{x}_t \mid \mathbf{x}_0) = \mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I}\right)$.
+            \item Express ELBO on $\log p_\theta(\mathbf{x}_0)$.
+            \item Show exact posterior $q(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0)$ is Gaussian with variance $\tilde{\beta}_t = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \beta_t$ and derive its mean.
+        \end{enumerate}
+        \item Noise-prediction parameterization:
+        \begin{enumerate}[label=(\roman*)]
+            \item Show optimal mean parameterization $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t) = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right)$.
+            \item Prove training loss reduces to $\mathcal{L}_t = \E_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}, t\right) \right\|_2^2 \right]$.
+        \end{enumerate}
+        \item Conditional reverse process with Transformer architecture and text conditioning.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}
