@@ -1,0 +1,93 @@
+% Shared QE notes preamble fragment (amsthm environments + macros).
+% Usage from any subject notes/*.tex:
+%   \documentclass[11pt,a4paper]{article}
+%   \input{../../common/qe-notes-preamble.tex}
+% Or from a local notes/preamble.tex wrapper that inputs this file.
+
+\usepackage[a4paper,margin=2.35cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+% Prefer xeCJK when available (XeLaTeX); ignore if missing.
+\IfFileExists{xeCJK.sty}{%
+  \usepackage{xeCJK}%
+}{}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!60!black,
+  unicode=true,
+  bookmarks=true,
+  bookmarksopen=true,
+  bookmarksopenlevel=1,
+  bookmarksnumbered=false
+}
+
+\setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% Shared math extras (fixes \mathbb{1}) + theorem environments + cleveref
+% Order matters: hyperref (above) → amsthm envs → cleveref.
+\input{../../common/qe-math-extras.tex}
+\input{../../common/qe-amsthm-envs.tex}
+\input{../../common/qe-cleveref.tex}
+
+% ---------------------------------------------------------------------------
+% Common math operators / macros for QE notes
+% ---------------------------------------------------------------------------
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\VCdim}{VCdim}
+\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator{\TV}{TV}
+\DeclareMathOperator{\esssup}{ess\,sup}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pbb}{\mathbb{P}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Lcal}{\mathcal{L}}
+\newcommand{\Xcal}{\mathcal{X}}
+\newcommand{\Ycal}{\mathcal{Y}}
+% \ind and \bbone are defined in qe-math-extras.tex
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tol}{\mathrm{tol}}
+
+\newcommand{\source}[1]{\par\smallskip\noindent{\small\textit{Source: #1}}\par\smallskip}
+\newcommand{\solution}{\par\smallskip\noindent\textbf{Solution.}\ }
+\newcommand{\idea}{\par\smallskip\noindent\textbf{Idea.}\ }
+
+% Page style helpers (override per-note if needed)
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot{\small Page \thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}

@@ -1,0 +1,116 @@
+% Two axes of the Spring 2025 NLP scaling paragraph: specify vs diagnose.
+\begin{tikzpicture}[
+  font=\small,
+  >=Stealth,
+  every node/.style={color=black!88},
+  card/.style={
+    draw=#1, fill=#1!11, line width=0.65pt,
+    rounded corners=2pt, align=left,
+    inner sep=3.4pt, text width=3.28cm, font=\scriptsize
+  },
+  chip/.style={
+    draw=#1, fill=#1!16, line width=0.55pt,
+    rounded corners=1.2pt, inner xsep=2.4pt, inner ysep=1.6pt,
+    font=\scriptsize, align=center
+  },
+  term/.style={
+    draw=#1, fill=#1!10, line width=0.6pt,
+    rounded corners=2pt, align=left,
+    inner sep=3.2pt, text width=3.28cm, font=\scriptsize
+  },
+  arr/.style={-{Stealth}, line width=0.8pt, draw=black!55},
+  dasharr/.style={-{Stealth}, densely dashed, line width=0.65pt, draw=black!45},
+  lbl/.style={font=\scriptsize, text=black!45, align=center}
+]
+
+\definecolor{clsdraw}{HTML}{1D4ED8}
+\definecolor{objdraw}{HTML}{C2410C}
+\definecolor{scadraw}{HTML}{A16207}
+\definecolor{flodraw}{HTML}{57534E}
+\definecolor{apxdraw}{HTML}{0F766E}
+\definecolor{estdraw}{HTML}{6D28D9}
+\definecolor{optdraw}{HTML}{B45309}
+
+\node[anchor=west, font=\small\bfseries] at (0,8.85)
+  {Two questions, not five methods};
+\node[anchor=west, font=\scriptsize, text=black!45] at (0,8.42)
+  {n-gram / word2vec / attention / alignment specify \(\mathcal{H}\) and the scalar.
+   A scaling law diagnoses how test loss \(\mathcal{L}\) moves with \(N,P\).};
+
+\node[anchor=west, font=\scriptsize\bfseries, text=clsdraw] at (0,7.95)
+  {Specify a class and an objective};
+
+\node[card=clsdraw, anchor=north] (ng) at (1.78,7.62) {%
+  \textbf{n-gram}\\[1pt]
+  Class: order-\(k\) Markov table.\\
+  Objective: next-token counts / smoothing.\\
+  Changes \(\mathcal{H}\).};
+
+\node[card=clsdraw, anchor=north] (w2v) at (5.28,7.62) {%
+  \textbf{word2vec}\\[1pt]
+  Class: static vectors \(e_\theta\).\\
+  Objective: still predictive / contrastive.\\
+  Changes the parameterisation.};
+
+\node[card=clsdraw, anchor=north] (tf) at (8.78,7.62) {%
+  \textbf{self-attention}\\[1pt]
+  Class: contextual Transformer.\\
+  Objective: still next-token CE.\\
+  Enlarges \(\mathcal{H}\); same target.};
+
+\node[card=objdraw, anchor=north] (al) at (12.28,7.62) {%
+  \textbf{alignment}\\[1pt]
+  Class: not reinvented.\\
+  Objective: rewritten as preference \(J\).\\
+  Changes the scalar, not the family.};
+
+\draw[arr] (ng) -- (w2v);
+\draw[arr] (w2v) -- (tf);
+\draw[arr] (tf) -- (al);
+\node[lbl, above=0.35mm of $(ng)!0.5!(w2v)$] {class};
+\node[lbl, above=0.35mm of $(w2v)!0.5!(tf)$] {class};
+\node[lbl, above=0.35mm of $(tf)!0.5!(al)$] {objective};
+
+\node[anchor=west, font=\scriptsize\bfseries, text=scadraw] at (0,4.55)
+  {Diagnose: if one spends \(N\) or \(P\), which gap in test loss falls};
+
+\node[chip=scadraw, text width=13.9cm, align=left] (fit) at (7.05,4.02)
+  {\(\displaystyle\mathcal{L}(N,P)\approx\mathcal{L}_\infty+A N^{-\alpha}+B P^{-\gamma}\).
+   Local power-law fit until a floor. Not a theorem, not a fifth architecture.};
+
+\node[term=flodraw, anchor=north] (bayes) at (1.78,3.28) {%
+  \textbf{Bayes floor \(\mathcal{L}_\infty=L(h^\star)\)}\\[1pt]
+  Irreducible: \(y\) is noisy given \(x\).\\
+  Does not fall with \(N\) or \(P\).};
+
+\node[term=apxdraw, anchor=north] (apx) at (5.28,3.28) {%
+  \textbf{Approximation}\\[1pt]
+  \(L(h_{\mathcal{H}})-L(h^\star)\).\\
+  Class too small. Falls if \(\mathcal{H}\) grows (\(P\), attention vs \(k\)-gram). Not if \(N\) grows.};
+
+\node[term=estdraw, anchor=north] (est) at (8.78,3.28) {%
+  \textbf{Estimation}\\[1pt]
+  \(\mathbb{E}_S[L(\widehat h_S)-L(h_{\mathcal{H}})]\).\\
+  Finite sample. Falls if \(N\) grows. Typically rises if \(\mathcal{H}\) grows at fixed \(N\).};
+
+\node[term=optdraw, anchor=north] (opt) at (12.28,3.28) {%
+  \textbf{Optimisation}\\[1pt]
+  \(\mathbb{E}_S[L(\widehat h)-L(\widehat h_S)]\).\\
+  Did not finish \(L_S\). About the optimiser; absorbed into the floor if it cannot keep up.};
+
+\draw[dasharr] (fit.south) -- (bayes.north);
+\draw[dasharr] (fit.south) -- (apx.north);
+\draw[dasharr] (fit.south) -- (est.north);
+\draw[dasharr] (fit.south) -- (opt.north);
+
+\node[chip=apxdraw] (pchip) at (5.28,1.22) {\(P\uparrow\) hits this};
+\node[chip=estdraw] (nchip) at (8.78,1.22) {\(N\uparrow\) hits this};
+\draw[arr] (pchip) -- (apx.south);
+\draw[arr] (nchip) -- (est.south);
+
+\node[anchor=west, font=\scriptsize, text=black!45, text width=14.2cm] at (0,0.55)
+  {The four topics above choose \(\mathcal{H}\) and the fitted scalar. Scaling asks how
+   \(\mathbb{E}_S[L(\widehat h)]=L(h^\star)+\text{approx}+\text{est}+\text{opt}\) moves.
+   Problem~6 is the decomposition, not a claim that the exponents are universal.};
+
+\end{tikzpicture}

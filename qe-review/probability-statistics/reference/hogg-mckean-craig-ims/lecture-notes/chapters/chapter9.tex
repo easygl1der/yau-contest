@@ -1,0 +1,1187 @@
+% Chapter 9: ANOVA and Regression
+% Hogg, McKean, Craig - Introduction to Mathematical Statistics
+
+\chapter{ANOVA and Regression}\label{chap:anova-regression}
+
+\section*{Chapter 9 Overview}
+
+在前几章中，我们讨论了来自单个总体的样本推断，以及两个总体的比较。但实际中，我们常常面临更复杂的问题：
+
+\begin{center}
+\textit{如果有三个、四个甚至更多个总体，我们该如何比较它们的均值？}
+\end{center}
+
+这个问题——即\textbf{多组比较问题}——在农业实验、医学试验、工业质量控制等领域无处不在。例如，在一项评估不同肥料对作物产量影响的实验中，我们需要同时比较多个处理组；而在研究药物疗效时，我们可能需要同时评估多种药物的效果。
+
+本章，我们从单样本 $t$ 检验 $\to$ 两样本 $t$ 检验 $\to$ 多组比较的自然推广，引入\textbf{方差分析（Analysis of Variance，简称 ANOVA）}。这一方法由 Ronald Fisher 在 1920 年代创立，起源于他在英国洛桑农业实验站的农业实验研究。Fisher 的核心思想是：将总变异分解为可解释的变异和随机误差，通过比较两者来判断处理效应是否显著。
+
+\textbf{本章路线图}：
+\begin{enumerate}
+\item One-Way ANOVA $\to$ 组间/组内平方和分解 $\to$ $F$ 检验
+\item 非中心 $\chi^2$ 和 $F$ 分布 $\to$ 备择假设下的分布
+\item Multiple Comparisons $\to$ Tukey 法、Bonferroni 法（控制族误差率）
+\item Two-Way ANOVA $\to$ 主效应、交互效应
+\item 回归问题 $\to$ 最小二乘估计、几何解释（投影）
+\item 二次型分布 $\to$ Cochran 定理——平方和分解的理论基础
+\end{enumerate}
+
+\section{9.1 Introduction}\label{sec:9.1}
+
+在正式进入 ANOVA 之前，我们需要介绍一个重要的数学工具——\textbf{二次型（quadratic form）}。
+
+\begin{definition}[二次型]\label{def:quadratic-form}
+设 $X_1, \ldots, X_n$ 是 $n$ 个变量，$a_{ij}$ 是常数。形如
+\[
+q(X_1, \ldots, X_n) = \sum_{i=1}^n \sum_{j=1}^n X_i a_{ij} X_j
+\]
+的表达式称为 $X_1, \ldots, X_n$ 的（二次）\textbf{二次型}。
+\end{definition}
+
+\textbf{为什么二次型重要？} 在统计推断中，许多关键的统计量都可以表示为二次型。例如，样本方差
+\[
+(n-1)S^2 = \sum_{i=1}^n (X_i - \bar{X})^2 = \sum_{i=1}^n X_i^2 - n\bar{X}^2
+\]
+就是关于样本 $X_1, \ldots, X_n$ 的一个二次型。理解二次型的分布性质，是理解 ANOVA 和回归分析的理论基础。
+
+\section{9.2 One-Way ANOVA}\label{sec:9.2}
+
+\subsection{问题的引入}
+
+考虑 $b$ 个独立的正态总体，第 $j$ 个总体的均值为 $\mu_j$，共同方差为 $\sigma^2$。从第 $j$ 个总体中抽取容量为 $n_j$ 的随机样本 $X_{1j}, X_{2j}, \ldots, X_{nj}$。记总样本量为 $n = \sum_{j=1}^b n_j$。
+
+\textbf{模型}为：
+\[
+X_{ij} = \mu_j + e_{ij}, \quad i = 1, \ldots, n_j,\ j = 1, \ldots, b,
+\label{eq:one-way-model}
+\]
+其中 $e_{ij}$ 是 iid $N(0, \sigma^2)$ 随机误差。
+
+\textbf{我们想检验}：所有 $b$ 个总体的均值是否相等——
+\[
+H_0: \mu_1 = \mu_2 = \cdots = \mu_b \quad \text{vs} \quad H_1: \mu_j \neq \mu_{j'} \text{ 对某些 } j \neq j'.
+\label{eq:one-way-hypotheses}
+\]
+
+\textbf{实际背景}：例如，$b$ 种药物对某种疾病的疗效比较；或 $b$ 种肥料对作物产量的影响。这里"一种因素（factor）"处于 $b$ 个"水平（level）"，因此称为\textbf{单因素实验（one-way layout）}。
+
+\subsection{似然比检验的推导}
+
+完全模型（full model）参数空间：
+\[
+\Omega = \left\{(\mu_1, \ldots, \mu_b, \sigma^2): -\infty < \mu_j < \infty,\ 0 < \sigma^2 < \infty \right\}.
+\]
+
+约束模型（reduced model）参数空间（$H_0$ 下）：
+\[
+\omega = \left\{(\mu_1, \ldots, \mu_b, \sigma^2): \mu_1 = \cdots = \mu_b = \mu,\ 0 < \sigma^2 < \infty \right\}.
+\]
+
+完全模型下的 MLE：
+\[
+\hat{\mu}_j = \bar{X}_{.j} = \frac{1}{n_j}\sum_{i=1}^{n_j} X_{ij},\quad
+\hat{\sigma}_\Omega^2 = \frac{1}{n}\sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{.j})^2.
+\label{eq:one-way-mle-omega}
+\]
+
+约束模型下的 MLE（此时等价于单样本问题）：
+\[
+\hat{\mu}_\omega = \bar{X}_{..} = \frac{1}{n}\sum_{j=1}^b \sum_{i=1}^{n_j} X_{ij},\quad
+\hat{\sigma}_\omega^2 = \frac{1}{n}\sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{..})^2.
+\label{eq:one-way-mle-omega-constraint}
+\]
+
+似然比统计量简化后的形式为：
+\[
+\Lambda^{n/2} = \frac{\hat{\sigma}_\Omega^2}{\hat{\sigma}_\omega^2}.
+\label{eq:one-way-lrt}
+\]
+
+拒绝 $H_0$ 等价于 $F$ 统计量过大，其中
+\[
+F = \frac{Q_4 / (b-1)}{Q_3 / (n-b)},
+\label{eq:one-way-F}
+\]
+而
+\[
+Q_3 = \sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{.j})^2,\quad
+Q_4 = \sum_{j=1}^b n_j (\bar{X}_{.j} - \bar{X}_{..})^2.
+\label{eq:one-way-sum-squares}
+\]
+
+\textbf{核心分解}：
+\[
+\underbrace{\sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{..})^2}_{Q} =
+\underbrace{\sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{.j})^2}_{Q_3\text{（组内）}} +
+\underbrace{\sum_{j=1}^b n_j (\bar{X}_{.j} - \bar{X}_{..})^2}_{Q_4\text{（组间）}}.
+\label{eq:one-way-ss-decomposition}
+\]
+
+在 $H_0$ 下，$Q_3/\sigma^2 \sim \chi^2(n-b)$，$Q_4/\sigma^2 \sim \chi^2(b-1)$，且二者独立。因此 $F \sim F(b-1, n-b)$。
+
+\subsection{ANOVA 表格}
+
+单因素 ANOVA 的结果可以汇总为一张清晰的表格：
+
+\begin{table}[H]
+\centering
+\caption{单因素 ANOVA 表格}\label{tab:one-way-anova}
+\begin{tabular}{lccccc}
+\hline
+\textbf{来源} & \textbf{平方和（SS）} & \textbf{df} & \textbf{均方（MS）} & $F$ 统计量 & \textbf{p 值} \\
+\hline
+组间（Between） & $Q_4$ & $b-1$ & $\mathrm{MSB} = Q_4/(b-1)$ & $\dfrac{\mathrm{MSB}}{\mathrm{MSW}}$ & $\mathbb{P}(F > F_0)$ \\[6pt]
+组内（Within） & $Q_3$ & $n-b$ & $\mathrm{MSW} = Q_3/(n-b)$ & & \\[6pt]
+\hline
+总计（Total） & $Q$ & $n-1$ & & & \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{example}[合金弹性模量]\label{ex:elastic-modulus-anova}
+Devore（2012，第 412 页）报告了一项数据：三种铸造工艺（永久模具、压铸、石膏模具）生产合金的弹性模量。三种工艺各有多次测量，我们想知道铸造工艺是否显著影响弹性模量。
+
+数据汇总后，$F = 12.565$，自由度为 $2$ 和 $19$，p 值为 $0.0003$。如此小的 p 值表明：铸造工艺对弹性模量有显著影响。
+\end{example}
+\\
+
+\section{9.3 Noncentral $\chi^2$ and $F$ Distributions}\label{sec:9.3}
+
+\subsection{为什么需要非中心分布？}
+
+在前一节的 ANOVA 中，我们在原假设 $H_0$ 下推导了 $F$ 统计量的分布。但在实际应用中，我们更关心：当 $H_0$ 不成立（即各组均值不全相等）时，$F$ 统计量的分布是什么？这时就需要引入\textbf{非中心 $\chi^2$ 分布}和\textbf{非中心 $F$ 分布}。
+
+\begin{definition}[非中心 $\chi^2$ 分布]\label{def:noncentral-chisq}
+设 $X_i \sim N(\mu_i, \sigma^2)$，$i = 1, \ldots, n$，独立。则
+\[
+Y = \sum_{i=1}^n \frac{X_i^2}{\sigma^2}
+\]
+的 mgf 为
+\[
+M(t) = \frac{1}{(1-2t)^{n/2}} \exp\left\{\frac{t\sum_{i=1}^n \mu_i^2}{\sigma^2(1-2t)}\right\},\quad t < \frac{1}{2}.
+\label{eq:noncentral-chisq-mgf}
+\]
+此时称 $Y \sim \chi^2(r, \theta)$，其中 $r = n$ 是自由度，$\theta = \sum_{i=1}^n \mu_i^2/\sigma^2$ 是\textbf{非中心参数（noncentrality parameter）}。
+\end{definition}
+
+\textbf{直观理解}：当所有 $\mu_i = 0$ 时，$\theta = 0$，回到中心 $\chi^2$ 分布；当某些 $\mu_i \neq 0$ 时，$Y$ 的分布在中心 $\chi^2$ 的基础上向右偏移，$\theta$ 越大，偏移越明显。
+
+非中心 $\chi^2$ 分布的均值：$\mathbb{E}(Y) = r + \theta$（中心部分 $r$ 加上非中心部分 $\theta$）。
+
+\begin{definition}[非中心 $F$ 分布]\label{def:noncentral-F}
+设 $U \sim \chi^2(r_1, \theta)$，$V \sim \chi^2(r_2)$，独立。则
+\[
+F = \frac{r_2 U}{r_1 V}
+\]
+服从自由度为 $r_1, r_2$、非中心参数为 $\theta$ 的\textbf{非中心 $F$ 分布}，记作 $F(r_1, r_2, \theta)$。
+\end{definition}
+
+\begin{example}[One-Way ANOVA 的非中心参数]\label{ex:anova-noncentral}
+对于 one-way ANOVA 模型 \eqref{eq:one-way-model}，在备择假设 $H_1$ 下，$F$ 统计量的分子 $Q_4/\sigma^2 \sim \chi^2(b-1, \theta)$，其中
+\[
+\theta = \frac{1}{\sigma^2}\sum_{j=1}^b n_j (\mu_j - \bar{\mu})^2,\quad
+\bar{\mu} = \frac{1}{n}\sum_{j=1}^b n_j \mu_j.
+\label{eq:anova-noncentrality}
+\]
+
+当 $H_0$ 成立时，$\theta = 0$，回到中心 $F$ 分布；当 $H_1$ 成立时，$\theta > 0$，$F$ 分布向右偏移，偏移程度由 $\theta$ 刻画。这解释了为什么 $F$ 检验在 $H_0$ 不成立时倾向于取更大的值。
+\end{example}
+
+\section{9.4 Multiple Comparisons}\label{sec:9.4}
+
+当 one-way ANOVA 的 $F$ 检验拒绝了 $H_0$ 后，我们自然想知道：\textbf{具体哪些组之间存在显著差异？} 这就是\textbf{多重比较问题（Multiple Comparison Problem，MCP）}。
+
+\subsection{问题的核心矛盾}
+
+对 $b$ 个总体，若进行所有 $\binom{b}{2}$ 个成对比较，即使每个置信区间的置信水平为 $95\%$，整体的置信水平也会急剧下降。举例来说，若 $b = 5$，则共有 $10$ 个成对比较，每个比较犯错的概率为 $5\%$，至少有一次犯错的概率粗略估计为 $1 - (0.95)^{10} \approx 40\%$。
+
+因此，我们需要专门设计的方法来\textbf{控制族误差率（Family-Wise Error Rate，FWER）}——即在所有比较中至少有一次犯错的概率。
+
+\subsection{Bonferroni 方法}
+
+Bonferroni 方法基于一个简单的不等式：对 $k$ 个参数 $\theta_i$，若每个区间 $I_i$ 的置信水平为 $1-\alpha$，则
+\[
+P(\text{所有 } \theta_i \in I_i) \geq 1 - k\alpha.
+\label{eq:bonferroni-inequality}
+\]
+
+\textbf{核心思想}：将每个区间的置信水平从 $1-\alpha$ 调整为 $1-\alpha/k$，则整体的置信水平至少为 $1-\alpha$。
+
+对 one-way ANOVA，成对差值 $\mu_j - \mu_{j'}$ 的 Bonferroni 置信区间为：
+\[
+\bar{X}_{.j} - \bar{X}_{.j'} \pm t_{\alpha/(2k),\ n-b}\ \hat{\sigma}_\Omega \sqrt{\frac{1}{n_j} + \frac{1}{n_{j'}}}.
+\label{eq:bonferroni-ci}
+\]
+
+\textbf{优点}：通用性强，适用于任何成对比较。
+\textbf{缺点}：比较数量 $k$ 越大，区间越宽，精度损失越大。
+
+\subsection{Tukey 方法}
+
+Tukey 方法利用\textbf{学生化极差分布（Studentized range distribution）}，专为 balanced 设计的成对比较设计。
+
+当所有组样本容量相等（$n_j = a$，$j = 1, \ldots, b$）时，所有成对比较的\textbf{同时置信区间}为：
+\[
+\bar{X}_{.j} - \bar{X}_{.j'} \pm q_{1-\alpha,\ b,\ n-b}\ \frac{\hat{\sigma}_\Omega}{\sqrt{a}},\quad \forall j \neq j'.
+\label{eq:tukey-ci}
+\]
+其中 $q_{1-\alpha,\ b,\ n-b}$ 是自由度为 $b$ 和 $n-b$ 的学生化极差分布分位数。
+
+对于 unbalanced 情形，使用 Tukey-Kramer 修正：
+\[
+\bar{X}_{.j} - \bar{X}_{.j'} \pm \frac{q_{1-\alpha,\ b,\ n-b}}{\sqrt{2}}\ \hat{\sigma}_\Omega \sqrt{\frac{1}{n_j} + \frac{1}{n_{j'}}}.
+\label{eq:tukey-kramer-ci}
+\]
+
+\begin{example}[赛车速度比较]\label{ex:car-speed-tukey}
+Kitchens（1997）报告了一项实验：比较五种汽车（Acura, Ferrari, Lotus, Porsche, Viper）的最高速度。每种车进行 6 次运行测试。整体 $F$ 检验高度显著（$F = 25.15$，$p \approx 0$）。Tukey 多重比较结果表明：Ferrari 和 Porsche 的平均速度显著快于其他三种车，但 Ferrari 与 Porsche 之间速度差异不显著。
+\end{example}
+
+\subsection{Fisher 的保护 LSD 方法}
+
+Fisher 方法是一个两步程序：
+\begin{enumerate}
+\item 首先进行整体 $F$ 检验；若拒绝 $H_0$，
+\item 再使用标准的成对 $t$ 置信区间（置信水平 $1-\alpha$）。
+\end{enumerate}
+
+Fisher 方法不保证整体覆盖率为 $1-\alpha$，但 $F$ 检验提供了"保护"。模拟研究表明它在功效和实际误差率方面表现良好。
+
+\section{9.5 Two-Way ANOVA}\label{sec:9.5}
+
+\subsection{双因素实验的引入}
+
+在实际研究中，我们常常需要同时考虑两个因素对结果的影响。例如：
+\begin{itemize}
+\item 作物产量：同时受品种（因素 A）和肥料类型（因素 B）的影响
+\item 考试成绩：同时受教学方法（因素 A）和班级规模（因素 B）的影响
+\end{itemize}
+
+这就是\textbf{双因素方差分析（two-way ANOVA）}。
+
+设因素 A 有 $a$ 个水平，因素 B 有 $b$ 个水平，每个组合有一个观测值 $X_{ij}$。模型为：
+\[
+X_{ij} = \mu + \alpha_i + \beta_j + e_{ij},\quad i = 1,\ldots,a,\ j = 1,\ldots,b,
+\label{eq:two-way-additive-model}
+\]
+其中 $e_{ij} \sim N(0, \sigma^2)$ iid，且 $\sum_{i=1}^a \alpha_i = 0$，$\sum_{j=1}^b \beta_j = 0$。
+
+\textbf{可加模型（additive model）}意味着两个因素的影响是相互独立的——因素 A 的效应不随因素 B 的水平变化。
+
+\begin{table}[H]
+\centering
+\caption{双因素可加模型的单元格均值示例（$a=2$, $b=3$）}\label{tab:two-way-additive}
+\begin{tabular}{c|ccc}
+ & \textbf{B=1} & \textbf{B=2} & \textbf{B=3} \\
+\hline
+\textbf{A=1} & 7 & 6 & 5 \\
+\textbf{A=2} & 5 & 4 & 3 \\
+\hline
+\end{tabular}
+\end{table}
+
+在可加模型中，行均值轮廓线是\textbf{平行的}——这是可加模型的重要特征。
+
+\subsection{假设检验}
+
+我们需要检验两个主效应假设：
+\[
+H_{0A}: \alpha_1 = \cdots = \alpha_a = 0 \quad \text{vs} \quad H_{1A}: \text{某些 } \alpha_i \neq 0,
+\label{eq:two-way-H0A}
+\]
+\[
+H_{0B}: \beta_1 = \cdots = \beta_b = 0 \quad \text{vs} \quad H_{1B}: \text{某些 } \beta_j \neq 0.
+\label{eq:two-way-H0B}
+\]
+
+检验 $H_{0B}$ 的 $F$ 统计量：
+\[
+F_B = \frac{a\sum_{j=1}^b (\bar{X}_{.j} - \bar{X}_{..})^2 / (b-1)}
+{\sum_{i=1}^a \sum_{j=1}^b (X_{ij} - \bar{X}_{i.} - \bar{X}_{.j} + \bar{X}_{..})^2 / [(a-1)(b-1)]}.
+\label{eq:two-way-FB}
+\]
+在 $H_{0B}$ 下，$F_B \sim F(b-1,\ (a-1)(b-1))$。
+
+类似地，检验 $H_{0A}$ 的 $F$ 统计量 $F_A \sim F(a-1,\ (a-1)(b-1))$。
+
+\subsection{9.5.1 Interaction between Factors}\label{sec:9.5.1}
+
+\textbf{交互效应}发生在：一个因素的影响程度取决于另一个因素的水平时。
+
+在模型中引入交互参数 $\gamma_{ij}$：
+\[
+\mu_{ij} = \mu + \alpha_i + \beta_j + \gamma_{ij},
+\label{eq:two-way-interaction-model}
+\]
+其中 $\sum_i \gamma_{ij} = \sum_j \gamma_{ij} = 0$。
+
+若所有 $\gamma_{ij} = 0$，则回到可加模型；若存在非零 $\gamma_{ij}$，则两个因素之间存在\textbf{交互作用}。
+
+\textbf{图形诊断}：在双因素实验中，绘制各行（因素 A 各水平）的均值轮廓线。若线条大致平行，则交互作用不明显；若线条明显交叉或分离，则表明存在交互效应。
+
+\begin{example}[沥青混合料热导率]\label{ex:asphalt-conductivity}
+Devore（2012，第 435 页）研究了两个因素对沥青混合料热导率的影响：粘结剂等级（PG58, PG64, PG70）和粗骨料含量（38\%, 41\%, 44\%）。每个处理组合有 2 次重复。
+
+R 分析结果：交互效应不显著（$p = 0.4135$），但两个主效应都非常显著（$p = 0.0017$ 和 $p < 10^{-5}$）。因此接受可加模型，两个因素独立地影响热导率。
+\end{example}
+
+\section{9.6 A Regression Problem}\label{sec:9.6}
+
+\subsection{为什么研究回归？}
+
+ANOVA 研究的是类别型（categorical）自变量对因变量的影响。但在许多实际问题中，自变量是连续型的。例如：
+\begin{itemize}
+\item 学生的学习时间（连续）$\to$ 考试成绩
+\item 汽车的发动机排量（连续）$\to$ 每加仑行驶里程
+\item 农作物的施肥量（连续）$\to$ 作物产量
+\end{itemize}
+
+这就引出了\textbf{回归分析（regression analysis）}——研究自变量（通常记作 $x$）与因变量 $Y$ 之间关系的方法。
+
+\textbf{线性模型}：假设 $\mathbb{E}(Y) = \mu(x)$ 是 $x$ 的线性函数——
+\[
+Y_i = \alpha + \beta(x_i - \bar{x}) + e_i,\quad i = 1, \ldots, n,
+\label{eq:regression-model}
+\]
+其中 $e_i \sim N(0, \sigma^2)$ iid。
+
+\textbf{为什么假设 $x$ 是已知的非随机变量？} 这是为了简化分析——我们把不确定性全部放在 $Y$ 上。在实际中，如果 $x$ 也是随机的，则需要联合分布建模；但在受控实验或观测研究中，将 $x$ 视为固定设计点是合理的近似。
+
+\textbf{线性模型 vs 非线性模型}：这里"线性"指的是对参数（$\alpha, \beta$）线性，而非对 $x$ 线性。因此 $\alpha + \beta x + \gamma x^2$ 仍是线性模型，而 $\alpha e^{\beta x}$ 不是。
+
+\subsection{9.6.1 Maximum Likelihood Estimates}\label{sec:9.6.1}
+
+对模型 \eqref{eq:regression-model}，似然函数为
+\[
+L(\alpha, \beta, \sigma^2) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left\{-\frac{[Y_i - \alpha - \beta(x_i - \bar{x})]^2}{2\sigma^2}\right\}.
+\label{eq:regression-likelihood}
+\]
+
+最大化似然等价于最小化
+\[
+H(\alpha, \beta) = \sum_{i=1}^n [Y_i - \alpha - \beta(x_i - \bar{x})]^2.
+\label{eq:regression-ls}
+\]
+这正是\textbf{最小二乘法（least squares）}——选择使残差平方和最小的 $\alpha, \beta$。
+
+\textbf{几何直观}：$|Y_i - \alpha - \beta(x_i - \bar{x})|$ 是点 $(x_i, Y_i)$ 到直线 $y = \alpha + \beta(x - \bar{x})$ 的垂直距离。最小二乘法就是找到使所有这些距离平方和最小的直线。
+
+MLE 的解：
+\[
+\hat{\alpha} = \bar{Y},
+\label{eq:regression-alpha-hat}
+\]
+\[
+\hat{\beta} = \frac{\sum_{i=1}^n (Y_i - \bar{Y})(x_i - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}
+= \frac{\sum_{i=1}^n Y_i(x_i - \bar{x})}{\sum_{i=1}^n (x_i - \bar{x})^2}.
+\label{eq:regression-beta-hat}
+\]
+
+$\hat{\sigma}^2$ 的 MLE：
+\[
+\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n [Y_i - \hat{\alpha} - \hat{\beta}(x_i - \bar{x})]^2.
+\label{eq:regression-sigma-hat}
+\]
+
+\textbf{拟合值与残差}：
+\[
+\hat{Y}_i = \hat{\alpha} + \hat{\beta}(x_i - \bar{x}),\quad
+\hat{e}_i = Y_i - \hat{Y}_i.
+\label{eq:regression-fitted}
+\]
+
+\textbf{估计量的分布}：可以证明
+\[
+\begin{pmatrix} \hat{\alpha} \\ \hat{\beta} \end{pmatrix}
+\sim N_2\left(
+\begin{pmatrix} \alpha \\ \beta \end{pmatrix},
+\sigma^2
+\begin{pmatrix}
+\frac{1}{n} & 0 \\
+0 & \frac{1}{\sum_{i=1}^n (x_i - \bar{x})^2}
+\end{pmatrix}
+\right).
+\label{eq:regression-joint-dist}
+\]
+
+\begin{example}[男子 1500 米奥运会成绩]\label{ex:olympic-1500m}
+考虑 27 届奥运会男子 1500 米冠军成绩与年份的关系。年份为自变量 $x$，时间为因变量 $Y$。
+
+R 拟合结果：$\hat{y} = 12.33 - 0.0044 \times \text{year}$。斜率的 $95\%$ 置信区间为 $(-0.00547,\ -0.00328)$——这意味着每年获胜时间平均减少约 0.004 分钟（约 0.24 秒）。对 2020 年奥运会的预测时间约为 3.486 分钟。
+\end{example}
+
+\textbf{残差图诊断}：在回归分析中，绘制残差 $\hat{e}_i$ vs 拟合值 $\hat{Y}_i$ 的散点图。如果图呈现随机散布，说明模型是合理的；如果出现系统模式（如 U 形、漏斗形），则提示模型设定有问题（如遗漏非线性项、异方差等）。
+
+\subsection{9.6.2 *Geometry of the Least Squares Fit}\label{sec:9.6.2}
+
+最小二乘拟合有一个优美的几何解释。
+
+将数据写成向量形式 $\mathbf{Y} = (Y_1, \ldots, Y_n)'$，设计矩阵 $\mathbf{X}$ 的列为 $\mathbf{1}$ 和 $\mathbf{x}_c = (x_1 - \bar{x}, \ldots, x_n - \bar{x})'$。模型为
+\[
+\mathbf{Y} = \mathbf{X}\boldsymbol{\beta} + \mathbf{e},\quad \mathbf{e} \sim N(\mathbf{0}, \sigma^2\mathbf{I}).
+\label{eq:regression-matrix-model}
+\]
+
+设 $V$ 为 $\mathbf{X}$ 列张成的 $\mathbb{R}^n$ 中的二维子空间（拟合空间）。最小二乘估计 $\hat{\boldsymbol{\theta}} = \mathbf{X}\hat{\boldsymbol{\beta}}$ 正是 $\mathbf{Y}$ 在子空间 $V$ 上的\textbf{正交投影}——即使得 $\|\mathbf{Y} - \boldsymbol{\theta}\|^2$ 最小的 $V$ 中元素。
+
+几何分解：
+\[
+\|\mathbf{Y}\|^2 = \|\hat{\boldsymbol{\theta}}\|^2 + \|\hat{\mathbf{e}}\|^2,
+\]
+其中 $\hat{\mathbf{e}} = \mathbf{Y} - \hat{\boldsymbol{\theta}}$ 是残差向量，且 $\hat{\boldsymbol{\theta}} \perp \hat{\mathbf{e}}$（残差与拟合空间正交）。这正是 ANOVA 中平方和分解的几何版本。
+
+\section{9.7 A Test of Independence}\label{sec:9.7}
+
+在许多应用中，我们需要检验两个连续变量 $X$ 和 $Y$ 是否独立。对于二元正态分布，$X$ 和 $Y$ 独立当且仅当它们的相关系数 $\rho = 0$。因此我们检验：
+\[
+H_0: \rho = 0 \quad \text{vs} \quad H_1: \rho \neq 0.
+\label{eq:independence-hypotheses}
+\]
+
+\textbf{样本相关系数}：
+\[
+R = \frac{\sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})}
+{\sqrt{\sum_{i=1}^n (X_i - \bar{X})^2 \cdot \sum_{i=1}^n (Y_i - \bar{Y})^2}}.
+\label{eq:sample-correlation}
+\]
+
+\textbf{关键定理}：在 $H_0$ 下（即 $\rho = 0$ 时），$R$ 的分布不依赖于 $X$ 的具体分布——只要 $X$ 与 $Y$ 独立，$R$ 的分布在正态情况下就有上式 \eqref{eq:noncentral-chisq-mgf} 给出的精确形式。特别是，
+\[
+T = \frac{R\sqrt{n-2}}{\sqrt{1-R^2}} \sim t(n-2).
+\label{eq:correlation-t-stat}
+\]
+
+因此，$H_0$ 的拒绝域为 $|T| \geq t_{\alpha/2,\ n-2}$，或等价地 $|R| \geq c$。
+
+\textbf{Remark 的深层含义}：$R$ 的条件分布（在给定 $X_1, \ldots, X_n$ 下）不依赖于 $X_i$ 的具体值，这意味着 $R$ 与所有仅依赖于 $X$ 的统计量独立。这是一个非常优雅的性质——样本相关系数在 $\rho = 0$ 时"不受" $X$ 取值的影响。
+
+\section{9.8 Distributions of Certain Quadratic Forms}\label{sec:9.8}
+
+前几节的分析依赖于一个共同的理论支柱：某些二次型服从 $\chi^2$ 分布，且它们相互独立。本节和下一节建立这一理论的严格基础。
+
+设 $\mathbf{X}' = (X_1, \ldots, X_n)$，其中 $X_i \sim N(\mu_i, \sigma^2)$ iid。二次型 $Q = \sigma^{-2}\mathbf{X}'\mathbf{A}\mathbf{X}$ 的 mgf 为：
+\[
+M_Q(t) = \frac{1}{(1-2t)^{n/2}} \exp\left\{\frac{t\sum_{i=1}^n \mu_i^2}{\sigma^2(1-2t)}\right\}.
+\label{eq:quadratic-form-mgf}
+\]
+
+特别地，若 $\mathbf{A}$ 是对称幂等矩阵（$\mathbf{A}^2 = \mathbf{A}$），则 $Q \sim \chi^2(r, \theta)$，其中 $r = \mathrm{tr}(\mathbf{A}) = \mathrm{rank}(\mathbf{A})$，$\theta = \boldsymbol{\mu}'\mathbf{A}\boldsymbol{\mu}/\sigma^2$。若进一步 $\boldsymbol{\mu} = \mu\mathbf{1}$ 且 $\sum_{i,j}a_{ij} = 0$，则 $\theta = 0$，$Q$ 为中心 $\chi^2(r)$。
+
+\textbf{Cochran 定理的特例}：若 $Q_1, \ldots, Q_k$ 是相互独立的 $\chi^2$ 变量之和，且 $\sum \mathrm{rank}(Q_i) = n$，则各 $Q_i$ 独立。
+
+\section{9.9 The Independence of Certain Quadratic Forms}\label{sec:9.9}
+
+最后一个理论工具：Craig 定理，给出了两个二次型独立的充要条件。
+
+\begin{theorem[Craig]\label{th:craig-theorem
+设 $\mathbf{X} \sim N(\mathbf{0}, \sigma^2\mathbf{I})$。对对称矩阵 $\mathbf{A}, \mathbf{B}$，令
+\[
+Q_1 = \sigma^{-2}\mathbf{X}'\mathbf{A}\mathbf{X},\quad Q_2 = \sigma^{-2}\mathbf{X}'\mathbf{B}\mathbf{X}.
+\]
+则 $Q_1$ 与 $Q_2$ 独立当且仅当 $\mathbf{A}\mathbf{B} = \mathbf{0}$。
+\end{theorem
+
+这个定理在 ANOVA 中有重要应用：在 one-way ANOVA 中，组间平方和 $Q_4$（对应某个幂等矩阵）与组内平方和 $Q_3$（对应另一个幂等矩阵）满足 $\mathbf{A}\mathbf{B} = \mathbf{0}$，因此独立——这正是 $F$ 检验的理论基础。
+
+推论：在回归模型中，拟合值的二次型与残差的二次型相互独立，反映了"被解释的变异"与"未被解释的变异"之间的正交性。
+
+\section*{习题}\label{sec:exercises-ch9}
+
+\begin{exercise}{\ref{exr:9.2.1} $T^2$ 与 $F$ 统计量的关系 – Hogg 9.2.1}\label{exr:9.2.1}
+考虑在例 8.3.1 中通过似然比检验推导出的 $T$ 统计量，用于检验两个具有公共方差的正态分布均值的相等性。证明 $T^2$ 恰好是表达式 (9.2.11) 中的 $F$ 统计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.2} 线性函数的不相关性 – Hogg 9.2.2}\label{exr:9.2.2}
+在模型 (9.2.1) 下，证明线性函数 $X_{ij} - \overline{X}_{.j}$ 与 $\overline{X}_{.j} - \overline{X}_{..}$ 不相关。
+
+\textbf{提示}: 回忆 $\overline{X}_{.j}$ 和 $\overline{X}_{..}$ 的定义，不失一般性地设 $E(X_{ij}) = 0$ 对所有 $i,j$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.3} One-Way ANOVA 数据计算 – Hogg 9.2.3}\label{exr:9.2.3}
+考虑来自三个正态分布的独立随机样本，它们具有相等方差及 respective means $\mu_1, \mu_2, \mu_3$。数据如下：
+
+\begin{tabular}{ccc}
+I & II & III \\
+\hline
+0.5 & 2.1 & 3.0 \\
+1.3 & 3.3 & 5.1 \\
+-1.0 & 0.0 & 1.9 \\
+1.8 & 2.3 & 2.4 \\
+ & 2.5 & 4.2 \\
+ &  & 4.1
+\end{tabular}
+
+使用 R 或其他统计软件，计算用于检验 $H_0: \mu_1 = \mu_2 = \mu_3$ 的 $F$ 统计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.4} 样本方差的分解 – Hogg 9.2.4}\label{exr:9.2.4}
+设 $X_1, X_2, \ldots, X_n$ 是来自正态分布 $N(\mu, \sigma^2)$ 的随机样本。证明
+
+\[
+\sum_{i=1}^n (X_i - \overline{X})^2 = \sum_{i=2}^n (X_i - \overline{X}')^2 + \frac{n-1}{n}(X_1 - \overline{X}')^2,
+\]
+
+其中 $\overline{X} = \sum_{i=1}^n X_i / n$ 且 $\overline{X}' = \sum_{i=2}^n X_i / (n-1)$。
+
+\textbf{提示}: 将 $X_i - \overline{X}$ 替换为 $(X_i - \overline{X}') - (X_1 - \overline{X}')/n$。证明 $\sum_{i=2}^n (X_i - \overline{X}')^2 / \sigma^2$ 服从自由度为 $n-2$ 的卡方分布。证明右边两项独立。下列统计量的分布是什么？
+
+\[
+\frac{[(n-1)/n](X_1 - \overline{X}')^2}{\sigma^2}?
+\]
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.5} MLE 与平方和分解 – Hogg 9.2.5}\label{exr:9.2.5}
+使用本节的记号，假设均值满足条件 $\mu = \mu_1 + (b-1)d = \mu_2 - d = \mu_3 - d = \dots = \mu_b - d$。即最后 $b-1$ 个均值相等但与第一个均值 $\mu_1$ 不同（假设 $d \neq 0$）。从 $b$ 个具有公共未知方差 $\sigma^2$ 的正态分布中分别抽取容量为 $a$ 的独立随机样本。
+
+(a) 证明 $\mu$ 和 $d$ 的最大似然估计量分别是 $\hat{\mu} = \overline{X}_{..}$ 和
+
+\[
+\hat{d} = \frac{\sum_{j=2}^b \overline{X}_{.j}/(b-1) - \overline{X}_{.1}}{b}.
+\]
+
+(b) 使用练习 9.2.4，求 $Q_6$ 和 $Q_7 = c\hat{d}^2$，使得当 $d=0$ 时，$Q_7/\sigma^2 \sim \chi^2(1)$，且
+
+\[
+\sum_{i=1}^a \sum_{j=1}^b (X_{ij} - \overline{X}_{..})^2 = Q_3 + Q_6 + Q_7.
+\]
+
+(c) 论证当 $d=0$ 时，右边的三项除以 $\sigma^2$ 后是相互独立的卡方分布随机变量。
+
+(d) $Q_7/(Q_3+Q_6)$ 乘以什么常数在 $d=0$ 时服从 $F$ 分布？注意，这个 $F$ 实际上就是用于检验第一个分布的均值与后 $b-1$ 个分布合并后的公共均值相等的双样本 $T$ 的平方。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.6} LDL 胆固醇水平 ANOVA 分析 – Hogg 9.2.6}\label{exr:9.2.6}
+一项研究比较了四种药物对 LDL（低密度脂蛋白）胆固醇水平的影响。数据记录在文件 quailldl.rda 中。
+
+(a) 绘制 LDL 水平的比较箱线图。哪种药物似乎导致更低的 LDL 水平？识别数据中的异常值（按观测号）。
+
+(b) 计算所有四种药物的 LDL 均值相等的 $F$ 检验。报告 $F$ 检验统计量和 p 值。使用显著性水平 0.05 就问题给出结论。使用例 9.2.1 中的 R 代码。
+
+(c) (b) 中的结论与 (a) 中的箱线图一致吗？
+
+(d) 注意，$F$ 检验的一个假设是模型 (9.2.1) 中的随机误差 $e_{ij}$ 服从正态分布。$e_{ij}$ 的估计量是 $x_{ij} - \overline{x}_{.j}$，这些称为残差，即全模型拟合后剩余的部分。计算这些残差，然后获取它们的直方图、箱线图和正态 Q-Q 图。评价正态性假设。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.7} One-Way ANOVA 假设检验 – Hogg 9.2.7}\label{exr:9.2.7}
+设 $\mu_1, \mu_2, \mu_3$ 分别为三个正态分布的均值，它们具有公共未知方差 $\sigma^2$。为在显著性水平 $\alpha = 0.05$ 下检验假设 $H_0: \mu_1 = \mu_2 = \mu_3$ 对所有可能备择假设，从每个分布中抽取容量为 4 的独立随机样本。若观测值分别为：
+
+\[
+X_1: \quad 5 \quad 9 \quad 6 \quad 8
+\]
+
+\[
+X_2: \quad 11 \quad 13 \quad 10 \quad 12
+\]
+
+\[
+X_3: \quad 10 \quad 6 \quad 9 \quad 9
+\]
+
+判断是否拒绝 $H_0$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.2.8} 柴油燃料品牌 mpg 比较 – Hogg 9.2.8}\label{exr:9.2.8}
+一位柴油汽车司机根据 mpg 测试三种柴油燃料的质量。使用以下数据检验三个均值相等的原假设。做通常的假设并取 $\alpha = 0.05$。
+
+Brand A: 38.7 39.2 40.1 38.9
+
+Brand B: 41.9 42.3 41.3
+
+Brand C: 40.8 41.2 39.5 38.9 40.3
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.3.1} 非中心 $\chi^2$ 分布的可加性 – Hogg 9.3.1}\label{exr:9.3.1}
+设 $Y_i$，$i = 1, 2, \ldots, n$，是相互独立的随机变量，分别服从 $\chi^2(r_i, \theta_i)$，$i = 1, 2, \dots, n$。证明 $Z = \sum_{i=1}^n Y_i$ 服从 $\chi^2\left(\sum_{i=1}^n r_i, \sum_{i=1}^n \theta_i\right)$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.3.2} 非中心 $\chi^2$ 分布的方差 – Hogg 9.3.2}\label{exr:9.3.2}
+计算服从非中心 $\chi^2(r, \theta)$ 分布的随机变量的方差。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.3.3} 非中心性参数的计算与检验功效 – Hogg 9.3.3}\label{exr:9.3.3}
+考虑 one-way ANOVA 问题，其中各组样本容量相等（$n_j = m$，$j = 1, \ldots, b$），且各组均值满足模式：$\mu_1 = \mu + 2d$，$\mu_2 = \mu_3 = \dots = \mu_b = \mu - d$。
+
+(a) 确定上述均值模式下的非中心性参数。\footnote{答案：$\theta = 5md/3$，当 $\sigma^2 = 1$。}
+
+(b) 使用 R 函数 \texttt{pf} 确定 $F$ 检验在 $m = 5$ 和 $m = 10$ 时检测该均值模式的功效。\footnote{答案：对于 $m=5$：功效 = 0.6174；对于 $m=10$：功效 = 0.9421。}
+
+(c) 确定检测功效至少为 0.80 的最小 $m$ 值。\footnote{答案：$m = 7$。}
+
+(d) 如果 $\sigma^2 = 40$，回答 (a)-(c)。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.3.4} 非中心 $T$ 与非中心 $F$ 的关系 – Hogg 9.3.4}\label{exr:9.3.4}
+证明非中心 $T$ 随机变量的平方是非中心 $F$ 随机变量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.3.5} 非中心 $\chi^2$ 分布的差 – Hogg 9.3.5}\label{exr:9.3.5}
+设 $X_1$ 和 $X_2$ 是两个独立的随机变量。设 $X_1 \sim \chi^2(r_1, \theta_1)$，$Y = X_1 + X_2 \sim \chi^2(r, \theta)$，其中 $r_1 < r$ 且 $\theta_1 \leq \theta$。证明 $X_2 \sim \chi^2(r - r_1, \theta - \theta_1)$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.1} Bonferroni 多重比较程序 – Hogg 9.4.1}\label{exr:9.4.1}
+对于练习 9.2.8 中讨论的研究，使用 $\alpha = 0.10$ 获取 Bonferroni 多重比较程序的结果。基于此程序，哪个品牌的燃料（如果有的话）显著最好？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.2} Tukey-Kramer 程序 – Hogg 9.4.2}\label{exr:9.4.2}
+对于练习 9.2.6 中讨论的研究，计算 Tukey-Kramer 程序。是否存在显著差异？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.3} Bonferroni 与 Fisher 多重比较方法 – Hogg 9.4.3}\label{exr:9.4.3}
+假设 $X$ 和 $Y$ 是离散随机变量，它们具有共同的范围 $\{1, 2, \ldots, k\}$。设 $p_{1j}$ 和 $p_{2j}$ 分别是 $P(X = j)$ 和 $P(Y = j)$ 的相应概率。
+
+(a) 确定执行所有这些比较的 Bonferroni 方法。
+
+(b) 确定执行所有这些比较的 Fisher 方法。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.4} 列联表的多重比较 – Hogg 9.4.4}\label{exr:9.4.4}
+假设练习 9.4.3 中的样本产生了以下列联表：
+
+\begin{tabular}{c|cccccccccc}
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$x$ & 20 & 31 & 56 & 18 & 45 & 55 & 47 & 78 & 56 & 81 \\
+$y$ & 36 & 41 & 65 & 15 & 38 & 78 & 18 & 72 & 59 & 85
+\end{tabular}
+
+为计算（用 R）下面的置信区间，使用命令 \texttt{prop.test}（见例 4.2.5）。
+
+(a) 基于所有 10 个比较的 Bonferroni 程序，计算 $p_{16} - p_{26}$ 的置信区间。
+
+(b) 基于所有 10 个比较的 Fisher 程序，计算 $p_{16} - p_{26}$ 的置信区间。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.5} Fisher 程序的 R 函数 – Hogg 9.4.5}\label{exr:9.4.5}
+编写一个 R 函数，计算练习 9.4.3 中的 Fisher 程序。用练习 9.4.4 的数据验证它。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.4.6} 同时检验的 Bonferroni 程序推广 – Hogg 9.4.6}\label{exr:9.4.6}
+将 Bonferroni 程序推广到同时检验。即，假设我们有 $m$ 个感兴趣的原假设：$H_{0i}$ 对 $H_{1i}$，$i = 1, \ldots, m$。对于检验 $H_{0i}$ 对 $H_{1i}$，设 $C_{i,\alpha}$ 是大小为 $\alpha$ 的临界域，并假设如果样本 $\mathbf{X}_i \in C_{i,\alpha}$，则拒绝 $H_{0i}$。确定一个规则，使我们能够同时检验这 $m$ 个假设，且第一类错误率不超过 $\alpha$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.1} 两因素可加模型平方和分解 – Hogg 9.5.1}\label{exr:9.5.1}
+考虑一个双因素实验，其中因素 A 有 2 个水平，因素 B 有 3 个水平。设 $\mu = 5$，$\alpha_1 = 1$，$\alpha_2 = -1$，$\beta_1 = 1$，$\beta_2 = 0$，$\beta_3 = -1$。回答以下问题：
+
+(a) 写出单元格均值 $\mu_{ij}$ 的表格。
+
+(b) 绘制均值轮廓图（mean profile plot）。
+
+(c) 若交互效应存在，轮廓图会有什么特征？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.2} MLE 的分布 – Hogg 9.5.2}\label{exr:9.5.2}
+考虑表达式 (9.5.14) 之前的讨论。证明随机变量 $\sqrt{a}\overline{X}_{.1}, \ldots, \sqrt{a}\overline{X}_{.b}$ 是相互独立的，且服从公共的 $N(\sqrt{a}\overline{\mu}, \sigma^2)$ 分布。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.3} 交互效应的非中心性参数 – Hogg 9.5.3}\label{exr:9.5.3}
+对于双因素交互模型 (9.5.15)，证明检验统计量 $F_{AB}$ 的非中心性参数等于 $c\sum_{j=1}^b \sum_{i=1}^a \gamma_{ij}^2 / \sigma^2$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.4} 单观测值单元的 MLE 分布 – Hogg 9.5.4}\label{exr:9.5.4}
+使用双因素分类（每单元一观测值）的背景，确定 $\alpha_i$、$\beta_j$ 和 $\mu$ 的最大似然估计量的分布。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.5} 线性函数的不相关性 – Hogg 9.5.5}\label{exr:9.5.5}
+证明在线性函数 $X_{ij} - \overline{X}_{i\cdot} - \overline{X}_{\cdot j} + \overline{X}_{\cdot \cdot}$ 与 $\overline{X}_{\cdot j} - \overline{X}_{\cdot \cdot}$ 在本节的假设下是不相关的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.6} 双因素分类的 $F$ 检验计算 – Hogg 9.5.6}\label{exr:9.5.6}
+给定以下与双因素分类相关的观测值，其中 $a = 3$，$b = 4$，使用 R 或其他统计软件计算用于检验列均值相等（$\beta_1 = \beta_2 = \beta_3 = \beta_4 = 0$）和行均值相等（$\alpha_1 = \alpha_2 = \alpha_3 = 0$）的 $F$ 统计量。
+
+\begin{tabular}{c|cccc}
+行/列 & 1 & 2 & 3 & 4 \\
+\hline
+1 & 3.1 & 4.2 & 2.7 & 4.9 \\
+2 & 2.7 & 2.9 & 1.8 & 3.0 \\
+3 & 4.0 & 4.6 & 3.0 & 3.9
+\end{tabular}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.7} 多观测值单元的 MLE 分布 – Hogg 9.5.7}\label{exr:9.5.7}
+在每单元有 $c > 1$ 个观测值的双因素分类背景下，确定 $\alpha_i$、$\beta_j$ 和 $\gamma_{ij}$ 的最大似然估计量的分布。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.8} 含交互效应的双因素分类 $F$ 检验 – Hogg 9.5.8}\label{exr:9.5.8}
+给定以下在双因素分类中的观测值，其中 $a = 3$，$b = 4$，$c = 2$，计算用于检验所有交互效应为零（$\gamma_{ij} = 0$）、所有列均值相等（$\beta_j = 0$）和所有行均值相等（$\alpha_i = 0$）的 $F$ 统计量。数据形式为 $x_{ijk}$，$i$、$j$ 在数据集 sec951.rda 中。
+
+\begin{tabular}{c|cccc}
+行/列 & 1 & 2 & 3 & 4 \\
+\hline
+1 & 3.1 & 4.2 & 2.7 & 4.9 \\
+  & 2.9 & 4.9 & 3.2 & 4.5 \\
+\hline
+2 & 2.7 & 2.9 & 1.8 & 3.0 \\
+  & 2.9 & 2.3 & 2.4 & 3.7 \\
+\hline
+3 & 4.0 & 4.6 & 3.0 & 3.9 \\
+  & 4.4 & 5.0 & 2.5 & 4.2
+\end{tabular}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.9} 可加模型的均值轮廓图 – Hogg 9.5.9}\label{exr:9.5.9}
+对于可加模型 (9.5.1)，证明均值轮廓图是平行的。样本均值轮廓图通过绘制 $\overline{X}_{ij}$ 对 $j$（对每个 $i$）得到。这些提供了检测交互效应的图形诊断。为上一道练习获取这些图。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.10} 随机区组设计的双因素 ANOVA – Hogg 9.5.10}\label{exr:9.5.10}
+考虑一个随机区组设计，其中处理（A）有 3 个水平，区组（B）有 5 个水平。数据如下：
+
+\begin{tabular}{c|ccccc}
+ & \multicolumn{5}{c}{区组} \\
+处理 & B1 & B2 & B3 & B4 & B5 \\
+\hline
+A1 & 52 & 47 & 44 & 51 & 42 \\
+A2 & 60 & 55 & 49 & 52 & 43 \\
+A3 & 56 & 48 & 45 & 44 & 38
+\end{tabular}
+
+(a) 使用 5\% 的显著性水平，检验 $H_A: \alpha_1 = \alpha_2 = \alpha_3 = 0$ 对所有备择假设。
+
+(b) 使用 5\% 的显著性水平，检验 $H_B: \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0$ 对所有备择假设。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.5.11} 双因素模型参数分解 – Hogg 9.5.11}\label{exr:9.5.11}
+设 $a = 3$、$b = 4$，如果 $\mu_{ij}$（$i = 1, 2, 3$ 和 $j = 1, 2, 3, 4$）由下表给出，求 $\mu$、$\alpha_i$、$\beta_j$ 和 $\gamma_{ij}$：
+
+\begin{tabular}{cccc}
+6 & 7 & 7 & 12 \\
+10 & 3 & 11 & 8 \\
+8 & 5 & 9 & 10
+\end{tabular}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.1} 回归系数 $\alpha^*$ 的最小二乘估计 – Hogg 9.6.1}\label{exr:9.6.1}
+通过最小化表达式 (9.6.11) 给出的平方和，得到模型 $y_i = \alpha^* + \beta x_i + e_i$ 的最小二乘估计。确定 $\hat{\alpha}^*$ 的分布。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.2} ACT 与微积分成绩的回归分析 – Hogg 9.6.2}\label{exr:9.6.2}
+学生在 ACT 数学考试中的成绩 $x$ 和第一学期微积分期末考试（满分 200 分）的成绩 $y$ 如下：
+
+\begin{tabular}{c|cccccccccc}
+$x$ & 25 & 20 & 26 & 26 & 28 & 28 & 29 & 32 & 20 & 25 \\
+\hline
+$y$ & 138 & 84 & 104 & 112 & 88 & 132 & 90 & 183 & 100 & 143 \\
+\hline
+$x$ & 26 & 28 & 25 & 31 & 30 \\
+\hline
+$y$ & 141 & 161 & 124 & 118 & 168
+\end{tabular}
+
+数据也在 rda 文件 regr1.rda 中。使用 R 或其他统计软件进行计算和绘图。
+
+(a) 计算这些数据的最小二乘回归线。
+
+(b) 在同一图上绘制散点和最小二乘回归线。
+
+(c) 获取残差图并评价模型的适用性。
+
+(d) 求 $\beta$ 的 95\% 置信区间。就问题给出评论。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.3} 电话数据回归分析 – Hogg 9.6.3}\label{exr:9.6.3}
+考虑以下数据。该数据集的响应变量 $y$ 是 1950 年至 1973 年比利时电话通话次数（单位：千万次）。时间（年份）作为预测变量 $x$。数据在文件 telephone.rda 中。
+
+(a) 计算这些数据的最小二乘回归线。
+
+(b) 在同一图上绘制散点和最小二乘回归线。
+
+(c) 最小二乘拟合效果差的原因是什么？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.4} 回归估计量的协方差 – Hogg 9.6.4}\label{exr:9.6.4}
+证明 $\hat{\alpha}$ 与 $\hat{\beta}$ 之间的协方差为零。
+
+\textbf{提示}: 利用 \eqref{eq:regression-beta-hat} 中 $\hat{\beta}$ 的表达式，以及 $\sum_{i=1}^n (x_i - \bar{x}) = 0$ 的性质。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.5} 回归参数的置信区间 – Hogg 9.6.5}\label{exr:9.6.5}
+在模型 \eqref{eq:regression-model} 下，求参数 $\alpha$ 和 $\beta$ 的 $(1-\alpha)100\%$ 置信区间。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.6} 均值估计量的分布与置信区间 – Hogg 9.6.6}\label{exr:9.6.6}
+考虑模型 (9.6.1)。设 $\eta_0 = E(Y|x = x_0 - \overline{x})$。$\eta_0$ 的最小二乘估计量是 $\hat{\eta}_0 = \hat{\alpha} + \hat{\beta}(x_0 - \overline{x})$。
+
+(a) 使用 (9.6.9)，证明 $\hat{\eta}_0$ 是无偏估计量，并证明其方差为
+
+\[
+V(\hat{\eta}_0) = \sigma^2 \left[ \frac{1}{n} + \frac{(x_0 - \overline{x})^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right].
+\]
+
+(b) 获取 $\hat{\eta}_0$ 的分布，并用它来确定 $\eta_0$ 的 $(1-\alpha)100\%$ 置信区间。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.7} 预测区间 – Hogg 9.6.7}\label{exr:9.6.7}
+假设样本 $(x_1, Y_1), \ldots, (x_n, Y_n)$ 服从线性模型 (9.6.1)。设 $Y_0$ 是在 $x = x_0 - \overline{x}$ 处的一个未来观测值，我们想为其确定一个预测区间。假设模型 (9.6.1) 对 $Y_0$ 成立；即 $Y_0 \sim N(\alpha + \beta(x_0 - \overline{x}), \sigma^2)$。我们使用练习 9.6.6 中的 $\hat{\eta}_0$ 作为对 $Y_0$ 的预测。
+
+(a) 获取 $Y_0 - \hat{\eta}_0$ 的分布，证明其方差为：
+
+\[
+V(Y_0 - \hat{\eta}_0) = \sigma^2 \left[ 1 + \frac{1}{n} + \frac{(x_0 - \overline{x})^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right].
+\]
+
+(b) 获取以 $Y_0 - \hat{\eta}_0$ 为分子的 $t$ 统计量。
+
+(c) 现在从 $1 - \alpha = P[-t_{\alpha/2, n-2} < T < t_{\alpha/2, n-2}]$ 开始，其中 $0 < \alpha < 1$，确定 $Y_0$ 的 $(1-\alpha)100\%$ 预测区间。
+
+(d) 将此预测区间与练习 9.6.6 获得的置信区间进行比较。为什么预测区间更大？从直觉上解释。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.8} 奥运会 1500 米成绩的预测区间 – Hogg 9.6.8}\label{exr:9.6.8}
+在例 9.6.1 中，我们得到了 2020 年奥运会男子 1500 米冠军成绩的预测。计算上一道练习中给出的该预测的 95\% 预测区间。这些计算由 R 函数 \texttt{cipi.R} 执行。调用方式是 \texttt{cipi(lm(time$\sim$year), matrix(c(1,2020), ncol=2))}。就问题而言，这个预测区间意味着什么？接下来计算 2024 年和 2028 年奥运会的预测。为什么区间长度在增加？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.9} 回归平方和分解 – Hogg 9.6.9}\label{exr:9.6.9}
+证明以下等式成立：
+
+\[
+\sum_{i=1}^n [Y_i - \alpha - \beta(x_i - \bar{x})]^2 = n(\hat{\alpha} - \alpha)^2 + (\hat{\beta} - \beta)^2 \sum_{i=1}^n (x_i - \bar{x})^2 + \sum_{i=1}^n [Y_i - \hat{\alpha} - \hat{\beta}(x_i - \bar{x})]^2.
+\]
+
+\textbf{提示}: 这本质上是将总平方和分解为拟合平方和与残差平方和。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.14} 简单最小二乘拟合 – Hogg 9.6.14}\label{exr:9.6.14}
+使用最小二乘法拟合 $y = a + x$ 到以下数据：
+
+\begin{tabular}{ccc}
+$x$ & 0 & 1 & 2 \\
+\hline
+$y$ & 1 & 3 & 4
+\end{tabular}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.10} 异方差回归模型的 MLE – Hogg 9.6.10}\label{exr:9.6.10}
+设独立随机变量 $Y_1, Y_2, \ldots, Y_n$ 分别具有概率密度函数 $N(\beta x_i, \gamma^2 x_i^2)$，$i = 1, 2, \ldots, n$，其中给定的数 $x_1, x_2, \ldots, x_n$ 不全相等且均不为零。求 $\beta$ 和 $\gamma^2$ 的最大似然估计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.11} 似然比检验与回归 – Hogg 9.6.11}\label{exr:9.6.11}
+设独立随机变量 $Y_1, \ldots, Y_n$ 具有联合 pdf
+
+\[
+L(\alpha, \beta, \sigma^2) = \left(\frac{1}{2\pi\sigma^2}\right)^{n/2} \exp\left\{-\frac{1}{2\sigma^2}\sum_{i=1}^n [y_i - \alpha - \beta(x_i - \overline{x})]^2\right\},
+\]
+
+其中给定的数 $x_1, x_2, \ldots, x_n$ 不全相等。设原假设 $H_0: \beta = 0$（$\alpha$ 和 $\sigma^2$ 未指定）。希望使用似然比检验来检验 $H_0$ 对所有备择假设。求 $\Lambda$，并看看检验是否能基于一个熟悉的统计量。
+
+\textbf{提示}: 在本节的记号下，证明
+
+\[
+\sum_{i=1}^n (Y_i - \hat{\alpha})^2 = Q_3 + \hat{\beta}^2 \sum_{i=1}^n (x_i - \overline{x})^2.
+\]
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.12} 线性趋势 ANOVA – Hogg 9.6.12}\label{exr:9.6.12}
+使用第 9.2 节的记号，假设均值满足 $j$ 的线性函数：$\mu_j = c + d[j - (b+1)/2]$。从 $b$ 个均值分别为 $\mu_1, \mu_2, \ldots, \mu_b$、公共未知方差为 $\sigma^2$ 的正态分布中分别抽取容量为 $a$ 的独立随机样本。
+
+(a) 证明 $c$ 和 $d$ 的最大似然估计量分别为 $\hat{c} = \overline{X}_{..}$ 和
+
+\[
+\hat{d} = \frac{\sum_{j=1}^b [j - (b-1)/2](\overline{X}_{.j} - \overline{X}_{..})}{\sum_{j=1}^b [j - (b+1)/2]^2}.
+\]
+
+(b) 类似于练习 9.2.5，求平方和分解。
+
+(c) 论证当 $d=0$ 时，(b) 中右边的两项除以 $\sigma^2$ 后是自由度分别为 1 和 $ab - 2$ 的独立卡方分布随机变量。
+
+(d) 什么 $F$ 统计量用于检验均值的相等性，即 $H_0: d=0$？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.13} 最小二乘估计的几何 – Hogg 9.6.13}\label{exr:9.6.13}
+考虑第 9.6.2 节的讨论。
+
+(a) 证明 $\hat{\boldsymbol{\theta}} = \hat{\alpha}\mathbf{1} + \hat{\beta}\mathbf{x}_c$，其中 $\hat{\alpha}$ 和 $\hat{\beta}$ 是本节导出的最小二乘估计量。
+
+(b) 证明残差向量 $\hat{\mathbf{e}} = \mathbf{Y} - \hat{\boldsymbol{\theta}}$；即它的第 $i$ 个元素是 $\hat{e}_i$，(9.6.7)。
+
+(c) 如图 9.6.3 所示，证明向量 $\hat{\boldsymbol{\theta}}$ 和 $\hat{\mathbf{e}}$ 之间的夹角是直角。
+
+(d) 证明残差之和为零；即 $\mathbf{1}'\hat{\mathbf{e}} = 0$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.15} 平面拟合 – Hogg 9.6.15}\label{exr:9.6.15}
+用最小二乘法拟合平面 $z = a + bx + cy$ 到五个点 $(x, y, z): (-1, -2, 5), (0, -2, 4), (0, 0, 4), (1, 0, 2), (2, 1, 0)$。
+
+令 R 向量 $\mathbf{x}$、$\mathbf{y}$、$\mathbf{z}$ 包含 $x$、$y$ 和 $z$ 的值。则 LS 拟合通过 $\mathrm{lm}(\mathbf{z} \sim \mathbf{x} + \mathbf{y})$ 计算。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.16} 多元正态回归估计 – Hogg 9.6.16}\label{exr:9.6.16}
+设 $4 \times 1$ 矩阵 $\mathbf{Y}$ 服从多元正态分布 $N(\mathbf{X}\boldsymbol{\beta}, \sigma^2\mathbf{I})$，其中 $4 \times 3$ 矩阵 $\mathbf{X}$ 等于
+
+\[
+\mathbf{X} = \begin{pmatrix}
+1 & 1 & 2 \\
+1 & -1 & 2 \\
+1 & 0 & -3 \\
+1 & 0 & -1
+\end{pmatrix}.
+\]
+
+(a) 求 $\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{Y}$ 的均值矩阵和协方差矩阵。
+
+(b) 如果我们观测到 $\mathbf{Y}' = (6, 1, 11, 3)$，计算 $\hat{\boldsymbol{\beta}}$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.17} 多元正态回归的 pdf – Hogg 9.6.17}\label{exr:9.6.17}
+设 $\mathbf{Y}$ 是 $n \times 1$ 随机向量，$\mathbf{X}$ 是 $n \times p$ 已知常数矩阵（秩为 $p$），$\beta$ 是 $p \times 1$ 回归系数向量。设 $\mathbf{Y} \sim N(\mathbf{X}\boldsymbol{\beta}, \sigma^2\mathbf{I})$。求 $\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{Y}$ 的 pdf。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.6.18} 异方差检验 – Hogg 9.6.18}\label{exr:9.6.18}
+设独立正态随机变量 $Y_1, Y_2, \ldots, Y_n$ 分别具有概率密度函数 $N(\mu, \gamma^2 x_i^2)$，$i = 1, 2, \ldots, n$，其中给定的 $x_1, x_2, \ldots, x_n$ 不全相等且均不为零。讨论在未指定 $\mu$ 的情况下，检验原假设 $H_0: \gamma = 1$ 对所有备择假设 $H_1: \gamma \neq 1$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.1} 相关系数表达式的化简 – Hogg 9.7.1}\label{exr:9.7.1}
+证明
+
+\[
+R = \frac{\sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})}{\sqrt{\sum_{i=1}^n (X_i - \bar{X})^2 \sum_{i=1}^n (Y_i - \bar{Y})^2}} = \frac{\sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y}}{\sqrt{\left(\sum_{i=1}^n X_i^2 - n\bar{X}^2\right)\left(\sum_{i=1}^n Y_i^2 - n\bar{Y}^2\right)}}.
+\]
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.2} 相关系数的假设检验 – Hogg 9.7.2}\label{exr:9.7.2}
+从二元正态分布中抽取容量为 $n = 6$ 的随机样本，得到相关系数为 0.89。在 5\% 的显著性水平下，我们是接受还是拒绝 $\rho = 0$ 的假设？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.3} 验证相关系数的 $t$ 分布 – Hogg 9.7.3}\label{exr:9.7.3}
+验证本节的等式 (9.7.3)。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.4} 验证相关系数的分布 – Hogg 9.7.4}\label{exr:9.7.4}
+验证本节的 (9.7.4) 中的 pdf。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.5} 相关系数的一致性 – Hogg 9.7.5}\label{exr:9.7.5}
+使用第 4.5 节的结果，证明 $R$，(9.7.1)，是 $\rho$ 的一致估计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.6} 相关系数的置信区间 – Hogg 9.7.6}\label{exr:9.7.6}
+通过执行以下步骤，确定 $\rho$ 的 $(1-\alpha)100\%$ 近似置信区间。
+
+(a) 对于 $0 < \alpha < 1$，通常从 $1 - \alpha = P(-z_{\alpha/2} < Z < z_{\alpha/2})$ 开始，其中 $Z$ 由表达式 (9.7.5) 给出。然后在不等式的中间部分孤立 $h(\rho) = (1/2)\log[(1+\rho)/(1-\rho)]$。求 $h'(\rho)$ 并证明它在 $-1 < \rho < 1$ 上严格为正；因此 $h$ 是严格递增的，其逆函数存在。
+
+(b) 证明这个逆函数是双曲正切函数，$\tanh(y) = (e^y - e^{-y})/(e^y + e^{-y})$。
+
+(c) 获取 $\rho$ 的 $(1-\alpha)100\%$ 置信区间。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.7} 棒球数据的相关系数分析 – Hogg 9.7.7}\label{exr:9.7.7}
+R 函数 \texttt{cor.test(x,y)} 计算 $\rho$ 的估计量和练习 9.7.6 中的置信区间。回忆棒球数据，它在文件 bb.rda 中。
+
+(a) 使用棒球数据，确定职业棒球运动员身高与体重之间相关系数的估计值和置信区间。
+
+(b) 将投手和击球手分开，分别获取身高与体重之间相关系数的估计值和置信区间。它们有显著差异吗？
+
+(c) 论证第二部分中相关系数估计值的差异是关于两个独立样本的 $\rho_1 - \rho_2$ 的一个模型。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.7.8} 组合样本的相关系数 – Hogg 9.7.8}\label{exr:9.7.8}
+两个实验给出以下结果：
+
+\begin{tabular}{c|cccccc}
+$n$ & $\bar{x}$ & $\bar{y}$ & $s_x$ & $s_y$ & $r$ \\
+\hline
+100 & 10 & 20 & 5 & 8 & 0.70 \\
+200 & 12 & 22 & 6 & 10 & 0.80
+\end{tabular}
+
+计算组合样本的 $r$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.1} 二次型与卡方分布 – Hogg 9.8.1}\label{exr:9.8.1}
+设 $Q = X_1 X_2 - X_3 X_4$，其中 $X_1, X_2, X_3, X_4$ 是来自 $N(0, \sigma^2)$ 分布的容量为 4 的随机样本。证明 $Q/\sigma^2$ 不服从卡方分布。求 $Q/\sigma^2$ 的 mgf。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.2} 二次型的非中心卡方分布 – Hogg 9.8.2}\label{exr:9.8.2}
+设 $\mathbf{X}' = [X_1, X_2]$ 服从二元正态分布，均值矩阵 $\boldsymbol{\mu}' = [\mu_1, \mu_2]$ 和正定协方差矩阵 $\boldsymbol{\Sigma}$。设
+
+\[
+Q_1 = \frac{X_1^2}{\sigma_1^2(1-\rho^2)} - 2\rho \frac{X_1 X_2}{\sigma_1 \sigma_2(1-\rho^2)} + \frac{X_2^2}{\sigma_2^2(1-\rho^2)}.
+\]
+
+证明 $Q_1 \sim \chi^2(r, \theta)$，并求 $r$ 和 $\theta$。$Q_1$ 何时且仅何时服从中心卡方分布？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.3} 非中心卡方分布的计算 – Hogg 9.8.3}\label{exr:9.8.3}
+设 $\mathbf{X}' = [X_1, X_2, X_3]$ 是来自 $N(4, 8)$ 分布的容量为 3 的随机样本，并设
+
+\[
+\mathbf{A} = \begin{pmatrix}
+\frac{1}{2} & 0 & \frac{1}{2} \\
+0 & 1 & 0 \\
+\frac{1}{2} & 0 & \frac{1}{2}
+\end{pmatrix}.
+\]
+
+设 $Q = \mathbf{X}'\mathbf{A}\mathbf{X} / \sigma^2$。
+
+(a) 使用定理 9.8.1 求 $E(Q)$。
+
+(b) 说明为什么断言 $Q \sim \chi^2(2, 6)$ 成立。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.4} 不等方差的样本均值方差 – Hogg 9.8.4}\label{exr:9.8.4}
+假设 $X_1, \ldots, X_n$ 是独立随机变量，有公共均值 $\mu$ 但有不等的方差 $\sigma_i^2 = \text{var}(X_i)$。
+
+(a) 确定 $\bar{X}$ 的方差。
+
+(b) 确定常数 $K$，使得 $Q = K\sum_{i=1}^n (X_i - \bar{X})^2$ 是 $\bar{X}$ 方差的无偏估计量。（提示：按例 9.8.3 中的方法进行。）
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.5} 相关变量的样本均值方差 – Hogg 9.8.5}\label{exr:9.8.5}
+假设 $X_1, \ldots, X_n$ 是相关随机变量，有公共均值 $\mu$ 和方差 $\sigma^2$ 但相关系数 $\rho$（所有相关系数相同）。
+
+(a) 确定 $\bar{X}$ 的方差。
+
+(b) 确定常数 $K$，使得 $Q = K\sum_{i=1}^n (X_i - \bar{X})^2$ 是 $\bar{X}$ 方差的无偏估计量。（提示：按例 9.8.3 中的方法进行。）
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.6} 验证表达式 (9.8.13) – Hogg 9.8.6}\label{exr:9.8.6}
+补充表达式 (9.8.13) 的细节。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.7} 迹算子的性质 – Hogg 9.8.7}\label{exr:9.8.7}
+证明表达式 (9.8.1) 中定义的迹算子具有以下性质。
+
+(a) 如果 $\mathbf{A}$ 和 $\mathbf{B}$ 是 $n \times n$ 矩阵，$a$ 和 $b$ 是标量，则
+
+\[
+\operatorname{tr}(a\mathbf{A} + b\mathbf{B}) = a \operatorname{tr}\mathbf{A} + b \operatorname{tr}\mathbf{B}.
+\]
+
+(b) 对于任何 $n \times n$ 矩阵 $\mathbf{A}$ 和 $\mathbf{B}$，$\operatorname{tr}(\mathbf{A}\mathbf{B}) = \operatorname{tr}(\mathbf{B}\mathbf{A})$。
+
+(c) 如果 $\mathbf{A}$ 是方阵，$\Gamma$ 是正交矩阵，利用 (a) 的结果证明 $\operatorname{tr}(\Gamma'\mathbf{A}\Gamma) = \operatorname{tr}\mathbf{A}$。
+
+(d) 如果 $\mathbf{A}$ 是实对称幂等矩阵，利用 (b) 的结果证明 $\mathbf{A}$ 的秩等于 $\operatorname{tr}\mathbf{A}$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.8} 矩阵元素平方和与特征值 – Hogg 9.8.8}\label{exr:9.8.8}
+设 $\mathbf{A} = [a_{ij}]$ 是实对称矩阵。证明 $\sum_i \sum_j a_{ij}^2$ 等于 $\mathbf{A}$ 的特征值的平方和。
+
+\textbf{提示}: 如果 $\Gamma$ 是正交矩阵，证明 $\sum_j \sum_i a_{ij}^2 = \operatorname{tr}(\mathbf{A}^2) = \operatorname{tr}(\Gamma'\mathbf{A}^2\Gamma) = \operatorname{tr}[(\Gamma'\mathbf{A}\boldsymbol{\Gamma})(\Gamma'\mathbf{A}\boldsymbol{\Gamma})]$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.9} 非中心卡方分布的判定 – Hogg 9.8.9}\label{exr:9.8.9}
+假设 $\mathbf{X} \sim N_n(0, \Sigma)$，其中 $\boldsymbol{\Sigma}$ 是正定矩阵。对于对称矩阵 $\mathbf{A}$，设 $Q = \mathbf{X}'\mathbf{A}\mathbf{X}$。证明当且仅当 $\mathbf{A}\boldsymbol{\Sigma}\mathbf{A} = \mathbf{A}$ 时，$Q \sim \chi^2(r)$，其中 $r = \operatorname{rank}(\mathbf{A})$。
+
+\textbf{提示}: 将 $Q$ 写成
+
+\[
+Q = (\boldsymbol{\Sigma}^{-1/2}\mathbf{X})' \boldsymbol{\Sigma}^{1/2} \mathbf{A} \boldsymbol{\Sigma}^{1/2} (\boldsymbol{\Sigma}^{-1/2}\mathbf{X}),
+\]
+
+其中 $\pmb{\Sigma}^{1/2} = \pmb{\Gamma}'\pmb{\Lambda}^{1/2}\pmb{\Gamma}$，$\pmb{\Sigma} = \pmb{\Gamma}'\pmb{\Lambda}\pmb{\Gamma}$ 是 $\pmb{\Sigma}$ 的谱分解。然后使用定理 9.8.4。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.8.10} 幂等矩阵的特征值 – Hogg 9.8.10}\label{exr:9.8.10}
+假设 $\mathbf{A}$ 是实对称矩阵。如果 $\mathbf{A}$ 的特征值只有 0 和 1，证明 $\mathbf{A}$ 是幂等的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.9.1} 二次型的独立性判定 – Hogg 9.9.1}\label{exr:9.9.1}
+设 $X_1, X_2, X_3$ 是来自正态分布 $N(0, \sigma^2)$ 的随机样本。二次型 $X_1^2 + 3X_1 X_2 + X_2^2 + X_1 X_3 + X_3^2$ 和 $X_1^2 - 2X_1 X_2 + \frac{2}{3}X_2^2 - 2X_1 X_2 - X_3^2$ 是独立还是相关？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.9.2} 平方和与二次型的相关性 – Hogg 9.9.2}\label{exr:9.9.2}
+设 $X_1, X_2, \ldots, X_n$ 表示来自 $N(0, \sigma^2)$ 分布的容量为 $n$ 的随机样本。证明 $\sum_{i=1}^n X_i^2$ 与每一个在 $X_1, X_2, \ldots, X_n$ 中非恒为零的二次型都是相关的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:9.9.3} 线性函数与二次型的独立性 – Hogg 9.9.3}\label{exr:9.9.3}
+设 $X_1, X_2, X_3, X_4$ 是来自 $N(0, \sigma^2)$ 分布的容量为 4 的随机样本。设 $Y = \sum_{i=1}^4 a_i X_i$，其中 $a_1, a_2, a_3, a_4$ 是实常数。如果 $Y^2$ 和 $Q = X_1 X_2 - X_3 X_4$ 独立，确定 $a_1, a_2, a_3, a_4$。
+\end{exercise}
+
+\section*{附录：公式推导}\label{sec:appendix-ch9}
+
+\subsection*{One-Way ANOVA 平方和恒等式的证明}\label{sec:one-way-ss-identity}
+
+\textbf{背景}：在 one-way ANOVA 中，总平方和 $Q$ 可以分解为组内平方和 $Q_3$ 与组间平方和 $Q_4$ 之和。这一恒等式是 $F$ 检验的基石。
+
+\textbf{目标}：证明
+\[
+\sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{..})^2
+= \sum_{j=1}^b \sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{.j})^2
++ \sum_{j=1}^b n_j (\bar{X}_{.j} - \bar{X}_{..})^2.
+\label{eq:appendix-ss-identity}
+\]
+
+\textbf{推导}：记 $d_{ij} = X_{ij} - \bar{X}_{..}$。则
+\[
+d_{ij} = (X_{ij} - \bar{X}_{.j}) + (\bar{X}_{.j} - \bar{X}_{..}).
+\]
+展开平方和：
+\[
+\sum_{j,i} d_{ij}^2 = \sum_{j,i} (X_{ij} - \bar{X}_{.j})^2 + \sum_{j,i} (\bar{X}_{.j} - \bar{X}_{..})^2
++ 2\sum_{j,i} (X_{ij} - \bar{X}_{.j})(\bar{X}_{.j} - \bar{X}_{..}).
+\]
+
+最后一项为零，因为对每个固定的 $j$，
+\[
+\sum_{i=1}^{n_j} (X_{ij} - \bar{X}_{.j}) = 0,
+\]
+故交叉项为零。得证。\qed
+
+\subsection*{One-Way ANOVA 检验统计量的分布}\label{sec:one-way-F-distribution}
+
+\textbf{背景}：推导 one-way ANOVA 中 $F$ 统计量在原假设下的分布。
+
+\textbf{目标}：证明在 $H_0$ 下，$F = [Q_4/(b-1)] / [Q_3/(n-b)] \sim F(b-1,\ n-b)$。
+
+\textbf{推导}：
+
+\textbf{步骤 1：$Q_3$ 的分布。} 对每个固定的 $j$，由样本方差性质，$\sum_{i=1}^{n_j}(X_{ij} - \bar{X}_{.j})^2 / \sigma^2 \sim \chi^2(n_j - 1)$。各组样本独立，故
+\[
+\frac{Q_3}{\sigma^2} = \sum_{j=1}^b \frac{\sum_{i=1}^{n_j}(X_{ij} - \bar{X}_{.j})^2}{\sigma^2}
+\sim \chi^2\!\left(\sum_{j=1}^b (n_j - 1)\right) = \chi^2(n-b).
+\label{eq:appendix-Q3-chisq}
+\]
+
+\textbf{步骤 2：$Q_4$ 与 $Q_3$ 的独立性。} 注意 $\bar{X}_{.j}$ 与 $Q_3$ 独立（由正态样本的性质），且 $\bar{X}_{..}$ 是 $\bar{X}_{.1}, \ldots, \bar{X}_{.b}$ 的线性组合，因此 $\bar{X}_{..}$ 也与 $Q_3$ 独立。故 $Q_4$（$\bar{X}_{.j}$ 的函数）与 $Q_3$ 独立。
+
+\textbf{步骤 3：$Q_4$ 的分布。} 在 $H_0$ 下，$\bar{X}_{.j} \sim N(\mu,\ \sigma^2/n_j)$，故
+\[
+\frac{n_j(\bar{X}_{.j} - \bar{X}_{..})^2}{\sigma^2} \sim \chi^2(1).
+\]
+但各 $\bar{X}_{.j}$ 通过 $\bar{X}_{..}$ 而不独立。直接计算知 $Q_4/\sigma^2 \sim \chi^2(b-1)$。
+
+\textbf{步骤 4：$F$ 分布。} 由步骤 1、2、3 及 $F$ 分布定义，
+\[
+F = \frac{Q_4/(b-1)}{Q_3/(n-b)} \sim F(b-1,\ n-b).
+\label{eq:appendix-F-dist}
+\]
+\qed
+
+\subsection*{非中心 $\chi^2$ 分布的均值和方差}\label{sec:noncentral-chisq-mgf}
+
+\textbf{背景}：验证非中心 $\chi^2$ 分布的基本性质。
+
+\textbf{已知}：$Y \sim \chi^2(r, \theta)$，mgf 为 $M(t) = (1-2t)^{-r/2}\exp\{t\theta/(1-2t)\}$。
+
+\textbf{目标}：求 $\mathbb{E}(Y)$ 和 $\text{var}(Y)$。
+
+\textbf{推导}：
+
+由 mgf，$M(t) = (1-2t)^{-r/2}\exp\{t\theta/(1-2t)\}$。对 $M(t)$ 求导：
+\[
+M'(t) = \left[r(1-2t)^{-r/2-1} + \frac{r\theta}{(1-2t)^{r/2+1}}\right] \exp\left\{\frac{t\theta}{1-2t}\right\}.
+\]
+故 $\mathbb{E}(Y) = M'(0) = r + \theta$。
+
+对 $M''(t)$ 在 $t=0$ 求值，可得 $\text{var}(Y) = 2(r+2\theta)$。\footnote{该推导的详细计算见附录 \cref{sec:appendix-ch9}。}
+
+\subsection*{最小二乘估计的几何解释}\label{sec:ls-geometric-proof}
+
+\textbf{背景}：回归最小二乘估计的正交投影几何。
+
+\textbf{目标}：证明 $\hat{\boldsymbol{\theta}} = \mathbf{X}\hat{\boldsymbol{\beta}}$ 是 $\mathbf{Y}$ 在 $V = \mathrm{span}(\mathbf{1}, \mathbf{x}_c)$ 上的正交投影。
+
+\textbf{推导}：由正交投影的定义，$\hat{\boldsymbol{\theta}}$ 满足：
+\[
+\mathbf{Y} - \hat{\boldsymbol{\theta}} \perp V.
+\]
+
+即残差向量 $\hat{\mathbf{e}} = \mathbf{Y} - \hat{\boldsymbol{\theta}}$ 与 $\mathbf{1}$ 和 $\mathbf{x}_c$ 都正交：
+\[
+\mathbf{1}'\hat{\mathbf{e}} = 0,\quad \mathbf{x}_c'\hat{\mathbf{e}} = 0.
+\label{eq:appendix-orthogonality}
+\]
+
+由 $\mathbf{1}'\hat{\mathbf{e}} = 0$ 得 $\sum_i \hat{e}_i = 0$（残差之和为零）。
+
+由 $\mathbf{x}_c'\hat{\mathbf{e}} = 0$ 并利用正规方程，可解出 $\hat{\alpha}$ 和 $\hat{\beta}$ 的表达式与 \eqref{eq:regression-alpha-hat}、\eqref{eq:regression-beta-hat} 一致。故 $\hat{\boldsymbol{\theta}}$ 确为正交投影。\qed
+

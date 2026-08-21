@@ -1,0 +1,342 @@
+% Chapter 8: Modeling accounting for data collection
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{考虑数据收集过程的建模}
+
+\section{本章导论}
+
+在前几章的贝叶斯分析中，我们默认数据已收集完毕，直接对观测值建模。然而在实践中，\textbf{数据收集方式}对推断的正确性至关重要。不同的抽样设计、实验设计、缺失数据机制都可能导致相同的观测值携带不同的信息量。
+
+本章的核心问题是：如何在贝叶斯推断中正确地考虑数据收集过程？这一问题的答案涉及一个看似矛盾的现象——天真的学生可能会认为，既然贝叶斯推断只依赖于后验分布 $p(\theta|y)$，数据如何收集无关紧要。这种对似然原则的误用忽视了一个关键事实：\textbf{``观测数据''的完整定义必须包含这些数据如何产生的全部信息}。
+
+\section{观测数据与缺失数据的普遍范式}
+
+这三个骰子场景的例子揭示了一个关键洞察：\textbf{相同的观测数据可以来自根本不同的数据生成过程}。为了系统地推理这类情况，我们需要一个统一的框架——将数据收集过程形式化为"完全数据"与"观测数据"之间的关系。
+
+\textbf{核心思想}：将数据收集过程视为从"完整数据"（或潜在数据）$y$ 中观测到部分数据，留下缺失数据 $y_{\mathrm{mis}}$ 的过程。记 $y = (y_1, \ldots, y_N)$ 为完整数据矩阵，$I = (I_1, \ldots, I_N)$ 为观测指示矩阵，其中 $I_{ij} = 1$ 表示 $y_{ij}$ 被观测，$I_{ij} = 0$ 表示缺失。
+
+\begin{Example}[骰子实验]
+  假设我们告诉你掷了十次骰子且全部为 6。你的态度会因以下三种说法而大不相同：
+  \begin{enumerate}
+    \item 这十次是我们做的全部掷骰；
+    \item 我们掷了 60 次但只报告了其中出现 6 的十次；
+    \item 我们预先决定诚实报告出现十次 6，但隐瞒了总共掷了多少次——为此等待了 500 次。
+  \end{enumerate}
+  在情形 (i) 中，$p(y|\theta) = (1/6)^{10}$；在情形 (ii) 中，报告规则本身改变了分布；在情形 (iii) 中，等待时间提供了额外信息。这说明：\textbf{观测数据的分布不同于产生它们的"完整数据"的分布}。
+\end{Example}\footnote{详见 \cite[ Chapter 8]{gelman2013bayesian}。}
+
+\section{数据收集模型与可忽略性}
+
+\subsection{观测数据和缺失数据的记号}
+
+设 $y = (y_1, \ldots, y_N)$ 为潜在数据矩阵（每个 $y_i$ 可能本身是向量），$I$ 为同样维数的指示矩阵。记 $y_{\mathrm{obs}}$ 和 $y_{\mathrm{mis}}$ 分别为观测和缺失的数据部分。
+
+\textbf{稳定性假设}（stable unit treatment value assumption）：记录的测量过程不改变数据本身的值——即完整数据向量 $y$ 不受包含向量 $I$ 的影响。
+
+\subsection{数据模型、包含模型与完全/观测数据似然}
+
+将联合概率模型分解为两部分：
+\begin{enumerate}
+  \item 完整数据的模型 $p(y|\theta)$；
+  \item 包含向量的模型 $p(I|y,\phi)$。
+\end{enumerate}
+
+完全数据似然为：
+\begin{equation}
+p(y, I|\theta, \phi) = p(y|\theta) \cdot p(I|y, \phi). \label{eq:ch8-complete-data-likelihood}
+\end{equation}
+
+实际可用的信息是 $(y_{\mathrm{obs}}, I)$，因此贝叶斯推断的适当似然（\textbf{观测数据似然}）为：
+\begin{equation}
+p(y_{\mathrm{obs}}, I|\theta, \phi) = \int p(y, I|\theta, \phi) \, dy_{\mathrm{mis}}. \label{eq:ch8-observed-data-likelihood}
+\end{equation}
+
+给定 $(x, y_{\mathrm{obs}}, I)$ 的联合后验分布为：
+\begin{equation}
+p(\theta, \phi|x, y_{\mathrm{obs}}, I) \propto p(\theta, \phi|x) \int p(y|x, \theta) p(I|x, y, \phi) \, dy_{\mathrm{mis}}. \label{eq:ch8-joint-posterior}
+\end{equation}
+
+\subsection{有限总体与超总体推断}
+
+这一区分的历史渊源可追溯至 Jerzy Neyman 在 1934 年的开创性工作——他首次系统地提出了有限总体推断的框架，将抽样视为从超总体中抽取样本的过程。在现代贝叶斯文献中，Rubin (1976, 1984) 的潜在结果框架（Rubin causal model）为因果推断奠定了形式化基础，而 Rosenbaum 与 Rubin (1983) 进一步提出了倾向性得分方法，成为观测研究中的核心工具。
+
+本章区分两类目标量：
+\begin{itemize}
+  \item \textbf{有限总体量}（finite-population estimands）：如总体均值 $\bar{y}$，在抽样调查中可预测但未观测；
+  \item \textbf{超总体量}（superpopulation estimands）：如参数 $\theta$，是产生数据的分布特征。
+\end{itemize}
+
+有限总体量 $\bar{y}$ 的后验分布可以通过从后验预测分布 $p(y_{\mathrm{mis}}|x, y_{\mathrm{obs}}, I)$ 模拟缺失数据得到。
+
+\subsection{可忽略性}
+
+如果决定忽略数据收集过程，可以只对 $y_{\mathrm{obs}}$ 条件化计算后验：
+\begin{equation}
+p(\theta|x, y_{\mathrm{obs}}) \propto p(\theta|x) \int p(y|x, \theta) \, dy_{\mathrm{mis}}. \label{eq:ch8-ignorable-posterior}
+\end{equation}
+
+当缺失数据模式不提供额外信息——即 $p(\theta|x, y_{\mathrm{obs}}) = p(\theta|x, y_{\mathrm{obs}}, I)$——时，研究设计称为\textbf{可忽略的}（ignorable）。
+
+\textbf{可忽略性的两个充分条件}：
+\begin{enumerate}
+  \item \textbf{随机缺失}（Missing at Random）：$p(I|x, y, \phi) = p(I|x, y_{\mathrm{obs}}, \phi)$——即给定 $\phi$ 和 $(x, y_{\mathrm{obs}})$，缺失性只依赖已观测部分；
+  \item \textbf{独立参数}（Distinct Parameters）：$p(\phi|x, \theta) = p(\phi|x)$——即缺失数据过程的参数与数据生成过程的参数在先验中独立。
+\end{enumerate}
+
+\begin{Remark}
+  这两个条件的组合确保了 $p(\theta|x, y_{\mathrm{obs}}) = p(\theta|x, y_{\mathrm{obs}}, I)$，从而使缺失数据机制可忽略。
+\end{Remark}
+
+\subsection{设计分类}
+
+根据可忽略性和机制是否已知，可以将数据收集设计分为以下几类：
+
+这个分类对实践有直接指导意义：\textbf{类型 1-4 只需建模 $p(y|\theta)$，而类型 5-6 必须显式建模缺失数据机制}。随着类型编号增大，分析的复杂度和模型敏感性也随之增加。
+
+\begin{enumerate}
+  \item \textbf{可忽略且已知（无协变量）}：如简单随机抽样、完全随机化实验。只需考虑 $p(y|\theta)$ 和 $p(\theta)$；
+  \item \textbf{可忽略且已知（给定协变量）}：如分层抽样、区组随机实验。需要建模 $p(y|x,\theta)$ 使设计可忽略；
+  \item \textbf{强可忽略且已知}：$p(I|x, y, \phi) = p(I|x)$，依赖性仅通过完全观测的协变量 $x$ 介导；
+  \item \textbf{可忽略但未知}：如基于完全观测协变量的非随机指派实验。倾向性得分（propensity score）在此有用；
+  \item \textbf{不可忽略且已知}：如删失数据。需要将缺失机制明确建模；
+  \item \textbf{不可忽略且未知}：最困难的情况，如因果推断中的选择偏差。
+\end{enumerate}
+
+\subsection{倾向性得分}
+
+在强可忽略设计中，单元级指派概率 $\Pr(I_i = 1|x_i) = \pi_i$ 称为\textbf{倾向性得分}（propensity score）。倾向性得分可以充分概括协变量 $X$，使指派机制在给定倾向性得分时强可忽略。
+
+\textbf{重要警告}：倾向性得分本身永远不足以进行后验预测检验（模型检查的关键工具），因为不同设计可能产生相同的倾向性得分。
+
+\section{抽样调查}
+
+考虑一个包含 $N$ 个人的有限总体，$y_i$ 为第 $i$ 个人的每周食品支出。目标是估计总体平均支出 $\bar{y}$。由于全面调查成本过高，采用简单随机抽样抽取 $n$ 个样本。
+
+\subsection{简单随机抽样}
+
+设 $I_i$ 为第 $i$ 个人是否被抽中的指示变量。简单随机抽样定义为：
+\begin{equation}
+p(I|y, \phi) = p(I) =
+\begin{cases}
+\binom{N}{n}^{-1} & \text{若} \sum_{i=1}^N I_i = n, \\
+0 & \text{其他情形。}
+\end{cases}
+\end{equation}
+
+这是强可忽略且已知的设计——指派概率（倾向性得分）为 $\pi_i = n/N$ 对所有单元相同。
+
+\textbf{有限总体均值的贝叶斯推断}：这里 $\bar{y}$ 表示有限总体均值（目标量），而 $\bar{y}_{\mathrm{obs}}$ 和 $\bar{y}_{\mathrm{mis}}$ 分别表示已观测和未观测子总体的均值。将 $\bar{y}$ 分解为：
+\begin{equation}
+\bar{y} = \frac{n}{N}\bar{y}_{\mathrm{obs}} + \frac{N-n}{N}\bar{y}_{\mathrm{mis}}. \label{eq:ch8-finite-pop-mean}
+\end{equation}
+
+其中 $\bar{y}_{\mathrm{obs}}$ 已知，$\bar{y}_{\mathrm{mis}}$ 可从后验预测分布模拟。
+
+\textbf{大样本近似}：当 $n$ 和 $N-n$ 都较大时，
+\begin{equation}
+\bar{y} | y_{\mathrm{obs}} \approx \mathrm{N}\left(\bar{y}_{\mathrm{obs}}, \left(\frac{1}{n} - \frac{1}{N}\right)s_{\mathrm{obs}}^2\right). \label{eq:ch8-normal-approx-finite-pop}
+\end{equation}
+
+这就是有限总体抽样推断的正态理论的正式贝叶斯 justification。
+
+\subsection{分层抽样}
+
+在分层随机抽样中，将 $N$ 个单元分为 $J$ 层，从每层 $j$ 中用简单随机抽样抽取 $n_j$ 个样本。给定层指示变量 $x_j$，此设计是可忽略的。
+
+\textbf{贝叶斯分析}：在每层内建模 $y_i$ 的分布为参数 $\theta_j$，然后对所有参数集 $\theta_1, \ldots, \theta_J$ 执行贝叶斯推断。通常对 $\theta_j$ 指定层次模型，类似于第 5 章中的方法。
+
+\begin{Example}[选前民意调查的分层抽样分析]
+  1988 年美国总统选举的 CBS 调查将受访者按地区（东北、中西部、南部、西部）和居住密度分为 16 层。数据列于表 8.2。
+
+  对每层 $j$，设 $y_{\mathrm{obs}j} = (y_{\mathrm{obs}1j}, y_{\mathrm{obs}2j}, y_{\mathrm{obs}3j})$ 为支持布什、杜卡基斯和无意见的人数，建模为多项分布 $y_{\mathrm{obs}j} \sim \mathrm{Multinomial}(n_j; \theta_{1j}, \theta_{2j}, \theta_{3j})$。
+
+  \textbf{非层次模型}：各层参数赋予独立的 Dirichlet 先验，简单但未利用层间相似性；
+
+  \textbf{层次模型}：将参数转换为 logit 尺度，建模为跨层可交换的二元正态分布。层次模型产生的后验中位数为 0.11，比非层次模型的 0.097 更集中于真实值。
+\end{Example}\footnote{选举调查例子的完整推导见附录 \cref{sec:election-survey-hierarchical-derivation}。}
+
+\subsection{整群抽样}
+
+在整群抽样中，首先抽取 $J$ 个群，然后从每个抽中群 $j$ 中抽取 $n_j$ 个单元。分析需要为聚类的每个水平包含参数——这是一个层次建模问题。
+
+\begin{Example}[澳大利亚学童调查]
+  为估计墨尔本地区步行上学儿童的比例，首先从该都市区抽取 72 所学校，然后从每所学校的两个随机班级进行调查。
+
+  模型包含学生、班级和学校三层参数：
+  \begin{align}
+    \bar{y}_{.jk} &\sim \mathrm{N}(\theta_{jk}, \sigma_{jk}^2), \quad \sigma_{jk}^2 = \bar{y}_{.jk}(1-\bar{y}_{.jk})/N_{jk} \\
+    \theta_{jk} &\sim \mathrm{N}(\theta_k, \tau_{\mathrm{class}}^2) \\
+    \theta_k &\sim \mathrm{N}(\alpha + \beta M_k, \tau_{\mathrm{school}}^2)
+  \end{align}
+  其中 $M_k$ 为学校 $k$ 的班级数。将班级数纳入学校级模型是因为调查的抽样概率依赖于学校规模 $M_k$——设计只有在对包含 $M_k$ 的模型才是可忽略的。
+\end{Example}\footnote{整群抽样的完整推导见附录 \cref{sec:cluster-sampling-derivation}。}
+
+\section{设计实验}
+
+在统计术语中，实验涉及将处理指派给单元，指派过程由实验者控制。设 $(y_i^A, y_i^B)$ 为第 $i$ 个单元接受处理 $A$ 或 $B$ 的潜在结果，$i=1,\ldots,n$。
+
+\textbf{稳定性假设}：应用于任何单元的处理对其余单元的结果没有影响。
+
+因果效应分为两类：
+\begin{itemize}
+  \item \textbf{超总体框架}：平均因果效应为 $\mathrm{E}(y_i^A - y_i^B|\theta)$；
+  \item \textbf{有限总体框架}：有限总体因果效应为 $\bar{y}^A - \bar{y}^B$。
+\end{itemize}
+
+\subsection{完全随机化实验}
+
+在完全随机化实验中，处理指派是可忽略的。可以分别对两组数据建模：
+\begin{equation}
+p(y_{\mathrm{obs}}|\theta) = \prod_{i:I_i=(1,0)} p(y_i^A|\theta) \prod_{i:I_i=(0,1)} p(y_i^B|\theta).
+\end{equation}
+
+\textbf{有限总体因果效应的大样本近似}：
+\begin{equation}
+(\bar{y}^A - \bar{y}^B)|y_{\mathrm{obs}} \approx \mathrm{N}\left(\bar{y}_{\mathrm{obs}}^A - \bar{y}_{\mathrm{obs}}^B, \frac{2}{n}(s_{\mathrm{obs}}^{2A} + s_{\mathrm{obs}}^{2B})\right). \label{eq:ch8-causal-effect-approx}
+\end{equation}
+
+\subsection{随机区组、拉丁方等}
+
+更复杂的设计可以基于处理指派过程中使用的所有因素建模，在模型下设计是可忽略的。
+
+\begin{Example}[拉丁方实验]
+  一个农业实验有 25 个小区和五种处理（A、B、C、D、E），排列成拉丁方形式（表 8.4）。
+
+  可忽略设计所需的最小信息是 25 个小区的物理位置编码 $x$（水平和垂直坐标）。任何可忽略模型必须具有 $p(y|x,\theta)$ 的形式。
+
+  如果额外信息可用（如流经田地的溪流位置），也应纳入分析。
+\end{Example}\footnote{拉丁方实验的完整分析见附录 \cref{sec:latin-square-derivation}。}
+
+\section{敏感性与随机化的作用}
+
+我们已经看到，可忽略设计通过允许直接建模观测数据来简化贝叶斯分析。但随机化在此图景中扮演什么角色？
+
+\subsection{完全随机化}
+
+在没有完全观测协变量 $x$ 的情况下，实现可忽略设计的唯一方法（排除所有单元获得同一处理的退化设计）是\textbf{随机化}。
+
+然而，对于任何给定的推断目标，某些可忽略设计在其他设计中更优——在产生关于目标量的更精确推断方面。完全随机化比独立伯努利指派产生更高的后验精度估计（因为期望每组有相等的样本量）。
+
+\subsection{协变量条件下的随机化}
+
+当有完全观测协变量时，随机化设计与确定性可忽略设计竞争。随机化的潜在优势包括：
+\begin{enumerate}
+  \item 即使假装 $x$ 未知，分析仍然有效；
+  \item 观察到 $x$ 后可以更新后验分布，产生更精确的条件推断；
+  \item 增加后验预测检验的灵活性；
+  \item 使实验者更难通过选择样本或处理指派来"作弊"。
+\end{enumerate}
+
+\textbf{敏感性分析的实践意义}：在非随机化研究中，即使处理指派是可忽略的，当两组在协变量分布上严重不平衡时，后验推断会对所选的 $p(y|x,\theta)$ 模型形式高度敏感（如图 8.2 所示）。实践中，研究者通常通过倾向性得分匹配或分层来缓解这一问题，但这些方法无法完全消除敏感性——它们只是使敏感性更易于诊断。
+
+\section{观测研究}
+
+在观测性研究中，处理是被观察而非被实验者指派的。各处理组可能在未测量的因素上存在很大差异。
+
+\textbf{关键问题}：如何确保因果推断的有效性？Gelman 等人指出，良好的观测研究需要：(1) 充分控制各处理组间的背景差异；(2) 每组有足够的独立单元产生可靠结果；(3) 研究设计不依赖于分析结果；(4) 最小化流失和其他形式的无意缺失数据；(5) 分析考虑设计中使用的所有信息。
+
+图 8.2 说明了数据收集的不平衡与对建模假设敏感性的联系。当两组在预处理协变量上相似时（如随机实验），处理效应估计对所拟合的 $y|x$ 模型形式相对不敏感。当不平衡严重时，相同数据可以用完全不同的非线性关系拟合，产生完全不同的处理效应估计。
+
+\subsection{倾向性得分在观测研究中的作用}
+
+倾向性得分是处理指派的概率（作为协变量的函数）。它可用于诊断——如果估计的倾向性得分在两种处理条件下几乎没有重叠，则暗示推断可能对模型形式高度敏感。
+
+\subsection{主分层}
+
+\textbf{主分层}（principal stratification）是一种调整"中间结果"的方法——即在最终结果 $y$ 的因果路径上的中间变量 $C$。
+
+\begin{Example}[有依从性问题的随机实验]
+  在印度尼西亚村庄进行的维生素 A 补充剂对婴儿死亡率影响的随机实验中，维生素 A 仅提供给被分配接受它的人。这里 $I$ 是分配指标，中间结果是依从性。
+
+  定义两种主分层：\textbf{依从者}（如果被分配则服用）和 \textbf{非依从者}（如果被分配也不服用）。
+
+  依从者平均因果效应（CACE，记为 $\mathrm{CACE}$，即依从者的平均因果效应）的估计：
+  \begin{equation}
+    \widehat{\mathrm{CACE}} = (\bar{y}_1 - \bar{y}_0) / \hat{p}_c, \label{eq:ch8-cace-estimate}
+  \end{equation}
+  其中 $p_c$ 为依从者比例，$\bar{y}_1$ 和 $\bar{y}_0$ 为处理组和对照组的样本均值，\textbf{hat 表示对应的样本估计量}。这被称为\textbf{工具变量估计}。
+\end{Example}\footnote{工具变量方法和贝叶斯因果推断的完整讨论见附录 \cref{sec:cace-derivation}。}
+
+\section{删失与截断}
+
+在医学随访、工业质量控制和环境监测中，研究者经常面临一类特殊的数据缺失问题：数据并非"未记录"，而是以某种受约束的形式被报告。区分\textbf{删失}（censoring）和\textbf{截断}（truncation）的概念——以及理解它们的统计含义——对于正确建模至关重要。删失与截断的区别在实践中往往被忽视，但忽略它们会导致严重的推断偏差。
+
+我们通过一个简单例子的多种变体来说明不同的缺失数据机制。
+
+\textbf{设定}：对某物体进行 $N=100$ 次称重，$y_i \sim \mathrm{N}(\theta, 1)$，先验 $p(\theta) \propto 1$。每种变体下只观测到 $n=91$ 个值，记 $\bar{y}_{\mathrm{obs}}$ 为已观测测量的均值。
+
+\subsection{完全随机缺失（MCAR）}
+
+如果天平等概率 $0.1$ 随机未报告，则包含模型为 $I_i \sim \mathrm{Bernoulli}(0.9)$，且与 $y$ 独立。后验分布与预先固定样本量 $n=91$ 的情形相同：
+\begin{equation}
+p(\theta|y_{\mathrm{obs}}, I) = \mathrm{N}(\theta|\bar{y}_{\mathrm{obs}}, 1/91).
+\end{equation}
+
+\subsection{完全随机缺失但缺失概率未知}
+
+当天平随机失败概率 $\pi$ 未知时，如果 $\theta$ 和 $\pi$ 在先验中独立（即"独立参数"条件），后验推断与上一情形相同。但如果 $\pi = \theta/(1+\theta)$（两者不独立），则 $n=91$ 提供了关于 $\theta$ 的额外信息。
+
+\subsection{删失数据}
+
+如果天平的报告上限为 200kg——所有超过 200kg 的值被报告为"太重"——则 $n=91$ 个数值测量的贡献是正态密度，9 个"太重"测量的贡献形式为 $\Phi(\theta - 200)$。后验分布为：
+\begin{equation}
+p(\theta|y_{\mathrm{obs}}, I) \propto \mathrm{N}(\theta|\bar{y}_{\mathrm{obs}}, 1/91) \cdot [\Phi(\theta-200)]^9. \label{eq:ch8-censored-posterior}
+\end{equation}
+
+\textbf{关键}：删失数据的似然不能简单地忽略指示向量，必须包含删失观测的贡献 $[\Phi(\theta-200)]^9$。
+
+\subsection{未知删失点的删失数据}
+
+当删失点 $\phi$ 本身未知时，后验分布必须同时考虑 $(\theta, \phi)$。9 个删失测量贡献 $[\Phi(\theta-\phi)]^9$，即使先验中 $\theta$ 和 $\phi$ 独立，后验中也会产生依赖——这说明缺失数据机制不可忽略。
+
+\subsection{截断数据}
+
+截断与删失的关键区别在于：\textbf{删失}知道超过截断点的观测数量，而\textbf{截断}不知道。当 $N$ 也未知时，后验分布涉及对 $N$ 的推断。
+
+\section{习题}
+
+\begin{Exercise}{设计类型识别}
+给定以下场景，判断属于哪种数据收集设计类型（类型 1-6），并说明理由：
+\begin{enumerate}
+  \item 研究者对某社区进行简单随机抽样，调查居民收入；
+  \item 某制药公司在多个医学中心进行随机对照试验，评估新药有效性；
+  \item 一项调查因部分受访者拒绝回答而导致收入数据缺失，研究者假设缺失与收入无关；
+  \item 某工厂的质量监控系统记录超过测量上限的值为"> 100"，而非实际数值；
+  \item 研究者根据学生的期中考试成绩决定是否邀请其参加辅导项目（处理指派依赖于观测结果）。
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{删失数据的似然推导}
+对 8.7 节中的删失数据情形（天平上限 200kg），写出完整的观测数据似然函数，并验证 \cref{eq:ch8-censored-posterior} 的形式。
+\end{Exercise}
+
+\begin{Exercise}{倾向性得分计算}
+假设有 100 个单元的二元处理指派，其中 50 个单元的处理指派概率为 0.8，50 个为 0.2。给定处理指示向量 $I$ 和协变量矩阵 $X$，描述如何估计倾向性得分，并讨论在什么条件下倾向性得分分析可能失效。
+\end{Exercise}
+
+\begin{Exercise}{MCAR 与 MAR 的区分}
+构造一个一维数据的例子，其中缺失机制满足 MCAR（完全随机缺失）但不满足 MAR（随机缺失）。再构造一个满足 MAR 但不满足 MCAR 的例子。说明两者之间的包含关系。
+\end{Exercise}
+
+\section{本章小结}
+
+本章我们学习了：
+\begin{enumerate}
+  \item 数据收集过程必须纳入贝叶斯模型的核心理念
+  \item 观测数据与缺失数据的普遍记号框架
+  \item 可忽略性的两个充分条件：随机缺失（MAR）+ 独立参数
+  \item 有限总体推断与超总体推断的区别
+  \item 倾向性得分的概念与局限
+  \item 抽样调查的贝叶斯分析：简单随机抽样、分层抽样、整群抽样
+  \item 设计实验的贝叶斯分析：完全随机化、区组设计、拉丁方
+  \item 随机化在降低模型敏感性中的作用
+  \item 观测研究的挑战与敏感性分析
+  \item 主分层与因果推断中的依从性
+  \item 删失与截断数据的建模
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习决策分析（Chapter 9），探讨贝叶斯决策理论在不同情境中的应用，包括回归预测的激励措施、多阶段决策制定和个体与机构决策分析。
+
+\endinput

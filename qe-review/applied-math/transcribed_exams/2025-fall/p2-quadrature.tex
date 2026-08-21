@@ -1,0 +1,408 @@
+\setcounter{section}{2}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: what a quadrature formula is, and why (d) uses the nodes of (c)}
+
+Problem~2 is one object used four times. Parts~(a)--(b) identify the Chebyshev polynomial \(T_{n}\). Parts~(c)--(d) use the zeros of the next polynomial \(T_{n+1}\): once as interpolation nodes, once as quadrature nodes. The word the exam does not define is the second of those.
+
+A quadrature formula is a finite recipe that replaces an integral by a weighted sum of samples of \(f\). The sample locations are the \emph{nodes}; the coefficients in front of the samples are the \emph{weights}. ``Gauss'' is a rule for choosing the nodes, not a different kind of sum. The 2026 Spring Problem~2 is the same package with Legendre polynomials and weight \(1\); this paper is the Chebyshev-weight twin \cite{conte00}.
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=4.5pt, font=\small},
+  arr/.style={-{Latex}, thick}
+]
+  \node[box] (Tn) at (0,1.35) {\(T_{n}\)};
+  \node[box] (a) at (3.15,2.15) {(a) closed form};
+  \node[box] (b) at (3.15,0.55) {(b) minimax, \(p(1)=1\)};
+  \node[box] (z) at (0,-1.15) {zeros of \(T_{n+1}\)};
+  \node[box] (c) at (3.15,-0.55) {(c) interpolation nodes};
+  \node[box] (d) at (3.15,-1.75) {(d) quadrature nodes};
+  \draw[arr] (Tn) -- (a);
+  \draw[arr] (Tn) -- (b);
+  \draw[arr] (Tn) -- (z);
+  \draw[arr] (z) -- (c);
+  \draw[arr] (z) -- (d);
+\end{tikzpicture}
+\end{center}
+
+\paragraph{The objects.}
+
+Throughout, write \(\mathcal{P}_{k}\) for polynomials of degree at most \(k\), and write
+
+\[
+I(f)
+\coloneqq
+\int_{-1}^{1}
+\frac{f(x)}{\sqrt{1-x^{2}}}\,
+\mathrm{d}x
+\]
+
+for the weighted integral in (d). The weight \(w(x)=(1-x^{2})^{-1/2}\) is part of \(I\), not a factor one samples at the nodes.
+
+\begin{definition}[Quadrature formula, nodes, weights]
+\label{def:quadrature}
+A \emph{quadrature formula} with \(n+1\) nodes for \(I\) is a linear functional of the form
+
+\begin{equation}
+\label{eq:quad-sum}
+I_{n+1}(f)
+\coloneqq
+\sum_{j=0}^{n} w_{j}\, f(x_{j}).
+\end{equation}
+
+The points \(x_{0},\ldots,x_{n}\in[-1,1]\) are the \emph{quadrature nodes}; the scalars \(w_{0},\ldots,w_{n}\) are the \emph{quadrature weights}. The exam's phrase ``for \(n+1\) quadrature nodes, written by \(I_{n+1}(f)\)'' means: produce an explicit sum \eqref{eq:quad-sum}, i.e.\ name both the \(x_{j}\) and the \(w_{j}\). It does \emph{not} mean ``sample \(f(x)/\sqrt{1-x^{2}}\)''. The weight has already been integrated into the \(w_{j}\).
+\end{definition}
+
+The trapezoid rule, Simpson's rule, and the midpoint rule are quadrature formulae. Each is \eqref{eq:quad-sum} with a particular choice of nodes and weights. Gauss quadrature is the same shape, with a particular choice of nodes.
+
+\begin{example}[One node, already Gauss]
+\label{ex:gauss-cheb-one}
+The unique node in \((-1,1)\) that can appear for \(n=0\) is the zero of \(T_{1}(x)=x\), namely \(x_{0}=0\). The only weight compatible with exactness on constants is \(w_{0}=I(1)=\pi\). Thus
+
+\[
+I_{1}(f)
+=
+\pi f(0).
+\]
+
+This is the statement ``\(I(f)\approx \pi f(0)\)'': one samples \(f\) at the origin, and the Chebyshev weight contributes the factor \(\pi=\int_{-1}^{1}(1-x^{2})^{-1/2}\,\mathrm{d}x\).
+\end{example}
+
+\paragraph{How the weights are determined, once the nodes are chosen.}
+
+Fix any distinct nodes. There is a canonical way to produce weights so that \eqref{eq:quad-sum} integrates every polynomial of degree \(\le n\) exactly: integrate the interpolant.
+
+\begin{definition}[Interpolatory quadrature]
+\label{def:interpolatory}
+Let \(x_{0},\ldots,x_{n}\) be distinct. Write \(\ell_{j}\) for the Lagrange basis
+
+\[
+\ell_{j}(x)
+=
+\prod_{\substack{0\le k\le n\\ k\neq j}}
+\frac{x-x_{k}}{x_{j}-x_{k}},
+\]
+
+so that the unique \(L_{n}\in\mathcal{P}_{n}\) interpolating \(f\) at these nodes is \(L_{n}=\sum_{j} f(x_{j})\,\ell_{j}\). The associated \emph{interpolatory quadrature} is \eqref{eq:quad-sum} with
+
+\[
+w_{j}
+\coloneqq
+I(\ell_{j})
+=
+\int_{-1}^{1}
+\frac{\ell_{j}(x)}{\sqrt{1-x^{2}}}\,
+\mathrm{d}x.
+\]
+
+Equivalently, \(I_{n+1}(f)=I(L_{n})\): replace \(f\) by its interpolant, then integrate the interpolant exactly.
+\end{definition}
+
+\begin{lemma}[Exactness on \(\mathcal{P}_{n}\)]
+\label{lem:interp-exact}
+The interpolatory rule of \cref{def:interpolatory} satisfies \(I_{n+1}(p)=I(p)\) for every \(p\in\mathcal{P}_{n}\).
+\end{lemma}
+
+\begin{proof}
+If \(\deg p\le n\), then \(L_{n}=p\), so \(I_{n+1}(p)=I(L_{n})=I(p)\).
+\end{proof}
+
+Part~(c) stops here: it asks for \(\|f-L_{n}\|_{\infty}\), not for \(I(L_{n})\). Part~(d) integrates that interpolant (in fact a Hermite interpolant of twice the degree, which is why the derivative order jumps). The nodes in (c) and (d) are the same points, used for two different linear maps.
+
+\paragraph{What ``Gauss'' adds: a better choice of nodes.}
+
+For generic nodes, \cref{lem:interp-exact} is sharp: some polynomial of degree \(n+1\) is missed. If the nodes are the zeros of the orthogonal polynomial of degree \(n+1\) for the inner product \(\langle f,g\rangle_{w}=I(fg)\), exactness doubles.
+
+\begin{definition}[Gauss quadrature]
+\label{def:gauss}
+A quadrature \eqref{eq:quad-sum} with \(n+1\) nodes is \emph{Gauss} for the weight \(w\) if it is interpolatory in the sense of \cref{def:interpolatory} and the nodes are the zeros of a polynomial \(\pi_{n+1}\) of degree \(n+1\) that is orthogonal to \(\mathcal{P}_{n}\) in \(\langle\cdot,\cdot\rangle_{w}\). Equivalently: among all interpolatory rules with \(n+1\) nodes, Gauss is the unique one that integrates every element of \(\mathcal{P}_{2n+1}\) exactly.
+\end{definition}
+
+\begin{lemma}[Precision \(2n+1\)]
+\label{lem:gauss-prec-cheb}
+Let \(\pi_{n+1}\) be orthogonal to \(\mathcal{P}_{n}\) for \(\langle\cdot,\cdot\rangle_{w}\), with \(n+1\) distinct zeros \(x_{0},\ldots,x_{n}\) in \((-1,1)\). The interpolatory rule on those nodes satisfies \(I_{n+1}(p)=I(p)\) for every \(p\in\mathcal{P}_{2n+1}\).
+\end{lemma}
+
+\begin{proof}
+Write \(p=q\pi_{n+1}+s\) with \(q,s\in\mathcal{P}_{n}\). Then \(I(q\pi_{n+1})=\langle q,\pi_{n+1}\rangle_{w}=0\), while \(p(x_{j})=s(x_{j})\), so \(I_{n+1}(p)=I_{n+1}(s)\). \Cref{lem:interp-exact} gives \(I_{n+1}(s)=I(s)\). Combining, \(I_{n+1}(p)=I(s)=I(p)\).
+\end{proof}
+
+That is the whole content of the adjective Gauss: spend the \(n+1\) free nodes so that the \(n+1\) interpolatory weights become exact on a space of dimension \(2n+2\). The error for a general \(f\in C^{2n+2}\) then involves \(f^{(2n+2)}\), which is why (d) assumes that regularity and why the factorial is \((2n+2)!\), not \((n+1)!\).
+
+\paragraph{The Chebyshev case.}
+
+After \(x=\cos\theta\), one has \(\mathrm{d}x/\sqrt{1-x^{2}}=-\mathrm{d}\theta\) and
+
+\[
+I(f)
+=
+\int_{0}^{\pi} f(\cos\theta)\,\mathrm{d}\theta.
+\]
+
+The Chebyshev polynomials \(T_{n}(\cos\theta)=\cos(n\theta)\) (the identity (a) asks to prove) are orthogonal on \([0,\pi]\) as ordinary cosines, hence orthogonal on \([-1,1]\) for the weight \((1-x^{2})^{-1/2}\). Their zeros are the interior points
+
+\begin{equation}
+\label{eq:cheb-nodes}
+x_{j}
+=
+\cos\theta_{j},
+\qquad
+\theta_{j}
+=
+\frac{(2j+1)\pi}{2(n+1)},
+\qquad
+j=0,\ldots,n,
+\end{equation}
+
+which are exactly the interpolation nodes of (c). By \cref{def:gauss} they are the Gauss nodes of (d).
+
+The angles \(\theta_{j}\) are the midpoints of \(n+1\) equal subintervals of \([0,\pi]\). The composite midpoint rule on those intervals is
+
+\begin{equation}
+\label{eq:gauss-cheb}
+I_{n+1}(f)
+=
+\frac{\pi}{n+1}
+\sum_{j=0}^{n} f(x_{j}),
+\end{equation}
+
+i.e.\ all weights equal \(w_{j}=\pi/(n+1)\). This is the Gauss quadrature formula (d) asks to derive: \(n+1\) nodes \eqref{eq:cheb-nodes}, and the constant weight \(\pi/(n+1)\). Exactness on \(\mathcal{P}_{2n+1}\) is \cref{lem:gauss-prec-cheb}, or equivalently exactness of the midpoint rule on trigonometric polynomials of degree \(\le 2n+1\) in \(\theta\).
+
+\begin{example}[Two nodes]
+\label{ex:gauss-cheb-two}
+Here \(T_{2}(x)=2x^{2}-1\), with zeros \(x=\pm 1/\sqrt{2}\). Formula \eqref{eq:gauss-cheb} is
+
+\[
+I_{2}(f)
+=
+\frac{\pi}{2}
+\Bigl(
+f\bigl(\tfrac{1}{\sqrt{2}}\bigr)
++
+f\bigl(-\tfrac{1}{\sqrt{2}}\bigr)
+\Bigr).
+\]
+
+It is exact on \(\mathcal{P}_{3}\). It is not the trapezoid rule on \([-1,1]\) (that would sample the endpoints \(\pm 1\)).
+\end{example}
+
+\paragraph{The printed error constant.}
+
+Let \(\omega(x)=\prod_{j=0}^{n}(x-x_{j})\). The leading coefficient of \(T_{n+1}\) is \(2^{n}\), so \(\omega=2^{-n}T_{n+1}\). If \(H\in\mathcal{P}_{2n+1}\) is the Hermite interpolant matching \(f\) and \(f'\) at each \(x_{j}\), the remainder is
+
+\[
+f(x)-H(x)
+=
+\frac{f^{(2n+2)}(\theta_{x})}{(2n+2)!}\,\omega(x)^{2}.
+\]
+
+Gauss integrates \(H\) exactly (\(\deg H\le 2n+1\)), and \(H(x_{j})=f(x_{j})\), so \(I_{n+1}(f)=I(H)\) and \(I(f)-I_{n+1}(f)=I(f-H)\). Integrating the remainder against the Chebyshev weight, and using \(I(T_{n+1}^{2})=\pi/2\), produces the printed bound
+
+\[
+\bigl|I(f)-I_{n+1}(f)\bigr)
+\le
+\frac{\pi\|f^{(2n+2)}\|_{\infty}}{(2n+2)!\,2^{2n+1}}.
+\]
+
+(The same \(\omega\) appears in (c) unsquared, which is why (c) has \((n+1)!\,2^{n}\) and a first-derivative gap of one, while (d) squares the nodal polynomial and doubles the order.)
+
+\begin{examnote}[What ``derive \(I_{n+1}\)'' is]
+\label{examnote:p2-quad}
+The script for (d) has three lines: the nodes \eqref{eq:cheb-nodes}; the formula \eqref{eq:gauss-cheb}; and the error bound via \(\omega^{2}\) and \(I(T_{n+1}^{2})=\pi/2\). Naming ``Gauss--Chebyshev'' without writing the sum is not the formula. A common slip is to put \(1/\sqrt{1-x_{j}^{2}}\) into the sum: that factor is already inside each \(w_{j}\). Another is to use Chebyshev extrema \(\cos(j\pi/n)\) (Clenshaw--Curtis nodes) instead of the zeros \eqref{eq:cheb-nodes}. Part~(c) is the interpolant at those zeros, not the quadrature; the two share nodes and nothing else.
+\end{examnote}
+
+\subsubsection{Parts (a)--(c)}
+
+Omitted. The closed form \(T_{n}(\cos\theta)=\cos(n\theta)\) from (a) is used below; the zeros of \(T_{n+1}\) are the nodes of (c), reused as Gauss nodes.
+
+\subsubsection{Solution of Problem 2(d)}
+
+\paragraph{Answer.}
+Write \(N\coloneqq n+1\). The sum below is interpolatory quadrature at the zeros of \(T_{N}\); that is the definition of the \(N\)-node Gauss rule for \(I\) (\cref{rem:why-gauss}).
+
+\begin{equation}
+\label{eq:p2d-formula}
+I_{N}(f)
+=
+\frac{\pi}{N}
+\sum_{j=0}^{N-1}
+f(x_{j}),
+\qquad
+x_{j}
+=
+\cos\theta_{j},
+\qquad
+\theta_{j}
+=
+\frac{(2j+1)\pi}{2N}.
+\end{equation}
+
+The nodes are the zeros of \(T_{N}\). The rule is exact on \(\mathcal{P}_{2N-1}=\mathcal{P}_{2n+1}\). For \(f\in C^{2n+2}[-1,1]\),
+
+\[
+\bigl|I(f)-I_{N}(f)\bigr|
+\le
+\frac{\pi\|f^{(2n+2)}\|_{\infty}}{(2n+2)!\,2^{2n+1}}.
+\]
+
+(The exam's \(I_{n+1}\) is this \(I_{N}\).)
+
+\begin{remark}[Why this is Gauss, not a different interpolant]
+\label{rem:why-gauss}
+There is no separate object called ``Gauss interpolation''. Part~(c) is ordinary Lagrange interpolation at the zeros of \(T_{N}\). Part~(d) is a \emph{quadrature}: replace \(I(f)\) by a weighted sum of samples. Every such sum with \(N\) nodes can be made interpolatory in the sense of \cref{def:interpolatory}: take any distinct nodes, form the Lagrange interpolant \(L\in\mathcal{P}_{n}\), and set \(I_{N}(f)\coloneqq I(L)\). That rule is always exact on \(\mathcal{P}_{n}\), and that is all one gets for a generic choice of nodes.
+
+Gauss is the same interpolatory construction with a constrained choice of nodes. Write \(\langle f,g\rangle_{w}\coloneqq I(fg)\). If the nodes are the zeros of a degree-\(N\) polynomial orthogonal to \(\mathcal{P}_{n}\) for this inner product, exactness doubles to \(\mathcal{P}_{2n+1}\) (\cref{def:gauss,lem:gauss-prec-cheb}): divide \(p=q\,T_{N}+s\) with \(\deg q,\deg s\le n\), the product \(qT_{N}\) integrates to zero against the weight, and the samples of \(p\) agree with those of \(s\). For the Chebyshev weight the orthogonal polynomials are \(\{T_{m}\}\), so the Gauss nodes are exactly the zeros of \(T_{N}\), i.e.\ the points in \eqref{eq:p2d-formula}. The equal weights \(\pi/N\) are then forced by uniqueness: there is only one interpolatory \(N\)-node rule exact on \(\mathcal{P}_{2n+1}\), and the proof below checks that this particular sum is that rule.
+
+The later Hermite interpolant \(H\in\mathcal{P}_{2n+1}\) is used only for the error, not to define the formula. The formula itself samples \(f\), not \(f'\).
+\end{remark}
+
+\begin{lemma}[Hermite remainder at double nodes]
+\label{lem:p2d-hermite}
+Let \(x_{0},\ldots,x_{n}\) be distinct, write \(\omega(x)\coloneqq\prod_{j=0}^{n}(x-x_{j})\), and let \(H\in\mathcal{P}_{2n+1}\) satisfy \(H(x_{j})=f(x_{j})\) and \(H'(x_{j})=f'(x_{j})\) for each \(j\). If \(f\in C^{2n+2}[-1,1]\), then for every \(x\) there is \(\theta_{x}\) between \(x\) and the nodes such that
+
+\[
+f(x)-H(x)
+=
+\frac{f^{(2n+2)}(\theta_{x})}{(2n+2)!}\,\omega(x)^{2}.
+\]
+\end{lemma}
+
+\begin{proof}
+If \(x\) is a node both sides vanish. If not, choose \(K\) so that
+
+\[
+F(y)
+\coloneqq
+f(y)-H(y)-K\,\omega(y)^{2}
+\]
+
+vanishes at \(y=x\). Then \(F\) has a double zero at each \(x_{j}\) (because \(H\) matches \(f\) to first order and \(\omega^{2}\) has a double zero there) and a further zero at \(x\), hence at least \(2n+3\) zeros counting multiplicity. Rolle's theorem applied \(2n+2\) times produces \(\theta_{x}\) with \(F^{(2n+2)}(\theta_{x})=0\). Since \(\deg H\le 2n+1\) and \(\omega^{2}\) is monic of degree \(2n+2\), this is \(f^{(2n+2)}(\theta_{x})-K\cdot(2n+2)! =0\), so \(K=f^{(2n+2)}(\theta_{x})/(2n+2)!\). Evaluating \(F(x)=0\) is the claim.
+\end{proof}
+
+\begin{proof}[Solution of (d)]
+\emph{The integral after the Chebyshev substitution.}
+From (a), \(T_{m}(\cos\theta)=\cos(m\theta)\). The change of variables \(x=\cos\theta\), \(\theta\in[0,\pi]\), gives \(\mathrm{d}x/\sqrt{1-x^{2}}=-\mathrm{d}\theta\), hence
+
+\[
+I(f)
+=
+\int_{0}^{\pi} f(\cos\theta)\,\mathrm{d}\theta.
+\]
+
+In particular \(I(1)=\pi\) and, for every integer \(m\ge 1\),
+
+\[
+I(T_{m})
+=
+\int_{0}^{\pi}\cos(m\theta)\,\mathrm{d}\theta
+=
+0,
+\qquad
+I(T_{m}^{2})
+=
+\int_{0}^{\pi}\cos^{2}(m\theta)\,\mathrm{d}\theta
+=
+\int_{0}^{\pi}\frac{1+\cos(2m\theta)}{2}\,\mathrm{d}\theta
+=
+\frac{\pi}{2}.
+\]
+
+The zeros of \(T_{N}\) on \((-1,1)\) are exactly the points \(x_{j}\) in \eqref{eq:p2d-formula}: \(\cos(N\theta_{j})=\cos((2j+1)\pi/2)=0\).
+
+\emph{The formula, by exhibiting a rule exact on \(\mathcal{P}_{2n+1}\).}
+Define \(I_{N}\) by \eqref{eq:p2d-formula}. The family \(\{T_{0},\ldots,T_{2n+1}\}\) is a basis of \(\mathcal{P}_{2n+1}\), so it is enough to check \(I_{N}(T_{k})=I(T_{k})\) for \(k=0,\ldots,2n+1\). For \(k=0\),
+
+\[
+I_{N}(T_{0})
+=
+\frac{\pi}{N}\sum_{j=0}^{N-1}1
+=
+\pi
+=
+I(1).
+\]
+
+For \(1\le k\le 2n+1\), the target is \(I(T_{k})=0\), and
+
+\[
+I_{N}(T_{k})
+=
+\frac{\pi}{N}
+\sum_{j=0}^{N-1}
+\cos(k\theta_{j})
+=
+\frac{\pi}{N}\,
+\operatorname{Re}
+\sum_{j=0}^{N-1}
+e^{ik\theta_{j}}.
+\]
+
+Write \(\zeta\coloneqq e^{ik\pi/N}\). Then
+
+\[
+\sum_{j=0}^{N-1}e^{ik\theta_{j}}
+=
+e^{ik\pi/(2N)}
+\sum_{j=0}^{N-1}\zeta^{j}.
+\]
+
+One has \(\zeta=1\) if and only if \(k\) is a multiple of \(2N\). No such \(k\) occurs in \(\{1,\ldots,2N-1\}=\{1,\ldots,2n+1\}\), so
+
+\[
+\sum_{j=0}^{N-1}\zeta^{j}
+=
+\frac{1-\zeta^{N}}{1-\zeta}
+=
+\frac{1-(-1)^{k}}{1-\zeta}.
+\]
+
+If \(k\) is even the numerator vanishes and the sum is \(0\). If \(k\) is odd, write \(\varphi\coloneqq k\pi/N\). Then \(1-e^{i\varphi}=-2i\,e^{i\varphi/2}\sin(\varphi/2)\), and
+
+\[
+e^{i\varphi/2}\cdot\frac{2}{1-e^{i\varphi}}
+=
+\frac{i}{\sin(\varphi/2)}
+\]
+
+is purely imaginary. In both cases the real part vanishes, so \(I_{N}(T_{k})=0=I(T_{k})\). Thus \(I_{N}\) is exact on \(\mathcal{P}_{2n+1}\). An \((n+1)\)-node interpolatory rule exact on \(\mathcal{P}_{2n+1}\) is the Gauss rule for this weight (\cref{def:gauss,lem:gauss-prec-cheb}); the nodes are necessarily the zeros of \(T_{N}\).
+
+\emph{The error bound.}
+Let \(\omega(x)\coloneqq\prod_{j=0}^{n}(x-x_{j})\), the monic polynomial with the Gauss nodes as roots. The recurrence \(T_{m+1}=2xT_{m}-T_{m-1}\) with \(T_{1}(x)=x\) gives that the leading coefficient of \(T_{N}\) is \(2^{n}\), hence \(\omega=2^{-n}T_{N}\). Let \(H\in\mathcal{P}_{2n+1}\) be the Hermite interpolant of \(f\) at the double nodes \(x_{j}\). \Cref{lem:p2d-hermite} yields
+
+\[
+f(x)-H(x)
+=
+\frac{f^{(2n+2)}(\theta_{x})}{(2n+2)!}\,\omega(x)^{2}.
+\]
+
+Exactness on \(\mathcal{P}_{2n+1}\) gives \(I(H)=I_{N}(H)\). But \(H(x_{j})=f(x_{j})\), so \(I_{N}(H)=I_{N}(f)\). Therefore \(I(f)-I_{N}(f)=I(f-H)\). The weight \((1-x^{2})^{-1/2}\) is positive and \(\omega^{2}\ge 0\), so the pointwise remainder yields
+
+\[
+\bigl|I(f)-I_{N}(f)\bigr|
+\le
+\frac{\|f^{(2n+2)}\|_{\infty}}{(2n+2)!}\,I(\omega^{2}).
+\]
+
+The remaining factor is
+
+\[
+I(\omega^{2})
+=
+2^{-2n}I(T_{N}^{2})
+=
+2^{-2n}\cdot\frac{\pi}{2}
+=
+\frac{\pi}{2^{2n+1}},
+\]
+
+which is the printed constant.
+\end{proof}
+
+\begin{examnote}[What of this belongs on a script]
+\label{examnote:p2d-script}
+Write \eqref{eq:p2d-formula} first (nodes and the equal weight \(\pi/N\)). Exactness on \(\{T_{0},\ldots,T_{2n+1}\}\) is the derivation of the formula; the odd-\(k\) geometric sum must be checked to be purely imaginary, not merely quoted as ``the midpoint rule on \([0,\pi]\)''. The error is Hermite at double nodes, not the Lagrange remainder of (c): that is the only reason the factorial is \((2n+2)!\) and \(\omega\) is squared. Evaluating \(I(T_{N}^{2})=\pi/2\) is one line after \(x=\cos\theta\).
+\end{examnote}

@@ -1,0 +1,28 @@
+% Shared math extras for qe-review.
+% Requires already-loaded: amsmath, amssymb.
+%
+% Classic pitfall: AMS blackboard-bold fonts have no digit glyphs, so
+% \mathbb{1} renders as overlapping garbage. Map the digit 1 to dsfont's
+% \mathds{1}; leave \mathbb{R}, \mathbb{P}, etc. on AMS.
+%
+% Usage (path relative to the main .tex being compiled):
+%   notes:  \input{../../common/qe-math-extras.tex}
+%   exams:  \input{../../../common/qe-math-extras.tex}
+
+\usepackage{dsfont}
+\usepackage{pdftexcmds}
+
+\makeatletter
+\let\qe@amsmmathbb\mathbb
+\renewcommand{\mathbb}[1]{%
+  \ifnum\pdf@strcmp{\unexpanded{#1}}{1}=\z@
+    \mathds{1}%
+  \else
+    \qe@amsmmathbb{#1}%
+  \fi
+}
+\makeatother
+
+% Preferred indicator macros (either style is safe after the remap above).
+\newcommand{\bbone}{\mathds{1}}
+\newcommand{\ind}{\mathbf{1}}

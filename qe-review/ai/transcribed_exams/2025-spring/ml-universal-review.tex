@@ -1,0 +1,2087 @@
+\subsubsection{Uniform convergence}
+\label{subsubsec:mlu-uc}
+
+The event written above is the failure of \emph{uniform} concentration over the whole class. A single Hoeffding bound controls one fixed $h$. After ERM, the hypothesis is chosen from the data, so one must control every $h\in\mathcal{H}$ at once.
+
+\begin{definition}[Uniform convergence]
+\label{def:mlu-uc}
+A class $\mathcal{H}$ has the \textbf{uniform convergence} property if there exists a function $m_{\mathrm{UC}}:(0,1)^2\to\mathbb{N}$ such that, for every $\epsilon,\delta\in(0,1)$ and every distribution $\mathcal{D}$ over $\mathcal{Z}$,
+\[
+m\ge m_{\mathrm{UC}}(\epsilon,\delta)
+\quad\Longrightarrow\quad
+\Pr_{S\sim\mathcal{D}^m}\Bigl[\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert\le\epsilon\Bigr]\ge 1-\delta.
+\]
+The random variable $\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert$ is the \textbf{uniform deviation}.
+\end{definition}
+
+\begin{proposition}[Uniform convergence implies agnostic PAC for ERM]
+\label{prop:mlu-uc-implies-agnostic}
+If $\mathcal{H}$ has uniform convergence, then ERM is an agnostic PAC learner for $\mathcal{H}$. More precisely, on the event that the uniform deviation is at most $\epsilon/2$,
+\[
+L_{\mathcal{D}}(\widehat{h}_S)
+\le
+\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)+\epsilon.
+\]
+\end{proposition}
+
+\begin{proof}
+Write $h^\star\in\arg\min_{h\in\mathcal{H}}L_{\mathcal{D}}(h)$ and $\widehat{h}_S\in\arg\min_{h\in\mathcal{H}}L_S(h)$. On the uniform-convergence event,
+\begin{align*}
+L_{\mathcal{D}}(\widehat{h}_S)
+&\le
+L_S(\widehat{h}_S)+\frac{\epsilon}{2}
+&&\text{(deviation at $\widehat{h}_S$)}\\
+&\le
+L_S(h^\star)+\frac{\epsilon}{2}
+&&\text{(ERM beats every competitor on $S$)}\\
+&\le
+L_{\mathcal{D}}(h^\star)+\epsilon
+&&\text{(deviation at the fixed $h^\star$).}
+\end{align*}
+The first and third steps use the same uniform bound; they are not two different theorems. The middle step is the only place ERM is used.
+\end{proof}
+
+\begin{remark}[Three routes to generalization, already in this paper]
+\label{rem:mlu-three-routes}
+Problems~1--4 already display three different mechanisms.
+\begin{itemize}
+    \item Problem~1 is \emph{pointwise} concentration: $h$ is fixed, so $L_S(h)$ is an ordinary sample mean.
+    \item Problems~2--3 are \emph{uniform} arguments: a union bound or a VC/growth-function bound upgrades pointwise concentration to a statement about every $h\in\mathcal{H}$.
+    \item Problem~4 is \emph{algorithmic stability}: one controls how $A(S)$ moves when a single example is replaced, and never needs a uniform bound over all of $\mathcal{H}$.
+\end{itemize}
+Uniform convergence is a property of the class. Stability is a property of the algorithm. Both can bound $\mathbb{E}_S[L_{\mathcal{D}}(A(S))-L_S(A(S))]$, but they do it for different reasons.
+\end{remark}
+
+\paragraph{Finite-class agnostic rate.}
+If $\lvert\mathcal{H}\rvert<\infty$ and the loss takes values in $[0,1]$, a union bound over two-sided Hoeffding gives
+\[
+\Pr\Bigl[\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>\epsilon\Bigr]
+\le
+2\lvert\mathcal{H}\rvert\,e^{-2m\epsilon^2}.
+\]
+Hence
+\[
+m_{\mathrm{UC}}(\epsilon,\delta)
+\le
+\Bigl\lceil\frac{1}{2\epsilon^2}\bigl(\ln\lvert\mathcal{H}\rvert+\ln(2/\delta)\bigr)\Bigr\rceil.
+\]
+Compare this with the realizable finite-class bound in the previous subsection: there the rate is $O\bigl((\ln\lvert\mathcal{H}\rvert)/\epsilon\bigr)$, because a bad $h$ must be accidentally consistent. Here one estimates every risk to additive accuracy $\epsilon$, which costs a square.
+
+\begin{theorem}[Fundamental theorem of statistical learning]
+\label{thm:mlu-fundamental}
+For a binary hypothesis class $\mathcal{H}$ the following are equivalent.
+\begin{enumerate}[label=(\roman*)]
+    \item $\VCdim(\mathcal{H})<\infty$.
+    \item The growth function is polynomial: $\Pi_{\mathcal{H}}(n)\le\Phi_d(n)$ for $d=\VCdim(\mathcal{H})$, by the Sauer--Shelah lemma already proved in Problem~3.
+    \item $\mathcal{H}$ has uniform convergence.
+    \item $\mathcal{H}$ is agnostically PAC learnable (and, a fortiori,\footnote{\emph{A fortiori} is Latin for ``from the stronger reason'': a statement that already covers the harder case automatically covers the easier special case. Agnostic PAC is the harder guarantee: for \emph{every} $\mathcal{D}$,
+\[
+L_{\mathcal{D}}(A(S))\le\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)+\epsilon
+\]
+with high probability, even if that infimum is positive (noise, or $f\notin\mathcal{H}$). Realizable PAC asks for the same inequality only on those $\mathcal{D}$ for which $\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)=0$, in which case it collapses to $L_{\mathcal{D}}(A(S))\le\epsilon$. Substituting zero into the agnostic bound is exactly realizable PAC, with the same algorithm $A$ and no extra hypothesis. The converse is false as a rate: realizable sample complexity is $\Theta((d+\ln(1/\delta))/\epsilon)$, agnostic replaces $\epsilon$ by $\epsilon^2$. Finite VC still gives both, which is why the four items are equivalent as \emph{learnability} statements.} PAC learnable in the realizable case).
+\end{enumerate}
+In the realizable case the sample complexity is of order
+\[
+m(\epsilon,\delta)
+=\Theta\Bigl(\frac{d+\ln(1/\delta)}{\epsilon}\Bigr);
+\]
+in the agnostic case the $\epsilon$ in the denominator is replaced by $\epsilon^2$. The hidden constants depend on the precise concentration inequality; the exam asks for the distinction of exponents, not for a particular numerical prefactor.
+\end{theorem}
+
+\begin{proof}
+We prove the four arrows a zero-background reader needs. Throughout, the loss is $0$--$1$, so $L_S(h)$ is a frequency in $[0,1]$. Write
+\[
+\Delta(S)
+:=
+\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert
+\]
+for the uniform deviation, and write $\Pi_{\mathcal{H}}(n)$ for the growth function (the maximal number of dichotomies $\mathcal{H}$ realises on $n$ points).
+
+\paragraph{Step A: (i) $\Leftrightarrow$ (ii).}
+This is \jump{lem:sauer-shelah}{the Sauer--Shelah lemma} already proved by \jump{prf:sauer-shelah}{last-point splitting} in Problem~3. If $\VCdim(\mathcal{H})=d<\infty$, then
+\[
+\Pi_{\mathcal{H}}(n)
+\le
+\sum_{i=0}^{d}\binom{n}{i}
+\le
+\Bigl(\frac{en}{d}\Bigr)^{d}
+\qquad(n\ge d).
+\]
+If $\VCdim(\mathcal{H})=\infty$, then for every $n$ some $n$-set is shattered, so $\Pi_{\mathcal{H}}(n)=2^n$, which is not a polynomial. Nothing statistical has been used yet: this step is purely combinatorial.
+
+\paragraph{Step B: (iii) $\Rightarrow$ (iv).}
+This is exactly \cref{prop:mlu-uc-implies-agnostic}. On the event $\Delta(S)\le\epsilon/2$, ERM satisfies $L_{\mathcal{D}}(\widehat h_S)\le\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)+\epsilon$. Uniform convergence says that event has probability at least $1-\delta$ once $m\ge m_{\mathrm{UC}}(\epsilon/2,\delta)$. That is agnostic PAC. The realizable case is the special case $\inf_{h}L_{\mathcal{D}}(h)=0$.
+
+\paragraph{Step C: (ii) $\Rightarrow$ (iii), the ghost-sample argument.}
+If $\mathcal{H}$ is finite one may stop at the Hoeffding union bound written before the theorem: replace $\lvert\mathcal{H}\rvert$ by $N$ and invert $2Ne^{-2m\epsilon^2}\le\delta$. If $\mathcal{H}$ is infinite that union is illegal. The repair is to compare $S$ with an independent \emph{ghost} copy $S'=(z_1',\dots,z_m')\sim\mathcal{D}^m$, and only then union-bound over the finitely many dichotomies realised on the pooled $2m$ points.
+
+\textit{C1. Why a ghost sample helps.}
+Fix any $h$ (even one chosen from $S$). The ghost sample $S'$ never saw that choice, so ordinary two-sided Hoeffding applies to $S'$ at that $h$:
+\[
+\Pr_{S'}\Bigl(\lvert L_{S'}(h)-L_{\mathcal{D}}(h)\rvert\ge\frac{\epsilon}{2}\Bigr)
+\le
+2e^{-m\epsilon^2/2}.
+\]
+Choose $m$ large enough that the right-hand side is at most $1/2$ (any $m\ge(2/\epsilon^2)\ln 4$ will do). Then, for every $h$,
+\[
+\Pr_{S'}\Bigl(\lvert L_{S'}(h)-L_{\mathcal{D}}(h)\rvert<\frac{\epsilon}{2}\Bigr)
+\ge
+\frac12.
+\]
+The numerical bound does not depend on $h$. Therefore it remains valid if $h$ is replaced by a data-dependent witness $\widehat h$ selected from $S$.
+
+\textit{C2. Triangle inequality moves the population risk out.}
+If $\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert\ge\epsilon$ and $\lvert L_{S'}(h)-L_{\mathcal{D}}(h)\rvert<\epsilon/2$, then
+\[
+\lvert L_S(h)-L_{S'}(h)\rvert
+\ge
+\epsilon-\frac{\epsilon}{2}
+=
+\frac{\epsilon}{2}.
+\]
+Let $E$ be the event $\{\Delta(S)\ge\epsilon\}$, and on $E$ pick any $h_S$ with $\lvert L_S(h_S)-L_{\mathcal{D}}(h_S)\rvert\ge\epsilon$. Conditioning on $S$ and using C1 at $h_S$,
+\[
+\Pr_{S,S'}(E)
+=
+\mathbb{E}_S\bigl[\mathbf{1}_E\bigr]
+\le
+2\,\mathbb{E}_S\Bigl[\mathbf{1}_E\cdot\Pr_{S'}\bigl(\lvert L_{S'}(h_S)-L_{\mathcal{D}}(h_S)\rvert<\tfrac{\epsilon}{2}\bigm|S\bigr)\Bigr]
+\le
+2\,\Pr_{S,S'}\Bigl(\exists h:\ \lvert L_S(h)-L_{S'}(h)\rvert\ge\tfrac{\epsilon}{2}\Bigr).
+\]
+The population risks have disappeared. The price is a factor $2$ and a comparison of two empirical means.
+
+\textit{C3. Random swaps make the two samples symmetric.}
+Conditionally on the pooled $2m$ examples, independently swap each pair $(z_i,z_i')$ with probability $1/2$. Equivalently, draw i.i.d.\ Rademacher signs $\sigma_i\in\{\pm1\}$ and replace the $i$-th contribution of $L_S-L_{S'}$ by $\sigma_i(\ell(h,z_i)-\ell(h,z_i'))$. This does not change the conditional law of $\lvert L_S-L_{S'}\rvert$, because $(z_i,z_i')$ and $(z_i',z_i)$ are exchangeable.
+
+\textit{C4. Only finitely many dichotomies appear on the pool.}
+Two classifiers that agree on all $2m$ pooled points produce the same $0$--$1$ losses on $S$ and on $S'$. There are at most $\Pi_{\mathcal{H}}(2m)$ such dichotomies. For each fixed dichotomy the swapped summands $D_i=\sigma_i(\ell(h,z_i)-\ell(h,z_i'))$ are independent, lie in $[-1,1]$, and have mean zero. Hoeffding's inequality for a sum of $m$ such variables yields
+\[
+\Pr\Bigl(\bigl\lvert\tfrac1m\sum_{i=1}^m D_i\bigr\rvert\ge\tfrac{\epsilon}{2}\Bigr)
+\le
+2\exp\Bigl(-\frac{2m(\epsilon/2)^2}{4}\Bigr)
+=
+2e^{-m\epsilon^2/8}.
+\]
+(The denominator $4$ is $(\mathrm{range})^2=(-1-1)^2$.) A union bound over the $\Pi_{\mathcal{H}}(2m)$ dichotomies, then C2, gives
+\[
+\Pr\bigl(\Delta(S)\ge\epsilon\bigr)
+\le
+4\,\Pi_{\mathcal{H}}(2m)\,e^{-m\epsilon^2/8}.
+\]
+
+\textit{C5. Plug in Sauer--Shelah and invert.}
+If $\VCdim(\mathcal{H})=d$ and $2m\ge d$, Step~A supplies $\Pi_{\mathcal{H}}(2m)\le(2em/d)^d$. Hence
+\[
+\Pr\bigl(\Delta(S)\ge\epsilon\bigr)
+\le
+4\Bigl(\frac{2em}{d}\Bigr)^{d}e^{-m\epsilon^2/8}.
+\]
+The right-hand side is at most $\delta$ as soon as $m$ is of order $(d\ln(m/d)+\ln(1/\delta))/\epsilon^2$. That is a finite $m_{\mathrm{UC}}(\epsilon,\delta)$, so $\mathcal{H}$ has uniform convergence. (A Rademacher proof of the same arrow is written after \cref{thm:mlu-rad-bound}; it is a rearrangement of C3--C4, not a new idea.)
+
+\paragraph{Step D: (iv) $\Rightarrow$ (i), via a shattered set.}
+We show the contrapositive. Suppose $\VCdim(\mathcal{H})=\infty$. Then for every $m$ there is a set $C\subset\mathcal{X}$ with $\lvert C\rvert=2m$ that $\mathcal{H}$ shatters. Let $\mathcal{D}$ be the uniform distribution on $C$. Every labeling $f:C\to\{\pm1\}$ is realised by some $h\in\mathcal{H}$, so learning under $\mathcal{D}$ is exactly ``learn an arbitrary Boolean function on $2m$ points from $m$ observations''. Draw a training set of $m$ distinct points of $C$ (or sample without replacement) and let the remaining $m$ points be unseen. \Cref{thm:mlu-nfl}, applied to this finite domain $C$, says that every algorithm has expected $0$--$1$ error $1/2$ on each unseen point. Averaging over $C$ therefore gives
+\[
+\mathbb{E}_{f,S}\bigl[L_{\mathcal{D}}(A(S))\bigr]
+=
+\frac{m}{2m}\cdot 0+\frac{m}{2m}\cdot\frac12
+=
+\frac14.
+\]
+Agnostic PAC with $\epsilon=1/8$ would force $L_{\mathcal{D}}(A(S))\le 1/8$ with high probability for every $\mathcal{D}$ and every $f$, hence an expectation strictly smaller than $1/4$ for large $m$, a contradiction. Thus infinite VC dimension forbids distribution-free PAC learnability.
+
+The four arrows together are the theorem. The exponent $\epsilon$ versus $\epsilon^2$ is the difference between ``a bad $h$ must be accidentally consistent'' (realizable, one-sided) and ``every risk is estimated to additive accuracy $\epsilon$'' (agnostic, two-sided / Hoeffding).
+\end{proof}
+
+\begin{remark}[Why Sauer--Shelah is the combinatorial engine]
+Once $\Pi_{\mathcal{H}}(m)\le(em/d)^d$, a union bound over the \emph{realized} dichotomies---rather than over an infinite $\mathcal{H}$---produces a polynomial-in-$m$ covering of the class. That is the only place VC dimension enters the sample-complexity proof. Problem~3 already computed growth functions and VC dimensions; the present theorem is the statistical consequence of those combinatorial bounds.
+\end{remark}
+
+\begin{exercise}[From a fixed-$h$ bound to a uniform bound]
+\label{ex:mlu-union-hoeffding}
+Assume the loss is $\{0,1\}$-valued and $\lvert\mathcal{H}\rvert=N<\infty$. Starting from the two-sided Hoeffding bound for one fixed $h$, derive a sufficient $m$ such that
+\[
+\Pr\Bigl[\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>\epsilon\Bigr]\le\delta.
+\]
+Write every step, including why a union bound is legal here and would be illegal if $\mathcal{H}$ were replaced by the data-dependent singleton $\{\widehat{h}_S\}$ without first passing through the supremum.
+\end{exercise}
+
+\begin{solution}[From a fixed-$h$ bound to a uniform bound]
+\textbf{Step 0: what is given.}
+For each \emph{fixed} $h\in\mathcal{H}$, the variables $Z_i=\ell(h,z_i)$ are i.i.d.\ in $\{0,1\}$, with mean $L_{\mathcal{D}}(h)$ and sample mean $L_S(h)$. Two-sided Hoeffding therefore yields, for every $t>0$,
+\[
+\Pr\bigl[\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>t\bigr]\le 2e^{-2mt^2}.
+\]
+This statement has $h$ frozen before $S$ is drawn. It does \emph{not} yet apply to $\widehat{h}_S$.
+
+\textbf{Step 1: name the bad event for the whole class.}
+Define
+\[
+E
+:=
+\Bigl\{\sup_{h\in\mathcal{H}}\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>\epsilon\Bigr\}
+=
+\bigcup_{h\in\mathcal{H}}
+\bigl\{\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>\epsilon\bigr\}.
+\]
+The second equality is the definition of a supremum: the supremum exceeds $\epsilon$ if and only if at least one coordinate does. The right-hand side is a union of $N$ events, one per hypothesis, and each of those events is of the Hoeffding type.
+
+\textbf{Step 2: union bound.}
+For any finite collection of events,
+\[
+\Pr\Bigl(\bigcup_{h\in\mathcal{H}}E_h\Bigr)
+\le
+\sum_{h\in\mathcal{H}}\Pr(E_h).
+\]
+This inequality does not require independence. Substituting the Hoeffding tail with $t=\epsilon$ gives
+\[
+\Pr(E)
+\le
+\sum_{h\in\mathcal{H}}2e^{-2m\epsilon^2}
+=
+2N\,e^{-2m\epsilon^2}.
+\]
+
+\textbf{Step 3: choose $m$.}
+We want $2N\,e^{-2m\epsilon^2}\le\delta$. Taking natural logarithms (which preserves inequalities because $\ln$ is increasing),
+\[
+\ln(2N)-2m\epsilon^2\le\ln\delta
+\qquad\Longleftrightarrow\qquad
+2m\epsilon^2\ge\ln(2N)+\ln(1/\delta).
+\]
+Hence any
+\[
+m
+\ge
+\frac{1}{2\epsilon^2}\bigl(\ln N+\ln(2/\delta)\bigr)
+\]
+is sufficient. (If one wants an integer sample size, take the ceiling.)
+
+\textbf{Step 4: why one cannot start from $\{\widehat{h}_S\}$.}
+The singleton $\{\widehat{h}_S\}$ is a random set, chosen after seeing $S$. The identity
+\[
+\bigl\{\lvert L_S(\widehat{h}_S)-L_{\mathcal{D}}(\widehat{h}_S)\rvert>\epsilon\bigr\}
+=
+\bigcup_{h\in\{\widehat{h}_S\}}
+\bigl\{\lvert L_S(h)-L_{\mathcal{D}}(h)\rvert>\epsilon\bigr\}
+\]
+is true, but the right-hand side is \emph{not} a union of a fixed list of events to which Hoeffding applies. The term that is selected is correlated with $S$. The legal path is: first control every $h$ in the deterministic list $\mathcal{H}$ (Step~2), then observe that $\widehat{h}_S$ is one of those $h$. That is exactly why one writes a supremum over $\mathcal{H}$ rather than a Hoeffding bound ``at the ERM''.
+\end{solution}
+
+
+\subsubsection{Loss, risk, parameters, and algorithms}
+\label{subsubsec:mlu-loss-risk}
+
+Problem~4 writes both $L_S(w)$ and $L_S(A(S))$. These are not two different risk functionals. They are the same map $L_S:\,\mathcal{H}\to\mathbb{R}$, evaluated at two different points of $\mathcal{H}$.
+
+\begin{notation}[Four spaces]
+\label{not:mlu-four-spaces}
+\begin{itemize}
+    \item An \textbf{example} is $z=(x,y)\in\mathcal{Z}:=\mathcal{X}\times\mathcal{Y}$.
+    \item A \textbf{training sample} is $S=(z_1,\dots,z_m)\in\mathcal{Z}^m$.
+    \item A \textbf{model} is a point of a hypothesis class $\mathcal{H}$. In Problems~1--3 one writes $h\in\mathcal{H}\subseteq\{0,1\}^{\mathcal{X}}$: $\mathcal{H}$ is a set of classifiers, not necessarily a vector space. In Problem~4 one writes $w\in\mathcal{H}\subseteq\mathbb{R}^d$: the same letter $\mathcal{H}$ is identified with a parameter set, so that $\lVert w\rVert$ and strong convexity make sense.
+    \item A \textbf{learning algorithm} is a map $A:\mathcal{Z}^m\to\mathcal{H}$. The symbol $A(S)$ is one point of $\mathcal{H}$, namely the output after seeing $S$.
+\end{itemize}
+\end{notation}
+
+\begin{definition}[Point loss and the two risks]
+\label{def:mlu-loss-risk}
+A point loss is a function $\ell:\mathcal{H}\times\mathcal{Z}\to\mathbb{R}$. For a \emph{fixed} model $w\in\mathcal{H}$,
+\[
+L_S(w)
+:=
+\frac{1}{m}\sum_{i=1}^m\ell(w,z_i),
+\qquad
+L_{\mathcal{D}}(w)
+:=
+\mathbb{E}_{z\sim\mathcal{D}}\bigl[\ell(w,z)\bigr].
+\]
+The first is the empirical risk (a number once $S$ and $w$ are given; a random variable if $S$ is random). The second is the population risk (a number once $\mathcal{D}$ and $w$ are given).
+\end{definition}
+
+\begin{remark}[What $w$ is, and what it is not]
+\label{rem:mlu-what-is-w}
+The letter $w$ is a dummy variable ranging over $\mathcal{H}$. It is not ``the learned model'' until one specifies which point is meant.
+\begin{itemize}
+    \item In Problem~4, $\mathcal{H}$ is treated as a subset of a Euclidean space, so $w$ is a parameter vector. The regularizer $\tfrac{\lambda}{2}\lVert w\rVert^2$ is the squared Euclidean norm of that vector.
+    \item In Problems~1--3, the corresponding dummy variable is a classifier $h$, which need not be a vector. Axis-aligned rectangles and triangles are sets of functions. There is no $\lVert h\rVert^2$ in those problems.
+    \item $A(S)$ is not a new space. It is the particular $w$ (or $h$) chosen by the algorithm. After training one may write $w=A(S)$ and $w'=A(S^{(i)})$, as in the stability proof.
+\end{itemize}
+The expression $\ell(A(S),z)$ is legal because the first slot of $\ell$ expects an element of $\mathcal{H}$, and $A(S)$ is such an element. The two slots are \emph{model} and \emph{one example}, never ``two samples''.
+\end{remark}
+
+\begin{example}[Ridge regression: $w$ is a vector]
+\label{exmp:mlu-ridge}
+Take $\mathcal{X}=\mathbb{R}^d$, $\mathcal{Y}=\mathbb{R}$, $\mathcal{H}=\mathbb{R}^d$, and
+\[
+\ell(w,z)=\bigl(\langle w,x\rangle-y\bigr)^2.
+\]
+Then
+\[
+L_S(w)
+=
+\frac{1}{m}\sum_{i=1}^m\bigl(\langle w,x_i\rangle-y_i\bigr)^2
+\]
+is ordinary least squares, and
+\[
+A(S)
+=
+\arg\min_{w\in\mathbb{R}^d}
+\Bigl(L_S(w)+\tfrac{\lambda}{2}\lVert w\rVert^2\Bigr)
+=
+\bigl(X^\top X+\tfrac{\lambda m}{2}I\bigr)^{-1}X^\top y
+\]
+is ridge regression (up to the conventional scaling of $\lambda$). Here $w$ really is a vector in $\mathbb{R}^d$. The object $A(S)$ is one such vector, computed from $S$.
+
+A numerical illustration with $d=1$, $m=2$, $\lambda=1$, and $S=\{(1,1),(2,1)\}$:
+\[
+F_S(w)
+=
+\frac12\bigl[(w-1)^2+(2w-1)^2\bigr]+\frac12 w^2
+=
+\frac52 w^2-3w+1.
+\]
+The critical point is $F_S'(w)=5w-3=0$, so $A(S)=3/5$. This is a number in $\mathbb{R}=\mathcal{H}$. Replacing the second example by $(2,3)$ produces a different number $A(S^{(2)})$. Stability compares $\ell(A(S),z)$ with $\ell(A(S^{(2)}),z)$ at the \emph{same} test point $z$; the thing that moved is the model.
+\end{example}
+
+\begin{example}[Logistic loss: the classifier is a function of the vector]
+\label{exmp:mlu-logistic}
+Take $y\in\{\pm1\}$ and
+\[
+\ell(w,(x,y))
+=
+\log\bigl(1+e^{-y\langle w,x\rangle}\bigr).
+\]
+The parameter $w\in\mathbb{R}^d$ determines the classifier $x\mapsto\mathrm{sign}(\langle w,x\rangle)$. Problem~4's convex analysis is performed on $w$, not on the $0$--$1$ classifier. The $0$--$1$ loss of Problems~1--3 is a different point loss on the same underlying linear family; it is not convex, which is why Problem~4 switches loss.
+\end{example}
+
+\begin{example}[$0$--$1$ loss: the dummy variable is a function]
+\label{exmp:mlu-01}
+In Problem~1 one has
+\[
+\ell(h,x)=\mathbf{1}\{h(x)\ne f(x)\},
+\qquad
+L_S(h)=\frac1m\sum_{i=1}^m\mathbf{1}\{h(x_i)\ne f(x_i)\}.
+\]
+Here $h$ is a function $\mathcal{X}\to\{0,1\}$. If $\mathcal{H}$ is ``all axis-aligned rectangles'', $h$ is not a vector. The same letters $L_S$ and $L_{\mathcal{D}}$ are used, because the \emph{construction} (average / expectation of a point loss) is identical.
+\end{example}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Symbol} & \textbf{Space} & \textbf{Depends on $S$?} & \textbf{Role} \\ \hline
+$w$ or $h$ & $\mathcal{H}$ & no (dummy variable) & generic model \\ \hline
+$A(S)$ & $\mathcal{H}$ & yes & trained model \\ \hline
+$w^\star$ & $\mathcal{H}$ & no (depends on $\mathcal{D}$) & best-in-class comparator \\ \hline
+$z$ & $\mathcal{Z}$ & --- & one example \\ \hline
+$\ell(w,z)$ & $\mathbb{R}$ & only through its arguments & point loss \\ \hline
+$L_S(w)$ & $\mathbb{R}$ & yes & empirical risk of a fixed $w$ \\ \hline
+$L_{\mathcal{D}}(w)$ & $\mathbb{R}$ & no & population risk of a fixed $w$ \\ \hline
+$L_S(A(S))$ & $\mathbb{R}$ & yes, twice & training error \\ \hline
+$L_{\mathcal{D}}(A(S))$ & $\mathbb{R}$ & yes, through $A(S)$ & generalization error \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Unbiasedness holds for a frozen model, not for $A(S)$]
+\label{prop:mlu-unbiased}
+If $w\in\mathcal{H}$ is independent of $S\sim\mathcal{D}^m$, then
+\[
+\mathbb{E}_S\bigl[L_S(w)\bigr]=L_{\mathcal{D}}(w).
+\]
+In particular this applies to the oracle $w^\star$. It does \emph{not} apply to $A(S)$: the same $S$ appears both as the training set that produces the model and as the set on which $L_S$ is evaluated, so $\mathbb{E}_S[L_S(A(S))]$ is typically smaller than $\mathbb{E}_S[L_{\mathcal{D}}(A(S))]$. Problem~4(a) bounds that gap by the stability rate $\epsilon(m)$.
+\end{proposition}
+
+\begin{proof}
+Linearity of expectation and identical distribution give
+\[
+\mathbb{E}_S\bigl[L_S(w)\bigr]
+=
+\frac1m\sum_{i=1}^m\mathbb{E}_{z_i}\bigl[\ell(w,z_i)\bigr]
+=
+L_{\mathcal{D}}(w),
+\]
+where the first slot $w$ may be taken out of the expectation only because it does not depend on $z_i$. If the first slot is $A(S)$, it \emph{does} depend on every $z_i$, and the same cancellation fails. That is the entire distinction.
+\end{proof}
+
+\begin{exercise}[Name the spaces]
+\label{ex:mlu-spaces}
+In the expression
+\[
+\bigl\lvert\ell\bigl(A(S),z\bigr)-\ell\bigl(A(S^{(i)}),z\bigr)\bigr\rvert,
+\]
+answer the following in one sentence each.
+\begin{enumerate}[label=(\alph*)]
+    \item What set does $A(S)$ belong to? Is it a sample, a classifier, or a distribution?
+    \item What set does $z$ belong to?
+    \item Why is it illegal to read this as ``the loss between the sample $S$ and the sample $z$''?
+    \item Why can one later write $w=A(S)$ and treat $w$ as a vector in the Problem~4 proof?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Name the spaces]
+(a) $A(S)$ belongs to $\mathcal{H}$. It is the model (classifier / parameter vector) returned by the algorithm. It is not a sample and not a distribution.
+
+(b) $z$ belongs to $\mathcal{Z}=\mathcal{X}\times\mathcal{Y}$. It is a single example, typically a test point or the replacement point $z_i'$.
+
+(c) The point loss $\ell$ is never a function of two samples. Its prototype is $\ell(\text{model},\text{one example})$. Both $A(S)$ and $A(S^{(i)})$ occupy the model slot; the same $z$ occupies the example slot twice. What is being compared is how two nearby models score the same point.
+
+(d) Problem~4 parameterizes $\mathcal{H}$ as a subset of a Euclidean space and writes the regularizer $\tfrac{\lambda}{2}\lVert w\rVert^2$. Once $A(S)$ has been defined as the minimizer of $F_S$ over that same $\mathcal{H}$, the substitution $w=A(S)$ is just a renaming of one vector. The Lipschitz assumption $\lvert\ell(w,z)-\ell(w',z)\rvert\le\rho\lVert w-w'\rVert$ is an assumption about that vector space structure; it would be meaningless for an abstract set of rectangles.
+\end{solution}
+
+\begin{exercise}[A complete ridge computation]
+\label{ex:mlu-ridge-num}
+Let $d=1$, $\lambda=2$, and $S=\{(1,0),(1,2)\}$. Using squared loss $\ell(w,(x,y))=(wx-y)^2$ and the regularizer $\tfrac{\lambda}{2}w^2$, compute $A(S)$ by hand. Then replace the second example by $(1,4)$ to obtain $S^{(2)}$, compute $A(S^{(2)})$, and evaluate
+\[
+\bigl\lvert\ell\bigl(A(S),(1,0)\bigr)-\ell\bigl(A(S^{(2)}),(1,0)\bigr)\bigr\rvert
+\]
+at the test point $z=(1,0)$. Explain in words which slot of $\ell$ changed.
+\end{exercise}
+
+\begin{solution}[A complete ridge computation]
+\textbf{Step 1: write the regularized objective on $S$.}
+Here $m=2$ and $\lambda=2$, so
+\[
+F_S(w)
+=
+\frac12\Bigl[(w\cdot 1-0)^2+(w\cdot 1-2)^2\Bigr]
++
+\frac{2}{2}w^2
+=
+\frac12\bigl(w^2+(w-2)^2\bigr)+w^2.
+\]
+Expand: $(w-2)^2=w^2-4w+4$, hence
+\[
+F_S(w)
+=
+\frac12(2w^2-4w+4)+w^2
+=
+w^2-2w+2+w^2
+=
+2w^2-2w+2.
+\]
+
+\textbf{Step 2: minimize.}
+$F_S'(w)=4w-2$. The unique critical point is $w=1/2$. The second derivative $F_S''(w)=4>0$, so this is a minimum. Thus $A(S)=1/2$.
+
+\textbf{Step 3: the replaced sample.}
+Now $S^{(2)}=\{(1,0),(1,4)\}$ and
+\[
+F_{S^{(2)}}(w)
+=
+\frac12\bigl[w^2+(w-4)^2\bigr]+w^2
+=
+\frac12(2w^2-8w+16)+w^2
+=
+2w^2-4w+8.
+\]
+Then $F_{S^{(2)}}'(w)=4w-4$, so $A(S^{(2)})=1$.
+
+\textbf{Step 4: point losses at $z=(1,0)$.}
+\[
+\ell\bigl(A(S),(1,0)\bigr)
+=
+\bigl(\tfrac12\cdot 1-0\bigr)^2
+=
+\frac14,
+\qquad
+\ell\bigl(A(S^{(2)}),(1,0)\bigr)
+=
+(1\cdot 1-0)^2
+=
+1.
+\]
+The absolute difference is $3/4$.
+
+\textbf{Step 5: which slot changed?}
+The example $z=(1,0)$ is the same in both evaluations. The first slot changed: the model moved from $1/2$ to $1$ because the training set changed. This is the meaning of loss stability. It is not a distance between $S$ and $S^{(2)}$ inside $\ell$.
+\end{solution}
+
+\begin{exercise}[Why the last step of Problem 4(b) is an equality]
+\label{ex:mlu-last-eq}
+In Problem~4(b) the last step of the displayed chain is
+\[
+\mathbb{E}_S\bigl[L_S(w^\star)\bigr]+\tfrac{\lambda}{2}\lVert w^\star\rVert^2+\epsilon(m)
+=
+L_{\mathcal{D}}(w^\star)+\tfrac{\lambda}{2}\lVert w^\star\rVert^2+\epsilon(m).
+\]
+Explain why this step is an equality, not an inequality, and why the same step would be false if $w^\star$ were replaced by $A(S)$.
+\end{exercise}
+
+\begin{solution}[Why the last equality]
+The comparator $w^\star=\arg\min_{w\in\mathcal{H}}L_{\mathcal{D}}(w)$ is defined from $\mathcal{D}$ alone. It does not look at the random sample $S$. Therefore $w^\star$ is a frozen model in the sense of \cref{prop:mlu-unbiased}, and
+\[
+\mathbb{E}_S\bigl[L_S(w^\star)\bigr]
+=
+\frac1m\sum_{i=1}^m\mathbb{E}_{z_i}\bigl[\ell(w^\star,z_i)\bigr]
+=
+L_{\mathcal{D}}(w^\star).
+\]
+The remaining two summands do not depend on $S$: $\lVert w^\star\rVert^2$ is a constant, and $\epsilon(m)$ is a deterministic stability rate. Adding constants to both sides of an equality preserves equality.
+
+If one wrote $A(S)$ in place of $w^\star$, the identity $\mathbb{E}_S[L_S(A(S))]=L_{\mathcal{D}}(A(S))$ is already meaningless as written ($A(S)$ is random, so the right-hand side is random), and the averaged statement
+\[
+\mathbb{E}_S\bigl[L_S(A(S))\bigr]
+=
+\mathbb{E}_S\bigl[L_{\mathcal{D}}(A(S))\bigr]
+\]
+is false in general: the same $S$ is used both to train and to evaluate, so the training error is optimistically biased. Problem~4(a) exists precisely to control that bias.
+\end{solution}
+
+
+\subsubsection{Bias, variance, and model selection}
+\label{subsubsec:mlu-bv}
+
+Problems~1--3 measure estimation error for a \emph{fixed} class $\mathcal{H}$. Model selection asks which class to use. The classical decomposition for square loss makes the tension quantitative.
+
+\begin{definition}[Square-loss decomposition]
+\label{def:mlu-bv}
+Let $Y=f(X)+\varepsilon$ with $\mathbb{E}[\varepsilon\mid X]=0$ and $\mathrm{Var}(\varepsilon\mid X)=\sigma^2(X)$. Let $\widehat{h}_S$ be any (possibly randomized) predictor trained on $S$, independent of a fresh pair $(X,Y)$. Then
+\[
+\mathbb{E}_{S,X,Y}\bigl[\bigl(Y-\widehat{h}_S(X)\bigr)^2\bigr]
+=
+\mathbb{E}_X\bigl[\sigma^2(X)\bigr]
++
+\mathbb{E}_X\bigl[\bigl(f(X)-\bar h(X)\bigr)^2\bigr]
++
+\mathbb{E}_{S,X}\bigl[\bigl(\widehat{h}_S(X)-\bar h(X)\bigr)^2\bigr],
+\]
+where $\bar h(x):=\mathbb{E}_S[\widehat{h}_S(x)]$. The three terms are irreducible noise, (squared) bias, and variance.
+\end{definition}
+
+\begin{proof}[Proof of the decomposition]
+Condition on $X=x$ and write $\widehat{h}=\widehat{h}_S(x)$, $\bar h=\bar h(x)$, $f=f(x)$. Split
+\[
+Y-\widehat{h}
+=
+\underbrace{(Y-f)}_{A}
++
+\underbrace{(f-\bar h)}_{B}
++
+\underbrace{(\bar h-\widehat{h})}_{C}.
+\]
+The square expands into three squares and three cross products:
+\[
+\mathbb{E}\bigl[(A+B+C)^2\mid x\bigr]
+=
+\mathbb{E}[A^2\mid x]+\mathbb{E}[B^2\mid x]+\mathbb{E}[C^2\mid x]
++2\mathbb{E}[AB\mid x]+2\mathbb{E}[AC\mid x]+2\mathbb{E}[BC\mid x].
+\]
+``Uncorrelated'' here means exactly that those three products have conditional mean zero; it is not a claim that $B$ and $C$ are independent random variables.
+
+Given $X=x$, the objects $f(x)$ and $\bar h(x)=\mathbb{E}_S[\widehat{h}_S(x)]$ are numbers. In particular $B$ is deterministic, not a second source of randomness. The only random pieces (given $x$) are the fresh noise $A=Y-f$ and the training fluctuation $C$, and they are independent because $(X,Y)$ is a fresh pair, independent of $S$. Moreover $\mathbb{E}[A\mid x]=0$ by $\mathbb{E}[\varepsilon\mid X]=0$, and
+\[
+\mathbb{E}[C\mid x]
+=
+\bar h(x)-\mathbb{E}_S[\widehat{h}_S(x)]
+=
+0
+\]
+by the definition of $\bar h$. Therefore
+\begin{align*}
+\mathbb{E}[AB\mid x]
+&=
+B\,\mathbb{E}[A\mid x]
+=
+0,\\
+\mathbb{E}[AC\mid x]
+&=
+\mathbb{E}[A\mid x]\,\mathbb{E}[C\mid x]
+=
+0,\\
+\mathbb{E}[BC\mid x]
+&=
+B\,\mathbb{E}[C\mid x]
+=
+0.
+\end{align*}
+The $BC$ cancellation does \emph{not} use independence of $f-\bar h$ and $\widehat{h}-\bar h$. It uses that $B$ factors out and $C$ is already centered. The $AC$ cancellation is the one that uses independence of the test pair from $S$. What remains is
+\begin{align*}
+\mathbb{E}\bigl[(Y-\widehat{h})^2\mid X=x\bigr]
+&=
+\mathbb{E}[(Y-f)^2\mid x]
++
+(f-\bar h)^2
++
+\mathbb{E}[(\widehat{h}-\bar h)^2],
+\end{align*}
+which is noise, bias squared, and variance at $x$. Taking $\mathbb{E}_X$ yields the claim.
+\end{proof}
+
+\begin{remark}[Two different ``variances'']
+\label{rem:mlu-two-variances}
+Problem~1's $\mathrm{Var}_S[L_S(h)]$ is the sampling variance of the \emph{empirical risk of a frozen $h$}. The variance term above is the sampling variance of the \emph{learned predictor} $\widehat{h}_S$ as a function. They are related in spirit (both come from $S$ being random) and are not the same random variable. Enlarging $\mathcal{H}$ typically decreases bias and increases the second variance; it does not change $\mathrm{Var}_S[L_S(h)]$ for a $h$ that was already in the small class.
+\end{remark}
+
+\begin{property}[Qualitative trade-off]
+\label{prop:mlu-bv-tradeoff}
+A more constrained class (higher approximation bias) is usually less sensitive to $S$ (lower variance). Regularization in Problem~4 is one concrete implementation: the penalty $\tfrac{\lambda}{2}\lVert w\rVert^2$ shrinks $A(S)$ toward the origin, raising approximation error relative to unregularized ERM and lowering replace-one sensitivity. Model selection (validation, AIC/BIC, structural risk minimization) is the problem of choosing the constraint so that the sum of the two errors is small.
+\end{property}
+
+\begin{exercise}[A two-point bias--variance computation]
+\label{ex:mlu-bv-num}
+Let $\mathcal{X}=\{x_0\}$ be a singleton, $Y=1+\varepsilon$ with $\varepsilon=\pm 1$ each with probability $1/2$, and let $S=(Y_1,Y_2)$ consist of two i.i.d.\ copies of $Y$. Consider two algorithms:
+\begin{enumerate}[label=(\alph*)]
+    \item $\widehat{h}_{\mathrm{mean}}(x_0)=\frac{Y_1+Y_2}{2}$;
+    \item $\widehat{h}_{\mathrm{const}}(x_0)=0$ (ignores the sample).
+\end{enumerate}
+Compute noise, bias squared, and variance for each algorithm. Which one has smaller risk?
+\end{exercise}
+
+\begin{solution}[A two-point bias--variance computation]
+Here $f(x_0)=1$ and $\sigma^2(x_0)=\mathbb{E}[\varepsilon^2]=1$. The noise term is $1$ for both algorithms.
+
+(a) $\mathbb{E}_S[\widehat{h}_{\mathrm{mean}}]=1$, so the bias is $0$. The variance is
+\[
+\mathrm{Var}\Bigl(\frac{Y_1+Y_2}{2}\Bigr)
+=
+\frac14\bigl(\mathrm{Var}(Y_1)+\mathrm{Var}(Y_2)\bigr)
+=
+\frac14\cdot 2\cdot 1
+=
+\frac12.
+\]
+Risk $=1+0+1/2=3/2$.
+
+(b) $\bar h=0$, so bias squared is $(1-0)^2=1$. Variance is $0$ because the predictor does not depend on $S$. Risk $=1+1+0=2$.
+
+The mean estimator has larger variance and much smaller bias; its risk is smaller. This is the trade-off in miniature: the constant predictor is infinitely stable (Problem~4 would give $\epsilon(m)=0$) and badly biased.
+\end{solution}
+
+
+\subsubsection{No Free Lunch}
+\label{subsubsec:mlu-nfl}
+
+One sentence: if every Boolean target on a large domain is equally likely, then on the \emph{unseen} points every learner has the same expected error as a coin flip---so a guarantee that is small for \emph{every} $f$ is impossible unless one first throws most targets away.
+
+The two equivalent official phrasings are: (i) for any algorithm there exists a bad $f$ on which it is no better than chance; (ii) the uniform average of the risk over all $f$ is the same for every algorithm. Finite-VC learnability in Problems~2--3 is the opposite move: one keeps only a small class, and then a guarantee becomes possible.
+
+\begin{theorem}[No Free Lunch]
+\label{thm:mlu-nfl}
+Let $\mathcal{X}$ be finite with $\lvert\mathcal{X}\rvert\ge m+1$, and let $A$ be any (possibly randomized) rule that, given $m$ labeled points, outputs a classifier $\widehat h_S:\mathcal{X}\to\{\pm 1\}$. Draw a target $f:\mathcal{X}\to\{\pm 1\}$ uniformly from the $2^{\lvert\mathcal{X}\rvert}$ possibilities. Draw a training location set $T\subset\mathcal{X}$ with $\lvert T\rvert=m$ and a fresh unseen point $X\in\mathcal{X}\setminus T$ (for instance: choose $T$ uniformly among $m$-subsets, then $X$ uniformly in the complement). Label $S=\{(x,f(x)):x\in T\}$ without noise. Then
+\[
+\mathbb{E}_{f,T,X}\bigl[\mathbf{1}_{\{\widehat h_S(X)\ne f(X)\}}\bigr]
+=
+\frac12,
+\]
+independently of how $A$ is designed. In particular no $A$ is uniformly superior to any other $A'$ on this unrestricted average.
+\end{theorem}
+
+\begin{proof}
+The only randomness we shall use is that an unseen bit of a uniformly random Boolean function is still a fair coin, even after one has read $m$ other bits.
+
+\paragraph{Step 1: name what the algorithm is allowed to see.}
+The training set $S$ is completely determined by the pair $(T,f|_T)$. The algorithm $A$ may be randomized, so $\widehat h_S(X)$ is a (possibly random) function of $(T,X,f|_T)$ and of $A$'s internal coins. In every case, $\widehat h_S(X)$ does \emph{not} look at the single bit $f(X)$.
+
+\paragraph{Step 2: the unseen bit is independent of the seen bits.}
+A uniform random $f:\mathcal{X}\to\{\pm1\}$ is the same object as $\lvert\mathcal{X}\rvert$ independent fair coin flips, one per point. Therefore, conditionally on $(T,X,f|_T)$, the remaining bit $f(X)$ is still uniform on $\{\pm1\}$ and independent of $\widehat h_S(X)$. Concretely: there are equally many extensions of $f|_T$ that send $X$ to $+1$ and to $-1$, namely $2^{\lvert\mathcal{X}\rvert-m-1}$ of each.
+
+\paragraph{Step 3: a coin flip versus a guess that cannot see the coin.}
+For any fixed prediction $a\in\{\pm1\}$ (here $a=\widehat h_S(X)$),
+\[
+\Pr\bigl(a\ne f(X)\bigm|T,X,f|_T,A\text{'s coins}\bigr)
+=
+\frac12,
+\]
+because $f(X)$ is an independent fair bit. Taking the expectation over all the conditioning variables (and over $A$'s coins) preserves the value $1/2$. That is the displayed claim.
+
+\paragraph{Step 4: why ``uniformly superior'' is impossible.}
+If some $A$ satisfied $\mathbb{E}_{f,T,X}[\mathbf{1}_{\{\widehat h_S(X)\ne f(X)\}}]<\mathbb{E}_{f,T,X}[\mathbf{1}_{\{\widehat h'_S(X)\ne f(X)\}}]$ for every other $A'$, the left-hand side would have to be strictly smaller than $1/2$. Step~3 forbids that. The same computation with the roles of $A$ and $A'$ reversed shows that the two averages are in fact equal.
+
+The three-point picture of \cref{exmp:mlu-nfl-three} is this proof with $\lvert\mathcal{X}\rvert=3$ and $m=1$: after one sees $f(x_1)$, the bits $f(x_2)$ and $f(x_3)$ are still fair, so every rule has unseen error $1/2$.
+\end{proof}
+
+\begin{example}[Three points, one observation]
+\label{exmp:mlu-nfl-three}
+Take $\mathcal{X}=\{x_1,x_2,x_3\}$. There are $2^3=8$ targets, all equally likely. The sample is the single pair $(x_1,f(x_1))$. Risk is $0$--$1$ error on the unseen set $\{x_2,x_3\}$. Compare three algorithms:
+\begin{itemize}
+    \item $A_{\mathrm{copy}}$: predict $f(x_1)$ at both unseen points (``the world is constant'');
+    \item $A_{+}$: ignore the sample and predict $+1$ everywhere;
+    \item $A_{\mathrm{flip}}$: predict $-f(x_1)$ at both unseen points (``the world flips'').
+\end{itemize}
+For any \emph{fixed} $f$ the three look very different. If $f\equiv +1$, then $A_{+}$ and $A_{\mathrm{copy}}$ have unseen error $0$, while $A_{\mathrm{flip}}$ has unseen error $1$. If $f(x_1)=+1$ and $f(x_2)=f(x_3)=-1$, the ranking reverses: $A_{\mathrm{flip}}$ is perfect and $A_{\mathrm{copy}}$ is wrong on both unseen points.
+
+After averaging over the eight targets the ranking disappears. Independently of $f(x_1)$, the unseen bit $f(x_2)$ is still uniform on $\{\pm 1\}$, and likewise $f(x_3)$. So each algorithm has unseen error $1/2$ at each of $x_2,x_3$. The copy rule paid for its wins on constant $f$ by losing on the flipped $f$; the average is a wash. That is NFL in a picture that one can count by hand.
+\end{example}
+
+\begin{example}[Where the lunch is: restrict the eight targets to two]
+\label{exmp:mlu-nfl-restrict}
+Keep the same domain and sample, but now announce in advance that $f$ is one of the two \emph{constant} functions. Then $A_{\mathrm{copy}}$ has unseen error $0$, while $A_{+}$ still fails on $f\equiv -1$. The restriction \emph{is} the inductive bias. It is also the move already used in this paper: Problem~2 keeps a finite $\mathcal{H}$, Problem~3 keeps a finite-VC $\mathcal{H}$, Problem~4 keeps convex Lipschitz losses plus $\tfrac{\lambda}{2}\lVert w\rVert^2$. Each of those assumptions throws away most Boolean $f$ on $\mathcal{X}$, which is why a PAC or stability bound can be smaller than $1/2$.
+\end{example}
+
+\begin{remark}[What NFL does and does not say]
+\label{rem:mlu-nfl}
+NFL does not say that learning is impossible, nor that a CNN and a coin flip are equally good on natural images. Natural-image classification is not the uniform average over all labelings of all pixel arrays; it is a tiny structured subset, exactly as in \cref{exmp:mlu-nfl-restrict}. NFL also does not say that shrinking $\mathcal{H}$ always helps: if the surviving class misses every good predictor, approximation error is large. That is why (a) in the drill below is false.
+
+The later-paper items ask only for the consequence: Fall 2025 Problem~2 wants ``no universally superior algorithm across all tasks''; Spring 2026 MQ5 wants ``inductive bias is necessary for a nontrivial guarantee.'' The counting proof above is the reason those slogans are true; the multiple-choice itself does not ask one to reproduce the conditioning.
+\end{remark}
+
+\begin{exercise}[NFL as a multiple-choice with a written reason]
+\label{ex:mlu-nfl-mcq}
+Which statement is a correct consequence of the No Free Lunch theorem?
+\begin{enumerate}[label=(\alph*)]
+    \item Restricting the hypothesis class always improves generalization.
+    \item There exists a universally optimal learning algorithm.
+    \item Inductive bias is necessary to obtain nontrivial learning guarantees.
+    \item Random guessing is optimal for every supervised problem.
+\end{enumerate}
+Give a one-paragraph reason for the correct choice and a one-sentence rejection of each of the others.
+\end{exercise}
+
+\begin{solution}[NFL as a multiple-choice]
+The correct choice is (c).
+
+NFL says that, once one averages over an unrestricted set of target functions, no algorithm beats any other (\cref{exmp:mlu-nfl-three}: copy, constant $+1$, and flip all have unseen error $1/2$). Therefore a statement of the form ``for every $\mathcal{D}$ and every $f$, algorithm $A$ has small risk'' cannot hold unless some restriction is added. A restriction on $\mathcal{H}$ (finite VC), on $\mathcal{D}$ (margin, sparsity), or on the algorithm (regularization) is an inductive bias. That is the content of (c), and it is the restriction step of \cref{exmp:mlu-nfl-restrict}.
+
+(a) is false: a class that does not contain a good predictor has large approximation error. Restriction can hurt. (b) is the negation of NFL. (d) overstates the theorem: on a structured family (the two constant targets, or linear targets with a margin) ERM is far better than guessing; NFL only concerns the unrestricted average.
+\end{solution}
+
+
+\subsubsection{Rademacher complexity}
+\label{subsubsec:mlu-rad}
+
+VC dimension is combinatorial and distribution-free. Rademacher complexity is a data-dependent capacity measure that applies to real-valued classes and recovers VC bounds as a special case.
+
+\begin{definition}[Empirical and expected Rademacher complexity]
+\label{def:mlu-rad}
+Let $\sigma_1,\dots,\sigma_m$ be i.i.d.\ Rademacher signs, $\Pr(\sigma_i=\pm 1)=1/2$, independent of $S=(z_1,\dots,z_m)$. For a class $\mathcal{F}$ of functions $\mathcal{Z}\to\mathbb{R}$,
+\[
+\widehat{\mathfrak{R}}_S(\mathcal{F})
+:=
+\mathbb{E}_{\sigma}
+\Bigl[
+\sup_{f\in\mathcal{F}}
+\frac1m\sum_{i=1}^m\sigma_i f(z_i)
+\Bigr],
+\qquad
+\mathfrak{R}_m(\mathcal{F})
+:=
+\mathbb{E}_S\bigl[\widehat{\mathfrak{R}}_S(\mathcal{F})\bigr].
+\]
+\end{definition}
+
+\begin{remark}[How to read the definition]
+The inner product $\frac1m\sum\sigma_i f(z_i)$ is the correlation of $f$ with a random labeling of the sample. The supremum asks how well the richest function in $\mathcal{F}$ can fit that noise. A class that can interpolate arbitrary signs on $S$ has large empirical Rademacher complexity. This is the same intuition as shattering, but the quantity is an expectation rather than a worst-case combinatorial count, and it depends on the actual points in $S$.
+\end{remark}
+
+\begin{lemma}[McDiarmid / bounded differences]
+\label{lem:mlu-mcdiarmid}
+Let $g:\mathcal{Z}^m\to\mathbb{R}$ be a function that changes by at most $c_i$ when its $i$-th coordinate is replaced: for every $i$ and every $z_1,\dots,z_m,z_i'$,
+\[
+\bigl\lvert g(z_1,\dots,z_i,\dots,z_m)-g(z_1,\dots,z_i',\dots,z_m)\bigr\rvert
+\le
+c_i.
+\]
+If $S=(z_1,\dots,z_m)$ has independent coordinates, then for every $t>0$,
+\[
+\Pr\bigl(g(S)-\mathbb{E}[g(S)]\ge t\bigr)
+\le
+\exp\Bigl(\frac{-2t^2}{\sum_{i=1}^m c_i^2}\Bigr).
+\]
+\end{lemma}
+
+\begin{remark}[How to read McDiarmid]
+This is the same role Hoeffding played in Problem~1, upgraded from a sample mean to an arbitrary Lipschitz-in-each-coordinate functional. We use it as a black box (its proof is Azuma's inequality on the Doob martingale of $g$). The only thing a reader must check, each time, is the list of numbers $c_i$.
+\end{remark}
+
+\begin{lemma}[Massart]
+\label{lem:mlu-massart}
+Let $\mathcal{F}=\{f_1,\dots,f_N\}$ with $\lvert f_j(z)\rvert\le 1$ for all $j,z$. Then
+\[
+\widehat{\mathfrak{R}}_S(\mathcal{F})
+\le
+\sqrt{\frac{2\ln N}{m}}.
+\]
+\end{lemma}
+
+\begin{proof}
+Write $Z_j:=\frac1m\sum_{i=1}^m\sigma_i f_j(z_i)$, so that $\widehat{\mathfrak{R}}_S(\mathcal{F})=\mathbb{E}_\sigma[\max_j Z_j]$. The points $z_i$ are frozen; only the signs $\sigma$ are random.
+
+\textit{A soft-max bound.}
+For every $\lambda>0$ the inequality $\max_j Z_j=\frac1\lambda\log e^{\lambda\max_j Z_j}\le\frac1\lambda\log\sum_j e^{\lambda Z_j}$ holds pathwise. Take $\mathbb{E}_\sigma$ and apply Jensen to the concave logarithm:
+\[
+\mathbb{E}_\sigma\bigl[\max_j Z_j\bigr]
+\le
+\frac1\lambda\log\sum_{j=1}^N\mathbb{E}_\sigma\bigl[e^{\lambda Z_j}\bigr].
+\]
+
+\textit{A moment-generating function for one $Z_j$.}
+Independence of the signs and the elementary bound $\mathbb{E}[e^{\lambda\sigma u}]\le e^{\lambda^2 u^2/2}$ for $\sigma\in\{\pm1\}$ and $\lvert u\rvert\le 1$ give
+\[
+\mathbb{E}_\sigma\bigl[e^{\lambda Z_j}\bigr]
+=
+\prod_{i=1}^m\mathbb{E}_{\sigma_i}\bigl[e^{(\lambda/m)\sigma_i f_j(z_i)}\bigr]
+\le
+\prod_{i=1}^m e^{\lambda^2 f_j(z_i)^2/(2m^2)}
+\le
+e^{\lambda^2/(2m)}.
+\]
+Hence
+\[
+\mathbb{E}_\sigma\bigl[\max_j Z_j\bigr]
+\le
+\frac1\lambda\log\bigl(N e^{\lambda^2/(2m)}\bigr)
+=
+\frac{\ln N}{\lambda}+\frac{\lambda}{2m}.
+\]
+
+\textit{Optimize $\lambda$.}
+The right-hand side is minimized at $\lambda=\sqrt{2m\ln N}$ (or any $\lambda>0$ if $N=1$). Substituting that value yields $\sqrt{2\ln N/m}$.
+\end{proof}
+
+\begin{theorem}[Rademacher generalization bound]
+\label{thm:mlu-rad-bound}
+If every $f\in\mathcal{F}$ takes values in $[0,1]$, then with probability at least $1-\delta$ over $S$,
+\[
+\sup_{f\in\mathcal{F}}\bigl(L_{\mathcal{D}}(f)-L_S(f)\bigr)
+\le
+2\mathfrak{R}_m(\mathcal{F})
++
+\sqrt{\frac{\ln(1/\delta)}{2m}}.
+\]
+(The two-sided version has a factor $2$ in front of the square root, or uses $\widehat{\mathfrak{R}}_S$ plus a slightly larger concentration term.)
+\end{theorem}
+
+\begin{proof}
+Write $\Phi(S):=\sup_{f\in\mathcal{F}}(L_{\mathcal{D}}(f)-L_S(f))$ for the one-sided uniform deviation. The argument has two halves: bound the \emph{expectation} of $\Phi$ by twice the Rademacher complexity, then concentrate $\Phi$ about that expectation.
+
+\paragraph{Half 1: a ghost sample turns $L_{\mathcal{D}}$ into an empirical mean.}
+
+\textit{Step 1: replace the unknown $L_{\mathcal{D}}(f)$ by an independent copy.}
+Let $S'=(z_1',\dots,z_m')$ be an independent ghost sample, and write $L_{S'}(f)=\frac1m\sum_i f(z_i')$. Because $f$ is a fixed function while $S'$ is drawn from $\mathcal{D}^m$,
+\[
+L_{\mathcal{D}}(f)
+=
+\mathbb{E}_{S'}\bigl[L_{S'}(f)\bigr].
+\]
+Therefore
+\[
+\Phi(S)
+=
+\sup_{f\in\mathcal{F}}\mathbb{E}_{S'}\bigl[L_{S'}(f)-L_S(f)\bigr]
+\le
+\mathbb{E}_{S'}\Bigl[\sup_{f\in\mathcal{F}}\bigl(L_{S'}(f)-L_S(f)\bigr)\Bigr].
+\]
+The inequality is ``a supremum of averages is at most the average of the supremum''. It is the only place we pay for not knowing which $f$ will be large. Taking $\mathbb{E}_S$ of both sides gives
+\[
+\mathbb{E}_S\bigl[\Phi(S)\bigr]
+\le
+\mathbb{E}_{S,S'}\Bigl[\sup_{f\in\mathcal{F}}\frac1m\sum_{i=1}^m\bigl(f(z_i')-f(z_i)\bigr)\Bigr].
+\]
+
+\textit{Step 2: random signs do not change the law.}
+For each $i$ the pair $(z_i,z_i')$ has the same law as $(z_i',z_i)$. Independently flipping the sign of $f(z_i')-f(z_i)$ is therefore invisible in distribution. Introducing i.i.d.\ Rademacher signs $\sigma_i$, independent of $(S,S')$,
+\[
+\mathbb{E}_S\bigl[\Phi(S)\bigr]
+=
+\mathbb{E}_{S,S',\sigma}\Bigl[\sup_{f\in\mathcal{F}}\frac1m\sum_{i=1}^m\sigma_i\bigl(f(z_i')-f(z_i)\bigr)\Bigr].
+\]
+
+\textit{Step 3: split the supremum into two identical copies.}
+A supremum of a sum is at most the sum of the suprema, so
+\begin{align*}
+\sup_{f}\frac1m\sum_i\sigma_i\bigl(f(z_i')-f(z_i)\bigr)
+&\le
+\sup_{f}\frac1m\sum_i\sigma_i f(z_i')
++
+\sup_{f}\frac1m\sum_i(-\sigma_i)f(z_i).
+\end{align*}
+The law of $(\sigma_1,\dots,\sigma_m)$ equals the law of $(-\sigma_1,\dots,-\sigma_m)$. Taking expectations, the two summands are therefore equal, and each is exactly the definition of $\mathfrak{R}_m(\mathcal{F})$. We have shown
+\[
+\mathbb{E}_S\bigl[\Phi(S)\bigr]
+\le
+2\mathfrak{R}_m(\mathcal{F}).
+\]
+
+\paragraph{Half 2: $\Phi$ concentrates.}
+
+\textit{Step 4: check the bounded-difference numbers.}
+Replace one example $z_i$ by $z_i'$. For every single $f\in[0,1]$,
+\[
+\bigl\lvert L_S(f)-L_{S^{(i)}}(f)\bigr\rvert
+=
+\frac1m\bigl\lvert f(z_i)-f(z_i')\bigr\rvert
+\le
+\frac1m.
+\]
+A supremum of functions that each move by at most $1/m$ itself moves by at most $1/m$:
+\[
+\bigl\lvert\Phi(S)-\Phi(S^{(i)})\bigr\rvert
+\le
+\sup_{f\in\mathcal{F}}\bigl\lvert L_S(f)-L_{S^{(i)}}(f)\bigr\rvert
+\le
+\frac1m.
+\]
+Thus McDiarmid applies with every $c_i=1/m$. Then $\sum_i c_i^2=1/m$, and
+\[
+\Pr\bigl(\Phi(S)-\mathbb{E}[\Phi(S)]\ge t\bigr)
+\le
+e^{-2mt^2}.
+\]
+
+\textit{Step 5: choose the deviation.}
+Set $t=\sqrt{\ln(1/\delta)/(2m)}$, so that $e^{-2mt^2}=\delta$. On the complementary event of probability $1-\delta$,
+\[
+\Phi(S)
+\le
+\mathbb{E}[\Phi(S)]+t
+\le
+2\mathfrak{R}_m(\mathcal{F})+\sqrt{\frac{\ln(1/\delta)}{2m}},
+\]
+which is the claim.
+
+(The two-sided statement applies the same argument to $-\Phi$, or to $\sup_f\lvert L_{\mathcal{D}}(f)-L_S(f)\rvert$, and pays a factor $2$ in the tail.)
+\end{proof}
+
+\begin{property}[Finite classes and VC classes]
+\label{prop:mlu-rad-bounds}
+\Cref{lem:mlu-massart} gives $\widehat{\mathfrak{R}}_S(\mathcal{F})\le\sqrt{2\ln\lvert\mathcal{F}\rvert/m}$ when $\lvert\mathcal{F}\rvert<\infty$ and $\lVert f\rVert_\infty\le 1$. For a binary class with $\VCdim(\mathcal{H})=d$, the empirical complexity sees only the restrictions of $\mathcal{H}$ to $S$, of which there are at most $\Pi_{\mathcal{H}}(m)$. Sauer--Shelah and Massart therefore yield
+\[
+\mathfrak{R}_m(\mathcal{H})
+\le
+\sqrt{\frac{2d\ln(em/d)}{m}}
+\]
+(up to replacing $\ln\lvert\mathcal{F}\rvert$ by $\ln\Pi_{\mathcal{H}}(m)\le d\ln(em/d)$). Inserting this into \cref{thm:mlu-rad-bound} reproduces the agnostic VC rate $\widetilde{O}(\sqrt{d/m})$ of \cref{thm:mlu-fundamental}, which is the alternative reading of Step~C promised there.
+\end{property}
+
+\begin{remark}[Comparison with Problem~3]
+\label{rem:mlu-rad-vs-vc}
+Problem~3 bounds $\VCdim(\mathcal{H}\cup\mathcal{H}')$ through the growth-function inequality $\Pi_{\mathcal{H}\cup\mathcal{H}'}(n)\le\Pi_{\mathcal{H}}(n)+\Pi_{\mathcal{H}'}(n)$. The same union is subadditive for Rademacher complexities:
+\[
+\widehat{\mathfrak{R}}_S(\mathcal{F}\cup\mathcal{G})
+\le
+\widehat{\mathfrak{R}}_S(\mathcal{F})+\widehat{\mathfrak{R}}_S(\mathcal{G}),
+\]
+because a supremum over a union is at most the sum of the two suprema. VC dimension adds a $+1$; Rademacher complexity adds without the $+1$, but it is an additive bound on a different scale (order $1/\sqrt{m}$, not an integer).
+\end{remark}
+
+\begin{exercise}[Rademacher complexity of a finite class]
+\label{ex:mlu-rad-finite}
+Let $\mathcal{F}=\{f_1,\dots,f_N\}$ with $\lvert f_j(z)\rvert\le 1$ for all $j,z$. Using only $\mathbb{E}e^{\lambda\sigma}\le e^{\lambda^2/2}$ for a Rademacher $\sigma$ and the soft-max bound of \cref{lem:mlu-massart}, show that
+\[
+\widehat{\mathfrak{R}}_S(\mathcal{F})\le\sqrt{\frac{2\ln N}{m}}.
+\]
+Then explain why this recovers, up to constants, the finite-class agnostic rate after inserting the bound into \cref{thm:mlu-rad-bound}.
+\end{exercise}
+
+\begin{solution}[Rademacher complexity of a finite class]
+This is \cref{lem:mlu-massart}, written as an exam-length calculation.
+
+\textbf{Step 1: write the empirical complexity as an expectation of a maximum.}
+\[
+\widehat{\mathfrak{R}}_S(\mathcal{F})
+=
+\mathbb{E}_{\sigma}
+\Bigl[\max_{1\le j\le N}Z_j\Bigr],
+\qquad
+Z_j
+:=
+\frac1m\sum_{i=1}^m\sigma_i f_j(z_i).
+\]
+The points $z_i$ are frozen in the empirical complexity; only the signs $\sigma$ are random.
+
+\textbf{Step 2: pass to a soft-max and a product of moment-generating functions.}
+For any $\lambda>0$,
+\[
+\max_j Z_j
+\le
+\frac1\lambda\log\sum_{j=1}^N e^{\lambda Z_j},
+\]
+so Jensen on $\log$ yields $\mathbb{E}[\max Z_j]\le\frac1\lambda\log\sum_j\mathbb{E}[e^{\lambda Z_j}]$. For a single $j$,
+\[
+\mathbb{E}_{\sigma}e^{\lambda Z_j}
+=
+\prod_{i=1}^m\mathbb{E}_{\sigma_i}e^{(\lambda/m)\sigma_i f_j(z_i)}
+\le
+e^{\lambda^2/(2m)},
+\]
+where the inequality is $\mathbb{E}[e^{u\sigma}]\le e^{u^2/2}$ for a Rademacher $\sigma$ and $\lvert u\rvert\le\lambda/m$.
+
+\textbf{Step 3: optimize $\lambda$.}
+\[
+\mathbb{E}\bigl[\max_j Z_j\bigr]
+\le
+\frac{\ln N}{\lambda}+\frac{\lambda}{2m}.
+\]
+The choice $\lambda=\sqrt{2m\ln N}$ produces $\widehat{\mathfrak{R}}_S(\mathcal{F})\le\sqrt{2\ln N/m}$.
+
+\textbf{Step 4: back to sample complexity.}
+\Cref{thm:mlu-rad-bound} then says that the uniform deviation is at most
+\[
+2\sqrt{\frac{2\ln N}{m}}+\sqrt{\frac{\ln(1/\delta)}{2m}}
+\]
+with probability $1-\delta$. Setting this $\le\epsilon$ forces $m=\Omega\bigl((\ln N+\ln(1/\delta))/\epsilon^2\bigr)$, which is the same finite-class agnostic rate obtained from a Hoeffding union bound after \cref{def:mlu-uc}. The two proofs are cousins: one unions over hypotheses inside Hoeffding, the other unions over hypotheses inside a Rademacher supremum.
+\end{solution}
+
+
+\subsubsection{Linear regression and logistic regression}
+\label{subsubsec:mlu-linlog}
+
+Both models are ERM for a concrete loss on a linear parameter. They sit on the Problem~4 side of the dictionary: $w\in\mathbb{R}^d$.
+
+\begin{definition}[Linear regression]
+\label{def:mlu-linreg}
+The hypothesis is $x\mapsto\langle w,x\rangle$ (or $\langle w,x\rangle+b$ after appending a constant coordinate). With squared loss,
+\[
+L_S(w)
+=
+\frac1m\lVert Xw-y\rVert_2^2,
+\qquad
+\widehat{w}_{\mathrm{OLS}}
+=
+(X^\top X)^+X^\top y
+\]
+whenever one takes a minimizer. The population target $w^\star=\arg\min_w\mathbb{E}[(\langle w,X\rangle-Y)^2]$ is the best linear predictor, not necessarily the true regression function if that function is nonlinear.
+\end{definition}
+
+\begin{definition}[Logistic regression]
+\label{def:mlu-logreg}
+For $y\in\{\pm1\}$,
+\[
+L_S(w)
+=
+\frac1m\sum_{i=1}^m\log\bigl(1+e^{-y_i\langle w,x_i\rangle}\bigr).
+\]
+This is the negative log-likelihood of the model $\Pr(Y=1\mid x)=\sigma(\langle w,x\rangle)$, $\sigma(t)=(1+e^{-t})^{-1}$. Adding $\tfrac{\lambda}{2}\lVert w\rVert^2$ produces exactly the regularized ERM of Problem~4 with logistic loss, which is convex and $\rho$-Lipschitz on a bounded domain.
+\end{definition}
+
+\begin{remark}[Link to Problems~1 and~4]
+OLS and logistic regression are algorithms $A$. Problem~1's variance identity applies to the $0$--$1$ risk of the frozen classifier $\mathrm{sign}(\langle w,\,\cdot\,\rangle)$ if $w$ is not trained on $S$. After training, one needs uniform convergence (this subsection's first block) or stability (Problem~4). Logistic loss is a convex surrogate: minimizing it does not minimize $0$--$1$ risk exactly, but it makes the Problem~4 hypotheses (convexity, Lipschitzness) available.
+\end{remark}
+
+\begin{exercise}[OLS as ERM, written from scratch]
+\label{ex:mlu-ols}
+Let $m=2$, $d=1$, $S=\{(1,1),(3,2)\}$. Compute $\widehat{w}_{\mathrm{OLS}}$ by minimizing $L_S(w)=\frac12\bigl((w-1)^2+(3w-2)^2\bigr)$. Then compute $L_S(\widehat{w}_{\mathrm{OLS}})$ and explain why this number is \emph{not} $L_{\mathcal{D}}(\widehat{w}_{\mathrm{OLS}})$.
+\end{exercise}
+
+\begin{solution}[OLS as ERM]
+Expand:
+\[
+L_S(w)
+=
+\frac12\bigl(w^2-2w+1+9w^2-12w+4\bigr)
+=
+5w^2-7w+\frac52.
+\]
+The derivative is $10w-7$, so $\widehat{w}_{\mathrm{OLS}}=7/10$. Then
+\[
+L_S\bigl(\tfrac{7}{10}\bigr)
+=
+5\cdot\frac{49}{100}-7\cdot\frac{7}{10}+\frac52
+=
+\frac{245}{100}-\frac{49}{10}+\frac52
+=
+\frac{49}{20}-\frac{98}{20}+\frac{50}{20}
+=
+\frac{1}{20}.
+\]
+This is the average squared residual on the two training points. The population risk $L_{\mathcal{D}}(7/10)$ is an expectation over a fresh $(X,Y)\sim\mathcal{D}$. We were not given $\mathcal{D}$, so we cannot evaluate it. Even if we were, $\widehat{w}_{\mathrm{OLS}}$ depends on $S$, so $L_S(\widehat{w}_{\mathrm{OLS}})$ is optimistically biased for $L_{\mathcal{D}}(\widehat{w}_{\mathrm{OLS}})$ in the sense of \cref{prop:mlu-unbiased}.
+\end{solution}
+
+
+\subsubsection{Decision trees}
+\label{subsubsec:mlu-trees}
+
+\begin{definition}[Axis-aligned binary tree]
+\label{def:mlu-tree}
+A decision tree of depth at most $k$ on $\mathbb{R}^p$ recursively splits a node by a coordinate threshold $\{x^{(j)}\le t\}$. Each leaf predicts a label (classification) or a constant (regression). The hypothesis class $\mathcal{H}_{p,k}$ is the set of all such trees.
+\end{definition}
+
+\begin{property}[Capacity and overfitting]
+\label{prop:mlu-tree-vc}
+Each split is an axis-aligned threshold, so a depth-$k$ tree is a union of at most $2^k$ axis-aligned rectangles. In $\mathbb{R}^2$, Problem~3 already proved $\VCdim(\mathcal{H}_{\mathrm{rect}})=4$; a deep tree can realize far more dichotomies and has VC dimension of order $\Theta(k)$ or larger, depending on $p$ and the precise encoding. Unpruned ERM over deep trees interpolates $S$ and has small $L_S$ with large uniform deviation: this is the bias--variance trade-off with ``depth'' as the complexity parameter. Pruning, a depth cap, or a minimum-leaf constraint is model selection.
+\end{property}
+
+\begin{remark}[Impurity is a surrogate]
+CART-style training replaces $0$--$1$ ERM, which is combinatorial, by a greedy impurity drop (Gini, entropy, or squared error). The output is still an element $A(S)\in\mathcal{H}_{p,k}$. Generalization is not guaranteed by the greedy step; it is guaranteed only if the final class is controlled (depth, pruning) or if one uses a hold-out set.
+\end{remark}
+
+\begin{exercise}[Why a deep tree can shatter a sample that a rectangle cannot]
+\label{ex:mlu-tree-xor}
+Let $C=\{(\pm 1,\pm 1)\}\subset\mathbb{R}^2$ with XOR labels: $(1,1)$ and $(-1,-1)$ positive, the other two negative. Show that no axis-aligned rectangle realizes this labeling, but a depth-$2$ tree does. Connect the observation to Problem~3.
+\end{exercise}
+
+\begin{solution}[Why a deep tree can shatter XOR]
+The two positives are diagonally opposite. Any axis-aligned rectangle containing both positives contains the entire bounding box $[-1,1]\times[-1,1]$, hence contains both negatives. This is the same trapping argument as the five-point upper bound for $\mathcal{H}_{\mathrm{rect}}$ in Problem~3: extrema determine the box. Thus no $h\in\mathcal{H}_{\mathrm{rect}}$ realizes XOR on $C$.
+
+A depth-$2$ tree can split first on $x^{(1)}\le 0$ and then, in each child, on $x^{(2)}\le 0$, assigning opposite labels to the two leaves in each pair so that the diagonal is positive. Equivalently, the tree implements $(x^{(1)}>0)\triangle(x^{(2)}>0)$ up to signs. So $\mathcal{H}_{2,2}$ is strictly richer than $\mathcal{H}_{\mathrm{rect}}$. That is why an unrestricted tree class needs a complexity control if one wants a VC/PAC guarantee of the Problem~3 type.
+\end{solution}
+
+
+\subsubsection{Nearest neighbours}
+\label{subsubsec:mlu-knn}
+
+\begin{definition}[$k$-NN]
+\label{def:mlu-knn}
+Given $S=((x_i,y_i))_{i=1}^m$ and a query $x$, let $x_{(1)},\dots,x_{(k)}$ be the $k$ nearest sample points to $x$ (break ties consistently). The prediction is the majority label (classification) or the average response (regression) among those $k$ neighbours.
+\end{definition}
+
+\begin{theorem}[Stone, informal]
+\label{thm:mlu-stone}
+In $\mathbb{R}^p$, if $k\to\infty$ and $k/m\to 0$ as $m\to\infty$, then $k$-NN is universally consistent for classification and regression under mild moment conditions: $L_{\mathcal{D}}(A(S))\to L_{\mathcal{D}}(h_{\mathrm{Bayes}})$ in probability. The algorithm is not a fixed finite-VC class; the effective neighbourhood shrinks, so bias $\to 0$, while $k\to\infty$ sends variance $\to 0$.
+\end{theorem}
+
+\begin{proof}[Proof of the two-limit mechanism]
+A complete proof of Stone's theorem uses covering numbers and a uniform law of large numbers on a vanishing neighbourhood; it is longer than this supplement and is not an exam item. What a zero-background reader needs is why the two limits $k\to\infty$ and $k/m\to 0$ are both necessary, in the language of \cref{def:mlu-bv}.
+
+Fix a query $x$ at which the regression function $f(x)=\mathbb{E}[Y\mid X=x]$ is continuous, and write $\widehat h_S(x)$ for the average of the $k$ responses whose inputs are nearest to $x$. Let $U_x$ be that random neighbourhood.
+
+\paragraph{Step 1: a bias--variance split at one $x$.}
+Conditionally on the $k$ neighbours,
+\[
+\widehat h_S(x)
+=
+\frac1k\sum_{j=1}^k Y_{(j)}
+=
+\frac1k\sum_{j=1}^k f(X_{(j)})
++
+\frac1k\sum_{j=1}^k\varepsilon_{(j)},
+\]
+where $\varepsilon_{(j)}=Y_{(j)}-f(X_{(j)})$ has conditional mean zero. The first average is the local mean of $f$; the second is a mean of $k$ noise terms.
+
+\paragraph{Step 2: why $k/m\to 0$ kills the bias.}
+If $k/m\to 0$, the $k$-nearest neighbourhood of a typical $x$ shrinks to $\{x\}$ (in $\mathbb{R}^p$ this uses that balls have positive mass and that $k$ is $o(m)$). Continuity of $f$ then forces $f(X_{(j)})\to f(x)$ for every neighbour, so
+\[
+\frac1k\sum_{j=1}^k f(X_{(j)})
+\to
+f(x).
+\]
+That is the bias term of \cref{def:mlu-bv} at the point $x$. If instead $k/m$ stayed bounded away from zero, $U_x$ would keep a definite radius and the local average of $f$ would not approach $f(x)$ at a continuity point. A fixed-$k$ rule with $m\to\infty$ still has $k/m\to 0$, which is why $1$-NN has vanishing bias and is consistent in dimension $1$ under extra conditions; the variance, next, is why one still lets $k$ grow.
+
+\paragraph{Step 3: why $k\to\infty$ kills the variance.}
+The noise average has conditional variance of order $\sigma^2(x)/k$, because it is a mean of $k$ mean-zero terms (exactly, if the $\varepsilon_{(j)}$ are i.i.d.\ given the locations). Thus $k\to\infty$ sends that variance to $0$. If $k$ stayed bounded, a single noisy neighbour would keep a definite influence and $\widehat h_S(x)$ would not concentrate on $f(x)$.
+
+\paragraph{Step 4: the two limits cannot be dropped.}
+- $k$ fixed, $m\to\infty$: neighbourhoods shrink (bias $\to 0$) but each prediction uses only $k$ noisy labels (variance stays of order $1/k$).
+- $k/m$ bounded away from $0$: variance dies but the neighbourhood does not shrink (bias stays).
+- Both limits together: bias and variance vanish at each continuity point, hence $L_{\mathcal{D}}(A(S))\to L_{\mathcal{D}}(h_{\mathrm{Bayes}})$ after one integrates against $\mathcal{D}$ (the genuine theorem supplies the domination and the measure-zero set of discontinuities).
+
+This is the same tension as model selection in \cref{def:mlu-bv}, with ``width of $\mathcal{H}$'' replaced by ``width of the neighbourhood''. The curse of dimensionality is Step~2 failing: in large $p$, typical nearest-neighbour distances do not go to zero fast enough for the same $(k,m)$.
+\end{proof}
+
+\begin{remark}[Curse of dimensionality and the rest of the syllabus]
+In high dimension, nearest-neighbour distances concentrate and the neighbourhood is no longer local. This is a geometric bias--variance failure, not a failure of the definition. Contrast with linear/logistic models (fixed $d$ parameters) and with compressed sensing (explicit sparsity to escape dimension). $k$-NN is also a useful foil for stability: replacing one training point changes $A(S)$ only in the Voronoi cells that used that point, so leave-one-out risk is almost unbiased---a computational cousin of Problem~4(a).
+\end{remark}
+
+\begin{exercise}[$1$-NN on the line]
+\label{ex:mlu-1nn}
+Let $\mathcal{X}=\mathbb{R}$, let $S=\{(-2,-1),(1,+1),(3,+1)\}$, and let $A$ be $1$-NN with Euclidean distance, ties broken to the left. Compute $A(S)(0)$ and $A(S^{(2)})(0)$, where $S^{(2)}$ replaces $(1,+1)$ by $(1,-1)$. What does the change illustrate?
+\end{exercise}
+
+\begin{solution}[$1$-NN on the line]
+The query $x=0$ has distances $2$, $1$, and $3$ to the three training points. The nearest neighbour is $(1,+1)$, so $A(S)(0)=+1$.
+
+After replacement, the three points are $(-2,-1)$, $(1,-1)$, $(3,+1)$. The nearest neighbour to $0$ is now $(1,-1)$, so $A(S^{(2)})(0)=-1$.
+
+The test location $x=0$ never entered the training loss of a parametric $w$; $k$-NN stores $S$ itself. Replace-one stability still makes sense: one training replacement flipped the prediction. For $k$-NN the Lipschitz-in-$w$ argument of Problem~4 does not apply, because there is no Euclidean parameter; the right language is leave-one-out or local stability of the Voronoi partition.
+\end{solution}
+
+
+\subsubsection{Support vector machines and kernels}
+\label{subsubsec:mlu-svm}
+
+\begin{definition}[Hard-margin SVM]
+\label{def:mlu-hard-svm}
+If $S$ is linearly separable, the hard-margin SVM is
+\[
+\min_{w,b}\ \frac12\lVert w\rVert^2
+\qquad\text{subject to}\qquad
+y_i\bigl(\langle w,x_i\rangle+b\bigr)\ge 1
+\quad(i=1,\dots,m).
+\]
+The constraints say that every point lies outside the slab $\lvert\langle w,x\rangle+b\rvert<1$. Minimizing $\lVert w\rVert$ maximizes the geometric margin $2/\lVert w\rVert$.
+\end{definition}
+
+\begin{definition}[Soft-margin SVM / hinge ERM]
+\label{def:mlu-soft-svm}
+\[
+\min_{w}\
+\frac{\lambda}{2}\lVert w\rVert^2
++
+\frac1m\sum_{i=1}^m\max\bigl\{0,1-y_i\langle w,x_i\rangle\bigr\}.
+\]
+This is Problem~4's regularized ERM with hinge loss, which is convex and $1$-Lipschitz in $w$ on the unit-ball feature side (up to the usual bound on $\lVert x\rVert$). The stability theorem of Problem~4 therefore applies verbatim to linear SVM.
+\end{definition}
+
+\begin{definition}[Positive semidefinite kernel]
+\label{def:mlu-kernel}
+A symmetric $K:\mathcal{X}\times\mathcal{X}\to\mathbb{R}$ is a \textbf{kernel} if for every $n$ and every $x_1,\dots,x_n$, the Gram matrix $(K(x_i,x_j))_{i,j}$ is positive semidefinite. Equivalently, there exist a Hilbert space $\mathcal{H}$ and a feature map $\psi:\mathcal{X}\to\mathcal{H}$ with $K(x,x')=\langle\psi(x),\psi(x')\rangle_{\mathcal{H}}$.
+\end{definition}
+
+\begin{theorem}[Representer theorem, SVM form]
+\label{thm:mlu-representer}
+Every minimizer of the soft-margin objective in a feature space $\psi$ may be taken of the form $w=\sum_{i=1}^m\alpha_i y_i\psi(x_i)$. Predictions depend on $x$ only through $K(x,x_i)=\langle\psi(x),\psi(x_i)\rangle$. The feature map need not be computed (the kernel trick).
+\end{theorem}
+
+\begin{proof}
+Write the soft-margin objective of \cref{def:mlu-soft-svm} in a Hilbert feature space $\mathcal{H}$, with $w\in\mathcal{H}$:
+\[
+F(w)
+:=
+\frac{\lambda}{2}\lVert w\rVert_{\mathcal{H}}^2
++
+\frac1m\sum_{i=1}^m\max\bigl\{0,\,1-y_i\langle w,\psi(x_i)\rangle_{\mathcal{H}}\bigr\}.
+\]
+Let $W:=\mathrm{span}\{\psi(x_1),\dots,\psi(x_m)\}$ be the finite-dimensional subspace generated by the training features, and write an arbitrary $w\in\mathcal{H}$ as the orthogonal sum
+\[
+w
+=
+w_{\parallel}+w_{\perp},
+\qquad
+w_{\parallel}\in W,
+\qquad
+w_{\perp}\perp W.
+\]
+(Every Hilbert space admits this decomposition: $w_{\parallel}$ is the orthogonal projection of $w$ onto $W$.)
+
+\paragraph{Step 1: the hinge terms cannot see $w_{\perp}$.}
+Each training feature $\psi(x_i)$ lies in $W$, so $\langle w_{\perp},\psi(x_i)\rangle=0$. Therefore
+\[
+\langle w,\psi(x_i)\rangle
+=
+\langle w_{\parallel},\psi(x_i)\rangle
+\qquad(i=1,\dots,m).
+\]
+The $m$ hinge terms of $F(w)$ and of $F(w_{\parallel})$ are identical.
+
+\paragraph{Step 2: the regularizer strictly prefers the projection.}
+Pythagoras in $\mathcal{H}$ gives
+\[
+\lVert w\rVert_{\mathcal{H}}^2
+=
+\lVert w_{\parallel}\rVert_{\mathcal{H}}^2
++
+\lVert w_{\perp}\rVert_{\mathcal{H}}^2
+\ge
+\lVert w_{\parallel}\rVert_{\mathcal{H}}^2,
+\]
+with equality if and only if $w_{\perp}=0$. Hence $F(w_{\parallel})\le F(w)$, with equality if and only if $w\in W$.
+
+\paragraph{Step 3: a minimizer may be taken in $W$.}
+If $w^\star$ minimizes $F$, then $w^\star_{\parallel}$ is also a minimizer (Step~2) and lies in $W$. Every vector in $W$ has the form $\sum_{i=1}^m\beta_i\psi(x_i)$. Relabeling $\beta_i=\alpha_i y_i$ (a harmless change of coefficients, since $y_i=\pm1$) produces the SVM form $w=\sum_i\alpha_i y_i\psi(x_i)$.
+
+\paragraph{Step 4: predictions become kernel evaluations.}
+For a query $x$,
+\[
+\langle w,\psi(x)\rangle
+=
+\sum_{i=1}^m\alpha_i y_i\langle\psi(x_i),\psi(x)\rangle
+=
+\sum_{i=1}^m\alpha_i y_i K(x_i,x).
+\]
+One never needs a coordinate representation of $\psi(x)$. That is the kernel trick.
+
+The same orthogonal-split argument applies to any objective
+\[
+R\bigl(\lVert w\rVert\bigr)+L\bigl(\langle w,\psi(x_1)\rangle,\dots,\langle w,\psi(x_m)\rangle\bigr)
+\]
+with $R$ nondecreasing. Soft-margin SVM is the case $R(t)=\lambda t^2/2$ and $L$ a sum of hinges.
+\end{proof}
+
+\begin{remark}[Valid kernels, Spring 2026 MQ6]
+\label{rem:mlu-kernel-mcq}
+$K(x,x)\ge 0$ is necessary but not sufficient (choice (a) in that paper is false). A finite-dimensional $\psi$ is sufficient but not necessary (choice (b) is false). Positive semidefiniteness yields some Hilbert feature map, possibly infinite-dimensional (choice (c) is the correct statement). Feature maps are not unique: $\psi$ and $U\psi$ for a linear isometry $U$ give the same kernel (choice (d) is false).
+\end{remark}
+
+\begin{example}[Polynomial and Gaussian kernels]
+$K(x,x')=(\langle x,x'\rangle+c)^p$ corresponds to all monomials up to degree $p$. $K(x,x')=\exp(-\lVert x-x'\rVert^2/(2\sigma^2))$ corresponds to an infinite-dimensional radial feature map. Both Gram matrices are PSD. $K(x,x')=-\lVert x-x'\rVert^2$ is not a kernel: the $2\times 2$ Gram matrix on $\{0,1\}$ has a negative eigenvalue.
+\end{example}
+
+\begin{exercise}[Kernel or not]
+\label{ex:mlu-kernel-yesno}
+Decide whether each of the following is a valid kernel on $\mathbb{R}$. Give a feature map or a Gram-matrix counter-example.
+\begin{enumerate}[label=(\alph*)]
+    \item $K(x,x')=xx'$;
+    \item $K(x,x')=(xx')^2$;
+    \item $K(x,x')=xx'-1$;
+    \item $K(x,x')=\min\{x,x'\}$ on $[0,\infty)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Kernel or not]
+(a) Yes. Take $\psi(x)=x\in\mathbb{R}$. Then $K(x,x')=\langle\psi(x),\psi(x')\rangle$.
+
+(b) Yes. Take $\psi(x)=x^2$, or, equivalently, note that $K=(x\mapsto x^2)$ composed with the linear kernel. The Gram matrix is a rank-one PSD matrix of the form $vv^\top$ with $v_i=x_i^2$.
+
+(c) No. On the one-point set $\{0\}$, $K(0,0)=-1<0$, so the $1\times 1$ Gram matrix is already negative. A kernel must satisfy $K(x,x)=\lVert\psi(x)\rVert^2\ge 0$.
+
+(d) Yes (Brownian / min kernel). One feature map on $L^2[0,\infty)$ is $(\psi(x))(t)=\mathbf{1}_{[0,x]}(t)$. Then
+\[
+\langle\psi(x),\psi(x')\rangle_{L^2}
+=
+\int_0^\infty\mathbf{1}_{[0,x]}(t)\mathbf{1}_{[0,x']}(t)\,dt
+=
+\min\{x,x'\}.
+\]
+Alternatively, for $0\le x_1<\dots<x_n$ the Gram matrix is the covariance of a standard Brownian motion, which is known to be PSD.
+
+The moral, matching Spring 2026 MQ6: checking $K(x,x)\ge 0$ is only the first test; one needs a feature map or a PSD proof, and the feature space may be infinite-dimensional.
+\end{solution}
+
+\begin{exercise}[Hinge loss is Problem~4 material]
+\label{ex:mlu-hinge-lip}
+Let $\ell(w,(x,y))=\max\{0,1-y\langle w,x\rangle\}$ with $\lVert x\rVert\le R$ and $y\in\{\pm1\}$. Show that $\ell(\,\cdot\,,z)$ is convex and $R$-Lipschitz in $w$. Conclude that regularized hinge ERM satisfies the stability bound of Problem~4(b) with $\rho=R$.
+\end{exercise}
+
+\begin{solution}[Hinge loss is Problem~4 material]
+\textbf{Convexity.}
+For fixed $(x,y)$, the map $w\mapsto 1-y\langle w,x\rangle$ is affine, hence convex. The function $t\mapsto\max\{0,t\}$ is convex and nondecreasing on $\mathbb{R}$ in the sense that it preserves convexity of a scalar convex argument (it is the maximum of the convex functions $0$ and $t$). Thus $w\mapsto\max\{0,1-y\langle w,x\rangle\}$ is convex. An average of convex functions is convex, so $L_S$ is convex, and $F_S=L_S+\tfrac{\lambda}{2}\lVert\,\cdot\,\rVert^2$ is $\lambda$-strongly convex as in the Problem~4 footnote.
+
+\textbf{Lipschitzness.}
+The hinge is $1$-Lipschitz as a function of the margin $u=y\langle w,x\rangle$, and $\lvert y\langle w-w',x\rangle\rvert\le\lVert x\rVert\,\lVert w-w'\rVert\le R\lVert w-w'\rVert$. Therefore
+\[
+\bigl\lvert\ell(w,z)-\ell(w',z)\bigr\rvert
+\le
+\bigl\lvert y\langle w,x\rangle-y\langle w',x\rangle\bigr\rvert
+\le
+R\lVert w-w'\rVert.
+\]
+Problem~4(b) applies with $\rho=R$ and yields
+\[
+\mathbb{E}_S\bigl[L_{\mathcal{D}}(A(S))\bigr]
+\le
+L_{\mathcal{D}}(w^\star)+\lambda\lVert w^\star\rVert^2+\frac{2R^2}{\lambda m}
+\]
+(with the paper's $\lambda$-convention). Linear SVM is not an extra theory; it is a named special case of the regularized ERM already proved.
+\end{solution}
+
+
+\subsubsection{Compressed sensing}
+\label{subsubsec:mlu-cs}
+
+\begin{definition}[Exact sparse recovery]
+\label{def:mlu-cs}
+Let $x^\star\in\mathbb{R}^n$ be $s$-sparse ($\lVert x^\star\rVert_0\le s$) and let $A\in\mathbb{R}^{m\times n}$ be a sensing matrix with $m\ll n$. One observes $y=Ax^\star$ (noiseless case). The $\ell_0$ program
+\[
+\min_x\ \lVert x\rVert_0
+\qquad\text{subject to}\qquad
+Ax=y
+\]
+recovers $x^\star$ whenever $A$ is injective on $2s$-sparse vectors, but it is combinatorial.
+\end{definition}
+
+\begin{definition}[Basis pursuit and RIP]
+\label{def:mlu-bp-rip}
+Basis pursuit replaces $\ell_0$ by $\ell_1$:
+\[
+\min_x\ \lVert x\rVert_1
+\qquad\text{subject to}\qquad
+Ax=y.
+\]
+The matrix $A$ satisfies the \textbf{restricted isometry property} of order $2s$ with constant $\delta_{2s}<1$ if
+\[
+(1-\delta_{2s})\lVert u\rVert_2^2
+\le
+\lVert Au\rVert_2^2
+\le
+(1+\delta_{2s})\lVert u\rVert_2^2
+\]
+for every $2s$-sparse $u$. If $\delta_{2s}$ is smaller than a fixed numerical threshold (e.g.\ $\delta_{2s}<\sqrt{2}-1$), then $x^\star$ is the unique $\ell_1$ minimizer.
+\end{definition}
+
+\begin{remark}[Why $\ell_1$ and not $\ell_2$]
+\label{rem:mlu-l1-not-l2}
+The Euclidean program $\min\lVert x\rVert_2$ subject to $Ax=y$ returns the row-space minimum-norm solution, which is typically dense. Geometrically, the $\ell_1$ ball is a cross-polytope whose vertices are $1$-sparse; it touches a generic affine subspace $Ax=y$ at a sparse point. The $\ell_2$ ball is round and touches at a dense point. This is the same ``inductive bias'' lesson as NFL: sparsity is the restriction that makes an underdetermined linear problem well-posed. Random Gaussian or bounded orthonormal matrices satisfy RIP with high probability once $m=\Omega\bigl(s\log(n/s)\bigr)$.
+\end{remark}
+
+\begin{remark}[Link to regularization]
+Problem~4 uses $\ell_2$ regularization for strong convexity and stability. Compressed sensing uses $\ell_1$ regularization for sparsity. The two penalties are not interchangeable: $\ell_2$ never produces exact zeros; $\ell_1$ is convex but not strongly convex, so the Problem~4 stability rate does not apply verbatim.
+\end{remark}
+
+\begin{exercise}[A $2\times 3$ picture]
+\label{ex:mlu-cs-tiny}
+Let
+\[
+A
+=
+\begin{pmatrix}
+1&1&0\\
+0&1&1
+\end{pmatrix},
+\qquad
+x^\star=(1,0,0)^\top,
+\qquad
+y=Ax^\star=(1,0)^\top.
+\]
+Show that $x^\star$ is the unique $1$-sparse solution of $Ax=y$, that the minimal-$\ell_2$ solution is not $1$-sparse, and that the minimal-$\ell_1$ solution is $x^\star$.
+\end{exercise}
+
+\begin{solution}[A $2\times 3$ picture]
+The general solution of $Ax=y$ is $x=x^\star+v$ with $Av=0$. The kernel is spanned by $(1,-1,1)^\top$, so
+\[
+x(t)=(1+t,-t,t)^\top,
+\qquad t\in\mathbb{R}.
+\]
+
+\textbf{Sparse solutions.}
+$\lVert x(t)\rVert_0=1$ only if two coordinates vanish. The system $1+t=0$, $-t=0$ is inconsistent, and $1+t=0$, $t=0$ is inconsistent. The remaining pair $-t=t=0$ forces $t=0$, which gives $x^\star=(1,0,0)$, which is $1$-sparse. So $x^\star$ is the unique $1$-sparse solution. (If $t=-1$, one gets $(0,1,-1)$, which is $2$-sparse.)
+
+\textbf{Minimal $\ell_2$.}
+\[
+\lVert x(t)\rVert_2^2=(1+t)^2+(-t)^2+t^2=1+2t+3t^2,
+\]
+minimized at $t=-1/3$, where $x=(-2/3,1/3,-1/3)$ is dense.
+
+\textbf{Minimal $\ell_1$.}
+\[
+\lVert x(t)\rVert_1
+=
+\lvert 1+t\rvert+\lvert t\rvert+\lvert t\rvert
+=
+\lvert 1+t\rvert+2\lvert t\rvert.
+\]
+For $t\ge 0$ this is $1+3t\ge 1$. For $-1\le t\le 0$ it is $(1+t)+2(-t)=1-t\ge 1$. For $t\le -1$ it is $(-1-t)+2(-t)=-1-3t\ge 2$. The minimum is $1$, attained only at $t=0$. Thus basis pursuit recovers $x^\star$, while least-norm $\ell_2$ does not.
+\end{solution}
+
+
+\subsubsection{Geometric VC gallery from later papers}
+\label{subsubsec:mlu-geo}
+
+Problem~3 already treats unions, rectangles, and triangles. Later papers ask for one-dimensional and nested families. The method is unchanged: exhibit a shattered set of size $d$, then an unrealizable dichotomy on every $(d+1)$-set.
+
+\begin{proposition}[Signed intervals]
+\label{prop:mlu-signed-int}
+Let
+\[
+\mathcal{H}
+=
+\bigl\{h_{a,b,s}:a\le b,\ s\in\{\pm1\}\bigr\},
+\qquad
+h_{a,b,s}(x)
+=
+\begin{cases}
+s & \text{if }x\in[a,b],\\
+-s & \text{if }x\notin[a,b].
+\end{cases}
+\]
+Then $\VCdim(\mathcal{H})=3$.
+\end{proposition}
+
+\begin{proof}
+\textbf{Lower bound.}
+Take three ordered points $x_1<x_2<x_3$. The eight labelings in $\{\pm1\}^3$ are realized as follows. Constant labelings use an interval covering all three points with the appropriate sign. A contiguous block of $+1$ (patterns $++-$, $-++$, $-+-$) uses $s=+1$ and a suitable $[a,b]$. The complementary patterns are the same intervals with $s=-1$. In particular $-+-$ (i.e.\ $-1,+1,-1$ in $\{\pm1\}$) is the ordinary interval on the middle point; $+-+$ uses $s=-1$ and a negative interval around the middle point.
+
+\textbf{Upper bound.}
+On four ordered points the alternating pattern $+-+-$ makes two disjoint positive blocks and two disjoint negative blocks. For $s=+1$ the positive set must be a single interval; for $s=-1$ the negative set must be a single interval. Neither can produce two-and-two alternation. Hence no $4$-set is shattered.
+\end{proof}
+
+\begin{proposition}[Concentric disks are PAC learnable with a one-sided rate]
+\label{prop:mlu-circles}
+Let $\mathcal{H}=\{h_r:r\ge 0\}$ on $\mathbb{R}^2$ with $h_r(x)=\mathbf{1}\{\lVert x\rVert\le r\}$. The class is nested, $\VCdim(\mathcal{H})=1$, and in the realizable case any consistent learner (e.g.\ the smallest disk containing every positive example) satisfies
+\[
+m_{\mathcal{H}}(\epsilon,\delta)
+\le
+\frac{\ln(1/\delta)}{\epsilon}.
+\]
+\end{proposition}
+
+\begin{proof}
+\textbf{VC dimension.}
+One point is shattered (choose $r$ smaller or larger than its radius). Two points $x,x'$ with $\lVert x\rVert<\lVert x'\rVert$ cannot realize (positive on $x'$ and negative on $x$), because any disk containing $x'$ contains $x$. Thus $\VCdim=1$.
+
+\textbf{PAC bound.}
+Let $r^\star$ be the target radius and let $\widehat{r}$ be the radius of a consistent learner; realizability forces $\widehat{r}\le r^\star$ and $L_S(h_{\widehat{r}})=0$. If $L_{\mathcal{D}}(h_{\widehat{r}})>\epsilon$, the annulus $\{\widehat{r}<\lVert x\rVert\le r^\star\}$ has probability greater than $\epsilon$ and contains no sample point (else the learner would have enlarged $\widehat{r}$, or consistency would fail). The probability of missing a region of mass $>\epsilon$ is at most $(1-\epsilon)^m\le e^{-m\epsilon}$. Choosing $m\ge\ln(1/\delta)/\epsilon$ makes this $\le\delta$. The class is infinite, so one cannot quote the finite-class bound of Problem~2; nesting replaces the union bound.
+\end{proof}
+
+\begin{proposition}[Interval--ray class]
+\label{prop:mlu-interval-ray}
+On $\mathbb{R}$, let
+\[
+\mathcal{H}
+=
+\bigl\{
+h_{a,b,c}
+=
+\mathbf{1}_{[a,b]}\lor\mathbf{1}_{[c,\infty)}
+:
+a\le b<c
+\bigr\}.
+\]
+Then $\Pi_{\mathcal{H}}(n)\le n^3$ for $n\ge 2$, and $\VCdim(\mathcal{H})=3$.
+\end{proposition}
+
+\begin{proof}
+Order the sample $x_1<\dots<x_n$. These points cut $\mathbb{R}$ into $n+1$ slots
+\[
+(-\infty,x_1),\quad (x_1,x_2),\quad \dots,\quad (x_{n-1},x_n),\quad (x_n,\infty)
+\]
+(and $n$ degenerate slots $\{x_i\}$ if a threshold lands on a sample). The restriction of $h_{a,b,c}$ to the sample depends only on which slots contain $a$, $b$, and $c$. Each triple of slots produces one dichotomy, so $\Pi_{\mathcal{H}}(n)$ is finite and at most $(n+1)^3$. That already gives $\Pi_{\mathcal{H}}(n)=O(n^3)$.
+
+A slightly tighter enumeration, still only an upper bound, sorts dichotomies by shape. A hypothesis restricts to: a (possibly empty-on-the-sample) interval block, optionally followed after a nonempty gap by a suffix. The number of such patterns is at most
+\[
+1
++
+\underbrace{\frac{n(n+1)}{2}}_{\text{at most one block of $1$s}}
++
+\underbrace{n}_{\text{pure suffix}}
++
+\underbrace{\binom{n}{3}}_{\text{one finite interval and one true suffix}}
+\le
+n^3
+\qquad (n\ge 2).
+\]
+The exam asks only for some polynomial upper bound. Overcounting is allowed; a closed form for the exact growth function is not required.
+
+A common false count is $\sum_{k,t} k(n-k-t)t$. The left-hand side of the growth-function definition counts \emph{distinct labelings}. Each shape ``$k$ zeros on the left, a middle block, $t$ zeros before the ray'' is one dichotomy, so it contributes $1$, not the product of the block lengths. That product weights configurations; expanding it into a cubic does not recover $\Pi_{\mathcal{H}}$.
+
+The bound $\Pi_{\mathcal{H}}(n)\le n^3$ does \emph{not} by itself give $\VCdim(\mathcal{H})=3$. For $n=4$ one has $4^3=64>2^4=16$, so the polynomial does not press the class below $2^4$. Sauer--Shelah cannot be run backwards: a cubic upper bound is compatible with shattering four points. One still needs a direct shatter / non-shatter argument.
+
+\textit{Lower bound.}
+Three ordered points are shattered: $101$ is interval-on-the-left plus ray-on-the-right; $010$ is a middle interval; suffixes and prefixes are rays or intervals.
+
+\textit{Upper bound.}
+Four ordered points cannot realize $1010$: a ray that makes the third point positive would also make the fourth positive, and an interval that covers the first and third points would cover the second. Thus $\VCdim(\mathcal{H})=3$.
+\end{proof}
+
+\begin{exercise}[Signed intervals, written as an exam answer]
+\label{ex:mlu-signed}
+Compute $\VCdim(\mathcal{H})$ for the signed-interval class of \cref{prop:mlu-signed-int}. Your answer must contain an explicit $3$-point shattering and an unrealizable $4$-point labeling.
+\end{exercise}
+
+\begin{solution}[Signed intervals]
+This is the content of \cref{prop:mlu-signed-int}, written in exam order.
+
+Let $\mathcal{H}=\{h_{a,b,s}:a\le b,\ s\in\{\pm1\}\}$ with $h_{a,b,s}=s$ on $[a,b]$ and $-s$ off it.
+
+\textit{Lower bound.}
+Let $C=\{0,1,2\}$. We realize every $y\in\{\pm1\}^3$.
+\begin{itemize}
+    \item $(+,+,+)$: $s=+1$, $[a,b]=[-1,3]$.
+    \item $(-,-,-)$: $s=-1$, $[a,b]=[-1,3]$.
+    \item $(+,+,-)$: $s=+1$, $[a,b]=[-0.5,1.5]$.
+    \item $(-,+,+)$: $s=+1$, $[a,b]=[0.5,3]$.
+    \item $(-,+,-)$: $s=+1$, $[a,b]=[0.5,1.5]$.
+    \item The three remaining patterns are the previous three with $s$ flipped.
+\end{itemize}
+So $C$ is shattered and $\VCdim(\mathcal{H})\ge 3$.
+
+\textit{Upper bound.}
+Let $C=\{x_1<x_2<x_3<x_4\}$ be arbitrary. The labeling $(+1,-1,+1,-1)$ has two positive components and two negative components in the order topology. If $s=+1$, the positive set is one interval, so it cannot be $\{x_1,x_3\}$. If $s=-1$, the negative set is one interval, so it cannot be $\{x_2,x_4\}$. Hence $C$ is not shattered, $\VCdim(\mathcal{H})\le 3$, and equality holds.
+
+\textit{What not to write.}
+``Three real parameters $a,b,s$, therefore VC dimension $3$'' is not a proof. Parameter count is neither an upper nor a lower bound (cf.\ Fall 2025 Problem~5).
+\end{solution}
+
+\begin{exercise}[Concentric disks, written as an exam answer]
+\label{ex:mlu-circles}
+Prove that the concentric-disk class of \cref{prop:mlu-circles} is realizably PAC learnable with $m_{\mathcal{H}}(\epsilon,\delta)\le\ln(1/\delta)/\epsilon$. Do not use $\lvert\mathcal{H}\rvert<\infty$.
+\end{exercise}
+
+\begin{solution}[Concentric disks]
+\textbf{Learner.}
+In the realizable case there is an unknown $r^\star$ with $y=\mathbf{1}\{\lVert x\rVert\le r^\star\}$. On a sample $S$, set $\widehat{r}:=\max\{\lVert x_i\rVert:y_i=1\}$, or $\widehat{r}=0$ if there is no positive. Return $h_{\widehat{r}}$. Every positive of $S$ lies in the closed disk of radius $\widehat{r}$, and no negative of $S$ can lie in that disk (else it would lie in the target disk, contradicting realizability). Thus $L_S(h_{\widehat{r}})=0$: the learner is consistent.
+
+\textbf{Error event.}
+The learned disk is contained in the target disk, so the disagreement set is the annulus $A=\{\widehat{r}<\lVert x\rVert\le r^\star\}$ (or empty). On $A$ the target is positive and the learner is negative. Hence $L_{\mathcal{D}}(h_{\widehat{r}})=\mathcal{D}(A)$.
+
+\textbf{If the risk exceeds $\epsilon$.}
+Then $\mathcal{D}(A)>\epsilon$, but $S\cap A=\emptyset$: a point in $A$ would be a positive example with radius $>\widehat{r}$, contradicting the definition of $\widehat{r}$. Therefore
+\[
+\Pr\bigl[L_{\mathcal{D}}(h_{\widehat{r}})>\epsilon\bigr]
+\le
+\Pr[S\cap A=\emptyset]
+\le
+(1-\epsilon)^m
+\le
+e^{-m\epsilon},
+\]
+where the last step is $1-u\le e^{-u}$. (If $A$ depends on $S$ through $\widehat{r}$, one can instead compare to the \emph{fixed} annulus $\{r_\epsilon<\lVert x\rVert\le r^\star\}$ of mass $\epsilon$ just inside the target, which is missed if and only if the learner's risk exceeds $\epsilon$. That version makes the region non-random.)
+
+\textbf{Sample size.}
+$e^{-m\epsilon}\le\delta$ iff $m\ge\ln(1/\delta)/\epsilon$.
+
+\textbf{Why not Problem~2.}
+$\mathcal{H}$ is infinite. The argument used nesting (a total order by inclusion), not a union bound over $\lvert\mathcal{H}\rvert$ many classifiers.
+\end{solution}
+
+
+\subsubsection{Strong convexity toolkit}
+\label{subsubsec:mlu-sc}
+
+Problem~4 uses $\lambda$-strong convexity of $F_S$ as a black box. Fall 2025 Problem~10 and Spring 2026 Problem~2 ask for the underlying calculus.
+
+\begin{definition}[Strong convexity]
+\label{def:mlu-sc}
+A differentiable $f:\mathbb{R}^d\to\mathbb{R}$ is $\lambda$-strongly convex if
+\[
+f(v)
+\ge
+f(w)+\langle\nabla f(w),v-w\rangle+\frac{\lambda}{2}\lVert v-w\rVert^2
+\qquad\text{for all }w,v.
+\]
+If $f$ is twice differentiable, this is equivalent to $\nabla^2 f\succeq\lambda I$.
+\end{definition}
+
+\begin{proposition}[Three facts used in Problem~4]
+\label{prop:mlu-sc-three}
+\begin{enumerate}[label=(\alph*)]
+    \item $w\mapsto\lambda\lVert w\rVert^2$ is $2\lambda$-strongly convex. Consequently $w\mapsto\tfrac{\lambda}{2}\lVert w\rVert^2$ is $\lambda$-strongly convex.
+    \item If $f$ is $\lambda$-strongly convex and $g$ is convex, then $f+g$ is $\lambda$-strongly convex.
+    \item If $f$ is $\lambda$-strongly convex and $u$ is a minimizer, then $f(w)-f(u)\ge\frac{\lambda}{2}\lVert w-u\rVert^2$ for every $w$. In particular the minimizer is unique.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+All three items are the inequality of \cref{def:mlu-sc}, written at the relevant pair of points. No Hessian is used.
+
+\paragraph{(a): the two quadratics.}
+Let $\varphi(w):=\lambda\lVert w\rVert^2$. Then $\nabla\varphi(w)=2\lambda w$. The claim is that $\varphi$ is $2\lambda$-strongly convex, i.e.\ that
+\[
+\varphi(v)
+\ge
+\varphi(w)+\langle\nabla\varphi(w),v-w\rangle+\frac{2\lambda}{2}\lVert v-w\rVert^2
+\]
+holds for every $w,v$. The right-hand side expands, using $\langle w,v-w\rangle=\langle w,v\rangle-\lVert w\rVert^2$ and $\lVert v-w\rVert^2=\lVert v\rVert^2-2\langle v,w\rangle+\lVert w\rVert^2$, as
+\begin{align*}
+\lambda\lVert w\rVert^2+\langle 2\lambda w,v-w\rangle+\lambda\lVert v-w\rVert^2
+&=
+\lambda\lVert w\rVert^2+2\lambda\langle w,v\rangle-2\lambda\lVert w\rVert^2
++\lambda\lVert v\rVert^2-2\lambda\langle v,w\rangle+\lambda\lVert w\rVert^2 \\
+&=
+\lambda\lVert v\rVert^2
+=
+\varphi(v).
+\end{align*}
+The two sides are equal, so the inequality holds. (A quadratic that meets its tangent-plus-paraboloid bound with equality is the model case of strong convexity.)
+
+Now let $\psi(w):=\tfrac{\lambda}{2}\lVert w\rVert^2$. Then $\psi=\varphi/2$ and $\nabla\psi=\nabla\varphi/2$. Divide the identity just proved by $2$:
+\[
+\psi(v)
+=
+\psi(w)+\langle\nabla\psi(w),v-w\rangle+\frac{\lambda}{2}\lVert v-w\rVert^2.
+\]
+That is precisely \cref{def:mlu-sc} for $\psi$ with parameter $\lambda$. The coefficient in front of $\lVert w\rVert^2$ is half as large, so the strong-convexity parameter is halved.
+
+\paragraph{(b): add the two first-order inequalities.}
+Assume first that $g$ is differentiable, so convexity of $g$ is the $\lambda=0$ case of the same definition:
+\[
+g(v)
+\ge
+g(w)+\langle\nabla g(w),v-w\rangle.
+\]
+Write the $\lambda$-strong-convexity inequality for $f$ at the same pair $(w,v)$:
+\[
+f(v)
+\ge
+f(w)+\langle\nabla f(w),v-w\rangle+\frac{\lambda}{2}\lVert v-w\rVert^2.
+\]
+Add the two displays. The left-hand side is $(f+g)(v)$. The linear terms combine because $\nabla(f+g)(w)=\nabla f(w)+\nabla g(w)$. The quadratic term is untouched. Hence $f+g$ is $\lambda$-strongly convex.
+
+If $g$ is convex but not differentiable, the same addition uses a supporting slope $s\in\partial g(w)$ in place of $\nabla g(w)$. Then $f+g$ satisfies the subdifferential form of $\lambda$-strong convexity (the regularizer of Problem~4 is the differentiable summand; a hinge or $\ell_1$ term is the convex summand).
+
+\paragraph{(c): a minimizer kills the inner product.}
+Let $u$ minimize a differentiable $f$. Then $\nabla f(u)=0$: otherwise the directional derivative in the direction $d:=-\nabla f(u)$ would be $-\lVert\nabla f(u)\rVert^2<0$, so $f(u+td)<f(u)$ for all sufficiently small $t>0$, contradicting minimality.
+
+Apply \cref{def:mlu-sc} at the pair $(w,v)\leftarrow(u,w)$:
+\[
+f(w)
+\ge
+f(u)+\langle\nabla f(u),w-u\rangle+\frac{\lambda}{2}\lVert w-u\rVert^2
+=
+f(u)+\frac{\lambda}{2}\lVert w-u\rVert^2,
+\]
+which is the claim. If $\lambda>0$ and $w\ne u$, the right-hand side is strictly larger than $f(u)$, so no other point can be a minimizer.
+
+If $f$ is only subdifferentiable, a minimizer satisfies $0\in\partial f(u)$, and the same substitution into the subdifferential form of \cref{def:mlu-sc} gives the identical quadratic lower bound.
+\end{proof}
+
+\begin{remark}[Coefficient trap]
+The official Problem~4 statement writes a penalty $\lambda\lVert w\rVert^2$ on the exam sheet and $\tfrac{\lambda}{2}\lVert w\rVert^2$ in some writeups. Part (a) distinguishes them by the same first-order definition: $\lambda\lVert w\rVert^2$ is $2\lambda$-strongly convex, and dividing by $2$ halves the parameter. The footnote in Problem~4 records the conversion. Fall 2025 Problem~10(a) is exactly this conversion.
+\end{remark}
+
+\begin{exercise}[Unique minimizer from strong convexity]
+\label{ex:mlu-unique}
+Let $f:\mathbb{R}^d\to\mathbb{R}$ be twice continuously differentiable and $\lambda$-strongly convex with $\lambda>0$. Prove that $f$ has a unique global minimizer. (Spring 2026 Problem~2.)
+\end{exercise}
+
+\begin{solution}[Unique minimizer from strong convexity]
+\textbf{Existence.}
+Strong convexity implies $f(w)\ge f(0)+\langle\nabla f(0),w\rangle+\frac{\lambda}{2}\lVert w\rVert^2$. The quadratic dominates the linear term, so $f(w)\to\infty$ as $\lVert w\rVert\to\infty$ ($f$ is coercive). A continuous coercive function on $\mathbb{R}^d$ attains a global minimum: take a minimizing sequence, which is bounded, extract a convergent subsequence, and pass to the limit.
+
+\textbf{Uniqueness.}
+At any local minimizer $u$ one has $\nabla f(u)=0$. \Cref{prop:mlu-sc-three}(c) then gives $f(w)>f(u)$ whenever $w\ne u$. Hence there cannot be two distinct global minimizers, and the global minimizer is strict.
+
+\textbf{Hessian view.}
+$\nabla^2 f\succeq\lambda I\succ 0$, so $f$ is strictly convex, which alone gives uniqueness of a minimizer; coercivity is still needed for existence.
+\end{solution}
+
+
+\subsubsection{Past-paper drills}
+\label{subsubsec:mlu-drills}
+
+The items below are the recurring multiple-choice claims from Fall 2025 and Spring 2026, written as exercises with full reasons. They are not official Spring 2025 problems.
+
+\begin{exercise}[Bias--variance slogan]
+\label{ex:mlu-bv-mcq}
+Which description of the bias--variance trade-off is the intended one?
+\begin{enumerate}[label=(\alph*)]
+    \item Increasing model bias reduces variance but increases approximation error.
+    \item Increasing model bias reduces both bias and variance.
+    \item Variance is always independent of bias.
+    \item The trade-off applies only to neural networks.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Bias--variance slogan]
+(a). Bias is systematic error from a restricted class; variance is sensitivity to $S$. Tightening the class typically raises approximation error and lowers variance. (b) contradicts the definition of bias. (c) is false in every decomposition that shares a complexity parameter. (d) is false: the square-loss identity of \cref{def:mlu-bv} is model-agnostic. Connect to Problem~4: increasing $\lambda$ is a concrete ``increase bias, decrease replace-one variance'' move.
+
+The two directions are not a theorem for arbitrary incomparable classes; they are the usual monotonicity for a nested family $\mathcal{H}'\subset\mathcal{H}$.
+
+\textit{Why approximation error rises.}
+Write $h^\star_{\mathcal{H}}\in\arg\min_{h\in\mathcal{H}}L_{\mathcal{D}}(h)$ for a best-in-class predictor. Restricting the feasible set cannot improve the minimum:
+\[
+\min_{h\in\mathcal{H}'}L_{\mathcal{D}}(h)
+\ge
+\min_{h\in\mathcal{H}}L_{\mathcal{D}}(h).
+\]
+In \cref{def:mlu-bv} the bias term is $\mathbb{E}_X\bigl[(f(X)-\bar h(X))^2\bigr]$ with $\bar h=\mathbb{E}_S[\widehat h_S]$. For ERM-type rules, $\bar h$ typically sits near $h^\star_{\mathcal{H}}$. If $\mathcal{H}'$ cannot represent $f$ as well as $\mathcal{H}$, the gap $f-\bar h$ grows. That gap is approximation error; it is a property of the class and of $\mathcal{D}$, not of a lucky sample.
+
+\textit{Why variance falls.}
+The variance term is $\mathbb{E}_{S,X}\bigl[(\widehat h_S(X)-\bar h(X))^2\bigr]$: how far a fresh draw of $S$ moves the learned predictor. A smaller class has fewer dichotomies (or fewer free parameters), so replacing one training point cannot move $\widehat h_S$ as far.
+\begin{itemize}
+    \item Extreme: $\mathcal{H}'=\{h_0\}$ is a singleton, $\widehat h_S\equiv h_0$, and the variance term is identically $0$.
+    \item Finite / finite-VC classes: the uniform deviation of Problems~2--3 is of order $\sqrt{(d\log m)/m}$ with $d=\VCdim(\mathcal{H})$, which shrinks when the class shrinks.
+    \item Problem~4: replace-one sensitivity is of order $L^2/(\lambda m)$; raising $\lambda$ tightens the effective class toward the origin and lowers that sensitivity.
+\end{itemize}
+The word ``typically'' is there because the two errors are traded, not independently minimized: the object one actually wants small is their sum (plus noise).
+\end{solution}
+
+\begin{example}[Constants versus interpolators]
+\label{exmp:mlu-bv-const}
+Let $\mathcal{X}=\{1,\dots,n\}$ and let $f:\mathcal{X}\to\mathbb{R}$ be an arbitrary target, observed at $m<n$ points with no noise. Take two nested classes.
+
+\textit{Tight.}
+$\mathcal{H}'=\{\text{constant functions}\}$. ERM returns the sample mean. If $f$ is not constant, $h^\star_{\mathcal{H}'}$ cannot match $f$ off the observed points, so the bias term stays of order the spatial variation of $f$. The predictor is a single number: changing one label moves it by $O(1/m)$, so the variance term is small.
+
+\textit{Wide.}
+$\mathcal{H}=$ all functions $\mathcal{X}\to\mathbb{R}$. ERM can interpolate $S$ and extend arbitrarily on the unseen points. Then $\bar h$ can track $f$ (bias can be made $0$ if the extension is well-specified), but a different sample $S'$ produces a completely different extension, so $\widehat h_S-\bar h$ is large on unseen $x$. This is the same picture as \cref{ex:mlu-bv-num}: the constant rule is infinitely stable and badly biased; the mean / interpolating rule is the opposite extreme.
+\end{example}
+
+\begin{example}[Polynomial degree]
+\label{exmp:mlu-bv-poly}
+On $[-1,1]$, let $f(x)=x^2$ and let $S$ be $m$ noisy samples. Nested classes $\mathcal{H}_1\subset\mathcal{H}_2\subset\mathcal{H}_{m-1}$, where $\mathcal{H}_d$ is polynomials of degree at most $d$.
+\begin{itemize}
+    \item Degree $1$: the best-in-class fit is a line. The residual $x^2-\bar h(x)$ does not vanish, so squared bias stays positive even as $m\to\infty$. The fit is two coefficients, hence stable.
+    \item Degree $m-1$: ERM interpolates $S$. As $m\to\infty$ one can track $f$ (bias $\to 0$), but a small perturbation of any $Y_i$ produces a wildly oscillating interpolant (Runge / high-degree oscillation). Variance dominates.
+\end{itemize}
+Choosing $d$ is model selection: one wants the $d$ that makes $\mathrm{bias}^2+\mathrm{variance}$ small, not either term alone. The same knob in this paper is tree depth, $k$ in $k$-NN, or $\lambda$ in Problem~4.
+\end{example}
+
+The slogan is the qualitative form of \cref{prop:mlu-bv-tradeoff}: a more constrained class usually raises approximation bias and lowers sensitivity to $S$; regularization $\tfrac{\lambda}{2}\lVert w\rVert^2$ is one concrete implementation, and model selection is the problem of choosing the constraint so that the sum of the two errors is small.
+
+\begin{exercise}[What ERM minimizes]
+\label{ex:mlu-erm-mcq}
+In ERM, what is being minimized?
+\begin{enumerate}[label=(\alph*)]
+    \item The true risk on unseen data.
+    \item The average loss on the training sample.
+    \item The VC dimension of the hypothesis class.
+    \item The variance of the hypothesis.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[What ERM minimizes]
+(b). By definition
+\[
+A_{\mathrm{ERM}}(S)\in\arg\min_{h\in\mathcal{H}}L_S(h),
+\qquad
+L_S(h)=\frac1m\sum_{i=1}^m\ell(h,z_i).
+\]
+The thing being minimized is the average training loss. The argmin is a dummy variable ranging over $\mathcal{H}$; the sample $S$ is fixed while one searches.
+
+\textit{(a) is $L_{\mathcal{D}}$, which the learner cannot see.}
+If ERM minimized true risk, one would have $A_{\mathrm{ERM}}(S)=h^\star$ for every $S$, and there would be no estimation gap. Concrete counter-example: $\mathcal{X}=\{x_0\}$, $Y=\pm 1$ fair coins, $\mathcal{H}=\{\pm 1\}$, $m=1$. ERM returns the observed label, so $L_S=0$, but $L_{\mathcal{D}}(A(S))=1/2$ always. The minimizer of $L_{\mathcal{D}}$ is either constant and still has risk $1/2$; ERM did not ``see'' $\mathcal{D}$. ERM is a proxy for (a), not (a) itself.
+
+\textit{(c) is a property of the class, not an objective.}
+$\VCdim(\mathcal{H})$ does not depend on $h$ or on $S$. There is nothing to minimize over $h\in\mathcal{H}$. Choosing a smaller class (model selection) can change the VC dimension, but that is an outer choice of $\mathcal{H}$, not the ERM step inside a fixed $\mathcal{H}$.
+
+\textit{(d) is not an ERM objective.}
+``Variance of the hypothesis'' is not a function of a single $h$. The variance term of \cref{def:mlu-bv} is $\mathbb{E}_S[(\widehat h_S-\bar h)^2]$, a property of the algorithm as $S$ varies. ERM does not minimize that quantity; enlarging $\mathcal{H}$ typically increases it.
+
+Problem~4 then \emph{adds} a regularizer to the same average: one minimizes $L_S(w)+\tfrac{\lambda}{2}\lVert w\rVert^2$. That is still not $L_{\mathcal{D}}$.
+\end{solution}
+
+\begin{exercise}[VC dimension facts]
+\label{ex:mlu-vc-mcq}
+Which statement is true?
+\begin{enumerate}[label=(\alph*)]
+    \item A class with infinite VC dimension can never be PAC learnable.
+    \item The VC dimension of halfspaces in $\mathbb{R}^d$ is exactly $d+1$.
+    \item VC dimension always equals the number of parameters.
+    \item Finite VC dimension implies zero generalization error.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[VC dimension facts]
+(b). This is \jump{prop:vc-linear}{the linear-classifier property in Problem~3}. Homogeneous halfspaces through the origin in $\mathbb{R}^d$ have VC dimension $d$; adding a bias raises it to $d+1$. Concretely, the $d+1$ affinely independent points $\{0,e_1,\dots,e_d\}$ (or any simplex) are shattered by choosing $w$ and $b$ so that $\langle w,x\rangle+b$ has the prescribed signs. On any $d+2$ points a linear dependence $\sum_{i\in I}\lambda_i x_i=\sum_{j\in J}\mu_j x_j$ with positive weights produces a dichotomy (plus on $I$, minus on $J$) that no halfspace realizes.
+
+\textit{(a) is the slogan, not the uniquely safe true statement.}
+The precise theorem is \cref{thm:mlu-fundamental}: infinite VC forbids \emph{distribution-free} PAC. A class with infinite VC can still be easy for a special $\mathcal{D}$. Concrete: let $\mathcal{H}=\{0,1\}^{\mathbb{R}}$ be all Boolean functions on $\mathbb{R}$ (so $\VCdim=\infty$). If $\mathcal{D}$ is a Dirac at a single $x_0$, one labelled example determines $f(x_0)$ and the risk is $0$. The word ``never'' makes (a) false if the quantifier over $\mathcal{D}$ is dropped. The exam's safe true line is (b).
+
+\textit{(c) parameters are not VC dimension.}
+Signed intervals $h_{a,b,s}$ have three real parameters and $\VCdim=3$ only by coincidence (\cref{prop:mlu-signed-int}). The same class can be reparameterized by $(e^a,e^b,s)$ or by a redundant $4$-tuple $(a,b,s,t)$ with an unused $t$, without changing the functions, hence without changing $\VCdim$. Linear classifiers through the origin have $d$ parameters and VC dimension $d$, not $d+1$. VC dimension is a property of the \emph{set of functions}, not of a coordinate chart on the parameter space.
+
+\textit{(d) finite VC is a rate, not zero error.}
+Thresholds on $\mathbb{R}$ have $\VCdim=1<\infty$. For $m=1$ and a fair-coin label at a fresh $x$, any learner has expected error $1/2$. The fundamental theorem gives
+\[
+L_{\mathcal{D}}(A(S))\le\epsilon
+\quad\text{once}\quad
+m=\Omega\Bigl(\frac{d+\ln(1/\delta)}{\epsilon}\Bigr)
+\]
+in the realizable case (and $1/\epsilon^2$ if agnostic). At finite $m$ the residual can be positive. Finite VC implies a vanishing rate as $m\to\infty$, not $L_{\mathcal{D}}(A(S))=0$ for every sample size.
+\end{solution}
+
+\begin{exercise}[Agnostic PAC comparator]
+\label{ex:mlu-agnostic-mcq}
+In the agnostic PAC setting, what does the learner compete with?
+\begin{enumerate}[label=(\alph*)]
+    \item The Bayes-optimal classifier.
+    \item A hypothesis with zero training error.
+    \item The best hypothesis in $\mathcal{H}$.
+    \item The hypothesis minimizing validation error.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Agnostic PAC comparator]
+(c). The guarantee is
+\[
+L_{\mathcal{D}}(A(S))
+\le
+\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)+\epsilon
+\]
+with high probability. The right-hand side is the \emph{theoretical comparator}: the best population risk attainable by any (possibly uncomputable) member of the announced class $\mathcal{H}$. It is a number determined by $\mathcal{D}$ and $\mathcal{H}$ alone. It does not depend on the sample $S$, and no algorithm is required to output it.
+
+Four different objects are easy to mix.
+\begin{itemize}
+    \item \textit{Best-in-class} $h^\star\in\arg\min_{h\in\mathcal{H}}L_{\mathcal{D}}(h)$ (or the infimum if the min is not attained). This is the comparator in the display. In Problem~4 the same object is written $w^\star$. An oracle that knew $\mathcal{D}$ could name it; the learner does not see $\mathcal{D}$.
+    \item \textit{Bayes} $h_{\mathrm{Bayes}}=\arg\min L_{\mathcal{D}}(h)$, the minimum now taken over \emph{all} measurable predictors, not only $\mathcal{H}$. If $h_{\mathrm{Bayes}}\notin\mathcal{H}$, then $L_{\mathcal{D}}(h^\star)-L_{\mathcal{D}}(h_{\mathrm{Bayes}})$ is a positive approximation gap and agnostic PAC never claims to close it. That is why (a) is wrong. Realizable PAC is the special case $L_{\mathcal{D}}(h^\star)=0$, which forces Bayes to lie in $\mathcal{H}$ and to have risk $0$.
+    \item \textit{Algorithm} $A$: a map $S\mapsto A(S)\in\mathcal{H}$. ERM, regularized ERM, and ``pick the hypothesis with smallest validation error'' are three different maps. The left-hand side $L_{\mathcal{D}}(A(S))$ is the risk of whatever $A$ returned. The PAC statement is \emph{about} $A(S)$; the thing $A(S)$ is asked to be close to is $h^\star$, not another algorithm's output.
+    \item \textit{A data-dependent selection rule} such as (d). ``The hypothesis minimizing validation error'' is the output of one particular $A$ (hold out a val set, minimize $L_{\mathrm{val}}$). That output is random and depends on $S$. It is a candidate for the left-hand side, not a replacement for $\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)$. Using validation is a model-selection algorithm; it is not the definition of the comparator.
+\end{itemize}
+(b) need not exist: if labels are noisy, every $h\in\mathcal{H}$ can have $L_S(h)>0$. Even when a zero-training-error hypothesis exists, $L_S$ is not the quantity in the PAC inequality.
+
+The Problem~4 dictionary is the same split: $w^\star$ is the theoretical comparator (depends on $\mathcal{D}$, not on $S$); $A(S)$ is the algorithm. The stability bound controls $L_{\mathcal{D}}(A(S))-L_{\mathcal{D}}(w^\star)$, not $L_{\mathcal{D}}(A(S))-L_{\mathcal{D}}(h_{\mathrm{Bayes}})$, and not the gap to a validation winner.
+\end{solution}
+
+\begin{remark}[Comparator versus model selection]
+\label{rem:mlu-pipeline}
+The last bullet is not a small wording issue. It is the difference between two layers of the same theory. Write the excess risk of a trained predictor as two gaps, not one:
+\[
+L_{\mathcal{D}}(A(S))-L_{\mathcal{D}}(h_{\mathrm{Bayes}})
+=
+\underbrace{L_{\mathcal{D}}(h^\star_{\mathcal{H}})-L_{\mathcal{D}}(h_{\mathrm{Bayes}})}_{\text{approximation, a property of $\mathcal{H}$}}
++
+\underbrace{L_{\mathcal{D}}(A(S))-L_{\mathcal{D}}(h^\star_{\mathcal{H}})}_{\text{estimation, a property of $A$ and $S$}}.
+\]
+The \emph{comparator} $h^\star_{\mathcal{H}}$ is the split point. It is defined only after a class $\mathcal{H}$ has been announced, and it is defined from $\mathcal{D}$ alone. Agnostic PAC, uniform convergence (\cref{prop:mlu-uc-implies-agnostic}), the VC sample-complexity of \cref{thm:mlu-fundamental}, and the stability bound of Problem~4 all control the second gap for that fixed $\mathcal{H}$. None of them chooses $\mathcal{H}$.
+
+\emph{Model selection} is the first gap: which $\mathcal{H}$ (or which $\lambda$, depth, $k$) to announce, so that the \emph{sum} of the two gaps is small. That is \cref{prop:mlu-bv-tradeoff}. Validation, AIC/BIC, and structural risk minimization are algorithms for this outer choice. They look at data. They do not redefine $h^\star_{\mathcal{H}}$.
+
+The two roles, side by side:
+\begin{center}
+\begin{tabular}{|l|l|l|p{0.38\textwidth}|}
+\hline
+\textbf{Role} & \textbf{Object} & \textbf{Sees $S$?} & \textbf{Job} \\ \hline
+comparator & $h^\star_{\mathcal{H}}$ or $w^\star$ & no, only $\mathcal{D},\mathcal{H}$ & benchmark in a generalization inequality for one already chosen class \\ \hline
+algorithm & $A$ & yes, $S_{\mathrm{train}}$ & map that class to one predictor $A(S)$ \\ \hline
+model selection & choose $\mathcal{H}$ or $\lambda$ & yes, usually $S_{\mathrm{val}}$ & pick which class the inequality will be about \\ \hline
+test evaluation & $L_{\mathrm{test}}$ & a fresh $S_{\mathrm{test}}$ & unbiased estimate of $L_{\mathcal{D}}(A(S))$ after $A$ and $\mathcal{H}$ are frozen (\cref{prop:mlu-unbiased}) \\ \hline
+\end{tabular}
+\end{center}
+
+A validation winner is therefore a trained model, not a comparator. Hold out $S_{\mathrm{val}}$, train one candidate on each class $\mathcal{H}_1,\dots,\mathcal{H}_k$ (or each $\lambda$), and return the candidate with smallest $L_{S_{\mathrm{val}}}$. That procedure is itself an algorithm $A_{\mathrm{sel}}$. If a later guarantee is wanted for $A_{\mathrm{sel}}(S)$, the comparator becomes best-in-class in the \emph{selected} class, or best-in-class in the union $\bigcup_i\mathcal{H}_i$; either way one pays for having looked at $S_{\mathrm{val}}$ (a union bound over $k$ candidates, or a fresh test set). Validation estimates risks. It does not replace $\inf_{h\in\mathcal{H}}L_{\mathcal{D}}(h)$ in the definition.
+
+The whole route used in this paper, in order:
+\begin{enumerate}
+    \item Restrict the target family, otherwise NFL (\cref{thm:mlu-nfl}) makes every $A$ equivalent on unseen points.
+    \item Announce one class $\mathcal{H}$ (or a regularized family indexed by $\lambda$). The oracle $h^\star_{\mathcal{H}}$ is now defined. This is the comparator.
+    \item Train: $A$ is ERM, regularized ERM, or any other map $S\mapsto A(S)\in\mathcal{H}$.
+    \item Bound the estimation gap $L_{\mathcal{D}}(A(S))-L_{\mathcal{D}}(h^\star_{\mathcal{H}})$ by one of the three routes in \cref{rem:mlu-three-routes}: pointwise concentration for a frozen $h$ (Problem~1), uniform convergence / VC for a whole class (Problems~2--3 and \cref{thm:mlu-fundamental}), or replace-one stability of $A$ (Problem~4).
+    \item If several classes (or several $\lambda$) are still on the table, run model selection on a validation split. That chooses the first gap. It is not a second comparator.
+    \item After $\mathcal{H}$ and $A(S)$ are frozen, a test split estimates $L_{\mathcal{D}}(A(S))$. That number is an evaluation, not a training objective and not $h^\star$.
+\end{enumerate}
+Problems~1--4 live in steps 3--4 for a class that was already chosen. Bias--variance and the later-paper drills about validation live in step~5. Mixing (c) and (d) in the multiple choice is mixing step~2 with step~5.
+\end{remark}
+
+\begin{exercise}[Growth function after Sauer--Shelah]
+\label{ex:mlu-growth-mcq}
+Let $\VCdim(\mathcal{H})=d<\infty$. Which statement about $\Pi_{\mathcal{H}}(m)$ is necessarily true?
+\begin{enumerate}[label=(\alph*)]
+    \item $\Pi_{\mathcal{H}}(m)=2^m$ for all $m$.
+    \item $\Pi_{\mathcal{H}}(m)=O(m^d)$ for all $m$.
+    \item $\Pi_{\mathcal{H}}(m)\le\sum_{i=0}^d\binom{m}{i}$ for all $m$.
+    \item $\Pi_{\mathcal{H}}(m)$ is constant for $m>d$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Growth function after Sauer--Shelah]
+(c). This is exactly \jump{lem:sauer-shelah}{the Sauer--Shelah lemma in Problem~3}. The bound holds for every $m$, including the range $m\le d$ where both sides equal $2^m$; that convention is built into $\Phi_d(m)$ in \jump{prf:sauer-shelah}{the last-point splitting induction} (restrict to $C'$, split into $\mathcal{Y}_0$ and $\mathcal{Y}_1$, apply Pascal's identity $\Phi_d(n)=\Phi_d(n-1)+\Phi_{d-1}(n-1)$). Do not re-prove it here.
+
+\textit{(a) is infinite VC, not finite $d$.}
+$\Pi_{\mathcal{H}}(m)=2^m$ for all $m$ means every finite set is shattered, i.e.\ $\VCdim(\mathcal{H})=\infty$. Concrete finite-$d$ counter-example: thresholds $\mathcal{H}=\{x\mapsto\mathbf{1}\{x\ge t\}:t\in\mathbb{R}\}$ have $\VCdim=1$ and $\Pi_{\mathcal{H}}(m)=m+1$. For $m=3$ one has $4\ne 8$.
+
+\textit{(b) is the coarse asymptotic, not the necessary form.}
+For $m\to\infty$ with $d$ fixed, (c) plus $\Phi_d(m)\le(em/d)^d$ does give $\Pi_{\mathcal{H}}(m)=O(m^d)$. Two reasons it is not the keyed answer: the $O(\,\cdot\,)$ hides the range $m\le d$, where $\Pi_{\mathcal{H}}(m)=2^m$ and $2^m$ is not $O(m^d)$ unless one lets the implicit constant depend on a fixed $m$; and the exam asks for the sharp combinatorial statement, which is (c) for every $m$. Thresholds again: $m+1=O(m^1)$ is true, but the precise identity is $\Pi=m+1=\Phi_1(m)$.
+
+\textit{(d) polynomial growth is still growth.}
+After $m>d$ the class cannot shatter, so $\Pi_{\mathcal{H}}(m)<2^m$, but $\Pi$ need not flatten. Thresholds: $\VCdim=1$ and $\Pi_{\mathcal{H}}(m)=m+1$ is strictly increasing for all $m$. Intervals have $\VCdim=2$ and $\Pi(m)=\binom{m}{2}+m+1$, which still grows. Sauer forbids only the exponential $2^m$, not monotonicity.
+\end{solution}
+
+\begin{exercise}[ERM and finite VC]
+\label{ex:mlu-erm-vc-mcq}
+Which statement about ERM is correct?
+\begin{enumerate}[label=(\alph*)]
+    \item ERM is consistent for every hypothesis class.
+    \item ERM always returns a hypothesis of minimal true risk.
+    \item If $\mathcal{H}$ has finite VC dimension, then ERM is a PAC learner in the realizable case.
+    \item ERM is a PAC learner only if $\mathcal{H}$ is finite.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[ERM and finite VC]
+(c). This is \cref{thm:mlu-fundamental} specialized to realizable PAC: $\VCdim(\mathcal{H})<\infty$ if and only if $\mathcal{H}$ is PAC learnable, and ERM is a PAC learner for that class. In the realizable case the sample size is $\Theta((d+\ln(1/\delta))/\epsilon)$.
+
+\textit{(a) fails as soon as VC is infinite.}
+Let $\mathcal{H}$ be all Boolean functions on a domain with $\lvert\mathcal{X}\rvert\ge m+1$. ERM can interpolate $S$ (copy the observed labels, assign anything unseen). \Cref{thm:mlu-nfl} says the unseen error is still $1/2$ in expectation, uniformly in the algorithm. So ERM is not consistent for every class. ``Consistent'' here means $L_{\mathcal{D}}(A(S))\to 0$ (realizable) or $\to\inf_{\mathcal{H}}L_{\mathcal{D}}$ (agnostic); NFL blocks that without a restriction on $\mathcal{H}$.
+
+\textit{(b) confuses $L_S$ with $L_{\mathcal{D}}$.}
+ERM returns a minimizer of training risk, not of true risk. Concrete: $\mathcal{H}=$ all functions on $\{1,\dots,n\}$, $m<n$, noiseless labels from some $f$. ERM interpolates $S$ so $L_S=0$, but any extension to the unseen points can be wrong, and $h^\star=f$ is the unique minimizer of $L_{\mathcal{D}}$. The interpolant equals $f$ on $S$ and need not equal $f$ off $S$. Even inside a small class, $L_S(\widehat h)\le L_S(h^\star)$ does not imply $L_{\mathcal{D}}(\widehat h)=L_{\mathcal{D}}(h^\star)$; that gap is exactly what uniform convergence or Problem~4 controls.
+
+\textit{(d) finite cardinality is stronger than needed.}
+Axis-aligned rectangles in $\mathbb{R}^2$ and halfspaces in $\mathbb{R}^d$ are infinite classes. Both have finite VC dimension ($4$ and $d+1$) and are PAC learnable by (c). Finiteness of $\mathcal{H}$ is sufficient (Problem~2 union bound) but not necessary. The correct cardinality restriction is finite $\VCdim$, i.e.\ polynomial $\Pi_{\mathcal{H}}$, not $\lvert\mathcal{H}\rvert<\infty$.
+\end{solution}
+
+\begin{exercise}[ReLU networks as a class]
+\label{ex:mlu-relu-mcq}
+Which statement about ReLU networks is correct from a learning-theoretic viewpoint?
+\begin{enumerate}[label=(\alph*)]
+    \item ReLU networks represent smooth functions on $\mathbb{R}^d$.
+    \item Increasing depth always decreases the VC dimension.
+    \item ReLU networks compute piecewise-linear functions whose complexity depends on depth and width.
+    \item Universal approximation of ReLU networks implies PAC learnability.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[ReLU networks as a class]
+(c). A feed-forward ReLU net with $L$ layers is a map
+\[
+x\mapsto W_L\,\sigma(W_{L-1}\,\sigma(\cdots\sigma(W_1 x+b_1)\cdots)+b_{L-1})+b_L,
+\qquad
+\sigma(t)=\max\{0,t\}
+\]
+applied coordinatewise. Each $\sigma$ is linear on $\{t>0\}$ and identically $0$ on $\{t<0\}$, so each hidden unit cuts $\mathbb{R}^d$ by a hyperplane. An affine image of a piecewise-linear function is piecewise linear, and a composition of continuous piecewise-linear maps is continuous piecewise linear. Hence every ReLU net (with linear output) computes a continuous piecewise-linear function $\mathbb{R}^d\to\mathbb{R}$.
+
+The number of linear regions depends on depth and width: a shallow wide net can realize many pieces by many hyperplanes; a deep narrow net can fold the input repeatedly and produce a number of pieces that grows exponentially in $L$ for fixed width (the standard sawtooth / telescoping construction). Passing to the Boolean class $x\mapsto\mathbf{1}\{f_w(x)\ge 0\}$ therefore yields a VC dimension that grows with the architecture---polynomially in the number of weights for typical bounds, and exponentially in depth in some explicit shatterings. That is the learning-theoretic content of (c): the hypothesis class is a CPWL family whose complexity is an architecture parameter, exactly as tree depth or polynomial degree is a complexity parameter earlier in these notes.
+
+\textit{(a) fails on the elementary ReLU itself.}
+The network with one hidden unit and no extra affine map, $f(x)=\max\{0,x\}$ on $\mathbb{R}$, is not differentiable at $0$, hence not $C^1(\mathbb{R})$ and not $C^\infty$. A depth-$2$ net $x\mapsto\max\{0,x\}-\max\{0,x-1\}$ is a bounded bump that is linear on three pieces and has two kinks. Smoothness in the $C^1$ sense is the wrong regularity: ReLU nets are continuous and piecewise affine, not smooth. (Sigmoid nets are $C^\infty$, which is the contrast used in the remark below.)
+
+\textit{(b) is the opposite monotonicity.}
+Write $\mathcal{H}_{L,W}$ for ReLU nets of depth $L$ and width $W$, with real weights. Allowing a deeper architecture does not remove functions: a depth-$L$ net embeds into depth $L+1$ by an extra affine layer that acts as the identity on the range already attained. Hence $\VCdim(\mathcal{H}_{L+1,W})\ge\VCdim(\mathcal{H}_{L,W})$: depth cannot decrease VC dimension. The claim ``always decreases'' is already false from this nesting. An explicit Boolean counter-example shows the inequality is typically strict.
+
+\textit{Counter-example (three ordered points, pattern $101$).}
+Let $C=\{0,1,2\}$. A depth-$1$ net is an affine threshold $x\mapsto\mathbf{1}\{wx+b\ge 0\}$, i.e.\ a ray. On an ordered triple the realizable patterns are only prefixes and suffixes: $000,100,110,111$ and the four opposites if $w<0$. The alternating labeling $101$ is impossible: a ray that makes $0$ and $2$ positive must also make $1$ positive.
+
+A depth-$2$, width-$2$ ReLU net realizes $101$. Set
+\[
+f(x)
+=
+\max\{0,\,0.5-x\}
++
+\max\{0,\,x-1.5\}.
+\]
+Then $f(0)=0.5>0$, $f(1)=0$, $f(2)=0.5>0$. The Boolean classifier $x\mapsto\mathbf{1}\{f(x)>0\}$ labels $C$ as $101$. The same architecture realizes $010$ by the tent
+\[
+g(x)
+=
+1-\max\{0,\,x-1\}-\max\{0,\,1-x\},
+\]
+i.e.\ $1-\lvert x-1\rvert$, which equals $0$ at the endpoints and $1$ at the midpoint. Thus $\{0,1,2\}$ is shattered by $\mathcal{H}_{2,2}$ and not by $\mathcal{H}_{1,1}$, so
+\[
+\VCdim(\mathcal{H}_{2,2})
+\ge
+3
+>
+2
+=
+\VCdim(\mathcal{H}_{1,1}).
+\]
+Depth went up and VC dimension went up. Deeper sawtooth constructions (fold a $V$-shape $L$ times) shatter still larger sets; they are the same direction as increasing tree depth or polynomial degree, not the opposite.
+
+\textit{(d) density is not PAC learnability.}
+Universal approximation (Cybenko / Hornik for sigmoid; Leshno-type results for ReLU) says: the \emph{union over all widths} of single-hidden-layer nets is dense in $C(K)$ for compact $K\subset\mathbb{R}^d$. Density is a statement about approximation of continuous targets on a compact, i.e.\ about the first gap in \cref{rem:mlu-pipeline}. PAC learnability is a statement about a \emph{fixed} class and the second gap.
+
+Concrete separation:
+\begin{itemize}
+    \item Let $\mathcal{F}=C([-1,1])$, which is dense in itself. Threshold at $1/2$ to obtain a Boolean class. Any finite set of distinct points can be labelled arbitrarily by a continuous function, so the Boolean class has infinite VC dimension and is not distribution-free PAC learnable (\cref{thm:mlu-fundamental}, NFL). Approximation is perfect; learnability fails.
+    \item Unbounded-degree polynomials are dense on $[-1,1]$ by Stone--Weierstrass. Polynomial threshold functions of unbounded degree have infinite VC dimension.
+    \item The union $\bigcup_{L,W}\mathcal{H}_{L,W}$ of all ReLU architectures is a universal approximator and, as a single Boolean class after thresholding, has infinite VC dimension (it contains arbitrarily deep sawtooths). A \emph{fixed} $(L,W)$ class typically has finite VC dimension and \emph{is} PAC learnable---but that follows from finite VC, not from the universal-approximation theorem. The UA theorem lets the architecture grow; PAC for the exam class freezes the architecture first.
+\end{itemize}
+Thus (d) conflates step~1--2 of \cref{rem:mlu-pipeline} (choose a class rich enough to approximate) with step~4 (control estimation for that class). The two are related by the bias--variance trade-off, and they are not implied by each other.
+\end{solution}
+
+\begin{remark}[Spring 2026 Problem~5, for orientation]
+If a ReLU network and a network whose hidden activations are all sigmoid represent the \emph{same} function on all of $\mathbb{R}^d$, that function must be constant: a ReLU net is piecewise linear, a sigmoid net (with sigmoid on every hidden layer and a bounded output activation, or a bounded common range) is real-analytic, and the only bounded analytic piecewise-linear functions on $\mathbb{R}^d$ are constants. Universal approximation lives on compact sets; equality on the whole space is a rigidity statement, not a density statement.
+\end{remark}
+
+\begin{exercise}[Empirical-loss MSE, Spring 2026 form]
+\label{ex:mlu-mse}
+This is Problem~1 of this paper with a second clause. Let $h$ be frozen, $p:=L_{\mathcal{D},f}(h)$, and $L_S(h)=\frac1m\sum_{i=1}^m\mathbf{1}\{h(x_i)\ne f(x_i)\}$.
+\begin{enumerate}[label=(\alph*)]
+    \item Show $\mathbb{E}_S\bigl[(L_S(h)-p)^2\bigr]=p(1-p)/m$.
+    \item Deduce that the same quantity is at most $1/(4m)$.
+\end{enumerate}
+Write the argument so that a reader who has not seen Problem~1 can follow it.
+\end{exercise}
+
+\begin{solution}[Empirical-loss MSE]
+(a) Let $Z_i=\mathbf{1}\{h(x_i)\ne f(x_i)\}$. Then $Z_i$ is Bernoulli($p$), $\mathbb{E}[Z_i]=p$, $\mathrm{Var}(Z_i)=p(1-p)$, and $L_S(h)=\bar Z_m$. Independence of the $x_i$ gives independence of the $Z_i$, so
+\[
+\mathbb{E}\bigl[(\bar Z_m-p)^2\bigr]
+=
+\mathrm{Var}(\bar Z_m)
+=
+\frac1{m^2}\sum_{i=1}^m\mathrm{Var}(Z_i)
+=
+\frac{p(1-p)}{m}.
+\]
+(The cross terms vanish because $\mathrm{Cov}(Z_i,Z_j)=0$ for $i\ne j$.) This is exactly Problem~1: mean squared error of an unbiased estimator is its variance.
+
+(b) The quadratic $p(1-p)$ on $[0,1]$ has derivative $1-2p$ and maximum $1/4$ at $p=1/2$. Therefore
+\[
+\mathbb{E}\bigl[(L_S(h)-p)^2\bigr]
+\le
+\frac{1}{4m}.
+\]
+The $O(1/m)$ rate is uniform in $h$ and $\mathcal{D}$. It is still a frozen-$h$ statement: after replacing $h$ by $A(S)$ one needs Problem~4 or uniform convergence.
+\end{solution}
+
+\begin{exercise}[Interval--ray growth and VC]
+\label{ex:mlu-interval-ray}
+For the class $\mathcal{H}$ of \cref{prop:mlu-interval-ray}, give an upper bound on $\Pi_{\mathcal{H}}(n)$ and determine $\VCdim(\mathcal{H})$.
+\end{exercise}
+
+\begin{solution}[Interval--ray growth and VC]
+See \cref{prop:mlu-interval-ray}. Exam-style skeleton:
+
+\textit{Growth function.}
+On $x_1<\dots<x_n$, the parameters $a,b,c$ live in $n+1$ slots, so there are at most $(n+1)^3$ dichotomies. Equivalently, every $h_{a,b,c}$ produces either a single positive block, or a positive block plus a positive suffix after a gap: at most $1+n(n+1)/2$ interval patterns (including empty), $n$ pure suffixes, and at most $\binom{n}{3}$ ways to choose the left endpoint, the gap, and the start of the ray. Hence $\Pi_{\mathcal{H}}(n)\le n^3$ for $n\ge 2$. Do not count $\sum_{k,t}k(n-k-t)t$: that weights each shape by block lengths instead of adding $1$ per dichotomy. The cubic bound alone does not force $\VCdim\le 3$ (at $n=4$, $64>16$); Sauer cannot be inverted.
+
+\textit{Lower bound.}
+The three points $\{0,1,2\}$ are shattered (enumerate, as in the proposition: $101$ uses $[a,b]\ni 0$ and $c\in(1,2]$).
+
+\textit{Upper bound.}
+The labeling $1010$ on four ordered points is impossible: a ray making the third point positive forces the fourth positive; an interval covering the first and third covers the second.
+
+Thus $\VCdim(\mathcal{H})=3$. Compare Problem~3: this class is a structured union of an interval class ($\mathrm{VCdim}=2$) and a ray class ($\mathrm{VCdim}=1$), and the union bound of Problem~3(a) would only give $\VCdim\le 2+1+1=4$. The extra $+1$ is not always tight; a direct dichotomy argument saved one dimension.
+\end{solution}
+
+\begin{summary}[What this block added to Problems~1--4]
+\label{sum:mlu}
+\begin{itemize}
+    \item Problems~1--2 are pointwise and finite-class concentration. Uniform convergence and \cref{thm:mlu-fundamental} are the infinite-class upgrade that Sauer--Shelah makes possible; the ghost-sample proof of that theorem, the counting proof of NFL, the Rademacher bound, and the representer orthogonal split are written out in full.
+    \item Problem~3 is combinatorial VC. The gallery (signed intervals, concentric disks, interval--ray) is the same method on later-paper classes. Rademacher complexity is the real-valued, data-dependent sibling.
+    \item Problem~4 is stability of regularized ERM. Linear/logistic models and linear SVM are named special cases of that ERM. Strong convexity is the calculus lemma behind the footnote.
+    \item Bias--variance and model selection explain \emph{which} $\mathcal{H}$ or $\lambda$ to pick. NFL explains why some restriction is mandatory.
+    \item Trees, $k$-NN, kernels, and compressed sensing are the remaining official syllabus items: they reuse the same four letters $h$, $w$, $A(S)$, $L_S$, $L_{\mathcal{D}}$ with different $\mathcal{H}$ and different inductive biases (depth, locality, PSD kernels, sparsity).
+\end{itemize}
+\end{summary}

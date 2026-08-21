@@ -1,0 +1,608 @@
+\subsection{Further learnings}
+\label{subsec:optu}
+
+The six official problems of this section prove one constant-step mean-square bound for proximal SGD with abstract additive noise $\xi$. The official syllabus, and the later papers, ask for several neighbouring objects that the closing scope list already named: a convex-analysis toolkit written as exam answers, the finite-sum estimator that \emph{realizes} $\xi$, iterate averaging with a decreasing step, and a one-line coordinate-descent comparison. The notes below collect those objects in the same format as the Machine Learning and Deep Learning further-learnings blocks: a definition or proposition, a remark that ties the object back to Problems~1--6, and an exercise with a fully written solution. Momentum and Adam are \emph{not} rewritten here; they already occupy \jump{prop:dlu-mom}{the Deep Learning exam formulas}. Problems~1--6 themselves are not re-proved.
+
+
+\subsubsection{Convex sets and convex functions}
+\label{subsubsec:optu-convex}
+
+The official syllabus begins with convex sets and convex functions. Problems~1--2 already use the differentiable special case (a $C^1$ function is convex iff $\nabla f$ is monotone). The two definitions below are the objects that remain when $R$ is allowed to take the value $+\infty$.
+
+\begin{definition}[Convex set and convex function]
+\label{def:optu-convex}
+A set $C\subseteq\mathbb{R}^d$ is convex if $x,y\in C$ and $\lambda\in[0,1]$ imply $\lambda x+(1-\lambda)y\in C$. A function $R:\mathbb{R}^d\to(-\infty,+\infty]$ is convex if its epigraph $\{(x,t):R(x)\le t\}$ is a convex set; equivalently, for all $x,y$ and $\lambda\in[0,1]$,
+\[
+R\bigl(\lambda x+(1-\lambda)y\bigr)
+\le
+\lambda R(x)+(1-\lambda)R(y),
+\]
+with the arithmetic $+\infty$ conventions. The indicator $I_C$ of a nonempty set $C$ (value $0$ on $C$ and $+\infty$ off $C$) is convex if and only if $C$ is convex. Jensen's inequality is the $n$-point form of the same definition.
+\end{definition}
+
+\begin{remark}[Where this paper already used the indicator]
+\label{rem:optu-indicator}
+The background identity $\prox_{\gamma I_C}=\mathrm{proj}_C$ is this definition plus the proximal map: the $+\infty$ barrier forces the argmin to stay in $C$, and what remains is nearest-point projection. That is the only constrained method this paper needs. Separating hyperplanes and Fenchel conjugacy are not later-paper items.
+\end{remark}
+
+\begin{exercise}[Indicator versus quadratic]
+\label{ex:optu-indicator}
+Let $C=[0,+\infty)$. Write $I_C$ at $-1$ and at $1$. Why is $x\mapsto\tfrac12 x^2$ a legal $f$ in this paper, while $I_C$ must be placed in $R$ rather than in $f$?
+\end{exercise}
+
+\begin{solution}[Indicator versus quadratic]
+$I_C(-1)=+\infty$ and $I_C(1)=0$. The data term $f$ is assumed differentiable, $L$-smooth, and $\mu$-strongly convex, so it must be finite and $C^1$ on all of $\mathbb{R}^d$. The indicator is neither. It belongs in $R$, where the proximal map can enforce the constraint by projection. That is the $f$/$R$ split of the opening background.
+\end{solution}
+
+
+\subsubsection{Subdifferential calculus as exam answers}
+\label{subsubsec:optu-subdiff}
+
+The supporting-slope definition and Fermat's rule are already written as \jump{def:subdifferential}{the background definition}. Spring 2026 asks for three standalone consequences: monotonicity of $\partial R$, the proximal first-order condition, and uniqueness of a minimizer of $F=f+R$. The long notes are not copied; the identities below are the timed answers.
+
+\begin{proposition}[Monotonicity of the subdifferential]
+\label{prop:optu-mono}
+Let $R:\mathbb{R}^d\to(-\infty,+\infty]$ be convex. For any $x,y$ and any $r_x\in\partial R(x)$, $r_y\in\partial R(y)$,
+\[
+\langle r_x-r_y,x-y\rangle\ge 0.
+\]
+\end{proposition}
+
+\begin{proof}
+The two supporting-slope inequalities are $R(y)\ge R(x)+\langle r_x,y-x\rangle$ and $R(x)\ge R(y)+\langle r_y,x-y\rangle$. Add them: $0\ge\langle r_x-r_y,y-x\rangle$, which is the claim.
+\end{proof}
+
+\begin{proposition}[Proximal first-order condition]
+\label{prop:optu-prox-foc}
+For $\gamma>0$ and convex proper $R$,
+\[
+x^+=\prox_{\gamma R}(u)
+\quad\Longleftrightarrow\quad
+\frac1\gamma(u-x^+)\in\partial R(x^+).
+\]
+This is the identity already derived in the background note after \cref{def:subdifferential}, rewritten in the Spring 2026 letters $(u,x^+)$.
+\end{proposition}
+
+\begin{proposition}[Unique minimizer of $F$]
+\label{prop:optu-unique-F}
+If $f$ is $\mu$-strongly convex and $R$ is convex, then $F=f+R$ is $\mu$-strongly convex in the subdifferential sense: for every $x$ and every $g\in\partial F(x)$,
+\[
+F(y)
+\ge
+F(x)+\langle g,y-x\rangle+\frac\mu2\|y-x\|^2.
+\]
+Equivalently, $F$ satisfies the function-value form
+\[
+F\bigl(\lambda x+(1-\lambda)y\bigr)
+\le
+\lambda F(x)+(1-\lambda)F(y)-\frac\mu2\lambda(1-\lambda)\|x-y\|^2.
+\]
+In particular $F$ has at most one minimizer. If $f$ is also differentiable, $\partial F(x)=\{\nabla f(x)\}+\partial R(x)$, and a point $x^*$ minimizes $F$ if and only if $0\in\nabla f(x^*)+\partial R(x^*)$, if and only if the proximal fixed point of \cref{lem:prox-fixed} holds.
+\end{proposition}
+
+\begin{proof}
+Fix $r_x\in\partial R(x)$ and set $g=\nabla f(x)+r_x$. Strong convexity of $f$ and the supporting-slope inequality for $R$ add to the displayed lower bound. If $x^*$ and $y^*$ both minimize $F$, then $0\in\partial F(x^*)$, so the same bound at $y=y^*$ gives $0\ge\frac\mu2\|y^*-x^*\|^2$, hence $x^*=y^*$. The midpoint form of the exercise below is the $\lambda=\frac12$ case of the function-value inequality. The Fermat and fixed-point equivalences are \cref{lem:prox-fixed}.
+\end{proof}
+
+\begin{remark}[What Problem~1 uniqueness is not]
+\label{rem:optu-unique-f-vs-F}
+Problem~1's strong convexity gives uniqueness for $f$ alone. Fall 2025 Problem~2 and Spring 2026 Problem~3 ask for uniqueness of $F$. The extra convex summand $R$ cannot create a second minimizer, but it can move the unique minimizer away from $\argmin f$.
+\end{remark}
+
+\begin{exercise}[Add the two supporting slopes]
+\label{ex:optu-mono}
+Write the two supporting-slope inequalities that prove \cref{prop:optu-mono}, and state what fails if $R$ is not convex.
+\end{exercise}
+
+\begin{solution}[Add the two supporting slopes]
+$R(y)\ge R(x)+\langle r_x,y-x\rangle$ and $R(x)\ge R(y)+\langle r_y,x-y\rangle$. Adding cancels the function values and leaves $\langle r_x-r_y,x-y\rangle\ge 0$. Without convexity the set $\partial R(x)$ may be empty even at a differentiable point, and a slope that exists need not be supporting, so there is nothing to add.
+\end{solution}
+
+\begin{exercise}[Prox FOC in both directions]
+\label{ex:optu-foc}
+Starting from $x^+=\argmin_z\bigl(R(z)+\tfrac1{2\gamma}\|z-u\|^2\bigr)$, derive $\frac1\gamma(u-x^+)\in\partial R(x^+)$. Then reverse the argument.
+\end{exercise}
+
+\begin{solution}[Prox FOC in both directions]
+Let $\Phi(z)=R(z)+\tfrac1{2\gamma}\|z-u\|^2$. Then $x^+$ minimizes $\Phi$ iff $0\in\partial\Phi(x^+)$. The quadratic is $C^1$ and finite everywhere, so the sum rule gives
+\[
+\partial\Phi(x^+)
+=
+\partial R(x^+)+\frac1\gamma(x^+-u).
+\]
+Hence $0\in\partial\Phi(x^+)$ iff $\frac1\gamma(u-x^+)\in\partial R(x^+)$. Conversely, the same membership is $0\in\partial\Phi(x^+)$, hence $x^+$ minimizes $\Phi$, hence $x^+=\prox_{\gamma R}(u)$. That is Spring 2026 Problem~2 and the background calculation already on the page.
+\end{solution}
+
+\begin{exercise}[Why $F$ cannot have two minimizers]
+\label{ex:optu-unique}
+Assume $f$ is $\mu$-strongly convex and $R$ is convex. If $x\neq y$ both minimized $F$, what inequality would the midpoint violate?
+\end{exercise}
+
+\begin{solution}[Why $F$ cannot have two minimizers]
+\Cref{prop:optu-unique-F} gives
+\[
+F\Bigl(\frac{x+y}2\Bigr)
+\le
+\frac{F(x)+F(y)}2-\frac\mu8\|x-y\|^2
+=
+F(x)-\frac\mu8\|x-y\|^2
+<
+F(x),
+\]
+contradicting minimality of $x$. Fall 2025 Problem~2 is this one-line argument (or the equivalent ``strictly convex functions have at most one minimizer'').
+\end{solution}
+
+
+\subsubsection{Nonexpansiveness from monotonicity}
+\label{subsubsec:optu-nonexp}
+
+Problem~3 \emph{uses} $\|\prox_{\gamma R}(u)-\prox_{\gamma R}(v)\|\le\|u-v\|$ as a black box. Spring 2026 Problem~5 asks for the proof from monotonicity. That derivation is the missing step between \cref{prop:optu-mono} and the one-step recurrence.
+
+\begin{proposition}[Prox is nonexpansive]
+\label{prop:optu-nonexp}
+Let $x^+=\prox_{\gamma R}(u)$ and $y^+=\prox_{\gamma R}(v)$. Then $\|x^+-y^+\|\le\|u-v\|$.
+\end{proposition}
+
+\begin{proof}
+\Cref{prop:optu-prox-foc} supplies $\frac1\gamma(u-x^+)\in\partial R(x^+)$ and $\frac1\gamma(v-y^+)\in\partial R(y^+)$. Monotonicity (\cref{prop:optu-mono}) yields
+\[
+\Bigl\langle \frac{u-x^+}{\gamma}-\frac{v-y^+}{\gamma},\, x^+-y^+\Bigr\rangle
+\ge
+0,
+\]
+which rearranges to $\langle u-v-(x^+-y^+),x^+-y^+\rangle\ge 0$, or
+\[
+\langle u-v,x^+-y^+\rangle
+\ge
+\|x^+-y^+\|^2.
+\]
+Cauchy--Schwarz gives $\lvert\langle u-v,x^+-y^+\rangle\rvert\le\|u-v\|\,\|x^+-y^+\|$, and the claim follows on dividing by $\|x^+-y^+\|$ (or is trivial if $x^+=y^+$).
+\end{proof}
+
+\begin{remark}[This is the whole of Problem~3 after the fixed point]
+\label{rem:optu-p3-uses}
+Problem~3 writes $x^{k+1}=\prox_{\gamma R}(u)$ and $x^*=\prox_{\gamma R}(v)$ with $u=x^k-\gamma(\nabla f(x^k)+\xi^k)$ and $v=x^*-\gamma\nabla f(x^*)$, then drops the prox by \cref{prop:optu-nonexp}. The algebra after that line never sees $R$ again.
+\end{remark}
+
+\begin{exercise}[Finish the inner-product step]
+\label{ex:optu-nonexp}
+From $\langle u-v-(x^+-y^+),x^+-y^+\rangle\ge 0$, obtain $\|x^+-y^+\|\le\|u-v\|$ in two lines.
+\end{exercise}
+
+\begin{solution}[Finish the inner-product step]
+Move the second summand: $\langle u-v,x^+-y^+\rangle\ge\|x^+-y^+\|^2$. Then
+\[
+\|x^+-y^+\|^2
+\le
+\|u-v\|\,\|x^+-y^+\|
+\]
+by Cauchy--Schwarz. If $x^+\neq y^+$, divide; otherwise the claim is immediate. This is Spring 2026 Problem~5.
+\end{solution}
+
+
+\subsubsection{Finite-sum estimators, expected smoothness, and importance sampling}
+\label{subsubsec:optu-finite-sum}
+
+This is the extension promised by the scope list under ``mini-batch variance scaling''. Problems~4--6 treat $\xi$ as an abstract zero-mean vector with $\E[\|\xi\|^2]\le\sigma^2$. Fall 2025 builds $\xi$ from a finite sum $f=\frac1n\sum_i f_i$ and a minibatch.
+
+\begin{notation}[Multisampling estimator]
+\label{not:optu-g}
+Let $f(x)=\frac1n\sum_{i=1}^n f_i(x)$ with each $f_i$ convex and $L_i$-smooth, and let $f$ itself be $L$-smooth and $\mu$-strongly convex. Fix a probability vector $q\in\Delta_n$ with $q_i>0$, a batch size $\tau\in\mathbb{N}$, and i.i.d.\ indices $s_1,\dots,s_\tau\sim q$. The estimator is
+\[
+g(x)
+:=
+\frac1\tau\sum_{t=1}^\tau v_{s_t}(x),
+\qquad
+v_i(x)
+:=
+\frac1{n q_i}\nabla f_i(x).
+\]
+Write $D_f(x,y):=f(x)-f(y)-\langle\nabla f(y),x-y\rangle$ for the Bregman divergence of $f$, and likewise $D_{f_i}$ for each summand. Convexity of $f$ is $D_f\ge 0$, and $D_f=\frac1n\sum_i D_{f_i}$.
+\end{notation}
+
+\begin{proposition}[Unbiasedness]
+\label{prop:optu-unbiased}
+For every $x$, $\E[g(x)]=\nabla f(x)$.
+\end{proposition}
+
+\begin{proof}
+One copy is enough:
+\[
+\E[v_s(x)]
+=
+\sum_{i=1}^n q_i\cdot\frac1{n q_i}\nabla f_i(x)
+=
+\frac1n\sum_{i=1}^n\nabla f_i(x)
+=
+\nabla f(x).
+\]
+Averaging $\tau$ i.i.d.\ copies does not change the mean. The factor $1/(n q_i)$ is the importance weight that undoes the sampling probabilities. Uniform sampling $q_i=1/n$ reduces it to the ordinary minibatch average of $\nabla f_{s_t}$.
+\end{proof}
+
+\begin{remark}[This is the $\xi$ of Problems~4--6]
+\label{rem:optu-xi-is-g}
+Set $\xi(x):=g(x)-\nabla f(x)$. Then $\E[\xi(x)]=0$, and the iteration $x^{k+1}=\prox_{\gamma R}(x^k-\gamma g(x^k))$ is exactly the algorithm of this paper. The abstract bound $\E[\|\xi\|^2]\le\sigma^2$ becomes a concrete function of $(\tau,q,\{L_i\})$ below. That is why Fall 2025 can quote the same contraction as Problem~5 after it has computed $(A,C)$.
+\end{remark}
+
+\begin{proposition}[Bregman form of smoothness]
+\label{prop:optu-bregman}
+If $h$ is convex and $L_h$-smooth, then
+\[
+\|\nabla h(x)-\nabla h(y)\|^2
+\le
+2 L_h\, D_h(x,y).
+\]
+In particular $\|\nabla f(x)-\nabla f(y)\|^2\le 2L\, D_f(x,y)$ and $\|\nabla f_i(x)-\nabla f_i(y)\|^2\le 2 L_i\, D_{f_i}(x,y)$.
+\end{proposition}
+
+\begin{proof}
+Convex $L_h$-smoothness is equivalent to the Bregman lower bound $D_h(x,y)\ge\frac1{2L_h}\|\nabla h(x)-\nabla h(y)\|^2$, which rearranges to the claim. The same fact is co-coercivity of $\nabla h$: $\langle\nabla h(x)-\nabla h(y),x-y\rangle\ge\frac1{L_h}\|\nabla h(x)-\nabla h(y)\|^2$. (The $g=f-\mu\|\cdot\|^2/2$ argument of Problem~2 is that co-coercivity applied to a shifted function.)
+\end{proof}
+
+\begin{proposition}[Expected smoothness]
+\label{prop:optu-es}
+With the notation of \cref{not:optu-g},
+\[
+\E\bigl[\|g(x)-g(y)\|^2\bigr]
+\le
+2 A''(\tau,q)\, D_f(x,y),
+\qquad
+A''(\tau,q)
+:=
+\frac1\tau\max_i\frac{L_i}{n q_i}
++
+\Bigl(1-\frac1\tau\Bigr)L.
+\]
+\end{proposition}
+
+\begin{proof}
+Write $\delta_t:=v_{s_t}(x)-v_{s_t}(y)$, so $g(x)-g(y)=\frac1\tau\sum_t\delta_t$ with the $\delta_t$ i.i.d.\ and $\E[\delta_1]=\nabla f(x)-\nabla f(y)$. Expand the square and use independence of distinct copies:
+\[
+\E\Bigl\|\frac1\tau\sum_{t=1}^\tau\delta_t\Bigr\|^2
+=
+\frac1\tau\E\|\delta_1\|^2
++
+\Bigl(1-\frac1\tau\Bigr)\|\nabla f(x)-\nabla f(y)\|^2.
+\]
+The second term is at most $2L\, D_f(x,y)$ by \cref{prop:optu-bregman}. For the first,
+\begin{align*}
+\E\|\delta_1\|^2
+&=
+\sum_{i=1}^n q_i\Bigl\|\frac{\nabla f_i(x)-\nabla f_i(y)}{n q_i}\Bigr\|^2
+=
+\sum_{i=1}^n\frac1{n^2 q_i}\|\nabla f_i(x)-\nabla f_i(y)\|^2 \\
+&\le
+\sum_{i=1}^n\frac{2 L_i}{n^2 q_i} D_{f_i}(x,y)
+\le
+2\Bigl(\max_i\frac{L_i}{n q_i}\Bigr) D_f(x,y),
+\end{align*}
+because $\sum_i D_{f_i}=n D_f$. Collecting the two contributions yields $2A'' D_f$.
+\end{proof}
+
+\begin{proposition}[Batch size interpolates SGD and GD]
+\label{prop:optu-tau}
+Let $M(q):=\max_i L_i/(n q_i)$. Then $M(q)\ge L$, so $A''(\tau,q)$ is nonincreasing in $\tau$, with
+\[
+A''(1,q)=M(q),
+\qquad
+\lim_{\tau\to\infty}A''(\tau,q)=L.
+\]
+The endpoint $\tau=1$ is single-sample SGD (with importance weights); the endpoint $\tau\to\infty$ is full-gradient descent, whose expected smoothness constant is just the smoothness of $f$.
+\end{proposition}
+
+\begin{proof}
+$\sum_i q_i\cdot L_i/(n q_i)=\frac1n\sum_i L_i\ge L$, so the maximum $M(q)$ is at least the average, hence at least $L$. Write $A''(\tau,q)=\frac1\tau(M(q)-L)+L$. The coefficient of $1/\tau$ is nonnegative, so $A''$ cannot increase with $\tau$.
+\end{proof}
+
+\begin{proposition}[Optimal importance sampling]
+\label{prop:optu-qstar}
+For fixed $\tau$,
+\[
+\min_{q\in\Delta_n}M(q)
+=
+\frac1n\sum_{i=1}^n L_i,
+\]
+attained at $q_i^*=L_i/\sum_j L_j$. Uniform sampling $q_i^{\mathrm{uni}}=1/n$ attains the worse value $\max_i L_i$.
+\end{proposition}
+
+\begin{proof}
+For any $q$, $M(q)=\max_i L_i/(n q_i)\ge\sum_i q_i\cdot L_i/(n q_i)=\frac1n\sum_i L_i$. The choice $q_i^*\propto L_i$ equalizes every ratio $L_i/(n q_i)$ at $\bar L:=\frac1n\sum_j L_j$, so the lower bound is attained. Uniform sampling gives $M(q^{\mathrm{uni}})=\max_i L_i\ge\bar L$. Sampling a smoother $f_i$ less often, and a sharp $f_i$ more often, is the only information $q$ can use.
+\end{proof}
+
+\begin{proposition}[Variance at the optimum scales as $1/\tau$]
+\label{prop:optu-var-opt}
+Let $\xi(x):=g(x)-\nabla f(x)$. Then
+\[
+\E\bigl[\|\xi(x^*)\|^2\bigr]
+=
+\frac1\tau\,\Var\bigl(v_s(x^*)\bigr)
+=
+\frac1\tau\,\Var\Bigl(\frac1{n q_s}\nabla f_s(x^*)\Bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+The copies $v_{s_t}(x^*)$ are i.i.d.\ with mean $\nabla f(x^*)$, and $g(x^*)$ is their average. The variance of an average of $\tau$ i.i.d.\ vectors is $1/\tau$ times the variance of one copy. Explicitly,
+\[
+\Var\bigl(v_s(x^*)\bigr)
+=
+\sum_{i=1}^n q_i\Bigl\|\frac{\nabla f_i(x^*)}{n q_i}-\nabla f(x^*)\Bigr\|^2.
+\]
+There is no residual $\nabla f(x^*)$ cancellation unless one is at a point where every $\nabla f_i$ agrees (interpolation). Minibatching does not change the mean; it only divides this second moment by $\tau$.
+\end{proof}
+
+\begin{proposition}[AC constants from expected smoothness]
+\label{prop:optu-ac}
+If $g$ is unbiased and $\E\|g(x)-g(y)\|^2\le 2A'' D_f(x,y)$, then
+\[
+G(x,y)
+:=
+\E\|g(x)-\nabla f(y)\|^2
+\le
+4A''\, D_f(x,y)+2\Var[g(y)].
+\]
+In particular the AC inequality at $y=x^*$ holds with $A=2A''$ and $C=2\Var[g(x^*)]$. Combined with $\mu$-strong convexity, any step $\gamma\in(0,1/A]$ yields the same shape as Problem~5,
+\[
+\E\|x^k-x^*\|^2
+\le
+(1-\gamma\mu)^k\|x^0-x^*\|^2+\frac{\gamma C}{\mu}.
+\]
+\end{proposition}
+
+\begin{proof}
+Write $g(x)-\nabla f(y)=(g(x)-g(y))+(g(y)-\nabla f(y))$ and use $\|a+b\|^2\le 2\|a\|^2+2\|b\|^2$. The first piece is expected smoothness; the second is $\Var[g(y)]$. This is Fall 2025 Problem~8 with $C''=0$. The contraction is the standard one-step argument already used in Problem~5, with the interpolation inequality of Problem~2 replaced by the AC pair $(A,C)$: the $A$-term plays the role of a smoothness constant that controls the admissible $\gamma$, and $C$ is the concrete noise floor that Problem~6 writes as $\gamma\sigma^2/\mu$.
+\end{proof}
+
+\begin{exercise}[Check unbiasedness on $n=2$]
+\label{ex:optu-unbiased}
+Let $n=2$, $q=(1/3,2/3)$, $\tau=1$, $\nabla f_1(x)=e_1$, $\nabla f_2(x)=e_2$. Compute $\E[g(x)]$ and $\nabla f(x)$.
+\end{exercise}
+
+\begin{solution}[Check unbiasedness on $n=2$]
+$v_1=\frac1{2\cdot(1/3)}e_1=\frac32 e_1$ and $v_2=\frac1{2\cdot(2/3)}e_2=\frac34 e_2$. Then
+\[
+\E[g]
+=
+\frac13\cdot\frac32 e_1+\frac23\cdot\frac34 e_2
+=
+\frac12 e_1+\frac12 e_2
+=
+\nabla f.
+\]
+Dropping the weights $1/(n q_i)$ would give $\frac13 e_1+\frac23 e_2\neq\nabla f$. That is Fall 2025 Problem~3.
+\end{solution}
+
+\begin{exercise}[Diagonal plus cross term]
+\label{ex:optu-expand}
+Let $\delta_1,\delta_2$ be i.i.d.\ copies of $v_s(x)-v_s(y)$. Expand $\E\bigl\|\frac12(\delta_1+\delta_2)\bigr\|^2$ into a multiple of $\E\|\delta_1\|^2$ and a multiple of $\|\E\delta_1\|^2$.
+\end{exercise}
+
+\begin{solution}[Diagonal plus cross term]
+\[
+\E\Bigl\|\frac{\delta_1+\delta_2}2\Bigr\|^2
+=
+\frac14\bigl(2\E\|\delta_1\|^2+2\langle\E\delta_1,\E\delta_2\rangle\bigr)
+=
+\frac12\E\|\delta_1\|^2+\frac12\|\E\delta_1\|^2,
+\]
+which is the $\tau=2$ case of $\frac1\tau\E\|\delta_1\|^2+(1-\frac1\tau)\|\nabla f(x)-\nabla f(y)\|^2$ in the proof of \cref{prop:optu-es}. The cross term is a product of means because the two indices are independent. Forgetting that independence, or replacing $\E\|\delta_1\|^2$ by $\|\E\delta_1\|^2$, is the usual lost point on Fall 2025 Problem~4.
+\end{solution}
+
+\begin{exercise}[Read $A''$ at the two endpoints]
+\label{ex:optu-endpoints}
+Let $q$ be uniform and $L_1=\cdots=L_n=L$. Compute $A''(1,q)$ and $\lim_{\tau\to\infty}A''(\tau,q)$. Which algorithms do the two numbers describe?
+\end{exercise}
+
+\begin{solution}[Read $A''$ at the two endpoints]
+Uniform and equal $L_i$ give $M(q)=L$, so $A''(\tau,q)=L$ for every $\tau$. In this balanced case minibatching does not improve the expected-smoothness constant (it still helps the \emph{additive} variance at $x^*$, by \cref{prop:optu-var-opt}). If instead $L_1=nL$ and $L_i$ are smaller, then $A''(1,q^{\mathrm{uni}})=\max_i L_i>L=\lim_{\tau\to\infty}A''$. The large-$\tau$ limit is full GD; $\tau=1$ is single-sample SGD. That is Fall 2025 Problem~5.
+\end{solution}
+
+\begin{exercise}[Design $q$ for two smoothnesses]
+\label{ex:optu-q}
+Let $n=2$, $L_1=1$, $L_2=3$. Compute $q^*$ and $M(q^*)$. Compare with uniform sampling.
+\end{exercise}
+
+\begin{solution}[Design $q$ for two smoothnesses]
+$q^*=(1/4,3/4)$ and $M(q^*)=\bar L=2$. Uniform $q=(1/2,1/2)$ gives $M=\max(1,3)=3$. The first term of $A''$ drops from $3/\tau$ to $2/\tau$. Fall 2025 Problem~6 is this calculation: $q_i^*\propto L_i$ and the attained value is the average smoothness, not the max.
+\end{solution}
+
+\begin{exercise}[Variance scaling]
+\label{ex:optu-var-tau}
+If one copy has $\Var(v_s(x^*))=4$, what is $\E\|\xi(x^*)\|^2$ at $\tau=1$ and at $\tau=4$? Why does this not contradict the $A''=L$ example above?
+\end{exercise}
+
+\begin{solution}[Variance scaling]
+$\E\|\xi(x^*)\|^2=4/\tau$, hence $4$ and $1$. Expected smoothness controls $\E\|g(x)-g(y)\|^2$ \emph{away from} a pair $(x,y)$, through $D_f$. The additive floor $C$ is the second moment \emph{at} $x^*$, and that floor always divides by $\tau$ because $g(x^*)$ is an average of i.i.d.\ copies. Problem~6's $\sigma^2$ is this $C$ (up to the factor $2$ in \cref{prop:optu-ac}).
+\end{solution}
+
+\begin{exercise}[Name the AC pair]
+\label{ex:optu-ac-num}
+Suppose $A''=5$ and $\Var[g(x^*)]=2$. Write the AC pair $(A,C)$ and the largest admissible step in Fall 2025 Problem~9.
+\end{exercise}
+
+\begin{solution}[Name the AC pair]
+$A=2A''=10$ and $C=2\Var[g(x^*)]=4$. The theorem quoted in Fall 2025 Problem~9 allows any $\gamma\in(0,1/A]$, so $\gamma\le 1/10$, and the floor is $\gamma C/\mu=4\gamma/\mu$. The pair $(A,C)$ is the dictionary that turns the finite-sum calculation back into the contraction already proved as Problem~5.
+\end{solution}
+
+
+\subsubsection{Iterate averaging and a decreasing step}
+\label{subsubsec:optu-avg}
+
+Problem~6 uses a \emph{constant} $\gamma$ and therefore keeps a nonzero floor $\gamma\sigma^2/\mu$. Spring 2026 Problems~9--10 replace the last iterate by an average and, when $R\equiv 0$, let $\gamma_t$ decrease. The scope list named both moves.
+
+\begin{proposition}[Uncorrelated averaging]
+\label{prop:optu-avg-var}
+Let $e^t:=x^t-\E[x^t]$ with $\E\langle e^s,e^t\rangle=0$ for $s\neq t$ and $\E\|e^t\|^2\le V$. The averaged error $\bar e^k:=\frac1k\sum_{t=1}^k e^t$ satisfies $\E\|\bar e^k\|^2\le V/k$.
+\end{proposition}
+
+\begin{proof}
+Expand:
+\[
+\E\Bigl\|\frac1k\sum_{t=1}^k e^t\Bigr\|^2
+=
+\frac1{k^2}\sum_{t=1}^k\E\|e^t\|^2
++
+\frac1{k^2}\sum_{s\neq t}\E\langle e^s,e^t\rangle
+\le
+\frac{V}k.
+\]
+The cross terms vanish by the uncorrelated-error model. The last iterate carries variance up to $V$; the average divides it by $k$. That is Spring 2026 Problem~9. (Genuine SGD errors are only approximately uncorrelated; the exercise is the model the paper asks for.)
+\end{proof}
+
+\begin{proposition}[One-step gap, $R\equiv 0$]
+\label{prop:optu-gap}
+Assume $R\equiv 0$, so $x^{t+1}=x^t-\gamma_t g^t$ and $\nabla f(x^*)=0$. From the Problem~4 expansion
+\[
+\E_t\|x^{t+1}-x^*\|^2
+\le
+\bigl\|x^t-x^*-\gamma_t\bigl(\nabla f(x^t)-\nabla f(x^*)\bigr)\bigr\|^2
++\gamma_t^2\sigma^2
+\]
+and the convex $L$-smooth bound $\|\nabla f(x)-\nabla f(x^*)\|^2\le 2L\bigl(f(x)-f^*\bigr)$, one obtains
+\[
+\E_t\|x^{t+1}-x^*\|^2
+\le
+\|x^t-x^*\|^2-2\gamma_t(1-L\gamma_t)\,\E_t\bigl(f(x^t)-f^*\bigr)+\gamma_t^2\sigma^2.
+\]
+If $\gamma_t\le 1/(2L)$, this simplifies to a gap of at least $\gamma_t\,\E_t(f(x^t)-f^*)$.
+\end{proposition}
+
+\begin{proof}
+Let $h:=x^t-x^*$. The squared term expands as $\|h\|^2-2\gamma_t\langle h,\nabla f(x^t)\rangle+\gamma_t^2\|\nabla f(x^t)\|^2$. Convexity gives $\langle\nabla f(x^t),h\rangle\ge f(x^t)-f^*$, and $L$-smooth convexity with $\nabla f(x^*)=0$ gives $\|\nabla f(x^t)\|^2\le 2L(f(x^t)-f^*)$. Substitute:
+\[
+-2\gamma_t\langle h,\nabla f\rangle+\gamma_t^2\|\nabla f\|^2
+\le
+\bigl(-2\gamma_t+2L\gamma_t^2\bigr)\bigl(f(x^t)-f^*\bigr)
+=
+-2\gamma_t(1-L\gamma_t)\bigl(f(x^t)-f^*\bigr).
+\]
+The constraint $\gamma_t\le 1/(2L)$ makes $1-L\gamma_t\ge 1/2$, hence $2\gamma_t(1-L\gamma_t)\ge\gamma_t$.
+\end{proof}
+
+\begin{proposition}[Ces\`aro rate $\mathcal{O}((\log k)/k)$]
+\label{prop:optu-logk}
+Assume $R\equiv 0$, $\gamma_t=1/(\mu t)$ (and $t$ large enough that $\gamma_t\le 1/(2L)$), and the strong-convexity contraction
+\[
+\Delta_{t+1}
+\le
+(1-\mu\gamma_t)\Delta_t+\gamma_t^2\sigma^2,
+\qquad
+\Delta_t:=\E\|x^t-x^*\|^2.
+\]
+Then $t\Delta_{t+1}\le (t-1)\Delta_t+\sigma^2/(\mu^2 t)$, so
+\[
+k\Delta_{k+1}
+\le
+\Delta_1+\frac{\sigma^2}{\mu^2}\sum_{t=1}^k\frac1t
+=
+\mathcal{O}(\log k),
+\]
+hence $\Delta_k=\mathcal{O}((\log k)/k)$. Convex $L$-smoothness converts the last iterate into $\E[f(x^k)-f^*]=\mathcal{O}((\log k)/k)$. Spring 2026 Problem~10 asks to name the same rate for the Ces\`aro average $\bar x^k$, via the hint $\sum_{t\le k}1/t\sim\log k$. (A fully expanded Ces\`aro of the distances $\Delta_t=\mathcal{O}((\log t)/t)$ is $\mathcal{O}((\log k)^2/k)$; the paper's named rate is the one-line harmonic answer.) This contraction is the small-step strong-convexity form, available once $t\gtrsim 2L/\mu$ so that $\gamma_t\le 1/(2L)$. It is not the exact $\gamma=2/(\mu+L)$ cancellation of Problem~5.
+\end{proposition}
+
+\begin{proofsketch}
+The factor $1-\mu\gamma_t=(t-1)/t$ is why one multiplies through by $t$. The harmonic sum is the whole source of the logarithm: constant-step Problem~6 has a geometric $(1-\rho)^k$ and a persistent floor; a $1/t$ step trades the floor for a slowly decaying $1/k$ rate whose constant remembers $\sum 1/t$. Averaging (\cref{prop:optu-avg-var}) is optional insurance on the variance piece; the logarithm is already in the bias recurrence.
+\end{proofsketch}
+
+\begin{exercise}[Average four uncorrelated errors]
+\label{ex:optu-avg-num}
+Suppose $k=4$ and $\E\|e^t\|^2=V$ with vanishing cross terms. Compute $\E\|\bar e^4\|^2$.
+\end{exercise}
+
+\begin{solution}[Average four uncorrelated errors]
+$\E\|\bar e^4\|^2=\frac1{16}\cdot 4V=V/4$. The last iterate still has variance $V$. That is the one-sentence meaning of Spring 2026 Problem~9.
+\end{solution}
+
+\begin{exercise}[Where the $1-L\gamma$ comes from]
+\label{ex:optu-gap}
+In the expansion of \cref{prop:optu-gap}, which inequality turns $\|\nabla f(x^t)\|^2$ into a multiple of $f(x^t)-f^*$? What goes wrong if $R\not\equiv 0$?
+\end{exercise}
+
+\begin{solution}[Where the $1-L\gamma$ comes from]
+Convex $L$-smoothness at a point with $\nabla f(x^*)=0$: $\|\nabla f(x)\|^2\le 2L(f(x)-f^*)$. If $R\not\equiv 0$, then $\nabla f(x^*)$ need not vanish ($0\in\nabla f(x^*)+\partial R(x^*)$), and the function-gap identity is for $F$, not for $f$. That is why Spring 2026 Problem~10 sets $R\equiv 0$ before switching from distance to $f(\bar x^k)-f^*$.
+\end{solution}
+
+\begin{exercise}[Name the two rates]
+\label{ex:optu-two-rates}
+In one sentence each: what rate does constant-step Problem~6 give, and what rate does $\gamma_t=1/(\mu t)$ plus averaging give? What did each method refuse to give up?
+\end{exercise}
+
+\begin{solution}[Name the two rates]
+Problem~6: linear contraction of the initialization, plus a floor $\gamma\sigma^2/\mu$ that does not go to zero. Decreasing $1/t$ plus averaging: $\mathcal{O}((\log k)/k)$ on the function gap, with no persistent floor, at the price of a step that eventually becomes tiny and a logarithm from $\sum 1/t$. One keeps a usable constant step and lives with the floor; the other spends the step to kill the floor.
+\end{solution}
+
+
+\subsubsection{Randomized coordinate descent}
+\label{subsubsec:optu-rcd}
+
+The official syllabus names randomized coordinate descent next to SGD. Later papers have not asked for a rate. The only exam-useful fact is the unbiased estimator.
+
+\begin{definition}[Randomized coordinate estimator]
+\label{def:optu-rcd}
+Draw an index $i$ uniformly in $\{1,\dots,d\}$ and set $g_{\mathrm{RCD}}(x):=d\,(\partial_i f(x))\,e_i$. Then $\E[g_{\mathrm{RCD}}(x)]=\nabla f(x)$, because each coordinate is hit with probability $1/d$ and is scaled by $d$. The iteration $x\leftarrow x-\gamma g_{\mathrm{RCD}}(x)$ updates a single coordinate. It is SGD on the finite-sum decomposition of $f$ along coordinates rather than along data indices. Importance sampling $q_i\propto L_i$ of \cref{prop:optu-qstar} has a coordinate analogue (sample a coordinate with probability proportional to its Lipschitz constant).
+\end{definition}
+
+\begin{exercise}[Unbiased coordinate step]
+\label{ex:optu-rcd}
+Let $d=2$ and $\nabla f(x)=(3,1)$. Write the two possible RCD estimators and check that their mean is $\nabla f(x)$.
+\end{exercise}
+
+\begin{solution}[Unbiased coordinate step]
+The two values are $2\cdot 3\cdot e_1=(6,0)$ and $2\cdot 1\cdot e_2=(0,2)$, each with probability $1/2$. The mean is $(3,1)$. Without the factor $d=2$ the mean would be $(1.5,0.5)$, a biased estimator, and the theory of Problems~4--5 would not apply.
+\end{solution}
+
+
+\subsubsection{Momentum and adaptive steps: a pointer, not a second supplement}
+\label{subsubsec:optu-mom-ptr}
+
+The official syllabus item ``momentum acceleration and adaptive learning rates'' is already written, with the two momentum lines and the Adam moments, in \jump{prop:dlu-mom}{the Deep Learning further-learnings block} and in the optimizer family of Part~B Problem~1. This section's Problems~1--6 never use a momentum buffer: the recurrence is for plain (proximal) SGD. Do not start a Nesterov Lyapunov proof here.
+
+\begin{exercise}[Where to look up a momentum question]
+\label{ex:optu-mom-map}
+A later paper asks for $v_{k+1}$ and $x_{k+1}$ in SGD with momentum, and for the oscillation-damping sentence. Give the location, in one line.
+\end{exercise}
+
+\begin{solution}[Where to look up a momentum question]
+\jump{prop:dlu-mom}{Deep Learning further learnings, SGD with momentum}, or the optimizer subsection of Part~B Problem~1. The two lines are $v_{k+1}=\beta v_k+g_k$ and $x_{k+1}=x_k-\eta v_{k+1}$. Adaptive methods (RMSProp, Adam) sit in the same Part~B note; they change the per-coordinate scale, not the proximal calculus of this section.
+\end{solution}
+
+
+\subsubsection{Past-paper drills}
+\label{subsubsec:optu-drills}
+
+\begin{exercise}[This paper's $\xi$ versus Fall 2025's $g$]
+\label{ex:optu-xi-vs-g}
+In one sentence each: what random object is $\xi^k$ in Problems~4--6, and what random object is $g(x)$ in Fall 2025? How does one translate $\sigma^2$ into $(A,C)$?
+\end{exercise}
+
+\begin{solution}[This paper's $\xi$ versus Fall 2025's $g$]
+Here $\xi^k$ is an abstract zero-mean vector added to $\nabla f(x^k)$, with only a second-moment bound. Fall 2025's $g(x)$ is an explicit minibatch of importance-weighted component gradients; $\xi(x)=g(x)-\nabla f(x)$ is a \emph{realization} of that abstract noise. After one has $A=2A''$ and $C=2\Var[g(x^*)]$, Problem~5's floor $\gamma^2\sigma^2$ is the same object as $\gamma C/\mu$ in Fall 2025 Problem~9 (up to the conventional placement of constants). The six-line skeleton of this section does not change.
+\end{solution}
+
+\begin{exercise}[Name the pieces of $A''$]
+\label{ex:optu-name-A}
+For $A''(\tau,q)=\frac1\tau\max_i\frac{L_i}{n q_i}+\bigl(1-\frac1\tau\bigr)L$, name the two summands in words. Which one dies as $\tau\to\infty$, and which knob kills the first summand at fixed $\tau$?
+\end{exercise}
+
+\begin{solution}[Name the pieces of $A''$]
+The first summand is the single-sample (importance-weighted) smoothness; the second is the full-gradient smoothness of $f$, weighted by the fraction of cross terms in a batch of size $\tau$. Large $\tau$ kills the first summand. At fixed $\tau$, choosing $q_i\propto L_i$ replaces $\max_i L_i$ by the average $\bar L$.
+\end{solution}
+
+\begin{exercise}[Spring 2026 prox chain, in order]
+\label{ex:optu-2026-chain}
+List the five short facts Spring 2026 Problems~2--6 ask for, and point each to a statement in this paper or in the block above.
+\end{exercise}
+
+\begin{solution}[Spring 2026 prox chain, in order]
+(i) Prox FOC: \cref{prop:optu-prox-foc} / background note. (ii) Unique minimizer of $F$ and the fixed point: \cref{prop:optu-unique-F} and \cref{lem:prox-fixed}. (iii) Monotonicity of $\partial R$: \cref{prop:optu-mono}. (iv) Nonexpansiveness: \cref{prop:optu-nonexp}. (v) One-step distance inequality: Problem~3, which is (iv) applied to the noisy input and the fixed-point input. Problems~7--8 after that are Problems~4--5 of this paper.
+\end{solution}
+
+\begin{summary}[What this block added to Problems~1--6]
+\label{sum:optu}
+\begin{itemize}
+    \item Problems~1--2 already had smoothness, strong convexity, and the interpolation inequality. This block added the convex-set / indicator dictionary and wrote uniqueness for $F$, not only for $f$.
+    \item Problem~3 already used nonexpansiveness. This block added the monotonicity proof and the two-line Cauchy--Schwarz finish that Spring 2026 grades.
+    \item Problems~4--6 already had abstract $\xi$ and a constant-step floor. This block added the finite-sum estimator, Bregman expected smoothness, importance sampling, the AC dictionary, iterate averaging, and the $1/t$ logarithm.
+    \item Randomized coordinate descent is recorded as an unbiased single-coordinate estimator. Momentum and Adam remain the Deep Learning / Part~B formulas.
+\end{itemize}
+\end{summary}

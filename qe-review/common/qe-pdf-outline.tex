@@ -1,0 +1,28 @@
+% PDF sidebar outline + printed TOC for QE exam transcripts.
+% Load in the preamble AFTER hyperref and AFTER \newcommand{\examstatement}.
+\hypersetup{
+  unicode=true,
+  bookmarks=true,
+  bookmarksopen=true,
+  bookmarksopenlevel=3,
+  bookmarksnumbered=false,
+  bookmarksdepth=3
+}
+\IfFileExists{bookmark.sty}{%
+  \usepackage{bookmark}%
+  \bookmarksetup{open,openlevel=3,numbered=false,depth=3}%
+}{}
+% Unnumbered in print, but still written to the TOC / PDF outline
+% down to \subsubsection. Starred headings create neither.
+\setcounter{secnumdepth}{-1}
+\setcounter{tocdepth}{3}
+\makeatletter
+\@ifundefined{examstatement}{}{%
+  \let\qe@origexamstatement\examstatement
+  \renewcommand{\examstatement}[1]{%
+    \par\phantomsection
+    \addcontentsline{toc}{subsection}{#1}%
+    \qe@origexamstatement{#1}%
+  }%
+}
+\makeatother

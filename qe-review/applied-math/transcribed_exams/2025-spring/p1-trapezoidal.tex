@@ -1,0 +1,416 @@
+\setcounter{section}{1}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: Euler--Maclaurin, after Qingshu}
+
+The official CAM syllabus names this circle as interpolation and approximation, including trigonometric interpolation \cite{conte00}. Problem~1 is the periodic trapezoidal rule. Part~(i) is the statement that periodicity upgrades the usual \(O(h^{2})\) error to the full smoothness order \(O(h^{m})\). Part~(ii) is what that becomes when \(f\) is analytic: the error is exponential in \(n=2\pi/h\).
+
+The piecewise-linear interpolation remainder does \emph{not} give (i). On each panel \([ih,(i+1)h]\) one has
+\[
+f(x)-p_{1}(x)
+=
+\frac{f''(\xi_{x})}{2}(x-ih)\bigl(x-(i+1)h\bigr),
+\]
+and integrating produces the classical composite estimate \(I(f)-I_{h}^{Tr}(f)=-\frac{2\pi}{12}h^{2}f''(\xi)=O(h^{2})\). Higher smoothness only improves the constant. The missing mechanism is cancellation of the endpoint corrections, which is exactly Euler--Maclaurin. The background below is Qingshu, \S8.5 (printed pp.~94--97; PDF pp.~102--107) \cite{qingshu11}.
+
+\paragraph{Qiuzhen's quadrature questions, 2025--2026.}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.45cm}
+                   >{\raggedright\arraybackslash}p{4.35cm}
+                   >{\raggedright\arraybackslash}p{3.45cm}
+                   >{\raggedright\arraybackslash}p{3.55cm}@{}}
+\toprule
+Paper & Typical ask & Machine & Relation to 2025 Spring \\
+\midrule
+2025 Spring P1 & periodic trapezoid, order \(m\) / exponential & Euler--Maclaurin; Fourier aliasing & this problem \\
+2025 Fall P2 & Gauss--Chebyshev nodes and weights & interpolatory quadrature at zeros of \(T_{n+1}\) & same word ``quadrature'', different nodes \\
+2026 Spring P2 & Gauss--Legendre error via \(\omega^{2}\) & Hermite remainder / Peano & Qingshu Ch.~10, not Ch.~8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+\begin{definition}[Periodic \(C^{m}\), and the two trapezoidal sums]
+\label{def:p1-periodic}
+A \(2\pi\)-periodic function of class \(C^{m}\) is a function \(f\in C^{m}(\mathbb{R})\) with \(f(x+2\pi)=f(x)\). Equivalently, \(f\in C^{m}([0,2\pi])\) and
+\[
+f^{(j)}(0)
+=
+f^{(j)}(2\pi),
+\qquad
+j=0,1,\dots,m.
+\]
+(The exam's phrase ``periodic'' \(+\) \(f\in C^{m}([0,2\pi])\) is read this way: without matching jets at the endpoints the periodic extension is not \(C^{m}\), and the order in (i) drops to the first unmatched derivative.) Write
+\[
+I(f)
+\coloneqq
+\int_{0}^{2\pi} f(x)\,\mathrm{d}x,
+\qquad
+h
+=
+\frac{2\pi}{n},
+\qquad
+I_{h}^{Tr}(f)
+\coloneqq
+h\sum_{i=1}^{n} f(ih).
+\]
+The ordinary composite trapezoidal sum on \([0,2\pi]\) is
+\begin{equation}
+\label{eq:p1-ordinary-trap}
+T_{h}(f)
+\coloneqq
+\frac{h}{2}\bigl(f(0)+f(2\pi)\bigr)
++
+h\sum_{i=1}^{n-1} f(ih).
+\end{equation}
+If \(f(0)=f(2\pi)\), then \(I_{h}^{Tr}(f)=T_{h}(f)\). The exam writes the periodic form; the Euler--Maclaurin identity is most cleanly stated for \(T_{h}\).
+\end{definition}
+
+\paragraph{Qingshu's periodic Bernoulli functions.}
+
+Qingshu does not start from the classical Bernoulli numbers. The functions \(b_{n}\) are defined by integrating the sawtooth and imposing mean zero; the values \(b_{n}(0)\) then become the coefficients in Euler--Maclaurin.
+
+\begin{definition}[Periodic functions \(b_{n}\); Qingshu, Definition~8.1]
+\label{def:p1-bn}
+Let \(b_{1}\) be the \(1\)-periodic extension of \(x-\tfrac12\) from \([0,1)\). For each \(n\ge 2\), let \(b_{n}\) be the unique \(1\)-periodic antiderivative of \(b_{n-1}\) with
+\[
+\int_{0}^{1} b_{n}(x)\,\mathrm{d}x
+=
+0.
+\]
+Thus \(b_{n}'=b_{n-1}\) almost everywhere, and \(b_{n}(x)=B_{n}(\{x\})/n!\) in the usual Bernoulli-polynomial notation. On \([0,1)\) the first four are
+\begin{align*}
+b_{1}(x)
+&=
+x-\tfrac12,
+&
+b_{2}(x)
+&=
+\tfrac12 x^{2}-\tfrac12 x+\tfrac{1}{12},
+\\
+b_{3}(x)
+&=
+\tfrac16 x^{3}-\tfrac14 x^{2}+\tfrac{1}{12}x,
+&
+b_{4}(x)
+&=
+\tfrac{1}{24}x^{4}-\tfrac{1}{12}x^{3}+\tfrac{1}{24}x^{2}-\tfrac{1}{720}.
+\end{align*}
+In particular \(b_{2}(0)=\frac{1}{12}\) and \(b_{4}(0)=-\frac{1}{720}\).
+\end{definition}
+
+\begin{proposition}[Fourier series of \(b_{n}\); Qingshu, Proposition~8.4]
+\label{prop:p1-bn-fourier}
+For \(k\in\mathbb{N}\),
+\begin{align*}
+b_{1}(x)
+&\sim
+-\frac{1}{\pi}\sum_{n=1}^{\infty}\frac{\sin(2n\pi x)}{n},
+\\
+b_{2k}(x)
+&=
+\frac{2(-1)^{k+1}}{(2\pi)^{2k}}\sum_{n=1}^{\infty}\frac{\cos(2n\pi x)}{n^{2k}},
+\\
+b_{2k+1}(x)
+&=
+\frac{2(-1)^{k+1}}{(2\pi)^{2k+1}}\sum_{n=1}^{\infty}\frac{\sin(2n\pi x)}{n^{2k+1}}.
+\end{align*}
+The series for \(b_{1}\) converges to \(b_{1}(x)\) off \(\mathbb{Z}\) and to \(0\) at integers (Dirichlet).
+\end{proposition}
+
+\begin{corollary}[Values and bounds; Qingshu, Corollary~8.2]
+\label{cor:p1-bn-bound}
+For every \(k\in\mathbb{N}\),
+\[
+b_{2k+1}(0)
+=
+0,
+\qquad
+\lvert b_{k}(x)\rvert
+\le
+\frac{\zeta(k)}{(2\pi)^{k}}\qquad (k\ge 2),
+\]
+and \(\lvert b_{1}(x)\rvert\le\tfrac12\).
+\end{corollary}
+
+\paragraph{Qingshu's Euler--Maclaurin formula.}
+
+The unit-step identity is the one printed in the notes. The exam needs the same identity after the change of scale \(x=th\).
+
+\begin{proposition}[Order-zero formula; Qingshu, Proposition~8.3 / (8.41)]
+\label{prop:p1-em0}
+Let \(a,b\in\mathbb{Z}\) and \(f\in C^{1}[a,b]\). Then
+\begin{equation}
+\label{eq:p1-em0}
+\sum_{k=a}^{b} f(k)
+=
+\int_{a}^{b} f(x)\,\mathrm{d}x
++
+\frac{f(a)+f(b)}{2}
++
+\int_{a}^{b} b_{1}(x)\,f'(x)\,\mathrm{d}x.
+\end{equation}
+\end{proposition}
+
+\begin{theorem}[Euler--Maclaurin; Qingshu, Theorem~8.8 / (8.42)]
+\label{thm:p1-em}
+Let \(a,b,m\in\mathbb{Z}\) with \(m\ge 2\), and let \(f\in C^{m}[a,b]\). Then
+\begin{equation}
+\label{eq:p1-em}
+\sum_{k=a}^{b} f(k)
+-
+\int_{a}^{b} f(x)\,\mathrm{d}x
+=
+\frac{f(a)+f(b)}{2}
++
+\sum_{k=2}^{m}
+\bigl[f^{(k-1)}(b)-f^{(k-1)}(a)\bigr]\,b_{k}(0)
++
+(-1)^{m+1}
+\int_{a}^{b} b_{m}(x)\,f^{(m)}(x)\,\mathrm{d}x.
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof, after Qingshu]
+The case \(m=1\) is \eqref{eq:p1-em0}. For \(m=2\), integrate by parts using \(b_{2}'=b_{1}\) and the \(1\)-periodicity of \(b_{2}\) (so \(b_{2}(b)=b_{2}(a)=b_{2}(0)\)):
+\[
+\int_{a}^{b} b_{1}(x)\,f'(x)\,\mathrm{d}x
+=
+\bigl[f'(b)-f'(a)\bigr]\,b_{2}(0)
+-
+\int_{a}^{b} b_{2}(x)\,f''(x)\,\mathrm{d}x.
+\]
+Substitute into \eqref{eq:p1-em0}. The general formula is the same integration by parts, repeated.
+\end{proof}
+
+\begin{corollary}[Even form; Qingshu, Corollary~8.3 / (8.44)]
+\label{cor:p1-em-even}
+If \(f\in C^{2m}[a,b]\), then odd endpoint terms drop by \(b_{2k+1}(0)=0\), and
+\begin{equation}
+\label{eq:p1-em-even}
+\sum_{k=a}^{b} f(k)
+-
+\int_{a}^{b} f(x)\,\mathrm{d}x
+=
+\frac{f(a)+f(b)}{2}
++
+\sum_{k=1}^{m}
+\bigl[f^{(2k-1)}(b)-f^{(2k-1)}(a)\bigr]\,b_{2k}(0)
+-
+\int_{a}^{b} b_{2m}(x)\,f^{(2m)}(x)\,\mathrm{d}x.
+\end{equation}
+\end{corollary}
+
+\paragraph{How to use it on the exam interval.}
+
+Qingshu sums \(f(k)\) with step \(1\). The exam samples \(f(ih)\) with step \(h\). The reduction is the substitution \(F(t)=f(th)\).
+
+\begin{lemma}[Euler--Maclaurin at step \(h\)]
+\label{lem:p1-em-h}
+Let \(h=2\pi/n\) and \(f\in C^{m}([0,2\pi])\), with \(m\ge 1\). Then
+\begin{equation}
+\label{eq:p1-em-h}
+T_{h}(f)-I(f)
+=
+\sum_{k=2}^{m}
+h^{k}
+\bigl[f^{(k-1)}(2\pi)-f^{(k-1)}(0)\bigr]\,b_{k}(0)
++
+R_{m}(f,h),
+\end{equation}
+where the \(m=1\) sum is empty, and
+\begin{equation}
+\label{eq:p1-Rm}
+R_{m}(f,h)
+=
+(-1)^{m+1}
+h^{m}
+\int_{0}^{2\pi}
+b_{m}\!\left(\frac{x}{h}\right)
+f^{(m)}(x)\,
+\mathrm{d}x.
+\end{equation}
+In particular
+\begin{equation}
+\label{eq:p1-Rm-bound}
+\bigl\lvert R_{m}(f,h)\bigr\rvert
+\le
+C_{m}\,h^{m}\,\lVert f^{(m)}\rVert_{L^{1}[0,2\pi]},
+\qquad
+C_{1}
+=
+\tfrac12,
+\qquad
+C_{m}
+=
+\frac{\zeta(m)}{(2\pi)^{m}}\quad (m\ge 2).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Set \(F(t)\coloneqq f(th)\) for \(t\in[0,n]\), so \(F^{(j)}(t)=h^{j}f^{(j)}(th)\). Apply \cref{prop:p1-em0} if \(m=1\), and \cref{thm:p1-em} if \(m\ge 2\), on the integers from \(0\) to \(n\):
+\begin{align*}
+\sum_{k=0}^{n} F(k)
+-
+\int_{0}^{n} F(t)\,\mathrm{d}t
+&=
+\frac{F(0)+F(n)}{2}
++
+\sum_{k=2}^{m}
+\bigl[F^{(k-1)}(n)-F^{(k-1)}(0)\bigr]\,b_{k}(0)
+\\
+&\qquad
++
+(-1)^{m+1}
+\int_{0}^{n} b_{m}(t)\,F^{(m)}(t)\,\mathrm{d}t.
+\end{align*}
+The integral on the left is \(h^{-1}I(f)\). Multiply through by \(h\). The left-hand side becomes
+\[
+h\sum_{k=0}^{n} f(kh)
+-
+I(f)
+=
+T_{h}(f)
++
+\frac{h}{2}\bigl(f(0)+f(2\pi)\bigr)
+-
+I(f),
+\]
+and the displayed endpoint sum on the right is exactly \(\frac{h}{2}(f(0)+f(2\pi))\) plus the Bernoulli corrections. What remains is \(T_{h}(f)-I(f)\) as in \eqref{eq:p1-em-h}. The remainder integral is
+\[
+(-1)^{m+1}h^{m+1}
+\int_{0}^{n}
+b_{m}(t)\,f^{(m)}(th)\,\mathrm{d}t.
+\]
+The substitution \(x=th\) produces \eqref{eq:p1-Rm}. The bound \eqref{eq:p1-Rm-bound} is \cref{cor:p1-bn-bound}.
+\end{proof}
+
+\begin{remark}[What periodicity does]
+\label{rem:p1-cancel}
+Every coefficient in the sum \eqref{eq:p1-em-h} is a jump \(f^{(k-1)}(2\pi)-f^{(k-1)}(0)\). On a non-periodic interval those jumps are the reason the trapezoidal rule stays \(O(h^{2})\) no matter how smooth \(f\) is (the first surviving term is \(h^{2}b_{2}(0)(f'(2\pi)-f'(0))\)). If \(f\) is \(2\pi\)-periodic of class \(C^{m}\), every jump through order \(m-1\) vanishes, and \eqref{eq:p1-em-h} collapses to \(T_{h}(f)-I(f)=R_{m}(f,h)=O(h^{m})\). That is the whole of part~(i).
+\end{remark}
+
+\subsubsection{Solution of (i)}
+
+\begin{theorem}[\(C^{m}\) periodic \(\Rightarrow\) order \(m\)]
+\label{thm:p1-order-m}
+Let \(f\) be \(2\pi\)-periodic of class \(C^{m}\), \(m\ge 1\). Then \(I_{h}^{Tr}(f)=T_{h}(f)\) and
+\[
+\bigl\lvert I(f)-I_{h}^{Tr}(f)\bigr\rvert
+\le
+C_{m}\,h^{m}\,\lVert f^{(m)}\rVert_{L^{1}[0,2\pi]},
+\]
+with \(C_{m}\) as in \eqref{eq:p1-Rm-bound}. In particular the exam bound holds with \(C=C_{m}\lVert f^{(m)}\rVert_{L^{1}}\).
+\end{theorem}
+
+\begin{proof}
+Periodicity gives \(f(0)=f(2\pi)\), hence \(I_{h}^{Tr}=T_{h}\) by \cref{def:p1-periodic}. The same periodicity gives \(f^{(j)}(0)=f^{(j)}(2\pi)\) for \(0\le j\le m\), so every Bernoulli endpoint term in \cref{lem:p1-em-h} vanishes. The identity reduces to \(I_{h}^{Tr}(f)-I(f)=R_{m}(f,h)\), and \eqref{eq:p1-Rm-bound} is the claim.
+\end{proof}
+
+\begin{remark}[Fourier aliasing, and why it is not the proof of (i) for \(m=1\)]
+\label{rem:p1-alias-cm}
+Write \(\hat f(k)=(2\pi)^{-1}\int_{0}^{2\pi}f(x)e^{-ikx}\,\mathrm{d}x\). If the Fourier series of \(f\) may be summed absolutely,
+\begin{equation}
+\label{eq:p1-alias}
+I(f)
+=
+2\pi\,\hat f(0),
+\qquad
+I_{h}^{Tr}(f)
+=
+2\pi\sum_{\ell\in\mathbb{Z}}\hat f(\ell n),
+\end{equation}
+hence
+\[
+I(f)-I_{h}^{Tr}(f)
+=
+-2\pi\sum_{\ell\neq 0}\hat f(\ell n).
+\]
+(The inner geometric sum \(h\sum_{j=1}^{n}e^{ikjh}\) equals \(2\pi\) if \(n\mid k\) and equals \(0\) otherwise.) Integration by parts on the circle gives \(\lvert\hat f(k)\rvert\le (2\pi)^{-1}\lvert k\rvert^{-m}\lVert f^{(m)}\rVert_{L^{1}}\). For \(m\ge 2\) one may sum the aliases:
+\[
+\bigl\lvert I(f)-I_{h}^{Tr}(f)\bigr\rvert
+\le
+n^{-m}\,\lVert f^{(m)}\rVert_{L^{1}}\cdot 2\zeta(m)
+=
+O(h^{m}).
+\]
+For \(m=1\) the comparison series \(\sum_{\ell\neq 0}\lvert\ell\rvert^{-1}\) diverges, so this bound does not close. Euler--Maclaurin is the argument that covers every \(m\ge 1\), including the exam's \(C^{1}\) case.
+\end{remark}
+
+\subsubsection{Solution of (ii)}
+
+``Analytic'' for a \(2\pi\)-periodic function means the periodic extension is real-analytic on \(\mathbb{R}\). Equivalently, \(f\) extends holomorphically to a strip \(\lvert\operatorname{Im}z\rvert<\alpha\) for some \(\alpha>0\).
+
+\begin{lemma}[Exponential decay of Fourier coefficients]
+\label{lem:p1-fourier-exp}
+If \(f\) is \(2\pi\)-periodic and holomorphic in \(\lvert\operatorname{Im}z\rvert<\alpha\), then for every \(\beta\in(0,\alpha)\) there is \(M_{\beta}<\infty\) such that
+\[
+\lvert\hat f(k)\rvert
+\le
+M_{\beta}\,e^{-\beta\lvert k\rvert},
+\qquad
+k\in\mathbb{Z}.
+\]
+\end{lemma}
+
+\begin{proof}
+Shift the integration contour of \(\hat f(k)\) to \(\operatorname{Im}z=\beta\operatorname{sign}(-k)\) if \(k\neq 0\) (justified by periodicity in the real direction and holomorphy in the strip). Then \(\lvert e^{-ikz}\rvert=e^{-\beta\lvert k\rvert}\), and \(M_{\beta}\) is \((2\pi)^{-1}\) times the maximum of \(\lvert f\rvert\) on the two lines \(\operatorname{Im}z=\pm\beta\), times the length \(2\pi\).
+\end{proof}
+
+\begin{theorem}[Analytic periodic \(\Rightarrow\) exponential convergence]
+\label{thm:p1-exp}
+Let \(f\) be \(2\pi\)-periodic and holomorphic in a strip of width \(\alpha>0\). Then for every \(\beta\in(0,\alpha)\) there is \(C_{\beta}<\infty\) such that
+\[
+\bigl\lvert I(f)-I_{h}^{Tr}(f)\bigr\rvert
+\le
+C_{\beta}\,e^{-\beta n}
+=
+C_{\beta}\,e^{-2\pi\beta/h}.
+\]
+\end{theorem}
+
+\begin{proof}
+Absolute convergence of the Fourier series is \cref{lem:p1-fourier-exp}, so the aliasing identity \eqref{eq:p1-alias} applies and
+\[
+\bigl\lvert I(f)-I_{h}^{Tr}(f)\bigr\rvert
+\le
+2\pi\sum_{\ell\neq 0}
+M_{\beta}\,e^{-\beta n\lvert\ell\rvert}
+=
+\frac{4\pi M_{\beta}\,e^{-\beta n}}{1-e^{-\beta n}}.
+\]
+The right-hand side is \(O(e^{-\beta n})\).
+\end{proof}
+
+\begin{remark}[The same conclusion from Euler--Maclaurin alone]
+\label{rem:p1-em-exp}
+If one prefers not to name Fourier coefficients, apply \cref{thm:p1-order-m} at every order. Cauchy's estimate on a circle of radius \(r\in(0,\alpha)\) in the complex plane gives \(\lVert f^{(m)}\rVert_{\infty}\le M\,m!\,r^{-m}\). Combined with \eqref{eq:p1-Rm-bound},
+\[
+\bigl\lvert I(f)-I_{h}^{Tr}(f)\bigr\rvert
+\le
+C\,\Bigl(\frac{h}{2\pi r}\Bigr)^{m}m!.
+\]
+Stirling's bound \(m!\le (m/e)^{m}\sqrt{2\pi m}\,e^{1/(12m)}\) and the choice \(m\sim 2\pi r/h\) produce an estimate \(O(e^{-c/h})\) for some \(c>0\). This is the same exponential, read off Qingshu's remainder rather than off aliasing. The Fourier argument is shorter.
+\end{remark}
+
+\begin{examnote}[What the two parts are]
+\label{examnote:p1}
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item Quote Qingshu's formula at step \(h\), \cref{lem:p1-em-h}. Periodicity kills every jump \(f^{(k-1)}(2\pi)-f^{(k-1)}(0)\). The error is the integral remainder \(R_{m}=O(h^{m})\). Do not stop at the piecewise-linear interpolation remainder: that is only \(O(h^{2})\).
+    \item Analytic \(\Rightarrow\) holomorphic in a strip \(\Rightarrow\) \(\lvert\hat f(k)\rvert\le M e^{-\beta\lvert k\rvert}\). The trapezoidal sum aliases to \(2\pi\sum_{\ell}\hat f(\ell n)\), so the error is \(O(e^{-\beta n})\). The Euler--Maclaurin-only route is \cref{rem:p1-em-exp}.
+\end{enumerate}
+\end{examnote}
+
+\begin{remark}[Local Qingshu slice]
+\label{rem:p1-qingshu-em}
+The statements copied above are Qingshu, \S8.5.1, Theorem~8.8 and Corollary~8.3 \cite{qingshu11}. A six-page excerpt (original PDF pp.~102--107) sits at \texttt{qe-review/applied-math/reference/qingshu-euler-maclaurin/}.
+\end{remark}
+
+% Restore parent section so subsequent \subsection headings stay under
+% ``Statement and solutions''.
+\setcounter{section}{2}

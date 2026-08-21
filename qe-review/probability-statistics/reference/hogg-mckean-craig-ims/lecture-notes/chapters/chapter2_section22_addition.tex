@@ -1,0 +1,94 @@
+\subsection{R 计算：边缘分布}
+
+边缘分布在 R 中通过逐行或逐列求和（离散）或积分（连续）计算。
+
+\begin{example}[离散边缘分布]\label{ex:marginal-discrete-ch2}
+设 $(X_1, X_2)$ 的联合 pmf 如下（列联表形式）：
+
+\[
+\begin{array}{c|cccc|c}
+X_2 \backslash X_1 & 1 & 2 & 3 & 4 & \text{边缘} \\ \hline
+1 & 0.05 & 0.10 & 0.05 & 0.02 & ? \\
+2 & 0.08 & 0.15 & 0.12 & 0.05 & ? \\
+3 & 0.02 & 0.08 & 0.10 & 0.08 & ? \\ \hline
+\text{边缘} & ? & ? & ? & ? & 1.00
+\end{array}
+\]
+
+则 $X_1$ 的边缘 pmf 为每列之和：
+\[
+p_{X_1}(1) = 0.05 + 0.08 + 0.02 = 0.15, \quad
+p_{X_1}(2) = 0.10 + 0.15 + 0.08 = 0.33, \quad \text{等等}
+\]
+
+R 计算：
+\begin{verbatim}
+# 联合 pmf（矩阵形式）
+joint <- matrix(c(0.05, 0.08, 0.02,  # X1=1
+                  0.10, 0.15, 0.08,  # X1=2
+                  0.05, 0.12, 0.10,  # X1=3
+                  0.02, 0.05, 0.08), # X1=4
+                nrow = 3, byrow = FALSE)
+colnames(joint) <- c("X1=1", "X1=2", "X1=3", "X1=4")
+rownames(joint) <- c("X2=1", "X2=2", "X2=3")
+
+# 边缘分布（按行、按列求和）
+margin_x1 <- colSums(joint)  # X1 的边缘 pmf
+margin_x2 <- rowSums(joint)  # X2 的边缘 pmf
+
+# 验证：边缘分布之和为 1
+sum(margin_x1)  # = 1
+sum(margin_x2)  # = 1
+\end{verbatim}
+\end{example}
+
+\begin{example}[连续边缘分布]\label{ex:marginal-continuous-ch2}
+设 $(X_1, X_2)$ 的联合 pdf 为
+\[
+f(x_1, x_2) = \begin{cases}
+8x_1 x_2 & 0 < x_1 < x_2 < 1, \\
+0 & \text{otherwise}.
+\end{cases}
+\]
+
+求 $X_1$ 的边缘 pdf。
+
+由于 $0 < x_1 < x_2 < 1$，$x_2$ 的取值范围是 $x_1 < x_2 < 1$，因此：
+\[
+f_{X_1}(x_1) = \int_{x_1}^{1} 8x_1 x_2 \, dx_2 = 8x_1 \left[\frac{x_2^2}{2}\right]_{x_2=x_1}^{x_2=1} = 8x_1 \cdot \frac{1 - x_1^2}{2} = 4x_1(1 - x_1^2),
+\]
+其中 $0 < x_1 < 1$。
+
+验证：
+\[
+\int_0^1 4x_1(1 - x_1^2) \, dx_1 = 4\left[\frac{x_1^2}{2} - \frac{x_1^4}{4}\right]_0^1 = 4\left(\frac{1}{2} - \frac{1}{4}\right) = 1.
+\]
+
+R 数值验证：
+\begin{verbatim}
+# 验证边缘 pdf 的数值积分
+f_marginal_x1 <- function(x1) {
+  f <- function(x2) 8 * x1 * x2
+  integrate(f, lower = x1, upper = 1)$value
+}
+
+# 在几个点验证
+x1_vals <- c(0.2, 0.5, 0.8)
+sapply(x1_vals, f_marginal_x1)  # 应该接近 4*x1*(1-x1^2)
+4 * x1_vals * (1 - x1_vals^2)
+\end{verbatim}
+\end{example}
+
+\subsection{边缘分布的深度理解}
+
+\textbf{为什么边缘分布重要？} 边缘分布在实际应用中有广泛用途：
+
+\textbf{1. 人口统计学}：当我们研究"收入"与"教育年限"的联合分布时，边缘分布给出了各变量的边缘分布——即不考虑另一变量时该变量的分布。这相当于"总体"的分布。
+
+\textbf{2. 保险精算}：在汽车保险中，我们关心"理赔次数"与"理赔金额"的联合分布，但边缘分布分别给出了理赔次数的分布和理赔金额的分布——这两个分布本身就有独立的应用价值。
+
+\textbf{3. 信号处理}：在处理二元信号时，边缘分布给出了各分量信号的分布，这在单独分析各分量时有用。
+
+\textbf{信息损失}：一个关键事实是，从联合分布到边缘分布会丢失信息。如果只知道边缘分布，则无法恢复联合分布——因为这需要知道变量之间的依赖结构。
+
+\textbf{Clayton 模型}：在金融保险中，Clayton copula 正是用来说明：相同的边缘分布可以对应于不同的联合分布。这个事实在风险管理中非常重要——仅知道各变量的边缘分布是不够的。

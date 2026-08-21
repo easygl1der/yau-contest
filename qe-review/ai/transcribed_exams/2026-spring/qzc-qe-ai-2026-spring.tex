@@ -37,6 +37,16 @@
 \setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
 \setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
 
+\newcommand{\examstatement}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\bfseries #1}\par\nobreak\addvspace{0.28em}%
+}
+
+% Shared amsthm note/remark/theorem styles
+\input{../../../common/qe-math-extras.tex}
+\input{../../../common/qe-amsthm-envs.tex}
+\input{../../../common/qe-pdf-outline.tex}
+
 \title{\textbf{QIUZHEN QUALIFY EXAM FOR ARTIFICIAL INTELLIGENCE}\\[0.5em]\Large SPRING 2026}
 \date{}
 \author{}
@@ -46,203 +56,802 @@
 \maketitle
 \vspace{-3em}
 
-\section*{Instructions}
+\tableofcontents
+
+\section{Instructions}
 \begin{itemize}
     \item This exam consists of four sections, each with a total of 33 points. You are required to choose three out of the four sections and answer the questions in the selected sections. You will earn an additional point for writing your name and student ID number on your answer sheet. The maximum possible score you can achieve is 100.
     \item Please clearly indicate your section choices at the very beginning of your answer sheet. If you answer questions in more than three sections, only the first three sections will be graded.
 \end{itemize}
 
+\section{Statement of the problems}
+
+\noindent{\bfseries A. Machine Learning Theory}\par
+
+\noindent\textbf{Part I: Warm-Up Questions [3 pts.]} --- This section contains multiple-choice questions.
+Please select only one answer for each question. No justification is required.
+
+\examstatement{Problem MQ1. [0.5 pts.]}
+In the agnostic PAC learning setting, what quantity does a learning algorithm aim to compete with?
+\begin{enumerate}[label=(\alph*)]
+    \item The Bayes optimal classifier.
+    \item The hypothesis with zero training error.
+    \item The best hypothesis in the class $\mathcal{H}$.
+    \item The hypothesis minimising validation error.
+\end{enumerate}
+
+\examstatement{Problem MQ2. [0.5 pts.]}
+Let $\mathcal{H}$ be a binary hypothesis class with VC dimension $d < \infty$. Which statement about its growth function $\tau_{\mathcal{H}}(m)$ is necessarily true?
+\begin{enumerate}[label=(\alph*)]
+    \item $\tau_{\mathcal{H}}(m) = 2^m$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m) = O(m^d)$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m) \le \sum_{i=0}^{d} \binom{m}{i}$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m)$ is constant for $m > d$.
+\end{enumerate}
+
+\examstatement{Problem MQ3. [0.5 pts.]}
+Which statement about ReLU neural networks is correct from a learning-theoretic perspective?
+\begin{enumerate}[label=(\alph*)]
+    \item ReLU networks represent smooth functions on $\mathbb{R}^{d}$.
+    \item Increasing depth always decreases the VC dimension.
+    \item ReLU networks compute piecewise linear functions whose complexity depends on depth and width.
+    \item Universal approximation of ReLU networks implies PAC learnability.
+\end{enumerate}
+
+\examstatement{Problem MQ4. [0.5 pts.]}
+Which statement about empirical risk minimisation (ERM) is correct?
+\begin{enumerate}[label=(\alph*)]
+    \item ERM is guaranteed to be consistent for any hypothesis class.
+    \item ERM always finds a hypothesis with minimum true risk.
+    \item If $\mathcal{H}$ has finite VC dimension, ERM is PAC learnable in the realisable setting.
+    \item ERM is PAC learnable only if $\mathcal{H}$ is finite.
+\end{enumerate}
+
+\examstatement{Problem MQ5. [0.5 pts.]}
+Which statement is a correct consequence of the No Free Lunch theorem?
+\begin{enumerate}[label=(\alph*)]
+    \item Restricting the hypothesis class always improves generalization.
+    \item There exists a universally optimal learning algorithm.
+    \item Inductive bias is necessary to obtain non-trivial learning guarantees.
+    \item Random guessing is optimal for all supervised learning problems.
+\end{enumerate}
+
+\examstatement{Problem MQ6. [0.5 pts.]}
+Let $K : \mathcal{X} \times \mathcal{X} \to \mathbb{R}$ be a symmetric function. Which of the following statements is correct?
+\begin{enumerate}[label=(\alph*)]
+    \item $K$ is a valid kernel if and only if $K(x, x) \ge 0$ for all $x \in \mathcal{X}$.
+    \item $K$ is a valid kernel if and only if there exists a finite-dimensional feature map $\psi$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle$.
+    \item If $K$ is positive semidefinite, then there exists a (possibly infinite-dimensional) Hilbert space $\mathcal{H}$ and a feature map $\psi : \mathcal{X} \to \mathcal{H}$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle_{\mathcal{H}}$.
+    \item Every kernel corresponds to a unique feature map.
+\end{enumerate}
+
+\noindent\textbf{Part II: Theoretical Exercises [30 pts.]} --- This is the main part of the exam. Provide detailed solutions and reasoning for each question. Full marks are awarded only for complete and well-explained answers.
+
+\examstatement{Problem 1. [6 pts.]}
+Let $\mathcal{H}$ be a hypothesis class of binary classifiers $h : \mathcal{X} \to \{0, 1\}$. Let $\mathcal{D}$ be an unknown distribution over $\mathcal{X}$, and let $f \in \mathcal{H}$ be the target hypothesis.
+For a fixed $h \in \mathcal{H}$, define the empirical loss on a sample $S = \{x_1, \dots, x_m\} \sim \mathcal{D}^{m}$ by
+
+\[
+L_S(h) = \frac{1}{m} \sum_{i=1}^{m} \mathbf{1}[h(x_i) \neq f(x_i)].
+\]
+
+\begin{enumerate}[label=(\alph*)]
+    \item Let $p \coloneqq L_{\mathcal{D}, f}(h)$. Show that
+    \[
+    \E_{S \sim \mathcal{D}^{m}} \bigl[ (L_S(h) - p)^{2} \bigr] = \frac{p(1 - p)}{m}.
+    \]
+    \item Deduce that
+    \[
+    \E \bigl[ (L_S(h) - p)^{2} \bigr] \le \frac{1}{4m},
+    \]
+    and therefore it decreases at rate $O(1/m)$.
+\end{enumerate}
+
+\examstatement{Problem 2. [4 pts.]}
+Let $f : \mathbb{R}^{d} \to \mathbb{R}$ be twice continuously differentiable and $\lambda$-strongly convex. Prove that $f$ admits a unique global minimiser.
+
+\examstatement{Problem 3. [8 pts.]}
+Let $\mathcal{X} = \mathbb{R}$ and consider the hypothesis class
+
+\[
+\mathcal{H} = \bigl\{ h_{a,b,c}(x) = \mathbf{1}_{[a,b]}(x) \lor \mathbf{1}_{[c,\infty)}(x) \mid a \le b < c,\, a, b, c \in \mathbb{R} \bigr\},
+\]
+
+where $\lor$ denotes the logical OR (equivalently, the maximum of the two values).
+\begin{enumerate}[label=(\alph*)]
+    \item Let $x_1, \dots, x_n$ be $n$ distinct points in $\mathbb{R}$. Give an upper bound on the growth function $s(\mathcal{H}, n)$.
+    \item Determine the VC dimension of $\mathcal{H}$.
+\end{enumerate}
+
+\examstatement{Problem 4. [7 pts.]}
+Consider a set $S$ of examples in $\mathbb{R}^{n} \times [k]$ for which there exist vectors $\mu_1, \dots, \mu_k \in \mathbb{R}^{n}$ such that every example $(x, y) \in S$ falls within a ball centered at $\mu_y$ whose radius is $r \ge 1$. Assume also that for every $i \neq j$, $\|\mu_i - \mu_j\| \ge 4r$.
+Consider concatenating each instance by the constant $1$ and then applying the multivector construction, namely:
+
+\[
+\Psi(x, y) = \bigl[ \underbrace{0, \dots, 0}_{(y-1)(n+1)}, \underbrace{x_1, \dots, x_n, 1}_{n+1}, \underbrace{0, \dots, 0}_{(k-y)(n+1)} \bigr] \in \mathbb{R}^{k(n+1)}.
+\]
+
+Note that the $1$ is referring to the bias term. It allows the model to shift the decision boundary away from the origin. Show that there exists a vector $w \in \mathbb{R}^{k(n+1)}$ such that $\ell(w, (x, y)) = 0$ for every $(x, y) \in S$.
+
+\textit{Hint.} Observe that for every example $(x, y) \in S$ we can write $x = \mu_y + v$ for some $\|v\| \le r$. Now take $\mathbf{w} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$ where:
+
+\[
+\mathbf{w}_i = \Bigl[\mu_i, -\frac{\|\mu_i\|^{2}}{2}\Bigr].
+\]
+
+\examstatement{Problem 5. [5 pts.]}
+Let $d \in \mathbb{N}$. Consider two feedforward neural networks with the same input dimension $d$ and scalar output. Assume that the first network $\Phi_{\mathrm{ReLU}}$ uses the ReLU activation function in all hidden layers, while the second network $\Phi_{\sigma}$ uses the sigmoid activation function. Suppose that the two networks represent the same function on $\mathbb{R}^{d}$, that is:
+
+\[
+\Phi_{\mathrm{ReLU}}(x) = \Phi_{\sigma}(x) \quad \text{for all } x \in \mathbb{R}^{d}.
+\]
+
+Show that the function represented by $\Phi_{\mathrm{ReLU}}$ (and hence by $\Phi_{\sigma}$) must be constant.
+
+\noindent{\bfseries B. Deep Learning and Reinforcement Learning}\par
+
+\examstatement{Problem 1. [10 pts.]}
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} Consider a multi-layer perceptron (MLP) with layerwise relation
+    \[
+    x_{\ell} = f_{\ell}(x_{\ell-1}, \theta_{\ell}), \qquad \ell = 1, \dots, L,
+    \]
+    where $\theta_{\ell}$ denotes the parameters of layer $\ell$, and a loss $\mathcal{J} = \mathcal{L}(x_L, y)$.
+    \begin{enumerate}[label=(\roman*)]
+        \item Using chain rule, derive the expression for $\dfrac{\partial \mathcal{J}}{\partial \theta_{\ell}}$.
+        \item State briefly why computing all gradients $\bigl\{\frac{\partial \mathcal{J}}{\partial \theta_{\ell}}\bigr\}_{\ell=1}^{L}$ via backpropagation has the same order of computational complexity as one forward evaluation (up to a constant factor).
+    \end{enumerate}
+    \item \textbf{[2 pts.]} Explain mathematically why the sigmoid activation
+    \[
+    \sigma(z) = \frac{1}{1 + e^{-z}}
+    \]
+    often leads to the vanishing gradient problem in deep networks. Contrast this with the ReLU activation and explain how ReLU mitigates this issue during backpropagation.
+    \item \textbf{[2 pts.]} Write the update rules for stochastic gradient descent (SGD) with momentum. Define the momentum term $v_{k+1}$ and the parameter update $x_{k+1}$. Explain how the momentum term improves optimization compared to standard SGD, particularly in loss landscapes with oscillations.
+    \item \textbf{[2 pts.]} The scaled dot-product attention in Transformers is defined as
+    \[
+    W = \softmax\Bigl(\frac{Q K^{\top}}{\sqrt{d_k}}\Bigr).
+    \]
+    Explain the purpose of the scaling factor $1/\sqrt{d_k}$. What happens to the softmax outputs and their gradients if this scaling is removed when $d_k$ is large?
+    \item \textbf{[2 pts.]} Compare the computational structure of recurrent neural networks (RNNs) and Transformers. Explain why Transformers are typically more computationally efficient than RNNs in modern hardware implementations.
+\end{enumerate}
+
+\examstatement{Problem 2. [15 pts.]}
+Let $\pi_0$ be a simple base distribution on $\mathbb{R}^{d}$ (e.g., $\mathcal{N}(0, I)$) and let $\pi_1$ be a data distribution. We seek a time-dependent vector field $v_t(x)$ such that the ODE
+\[
+\frac{d}{dt} x_t = v_t(x_t), \qquad x_0 \sim \pi_0,
+\]
+transports $\pi_0$ to $\pi_1$ at time $t = 1$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} Assume a prescribed coupling $(x_0, x_1) \sim \gamma$ with marginals $x_0 \sim \pi_0$, $x_1 \sim \pi_1$, and define the interpolation
+    \[
+    x_t = (1 - t)x_0 + t x_1.
+    \]
+    Compute the conditional velocity
+    \[
+    v_t(x_t \mid x_0, x_1) \coloneqq \frac{d}{dt} x_t.
+    \]
+    \item \textbf{[3 pts.]} Define the population velocity field
+    \[
+    v_t(x) = \E\bigl[v_t(x_t \mid x_0, x_1) \mid x_t = x\bigr].
+    \]
+    Show that if particles evolve according to
+    \[
+    \frac{d}{dt} x_t = v_t(x_t),
+    \]
+    then the density $\pi_t$ of $x_t$ satisfies the continuity equation
+    \[
+    \partial_t \pi_t + \nabla \cdot (\pi_t v_t) = 0.
+    \]
+    Conclude that this ODE transports $\pi_0$ to $\pi_1$.
+    \item \textbf{[5 pts.]} Let $v_{\theta}(t, x)$ be a parametric model. Propose a squared-loss regression objective that uses training pairs $(t, x_t)$ and the conditional velocity $v_t(x_t \mid x_0, x_1)$ to learn $v_{\theta}(t, x)$. Prove that the minimizer of the loss function recovers the desired marginal velocity $v_t(x)$.
+    \item \textbf{[5 pts.]} To introduce stochasticity, consider the SDE
+    \[
+    d x_t = \bigl( v_t(x_t) + \beta_t \nabla_x \log \pi_t(x_t) \bigr)\, dt + \sqrt{2\beta_t}\, dW_t.
+    \]
+    Derive the Fokker--Planck equation of this SDE and show that this SDE has the same marginal distributions $\{\pi_t\}_{t \in [0,1]}$ as the deterministic ODE.
+
+    In practice $\nabla_x \log \pi_t(x)$ is unknown. Explain how this term can be approximated using score matching.
+\end{enumerate}
+
+\examstatement{Problem 3. [8 pts.]}
+Consider a discounted Markov Decision Process (MDP) $(\mathcal{S}, \mathcal{A}, P, r, \gamma)$, where $\gamma \in (0, 1)$ is the discount factor, $P(s' \mid s, a)$ is the transition kernel, and $r(s, a)$ is the reward.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} The value function under a policy $\pi(a \mid s)$ is defined as
+    \[
+    V^{\pi}(s) = \E_{\pi} \Biggl[ \sum_{t=0}^{\infty} \gamma^{t} r(s_t, a_t) \Bigm| s_0 = s \Biggr].
+    \]
+    Derive the Bellman equation satisfied by $V^{\pi}(s)$.
+    \item \textbf{[2 pts.]} Write down the policy iteration algorithm. Clearly specify:
+    \begin{itemize}
+        \item the policy evaluation step, and
+        \item the policy improvement step.
+    \end{itemize}
+    \item \textbf{[2 pts.]} In many practical problems the transition model $P$ is unknown. Describe how the evaluation and improvement steps are adapted using an actor--critic method under this model-free setting.
+    \item \textbf{[2 pts.]} Reinforcement Learning from Human Feedback (RLHF) aligns a policy using human preference data of the form $(x, y^{+}, y^{-})$, meaning $y^{+}$ is preferred to $y^{-}$ for prompt $x$.
+
+    Write down one RLHF algorithm by specifying the objective used to update the policy $\pi_{\theta}(y \mid x)$.
+
+    \textit{Hint:} You may choose either of the following approaches:
+    \begin{enumerate}[label=(\alph*)]
+        \item \textbf{Reward-model-based RLHF:} first learn a reward model $r_{\psi}(x, y)$ from preference data, then optimize the policy using a reinforcement learning objective (often with a KL regularization toward a reference policy).
+        \item \textbf{Direct Preference Optimization (DPO)-style methods:} update the policy directly from preference comparisons without explicitly learning a reward model, by encouraging higher likelihood of preferred outputs relative to dispreferred ones.
+    \end{enumerate}
+    Define any notation you introduce.
+\end{enumerate}
+
+\noindent{\bfseries C. Optimization Methods in Artificial Intelligence}\par
+
+Consider the composite optimization problem
+\[
+\min_{x \in \mathbb{R}^{d}} F(x) \coloneqq f(x) + R(x),
+\]
+where $f$ is differentiable $L$-smooth and $\mu$-strongly convex ($\mu > 0$), and $R : \mathbb{R}^{d} \to (-\infty, +\infty]$ is proper, closed, and convex. Let $g(x, \xi) = \nabla f(x) + \xi$ be an unbiased stochastic gradient estimator satisfying $\E[\xi] = 0$ and $\E[\|\xi\|^{2}] \le \sigma^{2}$. Consider the proximal SGD iteration
+\[
+x^{k+1} = \prox_{\gamma R}\bigl(x^{k} - \gamma g^{k}\bigr), \qquad g^{k} \coloneqq g(x^{k}, \xi^{k}) = \nabla f(x^{k}) + \xi^{k}.
+\]
+Define the averaged iterate
+\[
+\bar{x}^{k} \coloneqq \frac{1}{k} \sum_{t=1}^{k} x^{t}.
+\]
+
+\examstatement{Problem 1. [2 pts.] Basic definitions}
+Give the definitions of $L$-smoothness and $\mu$-strong convexity.
+
+\examstatement{Problem 2. [3 pts.] Optimality condition of the proximal operator}
+Show that for any $u \in \mathbb{R}^{d}$ and $\gamma > 0$,
+\[
+x^{+} = \prox_{\gamma R}(u) \iff \frac{1}{\gamma}(u - x^{+}) \in \partial R(x^{+}).
+\]
+
+\examstatement{Problem 3. [3 pts.] Uniqueness and proximal fixed point}
+Show that $F$ admits a unique minimizer $x^{*}$ and that
+\[
+x^{*} = \prox_{\gamma R}\bigl(x^{*} - \gamma \nabla f(x^{*})\bigr).
+\]
+
+\examstatement{Problem 4. [2 pts.] Monotonicity of the subdifferential}
+Show that the subdifferential mapping $\partial R$ is monotone: for any $x, y$ and any $r_x \in \partial R(x)$, $r_y \in \partial R(y)$,
+\[
+\langle r_x - r_y, x - y \rangle \ge 0.
+\]
+
+\examstatement{Problem 5. [3 pts.] Nonexpansiveness of prox}
+Show that $\prox_{\gamma R}$ is nonexpansive, i.e.,
+\[
+\bigl\| \prox_{\gamma R}(u) - \prox_{\gamma R}(v) \bigr\| \le \|u - v\|, \qquad \forall u, v.
+\]
+\textit{Hint:} use monotonicity of $\partial R$.
+
+\examstatement{Problem 6. [3 pts.] One-step inequality}
+Show that
+\[
+\|x^{k+1} - x^{*}\|^{2} \le \bigl\| x^{k} - x^{*} - \gamma\bigl(g^{k} - \nabla f(x^{*})\bigr) \bigr\|^{2}.
+\]
+
+\examstatement{Problem 7. [5 pts.] Conditional expectation and variance decomposition}
+Write $\E_k[\cdot] \coloneqq \E[\cdot \mid x^{k}]$ for the conditional expectation given the current iterate $x^{k}$. Prove that
+\[
+\E_k \|x^{k+1} - x^{*}\|^{2} \le \bigl\| x^{k} - x^{*} - \gamma\bigl(\nabla f(x^{k}) - \nabla f(x^{*})\bigr) \bigr\|^{2} + \gamma^{2} \sigma^{2}.
+\]
+
+\examstatement{Problem 8. [4 pts.] Linear contraction with a noise floor}
+Using smoothness and strong convexity of $f$, show that for $\gamma = \frac{2}{L + \mu}$ one has
+\[
+\E \|x^{k+1} - x^{*}\|^{2} \le (1 - \rho)\, \E \|x^{k} - x^{*}\|^{2} + \gamma^{2} \sigma^{2}, \qquad \rho \coloneqq \frac{4\mu L}{(L + \mu)^{2}} \in (0, 1).
+\]
+Explain the origin and meaning of the noise floor.
+
+\textit{Hint:} You may use the following two inequalities for an $L$-smooth and $\mu$-strongly convex function $f$:
+\[
+\langle \nabla f(x) - \nabla f(y), x - y \rangle \ge \mu \|x - y\|^{2},
+\qquad
+\langle \nabla f(x) - \nabla f(y), x - y \rangle \ge \frac{1}{L} \|\nabla f(x) - \nabla f(y)\|^{2}.
+\]
+
+\examstatement{Problem 9. [3 pts.] Averaging reduces variance}
+Write the iterate error as $e^{t} \coloneqq x^{t} - \E[x^{t}]$ and define the averaged error
+\[
+\bar{e}^{k} \coloneqq \bar{x}^{k} - \E[\bar{x}^{k}] = \frac{1}{k} \sum_{t=1}^{k} e^{t}.
+\]
+Assume (as a simplified model):
+\begin{itemize}
+    \item the errors $\{e^{t}\}_{t \ge 1}$ are uncorrelated, i.e., $\E\langle e^{s}, e^{t} \rangle = 0$ for $s \neq t$;
+    \item the second moments are uniformly bounded: $\E\|e^{t}\|^{2} \le V$ for all $t$.
+\end{itemize}
+Show that
+\[
+\E\|\bar{e}^{k}\|^{2} \le \frac{V}{k}.
+\]
+Explain briefly why $\bar{x}^{k}$ typically has smaller variance than the last iterate $x^{k}$.
+
+\examstatement{Problem 10. [5 pts.] Convergence rate of averaging}
+For this question, assume $R \equiv 0$ (so $F = f$).
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} Deriving a one-step bound from smoothness. Starting from the inequality proved earlier in Question 7, show that
+    \[
+    \E_k \|x^{t+1} - x^{*}\|^{2} \le \|x^{t} - x^{*}\|^{2} - 2\gamma_t (1 - L\gamma_t)\, \E_k\bigl(f(x^{t}) - f^{*}\bigr) + \gamma_t^{2} \sigma^{2}.
+    \]
+    In particular, if $\gamma_t \le \frac{1}{2L}$, deduce the simplified bound
+    \[
+    \E_k \|x^{t+1} - x^{*}\|^{2} \le \|x^{t} - x^{*}\|^{2} - \gamma_t\, \E_k\bigl(f(x^{t}) - f^{*}\bigr) + \gamma_t^{2} \sigma^{2}.
+    \]
+    \textit{Hint:} For convex $L$-smooth $f$, we have $f\bigl(x - \frac{1}{L}\nabla f(x)\bigr) \le f(x) - \frac{1}{2L}\|\nabla f(x)\|^{2}$.
+    \item \textbf{[2 pts.]} Choose $\gamma_t = \frac{1}{\mu t}$ and show that
+    \[
+    \E\bigl[f(\bar{x}^{k}) - f^{*}\bigr] \le \mathcal{O}\Bigl(\frac{\log k}{k}\Bigr).
+    \]
+    \textit{Hint:} Using the fact that $1 + \frac{1}{2} + \cdots + \frac{1}{k} \sim \log k$.
+\end{enumerate}
+
+\noindent{\bfseries D. Natural Language Processing}\par
+
+\examstatement{Problem 1. [6 pts.]}
+You are given an encoder $f_{\theta}(\cdot)$ that maps an input sentence $x$ to a unit-norm embedding $z = f_{\theta}(x) \in \mathbb{R}^{d}$ with $\|z\|_{2} = 1$. For each anchor $x$, you sample one positive view $x^{+}$ and $n$ negatives $\{x_{i}^{-}\}_{i=1}^{n}$ from the minibatch. Denote $z^{+} = f_{\theta}(x^{+})$ and $z_{i}^{-} = f_{\theta}(x_{i}^{-})$. Consider the InfoNCE loss with temperature $\tau > 0$:
+\[
+\mathcal{L} = -\log \frac{\exp(\langle z, z^{+} \rangle / \tau)}{\exp(\langle z, z^{+} \rangle / \tau) + \sum_{i=1}^{n} \exp(\langle z, z_{i}^{-} \rangle / \tau)}.
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Gradient) Compute $\nabla_z \mathcal{L}$. Interpret your result as ``pulling'' $z$ toward $z^{+}$ and ``pushing'' $z$ away from negatives on the unit hypersphere (a tangent-space geometric interpretation is sufficient; you do not need to explicitly compute the projection).
+    \item \textbf{[3 pts.]} (High-dimensional heuristic) Assume $d \gg 1$ and that negatives are isotropic on the unit sphere. Give a heuristic for the typical scale of $\langle z, z_{i}^{-} \rangle$ (e.g., its variance / concentration around $0$), and for the largest similarity among $n$ negatives, $\max_{1 \le i \le n} \langle z, z_{i}^{-} \rangle$. Then, explain why such false negatives (some sampled negative $x_{i}^{-}$ semantically equivalent or from the same latent class as the anchor $x$ so with embedding close to $z$) can significantly hurt contrastive learning.
+\end{enumerate}
+
+\examstatement{Problem 2. [6 pts.]}
+You are given a corpus of customer-support tickets from an e-commerce platform. Each ticket $d$ is a short document with tokens $w_{dn} \in \{1, \dots, V\}$ (after preprocessing). In addition, each ticket has an observed priority label $y_d \in \{0, 1\}$ (e.g., normal vs.\ urgent). The goal is to discover topics that both explain the text and help predict $y_d$.
+
+Consider a supervised topic model with $K$ topics and the following random variables:
+\begin{itemize}
+    \item document-topic proportions $\theta_d$ and topic-word distributions $\phi_k$;
+    \item token-level topic assignments $z_{dn}$ and observed words $w_{dn}$;
+    \item a document label $y_d \in \{0, 1\}$.
+\end{itemize}
+Assume Dirichlet priors $\theta_d \sim \operatorname{Dir}(\alpha)$ and $\phi_k \sim \operatorname{Dir}(\eta)$. For each document $d$ of length $N_d$, define the empirical topic-frequency vector $\bar{z}_d$ where $\bar{z}_{dk} = \frac{1}{N_d} \sum_{n=1}^{N_d} \mathbf{1}[z_{dn} = k]$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} (Modeling) Briefly explain why adding $y_d$ changes the learned topics compared with unsupervised LDA. Give one failure mode of vanilla LDA for this application that supervision can mitigate.
+    \item \textbf{[2 pts.]} (Label model) Propose a probabilistic model for $p(y_d \mid \bar{z}_d, \beta)$ with parameters $\beta \in \mathbb{R}^{K}$. You may choose logistic regression; if so, define $\sigma(u)$ and write $p(y_d \mid \bar{z}_d, \beta)$ explicitly. Briefly interpret $\beta$.
+    \item \textbf{[2 pts.]} (Sampling process) Conditioned on $(\theta_d, \Phi, \beta)$ for a fixed document $d$, specify the sampling steps that generate $(z_{d1:N_d}, w_{d1:N_d}, y_d)$, and name the distribution used at each step. Then, write the full joint probability (in factorized form; you do not need to expand normalization constants)
+    \[
+    p(\mathbf{w}, \mathbf{z}, \boldsymbol{\Theta}, \Phi, \mathbf{y} \mid \alpha, \eta, \beta),
+    \]
+    where $\boldsymbol{\Theta} = \{\theta_d\}_{d=1}^{D}$ and $\Phi = \{\phi_k\}_{k=1}^{K}$, and $\mathbf{w}, \mathbf{z}, \mathbf{y}$ denote all tokens/topics/labels. Your answer should make explicit the product structure over documents, topics, and token positions, and include the label term $p(y_d \mid \bar{z}_d, \beta)$.
+\end{enumerate}
+
+\examstatement{Problem 3. [7 pts.]}
+Standard self-attention costs $O(L^{2})$ in sequence length $L$. Design a Transformer variant that can handle $L \gg 10^{4}$ while preserving both local and long-range dependencies. Choose one mechanism: (i) block-sparse attention, (ii) sliding window + global tokens, (iii) low-rank/linear attention, or (iv) recurrent memory. Your design must include a precise definition of the attention pattern/computation (e.g., an attention mask $M_{ij}$ or neighbor set $\mathcal{N}(i)$ for sparse patterns, a feature map $\phi(\cdot)$ for linear attention, or explicit read/write equations for memory).
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Mechanism) Propose your chosen mechanism and define its computation/pattern precisely. Introduce any needed hyperparameters (e.g., window size $w$, number of global tokens $g$, block size $b$, memory length $m$) and specify exactly how information is aggregated across positions. Keep it brief.
+    \item \textbf{[2 pts.]} (Complexity) Analyze the per-layer time and memory complexity of the main component (dominant terms) in terms of sequence length $L$, hidden size $d$, and your hyperparameters. You may ignore the feed-forward sublayer cost. Keep it brief.
+    \item \textbf{[2 pts.]} (Expressivity for long-range interactions) Give one argument why long-range interactions remain expressible under your mechanism. Your argument should be based on, e.g., attention-graph connectivity / diameter (how information from position $i$ can reach $j$), or information propagation across layers via global tokens / blocks / memory.
+\end{enumerate}
+
+\examstatement{Problem 4. [7 pts.]}
+You are building an information-extraction system on news articles. A pipeline produces uncertain local predictions: (i) mention-to-entity linking candidates with confidence signals, and (ii) relation candidates between entities with confidence signals. You want a global model that enforces consistency and integrates evidence.
+
+An MLN defines a conditional distribution
+\[
+P(X \mid E) = \frac{1}{Z(E)} \exp\Biggl( \sum_{j=1}^{J} w_j n_j(X, E) \Biggr),
+\]
+where $E$ denotes observed evidence, $X$ denotes the set of unobserved atoms to be inferred, and $n_j(X, E)$ is the number of satisfied groundings of formula $j$. We use the following predicates:
+\begin{itemize}
+    \item Unknown (to infer): $\mathrm{Link}(m, e)$, meaning mention $m$ is linked to entity $e$; and $\mathrm{Rel}(e_1, e_2, r)$, meaning relation type $r$ holds between entities $(e_1, e_2)$.
+    \item Evidence (observed): $\mathrm{Cand}(m, e)$, indicating that $e$ is a candidate entity for mention $m$; $\mathrm{Type}(e, t)$, indicating that entity $e$ has type $t$ (e.g., Person, City, Org); $\mathrm{HighLink}(m, e)$, indicating strong local support for $\mathrm{Link}(m, e)$; and $\mathrm{HighRel}(m_1, m_2, r)$, indicating strong local support for relation type $r$ between mentions $(m_1, m_2)$.
+\end{itemize}
+Answer following questions:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} (Modeling rules with weights) Using the predicates above, write MLN formulas that: (i) propagate $\mathrm{HighLink}$ and $\mathrm{HighRel}$ into the unknown variables $\mathrm{Link}$ through $\mathrm{Rel}$. (ii) implement the constraint of at most one linked entity per mention, and (iii) enforce relation--type consistency using $\mathrm{Type}(e, t)$ (e.g., argument-type constraints). Briefly discuss how you would set (relative) weights for each rule, and which constraints you would treat as hard vs.\ soft.
+    \item \textbf{[2 pts.]} (Evidence construction) In real systems, $\mathrm{HighLink}(m, e)$ and $\mathrm{HighRel}(m_1, m_2, r)$ are produced by upstream machine learning models. Describe concrete modeling approaches (architectures and objectives) to obtain these signals. Your answer should mention what the model inputs are, what it outputs (score/probability), and how $\mathrm{HighLink}$/$\mathrm{HighRel}$ is derived from that output (e.g., thresholding, top-$k$ with margin). Keep it brief.
+    \item \textbf{[3 pts.]} (Name disambiguation) Name ambiguity is severe for people in the same domain. Suppose two candidate person entities $e_{\mathrm{old}}$ and $e_{\mathrm{new}}$ share the same surface name, but their birth years differ by $500$ years. You want to leverage (i) relation evidence among people in the document and (ii) KB birth-year attributes to impose an implicit ``same-era'' constraint. Please complete and extend the MLN by introducing additional predicates and rules. Then provide the additional key formulas and their intended weight behaviors, showing how relation evidence ($\mathrm{HighRel}$) induces contemporaneity (possibly conditioned on $r$) and how birth-year attributes penalize impossible contemporaneity. Finally, provide a minimal, reasonable example context (mentions, candidate entities, and one or two relation types) explaining how the joint inference prefers linking the ambiguous mention to $e_{\mathrm{old}}$ or $e_{\mathrm{new}}$. Use a minimal example only.
+\end{enumerate}
+
+\examstatement{Problem 5. [7 pts.]}
+A dialog-based NLU/QA system uses RAG as an external memory. At each turn $t$, given dialog history $H_t$, the system generate a candidate memory $c_t = \mathrm{Memorize}(H_t)$ and write into a store $\mathcal{M}_t$ (possibly with compression/tags), then retrieve top-$k$ memories $R_t = \mathrm{Retrieve}(H_t, \mathcal{M}_t, k)$, and generate an answer $\hat{y}_t = f_{\theta}(H_t, R_t)$. It may also write back summaries to update $\mathcal{M}_{t+1}$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Memory Gain) Let the test set be $\mathcal{D} = \{(H_t, y_t^{*})\}$ and $s(\hat{y}_t, y_t^{*}) \in [0, 1]$ be the evaluation score. Define the per-turn gain and total gain of the memory system as
+    \[
+    \Delta_t = s\bigl(f_{\theta}(H_t, R_t), y_t^{*}\bigr) - s\bigl(f_{\theta}(H_t, \varnothing), y_t^{*}\bigr), \qquad \Delta = \E_{(H_t, y_t^{*}) \sim \mathcal{D}} \Delta_t.
+    \]
+    Define $C_t = 1$ meaning $R_t$ contains the key memory; otherwise $C_t = 0$ with $\Pr(C_t = 0) = \epsilon$. Let $g_c = \E[\Delta_t \mid C_t = 1]$ and $g_{\neg c} = \E[\Delta_t \mid C_t = 0]$. Derive a necessary and sufficient condition for $\Delta > 0$ in terms of $\epsilon, g_c, g_{\neg c}$. In particular, when $g_c > g_{\neg c}$, show it is equivalent to
+    \[
+    \epsilon < \frac{g_c}{g_c - g_{\neg c}}.
+    \]
+    Explain in 2--3 sentences why a large $\epsilon$ makes stable positive gain hard to guarantee. (3 points)
+    \item \textbf{[4 pts.]} (Optimization) Formulate the memory mechanism as an MDP and optimize it with RL. Specify the state $s_t$, action $a_t$, and reward $r_t$. Your action should explicitly include both (i) write/merge/evict decisions under the budget constraint, and (ii) retrieval decisions (e.g., $k$, hybrid weights, query rewriting, reranking). Propose a reasonable reward that trades off answer quality and memory cost, e.g., $r_t = \Delta_t - \lambda \cdot \mathrm{Cost}(a_t)$, and state the optimization objective.
+\end{enumerate}
+
+
 \noindent\rule{\linewidth}{0.4pt}
 
-\section*{A. Machine Learning Theory}
+\section{Statement and solutions}
 
-\subsection*{Part I: Warm-Up Questions [3 pts.]}
-This section contains multiple-choice questions. Please select only one answer for each question. No justification is required.
+\section{A. Machine Learning Theory}
 
-\begin{enumerate}[label=\textbf{MQ\arabic*.}]
-    \item \textbf{[0.5 pts.]} In the agnostic PAC learning setting, what quantity does a learning algorithm aim to compete with?
-    \begin{enumerate}[label=(\alph*)]
-        \item The Bayes optimal classifier.
-        \item The hypothesis with zero training error.
-        \item The best hypothesis in the class $\mathcal{H}$.
-        \item The hypothesis minimising validation error.
-    \end{enumerate}
+\noindent\textbf{Part I: Warm-Up Questions [3 pts.]} --- This section contains multiple-choice questions.
+Please select only one answer for each question. No justification is required.
 
-    \item \textbf{[0.5 pts.]} Let $\mathcal{H}$ be a binary hypothesis class with VC dimension $d < \infty$. Which statement about its growth function $\tau_{\mathcal{H}}(m)$ is necessarily true?
-    \begin{enumerate}[label=(\alph*)]
-        \item $\tau_{\mathcal{H}}(m) = 2^m$ for all $m$.
-        \item $\tau_{\mathcal{H}}(m) = O(m^d)$ for all $m$.
-        \item $\tau_{\mathcal{H}}(m) \le \sum_{i=0}^d \binom{m}{i}$ for all $m$.
-        \item $\tau_{\mathcal{H}}(m)$ is constant for $m > d$.
-    \end{enumerate}
-
-    \item \textbf{[0.5 pts.]} Which statement about ReLU neural networks is correct from a learning-theoretic perspective?
-    \begin{enumerate}[label=(\alph*)]
-        \item ReLU networks represent smooth functions on $\mathbb{R}^d$.
-        \item Increasing depth always decreases the VC dimension.
-        \item ReLU networks compute piecewise linear functions whose complexity depends on depth and width.
-        \item Universal approximation of ReLU networks implies PAC learnability.
-    \end{enumerate}
-
-    \item \textbf{[0.5 pts.]} Which statement about empirical risk minimisation (ERM) is correct?
-    \begin{enumerate}[label=(\alph*)]
-        \item ERM is guaranteed to be consistent for any hypothesis class.
-        \item ERM always finds a hypothesis with minimum true risk.
-        \item If $\mathcal{H}$ has finite VC dimension, ERM is PAC learnable in the realisable setting.
-        \item ERM is PAC learnable only if $\mathcal{H}$ is finite.
-    \end{enumerate}
-
-    \item \textbf{[0.5 pts.]} Which statement is a correct consequence of the No Free Lunch theorem?
-    \begin{enumerate}[label=(\alph*)]
-        \item Restricting the hypothesis class always improves generalization.
-        \item There exists a universally optimal learning algorithm.
-        \item Inductive bias is necessary to obtain non-trivial learning guarantees.
-        \item Random guessing is optimal for all supervised learning problems.
-    \end{enumerate}
-
-    \item \textbf{[0.5 pts.]} Let $K : \mathcal{X} \times \mathcal{X} \to \mathbb{R}$ be a symmetric function. Which of the following statements is correct?
-    \begin{enumerate}[label=(\alph*)]
-        \item $K$ is a valid kernel if and only if $K(x, x) \ge 0$ for all $x \in \mathcal{X}$.
-        \item $K$ is a valid kernel if and only if there exists a finite-dimensional feature map $\psi$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle$.
-        \item If $K$ is positive semidefinite, then there exists a Hilbert space $\mathcal{H}$ and a feature map $\psi : \mathcal{X} \to \mathcal{H}$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle_{\mathcal{H}}$.
-        \item Every kernel corresponds to a unique feature map.
-    \end{enumerate}
+\subsection{Problem MQ1. [0.5 pts.]}
+In the agnostic PAC learning setting, what quantity does a learning algorithm aim to compete with?
+\begin{enumerate}[label=(\alph*)]
+    \item The Bayes optimal classifier.
+    \item The hypothesis with zero training error.
+    \item The best hypothesis in the class $\mathcal{H}$.
+    \item The hypothesis minimising validation error.
 \end{enumerate}
 
-\subsection*{Part II: Theoretical Exercises [30 pts.]}
+\subsection{Problem MQ2. [0.5 pts.]}
+Let $\mathcal{H}$ be a binary hypothesis class with VC dimension $d < \infty$. Which statement about its growth function $\tau_{\mathcal{H}}(m)$ is necessarily true?
+\begin{enumerate}[label=(\alph*)]
+    \item $\tau_{\mathcal{H}}(m) = 2^m$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m) = O(m^d)$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m) \le \sum_{i=0}^{d} \binom{m}{i}$ for all $m$.
+    \item $\tau_{\mathcal{H}}(m)$ is constant for $m > d$.
+\end{enumerate}
 
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{[6 pts.]} Let $\mathcal{H}$ be a hypothesis class of binary classifiers $h : \mathcal{X} \to \{0, 1\}$. Let $\mathcal{D}$ be an unknown distribution over $\mathcal{X}$, and let $f \in \mathcal{H}$ be the target hypothesis. For a fixed $h \in \mathcal{H}$, define the empirical loss on $S = \{x_1, \dots, x_m\} \sim \mathcal{D}^m$ by
+\subsection{Problem MQ3. [0.5 pts.]}
+Which statement about ReLU neural networks is correct from a learning-theoretic perspective?
+\begin{enumerate}[label=(\alph*)]
+    \item ReLU networks represent smooth functions on $\mathbb{R}^{d}$.
+    \item Increasing depth always decreases the VC dimension.
+    \item ReLU networks compute piecewise linear functions whose complexity depends on depth and width.
+    \item Universal approximation of ReLU networks implies PAC learnability.
+\end{enumerate}
+
+\subsection{Problem MQ4. [0.5 pts.]}
+Which statement about empirical risk minimisation (ERM) is correct?
+\begin{enumerate}[label=(\alph*)]
+    \item ERM is guaranteed to be consistent for any hypothesis class.
+    \item ERM always finds a hypothesis with minimum true risk.
+    \item If $\mathcal{H}$ has finite VC dimension, ERM is PAC learnable in the realisable setting.
+    \item ERM is PAC learnable only if $\mathcal{H}$ is finite.
+\end{enumerate}
+
+\subsection{Problem MQ5. [0.5 pts.]}
+Which statement is a correct consequence of the No Free Lunch theorem?
+\begin{enumerate}[label=(\alph*)]
+    \item Restricting the hypothesis class always improves generalization.
+    \item There exists a universally optimal learning algorithm.
+    \item Inductive bias is necessary to obtain non-trivial learning guarantees.
+    \item Random guessing is optimal for all supervised learning problems.
+\end{enumerate}
+
+\subsection{Problem MQ6. [0.5 pts.]}
+Let $K : \mathcal{X} \times \mathcal{X} \to \mathbb{R}$ be a symmetric function. Which of the following statements is correct?
+\begin{enumerate}[label=(\alph*)]
+    \item $K$ is a valid kernel if and only if $K(x, x) \ge 0$ for all $x \in \mathcal{X}$.
+    \item $K$ is a valid kernel if and only if there exists a finite-dimensional feature map $\psi$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle$.
+    \item If $K$ is positive semidefinite, then there exists a (possibly infinite-dimensional) Hilbert space $\mathcal{H}$ and a feature map $\psi : \mathcal{X} \to \mathcal{H}$ such that $K(x, x') = \langle \psi(x), \psi(x') \rangle_{\mathcal{H}}$.
+    \item Every kernel corresponds to a unique feature map.
+\end{enumerate}
+
+\noindent\textbf{Part II: Theoretical Exercises [30 pts.]} --- This is the main part of the exam. Provide detailed solutions and reasoning for each question. Full marks are awarded only for complete and well-explained answers.
+
+\subsection{Problem 1. [6 pts.]}
+Let $\mathcal{H}$ be a hypothesis class of binary classifiers $h : \mathcal{X} \to \{0, 1\}$. Let $\mathcal{D}$ be an unknown distribution over $\mathcal{X}$, and let $f \in \mathcal{H}$ be the target hypothesis.
+For a fixed $h \in \mathcal{H}$, define the empirical loss on a sample $S = \{x_1, \dots, x_m\} \sim \mathcal{D}^{m}$ by
+
+\[
+L_S(h) = \frac{1}{m} \sum_{i=1}^{m} \mathbf{1}[h(x_i) \neq f(x_i)].
+\]
+
+\begin{enumerate}[label=(\alph*)]
+    \item Let $p \coloneqq L_{\mathcal{D}, f}(h)$. Show that
     \[
-    L_S(h) = \frac{1}{m} \sum_{i=1}^m \mathbf{1}[h(x_i) \neq f(x_i)].
+    \E_{S \sim \mathcal{D}^{m}} \bigl[ (L_S(h) - p)^{2} \bigr] = \frac{p(1 - p)}{m}.
     \]
-    \begin{enumerate}[label=(\alph*)]
-        \item Let $p \coloneqq L_{\mathcal{D}, f}(h)$. Show that
-        \[
-        \E_{S \sim \mathcal{D}^m} \left[ (L_S(h) - p)^2 \right] = \frac{p(1 - p)}{m}.
-        \]
-        \item Deduce that
-        \[
-        \E \left[ (L_S(h) - p)^2 \right] \le \frac{1}{4m},
-        \]
-        and therefore it decreases at rate $O(1/m)$.
-    \end{enumerate}
-
-    \item \textbf{[4 pts.]} Let $f : \mathbb{R}^d \to \mathbb{R}$ be twice continuously differentiable and $\lambda$-strongly convex. Prove that $f$ admits a unique global minimiser.
-
-    \item \textbf{[8 pts.]} Let $\mathcal{X} = \mathbb{R}$ and consider the hypothesis class
+    \item Deduce that
     \[
-    \mathcal{H} = \left\{ h_{a,b,c}(x) = \mathbf{1}_{[a,b]}(x) \lor \mathbf{1}_{[c,\infty)}(x) \mid a \le b < c, \, a, b, c \in \mathbb{R} \right\},
+    \E \bigl[ (L_S(h) - p)^{2} \bigr] \le \frac{1}{4m},
     \]
-    where $\lor$ denotes logical OR.
-    \begin{enumerate}[label=(\alph*)]
-        \item Let $x_1, \dots, x_n$ be $n$ distinct points in $\mathbb{R}$. Give an upper bound on the growth function $\tau(\mathcal{H}, n)$.
-        \item Determine the VC dimension of $\mathcal{H}$.
-    \end{enumerate}
+    and therefore it decreases at rate $O(1/m)$.
+\end{enumerate}
 
-    \item \textbf{[7 pts.]} Consider a set $S$ of examples in $\mathbb{R}^n \times [k]$ for which there exist vectors $\mu_1, \dots, \mu_k \in \mathbb{R}^n$ such that every example $(x, y) \in S$ falls within a ball centered at $\mu_y$ with radius $r \ge 1$. Assume also that for every $i \neq j$, $\|\mu_i - \mu_j\| \ge 4r$. Concatenate each instance by constant $1$ and apply multivector construction:
+\subsection{Problem 2. [4 pts.]}
+Let $f : \mathbb{R}^{d} \to \mathbb{R}$ be twice continuously differentiable and $\lambda$-strongly convex. Prove that $f$ admits a unique global minimiser.
+
+\subsection{Problem 3. [8 pts.]}
+Let $\mathcal{X} = \mathbb{R}$ and consider the hypothesis class
+
+\[
+\mathcal{H} = \bigl\{ h_{a,b,c}(x) = \mathbf{1}_{[a,b]}(x) \lor \mathbf{1}_{[c,\infty)}(x) \mid a \le b < c,\, a, b, c \in \mathbb{R} \bigr\},
+\]
+
+where $\lor$ denotes the logical OR (equivalently, the maximum of the two values).
+\begin{enumerate}[label=(\alph*)]
+    \item Let $x_1, \dots, x_n$ be $n$ distinct points in $\mathbb{R}$. Give an upper bound on the growth function $s(\mathcal{H}, n)$.
+    \item Determine the VC dimension of $\mathcal{H}$.
+\end{enumerate}
+
+\subsection{Problem 4. [7 pts.]}
+Consider a set $S$ of examples in $\mathbb{R}^{n} \times [k]$ for which there exist vectors $\mu_1, \dots, \mu_k \in \mathbb{R}^{n}$ such that every example $(x, y) \in S$ falls within a ball centered at $\mu_y$ whose radius is $r \ge 1$. Assume also that for every $i \neq j$, $\|\mu_i - \mu_j\| \ge 4r$.
+Consider concatenating each instance by the constant $1$ and then applying the multivector construction, namely:
+
+\[
+\Psi(x, y) = \bigl[ \underbrace{0, \dots, 0}_{(y-1)(n+1)}, \underbrace{x_1, \dots, x_n, 1}_{n+1}, \underbrace{0, \dots, 0}_{(k-y)(n+1)} \bigr] \in \mathbb{R}^{k(n+1)}.
+\]
+
+Note that the $1$ is referring to the bias term. It allows the model to shift the decision boundary away from the origin. Show that there exists a vector $w \in \mathbb{R}^{k(n+1)}$ such that $\ell(w, (x, y)) = 0$ for every $(x, y) \in S$.
+
+\textit{Hint.} Observe that for every example $(x, y) \in S$ we can write $x = \mu_y + v$ for some $\|v\| \le r$. Now take $\mathbf{w} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$ where:
+
+\[
+\mathbf{w}_i = \Bigl[\mu_i, -\frac{\|\mu_i\|^{2}}{2}\Bigr].
+\]
+
+\subsection{Problem 5. [5 pts.]}
+Let $d \in \mathbb{N}$. Consider two feedforward neural networks with the same input dimension $d$ and scalar output. Assume that the first network $\Phi_{\mathrm{ReLU}}$ uses the ReLU activation function in all hidden layers, while the second network $\Phi_{\sigma}$ uses the sigmoid activation function. Suppose that the two networks represent the same function on $\mathbb{R}^{d}$, that is:
+
+\[
+\Phi_{\mathrm{ReLU}}(x) = \Phi_{\sigma}(x) \quad \text{for all } x \in \mathbb{R}^{d}.
+\]
+
+Show that the function represented by $\Phi_{\mathrm{ReLU}}$ (and hence by $\Phi_{\sigma}$) must be constant.
+
+\section{B. Deep Learning and Reinforcement Learning}
+
+\subsection{Problem 1. [10 pts.]}
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} Consider a multi-layer perceptron (MLP) with layerwise relation
     \[
-    \Psi(x, y) = \bigl[ \underbrace{0, \dots, 0}_{(y-1)(n+1)}, \underbrace{x_1, \dots, x_n, 1}_{n+1}, \underbrace{0, \dots, 0}_{(k-y)(n+1)} \bigr] \in \mathbb{R}^{k(n+1)}.
+    x_{\ell} = f_{\ell}(x_{\ell-1}, \theta_{\ell}), \qquad \ell = 1, \dots, L,
     \]
-    Show that there exists a vector $w \in \mathbb{R}^{k(n+1)}$ such that $\ell(w, (x, y)) = 0$ for every $(x, y) \in S$.
-    \textit{Hint:} Write $x = \mu_y + v$ with $\|v\| \le r$, and take $\mathbf{w} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$ where $\mathbf{w}_i = [\bm{\mu}_i, -\frac{\|\bm{\mu}_i\|^2}{2}]$.
-
-    \item \textbf{[5 pts.]} Let $d \in \mathbb{N}$. Consider two feedforward neural networks with input dimension $d$ and scalar output. Assume $\Phi_{\text{ReLU}}$ uses ReLU activation in all hidden layers, while $\Phi_\sigma$ uses sigmoid activation. Suppose $\Phi_{\text{ReLU}}(x) = \Phi_\sigma(x)$ for all $x \in \mathbb{R}^d$. Show that the function represented by $\Phi_{\text{ReLU}}$ (and hence $\Phi_\sigma$) must be constant.
-\end{enumerate}
-
-\section*{B. Deep Learning and Reinforcement Learning}
-
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{[10 pts.]}
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[2 pts.]} MLP layerwise relation $x_\ell = f_\ell(x_{\ell-1}, \theta_\ell)$ for $\ell = 1, \dots, L$ and loss $\mathcal{J} = \mathcal{L}(x_L, y)$.
-        \begin{enumerate}[label=(\roman*)]
-            \item Derive $\frac{\partial \mathcal{J}}{\partial \theta_\ell}$ using chain rule.
-            \item State why backpropagation complexity is $O(\text{forward pass})$.
-        \end{enumerate}
-        \item \textbf{[2 pts.]} Explain why sigmoid activation $\sigma(z) = \frac{1}{1 + e^{-z}}$ causes vanishing gradients in deep networks, and contrast with ReLU.
-        \item \textbf{[2 pts.]} Write update rules for SGD with momentum ($v_{k+1}$ and $x_{k+1}$). Explain how momentum improves optimization in oscillatory landscapes.
-        \item \textbf{[2 pts.]} Scaled dot-product attention $W = \softmax\left(\frac{Q K^\top}{\sqrt{d_k}}\right)$. Explain the purpose of $\frac{1}{\sqrt{d_k}}$ and what happens when $d_k$ is large without scaling.
-        \item \textbf{[2 pts.]} Compare computational structure of RNNs and Transformers. Why are Transformers more efficient on modern hardware?
+    where $\theta_{\ell}$ denotes the parameters of layer $\ell$, and a loss $\mathcal{J} = \mathcal{L}(x_L, y)$.
+    \begin{enumerate}[label=(\roman*)]
+        \item Using chain rule, derive the expression for $\dfrac{\partial \mathcal{J}}{\partial \theta_{\ell}}$.
+        \item State briefly why computing all gradients $\bigl\{\frac{\partial \mathcal{J}}{\partial \theta_{\ell}}\bigr\}_{\ell=1}^{L}$ via backpropagation has the same order of computational complexity as one forward evaluation (up to a constant factor).
     \end{enumerate}
-
-    \item \textbf{[15 pts.]} Let $\pi_0$ be base distribution on $\mathbb{R}^d$ and $\pi_1$ data distribution. We seek vector field $v_t(x)$ such that $\frac{d}{dt} x_t = v_t(x_t)$ transports $\pi_0$ to $\pi_1$ at $t = 1$.
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[2 pts.]} Prescribed coupling $(x_0, x_1) \sim \gamma$ and linear interpolation $x_t = (1-t)x_0 + t x_1$. Compute conditional velocity $v_t(x_t \mid x_0, x_1) \coloneqq \frac{d}{dt} x_t$.
-        \item \textbf{[3 pts.]} Population velocity field $v_t(x) = \E [v_t(x_t \mid x_0, x_1) \mid x_t = x]$. Show that density $\pi_t$ satisfies the continuity equation $\partial_t \pi_t + \nabla \cdot (\pi_t v_t) = 0$.
-        \item \textbf{[5 pts.]} For parametric model $v_\theta(t, \mathbf{x})$, propose a squared-loss regression objective using training pairs $(t, x_t)$ and $v_t(x_t \mid x_0, x_1)$. Prove minimizer recovers $v_t(x)$.
-        \item \textbf{[5 pts.]} For SDE $d x_t = (v_t(x_t) + \beta_t \nabla_x \log \pi_t(x_t)) dt + \sqrt{2\beta_t} dW_t$, derive Fokker--Planck equation and show it shares marginals $\pi_t$ with ODE. How is $\nabla_x \log \pi_t(x)$ approximated via score matching?
-    \end{enumerate}
-
-    \item \textbf{[8 pts.]} Discounted MDP $(\mathcal{S}, \mathcal{A}, P, r, \gamma)$.
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[2 pts.]} Derive Bellman equation for value function $V^\pi(s)$.
-        \item \textbf{[2 pts.]} Specify Policy Iteration (Policy Evaluation step and Policy Improvement step).
-        \item \textbf{[2 pts.]} Explain Actor--Critic adaptation when model $P$ is unknown.
-        \item \textbf{[2 pts.]} RLHF alignment: write down objective for updating policy $\pi_\theta(y \mid x)$ using preference data $(x, y^+, y^-)$ (using reward-model RLHF or DPO).
-    \end{enumerate}
-\end{enumerate}
-
-\section*{C. Optimization Methods in Artificial Intelligence}
-
-Composite optimization: $\min_{x \in \mathbb{R}^d} F(x) \coloneqq f(x) + R(x)$, $f$ is $L$-smooth and $\mu$-strongly convex ($\mu > 0$), $R$ is proper, closed, convex. Unbiased stochastic gradient $g(x, \xi) = \nabla f(x) + \xi$ with $\E[\xi] = 0, \E[\|\xi\|^2] \le \sigma^2$. Proximal SGD: $x^{k+1} = \prox_{\gamma R}(x^k - \gamma g^k)$, $\bar{x}^k \coloneqq \frac{1}{k} \sum_{t=1}^k x^t$.
-
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{[2 pts.] Basic definitions:} Definitions of $L$-smoothness and $\mu$-strong convexity.
-    \item \textbf{[3 pts.] Optimality condition of prox:} Show $x^+ = \prox_{\gamma R}(u) \iff \frac{1}{\gamma}(u - x^+) \in \partial R(x^+)$.
-    \item \textbf{[3 pts.] Uniqueness \& fixed point:} Show $F$ has unique minimizer $x^*$ and $x^* = \prox_{\gamma R}(x^* - \gamma \nabla f(x^*))$.
-    \item \textbf{[2 pts.] Monotonicity of subdifferential:} Show $\langle r_x - r_y, x - y \rangle \ge 0$ for $r_x \in \partial R(x), r_y \in \partial R(y)$.
-    \item \textbf{[3 pts.] Nonexpansiveness of prox:} Show $\|\prox_{\gamma R}(u) - \prox_{\gamma R}(v)\| \le \|u - v\|$.
-    \item \textbf{[3 pts.] One-step inequality:} Show $\|x^{k+1} - x^*\|^2 \le \|x^k - x^* - \gamma (g^k - \nabla f(x^*))\|^2$.
-    \item \textbf{[5 pts.] Conditional expectation \& variance decomposition:} Prove $\E_k \|x^{k+1} - x^*\|^2 \le \|x^k - x^* - \gamma(\nabla f(x^k) - \nabla f(x^*))\|^2 + \gamma^2 \sigma^2$.
-    \item \textbf{[4 pts.] Linear contraction \& noise floor:} For $\gamma = \frac{2}{L + \mu}$, show $\E \|x^{k+1} - x^*\|^2 \le (1 - \rho)\E \|x^k - x^*\|^2 + \gamma^2 \sigma^2$ with $\rho = \frac{4\mu L}{(L+\mu)^2}$. Explain noise floor.
-    \item \textbf{[3 pts.] Averaging reduces variance:} For uncorrelated errors $e^t = x^t - \E[x^t]$ with $\E[\|e^t\|^2] \le V$, show $\E[\|\bar{e}^k\|^2] \le V/k$.
-    \item \textbf{[5 pts.] Convergence rate of averaging ($R \equiv 0$):}
-    \begin{enumerate}[label=(\alph*)]
-        \item Show $\E_k \|x^{t+1} - x^*\|^2 \le \|x^t - x^*\|^2 - 2\gamma_t (1 - L\gamma_t) \E_k(f(x^t) - f^*) + \gamma_t^2 \sigma^2$, and for $\gamma_t \le \frac{1}{2L}$, simplify to $\E_k \|x^{t+1} - x^*\|^2 \le \|x^t - x^*\|^2 - \gamma_t \E_k(f(x^t) - f^*) + \gamma_t^2 \sigma^2$.
-        \item For $\gamma_t = \frac{1}{\mu t}$, show $\E[f(\bar{x}^k) - f^*] \le \mathcal{O}\left( \frac{\log k}{k} \right)$.
-    \end{enumerate}
-\end{enumerate}
-
-\section*{D. Natural Language Processing}
-
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{[6 pts.] InfoNCE Contrastive Loss \& Gradient}
+    \item \textbf{[2 pts.]} Explain mathematically why the sigmoid activation
     \[
-    \mathcal{L} = -\log \frac{\exp(\langle z, z^+ \rangle / \tau)}{\exp(\langle z, z^+ \rangle / \tau) + \sum_{i=1}^n \exp(\langle z, z_i^- \rangle / \tau)}.
+    \sigma(z) = \frac{1}{1 + e^{-z}}
     \]
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[3 pts.]} Compute $\nabla_z \mathcal{L}$. Interpret result as pulling towards $z^+$ and pushing away from $z_i^-$.
-        \item \textbf{[3 pts.]} High-dimensional heuristic ($d \gg 1$): scale of $\langle z, z_i^- \rangle$ and max similarity among $n$ negatives. Explain impact of false negatives.
-    \end{enumerate}
-
-    \item \textbf{[6 pts.] Supervised Topic Model (sLDA) for Tickets}
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[2 pts.]} Why adding priority label $y_d$ changes learned topics vs.\ unsupervised LDA; failure mode of unsupervised LDA.
-        \item \textbf{[2 pts.]} Label model $p(y_d \mid \bar{z}_d, \beta)$ using logistic regression $\sigma(u)$ and interpretation of $\beta$.
-        \item \textbf{[2 pts.]} Generative sampling steps and full factorized joint probability $p(\mathbf{w}, \mathbf{z}, \bm{\Theta}, \Phi, \mathbf{y} \mid \alpha, \eta, \beta)$.
-    \end{enumerate}
-
-    \item \textbf{[7 pts.] Efficient Transformer Architecture for Long Sequences ($L \gg 10^4$)}
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[3 pts.]} Mechanism definition (block-sparse / sliding window + global / linear / memory).
-        \item \textbf{[2 pts.]} Per-layer time and memory complexity analysis.
-        \item \textbf{[2 pts.]} Expressivity for long-range interactions (graph diameter / global tokens).
-    \end{enumerate}
-
-    \item \textbf{[7 pts.] Information Extraction with Markov Logic Networks (MLNs)}
-    $P(X \mid E) = \frac{1}{Z(E)} \exp\left( \sum_{j=1}^J w_j n_j(X, E) \right)$.
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[2 pts.]} Write MLN formulas for (i) propagation of HighLink/HighRel, (ii) at most one linked entity per mention, (iii) relation--type consistency. Discuss weights (hard vs.\ soft constraints).
-        \item \textbf{[2 pts.]} Upstream ML model architectures to produce HighLink / HighRel evidence signals.
-        \item \textbf{[3 pts.]} Name disambiguation with birth-year attribute \& contemporaneity constraint ($e_{\text{old}}$ vs.\ $e_{\text{new}}$).
-    \end{enumerate}
-
-    \item \textbf{[7 pts.] RAG as External Memory for Dialog QA}
-    \begin{enumerate}[label=(\alph*)]
-        \item \textbf{[3 pts.]} Memory Gain: derive necessary \& sufficient condition for total gain $\Delta > 0$ in terms of $\epsilon, g_c, g_{\neg c}$. Show equivalence to $\epsilon < \frac{g_c}{g_c - g_{\neg c}}$ when $g_c > g_{\neg c}$.
-        \item \textbf{[4 pts.]} MDP formulation: define state $s_t$, action $a_t$ (write/evict \& retrieval decisions), reward $r_t = \Delta_t - \lambda \cdot \text{Cost}(a_t)$, and optimization objective.
-    \end{enumerate}
+    often leads to the vanishing gradient problem in deep networks. Contrast this with the ReLU activation and explain how ReLU mitigates this issue during backpropagation.
+    \item \textbf{[2 pts.]} Write the update rules for stochastic gradient descent (SGD) with momentum. Define the momentum term $v_{k+1}$ and the parameter update $x_{k+1}$. Explain how the momentum term improves optimization compared to standard SGD, particularly in loss landscapes with oscillations.
+    \item \textbf{[2 pts.]} The scaled dot-product attention in Transformers is defined as
+    \[
+    W = \softmax\Bigl(\frac{Q K^{\top}}{\sqrt{d_k}}\Bigr).
+    \]
+    Explain the purpose of the scaling factor $1/\sqrt{d_k}$. What happens to the softmax outputs and their gradients if this scaling is removed when $d_k$ is large?
+    \item \textbf{[2 pts.]} Compare the computational structure of recurrent neural networks (RNNs) and Transformers. Explain why Transformers are typically more computationally efficient than RNNs in modern hardware implementations.
 \end{enumerate}
+
+\subsection{Problem 2. [15 pts.]}
+Let $\pi_0$ be a simple base distribution on $\mathbb{R}^{d}$ (e.g., $\mathcal{N}(0, I)$) and let $\pi_1$ be a data distribution. We seek a time-dependent vector field $v_t(x)$ such that the ODE
+\[
+\frac{d}{dt} x_t = v_t(x_t), \qquad x_0 \sim \pi_0,
+\]
+transports $\pi_0$ to $\pi_1$ at time $t = 1$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} Assume a prescribed coupling $(x_0, x_1) \sim \gamma$ with marginals $x_0 \sim \pi_0$, $x_1 \sim \pi_1$, and define the interpolation
+    \[
+    x_t = (1 - t)x_0 + t x_1.
+    \]
+    Compute the conditional velocity
+    \[
+    v_t(x_t \mid x_0, x_1) \coloneqq \frac{d}{dt} x_t.
+    \]
+    \item \textbf{[3 pts.]} Define the population velocity field
+    \[
+    v_t(x) = \E\bigl[v_t(x_t \mid x_0, x_1) \mid x_t = x\bigr].
+    \]
+    Show that if particles evolve according to
+    \[
+    \frac{d}{dt} x_t = v_t(x_t),
+    \]
+    then the density $\pi_t$ of $x_t$ satisfies the continuity equation
+    \[
+    \partial_t \pi_t + \nabla \cdot (\pi_t v_t) = 0.
+    \]
+    Conclude that this ODE transports $\pi_0$ to $\pi_1$.
+    \item \textbf{[5 pts.]} Let $v_{\theta}(t, x)$ be a parametric model. Propose a squared-loss regression objective that uses training pairs $(t, x_t)$ and the conditional velocity $v_t(x_t \mid x_0, x_1)$ to learn $v_{\theta}(t, x)$. Prove that the minimizer of the loss function recovers the desired marginal velocity $v_t(x)$.
+    \item \textbf{[5 pts.]} To introduce stochasticity, consider the SDE
+    \[
+    d x_t = \bigl( v_t(x_t) + \beta_t \nabla_x \log \pi_t(x_t) \bigr)\, dt + \sqrt{2\beta_t}\, dW_t.
+    \]
+    Derive the Fokker--Planck equation of this SDE and show that this SDE has the same marginal distributions $\{\pi_t\}_{t \in [0,1]}$ as the deterministic ODE.
+
+    In practice $\nabla_x \log \pi_t(x)$ is unknown. Explain how this term can be approximated using score matching.
+\end{enumerate}
+
+\subsection{Problem 3. [8 pts.]}
+Consider a discounted Markov Decision Process (MDP) $(\mathcal{S}, \mathcal{A}, P, r, \gamma)$, where $\gamma \in (0, 1)$ is the discount factor, $P(s' \mid s, a)$ is the transition kernel, and $r(s, a)$ is the reward.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} The value function under a policy $\pi(a \mid s)$ is defined as
+    \[
+    V^{\pi}(s) = \E_{\pi} \Biggl[ \sum_{t=0}^{\infty} \gamma^{t} r(s_t, a_t) \Bigm| s_0 = s \Biggr].
+    \]
+    Derive the Bellman equation satisfied by $V^{\pi}(s)$.
+    \item \textbf{[2 pts.]} Write down the policy iteration algorithm. Clearly specify:
+    \begin{itemize}
+        \item the policy evaluation step, and
+        \item the policy improvement step.
+    \end{itemize}
+    \item \textbf{[2 pts.]} In many practical problems the transition model $P$ is unknown. Describe how the evaluation and improvement steps are adapted using an actor--critic method under this model-free setting.
+    \item \textbf{[2 pts.]} Reinforcement Learning from Human Feedback (RLHF) aligns a policy using human preference data of the form $(x, y^{+}, y^{-})$, meaning $y^{+}$ is preferred to $y^{-}$ for prompt $x$.
+
+    Write down one RLHF algorithm by specifying the objective used to update the policy $\pi_{\theta}(y \mid x)$.
+
+    \textit{Hint:} You may choose either of the following approaches:
+    \begin{enumerate}[label=(\alph*)]
+        \item \textbf{Reward-model-based RLHF:} first learn a reward model $r_{\psi}(x, y)$ from preference data, then optimize the policy using a reinforcement learning objective (often with a KL regularization toward a reference policy).
+        \item \textbf{Direct Preference Optimization (DPO)-style methods:} update the policy directly from preference comparisons without explicitly learning a reward model, by encouraging higher likelihood of preferred outputs relative to dispreferred ones.
+    \end{enumerate}
+    Define any notation you introduce.
+\end{enumerate}
+
+\section{C. Optimization Methods in Artificial Intelligence}
+
+Consider the composite optimization problem
+\[
+\min_{x \in \mathbb{R}^{d}} F(x) \coloneqq f(x) + R(x),
+\]
+where $f$ is differentiable $L$-smooth and $\mu$-strongly convex ($\mu > 0$), and $R : \mathbb{R}^{d} \to (-\infty, +\infty]$ is proper, closed, and convex. Let $g(x, \xi) = \nabla f(x) + \xi$ be an unbiased stochastic gradient estimator satisfying $\E[\xi] = 0$ and $\E[\|\xi\|^{2}] \le \sigma^{2}$. Consider the proximal SGD iteration
+\[
+x^{k+1} = \prox_{\gamma R}\bigl(x^{k} - \gamma g^{k}\bigr), \qquad g^{k} \coloneqq g(x^{k}, \xi^{k}) = \nabla f(x^{k}) + \xi^{k}.
+\]
+Define the averaged iterate
+\[
+\bar{x}^{k} \coloneqq \frac{1}{k} \sum_{t=1}^{k} x^{t}.
+\]
+
+\subsection{Problem 1. [2 pts.] Basic definitions}
+Give the definitions of $L$-smoothness and $\mu$-strong convexity.
+
+\subsection{Problem 2. [3 pts.] Optimality condition of the proximal operator}
+Show that for any $u \in \mathbb{R}^{d}$ and $\gamma > 0$,
+\[
+x^{+} = \prox_{\gamma R}(u) \iff \frac{1}{\gamma}(u - x^{+}) \in \partial R(x^{+}).
+\]
+
+\subsection{Problem 3. [3 pts.] Uniqueness and proximal fixed point}
+Show that $F$ admits a unique minimizer $x^{*}$ and that
+\[
+x^{*} = \prox_{\gamma R}\bigl(x^{*} - \gamma \nabla f(x^{*})\bigr).
+\]
+
+\subsection{Problem 4. [2 pts.] Monotonicity of the subdifferential}
+Show that the subdifferential mapping $\partial R$ is monotone: for any $x, y$ and any $r_x \in \partial R(x)$, $r_y \in \partial R(y)$,
+\[
+\langle r_x - r_y, x - y \rangle \ge 0.
+\]
+
+\subsection{Problem 5. [3 pts.] Nonexpansiveness of prox}
+Show that $\prox_{\gamma R}$ is nonexpansive, i.e.,
+\[
+\bigl\| \prox_{\gamma R}(u) - \prox_{\gamma R}(v) \bigr\| \le \|u - v\|, \qquad \forall u, v.
+\]
+\textit{Hint:} use monotonicity of $\partial R$.
+
+\subsection{Problem 6. [3 pts.] One-step inequality}
+Show that
+\[
+\|x^{k+1} - x^{*}\|^{2} \le \bigl\| x^{k} - x^{*} - \gamma\bigl(g^{k} - \nabla f(x^{*})\bigr) \bigr\|^{2}.
+\]
+
+\subsection{Problem 7. [5 pts.] Conditional expectation and variance decomposition}
+Write $\E_k[\cdot] \coloneqq \E[\cdot \mid x^{k}]$ for the conditional expectation given the current iterate $x^{k}$. Prove that
+\[
+\E_k \|x^{k+1} - x^{*}\|^{2} \le \bigl\| x^{k} - x^{*} - \gamma\bigl(\nabla f(x^{k}) - \nabla f(x^{*})\bigr) \bigr\|^{2} + \gamma^{2} \sigma^{2}.
+\]
+
+\subsection{Problem 8. [4 pts.] Linear contraction with a noise floor}
+Using smoothness and strong convexity of $f$, show that for $\gamma = \frac{2}{L + \mu}$ one has
+\[
+\E \|x^{k+1} - x^{*}\|^{2} \le (1 - \rho)\, \E \|x^{k} - x^{*}\|^{2} + \gamma^{2} \sigma^{2}, \qquad \rho \coloneqq \frac{4\mu L}{(L + \mu)^{2}} \in (0, 1).
+\]
+Explain the origin and meaning of the noise floor.
+
+\textit{Hint:} You may use the following two inequalities for an $L$-smooth and $\mu$-strongly convex function $f$:
+\[
+\langle \nabla f(x) - \nabla f(y), x - y \rangle \ge \mu \|x - y\|^{2},
+\qquad
+\langle \nabla f(x) - \nabla f(y), x - y \rangle \ge \frac{1}{L} \|\nabla f(x) - \nabla f(y)\|^{2}.
+\]
+
+\subsection{Problem 9. [3 pts.] Averaging reduces variance}
+Write the iterate error as $e^{t} \coloneqq x^{t} - \E[x^{t}]$ and define the averaged error
+\[
+\bar{e}^{k} \coloneqq \bar{x}^{k} - \E[\bar{x}^{k}] = \frac{1}{k} \sum_{t=1}^{k} e^{t}.
+\]
+Assume (as a simplified model):
+\begin{itemize}
+    \item the errors $\{e^{t}\}_{t \ge 1}$ are uncorrelated, i.e., $\E\langle e^{s}, e^{t} \rangle = 0$ for $s \neq t$;
+    \item the second moments are uniformly bounded: $\E\|e^{t}\|^{2} \le V$ for all $t$.
+\end{itemize}
+Show that
+\[
+\E\|\bar{e}^{k}\|^{2} \le \frac{V}{k}.
+\]
+Explain briefly why $\bar{x}^{k}$ typically has smaller variance than the last iterate $x^{k}$.
+
+\subsection{Problem 10. [5 pts.] Convergence rate of averaging}
+For this question, assume $R \equiv 0$ (so $F = f$).
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} Deriving a one-step bound from smoothness. Starting from the inequality proved earlier in Question 7, show that
+    \[
+    \E_k \|x^{t+1} - x^{*}\|^{2} \le \|x^{t} - x^{*}\|^{2} - 2\gamma_t (1 - L\gamma_t)\, \E_k\bigl(f(x^{t}) - f^{*}\bigr) + \gamma_t^{2} \sigma^{2}.
+    \]
+    In particular, if $\gamma_t \le \frac{1}{2L}$, deduce the simplified bound
+    \[
+    \E_k \|x^{t+1} - x^{*}\|^{2} \le \|x^{t} - x^{*}\|^{2} - \gamma_t\, \E_k\bigl(f(x^{t}) - f^{*}\bigr) + \gamma_t^{2} \sigma^{2}.
+    \]
+    \textit{Hint:} For convex $L$-smooth $f$, we have $f\bigl(x - \frac{1}{L}\nabla f(x)\bigr) \le f(x) - \frac{1}{2L}\|\nabla f(x)\|^{2}$.
+    \item \textbf{[2 pts.]} Choose $\gamma_t = \frac{1}{\mu t}$ and show that
+    \[
+    \E\bigl[f(\bar{x}^{k}) - f^{*}\bigr] \le \mathcal{O}\Bigl(\frac{\log k}{k}\Bigr).
+    \]
+    \textit{Hint:} Using the fact that $1 + \frac{1}{2} + \cdots + \frac{1}{k} \sim \log k$.
+\end{enumerate}
+
+\section{D. Natural Language Processing}
+
+\subsection{Problem 1. [6 pts.]}
+You are given an encoder $f_{\theta}(\cdot)$ that maps an input sentence $x$ to a unit-norm embedding $z = f_{\theta}(x) \in \mathbb{R}^{d}$ with $\|z\|_{2} = 1$. For each anchor $x$, you sample one positive view $x^{+}$ and $n$ negatives $\{x_{i}^{-}\}_{i=1}^{n}$ from the minibatch. Denote $z^{+} = f_{\theta}(x^{+})$ and $z_{i}^{-} = f_{\theta}(x_{i}^{-})$. Consider the InfoNCE loss with temperature $\tau > 0$:
+\[
+\mathcal{L} = -\log \frac{\exp(\langle z, z^{+} \rangle / \tau)}{\exp(\langle z, z^{+} \rangle / \tau) + \sum_{i=1}^{n} \exp(\langle z, z_{i}^{-} \rangle / \tau)}.
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Gradient) Compute $\nabla_z \mathcal{L}$. Interpret your result as ``pulling'' $z$ toward $z^{+}$ and ``pushing'' $z$ away from negatives on the unit hypersphere (a tangent-space geometric interpretation is sufficient; you do not need to explicitly compute the projection).
+    \item \textbf{[3 pts.]} (High-dimensional heuristic) Assume $d \gg 1$ and that negatives are isotropic on the unit sphere. Give a heuristic for the typical scale of $\langle z, z_{i}^{-} \rangle$ (e.g., its variance / concentration around $0$), and for the largest similarity among $n$ negatives, $\max_{1 \le i \le n} \langle z, z_{i}^{-} \rangle$. Then, explain why such false negatives (some sampled negative $x_{i}^{-}$ semantically equivalent or from the same latent class as the anchor $x$ so with embedding close to $z$) can significantly hurt contrastive learning.
+\end{enumerate}
+
+\subsection{Problem 2. [6 pts.]}
+You are given a corpus of customer-support tickets from an e-commerce platform. Each ticket $d$ is a short document with tokens $w_{dn} \in \{1, \dots, V\}$ (after preprocessing). In addition, each ticket has an observed priority label $y_d \in \{0, 1\}$ (e.g., normal vs.\ urgent). The goal is to discover topics that both explain the text and help predict $y_d$.
+
+Consider a supervised topic model with $K$ topics and the following random variables:
+\begin{itemize}
+    \item document-topic proportions $\theta_d$ and topic-word distributions $\phi_k$;
+    \item token-level topic assignments $z_{dn}$ and observed words $w_{dn}$;
+    \item a document label $y_d \in \{0, 1\}$.
+\end{itemize}
+Assume Dirichlet priors $\theta_d \sim \operatorname{Dir}(\alpha)$ and $\phi_k \sim \operatorname{Dir}(\eta)$. For each document $d$ of length $N_d$, define the empirical topic-frequency vector $\bar{z}_d$ where $\bar{z}_{dk} = \frac{1}{N_d} \sum_{n=1}^{N_d} \mathbf{1}[z_{dn} = k]$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} (Modeling) Briefly explain why adding $y_d$ changes the learned topics compared with unsupervised LDA. Give one failure mode of vanilla LDA for this application that supervision can mitigate.
+    \item \textbf{[2 pts.]} (Label model) Propose a probabilistic model for $p(y_d \mid \bar{z}_d, \beta)$ with parameters $\beta \in \mathbb{R}^{K}$. You may choose logistic regression; if so, define $\sigma(u)$ and write $p(y_d \mid \bar{z}_d, \beta)$ explicitly. Briefly interpret $\beta$.
+    \item \textbf{[2 pts.]} (Sampling process) Conditioned on $(\theta_d, \Phi, \beta)$ for a fixed document $d$, specify the sampling steps that generate $(z_{d1:N_d}, w_{d1:N_d}, y_d)$, and name the distribution used at each step. Then, write the full joint probability (in factorized form; you do not need to expand normalization constants)
+    \[
+    p(\mathbf{w}, \mathbf{z}, \boldsymbol{\Theta}, \Phi, \mathbf{y} \mid \alpha, \eta, \beta),
+    \]
+    where $\boldsymbol{\Theta} = \{\theta_d\}_{d=1}^{D}$ and $\Phi = \{\phi_k\}_{k=1}^{K}$, and $\mathbf{w}, \mathbf{z}, \mathbf{y}$ denote all tokens/topics/labels. Your answer should make explicit the product structure over documents, topics, and token positions, and include the label term $p(y_d \mid \bar{z}_d, \beta)$.
+\end{enumerate}
+
+\subsection{Problem 3. [7 pts.]}
+Standard self-attention costs $O(L^{2})$ in sequence length $L$. Design a Transformer variant that can handle $L \gg 10^{4}$ while preserving both local and long-range dependencies. Choose one mechanism: (i) block-sparse attention, (ii) sliding window + global tokens, (iii) low-rank/linear attention, or (iv) recurrent memory. Your design must include a precise definition of the attention pattern/computation (e.g., an attention mask $M_{ij}$ or neighbor set $\mathcal{N}(i)$ for sparse patterns, a feature map $\phi(\cdot)$ for linear attention, or explicit read/write equations for memory).
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Mechanism) Propose your chosen mechanism and define its computation/pattern precisely. Introduce any needed hyperparameters (e.g., window size $w$, number of global tokens $g$, block size $b$, memory length $m$) and specify exactly how information is aggregated across positions. Keep it brief.
+    \item \textbf{[2 pts.]} (Complexity) Analyze the per-layer time and memory complexity of the main component (dominant terms) in terms of sequence length $L$, hidden size $d$, and your hyperparameters. You may ignore the feed-forward sublayer cost. Keep it brief.
+    \item \textbf{[2 pts.]} (Expressivity for long-range interactions) Give one argument why long-range interactions remain expressible under your mechanism. Your argument should be based on, e.g., attention-graph connectivity / diameter (how information from position $i$ can reach $j$), or information propagation across layers via global tokens / blocks / memory.
+\end{enumerate}
+
+\subsection{Problem 4. [7 pts.]}
+You are building an information-extraction system on news articles. A pipeline produces uncertain local predictions: (i) mention-to-entity linking candidates with confidence signals, and (ii) relation candidates between entities with confidence signals. You want a global model that enforces consistency and integrates evidence.
+
+An MLN defines a conditional distribution
+\[
+P(X \mid E) = \frac{1}{Z(E)} \exp\Biggl( \sum_{j=1}^{J} w_j n_j(X, E) \Biggr),
+\]
+where $E$ denotes observed evidence, $X$ denotes the set of unobserved atoms to be inferred, and $n_j(X, E)$ is the number of satisfied groundings of formula $j$. We use the following predicates:
+\begin{itemize}
+    \item Unknown (to infer): $\mathrm{Link}(m, e)$, meaning mention $m$ is linked to entity $e$; and $\mathrm{Rel}(e_1, e_2, r)$, meaning relation type $r$ holds between entities $(e_1, e_2)$.
+    \item Evidence (observed): $\mathrm{Cand}(m, e)$, indicating that $e$ is a candidate entity for mention $m$; $\mathrm{Type}(e, t)$, indicating that entity $e$ has type $t$ (e.g., Person, City, Org); $\mathrm{HighLink}(m, e)$, indicating strong local support for $\mathrm{Link}(m, e)$; and $\mathrm{HighRel}(m_1, m_2, r)$, indicating strong local support for relation type $r$ between mentions $(m_1, m_2)$.
+\end{itemize}
+Answer following questions:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[2 pts.]} (Modeling rules with weights) Using the predicates above, write MLN formulas that: (i) propagate $\mathrm{HighLink}$ and $\mathrm{HighRel}$ into the unknown variables $\mathrm{Link}$ through $\mathrm{Rel}$. (ii) implement the constraint of at most one linked entity per mention, and (iii) enforce relation--type consistency using $\mathrm{Type}(e, t)$ (e.g., argument-type constraints). Briefly discuss how you would set (relative) weights for each rule, and which constraints you would treat as hard vs.\ soft.
+    \item \textbf{[2 pts.]} (Evidence construction) In real systems, $\mathrm{HighLink}(m, e)$ and $\mathrm{HighRel}(m_1, m_2, r)$ are produced by upstream machine learning models. Describe concrete modeling approaches (architectures and objectives) to obtain these signals. Your answer should mention what the model inputs are, what it outputs (score/probability), and how $\mathrm{HighLink}$/$\mathrm{HighRel}$ is derived from that output (e.g., thresholding, top-$k$ with margin). Keep it brief.
+    \item \textbf{[3 pts.]} (Name disambiguation) Name ambiguity is severe for people in the same domain. Suppose two candidate person entities $e_{\mathrm{old}}$ and $e_{\mathrm{new}}$ share the same surface name, but their birth years differ by $500$ years. You want to leverage (i) relation evidence among people in the document and (ii) KB birth-year attributes to impose an implicit ``same-era'' constraint. Please complete and extend the MLN by introducing additional predicates and rules. Then provide the additional key formulas and their intended weight behaviors, showing how relation evidence ($\mathrm{HighRel}$) induces contemporaneity (possibly conditioned on $r$) and how birth-year attributes penalize impossible contemporaneity. Finally, provide a minimal, reasonable example context (mentions, candidate entities, and one or two relation types) explaining how the joint inference prefers linking the ambiguous mention to $e_{\mathrm{old}}$ or $e_{\mathrm{new}}$. Use a minimal example only.
+\end{enumerate}
+
+\subsection{Problem 5. [7 pts.]}
+A dialog-based NLU/QA system uses RAG as an external memory. At each turn $t$, given dialog history $H_t$, the system generate a candidate memory $c_t = \mathrm{Memorize}(H_t)$ and write into a store $\mathcal{M}_t$ (possibly with compression/tags), then retrieve top-$k$ memories $R_t = \mathrm{Retrieve}(H_t, \mathcal{M}_t, k)$, and generate an answer $\hat{y}_t = f_{\theta}(H_t, R_t)$. It may also write back summaries to update $\mathcal{M}_{t+1}$.
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{[3 pts.]} (Memory Gain) Let the test set be $\mathcal{D} = \{(H_t, y_t^{*})\}$ and $s(\hat{y}_t, y_t^{*}) \in [0, 1]$ be the evaluation score. Define the per-turn gain and total gain of the memory system as
+    \[
+    \Delta_t = s\bigl(f_{\theta}(H_t, R_t), y_t^{*}\bigr) - s\bigl(f_{\theta}(H_t, \varnothing), y_t^{*}\bigr), \qquad \Delta = \E_{(H_t, y_t^{*}) \sim \mathcal{D}} \Delta_t.
+    \]
+    Define $C_t = 1$ meaning $R_t$ contains the key memory; otherwise $C_t = 0$ with $\Pr(C_t = 0) = \epsilon$. Let $g_c = \E[\Delta_t \mid C_t = 1]$ and $g_{\neg c} = \E[\Delta_t \mid C_t = 0]$. Derive a necessary and sufficient condition for $\Delta > 0$ in terms of $\epsilon, g_c, g_{\neg c}$. In particular, when $g_c > g_{\neg c}$, show it is equivalent to
+    \[
+    \epsilon < \frac{g_c}{g_c - g_{\neg c}}.
+    \]
+    Explain in 2--3 sentences why a large $\epsilon$ makes stable positive gain hard to guarantee. (3 points)
+    \item \textbf{[4 pts.]} (Optimization) Formulate the memory mechanism as an MDP and optimize it with RL. Specify the state $s_t$, action $a_t$, and reward $r_t$. Your action should explicitly include both (i) write/merge/evict decisions under the budget constraint, and (ii) retrieval decisions (e.g., $k$, hybrid weights, query rewriting, reranking). Propose a reasonable reward that trades off answer quality and memory cost, e.g., $r_t = \Delta_t - \lambda \cdot \mathrm{Cost}(a_t)$, and state the optimization objective.
+\end{enumerate}
+
 
 \end{document}

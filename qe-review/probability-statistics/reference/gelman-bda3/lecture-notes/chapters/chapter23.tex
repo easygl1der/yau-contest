@@ -1,0 +1,207 @@
+% Chapter 23: Dirichlet Process Models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{狄利克雷过程模型}
+
+\section{本章导论}
+
+在前几章中，我们探讨了有限混合模型——用有限个组件的加权组合来刻画异质数据。在实践中，分析者必须事先指定成分的数量 $K$，这往往是一个困难的选择。Dirichlet 过程（Dirichlet Process，DP）提供了一种优雅的解决方案：允许无限多个潜在成分，让数据自适应地确定有效成分的个数。
+
+Dirichlet 过程是贝叶斯非参数统计的核心工具。它由 Ferguson (1973) 引入，是一种随机过程，其样本路径almost surely（以概率 1）是离散概率分布。这一看似特殊的性质——连续底空间上的随机概率分布却以概率 1 取离散值——正是 DP 成为非参数贝叶斯推断强大先验的根源。
+
+本章的结构如下：先从有限混合模型与 DP 的联系入手，介绍 DP 的三种等价构造（stick-breaking、Pólya urn、Chinese restaurant process），然后讨论 DP 作为未知分布的先验及其后验推断，最后介绍 DP 混合模型的计算方法。
+
+\section{从有限混合到无限混合}
+
+在有限混合模型中，我们假设数据来自 $K$ 个成分的混合：
+\[
+p(y_i | \theta_1, \ldots, \theta_K, \pi) = \sum_{k=1}^K \pi_k \, p(y_i | \theta_k),
+\]
+其中 $\pi = (\pi_1, \ldots, \pi_K)$ 是混合权重，满足 $\pi_k \ge 0$，$\sum_{k=1}^K \pi_k = 1$。
+
+一个自然的问题是：$K$ 本身能否从数据中学习，而不是预先固定？一个激进的思路是直接令 $K \to \infty$，但这在参数模型框架下并不容易处理。DP 提供了一种优雅的解决方案：先验性地将混合成分的数量设为无限，然后通过后验推断自动确定有效成分个数。
+
+Dirichlet 过程先验的核心思想是：不去直接参数化混合权重 $\pi_k$，而是假设混合权重本身来自一个随机过程，使得"有多少个有效成分"由数据决定。
+
+\section{狄利克雷过程的定义与构造}
+
+\subsection{Stick-breaking 构造}
+
+设 $G_0$ 为一个基分布（base measure），$\alpha > 0$ 为浓度参数（concentration parameter）。Dirichlet 过程 $G \sim \DP(\alpha, G_0)$ 可以通过以下 stick-breaking 构造（Sethuraman, 1994）生成：
+
+\begin{Definition}[Stick-breaking 构造]
+令 $V_1, V_2, \ldots$ 为独立同分布的 Beta 随机变量，$V_k \sim \mathrm{Beta}(1, \alpha)$。定义
+\[
+w_k = V_k \prod_{j=1}^{k-1} (1 - V_j), \quad k = 1, 2, \ldots
+\]
+则
+\[
+G = \sum_{k=1}^{\infty} w_k \, \delta_{\theta_k},
+\]
+其中 $\theta_1, \theta_2, \ldots$ 独立同分布自 $G_0$，且与 $(V_1, V_2, \ldots)$ 相互独立。
+\end{Definition}
+
+直观理解：取一根单位长度的棍子（stick），第一步折下长度为 $V_1$ 的第一段，分配给atom $\theta_1$；剩余长度为 $1-V_1$ 的棍子上，折下长度为 $(1-V_1)V_2$ 的第二段，分配给 $\theta_2$；依此类推。由于 $\prod_{j=1}^{\infty}(1-V_j) = 0$ with probability 1，这个过程永远不会终止，因此产生了无限多个atoms，但权重之和为 1。
+
+权重 $w_k$ 的期望为 $\mathbb{E}w_k = \frac{1}{1+\alpha}\left(\frac{\alpha}{1+\alpha}\right)^{k-1}$，随 $k$ 指数衰减。$\alpha$ 越大，衰减越慢，有效成分个数越多。
+
+\subsection{Pólya urn 构造}
+
+Stick-breaking 构造从"折棍子"的角度直观理解了 DP 权重的来源。另一种等价的概率视角来自 Pólya urn scheme——一种经典的随机 urn 过程。设我们有颜色（atoms）集合，urn 中每次加入一个球：
+
+\begin{enumerate}
+  \item 以概率 $\alpha/(\alpha + n-1)$ 加入一个新颜色的球（颜色为从 $G_0$ 中独立抽取的 $\theta$）；
+  \item 以概率 $(n_k)/( \alpha + n - 1)$ 加入一个颜色为 $k$ 的已有球（$n_k$ 为 urn 中颜色 $k$ 的球数）。
+\end{enumerate}
+
+这个 urn 过程产生的颜色分布恰好与 stick-breaking 构造等价。
+
+\subsection{Chinese restaurant process（中国餐厅过程）}
+
+第三种构造与中国餐厅过程的隐喻密切相关。
+
+想象一个拥有无限多张桌子的餐厅，第一位顾客随意选择一张桌子就座。第 $n$ 位顾客到来时：
+\begin{itemize}
+  \item 以概率 $\alpha/(\alpha + n - 1)$ 选择一张新桌子；
+  \item 以概率 $n_k/(\alpha + n - 1)$ 选择已有桌子 $k$（$n_k$ 为该桌已坐的顾客数）。
+\end{itemize}
+
+顾客坐在不同桌子上的概率分布恰好描述了 DP 样本中atoms的分配结构。同一桌子上的顾客可以理解为来自同一个聚类（cluster）。这就是著名的 Chinese restaurant process（CRP）。
+
+CRP 的魅力在于它将离散概率分布的随机结构编码为一个sequential partition 过程——这与统计学中聚类分析的精神高度一致：数据自然地聚集成簇，而簇的数量本身由数据决定。
+
+这三种构造实际上是等价的：stick-breaking 给出了权重的显式分布，urn 过程描述了 atoms 的依次分配，而 CRP 则是 urn 过程在聚类视角下的另一种表述。Ferguson (1973) 最初通过有限 Dirichlet 分布的类比构造了 DP；Sethuraman (1994) 的 stick-breaking 形式和 Blackwell-MacQueen (1973) 的 urn 形式则给出了更便于计算的等价表述。
+
+\begin{Remark}
+CRP 中的参数 $\alpha$ 控制聚类个数的"先验期望"。$\alpha$ 越小，倾向于更少的聚类；$\alpha$ 越大，倾向于更多的聚类。这与直觉一致：$\alpha$ 作为浓度参数，在 stick-breaking 中控制了权重衰减的速度。
+\end{Remark}
+
+\section{DP 作为未知分布的先验}
+
+DP 的核心应用是作为未知分布 $F$ 的先验。设我们希望从分布 $F$ 中抽取独立样本 $x_1, \ldots, x_n$，但对 $F$ 的形式一无所知。
+
+一个非参数的思路是：对 $F$ 赋予先验，然后在后验下进行推断。DP 正是这样一个先验：
+\[
+F \sim \DP(\alpha, G_0).
+\]
+
+具体而言，我们假设：
+\[
+\theta_i | F \stackrel{\mathrm{iid}}{\sim} F, \quad F \sim \DP(\alpha, G_0),
+\]
+其中 $G_0$ 是一个参数化的分布（如正态分布），$\alpha$ 控制先验的灵活性。
+
+由于 $G$ 的样本路径是离散分布，我们可以将模型等价地写为：
+\[
+\theta_i \stackrel{\mathrm{iid}}{\sim} G, \quad G \sim \DP(\alpha, G_0).
+\]
+但更常见的是直接积分掉 $G$，得到 $\theta_i$ 的边缘分布——这正是下一节要讨论的折棍（stick-breaking）表示的核心应用。
+
+\section{后验推断}
+
+给定观测数据 $\mathbf{x} = (x_1, \ldots, x_n)$，DP 先验下的后验推断有一个优雅的形式。
+
+假设基分布 $G_0$ 是某个参数 $\phi$ 的分布，即 $x_i | \phi \sim p(x | \phi)$，且 $\phi \sim G_0$。那么后验有如下形式：\footnote{推导见附录 \cref{sec:dp-posterior-derivation}}
+\[
+G | \mathbf{x} \sim \DP\!\left(\alpha + n, \frac{\alpha}{\alpha + n} G_0 + \frac{n}{\alpha + n} \cdot \frac{1}{n}\sum_{i=1}^n \delta_{x_i}\right).
+\]
+
+这一结果表明：后验等价于在先验 $G_0$ 的基础上"添加"了经验分布的 contribution。具体而言：
+\begin{itemize}
+  \item 有效样本量从 $\alpha$ 增加到 $\alpha + n$；
+  \item 后验基分布是 $G_0$ 与经验分布 $\frac{1}{n}\sum_i \delta_{x_i}$ 的加权平均，权重分别为 $\frac{\alpha}{\alpha+n}$ 和 $\frac{n}{\alpha+n}$。
+\end{itemize}
+
+预测分布也有简洁形式。设新观测为 $\tilde{x}$，则其后验预测分布为：\footnote{推导见附录 \cref{sec:dp-predictive-derivation}}
+\[
+p(\tilde{x} | \mathbf{x}) = \frac{\alpha}{\alpha + n} \, G_0(\tilde{x}) + \sum_{k=1}^{K_n} \frac{n_k}{\alpha + n} \, \delta_{\theta_k}(\tilde{x}),
+\]
+其中 $K_n$ 是有效聚类个数，$n_k$ 是第 $k$ 个聚类中的点数，$\theta_k$ 是对应的聚类参数。
+
+也就是说，新数据点有概率 $\alpha/(\alpha+n)$ 来自基分布 $G_0$（产生一个新聚类），有概率 $n_k/(\alpha+n)$ 落在第 $k$ 个已有聚类中（与该聚类的数据共享参数 $\theta_k$）。这正是 CRP 的 predictive probability。
+
+\section{DP 混合模型}
+
+DP 混合模型（Dirichlet process mixture model, DPM）是 DP 先验在密度估计中的主要应用形式。模型设定为：
+\[
+x_i | \theta_i \sim p(x | \theta_i), \quad \theta_i | G \stackrel{\mathrm{iid}}{\sim} G, \quad G \sim \DP(\alpha, G_0).
+\]
+
+与有限混合模型相比，DPM 的关键区别在于：成分的数量是无限的（由 stick-breaking 过程产生），而有效成分的个数由数据通过后验推断自动确定。
+
+从聚类角度看，DPM 自然地产生了一个 partition——数据被划分为若干聚类，每个聚类内的数据共享同一参数 $\theta_k$。这个 partition 是随机且自适应的，与 CRP 的 sequential partition 精神一致。
+
+\section{计算方法}
+
+DP 混合模型的计算核心挑战在于：stick-breaking 构造涉及无限多个 atoms，而后验中 atoms 的个数同样是无限的。MCMC 方法是处理这一问题的主要工具。
+
+\subsection{Blocked Gibbs 采样器}
+
+一种直接的方法是引入隐含的聚类分配指标 $\mathbf{c} = (c_1, \ldots, c_n)$，其中 $c_i = k$ 表示 $x_i$ 属于第 $k$ 个聚类。
+
+全条件后验分布为：
+\[
+p(c_i = k | \mathbf{c}_{-i}, \mathbf{x}, \alpha) \propto
+\begin{cases}
+n_{-i,k} \cdot p(x_i | \theta_k, \mathbf{x}_{-i}) & \text{if } k \text{ is an existing cluster}, \\
+\alpha \cdot p(x_i | \theta_{\mathrm{new}}, G_0) & \text{if } k \text{ is a new cluster}.
+\end{cases}
+\]
+其中 $n_{-i,k}$ 是除 $i$ 外属于第 $k$ 个聚类的数据点数。
+
+然后从各自的后验分布中采样 $\theta_k$。这个过程在 $c_i$ 和 $\theta_k$ 之间交替进行，即 blocked Gibbs 采样。
+
+\subsection{Chinese Restaurant Process 采样}
+
+CRP 的视角给出了一种更直觉的采样方案。已知完整数据下的 CRP predictive probability，Gibbs 采样可以直接对聚类分配进行更新，而无需显式处理无限多个 atoms。
+
+具体而言，对于数据点 $i$，计算其属于现有聚类 $k$ 和属于新聚类的概率，然后按概率重新分配。这个方法在高维数据和中等规模数据集上通常效率较高。
+
+\section{应用举例}
+
+\begin{Example}[基于 DP 聚类的密度估计]
+假设我们有一组来自混合分布的观测数据，数据中存在两个自然聚类，但分析者事先并不知道聚类的个数。
+
+应用 DPM 模型，设成分分布为正态分布 $N(\mu_k, \sigma^2_k)$，基分布 $G_0$ 取为 Normal-Inverse-Gamma 共轭先验。MCMC 采样将自动：
+\begin{itemize}
+  \item 在后验中探索不同的聚类个数；
+  \item 收敛到数据中真实存在的聚类结构；
+  \item 提供每个聚类的参数后验分布。
+\end{itemize}
+\end{Example}
+
+DP 混合模型在以下场景中尤为有用：
+\begin{itemize}
+  \item 密度估计：当数据具有未知数量的峰（modes）时；
+  \item 聚类分析：当聚类个数事先未知，且聚类结构可能随协变量变化时；
+  \item 随机过程建模：如隐马尔可夫模型的状态转移矩阵非参数化推广；
+  \item 函数逼近：如 DP 基函数回归（DP mixture of regressions）。
+\end{itemize}
+
+\section{与其他非参数方法的联系}
+
+DP 并非唯一的贝叶斯非参数工具。在密度估计中，高斯过程（见 Chapter 21）提供了函数空间上的先验，Dirichlet 过程则提供了分布空间上的先验。
+
+从数学上看，DP 是概率分布空间 $\mathcal{P}$ 上的先验（其样本是离散分布），而高斯过程是函数空间上的先验（其样本是函数曲线）。两者在无限维参数空间中都实现了"让数据自适应确定有效复杂度"的思想，但在应用层面：DP 更适合聚类、密度估计和混合模型；高斯过程更适合函数回归、时空建模。
+
+一个有用的视角是：DP 是有限维 Dirichlet 分布 $\mathrm{Dir}(\alpha_1, \ldots, \alpha_K)$ 在 $K \to \infty$ 时的推广。有限维 Dirichlet 分布是定义在 $K$ 维单纯形上的分布，其样本是 $K$ 维向量 $(w_1, \ldots, w_K)$；DP 则是其无限维推广，样本是无限维的离散分布。
+
+历史上，Ferguson (1973) 正是通过有限 Dirichlet 分布的类比，构造了无穷维 Dirichlet 过程。这一构造在数学上优雅，在应用中有效，是 20 世纪贝叶斯统计最重要的进展之一。
+
+\section{本章小结}
+
+本章我们学习了：
+\begin{enumerate}
+  \item Dirichlet 过程是定义在概率分布空间上的随机过程，其样本路径几乎 surely 是离散分布；
+  \item DP 有三种等价的构造方式：stick-breaking 构造、Pólya urn 构造和中国餐厅过程（CRP）；
+  \item 作为未知分布的先验，DP 的后验有简洁的闭式形式；
+  \item DP 混合模型（DPM）将 DP 先验与参数化成分分布结合，实现了无限混合的自然贝叶斯非参数建模；
+  \item 主要的计算方法包括 blocked Gibbs 采样和 CRP 采样；
+  \item DP 是有限 Dirichlet 分布在无限维的自然推广，由 Ferguson (1973) 开创。
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将转向更深入的贝叶斯计算方法，讨论如何在大规模问题中高效地进行贝叶斯推断。
+
+\endinput

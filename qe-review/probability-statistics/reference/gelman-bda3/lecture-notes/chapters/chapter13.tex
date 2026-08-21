@@ -1,0 +1,472 @@
+% Chapter 13: Modal and Distributional Approximations
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{模态与分布近似}
+
+\section{本章导论}
+
+在前几章中，我们探讨了蒙特卡洛模拟方法来逼近后验分布。对于低维问题，直接抽样或拒绝抽样往往已经足够；而对于更复杂的模型，马尔可夫链蒙特卡洛（MCMC）提供了通用的迭代模拟框架。然而，在超高维问题中，即便是 MCMC 也可能面临计算瓶颈——每步迭代需要遍历整个参数空间，而在高维曲面上的"随机行走"（random walk）行为会导致混合（mixing）极慢。
+
+这就引出了本章的核心问题：\textbf{当我们不需要完整的后验分布，而只需要快速近似推断时，是否存在比迭代模拟更高效的方法？}
+
+答案在于\textbf{模态与分布近似}。其基本思想是：首先找到后验分布的众数（mode）——即最可能出现的参数值——然后在众数附近用解析形式（如正态分布或其混合）来近似完整的后验。这种近似方法有三方面的价值：
+
+\begin{enumerate}
+\item \textbf{快速推断}：无需运行耗时的 MCMC 链，直接从近似分布抽样或计算矩；
+\item \textbf{MCMC 的初始化}：找到的后验众数可以作为 MCMC 的起点，加速收敛；
+\item \textbf{诊断工具}：比较近似分布与实际模拟结果，可以检验模型拟合质量。
+\end{enumerate}
+
+本章将依次介绍：寻找后验众数的算法（\cref{sec:finding-posterior-modes}）；避免边界估计的先验分布选择（\cref{sec:boundary-avoiding-priors}）；基于众数的正态及混合近似（\cref{sec:normal-approx}）；EM 算法及其变体用于寻找边缘众数（\cref{sec:em-algorithm}）；以及两种基于条件矩的近似方法——变分贝叶斯（\cref{sec:variational-bayes}）和期望传播（\cref{sec:expectation-propagation}）。
+
+\section{寻找后验众数}\label{sec:finding-posterior-modes}
+
+\subsection{动机：为什么关注众数？}
+
+在后验分布 $p(\theta|y)$ 中，众数 $\hat{\theta}$ 是概率密度最大的点。当后验分布近似正态或仅有一个对称峰时，众数与后验均值、后验中位数三者重合，是良好的点估计。但在非对称或多峰分布中，众数可能远离分布中心——这一点在分层模型中方差参数的后验上尤为明显（见 \cref{sec:boundary-avoiding-priors}）。
+
+更重要的是，在构建解析近似（如正态近似）时，我们需要知道：\textbf{在哪里近似？曲率多大？} 这两个信息都隐含在众数及其二阶导数中。因此，寻找后验众数是构建分布近似的第一步。
+
+\subsection{条件最大化}\label{sec:conditional-maximization}
+
+最直接的众数寻找方法是\textbf{条件最大化}（conditional maximization），又称逐步上升法（stepwise ascent）。其基本步骤如下：
+
+\begin{enumerate}
+\item 选择参数空间的某个初始点 $\theta^{(0)}$；
+\item 固定部分参数，更新其余参数使对数后验密度上升；
+\item 交替更新，直到对数后验密度变化小于预设阈值。
+\end{enumerate}
+
+在许多标准统计模型中，条件分布 $p(\theta_i | \theta_{-i}, y)$ 具有解析形式，最大化容易实现。例如在分层正态模型中，给定其他组参数后，单个组均值的后验条件分布是正态的，直接取其均值即可完成一次更新。
+
+条件最大化的优点是简单且稳定，缺点是可能收敛较慢，且只能找到初始点附近的一个局部众数。要找到多个众数，需要从参数空间的不同位置多次启动算法。
+
+\begin{Example}[EM 算法的特例——逐步上升]\label{ex:conditional-maximization}
+考虑经典的两参数正态模型：$y_i \sim N(\mu, \sigma^2)$，先验取部分共轭形式。令 $\theta = (\mu, \sigma^2)$，对数后验为
+\[
+\log p(\mu, \sigma^2 | y) = -\frac{n}{2}\log\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - \mu)^2 + \text{常数}.
+\]
+固定 $\sigma^2$（取当前估计值 $\sigma_{\text{old}}^2$），对 $\mu$ 求导并令其为零，得
+\[
+\hat{\mu} = \frac{1}{n}\sum_{i=1}^n y_i,
+\]
+即样本均值——这正是逐步上升法的一次更新。反过来固定 $\mu$ 可得 $\sigma^2$ 的更新公式。交替迭代即条件最大化。
+\end{Example}\footnote{推导见附录 \cref{sec:conditional-maximization-derivation}。}
+
+\subsection{牛顿法}\label{sec:newtons-method}
+
+\textbf{牛顿法}（Newton's method，或 Newton-Raphson 算法）是寻找后验众数的另一核心工具。其基本思想是对对数后验密度 $L(\theta) = \log p(\theta|y)$ 在当前点附近做二次泰勒展开：
+
+\[
+L(\theta) \approx L(\theta^{(t)}) + L'(\theta^{(t)})^\top (\theta - \theta^{(t)}) + \frac{1}{2}(\theta - \theta^{(t)})^\top L''(\theta^{(t)})(\theta - \theta^{(t)}).
+\]
+
+令梯度为零，求得迭代公式：
+\begin{equation}\label{eq:newton-update}
+\theta^{(t+1)} = \theta^{(t)} - [L''(\theta^{(t)})]^{-1} L'(\theta^{(t)}).
+\end{equation}
+
+其中 $L'(\theta)$ 是一阶导数向量，$L''(\theta)$ 是二阶导数矩阵（Hessian 矩阵）。当后验分布近似正态时——即在大样本极限下（见第四章）——二次近似非常准确，牛顿法展现出\textbf{二次收敛}速度：误差以平方速率下降。
+
+\begin{Remark}[初始值的重要性]
+牛顿法对初始值敏感。如果初始点选在 $L''$ 非正定的区域，迭代可能发散。实践中可先用条件最大化获得一个合理的初始点，再启动牛顿法加速收敛。
+\end{Remark}
+
+\begin{Example}[一维牛顿法]\label{ex:newton-1d}
+设后验密度 $p(\theta|y) \propto \exp(-\frac{1}{2}\theta^2)$（标准正态），则 $L(\theta) = -\frac{1}{2}\theta^2 + \text{常数}$，$L'(\theta) = -\theta$，$L''(\theta) = -1$。代入 \cref{eq:newton-update} 得
+\[
+\theta^{(t+1)} = \theta^{(t)} - \frac{-\theta^{(t)}}{-1} = 0,
+\]
+一步即收敛到真值。这反映了正态后验下牛顿法的卓越表现。
+\end{Example}\footnote{推导见附录 \cref{sec:newton-derivation}。}
+
+\subsection{拟牛顿法与共轭梯度法}\label{sec:quasi-newton}
+
+计算和存储完整的 Hessian 矩阵 $L''(\theta)$ 在高维问题中代价高昂。\textbf{拟牛顿法}（quasi-Newton methods）——如 BFGS（Broyden-Fletcher-Goldfarb-Shanno）算法——仅利用梯度信息迭代逼近 $-L''$，避免了二阶导数的直接计算。
+
+\textbf{共轭梯度法}（conjugate gradient methods）同样只需一阶导数，但通过共轭方向公式构造优化方向，比最速下降法效率更高，在存储受限的高维问题中尤为有用。
+
+\subsection{数值导数计算}\label{sec:numerical-derivatives}
+
+当对数后验的解析导数难以求出时，可用有限差分近似：
+\begin{equation}\label{eq:numerical-first-derivative}
+L'_i(\theta) \approx \frac{L(\theta + \delta_i e_i) - L(\theta - \delta_i e_i)}{2\delta_i},
+\end{equation}
+其中 $e_i$ 是第 $i$ 个标准基向量，$\delta_i$ 是小量（通常取 $10^{-4}$）。二阶导数的数值估计为
+\begin{equation}\label{eq:numerical-second-derivative}
+L''_{ij}(\theta) \approx \frac{L(\theta + \delta_i e_i + \delta_j e_j) - L(\theta - \delta_i e_i + \delta_j e_j) - L(\theta + \delta_i e_i - \delta_j e_j) + L(\theta - \delta_i e_i - \delta_j e_j)}{4\delta_i \delta_j}.
+\end{equation}
+数值导数的缺点是计算量随维度平方增长，但实现简单，适合调试阶段与解析梯度交叉验证。
+
+\section{避免边界估计的先验分布}\label{sec:boundary-avoiding-priors}
+
+\subsection{问题：后验众数落在边界上}\label{sec:mode-on-boundary}
+
+在后验分布的单峰接近参数空间边界时，以众数作为点估计会产生不合理的结论。最典型的例子是分层模型中方差参数 $\tau$（组间标准差）的后验分布。
+
+考虑 \cref{fig:tau-posterior}（图 13.1）所示的 8 所学校例子。边缘后验 $p(\tau|y)$ 的众数恰好在 $\tau = 0$——这意味着点估计告诉我们：所有学校的辅导效果完全相同（即 $\tau = 0$ 对应零方差）。但从实质角度看，我们不相信效应真精确为零；后验分布集中在 $\tau$ 的一个小邻域内，只是似然函数在零附近较为平坦，导致后验密度在边界处达到峰值。
+
+\begin{figure}[htbp]
+\centering
+\caption{8 所学校例子中 $\tau$ 的边缘后验密度 $p(\tau|y)$。若用众数概括此分布，将得到 $\hat{\tau} = 0$，即边界估计。}\label{fig:tau-posterior}
+\end{figure}
+
+问题在于：\textbf{从贝叶斯全后验角度看，$\tau = 0$ 本身无概率（它是连续参数空间中的一个零测集），边缘后验分布本身并无问题；但以众数作为点估计则选了一个边界值。}
+
+\subsection{避免 $\tau$ 边界估计的先验}\label{sec:zero-avoiding-prior-tau}
+
+如果我们的目标是用后验众数来概括分布（可能出于计算便利或快速近似的目的），则应选择使后验众数\textbf{远离边界}的先验分布。
+
+对于组间标准差 $\tau > 0$，我们要求先验 $p(\tau)$ 在 $\tau = 0$ 处为零，从而保证后验众数不在边界上。几种常见选择：
+
+\begin{itemize}
+\item \textbf{对数正态}：$\log\tau \sim N(\mu_\tau, \sigma_\tau^2)$，但其在零附近衰减过快，可能排除太多合理的小值；
+\item \textbf{逆 gamma}：$\tau^2 \sim \text{Inv-gamma}(\alpha_\tau, \beta_\tau)$，同样在零附近有有效下界；
+\item \textbf{Gamma$(2, A^2)$}：\textbf{本书推荐}，其中 $A$ 是尺度参数。该先验在 $\tau = 0$ 处为零但线性增长，保证先验密度在零附近不会压倒似然函数。
+\end{itemize}
+
+Gamma$(2, A^2)$ 的优势在于：它在 $\tau = 0$ 处的导数为正（线性增长），而非对数正态或逆 gamma 那般迅速趋于零或无穷。这使得无论似然函数在零附近多平坦，后验密度都不会被先验"截断"。
+
+\begin{Remark}[与全贝叶斯推断的对比]
+若目标是后验模拟（而非众数点估计），则无必要使用边界回避先验。通常使用均匀先验或半 Cauchy 先验（见第五章），它们允许 $\tau$ 取任意小值而不产生边界效应。本节的边界回避先验专为\textbf{以众数为总结量}的场景设计。
+\end{Remark}
+
+\subsection{相关系数的边界回避先验}\label{sec:boundary-avoiding-correlation}
+
+在多维分层模型中，相关矩阵的参数 $\rho$ 也有类似问题。若后验分布的众数落在 $\rho = \pm 1$（对应奇异协方差矩阵），则基于众数的点估计将给出退化的结论。
+
+解决思路相同：用先验 $p(\rho) \propto (1-\rho^2)$（即 $\text{Beta}(2,2)$ 分布在 $\rho = \cos\pi U$ 下的像），该先验在 $\rho = \pm 1$ 处为零但线性增长，从而保证后验众数不会落在边界。
+
+更一般地，对于 $d \times d$ 协方差矩阵，Wishart$(d+3, A\mathbb{I})$ 先验在协方差矩阵退化时趋于零，是协方差矩阵众数估计的默认边界回避选择。
+
+\section{正态及混合近似}\label{sec:normal-approx}
+
+\subsection{基于众数曲率的多元正态近似}\label{sec:normal-at-mode}
+
+找到后验众数 $\hat{\theta}$ 后，可以利用二阶导数构建正态近似。对对数后验做二次展开：
+
+\[
+\log p(\theta|y) \approx \log p(\hat{\theta}|y) - \frac{1}{2}(\theta - \hat{\theta})^\top \underbrace{[-L''(\hat{\theta})]}_{V_\theta^{-1}} (\theta - \hat{\theta}),
+\]
+即
+\begin{equation}\label{eq:normal-approx}
+p(\theta|y) \approx N(\theta | \hat{\theta}, V_\theta), \quad V_\theta = [-L''(\hat{\theta})]^{-1}.
+\end{equation}
+
+这里的方差矩阵 $V_\theta$ 正是 Fisher 信息矩阵的近似——它度量了后验分布在众数附近的曲率。
+
+\begin{Remark}[参数变换]
+在应用 \cref{eq:normal-approx} 之前，通常需要对参数做变换（如取对数、logit 变换），使得变换后的后验分布接近对称且定义在整个实数轴上。变换后需乘以雅可比行列式的绝对值来修正密度。
+\end{Remark}
+
+\subsection{拉普拉斯方法}\label{sec:laplace-method}
+
+\textbf{拉普拉斯方法}是逼近形式为 $\int h(\theta)p(\theta|y)\,d\theta$ 的积分的解析工具。在实际统计计算中，我们经常需要计算后验均值 $\mathbb{E}(h(\theta)|y)$ 或后验矩——这些本质上都是上述形式的积分。当 $h(\theta)$ 平滑且后验分布近似正态时，拉普拉斯方法提供了高效的近似。
+
+其核心思想是：用 $p(\theta|y)$ 在其众数处的正态近似来代替 $p$ 本身。具体地，对 $u(\theta) = \log(h(\theta)p(\theta|y))$ 在其众数 $\theta_0$ 处做二次展开：
+
+\[
+\int h(\theta)p(\theta|y)\,d\theta \approx h(\theta_0)p(\theta_0|y)(2\pi)^{d/2} | -u''(\theta_0) |^{-1/2}.
+\label{eq:laplace-integral-approx}
+\]
+其中 $u(\theta) = \log(h(\theta)p(\theta|y))$，$\theta_0$ 是其众数点。当 $h(\theta)$ 平滑且后验分布近似正态时（典型的大样本情形），该近似质量良好。拉普拉斯方法尤其适用于单峰后验分布；对于多峰情形，可对每个峰分别应用，然后组合。
+
+从 \cref{eq:normal-approx} 的正态近似出发，可以进一步构造\textbf{多元 $t$ 近似}——用 $t$ 分布替代正态，引入额外的自由度参数 $\nu$ 以捕获更厚的尾部：
+\[
+p_t(\theta) \propto \left( \nu + (\theta - \hat{\theta})^\top V_\theta^{-1} (\theta - \hat{\theta}) \right)^{-(d+\nu)/2}.
+\]
+
+\subsection{多峰情形的混合近似}\label{sec:mixture-approx}
+
+当后验分布有 $K$ 个分离良好的峰时，单一正态近似失效。此时可将后验近似为\textbf{多元正态混合分布}：
+
+\begin{equation}\label{eq:normal-mixture}
+p(\theta|y) \approx \sum_{k=1}^K \omega_k \, N(\theta | \hat{\theta}_k, V_k),
+\end{equation}
+其中 $\hat{\theta}_k$、$V_k$ 和 $\omega_k$ 分别是第 $k$ 个峰的位置、协方差矩阵和相对权重。权重可通过在各峰处匹配未归一化后验密度来估计：
+\[
+\omega_k \propto q(\hat{\theta}_k|y) \, |V_k|^{1/2},
+\]
+其中 $q(\theta|y)$ 是未归一化后验密度。
+
+从混合近似中抽样也很直接：首先根据混合权重 $\{\omega_k\}$ 做多项式抽样选出某个成分，然后从相应的正态（或 $t$）分布中抽样。该样本可用于重要性抽样或重要性重抽样（见第十章），以获得更接近真实后验的样本。
+
+\begin{Example}[双峰后验的混合近似]\label{ex:bimodal-mixture}
+考虑一个分层模型，其边缘后验 $p(\tau|y)$ 具有双峰——一个在 $\tau$ 较小的区域（对应同质性假设），另一个在较大的区域（对应异质性假设）。设两峰分别为 $\hat{\tau}_1 = 0.1$ 和 $\hat{\tau}_2 = 4.5$，对应的曲率半径估计为 $V_1 = 0.05^2$、$V_2 = 1.2^2$。则
+\[
+p(\tau|y) \approx \omega_1 N(\tau | 0.1, 0.05^2) + \omega_2 N(\tau | 4.5, 1.2^2),
+\]
+其中 $\omega_1 + \omega_2 = 1$。若 $q(\hat{\tau}_1|y) = 0.3$、$q(\hat{\tau}_2|y) = 0.7$，且 $|V_1|^{1/2} = 0.05$、$|V_2|^{1/2} = 1.2$，则 $\omega_1 \propto 0.3 \times 0.05 = 0.015$，$\omega_2 \propto 0.7 \times 1.2 = 0.84$，归一化后 $\omega_1 \approx 0.018$、$\omega_2 \approx 0.982$。
+\end{Example}
+
+\section{EM 算法寻找边缘后验众数}\label{sec:em-algorithm}
+
+\subsection{从联合众数到边缘众数}\label{sec:joint-to-marginal}
+
+在多参数问题中，联合后验的众数往往不是关注参数的最好近似起点。例如在分层模型中，我们可能只关心组间方差 $\tau$ 的后验分布，而非所有学校效应 $\theta_j$ 的联合后验。此时应寻找 $p(\phi|y)$ 的众数（$\phi$ 是感兴趣参数），而非 $p(\theta|y)$ 的。
+
+\textbf{EM 算法}（expectation-maximization algorithm）正是为这一场景设计的：它将隐变量（或缺失数据）$\gamma$ 引入模型，交替执行"求期望"（E步）和"最大化"（M步），逐步找到边缘后验 $p(\phi|y)$ 的众数。
+
+\subsection{EM 算法的推导}\label{sec:em-derivation}
+
+设我们观察数据为 $y$，完整数据为 $(y, \gamma)$，参数为 $\phi$。考虑恒等式
+\[
+\log p(\phi|y) = \log p(\gamma, \phi|y) - \log p(\gamma|\phi, y),
+\]
+对 $\gamma$ 取期望（使用当前估计 $\phi^{\text{old}}$ 下的条件分布 $p(\gamma|\phi^{\text{old}}, y)$）：
+
+\[
+\log p(\phi|y) = E_{\gamma|\phi^{\text{old}}, y}\!\left[ \log p(\gamma, \phi|y) \right] - E_{\gamma|\phi^{\text{old}}, y}\!\left[ \log p(\gamma|\phi, y) \right].
+\label{eq:em-log-identity}
+\]
+
+第二项在 $\phi = \phi^{\text{old}}$ 处取最大值（因为条件分布的熵在 $\phi$ 变化时不减）。因此，若我们找到一个 $\phi^{\text{new}}$ 使得第一项增大，则 $\log p(\phi^{\text{new}}|y) > \log p(\phi^{\text{old}}|y)$。这正是 EM 算法的核心洞察。
+
+定义 Q 函数：
+\[
+Q(\phi|\phi^{\text{old}}) = E_{\gamma|\phi^{\text{old}}, y}\!\left[ \log p(\gamma, \phi|y) \right],
+\]
+则 EM 算法的每步迭代为：
+\begin{enumerate}
+\item \textbf{E 步}：计算 $Q(\phi|\phi^{(t)})$；
+\item \textbf{M 步}：求 $\phi^{(t+1)} = \arg\max_\phi Q(\phi|\phi^{(t)})$。
+\end{enumerate}
+
+由于对数后验在每步迭代中单调递增，EM 算法必收敛到局部众数。
+
+\begin{Theorem}[EM 算法的单调性]\label{th:em-monotonicity}
+若每步迭代满足 $Q(\phi^{(t+1)}|\phi^{(t)}) \geq Q(\phi^{(t)}|\phi^{(t)})$，则对数边缘后验密度单调不减：$\log p(\phi^{(t+1)}|y) \geq \log p(\phi^{(t)}|y)$。
+\end{Theorem}\footnote{证明见附录 \cref{sec:em-monotonicity-proof}。}
+
+GEM（广义 EM）算法放松了 M 步的要求——只需\textbf{增加} $Q$ 而非严格最大化。当 $Q$ 的最大化困难时（如参数有约束），GEM 通过在可行方向上做条件最大化来更新。
+
+\begin{Example}[正态均值与方差的部分共轭模型]\label{ex:normal-mean-variance-em}
+设 $y_1, \ldots, y_n \sim N(\mu, \sigma^2)$，先验 $\mu \sim N(\mu_0, \tau_0^2)$，$\log\sigma$ 上取无信息均匀先验。此模型非完全共轭，无闭合形式边缘后验。我们用 EM 找 $\mu$ 的边缘后验众数（对 $\sigma$ 积分）。
+
+令 $\gamma = \sigma^2$（隐变量），$\phi = \mu$。对数联合后验为
+\[
+\log p(\mu, \sigma^2|y) = -\frac{n+1}{2}\log\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - \mu)^2 - \frac{(\mu - \mu_0)^2}{2\tau_0^2} + \text{常数}.
+\label{eq:normal-joint-log}
+\]
+
+E 步中，需求 $E_{\sigma^2|\mu^{\text{old}}, y}[(\sigma^2)^{-1}]$。给定 $\mu$ 时，$\sigma^2|\mu, y \sim \text{Inv-}\chi^2(n, s_{\text{old}}^2)$，其中 $s_{\text{old}}^2 = \frac{1}{n}\sum_i (y_i - \mu^{\text{old}})^2$。于是 $E[(\sigma^2)^{-1}] = n / s_{\text{old}}^2$。
+
+将 \cref{eq:normal-joint-log} 中的 $E_{\sigma^2|\mu^{\text{old}}, y}[(\sigma^2)^{-1}]$ 替换为 $n/s_{\text{old}}^2$，得 Q 函数的表达式。该 Q 函数关于 $\mu$ 是二次的（具有正态对数核的形式），直接对 $\mu$ 求导并令其为零，得 M 步更新公式：
+\[
+\mu^{\text{new}} = \frac{\frac{1}{\tau_0^2}\mu_0 + n\frac{\bar{y}}{s_{\text{old}}^2}}{\frac{1}{\tau_0^2} + \frac{n}{s_{\text{old}}^2}}.
+\label{eq:mu-new}
+\]
+迭代此式即收敛到 $\mu$ 的边缘后验众数。
+\end{Example}\footnote{详细推导见附录 \cref{sec:normal-em-derivation}。}
+
+\subsection{EM 的变体}\label{sec:em-variants}
+
+\begin{itemize}
+\item \textbf{ECM 算法}：将 M 步替换为一系列条件最大化（CM 步）。每步只更新参数的一个子集，同时约束其他子集保持不变。这在参数有约束（如协方差矩阵必须正定）时特别有用。
+
+\item \textbf{PX-EM（参数展开 EM）}：引入额外的扩展参数以加速收敛。核心思想是：如果原始参数的后验曲面曲率变化剧烈，EM 收敛缓慢；通过重新参数化（引入"伪数据"或"展开参数"）使 $Q$ 函数更接近二次，可显著加速。
+\end{itemize}
+
+\begin{Remark}[调试 EM]
+计算每步迭代后的对数边缘后验密度 $\log p(\phi^{(t)}|y)$，检查其是否单调递增。若出现下降，说明 E 步或 M 步实现有误。这是验证 EM 实现正确性的标准检查。
+\end{Remark}
+
+\section{变分贝叶斯}\label{sec:variational-bayes}
+
+\subsection{动机：为什么需要变分近似？}\label{sec:variational-motivation}
+
+EM 算法找到的是边缘后验的众数，而非整个后验分布。在许多场景下，我们希望获得后验的完整近似——包括均值、方差以及边缘分布。但对于复杂模型，精确计算后验分布的积分是 intractable 的（维数灾难）。
+
+\textbf{变分贝叶斯}（Variational Bayes，VB）提供了一种替代方案：它寻找一个形式简单的近似分布 $q(\theta)$ 来逼近真实后验 $p(\theta|y)$，同时保证计算可行。其核心是最小化 $q$ 与 $p$ 之间的 KL 散度：
+
+\[
+q^* = \arg\min_q \, \text{KL}\!\left( q(\theta) \, \| \, p(\theta|y) \right).
+\]
+
+与 MCMC 相比，变分贝叶斯的优点是\textbf{确定性}（无随机模拟误差）、\textbf{快速}（只需迭代优化少数变分参数）；缺点是近似质量依赖于近似分布的假设形式，无法保证捕获后验的所有特征。
+
+\subsection{平均场变分近似}\label{sec:mean-field}
+
+变分贝叶斯最常用的假设是\textbf{平均场}（mean-field）近似：设 $q(\theta)$ 可以分解为各参数子群因子的乘积，
+\[
+q(\theta) = \prod_{j=1}^J q_j(\theta_j),
+\]
+其中 $\theta = (\theta_1, \ldots, \theta_J)$ 是参数的一个划分，各子群内部可能包含多个原始参数。
+
+在该假设下，最优因子 $q_j^*(\theta_j)$ 满足：
+\[
+\log q_j^*(\theta_j) = E_{-j}\!\left[ \log p(\theta, y) \right] + \text{常数}.
+\label{eq:variational-update}
+\]
+其中 $E_{-j}[\cdot]$ 表示对除 $\theta_j$ 以外所有其他参数取期望（在当前变分分布 $q_{-j}$ 下）。
+
+\cref{eq:variational-update} 表明：\textbf{每个因子的最优形式由对数联合密度的期望决定}。若该期望是某个标准分布的核（kernel），则 $q_j^*$ 即为该标准分布——这意味着变分更新具有解析形式。
+
+\begin{Example}[8 学校模型的变分贝叶斯]\label{ex:vb-8schools}
+在 8 学校分层模型中，参数分为三组：学校效应 $\alpha = (\alpha_1, \ldots, \alpha_8)$、总体均值 $\mu$ 和组间标准差 $\tau$。设平均场近似 $q(\alpha, \mu, \tau) = q_\alpha(\alpha) \, q_\mu(\mu) \, q_\tau(\tau)$，则各因子的最优更新为：
+
+\begin{itemize}
+\item $q_\alpha(\alpha_j) = N(M_{\alpha_j}, S_{\alpha_j}^2)$，其中均值和方差依赖于 $q_\mu$ 和 $q_\tau$ 的当前矩；
+\item $q_\mu(\mu) = N(M_\mu, S_\mu^2)$；
+\item $q_\tau(\tau)$ 取某非标准形式（难以解析积分），实践中用数值近似或重新参数化。
+\end{itemize}
+
+\cref{fig:vb-convergence} 展示了一个典型运行中的迭代收敛过程：变分参数在约 50 次迭代后趋于稳定，KL 散度逐步下降（由算法保证单调性）。
+\end{Example}
+
+\begin{figure}[htbp]
+\centering
+\caption{8 学校模型的变分贝叶斯迭代过程。各变分参数（均值和标准差）在约 50 次迭代后收敛。右下图为 KL 散度 $\text{KL}(g\|p)$ 随迭代的变化（任意常数偏移），可见其单调下降。}\label{fig:vb-convergence}
+\end{figure}
+
+\subsection{变分推断的局限性}\label{sec:variational-limitations}
+
+变分近似假设后验可分解为独立因子的乘积，这在许多实际场景中并不成立——尤其是当参数间存在强相关时。平均场近似会\textbf{低估后验方差}（因为假设独立等价于忽略了负相关），在极端情况下可能给出严重误导的推断。
+
+评估变分近似质量的一种方法是：比较从变分分布抽样的样本与从 MCMC 得到的真实后验样本在各阶矩上的差异。若差异明显，应考虑更灵活的近似形式（如正则化流、神经网络近似等）。
+
+\section{期望传播}\label{sec:expectation-propagation}
+
+\subsection{动机：变分贝叶斯的不足与 EP 的引入}\label{sec:ep-motivation}
+
+变分贝叶斯通过最小化 $\text{KL}(q\|p)$ 逼近后验，其平均场假设虽然简化了计算，但也带来了根本性问题：\textbf{平均场分解假设各参数子群相互独立，这与许多实际模型中参数存在强相关的现实不符。}其后果是变分近似倾向于低估后验方差——因为独立假设强制忽略了负相关结构。
+
+更重要的是，变分贝叶斯只保证近似分布的均值（通过 \cref{eq:variational-update} 更新）逼近真实后验均值，但并不直接约束高阶矩。在需要精确后验方差或协方差进行不确定性量化的场景中，这一缺陷可能是致命的。
+
+\textbf{期望传播}（Expectation Propagation，EP）正是为解决这些问题而设计的。EP 的核心洞察是：\textbf{与其整体逼近后验，不如逐个因子地"提炼"近似。}每个因子（如某个似然项或先验）对应模型的一个局部结构；EP 在保持其余因子不动的同时，迭代地用真实因子的统计量（矩）来精化对应的近似因子，最终使得近似后验在各阶矩上与真实后验匹配。
+
+EP 的另一优势是\textbf{模块化}：模型中的每个因子可以独立定义其近似形式（如用正态近似某个非正态因子），而不像变分贝叶斯那样要求全局的平均场分解。
+
+\subsection{EP 的算法步骤}\label{sec:ep-algorithm}
+
+设后验分布可分解为 $F$ 个因子的乘积：
+\[
+p(\theta|y) \propto \prod_{f=1}^F m_f(\theta),
+\]
+其中每个 $m_f(\theta)$ 对应模型的一个组件（如先验 $p(\theta)$ 或第 $i$ 个数据点的似然 $p(y_i|\theta)$）。
+
+EP 用一组近似因子 $\{\tilde{m}_f(\theta)\}$ 替代真实因子，使近似后验
+\[
+q(\theta) \propto \prod_{f=1}^F \tilde{m}_f(\theta)
+\]
+具有正确的各阶矩。算法通过\textbf{迭代 refinement} 实现，具体步骤如下：
+
+\begin{enumerate}
+\item \textbf{初始化}：令所有近似因子 $\tilde{m}_f(\theta) = 1$（或某个简单的初始形式），得到初始近似 $q(\theta) \propto 1$。
+
+\item \textbf{迭代精化}：对每个因子 $f = 1, \ldots, F$，重复以下步骤：
+\begin{enumerate}
+\item \textbf{删除}：从当前近似中移除因子 $f$ 的贡献，得到边缘近似
+\[
+q_{\setminus f}(\theta) \propto q(\theta) / \tilde{m}_f(\theta).
+\]
+
+\item \textbf{包含修正}：计算真实因子 $m_f$ 与当前近似 $q_{\setminus f}$ 的"商"在 $q_{\setminus f}$ 下的动差。具体地，定义非归一化分布
+\[
+r_f(\theta) \propto \frac{m_f(\theta)}{q_{\setminus f}(\theta)},
+\]
+在 $q_{\setminus f}$ 下计算 $r_f(\theta)$ 的各阶矩（如均值和协方差）。
+
+\item \textbf{矩匹配}：用 $r_f$ 的矩来精化近似因子 $\tilde{m}_f$，使得新近似因子具有与 $r_f$ 相同的矩。通常假设 $\tilde{m}_f$ 属于某参数化族（如正态分布），通过匹配矩来确定其参数。
+
+\item \textbf{更新}：将精化后的 $\tilde{m}_f$ 放回近似分布，更新 $q(\theta) \propto q_{\setminus f}(\theta) \cdot \tilde{m}_f(\theta)$。
+\end{enumerate}
+\item \textbf{收敛判断}：重复上述迭代，直到近似后验 $q(\theta)$ 的各阶矩变化小于预设阈值，或达到最大迭代次数。
+\end{enumerate}
+
+\begin{Example}[EP 对正态似然的精化]\label{ex:ep-normal-likelihood}
+考虑一个正态模型 $y_i \sim N(\mu, \sigma^2)$，$\sigma^2$ 已知。先验 $p(\mu) \propto 1$。此时每个数据点贡献一个因子 $m_i(\mu) = N(y_i|\mu, \sigma^2)$，后验精确为 $N(\mu|\bar{y}, \sigma^2/n)$。
+
+EP 初始化所有 $\tilde{m}_i(\mu) = 1$，则 $q(\mu) \propto 1$（不proper但可工作）。对第一个因子 $f=1$：
+\begin{itemize}
+\item $q_{\setminus 1}(\mu) \propto 1$；
+\item $r_1(\mu) \propto m_1(\mu) / 1 = N(y_1|\mu, \sigma^2)$；
+\item 在 $q_{\setminus 1}$（均匀分布）下，$r_1$ 的均值和方差即为 $y_1$ 和 $\sigma^2$；
+\item 令 $\tilde{m}_1(\mu) = N(y_1|\mu, \sigma^2)$，则更新后 $q(\mu) \propto N(y_1|\mu, \sigma^2)$。
+\end{itemize}
+对所有因子迭代，最终 $q(\mu) = N(\bar{y}|\mu, \sigma^2/n)$，与精确后验完全一致——这体现了 EP 在正态模型中的优良性质。
+\end{Example}\footnote{详细推导见附录 \cref{sec:ep-normal-derivation}。}
+
+\begin{Remark}[EP 与变分贝叶斯的区别]
+两者都通过迭代优化逼近后验，但优化目标不同：
+\begin{itemize}
+\item \textbf{变分贝叶斯}最小化 $\text{KL}(q\|p)$，等价于让 $q$ 覆盖 $p$ 的全部支撑（覆盖性过强），导致方差低估；
+\item \textbf{EP} 最小化 $\text{KL}(p\|q)$（在每个因子的层面上），即让 $p$ 向 $q$ 靠拢（集中性过强），但通过迭代矩匹配可以更准确地捕获后验的各阶矩。
+\end{itemize}
+\end{Remark}
+
+\subsection{EP 的稳定性与实践}\label{sec:ep-stability}
+
+EP 的一个关键挑战是\textbf{数值稳定性}：在删除和包含因子的过程中，近似分布的精度可能逐步丧失，尤其当因子数量很大时。实践中常用以下策略：
+
+\begin{itemize}
+\item \textbf{ damping（阻尼）}：将新近似因子与旧因子做加权平均，如 $\tilde{m}_f^{\text{new}} = (\tilde{m}_f^{\text{old}})^{1-\beta} \cdot (\text{新因子})^\beta$，其中 $\beta \in (0,1)$ 是阻尼系数；
+\item \textbf{投影到参数化族}：将精化后的因子强制投影到预设的参数化族（如多元正态），以保持数值稳定性；
+\item \textbf{顺序处理 vs 并行处理}：因子可以按固定顺序处理（sequential），也可以每次随机选择一个因子处理（randomized），后者在某些情况下有助于避免系统偏差。
+\end{itemize}
+
+尽管存在这些工程上的挑战，EP 在许多实际应用中表现出色，尤其是在需要精确后验矩的低到中等维度问题中。
+
+\section{本章小结}
+
+本章介绍了在复杂贝叶斯模型中进行近似推断的核心工具：
+
+\begin{enumerate}
+\item \textbf{后验众数寻找}：条件最大化（简单稳定）、牛顿法（二次收敛，需良好初始值）、拟牛顿法与共轭梯度法（高维友好）；
+
+\item \textbf{边界回避先验}：当以众数为点估计时，应选择在参数空间边界处为零的先验（如 Gamma$(2, A^2)$、Wishart$(d+3, A\mathbb{I})$），以避免退化的边界估计；
+
+\item \textbf{正态及混合近似}：在众数处用曲率信息构造正态近似；多峰时用正态混合分布；拉普拉斯方法提供了更一般的积分近似框架；
+
+\item \textbf{EM 算法}：将隐变量引入模型，交替 E 步（条件期望）和 M 步（最大化），适合边缘众数的寻找；变体包括 ECM（条件最大化）和 PX-EM（参数展开）；
+
+\item \textbf{变分贝叶斯与 EP}：两种基于条件矩的近似推断方法，通过迭代优化变分参数或 refine 近似因子来逼近真实后验，各有优劣。
+\end{enumerate}
+
+这些方法共同构成了贝叶斯计算的工具箱：对于简单模型可直接模拟；对于复杂模型，可先用近似方法快速获得初始估计或完整近似，再视需求决定是否启动昂贵的 MCMC。
+
+\section{习题}\label{sec:exercises-ch13}
+
+\begin{Exercise}{牛顿法的二次收敛}\label{ex:newton-convergence}
+设对数后验 $L(\theta) = -\frac{A}{2}\theta^2 + b^\top\theta + c$（二次函数），证明牛顿法一步收敛到真解。进一步证明：若 $L$ 在众数附近三阶导数有界，则牛顿法的误差以平方速率下降（即二次收敛）。
+\end{Exercise}
+
+\begin{Exercise}{EM 算法的单调性}\label{ex:em-monotonicity-exercise}
+验证 \cref{ex:normal-mean-variance-em} 中 EM 算法的 M 步公式（\cref{eq:mu-new}）。并编程实现该算法，检查对数边缘后验密度是否随迭代单调递增。
+\end{Exercise}
+
+\begin{Exercise}{边界回避先验}\label{ex:boundary-prior}
+对于分层模型中的组间标准差 $\tau$，比较以下三种先验的行为：
+\begin{itemize}
+\item 均匀先验 $p(\tau) \propto 1$；
+\item Gamma$(1, A)$（指数分布）；
+\item Gamma$(2, A^2)$。
+\end{itemize}
+绘出 $A = 10$ 时三种先验的密度曲线，解释为什么 Gamma$(2, A^2)$ 在 $\tau \to 0$ 时优于指数分布。
+\end{Exercise}
+
+\begin{Exercise}{变分贝叶斯的 KL 散度}\label{ex:vb-kl}
+证明变分贝叶斯中，坐标上升算法（即交替更新各变分因子）保证 $\text{KL}(q\|p)$ 单调下降。
+
+\textbf{提示}：设当前变分分布为 $q^{(t)}(\theta) = \prod_j q_j^{(t)}(\theta_j)$，更新因子 $q_k$ 至 $q_k^{(t+1)}$（其余因子保持不变）。分两步证明：
+\begin{enumerate}
+\item 利用 KL 散度的定义展开 $\text{KL}(q^{(t+1)}\|p) - \text{KL}(q^{(t)}\|p)$；
+\item 代入 $q_k^{(t+1)}$ 的最优形式 \cref{eq:variational-update}，利用 Jensen 不等式说明每步更新必使 KL 散度下降。
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{拉普拉斯近似}\label{ex:laplace-approx}
+设 $y_1, \ldots, y_n \sim \text{Poisson}(\lambda)$，先验 $p(\lambda) \propto 1/\lambda$（Jeffreys 先验）。使用拉普拉斯方法近似后验均值 $\mathbb{E}(\lambda|y)$，并与数值积分的结果比较。研究不同 $n$ 值下近似的质量。
+\end{Exercise}
+
+\begin{Exercise}{8 学校模型的混合近似}\label{ex:8schools-mixture}
+在 8 学校模型中，后验分布关于 $\tau$ 可能有多个峰。编写程序：
+\begin{itemize}
+\item[(a)] 使用 MCMC 抽样获得 $p(\tau|y)$ 的样本；
+\item[(b)] 基于样本识别 $p(\tau|y)$ 的峰数和位置；
+\item[(c)] 用正态混合模型拟合样本，估计各成分的权重、均值和方差；
+\item[(d)] 比较混合近似与样本直方图。
+\end{itemize}
+\end{Exercise}
+
+\endinput

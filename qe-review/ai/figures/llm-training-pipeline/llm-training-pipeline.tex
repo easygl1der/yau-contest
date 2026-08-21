@@ -1,0 +1,209 @@
+%!TEX program = xelatex
+\documentclass[11pt]{article}
+\usepackage[landscape,margin=8mm,paperwidth=297mm,paperheight=210mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xeCJK}
+\usepackage{fontspec}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,decorations.pathreplacing,backgrounds}
+
+\setmainfont{Times New Roman}
+\setCJKmainfont{PingFang SC}
+\pagestyle{empty}
+
+\DeclareMathOperator{\KL}{KL}
+\newcommand{\sigm}{\sigma}
+
+\definecolor{ink}{HTML}{1C1917}
+\definecolor{muted}{HTML}{57534E}
+\definecolor{ptfill}{HTML}{DBEAFE}
+\definecolor{ptdraw}{HTML}{1D4ED8}
+\definecolor{sftfill}{HTML}{CCFBF1}
+\definecolor{sftdraw}{HTML}{0F766E}
+\definecolor{alfill}{HTML}{FFEDD5}
+\definecolor{aldraw}{HTML}{C2410C}
+\definecolor{inffill}{HTML}{DCFCE7}
+\definecolor{infdraw}{HTML}{15803D}
+\definecolor{rmfill}{HTML}{EDE9FE}
+\definecolor{rmdraw}{HTML}{6D28D9}
+\definecolor{frzfill}{HTML}{E7E5E4}
+\definecolor{frzdraw}{HTML}{57534E}
+\definecolor{goldfill}{HTML}{FEF3C7}
+\definecolor{golddraw}{HTML}{A16207}
+\definecolor{band}{HTML}{F5F5F4}
+\definecolor{paper}{HTML}{FFFBF5}
+
+\begin{document}
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={color=ink},
+  >=Stealth,
+  box/.style={
+    draw=#1, fill=#1!12, line width=0.7pt,
+    rounded corners=2.2pt, align=center,
+    inner sep=4.2pt, text width=4.55cm, font=\small
+  },
+  pill/.style={
+    draw=#1, fill=#1!14, line width=0.6pt,
+    rounded corners=1.6pt, inner sep=2.6pt, font=\scriptsize\bfseries
+  },
+  chip/.style={
+    draw=#1, fill=#1!18, line width=0.6pt,
+    rounded corners=1.4pt, inner sep=2.4pt 3.2pt, font=\scriptsize
+  },
+  arr/.style={-{Stealth}, line width=0.85pt, draw=ink!70},
+  dasharr/.style={-{Stealth}, densely dashed, line width=0.7pt, draw=frzdraw},
+  lbl/.style={font=\scriptsize, text=muted, align=center}
+]
+
+\fill[paper] (-0.4,-0.35) rectangle (28.3,19.15);
+
+% ----- title -----
+\node[anchor=west, font=\Large\bfseries] at (0,18.55)
+  {LLM 全流程：预训练 / 后训练 / 推理，以及参数如何对接};
+\node[anchor=west, font=\small, text=muted] at (0,17.95)
+  {同一套 Transformer 权重~$\theta$。换的是数据与目标，不是换一套新模型。
+   三个对象不可混：生成器~$(\pi,\theta)$，裁判~$(r,\phi)$，冻结参考~$\pi_{\mathrm{ref}}$。};
+
+% ----- epoch bands -----
+\node[anchor=west, font=\footnotesize\bfseries, text=ptdraw] at (0.05,17.28) {预训练};
+\node[anchor=west, font=\footnotesize\bfseries, text=aldraw] at (7.15,17.28) {后训练（目标被改写）};
+\node[anchor=west, font=\footnotesize\bfseries, text=infdraw] at (20.15,17.28) {推理（不再训练）};
+
+\begin{scope}[on background layer]
+  \fill[ptfill] (0,10.85) rectangle (6.95,17.15);
+  \fill[sftfill] (7.05,10.85) rectangle (13.55,17.15);
+  \fill[alfill] (13.65,10.85) rectangle (19.95,17.15);
+  \fill[inffill] (20.05,10.85) rectangle (27.9,17.15);
+\end{scope}
+
+% ----- stage cards -----
+\node[box=ptdraw, anchor=north] (pt) at (3.48,16.95) {%
+  \textbf{1. Pretrain}\\[2pt]
+  数据：生语料（自监督）\\
+  目标：$\displaystyle\max_\theta\sum_t\log p_\theta(x_{t+1}\mid x_{1:t})$\\[1pt]
+  训练：$\theta$\\
+  输出：$\pi$（网上的条件，不是好回答）};
+
+\node[box=sftdraw, anchor=north] (sft) at (10.30,16.95) {%
+  \textbf{2. SFT / instruction}\\[2pt]
+  数据：演示~$(x,y_{\mathrm{demo}})$\\
+  目标：仍是 next-token CE\\[1pt]
+  训练：$\theta\leftarrow\theta_{\mathrm{PT}}$\\
+  输出：$\pi_{\mathrm{SFT}}$；拷一份冻结为~$\pi_{\mathrm{ref}}$};
+
+\node[box=aldraw, anchor=north] (al) at (16.80,16.95) {%
+  \textbf{3. Align}\\[2pt]
+  数据：偏好对~$(x,y^+,y^-)$\\
+  改目标：谁更被偏好，而非像网页\\[1pt]
+  两条路：A~~RM$+J_{\mathrm{RLHF}}$\\
+  \phantom{两条路：}B~~$\mathcal{L}_{\mathrm{DPO}}$};
+
+\node[box=infdraw, anchor=north] (inf) at (23.98,16.95) {%
+  \textbf{4. Infer / RAG}\\[2pt]
+  数据：prompt~$x$（RAG 另加文档）\\
+  规则：top-$P$ 解码，不是训练\\[1pt]
+  训练：无\\
+  输出：token 序列；$\,\theta$ 冻结};
+
+\draw[arr] (pt) -- (sft);
+\draw[arr] (sft) -- (al);
+\draw[arr] (al) -- (inf);
+
+\node[lbl, above=0.5mm of $(pt)!0.5!(sft)$] {init $\theta$};
+\node[lbl, above=0.5mm of $(sft)!0.5!(al)$] {改目标};
+\node[lbl, above=0.5mm of $(al)!0.5!(inf)$] {只采样};
+
+% ----- parameter docking -----
+\node[anchor=west, font=\bfseries] at (0,10.35) {参数对接（同一骨干上的拷贝与冻结）};
+
+\node[chip=golddraw] (thpt) at (3.48,9.55) {$\theta_{\mathrm{PT}}$ 可训};
+\node[chip=golddraw] (thsft) at (10.30,9.55) {$\theta_{\mathrm{SFT}}$ 可训};
+\node[chip=golddraw] (thal) at (16.80,9.55) {$\theta$ 可训};
+\node[chip=frzdraw] (thinf) at (23.98,9.55) {$\theta$ 冻结};
+
+\draw[arr] (thpt) -- node[lbl, above] {接着训} (thsft);
+\draw[arr] (thsft) -- node[lbl, above] {接着训} (thal);
+\draw[arr] (thal) -- node[lbl, above] {停训} (thinf);
+
+\node[chip=frzdraw] (piref) at (10.30,8.35) {$\pi_{\mathrm{ref}}\leftarrow\mathrm{copy}(\theta_{\mathrm{SFT}})$，此后永不更新};
+\node[chip=rmdraw] (phi) at (16.80,8.35) {$\phi\leftarrow\mathrm{copy}(\theta_{\mathrm{SFT}})+\mathrm{head}$};
+
+\draw[dasharr] (thsft.south) -- (piref.north);
+\draw[dasharr] (thsft.south east) to[out=-20,in=180] (phi.west);
+
+\node[lbl, text width=6.6cm, align=left] at (23.98,8.35) {%
+  $\pi_{\mathrm{ref}}$：KL 皮带的锚点，不是第四套可训权重。\\
+  $\phi$：裁判，只在~$\mathcal{L}_{\mathrm{RM}}$ 里更新，进~$J$ 前冻结。};
+
+% ----- alignment fork -----
+\node[anchor=west, font=\bfseries] at (0,7.55)
+  {对齐分叉：同一 KL--Bradley--Terry 目标，两条计算路径};
+
+\node[pill=aldraw] (pairs) at (3.48,6.55) {偏好对 $(x,y^+,y^-)$};
+
+\node[box=rmdraw, text width=7.15cm] (routea) at (10.15,4.55) {%
+  \textbf{Route A：reward-model RLHF}\\[2pt]
+  Stage 1\quad$\displaystyle\min_\phi\mathcal{L}_{\mathrm{RM}}
+  =-\mathbb{E}\log\sigm\bigl(r_\phi(x,y^+)-r_\phi(x,y^-)\bigr)$\\[1pt]
+  得到裁判~$r_\phi$，然后冻结~$\phi$。\\[2pt]
+  Stage 2\quad$\displaystyle\max_\theta J(\theta)
+  =\mathbb{E}_{y\sim\pi_\theta}\bigl[r_\phi(x,y)
+  -\beta\log\tfrac{\pi_\theta(y\mid x)}{\pi_{\mathrm{ref}}(y\mid x)}\bigr]$\\[1pt]
+  数据变成新 rollout~$y\sim\pi_\theta$；PPO 只是求~$J$ 的算法，不是第四个目标。};
+
+\node[box=aldraw, text width=7.15cm] (routeb) at (18.55,4.55) {%
+  \textbf{Route B：DPO}\\[2pt]
+  跳过独立~$r_\phi$ 与 PPO 循环。\\[2pt]
+  $\displaystyle\min_\theta\mathcal{L}_{\mathrm{DPO}}
+  =-\mathbb{E}\log\sigm\Bigl(\beta\log\tfrac{\pi_\theta(y^+\mid x)}{\pi_{\mathrm{ref}}(y^+\mid x)}
+  -\beta\log\tfrac{\pi_\theta(y^-\mid x)}{\pi_{\mathrm{ref}}(y^-\mid x)}\Bigr)$\\[3pt]
+  $r$ 被改写成~$\log(\pi_\theta/\pi_{\mathrm{ref}})$。\\
+  离线、无探索；不能给模型刚发明的~$y$ 打分。};
+
+\node[pill=golddraw] (pial) at (24.95,4.55) {对齐后的 $\pi_\theta$};
+
+\draw[arr] (pairs) -- node[lbl, above, sloped] {A} (routea);
+\draw[arr] (pairs) -- node[lbl, above, sloped] {B} (routeb);
+\draw[arr] (routea) -- (pial);
+\draw[arr] (routeb) -- (pial);
+
+\node[lbl, text width=27.4cm, align=left] at (13.95,2.55) {%
+  考场判据：题面若写 ``reward model has already been trained''，写~$J$ 与~$\nabla_\theta J=\mathbb{E}[(r_\phi-\beta\log(\pi_\theta/\pi_{\mathrm{ref}})-b(x))\,\nabla_\theta\log\pi_\theta]$，不要写~$\mathcal{L}_{\mathrm{RM}}$，也不要写 DPO。
+  SFT 是演示上的 CE，不是偏好损失。};
+
+% ----- two axes + exam map -----
+\node[anchor=west, font=\bfseries] at (0,1.95)
+  {另一条轴：模型类在变，预训练目标可以一直没变};
+
+\node[box=ptdraw, text width=5.7cm] (ng) at (3.15,0.55) {%
+  n-gram\\[-1pt]
+  {\scriptsize 类：阶~$k$ Markov 表\\
+  目标：next-token 计数 / 平滑}};
+\node[box=ptdraw, text width=5.7cm] (w2v) at (9.35,0.55) {%
+  word2vec / 表示学习\\[-1pt]
+  {\scriptsize 类：静态向量~$e_\theta$\\
+  目标：预测 / 对比，仍非对齐}};
+\node[box=ptdraw, text width=5.7cm] (tf) at (15.55,0.55) {%
+  Transformer\\[-1pt]
+  {\scriptsize 类：上下文映射\\
+  目标：仍是 next-token}};
+\node[box=aldraw, text width=5.7cm] (al2) at (21.75,0.55) {%
+  alignment\\[-1pt]
+  {\scriptsize 类：不新发明\\
+  目标：改成偏好标量}};
+
+\draw[arr] (ng) -- (w2v);
+\draw[arr] (w2v) -- (tf);
+\draw[arr] (tf) -- (al2);
+
+\node[anchor=west, font=\scriptsize, text=muted, text width=27.6cm] at (0,-0.55) {%
+  Scaling law 不是第 5 个训练阶段：它诊断~$N,P$ 动的是逼近 / 估计 / 优化误差。
+  RAG（Problem~8）也不是第 5 个训练阶段：文档是未压缩记忆，检索后生成，$\,\theta$ 通常冻结。
+  春季卷对照：P1 n-gram，P2 表示，P3 top-$P$（推理），P5 Transformer，P6 scaling，P7~$J_{\mathrm{RLHF}}$，P8 RAG。};
+
+\end{tikzpicture}
+\end{document}

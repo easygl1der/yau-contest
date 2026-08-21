@@ -1,0 +1,387 @@
+% Chapter 7: Evaluating, comparing, and expanding models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{模型评估、比较与扩展}
+
+\section{本章导论}
+
+在前几章中，我们学习了如何建立贝叶斯模型（分层模型）、如何进行后验推断，以及如何检查模型的拟合性（第六章）。但一个根本性问题仍然悬而未决：当我们有多个候选模型时，如何判断哪个更好？或者，当我们需要向模型中添加新变量或改变结构时，如何评估这些修改是否真的改进了预测能力？
+
+这引出了本章的核心问题——\textbf{我们如何量化一个模型的预测表现？}
+
+这个问题比表面上看起来要复杂得多。直觉上，我们可能会说"选择对数据拟合最好的模型"——但这恰恰是过拟合的根源。统计学家 George Box 有一句名言："所有模型都是错误的，但有些是有用的。"评估一个模型的价值，不在于它是否能完美地描述训练数据，而在于它是否能\textbf{泛化}到新的、未见过的数据。
+
+在本章中，我们将学习一套完整的工具来评估和比较贝叶斯模型的预测表现。这些方法的核心思想是：将数据分为训练集和验证集，用训练集拟合模型，用验证集评估预测表现。我们将看到，这一思想如何演进出交叉验证、WAIC（广泛适用信息准则）和贝叶斯模型平均等强大工具。
+
+\section{预测准确性的度量}
+
+\subsection{点预测与分散度}
+
+在讨论预测准确性之前，我们需要明确"预测"究竟意味着什么。考虑一个简单的场景：我们有一组新数据 $\tilde{y}$，需要预测它的值。
+
+\textbf{点预测}是最直接的预测方式——给出一个单一数值 $\tilde{y}_{\text{pred}}$ 来代表我们的预测。但问题在于：什么样的数值是最好的预测？这取决于我们如何定义"最好"。
+
+如果使用均方误差（MSE）作为损失函数，最优的点预测是后验均值：\footnote{推导见附录 \cref{sec:posterior-mean-optimal}}
+\[
+\tilde{y}_{\text{pred}} = \mathbb{E}(\tilde{y} | y)
+\]
+
+如果使用绝对误差损失，最优预测是中位数。但如果考虑\textbf{整个预测分布}的准确性——即我们不仅预测一个点，而且想量化整个预测分布的质量——则需要更精细的工具。
+
+\subsection{对数预测密度}
+
+\textbf{对数预测密度（log predictive density）}是评估预测分布准确性的基本工具。对于新数据点 $\tilde{y}$，其对数预测密度定义为：
+\[
+\log p(\tilde{y} | y) = \log \int p(\tilde{y} | \theta) p(\theta | y) \, d\theta
+\]
+
+这个量度量了模型预测 $\tilde{y}$ 的能力——对数密度越高，说明模型对 $\tilde{y}$ 的预测越准确。
+
+为什么使用对数而不是原始密度？因为对数变换将乘积变为求和，这在计算和理论分析中都更方便。
+
+\textbf{期望对数预测密度（ELPD）}是对新数据上对数预测密度的期望：
+\[
+\text{ELPD} = \mathbb{E}_{\tilde{y}}[\log p(\tilde{y} | y)]
+\]
+
+ELPD 是衡量模型预测表现的\textbf{黄金标准}——它度量了模型对未来数据的预期预测准确性。
+
+\begin{Example}[子女身高预测]
+  假设我们要预测一对夫妇的子女身高。模型 $M_1$ 假设身高服从正态分布 $N(\mu, \sigma^2)$，其中 $\mu$ 和 $\sigma$ 有后验分布；模型 $M_2$ 假设身高服从 $t$ 分布。
+
+  对数预测密度可以比较这两个模型：如果 $M_1$ 的 ELPD 高于 $M_2$，说明正态假设对身高分布的预测更准确。
+\end{Example}
+
+\subsection{偏差与 DIC}
+
+在实践中，我们无法直接计算 ELPD（因为我们没有无限多的新数据）。一个实用的替代方案是使用\textbf{偏差（deviance）}：
+\[
+D(\theta) = -2 \log p(y | \theta)
+\]
+
+偏差越小，说明模型对观测数据的拟合越好。
+
+一个相关概念是\textbf{偏差信息准则（DIC）}：
+\[
+\text{DIC} = \bar{D} + p_D
+\]
+其中 $\bar{D} = \mathbb{E}^p[D(\theta)]$ 是后验平均偏差，$p_D = \bar{D} - D(\bar{\theta})$ 是有效参数个数。
+
+有效参数个数 $p_D$ 度量了模型的复杂度——它反映了后验分布中"信息"参数的数量。在过拟合时，$p_D$ 会接近数据的数量；在欠拟合时，$p_D$ 会很小。
+
+DIC 的局限：它只在后验分布近似正态且数据量足够大时才可靠。
+
+\section{交叉验证}
+
+\subsection{留一交叉验证（LOO-CV）}
+
+既然 ELPD 衡量的是模型对新数据的预测能力，一个自然的想法是：用部分数据来拟合模型，用另一部分数据来评估预测。
+
+\textbf{留一交叉验证（Leave-One-Out Cross-Validation，LOO-CV）}是最极端的形式——每次留出一个数据点 $y_i$，用其余 $n-1$ 个数据点拟合模型，然后预测 $y_i$。
+
+LOO-CV 的对数预测密度为：
+\[
+\text{lppd}_{\text{loo}} = \sum_{i=1}^n \log p(y_i | y_{-i})
+\]
+其中 $y_{-i}$ 表示除 $i$ 以外的所有数据。
+
+这个量的计算代价很高——需要拟合 $n$ 次模型。但对于共轭模型或可解析边缘化的模型，存在计算技巧。\footnote{推导见附录 \cref{sec:loo-cv-computation}}
+
+\subsection{K 折交叉验证}
+
+当 $n$ 很大时，LOO-CV 的计算成本变得不可接受。\textbf{K 折交叉验证}是一种折中方案：
+
+\begin{enumerate}
+  \item 将数据随机分为 $K$ 个大小相等的组
+  \item 对于 $k = 1, \ldots, K$：
+    \begin{itemize}
+      \item 用除第 $k$ 组以外的所有数据拟合模型
+      \item 用第 $k$ 组数据计算预测密度
+    \end{itemize}
+  \item 汇总 $K$ 次的结果得到总体评估
+\end{enumerate}
+
+常见的 $K$ 值有 5 和 10。$K$ 越小，计算越快但估计方差越大；$K$ 越大，估计越稳定但计算成本增加。
+
+当 $K = n$ 时，K 折 CV 退化为 LOO-CV。
+
+\begin{Remark}
+  交叉验证的一个关键假设是：数据的\textbf{可交换性}。如果数据有内部结构（如时间序列、分层数据），简单的交叉验证可能会给出误导性的结果。在这种情况下，需要使用\textbf{分层交叉验证}或考虑数据收集设计的影响。
+\end{Remark}
+
+\section{WAIC：广泛适用信息准则}
+
+\subsection{WAIC 的定义}
+
+DIC 虽然常用，但它有一些理论缺陷——特别是它依赖于后验分布的近似正态性。\textbf{WAIC（Widely Applicable Information Criterion）}是一种更一般化的准则，可以在任意贝叶斯模型中使用。\footnote{WAIC 的完整推导见附录 \cref{sec:waic-derivation}}
+
+WAIC 基于两个量：
+
+\textbf{对数预测密度的点估计（pointwise log predictive density）}：
+\[
+\text{lppd} = \sum_{i=1}^n \log \mathbb{E}[p(y_i | \theta)]
+\]
+这等价于用后验均值代替后验分布进行预测。
+
+\textbf{有效参数个数（effective number of parameters）}：
+\[
+p_{\text{waic}} = \sum_{i=1}^n \text{var}_{\text{post}}[\log p(y_i | \theta)]
+\]
+这个量度量了每个数据点对后验分布的贡献程度。
+
+WAIC 定义为：
+\[
+\text{WAIC} = -2 (\text{lppd} - p_{\text{waic}})
+\]
+或者从 ELPD 的角度：
+\[
+\text{ELPD}_{\text{waic}} = \text{lppd} - p_{\text{waic}}
+\]
+
+\subsection{WAIC 与 DIC 的比较}
+
+当后验分布近似正态时，WAIC 近似于 DIC。但 WAIC 有几个优势：
+
+\begin{enumerate}
+  \item \textbf{计算更一般}：WAIC 不需要后验分布的解析近似
+  \item \textbf{点估计}：WAIC 可以逐点计算，便于诊断
+  \item \textbf{理论基础更扎实}：WAIC 与交叉验证有更紧密的联系
+\end{enumerate}
+
+\begin{Example}[WAIC vs DIC]
+  在非线性回归模型中，后验分布通常是高度非正态的。DIC 的正态假设会失效，但 WAIC 仍然可靠。
+
+  在混合模型中，DIC 的有效参数个数定义模糊，而 WAIC 的逐点计算可以正确处理这种复杂性。
+\end{Example}
+
+\section{后验预测检验}
+
+我们在第六章已经接触过\textbf{后验预测检验（Posterior Predictive Checking，PPC）}的基本思想。本节我们将更系统地讨论如何在模型比较中使用 PPC。
+
+\subsection{复制数据与预测数据}
+
+给定后验分布 $p(\theta | y)$，我们可以：
+
+\begin{itemize}
+  \item \textbf{复制数据}：从 $p(\tilde{y} | \theta)$ 生成 $\tilde{y}^{\text{rep}}$，这代表如果模型正确，数据的"复制版本"应该是什么样的
+  \item \textbf{预测数据}：从 $p(\tilde{y} | y)$ 生成 $\tilde{y}^{\text{new}}$，这代表模型对未来数据的预测
+\end{itemize}
+
+两者的区别在于：$\tilde{y}^{\text{rep}}$ 用于检验模型拟合，$\tilde{y}^{\text{new}}$ 用于预测。
+
+\subsection{差异度量}
+
+为了量化观测数据与模型预测之间的差异，我们需要定义一个\textbf{差异度量（discrepancy measure）}：
+\[
+T(y, \theta) = \text{某个反映模型假设的统计量}
+\]
+
+常用的差异度量包括：
+
+\begin{itemize}
+  \item \textbf{均值差异}：$\bar{y} - \mathbb{E}[\bar{y}^{\text{rep}} | \theta]$
+  \item \textbf{方差差异}：$\text{var}(y) - \text{var}(\tilde{y}^{\text{rep}} | \theta)$
+  \item \textbf{最大值}：$\max(y) - \max(\tilde{y}^{\text{rep}} | \theta)$
+\end{itemize}
+
+对于每个差异度量 $T$，我们可以计算：
+\[
+\text{p-value} = \mathbb{P}(T(\tilde{y}^{\text{rep}}, \theta) \geq T(y, \theta) | y)
+\]
+
+如果这个 p 值接近 0 或 1，说明模型预测与数据之间存在系统性差异，模型可能需要改进。
+
+\begin{Remark}
+  后验预测 p 值不是严格的概率，而是反映模型拟合程度的一个指标。当样本量很大时，即使偏离很小，p 值也会变得显著——这提醒我们统计显著性不等于实际重要性。
+\end{Remark}
+
+\section{分层数据与交叉验证}
+
+在分层或聚类数据结构中，简单的交叉验证可能会产生误导性的结果。
+
+\subsection{分组交叉验证}
+
+考虑一个分层模型：数据来自 $J$ 个组，每组内有 $n_j$ 个观测。简单的留一交叉验证会：
+
+\begin{enumerate}
+  \item 随机留出一个观测点
+  \item 用剩余数据拟合模型
+  \item 预测被留出的观测
+\end{enumerate}
+
+但这样做的问题在于：来自同一组的观测是相关的。如果我们随机留出，一些组会被完全保留，另一些组会被部分保留，这导致训练集和测试集的分布不一致。
+
+\textbf{分组交叉验证（Group-based CV）}的解决方案是：每次留出一个完整的组，而不是单个观测点。这样保持了组的完整性。
+
+当 $K$ 折分组交叉验证中 $K$ 等于组数 $J$ 时，就变成了\textbf{留一组合叉验证（Leave-One-Group-Out CV）}。
+
+\begin{Example}[学校成绩预测]
+  假设我们要预测学生考试成绩，数据来自多所学校。使用简单交叉验证可能导致：训练集中包含某学校的大部分学生，但测试集中只有该校的少数学生——这违反了数据独立性的假设。
+
+  使用分组交叉验证，每次留出一整所学校，这样才能正确评估模型的跨学校泛化能力。
+\end{Example}
+
+\section{贝叶斯模型平均}
+
+当我们有多个候选模型时，\textbf{贝叶斯模型平均（Bayesian Model Averaging，BMA）}提供了一种 principled 的方法来组合它们的预测。
+
+\subsection{BMA 的思想}
+
+给定 $K$ 个候选模型 $M_1, \ldots, M_K$，每个模型有后验概率 $p(M_k | y)$。贝叶斯模型平均的预测分布为：
+\[
+p(\tilde{y} | y) = \sum_{k=1}^K p(\tilde{y} | y, M_k) p(M_k | y)
+\]
+
+即：每个模型的预测按其后验概率加权平均。
+
+后验概率 $p(M_k | y)$ 可以通过边际似然计算：
+\[
+p(M_k | y) \propto p(y | M_k) p(M_k)
+\]
+其中 $p(y | M_k) = \int p(y | \theta_k, M_k) p(\theta_k | M_k) \, d\theta_k$ 是模型 $M_k$ 的边际似然。
+
+\subsection{BMA 的优势}
+
+贝叶斯模型平均有几个重要优势：
+
+\begin{enumerate}
+  \item \textbf{自动正则化}：复杂模型通常有更低的边际似然（因为它们对数据的拟合更差）
+  \item \textbf{不确定性量化}：BMA 的预测分布反映了模型选择的不确定性
+  \item \textbf{防止过拟合}：单一模型的过拟合风险被分散到多个模型上
+\end{enumerate}
+
+但 BMA 也有局限：当候选模型都很差时，加权平均可能仍然表现不佳。此外，边际似然的计算在高维模型中可能很困难。
+
+\begin{Remark}
+  在实践中，BMA 最适合的情况是：候选模型捕捉了数据的不同方面，而真实数据生成过程接近其中某个模型。如果所有模型都系统性错误，BMA 无法纠正这个根本问题。
+\end{Remark}
+
+\section{信息准则的统一视角}
+
+从前几节的讨论中，我们可以看到不同准则之间的联系：
+
+\textbf{偏差} $D(\theta) = -2\log p(y|\theta)$ 是基本量。
+
+\textbf{DIC} 使用后验均值近似：
+\[
+\text{DIC} \approx -2 \mathbb{E}[\log p(y | \theta)] + 2 \text{var}[\log p(y | \theta)]
+\]
+
+\textbf{WAIC} 使用更精确的点估计：
+\[
+\text{WAIC} = -2 \left(\sum_i \log \mathbb{E}[p(y_i | \theta)] - \sum_i \text{var}[\log p(y_i | \theta)]\right)
+\]
+
+\textbf{交叉验证}本质上是对新数据的 ELPD 的估计，但计算更直接。
+
+这些准则都是对同一核心量——模型对未来数据的预测能力——的不同估计。
+
+\section{Stan 实现}
+
+本节展示如何在 Stan 中实现本章讨论的模型比较方法。
+
+\subsection{计算对数预测密度}
+
+Stan 提供了 \texttt{lppd} 函数来计算点态对数预测密度：
+
+\begin{verbatim}
+model {
+  // ... standard model spec ...
+  for (i in 1:n) {
+    log_lik[i] = log(p(y[i] | theta));
+  }
+}
+generated quantities {
+  // compute WAIC components
+  vector[n] log_lik;
+  for (i in 1:n) {
+    log_lik[i] = log(p(y[i] | theta));
+  }
+}
+\end{verbatim}
+
+\subsection{分层交叉验证的 Stan 实现}
+
+对于分层模型，Stan 可以并行计算各组的预测：
+
+\begin{verbatim}
+data {
+  int<lower=1> J;           // number of groups
+  int<lower=1> N;           // total observations
+  array[N] int<lower=1> group;  // group indicator
+  vector[N] y;              // observations
+}
+parameters {
+  vector[J] theta;          // group means
+  real<lower=0> sigma;      // common variance
+  real mu;                  // grand mean
+  real<lower=0> tau;        // between-group SD
+}
+model {
+  theta ~ normal(mu, tau);
+  y ~ normal(theta[group], sigma);
+}
+generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | theta[group[i]], sigma);
+  }
+}
+\end{verbatim}
+
+\section{本章小结}
+
+本章我们学习了评估和比较贝叶斯模型预测表现的核心方法：
+
+\begin{enumerate}
+  \item \textbf{预测准确性的度量}：对数预测密度、ELPD、偏差和 DIC
+  \item \textbf{交叉验证}：LOO-CV 和 K 折 CV，以及处理分层数据的分组交叉验证
+  \item \textbf{WAIC}：一种比 DIC 更一般化的信息准则，与交叉验证有紧密联系
+  \item \textbf{后验预测检验}：通过差异度量评估模型拟合
+  \item \textbf{贝叶斯模型平均}：组合多个模型预测的 principled 方法
+  \item \textbf{Stan 实现}：计算对数预测密度和实现分层交叉验证
+\end{enumerate}
+
+这些工具共同构成了一套完整的模型评估体系。关键思想是：\textbf{模型的價值在于其泛化能力，而非对训练数据的拟合程度}。交叉验证和 WAIC 提供了估计泛化能力的实用方法，而 BMA 则在模型不确定时提供了更稳健的预测。
+
+\section{下节预告}
+
+下一章我们将学习\textbf{建模与数据收集过程的关系}（第八章）。我们将探讨如何根据数据的收集方式调整建模策略，包括抽样设计对推断的影响、处理缺失数据的贝叶斯方法，以及如何将领域知识整合到模型中。
+
+\section{习题}\label{sec:chapter7-exercises}
+
+\begin{Exercise}{\ref{exr:7-1} 对数预测密度的计算}
+  假设数据 $y_1, \ldots, y_n$ 来自正态分布 $N(\mu, \sigma^2)$，其中 $\sigma$ 已知。给定共轭先验 $\mu \sim N(\mu_0, \sigma_0^2)$，推导后验预测分布 $p(\tilde{y} | y)$ 的对数密度表达式。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:7-2} DIC 的有效参数个数}
+  证明在正态模型 $y_i \sim N(\theta, \sigma^2)$（$\sigma$ 已知）中，DIC 的有效参数个数 $p_D$ 等于 1。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:7-3} LOO-CV 与 WAIC 的比较}
+  考虑二项数据 $y_i \sim \text{Bin}(n_i, \theta_i)$，使用层次模型 $\theta_i \sim \text{Beta}(\alpha, \beta)$。讨论：
+  \begin{enumerate}
+    \item 为什么 LOO-CV 在这个模型中计算困难？
+    \item WAIC 如何处理这个问题？
+    \item 在什么条件下两者会给出相似的结果？
+  \end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:7-4} 分组交叉验证}
+  在一个三水平的层次模型中（学生嵌套于班级，班级嵌套于学校），说明：
+  \begin{enumerate}
+    \item 为什么简单的留一交叉验证不合适？
+    \item 如何设计分组交叉验证？
+    \item 选择留出学校 vs 留出班级有什么影响？
+  \end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:7-5} 贝叶斯模型平均}
+  给定两个候选模型 $M_1$ 和 $M_2$ 的边际似然比 $p(y|M_1)/p(y|M_2) = 10$，解释这意味着什么。如果两个模型的预测分布差异很大，BMA 的结果会如何？
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:7-6} WAIC 的性质}
+  证明 WAIC 的有效参数个数 $p_{\text{waic}}$ 总是介于 0 和 $n$ 之间，其中 $n$ 是样本量。
+\end{Exercise}
+
+\endinput

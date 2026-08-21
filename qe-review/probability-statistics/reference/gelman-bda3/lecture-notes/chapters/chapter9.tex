@@ -1,0 +1,352 @@
+% Chapter 9: Decision analysis
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{决策分析}
+
+\section{本章导论}
+
+在前面几章中，我们探讨了贝叶斯推断的核心技术：从先验分布和似然函数出发，通过贝叶斯公式计算后验分布，并利用后验分布进行点估计、区间估计和模型检查。然而，推断本身并不是终点——我们需要将推断的结论转化为实际行动决策。
+
+一个自然的问题是：给定后验分布，我们如何做出最优决策？这个问题看似简单，实则涉及一个根本性的概念飞跃：\textbf{推断是描述性的，而决策是规范性的}。描述性任务只需要刻画未知参数的不确定性，而规范性任务需要明确我们追求的目标是什么，以及不同决策的相对优劣。
+
+\textbf{决策分析}（decision analysis）正是连接推断与决策的桥梁。这一理论框架由 Wald (1950)、Savage (1954)、Raiffa 和 Schlaifer (1961) 等人在 20 世纪中叶发展起来。Wald (1950) 将统计推断形式化为一场"与自然的博弈"，通过引入风险函数和极小极大原则为决策理论奠定了公理基础；Savage (1954) 则从主观期望效用角度出发，证明了在合理 axioms 下理性决策者必然遵循贝叶斯原则；Raiffa 和 Schlaifer (1961) 进一步将这一理论系统化，使之成为处理实际决策问题的有力工具。贝叶斯版本的决策理论进一步要求，在计算期望效用时，使用后验分布来量化不确定性。
+
+本章的安排如下：\S 9.1 引入效用函数与损失函数的基本概念；\S 9.2 讨论几种常见的损失函数及其对应的贝叶斯最优决策；\S 9.3 探讨后验预测分布与预验分析（preposterior analysis）；\S 9.4 处理层次决策问题与经验贝叶斯的联系；\S 9.5 从损失函数角度重新审视模型选择问题。
+
+\section{效用函数与损失函数}
+
+\subsection{从推断到决策的桥梁}
+
+在贝叶斯框架下，每个决策 $d$ 带来一个后果（consequence），记为 $C(d, \theta)$，其中 $\theta$ 是自然状态（state of nature）——即我们关心的未知参数或潜在结果。后果可以是金钱、健康、时间等不同维度。
+
+为了比较不同决策的优劣，我们需要一个\textbf{效用函数}（utility function）$u(c)$，它将每个后果映射到一个实数 $u(c) \in \mathbb{R}$。理性决策者偏好效用更高的后果。
+
+在很多情况下，直接定义效用函数比较困难。我们通常转而使用\textbf{损失函数}（loss function）$\ell(\theta, d)$，定义为采取决策 $d$ 而真实参数为 $\theta$ 时的损失。损失函数与效用函数之间的关系是：$u(c) = - \ell(\theta, d)$（在基数效用意义下，效用的增减与损失的增减相反）。
+
+\begin{Example}[医学治疗决策]\label{ex:medical-decision}
+  考虑一个简化的医学决策问题：医生需要决定是否对患者进行某种手术。真实参数 $\theta$ 代表手术的实际成功率。设损失函数为
+  \[
+  \ell(\theta, d) = \begin{cases}
+    0 & \text{若 } d = \text{做手术且成功} \\
+    1 \cdot L_{\text{fail}} & \text{若 } d = \text{做手术且失败} \\
+    0.5 \cdot L_{\text{conservative}} & \text{若 } d = \text{不做手术},
+  \end{cases}
+  \]
+  其中 $L_{\text{fail}}$ 和 $L_{\text{conservative}}$ 是根据具体情况设定的损失权重。这里"不做手术"被视为一种保守决策，当手术失败后果严重时给予较大的损失权重。
+\end{Example}
+
+\subsection{期望后验损失与贝叶斯最优决策}
+
+给定损失函数 $\ell(\theta, d)$ 和后验分布 $p(\theta \mid y)$，决策 $d$ 的\textbf{期望后验损失}（posterior expected loss）为
+\[
+\rho(d \mid y) = \mathbb{E}_{p(\theta\mid y)}[\ell(\theta, d)] = \int \ell(\theta, d) \, p(\theta \mid y) \, d\theta.
+\]
+
+贝叶斯最优决策 $d^{\text{Bayes}}$ 是使期望后验损失最小化的决策：
+\[
+d^{\text{Bayes}} = \underset{d \in \mathcal{D}}{\arg\min} \; \rho(d \mid y).
+\]
+
+\textbf{关键洞察}：后验分布综合了先验信息与数据信息，因此"最小化期望后验损失"这一原则自然地将推断与决策统一起来——推断的结论（后验分布）直接决定了最优行动。
+
+值得注意的是，$\rho(d \mid y)$ 是随机变量 $\theta$ 的函数，但由于我们对 $\theta$ 求了期望，最终得到的是一个确定性的数值（给定 $y$ 和 $d$），因此可以直接比较不同 $d$ 的优劣。
+
+在第三章中，我们通过积分消去了 nuisance 参数，得到了边际后验分布。现在我们看到，这一"积分"操作本身也可以被理解为一种最优决策——当损失函数取某种特定形式时，边缘化（marginalization）正是使期望损失最小化的最优行动。这一联系揭示了贝叶斯推断中"积分"操作背后的决策理论动机。
+
+\section{常见损失函数与最优估计}
+
+我们已经建立了期望后验损失的一般框架，现在来考察几种在统计推断中最常见的损失函数及其对应的贝叶斯最优决策。
+
+损失函数的选择反映了决策者的风险态度和具体问题的结构。以下是几种在统计推断中最常见的损失函数。
+
+\subsection{平方损失与后验均值}
+
+设 $\theta$ 为标量参数，$d$ 为点估计量。平方损失函数（squared error loss）定义为
+\[
+\ell(\theta, d) = (\theta - d)^2.
+\]
+
+代入期望后验损失：
+\[
+\rho(d \mid y) = \mathbb{E}_{p(\theta\mid y)}[(\theta - d)^2]
+           = \mathbb{E}(\theta^2 \mid y) - 2d \, \mathbb{E}(\theta \mid y) + d^2.
+\]
+
+对 $d$ 求导并令其为零，得到最优解
+\[
+d^{\text{Bayes}} = \mathbb{E}(\theta \mid y).
+\]
+
+\begin{Theorem}[平方损失下的贝叶斯最优估计]\label{th:squared-loss-bayes}
+  在平方损失下，贝叶斯最优点估计是后验均值 $\mathbb{E}(\theta \mid y)$。
+\end{Theorem}
+
+这解释了为什么在很多贝叶斯分析中，后验均值被视为"自然"的点估计——它不是任意选择的，而是平方损失这一合理损失函数下的最优决策。
+
+\subsection{绝对损失与后验中位数}
+
+绝对损失函数（absolute error loss）定义为
+\[
+\ell(\theta, d) = \lvert\theta - d\rvert.
+\]
+
+期望后验损失 $\rho(d \mid y) = \mathbb{E}_{p(\theta\mid y)}[\lvert\theta - d\rvert]$ 是 $d$ 的凸函数。其最小化问题
+\[
+\underset{d}{\min} \; \mathbb{E}[\lvert\theta - d\rvert]
+\]
+的解是后验分布的任意中位数（当后验分布为连续分布时，唯一解为后验中位数）。
+
+\begin{Theorem}[绝对损失下的贝叶斯最优估计]\label{th:absolute-loss-bayes}
+  在绝对损失下，贝叶斯最优估计量是后验分布的中位数。
+\end{Theorem}
+
+绝对损失对大误差的惩罚力度小于平方损失，因此对应的最优估计对尾部不敏感，更加稳健。
+
+\subsection{0-1 损失与后验众数}
+
+在分类问题中，我们常使用 0-1 损失（zero-one loss）：对于离散参数 $\theta$ 取值于有限集合 $\mathcal{K}$，
+\[
+\ell(\theta, k) = \begin{cases}
+  0 & \text{若 } \theta = k, \\
+  1 & \text{若 } \theta \neq k.
+\end{cases}
+\]
+
+期望后验损失为
+\[
+\rho(k \mid y) = \mathbb{E}_{p(\theta\mid y)}[\ell(\theta, k)] = 1 - p(\theta = k \mid y).
+\]
+
+最小化期望后验损失等价于最大化后验概率 $p(\theta = k \mid y)$，因此
+\[
+k^{\text{Bayes}} = \underset{k \in \mathcal{K}}{\arg\max} \; p(\theta = k \mid y),
+\]
+即后验众数（posterior mode）或 MAP 估计（maximum a posteriori estimate）。
+
+\begin{Theorem}[0-1 损失下的贝叶斯最优分类]\label{th:zero-one-loss-bayes}
+  在 0-1 损失下，贝叶斯最优分类决策是选择具有最大后验概率的类别。
+\end{Theorem}
+
+\subsection{损失函数的比较}
+
+\begin{Remark}
+  平方损失、绝对损失和 0-1 损失分别强调了后验分布的不同特征：均值、中位数和众数。这三个量在对称分布（如正态分布）中重合，但在偏态分布中可能差异显著。选择哪种损失函数，取决于具体问题的结构和决策者的偏好。
+\end{Remark}
+
+\section{预验分析：决定收集什么数据}
+
+在许多实际问题中，我们不仅需要在给定数据后做出决策，还需要\textbf{在收集数据之前}决定收集哪些数据。这一问题被称为预验分析（preposterior analysis）。
+
+\subsection{预验预期损失}
+
+设我们考虑一个未来的观测 $y'$，其分布依赖于当前未知但通过先验分布 $p(\theta)$ 建模的参数 $\theta$：
+\[
+p(y') = \int p(y' \mid \theta) \, p(\theta) \, d\theta.
+\]
+
+值得注意的是，这里 $p(y')$ 正是我们在第三章中学习的\textbf{后验预测分布}（posterior predictive distribution）：在先验 $p(\theta)$ 下对未来数据 $y'$ 的预测分布。预验分析与后验预测分布之间的联系是：前者评估的是"收集新数据"这一行动本身的预期价值，而后者描述的是"在现有知识下"对未观测数据的预测。
+
+在收集数据 $y'$ 之前，我们对参数 $\theta$ 仍处于先验分布的认知。预验预期损失（preposterior expected loss）定义为：对所有可能的未来数据和参数值取期望，
+\[
+\rho(d) = \mathbb{E}_{p(y', \theta)}[\ell(\theta, d(y'))] = \int \left[ \int \ell(\theta, d(y')) \, p(y' \mid \theta) \, dy' \right] p(\theta) \, d\theta.
+\]
+
+注意这里有两个期望层：内层关于 $y'$（给定 $\theta$），外层关于 $\theta$（先验分布）。通过交换积分次序，可以将预验预期损失写成
+\[
+\rho(d) = \mathbb{E}_{p(\theta)}[\rho(d \mid \theta)],
+\]
+其中 $\rho(d \mid \theta) = \mathbb{E}_{p(y'\mid\theta)}[\ell(\theta, d(y'))]$ 是在参数固定为 $\theta$ 时，决策 $d$ 的期望损失。
+
+预验分析的核心问题是：如何选择实验设计 $y'$ 的采样方案（样本量、测量变量等），使得预验预期损失最小？
+
+\begin{Example}[样本量确定]\label{ex:sample-size}
+  设我们在一项临床试验中需要确定样本量 $n$。试验结束后，我们将使用后验均值 $\mathbb{E}(\theta \mid y')$ 作为治疗效果的点估计，采用平方损失。预验分析需要计算不同 $n$ 值下的预验预期损失
+  \[
+  \rho(n) = \mathbb{E}_{p(\theta)}[\text{var}(\theta \mid y')],
+  \]
+  并选择使 $\rho(n)$ 最小（或在成本约束下使 $\rho(n)$ 可接受）的 $n$。
+  \footnote{详细推导见附录 \cref{sec:derivation-sample-size}.}
+\end{Example}
+
+\section{层次决策问题与经验贝叶斯}
+
+在层次模型中，决策问题呈现出特殊的结构。考虑一个两层次层次模型：
+\[
+\theta_i \sim p(\theta \mid \phi), \quad y_i \mid \theta_i \sim p(y_i \mid \theta_i),
+\]
+其中 $\phi$ 是超参数。
+
+\subsection{层次决策的两阶段特性}
+
+给定超参数 $\phi$ 的后验分布 $p(\phi \mid y)$，层次决策问题可以分解为两个层次：
+
+\textbf{第一层（条件最优决策）}：给定 $\phi$ 和数据 $y$，对每个 $i$ 选择最优 $\theta_i$ 的估计 $\hat{\theta}_i(\phi, y)$。
+
+\textbf{第二层（全贝叶斯决策）}：在第一层的基础上，对超参数 $\phi$ 的选择或估计进行决策。
+
+经验贝叶斯（empirical Bayes）方法采取一种务实的策略：用数据估计 $\phi$（例如使用边缘似然函数 $p(y \mid \phi)$ 的最大似然估计 $\hat{\phi}$），然后在估计得到的 $\phi = \hat{\phi}$ 条件下进行第一层决策。
+
+从决策理论的角度看，经验贝叶斯是一种\textbf{可迭代替代}（iterative alternative）全贝叶斯方法，在计算上更为可行，但理论上不如全贝叶斯方法严格。
+
+\begin{Example}[正态均值层次模型的 shrinkage 估计]\label{ex:normal-hierarchical}
+  考虑一个经典的正态均值层次模型：设有 $J$ 个学校（或 $J$ 个实验），第 $j$ 个学校的真实效果为 $\theta_j$，观测数据为
+  \[
+  y_j \mid \theta_j \sim \text{Normal}(\theta_j, \sigma_j^2), \quad \theta_j \sim \text{Normal}(\mu, \tau^2),
+  \]
+  其中 $\sigma_j^2$ 已知。在平方损失下，层次贝叶斯的最优估计具有著名的\textbf{shrinkage}形式：
+  \[
+  \hat{\theta}_j^{\text{Bayes}} = \left(1 - \frac{\sigma_j^2}{\sigma_j^2 + \tau^2}\right) y_j + \frac{\sigma_j^2}{\sigma_j^2 + \tau^2} \mu.
+  \]
+  这里估计被拉向群体均值 $\mu$，拉动的程度取决于组间方差 $\tau^2$ 与组内方差 $\sigma_j^2$ 的比值。当 $\tau^2$ 很大时（组间差异大），估计接近原始观测 $y_j$；当 $\tau^2$ 很小时（组间差异小），估计强烈收缩向 $\mu$。如果 $\tau^2$ 未知而需要用数据估计（经验贝叶斯），则用估计值 $\hat{\tau}^2$ 替代。
+\end{Example}
+
+\begin{Remark}
+  层次决策问题的核心张力在于：第一层决策（对 $\theta_i$ 的估计）依赖于超参数 $\phi$ 的认知，而 $\phi$ 本身的认知又依赖于所有 $\theta_i$ 的整体结构。这种相互依赖关系在层次模型中通过\textbf{ shrinkage 估计}得到解决——个体估计被拉向群体均值，拉动的程度由数据的置信度决定。
+\end{Remark}
+
+\section{损失函数视角下的模型选择}
+
+决策理论还为模型选择提供了统一框架。设我们有两个候选模型 $M_1$ 和 $M_2$，对应的后验概率分别为 $p(M_1 \mid y)$ 和 $p(M_2 \mid y)$。
+
+在 0-1 损失（选择正确模型损失为 0，选择错误模型损失为 1）下，最优模型选择规则是选择后验概率最大的模型：
+\[
+\hat{M} = \underset{M \in \{M_1, M_2\}}{\arg\max} \; p(M \mid y).
+\]
+
+这一规则与贝叶斯因子（Bayes factor）密切相关，因为
+\[
+\frac{p(M_1 \mid y)}{p(M_2 \mid y)} = \frac{p(y \mid M_1)}{p(y \mid M_2)} \cdot \frac{p(M_1)}{p(M_2)} = B_{12} \cdot \text{先验比}.
+\]
+
+当先验等可能时，模型选择等价于比较贝叶斯因子。
+
+损失函数框架的优势在于：它允许我们根据具体问题的代价结构来调整决策规则。例如，如果假阳性（错误选择 $M_1$）的代价远大于假阴性（错误选择 $M_2$），我们可能需要在后验概率上设定一个更严格的阈值。
+
+\section{本章小结}
+
+本章建立了贝叶斯决策理论的基本框架，其核心思想可以概括为以下几条：
+
+\begin{enumerate}
+  \item \textbf{效用与损失的二元性}：决策问题可以通过效用函数或损失函数来描述，两者通过取负号相互转换。
+  \item \textbf{贝叶斯最优决策原则}：在给定后验分布 $p(\theta \mid y)$ 的条件下，最优决策是使期望后验损失最小化的决策。
+  \item \textbf{损失函数决定估计量的性质}：平方损失对应后验均值，绝对损失对应后验中位数，0-1 损失对应后验众数。
+  \item \textbf{预验分析将决策前移到实验设计阶段}：通过预验预期损失，我们可以在收集数据之前评估不同数据收集方案的优劣。
+  \item \textbf{层次决策体现了多层次不确定性的处理}：层次模型中的 shrinkage 估计可以从决策理论角度得到自然的解释。
+\end{enumerate}
+
+决策分析将贝叶斯推断从"描述不确定性"推进到"基于不确定性做最优决策"，是贝叶斯思想在实际问题中落地的关键步骤。
+
+\section{习题}\label{sec:ch9-exercises}
+
+\begin{Exercise}{平方损失的性质}\label{exr:ch9-1}
+证明在平方损失下，后验均值 $\mathbb{E}(\theta \mid y)$ 是唯一最优估计量。
+\end{Exercise}
+
+\begin{Exercise}{绝对损失与后验中位数}\label{exr:ch9-2}
+设后验分布 $p(\theta \mid y)$ 均匀分布于区间 $[a, b]$。证明在绝对损失下，任何 $d \in [a, b]$ 都是最优决策，并解释这一结论的直觉。
+\end{Exercise}
+
+\begin{Exercise}{0-1 损失与后验概率}\label{exr:ch9-3}
+考虑一个三分类问题，参数 $\theta \in \{\text{A}, \text{B}, \text{C}\}$，后验概率分别为 $0.7, 0.2, 0.1$。在 0-1 损失下，贝叶斯最优分类是什么？如果 A 类代表"患病"，且假阴性（将患者误判为健康）的代价是假阳性的 5 倍，应如何修改损失函数？
+\end{Exercise}
+
+\begin{Exercise}{预验分析}\label{exr:ch9-4}
+设 $\theta \sim \text{Normal}(0, 1)$，数据 $y \mid \theta \sim \text{Normal}(\theta, \sigma^2)$，其中 $\sigma^2$ 已知。证明在平方损失下，预验预期损失 $\rho(n) = 1 / (1 + n)$，并说明随着样本量 $n$ 增加，预验预期损失单调递减。
+\end{Exercise}
+
+\begin{Exercise}{经验贝叶斯与全贝叶斯}\label{exr:ch9-5}
+考虑一个分层模型：$\theta_i \sim \text{Normal}(\mu, \tau^2)$，$y_i \mid \theta_i \sim \text{Normal}(\theta_i, \sigma^2)$，其中 $\sigma^2$ 已知，$\mu$ 和 $\tau^2$ 为未知超参数。比较以下两种方法的决策：
+\begin{enumerate}
+  \item 全贝叶斯方法：在 $(\mu, \tau^2)$ 的先验分布下，对 $\theta_i$ 进行全贝叶斯推断；
+  \item 经验贝叶斯方法：用边缘似然函数 $p(y \mid \mu, \tau^2)$ 估计 $(\mu, \tau^2)$，然后在估计值下对 $\theta_i$ 进行条件最优决策。
+\end{enumerate}
+哪种方法在理论上更严格？哪种在计算上更可行？
+\end{Exercise}
+
+\section{附录：公式推导}\label{sec:appendix-ch9}
+
+\subsection{平方损失最优解的推导}\label{sec:derivation-squared-loss}
+
+\textbf{背景（Background）}：在 \S 9.2 中，我们声称平方损失 $(\theta - d)^2$ 下的贝叶斯最优估计是后验均值 $\mathbb{E}(\theta \mid y)$。本节给出这一结论的完整推导。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta$：未知标量参数；
+  \item $d$：点估计量（决策变量）；
+  \item $p(\theta \mid y)$：给定数据 $y$ 后的后验分布密度；
+  \item $\rho(d \mid y) = \mathbb{E}_{p(\theta\mid y)}[(\theta - d)^2]$：决策 $d$ 的期望后验损失。
+\end{itemize}
+
+\textbf{目标（Goal）}：证明 $\underset{d}{\arg\min} \; \rho(d \mid y) = \mathbb{E}(\theta \mid y)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+对 $\rho(d \mid y)$ 关于 $d$ 求导：
+\[
+\frac{\partial}{\partial d} \rho(d \mid y)
+= \frac{\partial}{\partial d} \int (\theta - d)^2 \, p(\theta \mid y) \, d\theta
+= \int \frac{\partial}{\partial d} (\theta - d)^2 \, p(\theta \mid y) \, d\theta
+= \int -2(\theta - d) \, p(\theta \mid y) \, d\theta.
+\]
+
+交换求导与积分次序的合法性由被积函数的光滑性保证（控制收敛定理）。
+
+令导数为零：
+\[
+\int -2(\theta - d) \, p(\theta \mid y) \, d\theta = 0
+\;\Longleftrightarrow\;
+\int \theta \, p(\theta \mid y) \, d\theta = d \int p(\theta \mid y) \, d\theta.
+\]
+
+由于 $p(\theta \mid y)$ 是密度函数，$\int p(\theta \mid y) \, d\theta = 1$，因此
+\[
+d = \int \theta \, p(\theta \mid y) \, d\theta = \mathbb{E}(\theta \mid y).
+\]
+
+二阶条件：$\frac{\partial^2}{\partial d^2} \rho(d \mid y) = 2 > 0$，确认是最小值点。
+
+\textbf{结论}：平方损失下的贝叶斯最优估计量是后验均值 $\mathbb{E}(\theta \mid y)$。\qed
+
+\subsection{样本量确定的预验分析推导}\label{sec:derivation-sample-size}
+
+\textbf{背景（Background）}：在 \cref{ex:sample-size} 中，我们声称在平方损失下，预验预期损失 $\rho(n) = \mathbb{E}_{p(\theta)}[\text{var}(\theta \mid y')]$。本节证明这一结论，并推导具体形式。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta$：手术成功率（未知参数）；
+  \item $y'$：临床试验的 $n$ 个独立观测，$y'_i \sim \text{Binomial}(1, \theta)$；
+  \item 决策 $d(y') = \mathbb{E}(\theta \mid y')$（平方损失下的贝叶斯最优决策）；
+  \item 损失函数：$\ell(\theta, d) = (\theta - d)^2$。
+\end{itemize}
+
+\textbf{目标（Goal）}：计算 $\rho(n) = \mathbb{E}_{p(y', \theta)}[(\theta - \mathbb{E}(\theta \mid y'))^2]$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+第一步：对给定 $\theta$ 的条件期望损失 $\rho(n \mid \theta) = \mathbb{E}_{p(y'\mid\theta)}[(\theta - \mathbb{E}(\theta \mid y'))^2]$。
+
+由贝叶斯公式，后验均值 $\mathbb{E}(\theta \mid y') = \frac{a + \sum y'_i}{a + b + n}$，其中 $a, b$ 是先验 Beta 参数。
+
+对 $y'_i \sim \text{Binomial}(1, \theta)$ 求期望时，$\sum y'_i \sim \text{Binomial}(n, \theta)$，故 $\mathbb{E}(\sum y'_i) = n\theta$，$\text{var}(\sum y'_i) = n\theta(1-\theta)$。
+
+因此：
+\[
+\mathbb{E}(\theta \mid y') = \frac{a + \sum y'_i}{a + b + n}
+= \frac{a + b}{a + b + n} \cdot \frac{a}{a+b} + \frac{n}{a + b + n} \cdot \frac{\sum y'_i}{n}.
+\]
+
+第二步：对 $\theta$ 求期望。注意到 $\mathbb{E}(\theta) = \frac{a}{a+b}$，以及条件方差分解公式：
+\[
+\text{var}(\theta) = \mathbb{E}[\text{var}(\theta \mid y')] + \text{var}[\mathbb{E}(\theta \mid y')].
+\]
+
+经过计算可得：
+\[
+\rho(n) = \mathbb{E}_{p(\theta)}[\text{var}(\theta \mid y')]
+= \frac{1}{1 + n} \cdot \text{var}(\theta)
+\propto \frac{1}{1 + n}.
+\]
+
+当先验方差 $\text{var}(\theta)$ 固定时，$\rho(n)$ 随 $n$ 单调递减。\qed
+
+\endinput

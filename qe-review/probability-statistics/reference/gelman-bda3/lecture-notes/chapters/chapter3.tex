@@ -1,0 +1,264 @@
+% Chapter 3: Introduction to multiparameter models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{多参数模型简介}
+
+\section{对 Nuisance 参数的积分}
+
+为了表达联合后验分布和边际后验分布的思想，假设 $\theta$ 有两部分，每部分都可以是向量：$\theta = (\theta_1, \theta_2)$。进一步假设我们只（至少目前只）对 $\theta_1$ 的推断感兴趣，因此 $\theta_2$ 可以被视为 nuisance 参数。
+
+例如，在简单例子 $y|\mu, \sigma^2 \sim \text{Normal}(\mu, \sigma^2)$ 中，$\mu = \theta_1$ 和 $\sigma^2 = \theta_2$ 都未知，但通常我们最关心的是 $\mu$。
+
+我们寻求给定观测数据的参数条件分布，即 $p(\theta_1|y)$。这从联合后验密度
+\[
+p(\theta_1, \theta_2|y) \propto p(y|\theta_1, \theta_2) \times p(\theta_1, \theta_2)
+\]
+通过对 $\theta_2$ 积分得到：
+\[
+p(\theta_1|y) = \int p(\theta_1, \theta_2|y) \, d\theta_2
+\]
+
+另一种分解方式是：
+\[
+p(\theta_1|y) = \int p(\theta_1|\theta_2, y) \times p(\theta_2|y) \, d\theta_2
+\]
+
+它表明：感兴趣的\textbf{后验分布是条件后验分布的混合}，其中 $p(\theta_2|y)$ 是对 $\theta_2$ 不同值的加权函数。权重依赖于 $\theta_2$ 的后验密度，因此依赖于数据和先验模型的组合。
+
+对 nuisance 参数 $\theta_2$ 的积分可以一般性地解释。例如，$\theta_2$ 可以包括代表不同可能子模型的离散成分。
+
+\begin{Remark}
+  我们很少直接计算这个积分，但它暗示了构建和计算多参数模型的重要策略：\textbf{后验分布可以通过边际和条件模拟来计算}——首先从边际后验分布抽取 $\theta_2$，然后在给定 $\theta_2$ 值的条件下从条件后验分布抽取 $\theta_1$。通过这种方式，积分被间接执行。
+\end{Remark}
+
+这种分析形式的典型例子是正态模型中均值和方差都未知的情况。
+
+\section{正态数据与非信息先验}
+
+作为从样本估计总体均值的原型例子，我们考虑来自一元正态分布 $\text{Normal}(\mu, \sigma^2)$ 的 $n$ 个独立观测 $y = (y_1, \ldots, y_n)$。
+
+我们首先在非信息先验分布下分析这个模型。
+
+\subsection{非信息先验分布}
+
+对于 $\mu$ 和 $\sigma^2$，一个合理的模糊先验密度，假设位置参数和尺度参数的先验独立，是在 $(\mu, \log \sigma^2)$ 上均匀，即：
+\[
+p(\mu, \sigma^2) \propto (\sigma^2)^{-1}
+\]
+
+\subsection{联合后验分布}
+
+在这种约定的非正常先验密度下，联合后验分布为：
+\[
+p(\mu, \sigma^2 | y) \propto (\sigma^2)^{-(n/2+1)} \exp\left(-\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2\right)
+\]
+
+利用 $\sum_{i=1}^n (y_i - \mu)^2 = \sum_{i=1}^n (y_i - \bar{y})^2 + n(\bar{y} - \mu)^2$，可以写成：
+\[
+= (\sigma^2)^{-(n/2+1)} \exp\left(-\frac{1}{2\sigma^2}\left[(n-1)s^2 + n(\bar{y} - \mu)^2\right]\right)
+\]
+其中 $\bar{y}$ 是样本均值，$s^2 = \frac{1}{n-1}\sum_{i=1}^n (y_i - \bar{y})^2$ 是样本方差。
+
+\textbf{充分统计量}是 $\bar{y}$ 和 $s^2$。
+
+\subsection{条件后验分布}
+
+为了分解联合后验密度，我们首先考虑条件后验密度 $p(\mu | \sigma^2, y)$，然后考虑边际后验密度 $p(\sigma^2 | y)$。
+
+对于给定 $\sigma^2$ 的 $\mu$ 的后验分布，直接使用第二章中已知方差正态均值的均匀先验结果：
+\[
+\mu | \sigma^2, y \sim N(\bar{y}, \sigma^2 / n)
+\]
+
+\subsection{边际后验分布}
+
+为了确定 $p(\sigma^2 |y)$，我们必须对 $\mu$ 积分：
+\[
+p(\sigma^2 | y) \propto \int (\sigma^2)^{-(n/2+1)} \exp\left(-\frac{1}{2\sigma^2}\left[(n-1)s^2 + n(\bar{y} - \mu)^2\right]\right) d\mu
+\]
+
+对 $\mu$ 积分需要计算简单的正态积分，结果是：
+\[
+p(\sigma^2 | y) \propto (\sigma^2)^{-(n/2+1)} \exp\left(-\frac{(n-1)s^2}{2\sigma^2}\right) \times \sqrt{2\pi\sigma^2/n}
+\]
+
+简化后：
+\[
+p(\sigma^2 | y) \propto (\sigma^2)^{-[(n-1)/2+1]} \exp\left(-\frac{(n-1)s^2}{2\sigma^2}\right)
+\]
+
+这是尺度逆卡方分布（scale inverse-chi-squared distribution）：
+
+\begin{Definition}[尺度逆卡方分布]
+  \[
+  p(x|\nu, \sigma^2) = \frac{(\nu\sigma^2/2)^{\nu/2}}{\Gamma(\nu/2)} x^{-(\nu/2+1)} \exp\left(-\frac{\nu\sigma^2}{2x}\right)
+  \]
+  其中 $\nu$ 是自由度，$\sigma^2$ 是尺度参数。
+\end{Definition}
+
+因此：
+\[
+\sigma^2 | y \sim \text{Inv-}\chi^2(n-1, s^2)
+\]
+
+由 $\frac{(n-1)s^2}{\sigma^2} \sim \chi_{n-1}^2$，这与频率统计中的经典结果有显著相似性。
+
+\subsection{从联合后验分布抽样}
+
+从联合后验分布抽取样本很容易：
+\begin{enumerate}
+  \item 从边际后验分布抽取 $\sigma^2$，即 $\sigma^2 \sim \text{Inv-}\chi^2(n-1, s^2)$
+  \item 从条件后验分布抽取 $\mu$，即 $\mu | \sigma^2, y \sim N(\bar{y}, \sigma^2/n)$
+\end{enumerate}
+
+\subsection{边际后验分布：$t$ 分布}
+
+总体均值 $\mu$ 通常是感兴趣的估计量，边际后验分布可以通过对 $\sigma^2$ 积分得到。结果是：
+\[
+\mu | y \sim t_{n-1}(\bar{y}, s^2/n)
+\]
+即自由度为 $n-1$ 的学生 $t$ 分布。
+
+这与频率统计中的经典结果也有显著相似性：在采样分布下，$\frac{\bar{y}-\mu}{s/\sqrt{n}} \sim t_{n-1}$。
+
+一个值得注意的事实是：这个边际后验分布不依赖于数据——它是数据的函数，但关于 $\mu$ 的概率陈述只通过 $\bar{y}$ 和 $s^2$ 依赖于数据。
+
+\subsection{后验预测分布}
+
+未来观测 $\tilde{y}$ 的后验预测分布可以写成混合：
+\[
+p(\tilde{y} | y) = \iint p(\tilde{y}|\mu, \sigma^2) \times p(\mu, \sigma^2 | y) \, d\mu \, d\sigma^2
+\]
+
+结果是 $t$ 分布：$\tilde{y} \sim t_{n-1}(\bar{y}, (1+1/n)s^2)$。
+
+\section{正态数据与共轭先验}
+
+当使用共轭先验时，分析更加系统化。正态模型的共轭先验族具有形式：
+\[
+\mu | \sigma^2 \sim N(\mu_0, \sigma^2/\kappa_0), \quad \sigma^2 \sim \text{Inv-}\chi^2(\nu_0, \sigma_0^2)
+\]
+
+这对应于联合先验密度 $N\text{-Inv-}\chi^2(\mu_0, \sigma_0^2/\kappa_0; \nu_0, \sigma_0^2)$。
+
+四个超参数分别是 $\mu$ 的位置和尺度、$\sigma^2$ 的自由度和尺度。
+
+注意 $\sigma^2$ 出现在 $\mu|\sigma^2$ 的条件分布中，意味着在联合共轭先验密度中 $\mu$ 和 $\sigma^2$ 必然相关。
+
+这通常是有意义的——让 $\mu$ 的先验方差与 $\sigma^2$（观测 $y$ 的采样方差）挂钩是合理的。
+
+\subsection{联合后验分布}
+
+乘以正态似然得到后验密度仍然是 $N\text{-Inv-}\chi^2$ 形式，参数更新为：
+\[
+\mu_n = \frac{\kappa_0}{\kappa_0+n}\mu_0 + \frac{n}{\kappa_0+n}\bar{y}, \quad
+\kappa_n = \kappa_0 + n, \quad
+\nu_n = \nu_0 + n
+\]
+\[
+\nu_n\sigma_n^2 = \nu_0\sigma_0^2 + (n-1)s^2 + \frac{\kappa_0 n}{\kappa_n}(\bar{y}-\mu_0)^2
+\]
+
+条件后验分布：$\mu | \sigma^2, y \sim N(\mu_n, \sigma^2/\kappa_n)$
+
+边际后验分布：$\sigma^2 | y \sim \text{Inv-}\chi^2(\nu_n, \sigma_n^2)$
+
+$\mu$ 的边际后验分布：$\mu | y \sim t_{\nu_n}(\mu_n, \sigma_n^2/\kappa_n)$
+
+\section{分类数据的多项模型}
+
+多项模型用于描述每个观测是 $k$ 个可能结果之一的数据。如果 $y$ 是每个结果观测次数的计数向量，则：
+\[
+p(y|\theta) \propto \prod_{j=1}^k \theta_j^{y_j}, \quad \sum_{j=1}^k \theta_j = 1
+\]
+
+共轭先验分布是 Dirichlet 分布的多元推广：
+\[
+p(\theta|\alpha) \propto \prod_{j=1}^k \theta_j^{\alpha_j-1}
+\]
+
+结果是 $\theta_j' s$ 的后验分布是 Dirichlet 分布，参数为 $\alpha_j + y_j$。
+
+设置 $\alpha_j = 1$ 给出均匀密度；设置 $\alpha_j = 0$ 给出在 $\log(\theta_j)$ 上均匀的不正常先验。
+
+\section{已知方差的多元正态模型}
+
+多元正态模型 $N(\mu, \Sigma)$ 的似然函数为：
+\[
+p(y|\mu, \Sigma) \propto |\Sigma|^{-1/2} \exp\left\{-\frac{1}{2}(y-\mu)^T\Sigma^{-1}(y-\mu)\right\}
+\]
+
+给定 $\Sigma$ 时，$\mu$ 的共轭先验是多元正态分布 $\mu \sim N(\mu_0, \Lambda_0)$。
+
+后验分布：
+\[
+\mu_n = (\Lambda_0^{-1} + n\Sigma^{-1})^{-1}(\Lambda_0^{-1}\mu_0 + n\Sigma^{-1}\bar{y}), \quad
+\Lambda_n^{-1} = \Lambda_0^{-1} + n\Sigma^{-1}
+\]
+
+后验均值是数据和先验均值的加权平均，权重由精度矩阵给出；后验精度是先验精度和数据精度之和。
+
+\section{均值和方差都未知的多元正态模型}
+
+$(\mu, \Sigma)$ 的共轭先验分布是 normal-inverse-Wishart 分布：
+\[
+\Sigma \sim \text{Inv-Wishart}_{\nu_0}(\Lambda_0^{-1}), \quad \mu | \Sigma \sim N(\mu_0, \Sigma/\kappa_0)
+\]
+
+后验分布具有相同形式，参数更新为：
+\[
+\mu_n = \frac{\kappa_0}{\kappa_0+n}\mu_0 + \frac{n}{\kappa_0+n}\bar{y}, \quad
+\kappa_n = \kappa_0 + n, \quad
+\nu_n = \nu_0 + n
+\]
+\[
+\Lambda_n = \Lambda_0 + S + \frac{\kappa_0 n}{\kappa_0+n}(\bar{y}-\mu_0)(\bar{y}-\mu_0)^T
+\]
+其中 $S = \sum_{i=1}^n (y_i - \bar{y})(y_i - \bar{y})^T$。
+
+$\mu$ 的边际后验分布是多元 $t$ 分布。
+
+\section{基本建模与计算总结}
+
+多参数模型不允许轻易计算后验分布这一问题并非主要实际障碍，原因有三：
+
+\begin{enumerate}
+  \item 当参数较少时，非共轭多参数模型的后验推断可以通过简单模拟方法获得。
+  \item 复杂模型通常可以表示为层次化或条件化形式，为此有有效的计算策略。
+  \item 我们经常可以应用后验分布的正态近似，因此正态模型的共轭结构在实践中可以发挥重要作用，远远超出其对显式正态采样模型的应用。
+\end{enumerate}
+
+贝叶斯建模与计算的基本步骤总结：
+
+\begin{enumerate}
+  \item 写出模型的似然部分 $p(y|\theta)$，忽略任何不含 $\theta$ 的因子。
+  \item 写出后验密度 $p(\theta|y) \propto p(\theta) \times p(y|\theta)$
+    \begin{itemize}
+      \item 如果先验信息表述良好，将其包含在 $p(\theta)$ 中。
+      \item 否则使用弱信息先验或暂时设 $p(\theta) \propto \text{常数}$。
+    \end{itemize}
+  \item 创建参数的粗略估计 $\hat{\theta}$，用作起点和下一步计算的比较。
+  \item 从后验分布抽取模拟 $\theta^1, \ldots, \theta^S$。使用样本模拟计算 $\theta$ 任何感兴趣函数的后验密度。
+  \item 如果有预测量 $\tilde{y}$，通过对每个 $\tilde{y}^s$ 从给定 $\theta^s$ 的采样分布 $p(\tilde{y}|\theta^s)$ 抽取来模拟 $\tilde{y}^1, \ldots, \tilde{y}^S$。
+\end{enumerate}
+
+对于非共轭模型，步骤 4 可能很困难。各种方法已被开发用于从复杂模型中抽取后验模拟。
+
+\section{本章小结}
+
+本章我们学习了：
+\begin{enumerate}
+  \item 如何对 nuisance 参数进行积分（边际化和条件化）
+  \item 多参数模型的计算策略：边际和条件模拟
+  \item 正态模型中均值和方差同时未知时的分析
+  \item 尺度逆卡方分布与 $t$ 分布
+  \item 非信息先验和共轭先验在多参数情况下的应用
+  \item 多项模型与 Dirichlet 先验
+  \item 多元正态模型与 Inverse-Wishart 先验
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习渐近性以及贝叶斯方法与其他统计方法的联系。
+
+\endinput

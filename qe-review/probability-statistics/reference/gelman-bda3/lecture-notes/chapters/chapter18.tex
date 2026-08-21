@@ -1,0 +1,294 @@
+% Chapter 18: Models for missing data
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{缺失数据模型}
+\label{ch:missing-data}
+
+\section{本章导论}
+
+在现实世界的统计研究中，缺失数据几乎无处不在——调查中的无响应、医学试验中的受试者退出、工业生产中的零件损坏。简单地丢弃不完整的观测会导致严重的偏倚，并低估推断的不确定性。
+
+传统的统计方法往往假设数据是"完美"采集的，即每个应观测的变量都被记录下来。这一假设在许多应用中显然不成立。忽视缺失数据的存在，以"完全案例分析"（complete-case analysis）为例，只使用没有缺失值的观测，会导致估计量的偏倚。更隐蔽的是，完全案例分析通常会低估方差，因为它错误地假设样本量等于实际分析的观测数。
+
+1976 年，Donald Rubin 首次系统性地提出了缺失机制的分类框架 \cite{Rubin1976}，将缺失数据分为完全随机缺失、随机缺失和非随机缺失三类。这一框架至今仍是该领域的标准，被广泛应用于生物统计、社会科学和计量经济学等领域。Rubin 的核心洞见是：缺失数据的处理方法应该依赖于缺失机制的性质，而正确识别缺失机制对于获得无偏估计至关重要。
+
+本章我们将学习如何用概率模型描述数据的缺失机制，以及如何在贝叶斯框架下进行正确的推断。核心思想是：将缺失数据视为潜在的随机变量，为其指定概率模型，然后在完全贝叶斯分析中同时推断所有未知量。
+
+\section{缺失数据机制}
+\label{sec:missing-data-mechanisms}
+
+\subsection{为什么需要描述缺失机制？}
+\label{sec:why-describe-mechanism}
+
+当我们面对缺失数据时，一个关键的问题是：哪些数据缺失了？为什么它们缺失了？
+
+如果某些变量值的缺失与这些变量本身的值有关——例如，高收入人群更不愿意报告他们的工资——那么简单的补齐方法（如用均值填充）会产生严重偏倚。缺失机制（missing data mechanism）描述了缺失值与其对应变量值之间的关系。
+
+统计学家 Rubin \cite{Rubin1976} 将缺失机制分为三类，这一分类至今仍是该领域的标准框架。
+
+\subsection{三种缺失机制}
+
+\begin{enumerate}
+  \item \textbf{完全随机缺失（MCAR）}：缺失与观测数据或缺失数据都无关。例如，由于设备故障导致某些测量值丢失。
+  \item \textbf{随机缺失（MAR）}：缺失只依赖于观测数据，而与缺失数据本身无关。例如，老年受试者更可能错过随访，但他们是否存活与是否参与随访无关（给定年龄）。
+  \item \textbf{非随机缺失（MNAR）}：缺失依赖于缺失数据本身。例如，抑郁程度更严重的患者更可能退出治疗研究。
+\end{enumerate}
+
+\begin{Remark}
+  MCAR 是最强的假设，意味着缺失是"真正随机"的。MAR 是许多多重插补方法的基础假设，但 MAR 假设本身无法从数据中验证——我们无法仅凭观测数据判断 MAR 是否成立，这正是敏感度分析存在的原因。MNAR 最难处理，因为它要求对缺失机制进行明确的建模。
+\end{Remark}
+\label{rem:mar-verifiability}
+
+在贝叶斯分析中，我们通常假设缺失机制是\textbf{可忽略的（ignorable）}，这要求两个条件：
+\begin{enumerate}
+  \item \textbf{MAR（随机缺失）}：给定观测数据，缺失与否与缺失数据条件独立
+  \item \textbf{区分性（Distinctness）}：完整数据模型的参数与缺失机制模型的参数是独立的
+\end{enumerate}
+
+\section{贝叶斯推断中的可忽略性}
+\label{sec:ignorability}
+
+\subsection{可忽略性的含义}
+
+当缺失数据机制是可忽略的时候，我们可以在贝叶斯推断中"忽略"它——即不需要显式地建模缺失机制。后验分布只需基于观测数据的边际分布：
+
+\[
+p(\theta | y_{\text{obs}}) \propto p(\theta) p(y_{\text{obs}} | \theta)
+\label{eq:ignorability-posterior}
+\]
+
+如果缺失机制不可忽略，后验分布需要包含缺失机制模型：
+
+\[
+p(\theta, \psi | y_{\text{obs}}) \propto p(\theta) p(\psi) p(y_{\text{obs}}, r | \theta, \psi)
+\label{eq:non-ignorability-posterior}
+\]
+
+其中 $\psi$ 是缺失机制模型的参数，$r$ 是缺失指示向量。
+
+\begin{Remark}
+  区分性条件在实践中通常容易满足——我们通常假设数据模型和缺失机制模型的参数是不同的、独立的。例如，在正态均值估计中，均值参数 $\mu$ 与缺失概率参数通常是独立的。
+\end{Remark}
+
+\subsection{什么时候可忽略性成立？}
+\label{sec:when-ignorability-holds}
+
+可忽略的贝叶斯推断（ignorability）在以下情况成立：
+
+\begin{enumerate}
+  \item \textbf{MCAR 情况}：缺失完全随机，任何基于观测数据的推断都是无偏的（但可能低效）
+  \item \textbf{MAR + 正确模型}：如果正确指定了条件缺失模型，且参数与数据模型区分
+  \item \textbf{参数先验独立}：完整数据参数与缺失机制参数的先验分布相互独立
+\end{enumerate}
+
+\section{联合建模方法}
+\label{sec:joint-modeling}
+
+\subsection{完全数据模型}
+
+联合建模方法（joint modeling approach）同时指定：
+
+\begin{enumerate}
+  \item \textbf{完全数据模型} $p(y_{\text{obs}}, y_{\text{mis}} | \theta)$
+  \item \textbf{缺失机制模型} $p(r | y_{\text{obs}}, y_{\text{mis}}, \psi)$
+\end{enumerate}
+
+联合后验分布为：
+
+\[
+p(\theta, \psi, y_{\text{mis}} | y_{\text{obs}}, r) \propto p(\theta) p(\psi) p(y_{\text{obs}}, y_{\text{mis}} | \theta) p(r | y_{\text{obs}}, y_{\text{mis}}, \psi)
+\label{eq:joint-posterior}
+\]
+
+\begin{Example}[二元数据的缺失机制]\label{ex:binary-missing-mechanism}
+  假设 $y_i \in \{0, 1\}$ 是二项结果，缺失指示 $r_i$ 服从 logistic 模型：
+
+  \[
+  \mathrm{logit}(\mathbb{P}(r_i = 1)) = \psi_0 + \psi_1 y_i
+  \label{eq:logistic-missing-model}
+  \]
+
+  当 $\psi_1 \neq 0$ 时，缺失依赖于潜在结果 $y_i$，这是 MNAR 情形。当 $\psi_1 = 0$ 时，缺失是 MCAR。
+
+  我们可以在联合框架下估计 $\psi_1$，检验缺失机制是否依赖于潜在结果。
+\end{Example}
+推导见附录 \cref{sec:derivation-logistic-missing}。
+
+联合建模的优点是提供了缺失机制的完整描述；缺点是需要对缺失机制做出明确的参数化假设，而这些假设往往难以验证。
+
+\section{全贝叶斯方法与多重插补}
+\label{sec:full-bayes-multiple-imputation}
+
+\subsection{将缺失数据作为参数}
+
+在全贝叶斯方法中，我们将缺失数据本身视为需要推断的参数。与潜在变量一样，缺失值 $y_{\text{mis}}$ 被赋予先验分布，然后通过 MCMC 同时抽样 $\theta$ 和 $y_{\text{mis}}$。
+
+完整的分层结构为：
+
+\begin{enumerate}
+  \item \textbf{数据层}：$y_{\text{obs}}, y_{\text{mis}} | \theta \sim p(y | \theta)$
+  \item \textbf{参数层}：$\theta \sim p(\theta)$
+  \item \textbf{缺失机制层}：$r | y_{\text{obs}}, y_{\text{mis}}, \psi \sim p(r | y, \psi)$
+\end{enumerate}
+
+在 MAR 和可忽略性条件下，我们可以忽略缺失机制，只关注：
+
+\[
+p(\theta, y_{\text{mis}} | y_{\text{obs}}) \propto p(\theta) p(y_{\text{mis}} | \theta) p(y_{\text{obs}} | \theta, y_{\text{mis}})
+\label{eq:bayesian-missing-posterior}
+\]
+
+\subsection{多重插补}
+
+多重插补（multiple imputation）是一种实用的缺失数据处理技术，通过创建多个（通常是 $m = 5$ 到 $m = 50$）完整数据集来反映缺失数据的不确定性。\footnote{Rubin 组合规则的完整推导见附录 \cref{sec:derivation-rubin-combination}。}
+
+\textbf{插补阶段}：给定观测数据和当前参数值，从后验分布中抽取缺失值：
+
+\[
+y_{\text{mis}}^{(l)} \sim p(y_{\text{mis}} | y_{\text{obs}}, \theta^{(l)})
+\label{eq:imputation-step}
+\]
+
+\textbf{分析阶段}：对每个插补数据集应用标准的完全数据分析方法。
+
+\textbf{合并阶段}：使用 Rubin 组合规则将 $m$ 个分析结果合并。
+
+对于点估计 $\hat{Q}_l$ 和方差估计 $U_l$（$l = 1, \ldots, m$），合并的估计为：
+
+\[
+\bar{Q} = \frac{1}{m} \sum_{l=1}^m \hat{Q}_l
+\label{eq:rubin-pooled-estimate}
+\]
+
+Rubin 组合规则的核心洞见是：总方差 $T$ 由两部分组成——来自数据分析的抽样方差 $\bar{U}$ 和来自缺失数据不确定性的插补间方差 $B$：
+
+\[
+T = \bar{U} + \left(1 + \frac{1}{m}\right) B
+\label{eq:rubin-total-variance}
+\]
+
+其中 $\bar{U} = \frac{1}{m} \sum_{l=1}^m U_l$ 是 within-imputation 方差，$B = \frac{1}{m-1} \sum_{l=1}^m (\hat{Q}_l - \bar{Q})^2$ 是 between-imputation 方差。
+
+自由度为：
+
+\[
+\nu = (m-1)\left(1 + \frac{\bar{U}}{(1 + 1/m)B}\right)^2
+\label{eq:rubin-degrees-freedom}
+\]
+
+\begin{Remark}
+  多重插补的关键洞见是：总方差 $T$ 包括两个部分——来自数据分析的抽样方差 $\bar{U}$ 和来自缺失数据不确定性的插补间方差 $B$。忽视后者会严重低估总体不确定性。
+\end{Remark}
+
+\section{敏感度分析}
+\label{sec:sensitivity-analysis}
+
+\subsection{为什么需要敏感度分析？}
+\label{sec:why-sensitivity-analysis}
+
+在 MNAR 情况下，缺失机制是不可忽略的，分析结果严重依赖于我们对缺失机制的假设。敏感度分析（sensitivity analysis）系统地检验：当缺失机制的假设发生变化时，结论如何变化？
+
+即使在 MAR 情况下，如果模型误设（model misspecification），结论也可能对模型假设敏感。
+
+\subsection{敏感度分析的实施方式}
+\label{sec:sensitivity-methods}
+
+敏感度分析有多种实施方式：
+
+\begin{enumerate}
+  \item \textbf{情景规划（Scenario-based）}：定义几个关于缺失机制的合理情景，比较不同情景下的推断
+  \item \textbf{扰动分析（Perturbation）}：在似然函数或先验上引入小扰动，观察后验的稳定性
+  \item \textbf{选择模型（Selection model）} vs \textbf{模式混合模型（pattern-mixture model）}：两种互补的建模框架
+\end{enumerate}
+
+\textbf{选择模型方法}将联合分布分解为：
+
+\[
+p(y, r) = p(y) p(r | y)
+\label{eq:selection-model}
+\]
+
+\textbf{模式混合模型}则分解为：
+
+\[
+p(y, r) = \sum_{k} p(r = k) p(y | r = k)
+\label{eq:pattern-mixture-model}
+\]
+
+其中 $k$ 表示不同的缺失模式（完全观测、部分缺失、完全缺失等）。
+
+\begin{Example}[基于 Pattern-Mixture 的敏感度分析]\label{ex:pattern-mixture-sensitivity}
+  假设二分之一的数据是完全观测的，其余二分之一在处理后缺失。模式混合方法对每种模式分别建模：
+
+  \[
+  y_{\text{obs},1} | \theta \sim \mathrm{N}(\mu, \sigma^2)
+  \label{eq:pattern-mixture-complete}
+  \]
+  \[
+  y_{\text{obs},2} | \theta \sim \mathrm{N}(\mu + \Delta, \sigma^2)
+  \label{eq:pattern-mixture-missing}
+  \]
+
+  其中 $\Delta$ 衡量"缺失值与观测值的平均差异"。通过设定不同的 $\Delta$ 值（如 $\Delta = 0, \pm 0.5\sigma, \pm \sigma$），我们可以评估结论对 $\Delta$ 的敏感程度。
+\end{Example}
+推导见附录 \cref{sec:derivation-pattern-mixture}。
+
+\section{缺失数据的实际处理策略}
+\label{sec:practical-strategies}
+
+\subsection{完整案例分析}
+
+仅使用所有变量都被观测到的案例。优点是简单，缺点是：
+
+\begin{enumerate}
+  \item 如果 MCAR 不成立，会产生偏倚
+  \item 浪费了部分观测的信息
+  \item 方差估计基于不正确的样本量
+\end{enumerate}
+
+\subsection{单一插补}
+
+用单一值（如均值、条件均值）填充缺失值。问题在于：
+
+\begin{enumerate}
+  \item 忽略了缺失数据的不确定性
+  \item 通常会低估方差
+  \item 可能扭曲数据的分布
+\end{enumerate}
+
+\subsection{逆概率加权}
+
+在 MAR 假设下，通过对观测案例赋予权重来校正缺失偏倚。权重与缺失概率的倒数成正比：
+
+\[
+w_i = \frac{1}{\mathbb{P}(r_i = 1 | x_i)}
+\label{eq:inverse-probability-weight}
+\]
+
+缺点是当缺失概率接近 0 时权重会变得极大，导致不稳定。
+
+\begin{Remark}
+  在实际应用中，多重插补通常是处理 MAR 数据的最稳健选择，因为它既保留了观测数据的信息，又通过多个插补反映了缺失的不确定性。
+\end{Remark}
+
+\section{本章小结}
+
+本章我们学习了：
+
+\begin{enumerate}
+  \item 三种缺失数据机制：MCAR、MAR、MNAR \cite{Rubin1976}
+  \item 可忽略性条件：MAR + 区分性
+  \item 联合建模方法：同时建模完全数据和缺失机制
+  \item 全贝叶斯方法：将缺失值作为参数进行 MCMC 推断
+  \item 多重插补：Rubin 组合规则和方差的分解
+  \item 敏感度分析：检验结论对缺失机制假设的依赖性
+  \item 实际处理策略的优缺点比较
+\end{enumerate}
+
+缺失数据处理没有"一刀切"的解决方案。统计学家需要根据数据的具体缺失模式、缺失机制的合理性假设、以及计算资源，选择最合适的方法。在任何情况下，透明报告缺失数据的数量、模式和处理的假设，都是负责任的统计实践的基本要求。
+
+\section{下节预告}
+
+下一章我们将学习参数非线性模型（Parametric Nonlinear Models），这是对线性模型和广义线性模型的自然推广，允许更灵活的函数关系建模。
+
+\endinput

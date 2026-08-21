@@ -1,0 +1,326 @@
+% Chapter 10: Introduction to Bayesian Computation
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{贝叶斯计算入门}
+
+\section{本章导论}
+
+在前面几章中，我们已经建立了贝叶斯推理的基本框架：先验分布、数据模型、似然函数，通过贝叶斯定理将它们结合为后验分布。理论上，这个框架是完整且优雅的。然而，当我们试图将这一理论应用于实际问题时，一个根本性的障碍立刻显现出来：
+
+\textbf{后验分布的计算往往涉及高维积分，而这些积分在解析上通常是不可解的。}
+
+例如，在层次模型中，我们需要计算后验均值、预测分布、模型证据等，每一种都需要在数十甚至数百个参数构成的高维空间中进行积分。传统的解析方法对此束手无策。
+
+这正是本章要解决的问题：我们介绍三种主要的贝叶斯计算方法——\textbf{数值积分}、\textbf{蒙特卡洛（Monte Carlo）积分}和\textbf{渐近近似}。这些方法各有优劣，在不同场景下发挥各自的作用。我们将在第十一章深入讨论第四种也是最强大的方法——马尔科夫链蒙特卡洛（MCMC）。
+
+\section{计算挑战的来源}
+
+\subsection{从点估计到后验分布}
+
+在经典统计学中，我们通常只关心某些感兴趣的参数的点估计——如均值或众数。贝叶斯方法则更进一步：我们想要完整的后验分布，以便进行区间估计、预测推断和模型比较。
+
+形式上，对于参数 $\theta$ 和数据 $y$，后验分布为
+
+\[
+p(\theta | y) = \frac{p(y | \theta) p(\theta)}{p(y)},
+\]
+
+其中 $p(y) = \int p(y | \theta) p(\theta) \, d\theta$ 是边缘似然（或称证据）。
+
+\textbf{问题出在哪里？}边缘似然 $p(y)$ 是一个维度等于 $\theta$ 维度的积分。当 $\theta$ 是单个参数时，这个积分尚可数值求解；但当 $\theta$ 包含数十或数百个参数时，\textbf{维度灾难（curse of dimensionality）}使得传统数值方法彻底失效。
+
+\subsection{后验特征量的计算需求}
+
+贝叶斯分析中常用的特征量包括：
+
+\begin{enumerate}
+  \item \textbf{后验均值}：$\mathbb{E}(\theta | y) = \int \theta \, p(\theta | y) \, d\theta$
+  \item \textbf{后验方差}：$\text{var}(\theta | y) = \int (\theta - \mathbb{E}\theta)^2 \, p(\theta | y) \, d\theta$
+  \item \textbf{预测分布}：$p(y_{\text{new}} | y) = \int p(y_{\text{new}} | \theta) \, p(\theta | y) \, d\theta$
+  \item \textbf{边缘后验}：对部分参数积分得到其余参数的后验
+\end{enumerate}
+
+每一种都需要在高维空间中进行积分运算。
+
+\begin{Remark}
+  值得注意的是，在许多实际问题中，我们并不需要完整的联合后验分布 $p(\theta | y)$，而只需要某些边缘分布或特征量。这就引出了两类主要策略：\textbf{直接近似后验分布}（如变分推断）和\textbf{直接近似感兴趣的特征量}（如蒙特卡洛方法）。
+\end{Remark}
+
+\section{数值积分方法}
+
+\subsection{简单求积法}
+
+最基本的思路是用离散求和逼近连续积分。例如，对于一维积分，我们可以使用矩形法则或 Simpson 法则：
+
+\[
+\int_a^b f(x) \, dx \approx \sum_{i=1}^n w_i f(x_i),
+\]
+
+其中 $x_i$ 是求积节点，$w_i$ 是相应权重。
+
+\textbf{为什么这在贝叶斯计算中很快失效？}在 $d$ 维空间中，网格方法需要 $n^d$ 个节点。如果 $d = 10$ 且每维取 10 个节点，就需要 $10^{10}$ 个节点——这在任何实际计算中都是不可行的。这种指数增长就是维度灾难的本质。
+
+\subsection{Latin 超立方采样}
+
+一种改进策略是\textbf{分层采样（stratified sampling）}：将积分区域划分为若干子区域，在每个子区域中独立采样。
+
+Latin 超立方采样（Latin Hypercube Sampling, LHS）是一种优雅的分层采样方法，它确保样本在每个维度上均匀分布，同时保持采样的随机性。
+
+对于 $d$ 维空间和 $n$ 个样本，LHS 将每个维度划分为 $n$ 个等概率区间，然后通过随机置换确保样本点不重复。这种方法的优势在于：即使样本量较小，也能获得比纯随机采样更均匀的覆盖。
+
+然而，LHS 本质上仍是一种\textbf{低维方法}。当维度增加到数十甚至数百时，其效果迅速下降。
+
+\section{蒙特卡洛积分}
+
+\subsection{基本思想}
+
+蒙特卡洛方法的核心思想出奇地简单：用随机模拟代替确定性计算。\footnote{关于蒙特卡洛方法的历史，详见附录 \cref{sec:mc-history}。}
+
+假设我们想要计算 $\theta = \int h(x) \, dx$。如果我们能够从 $x$ 的分布 $p(x)$ 中独立抽取大量样本 $x_1, \ldots, x_n$，则可以用
+
+\[
+\hat{\theta}_n = \frac{1}{n} \sum_{i=1}^n h(x_i)
+\]
+
+作为 $\theta$ 的估计。强大数定律保证 $\hat{\theta}_n \to \theta$（当 $n \to \infty$）。
+
+更一般地，如果我们想计算 $\int h(x) p(x) \, dx$，其中 $p(x)$ 是某个分布的密度，我们只需从 $p(x)$ 中采样，然后用样本均值估计积分。
+
+\subsection{重要性采样}
+
+在贝叶斯计算中，我们经常需要从难以采样的分布中估计积分。\textbf{重要性采样（importance sampling）}是一种巧妙的解决方案：不是从目标分布 $p(\theta | y)$ 直接采样，而是从另一个更容易采样的分布 $g(\theta)$ 中采样。
+
+设我们想估计
+
+\[
+I = \int h(\theta) \, p(\theta | y) \, d\theta = \int h(\theta) \frac{p(y | \theta) p(\theta)}{p(y)} \, d\theta.
+\]
+
+如果从 $g(\theta)$ 中采样，注意到
+
+\[
+I = \int h(\theta) \frac{p(y | \theta) p(\theta)}{p(y)} \cdot \frac{g(\theta)}{g(\theta)} \, d\theta
+    = \int \frac{h(\theta) p(y | \theta) p(\theta)}{p(y) g(\theta)} \, g(\theta) \, d\theta.
+\]
+
+令 $w(\theta) = \frac{p(y | \theta) p(\theta)}{g(\theta)}$，则
+
+\[
+\hat{I} = \frac{1}{n} \sum_{i=1}^n \frac{h(\theta_i) w(\theta_i)}{\frac{1}{n} \sum_{j=1}^n w(\theta_j)}
+        = \sum_{i=1}^n h(\theta_i) \tilde{w}(\theta_i),
+\]
+
+其中 $\tilde{w}(\theta_i) = \frac{w(\theta_i)}{\sum_j w(\theta_j)}$ 是归一化权重。
+
+\begin{Example}[10 维积分的重要性采样估计]\label{ex:importance-sampling-10d}
+  考虑估计 $d$ 维单位球体积：$I_d = \int_{[0,1]^d} 1 \, d\theta$。
+
+  使用标准正态分布作为重要性分布 $g(\theta)$，并将积分区域扩展到全空间 $I = \int_{\mathbb{R}^d} \mathbb{I}_{[0,1]^d}(\theta) \, d\theta$。这实际上是用 $g(\theta)$ 的样本估计 $\mathbb{I}_{[0,1]^d}(\theta)$ 在 $\mathbb{R}^d$ 上的积分。
+
+  由于正态分布的尾部概率很小，我们需要足够多的样本才能获得稳定的估计。\footnote{详细推导和代码实现见附录 \cref{sec:importance-sampling-derivation}。}
+\end{Example}
+
+重要性采样的核心挑战是选择合适的\textbf{重要性分布} $g(\theta)$。好的重要性分布应该：
+\begin{enumerate}
+  \item \textbf{支撑集覆盖}：$g(\theta) > 0$ whenever $p(\theta | y) > 0$
+  \item \textbf{轻尾部}：避免在尾部区域浪费太多样本
+  \item \textbf{形状相近}：$g(\theta)$ 的形状应尽量接近 $|h(\theta)| p(\theta | y)$
+\end{enumerate}
+
+\subsection{有效样本量}
+
+在重要性采样中，权重 $w_i$ 的分布反映了估计的效率。如果所有权重几乎相等，说明 $g(\theta)$ 与目标分布匹配良好；如果权重分布极其不均，说明大部分样本贡献很小。
+
+我们用\textbf{有效样本量（Effective Sample Size, ESS）}量化这一点：
+
+\[
+\text{ESS} = \frac{n}{1 + \text{var}(w)},
+\]
+
+其中 $\text{var}(w)$ 是（未归一化）权重的变异系数。ESS 的直观含义是：与直接采样相比，我们需要多少样本来达到当前的估计精度？
+
+在实践中，我们用
+
+\[
+\text{ESS} \approx \frac{n}{1 + \frac{\text{var}(w)}{\mathbb{E}(w)^2}}
+\]
+
+来估计 ESS。如果 $\text{ESS} \ll n$，说明重要性采样效果不佳，我们需要调整 $g(\theta)$ 或尝试其他方法。
+
+\begin{Remark}
+  ESS 是一个有用的诊断工具，但不是绝对的。当权重高度非均匀时，即使 ESS 看起来还可以，估计量 $\hat{I}$ 的方差也可能被低估。这被称为\textbf{权重复制问题（weight degeneracy）}，是在实际使用重要性采样时需要警惕的。
+\end{Remark}
+
+\subsection{拒绝采样}
+
+\textbf{拒绝采样（rejection sampling）}是另一种从困难分布中采样的通用方法。\footnote{关于拒绝采样的详细讨论，包括与 MCMC 的关系，见附录 \cref{sec:rejection-sampling-detail}。}
+
+其基本思想是：找到一个容易采样的包络分布 $g(\theta)$，使得存在常数 $c$ 满足
+
+\[
+p(\theta | y) \leq c \cdot g(\theta), \quad \forall \theta.
+\]
+
+然后算法如下：
+
+\begin{enumerate}
+  \item 从 $g(\theta)$ 中抽取候选样本 $\theta^*$
+  \item 计算接受概率 $\alpha = \frac{p(\theta^* | y)}{c \cdot g(\theta^*)}$
+  \item 以概率 $\alpha$ 接受 $\theta^*$，否则拒绝并返回步骤 1
+\end{enumerate}
+
+被接受的样本恰好服从目标分布 $p(\theta | y)$。
+
+\begin{Example}[截断正态分布的拒绝采样]\label{ex:truncated-normal-rejection}
+  假设我们想从截断正态分布 $N(\mu, \sigma^2)$ 在区间 $[a, b]$ 上的限制采样。一个自然的选择是使用同样的正态分布作为包络分布，但需要确保 $c \cdot g(\theta) \geq p(\theta | y)$ 在整个区间上成立。
+
+  具体而言，我们需要 $c \geq \frac{\max_{\theta \in [a,b]} p(\theta | y)}{g(\theta)}$，这可以通过分析 $g$ 和 $p$ 的密度比来确定。\footnote{详细推导和 R 实现代码见附录 \cref{sec:truncated-normal-rejection}。}
+\end{Example}
+
+拒绝采样的关键挑战是找到合适的包络分布 $g(\theta)$ 和常数 $c$。如果 $c$ 太大，接受率会很低，算法效率严重下降；如果 $g(\theta)$ 的形状与 $p(\theta | y)$ 差异太大，$c$ 也不得不设得很大。
+
+\subsection{采样重要性重采样}
+
+\textbf{采样重要性重采样（Sequential Importance Resampling, SIR）}，也称为\textbf{粒子滤波}的基础，将重要性采样与重采样结合起来。
+
+当直接估计后验分布 $p(\theta | y)$ 困难时，SIR 提供了一种近似采样的方法：
+
+\begin{enumerate}
+  \item 从简单建议分布 $g(\theta)$ 中抽取 $n$ 个样本 $\theta_1, \ldots, \theta_n$
+  \item 计算非归一化权重 $w_i \propto \frac{p(y | \theta_i) p(\theta_i)}{g(\theta_i)}$
+  \item 归一化权重 $\tilde{w}_i = w_i / \sum_j w_j$
+  \item 通过重采样（依据权重 $\tilde{w}_i$）得到新样本集
+\end{enumerate}
+
+重采样步骤是 SIR 与普通重要性采样的关键区别：通过消除低权重样本、复制高权重样本，我们得到了一个更接近目标分布的样本集。
+
+\begin{Remark}
+  SIR 的一个重要应用是状态空间模型中的粒子滤波。在这类模型中，潜在状态 $x_t$ 是隐含的，我们只能通过观测 $y_t$ 间接推断。SIR 通过序贯地处理每个时间步的观测，逐步更新状态的后验分布。
+\end{Remark}
+
+\section{渐近近似方法}
+
+当样本量较大时，中心极限定理为后验分布提供了良好的近似。
+
+\subsection{Laplace 方法}
+
+Laplace 方法的核心思想是用正态分布逼近后验分布。设
+
+\[
+p(\theta | y) \propto p(y | \theta) p(\theta) = \exp\{-n \cdot h(\theta)\},
+\]
+
+其中 $h(\theta) = -\frac{1}{n} \log p(y | \theta) p(\theta)$。
+
+将 $h(\theta)$ 在其后验众数 $\hat{\theta}$ 处 Taylor 展开：
+
+\[
+h(\theta) \approx h(\hat{\theta}) + \frac{1}{2} (\theta - \hat{\theta})^T H(\hat{\theta}) (\theta - \hat{\theta}),
+\]
+
+其中 $H(\hat{\theta}) = \nabla^2 h(\hat{\theta})$ 是 Hessian 矩阵。
+
+代入得
+
+\[
+p(\theta | y) \approx \exp\left\{-n h(\hat{\theta})\right\} \cdot \exp\left\{-\frac{n}{2} (\theta - \hat{\theta})^T H(\hat{\theta}) (\theta - \hat{\theta})\right\}.
+\]
+
+这正是均值为 $\hat{\theta}$、协方差为 $\frac{1}{n} H(\hat{\theta})^{-1}$ 的正态分布。\footnote{关于 Laplace 方法的更严格推导和误差分析，见附录 \cref{sec:laplace-method-derivation}。}
+
+\begin{Example}[逻辑回归的 Laplace 近似]\label{ex:logistic-laplace}
+  在逻辑回归中，似然函数为
+  \[
+  p(y | \theta) = \prod_{i=1}^n \text{logit}^{-1}(\theta^T x_i)^{y_i} (1 - \text{logit}^{-1}(\theta^T x_i))^{1-y_i}.
+  \]
+  对数似然的 Hessian 矩阵为
+  \[
+  H(\theta) = \sum_{i=1}^n \text{logit}^{-1}(\theta^T x_i) (1 - \text{logit}^{-1}(\theta^T x_i)) x_i x_i^T,
+  \]
+  其中 $\text{logit}^{-1}(z) = \frac{1}{1 + e^{-z}}$。
+
+  Laplace 近似给出 $\theta | y \approx N(\hat{\theta}, H(\hat{\theta})^{-1})$，其中 $\hat{\theta}$ 是后验众数。\footnote{关于如何在实践中使用这个近似的详细讨论，见附录 \cref{sec:logistic-laplace-extra}。}
+\end{Example}
+
+Laplace 方法的优势在于计算效率高：当 $n$ 足够大时，它提供了对后验分布的快速近似。其局限性在于它假设后验分布是单峰的且接近正态——这在许多实际问题是合理的，但绝非普遍成立。
+
+\subsection{BIC 近似}
+
+贝叶斯信息准则（BIC）是大样本下边缘似然的重要近似。设 $d$ 是参数维度，$n$ 是样本量，则
+
+\[
+\text{BIC} = -2 \log p(y | \hat{\theta}_{\text{MLE}}) + d \log n.
+\]
+
+更精确地，边缘似然的 BIC 近似为
+
+\[
+\log p(y) \approx \log p(y | \hat{\theta}_{\text{MLE}}) - \frac{d}{2} \log n + O(1).
+\]
+
+BIC 在模型选择中广泛应用，因为它提供了一个在似然性和模型复杂度之间权衡的准则。\footnote{关于 BIC 与其他模型选择准则（如 AIC、WAIC）的比较，见附录 \cref{sec:model-selection-criteria}。}
+
+在贝叶斯计算中，BIC 的意义在于它提供了一种廉价的边缘似然近似，而无需进行昂贵的高维积分。这在需要快速筛选大量候选模型时尤其有用。
+
+\section{变分推断初步}
+
+变分推断（Variational Inference）是近年来发展迅速的一种贝叶斯计算方法。\footnote{变分推断的完整理论，包括平均场近似和信念传播，见附录 \cref{sec:variational-inference-full}。}
+
+其核心思想是：\textbf{用一类简单的分布 $Q$ 去近似难以处理的后验分布 $p(\theta | y)$}。具体而言，我们寻找 $q(\theta) \in Q$ 使得
+
+\[
+q^*(\theta) = \arg\min_{q \in Q} \text{KL}(q(\theta) \| p(\theta | y)).
+\]
+
+由于 KL 散度涉及 $p(\theta | y)$，直接最小化 KL 不可行。但可以证明（通过简单的代数变形）：
+
+\[
+\log p(y) = \text{KL}(q \| p) + \mathcal{L}(q),
+\]
+
+其中 $\mathcal{L}(q) = \int q(\theta) \log \frac{p(y | \theta) p(\theta)}{q(\theta)} \, d\theta$ 是\textbf{变分下界（ELBO）}。
+
+由于 $\log p(y)$ 是常数，最小化 $\text{KL}(q \| p)$ 等价于最大化 $\mathcal{L}(q)$。而 $\mathcal{L}(q)$ 只涉及 $q(\theta)$ 和对数似然/先验，因而是可以计算的。
+
+变分推断的优势在于其\textbf{计算效率}：通过优化有限的变分参数，变分推断可以在百万级参数规模的模型中进行后验近似。这使其成为现代大规模贝叶斯模型（如主题模型、深度贝叶斯网络）的首选方法。
+
+其局限性在于近似误差难以控制：我们无法知道 $q^*(\theta)$ 与真实后验 $p(\theta | y)$ 相差多少，除非进行昂贵的后验校验。
+
+\begin{Remark}
+  变分推断与 MCMC 是互补的关系。当我们需要\textbf{可扩展性}时（大规模数据、大参数空间），变分推断是首选；当我们需要\textbf{无偏估计}和\textbf{可证明收敛}时，MCMC 更适合。在实际应用中，两者经常结合使用：先用变分推断快速获得初始近似，再用 MCMC 进行精细采样。
+\end{Remark}
+
+\section{方法选择指南}
+
+面对多样的贝叶斯计算方法，如何选择？以下是一些经验法则：
+
+\begin{enumerate}
+  \item \textbf{低维问题（$d \leq 5$）}：优先尝试数值积分或拒绝采样。网格方法或简单的自适应求积可能已经足够。
+  \item \textbf{中等维度（$5 < d \leq 20$）}：重要性采样和 SIR 是合理的选择。关键是选择好的重要性分布——通常可以使用 Laplace 近似的正态分布作为建议分布。
+  \item \textbf{高维问题（$d > 20$）}：MCMC（下一章主题）或变分推断是主要工具。简单的重要性采样在极高维度下效果很差。
+  \item \textbf{模型结构}：如果模型具有共轭结构，利用条件分布的解析形式可以大大简化计算（如 EM 算法）。
+  \item \textbf{计算资源}：当有 GPU 可用时，基于蒙特卡洛的方法可以并行化；当只有 CPU 时，变分推断的确定性优化可能更快。
+\end{enumerate}
+
+\section{本章小结}
+
+本章我们介绍了贝叶斯计算的基本工具：
+
+\begin{enumerate}
+  \item \textbf{计算挑战的本质}：高维积分是贝叶斯计算的核心障碍
+  \item \textbf{数值积分方法}：低维有效，但受维度灾难限制
+  \item \textbf{蒙特卡洛积分}：用随机采样代替确定性积分
+  \item \textbf{重要性采样}：从建议分布采样，加权修正
+  \item \textbf{拒绝采样}：用包络分布控制接受率
+  \item \textbf{采样重要性重采样（SIR）}：结合重要性采样与重采样
+  \item \textbf{Laplace 方法}：用正态分布近似后验分布
+  \item \textbf{变分推断}：用优化方法近似后验
+\end{enumerate}
+
+这些方法为下一章马尔科夫链蒙特卡洛（MCMC）奠定了基础。MCMC 是解决高维贝叶斯计算问题的最强大武器，它将在第十一章和第十二章中得到系统阐述。
+
+\section{下节预告}
+
+下一章我们将学习\textbf{马尔科夫链蒙特卡洛（MCMC）}的基本原理，包括 Metropolis-Hastings 算法和 Gibbs 采样。这两种方法是现代贝叶斯统计计算的核心工具。
+
+\endinput

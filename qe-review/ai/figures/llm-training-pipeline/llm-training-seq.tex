@@ -1,0 +1,115 @@
+% Sequential LLM pipeline for insertion into the Spring 2025 NLP notes.
+% Input this file inside a tikzpicture-ready document (tikz already loaded).
+\begin{tikzpicture}[
+  font=\small,
+  >=Stealth,
+  every node/.style={color=black!88},
+  card/.style={
+    draw=#1, fill=#1!11, line width=0.65pt,
+    rounded corners=2pt, align=left,
+    inner sep=3.6pt, text width=3.42cm, font=\scriptsize
+  },
+  chip/.style={
+    draw=#1, fill=#1!16, line width=0.55pt,
+    rounded corners=1.2pt, inner xsep=2.6pt, inner ysep=1.8pt,
+    font=\scriptsize, align=center
+  },
+  fork/.style={
+    draw=#1, fill=#1!10, line width=0.6pt,
+    rounded corners=2pt, align=left,
+    inner sep=3.4pt, text width=5.85cm, font=\scriptsize
+  },
+  arr/.style={-{Stealth}, line width=0.8pt, draw=black!55},
+  dasharr/.style={-{Stealth}, densely dashed, line width=0.65pt, draw=black!45},
+  lbl/.style={font=\scriptsize, text=black!45, align=center}
+]
+
+\definecolor{ptdraw}{HTML}{1D4ED8}
+\definecolor{sftdraw}{HTML}{0F766E}
+\definecolor{aldraw}{HTML}{C2410C}
+\definecolor{infdraw}{HTML}{15803D}
+\definecolor{rmdraw}{HTML}{6D28D9}
+\definecolor{frzdraw}{HTML}{57534E}
+\definecolor{golddraw}{HTML}{A16207}
+
+\node[anchor=west, font=\small\bfseries] at (0,10.05)
+  {Same backbone \(\theta\): the datum and the objective change, not the architecture};
+\node[anchor=west, font=\scriptsize, text=black!45] at (0,9.58)
+  {Three objects: generator \((\pi,\theta)\), judge \((r,\phi)\), frozen reference \(\pi_{\mathrm{ref}}\).};
+
+\node[card=ptdraw, anchor=north] (pt) at (1.85,9.22) {%
+  \textbf{1. Pretrain}\\[1pt]
+  Data: raw corpus.\\
+  Objective: next-token CE
+  \(\max_\theta\sum_t\log p_\theta(x_{t+1}\mid x_{1:t})\).\\
+  Train \(\theta\). Output \(\theta_{\mathrm{PT}}\):\\
+  the web conditional, not a useful answer.};
+
+\node[card=sftdraw, anchor=north] (sft) at (5.55,9.22) {%
+  \textbf{2. SFT / instruction}\\[1pt]
+  Data: demos \((x,y_{\mathrm{demo}})\).\\
+  Objective: still next-token CE.\\
+  Init \(\theta\leftarrow\theta_{\mathrm{PT}}\).\\
+  Output \(\theta_{\mathrm{SFT}}\). Copy once to \(\pi_{\mathrm{ref}}\) and once to \(\phi\).};
+
+\node[card=aldraw, anchor=north] (al) at (9.25,9.22) {%
+  \textbf{3. Align}\\[1pt]
+  Data: pairs \((x,y^+,y^-)\).\\
+  The target is rewritten: who is preferred, not ``like the web''.\\
+  Route A: \(\mathcal{L}_{\mathrm{RM}}\) then \(J\).\\
+  Route B: \(\mathcal{L}_{\mathrm{DPO}}\).};
+
+\node[card=infdraw, anchor=north] (inf) at (12.95,9.22) {%
+  \textbf{4. Infer / RAG}\\[1pt]
+  Data: prompt \(x\) (RAG adds retrieved documents).\\
+  Rule: top-\(P\) decode.\\
+  No training. \(\theta\) frozen.\\
+  Scaling laws diagnose \(N,P\); they are not a fifth stage.};
+
+\draw[arr] (pt) -- (sft);
+\draw[arr] (sft) -- (al);
+\draw[arr] (al) -- (inf);
+\node[lbl, above=0.4mm of $(pt)!0.5!(sft)$] {init \(\theta\)};
+\node[lbl, above=0.4mm of $(sft)!0.5!(al)$] {change obj.};
+\node[lbl, above=0.4mm of $(al)!0.5!(inf)$] {sample only};
+
+\node[anchor=west, font=\scriptsize\bfseries] at (0,5.72)
+  {Parameter docking};
+\node[chip=golddraw] (thpt) at (1.85,5.18) {\(\theta_{\mathrm{PT}}\) trainable};
+\node[chip=golddraw] (thsft) at (5.55,5.18) {\(\theta_{\mathrm{SFT}}\) trainable};
+\node[chip=golddraw] (thal) at (9.25,5.18) {\(\theta\) trainable};
+\node[chip=frzdraw] (thinf) at (12.95,5.18) {\(\theta\) frozen};
+\draw[arr] (thpt) -- node[lbl, above] {continue} (thsft);
+\draw[arr] (thsft) -- node[lbl, above] {continue} (thal);
+\draw[arr] (thal) -- node[lbl, above] {stop} (thinf);
+
+\node[chip=frzdraw, text width=3.55cm, align=left] (piref) at (5.55,4.12)
+  {\(\pi_{\mathrm{ref}}\leftarrow\mathrm{copy}(\theta_{\mathrm{SFT}})\), never updated};
+\node[chip=rmdraw, text width=3.55cm, align=left] (phi) at (9.25,4.12)
+  {\(\phi\leftarrow\mathrm{copy}(\theta_{\mathrm{SFT}})+\mathrm{head}\)};
+\draw[dasharr] (thsft.south) -- (piref.north);
+\draw[dasharr] (thsft.south east) to[out=-25,in=180] (phi.west);
+
+\node[anchor=west, font=\scriptsize\bfseries] at (0,3.38)
+  {Alignment fork: one KL--Bradley--Terry geometry, two computations};
+\node[chip=aldraw] (pairs) at (1.85,2.72) {\((x,y^+,y^-)\)};
+
+\node[fork=rmdraw, anchor=north] (routea) at (5.40,2.28) {%
+  \textbf{Route A: reward-model RLHF}\\[1pt]
+  Stage 1. \(\min_\phi\mathcal{L}_{\mathrm{RM}}=-\mathbb{E}\log\sigma(r_\phi(x,y^+)-r_\phi(x,y^-))\). Freeze \(\phi\).\\[1pt]
+  Stage 2. \(\max_\theta J=\mathbb{E}_{y\sim\pi_\theta}\bigl[r_\phi(x,y)-\beta\log(\pi_\theta/\pi_{\mathrm{ref}})\bigr]\).\\
+  Data become on-policy rollouts. PPO is an algorithm for \(J\), not a fourth objective.};
+
+\node[fork=aldraw, anchor=north] (routeb) at (11.55,2.28) {%
+  \textbf{Route B: DPO}\\[1pt]
+  Skip a separate \(r_\phi\) and the PPO loop.\\[1pt]
+  \(\min_\theta\mathcal{L}_{\mathrm{DPO}}=-\mathbb{E}\log\sigma\bigl(\beta\log\tfrac{\pi_\theta(y^+)}{\pi_{\mathrm{ref}}(y^+)}-\beta\log\tfrac{\pi_\theta(y^-)}{\pi_{\mathrm{ref}}(y^-)}\bigr)\).\\
+  Offline: \(r\) is rewritten as \(\log(\pi_\theta/\pi_{\mathrm{ref}})\). Cannot score a newly invented \(y\).};
+
+\node[chip=golddraw] (pial) at (8.48,-0.22) {aligned \(\pi_\theta\)};
+\draw[arr] (pairs.east) -- node[lbl, above, sloped] {A} (routea.west);
+\draw[arr] (pairs.south) to[out=-40,in=180] node[lbl, below, pos=0.35] {B} (routeb.west);
+\draw[arr] (routea.south) -- (pial.west);
+\draw[arr] (routeb.south) -- (pial.east);
+
+\end{tikzpicture}

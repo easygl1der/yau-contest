@@ -1,0 +1,439 @@
+% Chapter 20: Basis Function Models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{基函数模型}
+
+\section{本章导论}
+
+在前几章中，我们讨论了回归模型的参数估计和贝叶斯推断方法。然而，经典线性回归假设响应变量与预测变量之间存在线性关系——这一假设在许多实际应用中过于严格。例如，在金融时间序列分析中，资产收益率与宏观经济变量之间的关系往往是非线动的；在生物统计中，剂量反应曲线通常呈现 S 形而非直线。
+
+\textbf{基函数方法}提供了一种优雅的解决方案：将非线性函数 $f(x)$ 表示为一组基函数的线性组合
+\begin{equation}
+f(x) = \sum_{j=1}^{J} h_j(x) \beta_j,
+\label{eq:basis-function-decomposition}
+\end{equation}
+其中 $h_1(x), h_2(x), \ldots, h_J(x)$ 是选定的基函数，$\beta_1, \ldots, \beta_J$ 是对应的系数。通过贝叶斯推断，我们可以同时估计这些系数及其不确定程度，从而获得对非线性关系的灵活且有原则的估计。
+
+本章我们将学习四种最重要的基函数方法：
+\begin{enumerate}
+\item \textbf{样条函数（Splines）}：通过分段多项式构建光滑的非线性函数；
+\item \textbf{径向基函数（RBF）}：通过径向函数构造适用于多元函数的基函数；
+\item \textbf{Sobolev 空间}：从函数空间的角度理解非参数推断的理论基础；
+\item \textbf{小波（Wavelets）}：通过多尺度分解捕捉函数在不同分辨率下的特征。
+\end{enumerate}
+
+这四种方法虽然在构造基函数的方式上有所不同，但共享相同的核心思想：通过精心选择的基函数族，将无限维的函数估计问题转化为有限维的线性回归问题。
+
+\section{样条函数模型}\label{sec:spline-models}
+
+\subsection{从多项式回归到样条}
+
+\textbf{多项式回归}是最直接的非线性建模方法——将预测变量的高次项作为额外的预测变量纳入模型：
+\begin{equation}
+y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_K x_i^K + \epsilon_i.
+\label{eq:polynomial-regression}
+\end{equation}
+尽管多项式回归在概念上简单，但高次多项式在数据边界处往往表现不稳定——系数估计的方差随阶数增加而急剧膨胀，导致过拟合问题。
+
+\textbf{样条函数}通过分段多项式克服了这些困难。在样条模型中，我们选择一个或多个\textbf{结点（knots）}$\xi_1 < \xi_2 < \cdots < \xi_K$，将预测变量域分割成多个区间，在每个区间内用低次多项式（如三次多项式）拟合，同时在结点处施加光滑性约束（通常要求函数值、一阶导数、二阶导数连续）。
+
+具体而言，\textbf{三次样条（cubic spline）}可以表示为一组\textbf{截断幂基函数（truncated power basis）}：
+\begin{align}
+h_1(x) &= 1, & h_2(x) &= x, & h_3(x) &= x^2, & h_4(x) &= x^3, \label{eq:truncated-power-basis} \\
+h_{4+k}(x) &= (x - \xi_k)_+^3,\quad k = 1,\ldots, K, \label{eq:knot-basis}
+\end{align}
+其中 $(x - \xi)_+ = \max(0, x - \xi)$ 是\textbf{正部（positive part）}函数。这 $4+K$ 个基函数张成了所有满足二阶导数连续的三次样条空间。
+
+然而，在实际应用中，直接使用截断幂基函数在数值计算上不够稳定。一种更常用的方法是\textbf{B-样条（B-splines）}基函数——它具有局部支撑性（每个 B-样条仅在少数几个相邻区间内非零），这使得系数的解释更加直观，计算也更加高效。
+
+\subsection{回归样条的贝叶斯推断}\label{sec:bayesian-spline-inference}
+
+给定 $n$ 个观测点 $(x_i, y_i)$，样条回归模型为
+\begin{equation}
+y_i = \sum_{j=1}^{J} h_j(x_i) \beta_j + \epsilon_i,\quad \epsilon_i \sim \mathrm{N}(0, \sigma^2),
+\label{eq:spline-model}
+\end{equation}
+其中 $J$ 是基函数的个数（对于三次样条，$J = 4 + K$，$K$ 为结点数）。
+
+写成矩阵形式，设 $\mathbf{y} = (y_1, \ldots, y_n)^{\mathsf{T}}$，设计矩阵 $H$ 的第 $i$ 行第 $j$ 列为 $h_j(x_i)$，误差向量 $\boldsymbol{\epsilon} \sim \mathrm{N}(0, \sigma^2 I)$，则
+\begin{equation}
+\mathbf{y} \sim \mathrm{N}(H\boldsymbol{\beta}, \sigma^2 I).
+\label{eq:spline-linear-model}
+\end{equation}
+
+\textbf{回归样条的贝叶斯推断}需要在系数上施加先验分布以实现光滑化。最常用的先验是\textbf{粗糖先验（g priors）}的推广——设
+\begin{equation}
+\boldsymbol{\beta} \sim \mathrm{N}(0, \sigma^2 \Sigma_\beta),
+\label{eq:spline-g-prior}
+\end{equation}
+其中 $\Sigma_\beta$ 是先验协方差矩阵，反映了函数的光滑性先验。当 $\Sigma_\beta = \tau^2 P^{-1}$ 时（即 $\Sigma_\beta^{-1} = \tau^{-2} P$），后验均值中的惩罚项 $\Sigma_\beta^{-1}$ 恰好对应二阶导数惩罚 $\int |f''(x)|^2\, dx$——这建立了光滑性先验与惩罚泛函之间的对应关系。
+
+具体而言，若使用截断幂基函数 \eqref{eq:truncated-power-basis}--\eqref{eq:knot-basis}，样条的光滑性可以用
+\begin{equation}
+\int |f''(x)|^2\, dx = \boldsymbol{\beta}^{\mathsf{T}} P \boldsymbol{\beta}
+\label{eq:spline-roughness-penalty}
+\end{equation}
+衡量，其中 $P$ 是由基函数二阶导数构造的惩罚矩阵。
+
+施加先验 \eqref{eq:spline-g-prior} 后的后验分布为
+\begin{equation}
+\boldsymbol{\beta} \mid \mathbf{y}, \sigma^2 \sim \mathrm{N}\left((H^{\mathsf{T}} H + \Sigma_\beta^{-1})^{-1} H^{\mathsf{T}} \mathbf{y},\ \sigma^2 (H^{\mathsf{T}} H + \Sigma_\beta^{-1})^{-1}\right).
+\label{eq:spline-posterior}
+\end{equation}
+后验均值 $\hat{\boldsymbol{\beta}} = (H^{\mathsf{T}} H + \Sigma_\beta^{-1})^{-1} H^{\mathsf{T}} \mathbf{y}$ 可以看作是对最小二乘估计的收缩——这与岭回归的精神一致，只是惩罚矩阵 $\Sigma_\beta^{-1}$ 来自光滑性先验。
+
+相应地，后验预测分布为
+\begin{equation}
+y_{\mathrm{new}} \mid x_{\mathrm{new}}, \mathbf{y} \sim \mathrm{N}\left(h(x_{\mathrm{new}})^{\mathsf{T}} \hat{\boldsymbol{\beta}},\ \sigma^2 \left(1 + h(x_{\mathrm{new}})^{\mathsf{T}} (H^{\mathsf{T}} H + \Sigma_\beta^{-1})^{-1} h(x_{\mathrm{new}})\right)\right).
+\label{eq:spline-posterior-predictive}
+\end{equation}
+后验方差中的额外项 $h(x_{\mathrm{new}})^{\mathsf{T}} (H^{\mathsf{T}} H + \Sigma_\beta^{-1})^{-1} h(x_{\mathrm{new}})$ 反映了在未知新点处的不确定程度。
+
+\begin{Example}[三次样条回归]\label{ex:cubic-spline-example}
+考虑对非线性函数 $f(x) = \sin(2\pi x) + 0.5 \sin(4\pi x)$ 加上噪声观测生成的数据拟合三次样条。
+
+设结点数 $K = 5$，等距分布在 $[0, 1]$ 区间。使用 B-样条基函数，模型为 $y_i = \sum_{j=1}^{J} h_j(x_i) \beta_j + \epsilon_i$。
+
+先验协方差矩阵 $\Sigma_\beta$ 的构造使得相邻结点的系数变化受到惩罚，从而保证拟合曲线的光滑性。
+
+后验均值的曲线将呈现为一条光滑曲线，既能捕捉到正弦函数的波动特征，又不会被噪声过度拟合。
+\end{Example}
+\footnote{三次样条回归的完整计算步骤，包括 B-样条基函数的构造和先验协方差矩阵的组装，见附录 \cref{sec:derivation-cubic-spline}。}
+
+\subsection{平滑样条与等效核}\label{sec:smoothing-splines}
+
+\textbf{平滑样条（smoothing splines）}提供了一种数据驱动的结点选择方法。与回归样条（需要预先指定结点）不同，平滑样条通过极小化带惩罚的残差平方和来同时选择拟合函数：
+\begin{equation}
+\sum_{i=1}^{n} (y_i - f(x_i))^2 + \lambda \int |f''(t)|^2\, dt,
+\label{eq:smoothing-spline-objective}
+\end{equation}
+其中 $\lambda \geq 0$ 是光滑参数，$\int |f''(t)|^2\, dt$ 是函数二阶导数平方的积分，度量函数的光滑程度。
+
+目标函数 \eqref{eq:smoothing-spline-objective} 的解是唯一的三次样条函数，其结点恰好位于所有唯一的 $x_i$ 处。这个解可以写成
+\begin{equation}
+\hat{f}(x) = \sum_{i=1}^{n} S_\lambda(x, x_i) y_i,
+\label{eq:smoothing-spline-solution}
+\end{equation}
+其中 $S_\lambda(x, x')$ 称为\textbf{等效核（equivalent kernel）}\footnote{等效核的详细推导及其与核密度估计的联系，见附录 \cref{sec:derivation-equivalent-kernel}。}。
+
+等效核具有以下重要性质：它是正定的，即 $\int S_\lambda(x, u) S_\lambda(u, x')\, du = S_\lambda(x, x')$，并且在不同 $x$ 处等效核的形状不同（这与标准核密度估计不同），这使得平滑样条在边界处具有自适应光滑的特性。
+
+\textbf{自由度（degrees of freedom）}是量化平滑样条灵活性的重要指标。设 $S$ 为平滑矩阵（满足 $\hat{\mathbf{y}} = S \mathbf{y}$），则自由度定义为
+\begin{equation}
+\mathrm{df}(\lambda) = \mathrm{tr}(S).
+\label{eq:smoothing-spline-df}
+\end{equation}
+当 $\lambda \to 0$ 时，$\mathrm{df} \to n$，拟合曲线接近插值（过拟合）；当 $\lambda \to \infty$ 时，$\mathrm{df} \to 1$，拟合曲线退化为线性回归（欠拟合）。因此，$\lambda$ 的选择控制了拟合曲线的光滑程度。
+
+在贝叶斯框架下，$\lambda$ 可以通过边际似然或交叉验证来估计：
+\begin{equation}
+p(\lambda \mid \mathbf{y}) \propto p(\mathbf{y} \mid \lambda) p(\lambda).
+\label{eq:smoothing-spline-lambda-posterior}
+\end{equation}
+计算 $p(\mathbf{y} \mid \lambda)$ 需要对系数 $\boldsymbol{\beta}$ 积分，这可以通过析因分解或 MCMC 完成。
+
+\begin{Example}[等效核的可视化]\label{ex:equivalent-kernel-visualization}
+对于均匀设计 $x_i = i/n$，等效核 $S_\lambda(x, \cdot)$ 在中心点 $x = 0.5$ 处近似高斯核的形状；但在边界点 $x = 0.05$ 处，等效核被截断并重新标准化以满足边界条件。
+
+这种自适应的边界处理是平滑样条相对于传统核方法的优势之一。
+\end{Example}
+\footnote{等效核在边界点处行为的详细分析，包括 Mercer 定理和特征分解，见附录 \cref{sec:derivation-equivalent-kernel-boundary}。}
+
+\subsection{基函数的构造：B-样条递推公式}\label{sec:b-spline-construction}
+
+B-样条基函数是样条计算的核心工具。本节给出 de Boor 递推公式的完整描述。
+
+设结点序列 $\xi_1 < \cdots < \xi_K$ 分布在 $[a, b]$，扩展结点为 $\xi_0 = \xi_{-1} = \cdots = a$ 和 $\xi_{K+1} = \xi_{K+2} = \cdots = b$。B-样条基函数 $B_{i,k}(x)$（次数为 $k-1$）由 de Boor 递推公式定义：
+\begin{align}
+B_{i,1}(x) &= \begin{cases} 1 & \xi_i \leq x < \xi_{i+1}, \\ 0 & \text{otherwise}, \end{cases} \label{eq:de-boor-base} \\
+B_{i,k}(x) &= \frac{x - \xi_i}{\xi_{i+k-1} - \xi_i} B_{i,k-1}(x) + \frac{\xi_{i+k} - x}{\xi_{i+k} - \xi_{i+1}} B_{i+1,k-1}(x). \label{eq:de-boor-recursion}
+\end{align}
+
+\textbf{局部支撑性}：每个 $B_{i,k}$ 仅在区间 $[\xi_i, \xi_{i+k}]$ 上非零，这意味着改变一个结点只影响 $k$ 个相邻基函数，使得计算高效且系数的几何解释直观。
+
+\textbf{单位分解性}：在每个内点区间 $[\xi_j, \xi_{j+1}]$ 上，恰好有 $k$ 个 $k-1$ 次 B-样条非零，且它们的和为 1：$\sum_{i=j-k+1}^{j} B_{i,k}(x) = 1$ for $x \in [\xi_j, \xi_{j+1}]$。
+
+\textbf{例子（$k=4$，三次 B-样条）}：对于结点 $\xi_1 < \xi_2 < \xi_3$，第一个三次 B-样条 $B_{1,4}(x)$ 在 $[\xi_0, \xi_4]$ 上有定义，在 $[\xi_0, \xi_1]$ 和 $[\xi_3, \xi_4]$ 上分别为三次多项式，在 $[\xi_1, \xi_3]$ 上为四次多项式的组合。
+
+样条函数 $f(x) = \sum_i \beta_i B_{i,k}(x)$ 在每个区间 $[\xi_j, \xi_{j+1}]$ 上是 $k-1$ 次多项式，且在整个 $[a, b]$ 上有 $k-2$ 阶连续导数——这正是样条"光滑拼接"的几何意义。
+
+\section{径向基函数}\label{sec:radial-basis-functions}
+
+\textbf{径向基函数（Radial Basis Functions, RBF）}提供了另一种重要的基函数构造方法。与样条基于多项式展开不同，RBF 的基函数是关于某个中心点的径向函数：
+\begin{equation}
+f(x) = \sum_{i=1}^{m} c_i \phi(\|x - c_i\|),
+\label{eq:rbf-expansion}
+\end{equation}
+其中 $\phi: [0, \infty) \to \mathbb{R}$ 是\textbf{径向基函数}，$c_1, \ldots, c_m$ 是\textbf{中心点（centers）}，$\|\cdot\|$ 是欧氏距离。
+
+RBF 方法的核心思想是：将多元函数分解为一系列以数据点为中心的局部径向函数的叠加。这种构造在空间维度上没有限制——无论是低维还是高维空间，RBF 都适用。
+
+\textbf{常用径向基函数}包括：
+
+\begin{enumerate}
+\item \textbf{高斯径向基函数（Gaussian RBF）}：
+\begin{equation}
+\phi(r) = \exp(-\gamma r^2),\quad \gamma > 0.
+\label{eq:gaussian-rbf}
+\end{equation}
+高斯 RBF 是正定的，其核矩阵始终是正定的。这使得高斯 RBF 在理论上和计算上都易于处理。
+
+\item \textbf{多谐波样条（Polyharmonic splines）}：
+\begin{equation}
+\phi(r) = \begin{cases} r^k, & k = 1, 3, 5, \ldots, \\ r^k \log r, & k = 2, 4, 6, \ldots. \end{cases}
+\label{eq:polyharmonic-spline}
+\end{equation}
+多谐波样条在插值问题中特别有用——当中心点互异时，插值矩阵是非奇异的。
+\end{enumerate}
+
+\textbf{高斯 RBF 的贝叶斯推断}等价于在函数空间上施加高斯过程先验。设中心点为 $c_1, \ldots, c_m$，则 $f(x) \sim \mathrm{GP}(0, K)$，其中核函数 $K(x, x') = \sum_i \tau_i^2 \phi_\gamma(\|x - c_i\|) \phi_\gamma(\|x' - c_i\|)$。从这一点看，RBF 是高斯过程的离散近似——这将在下一章（\cref{sec:basis-functions-outlook}）中详细展开。
+
+\begin{Example}[高斯 RBF 回归]\label{ex:rbf-regression}
+考虑对二维函数 $f(x_1, x_2) = \sin(x_1) \cos(x_2)$ 在网格点上加噪声观测的数据拟合高斯 RBF 模型。
+
+设中心点为 $c_1, \ldots, c_m$，均匀分布在 $[0, 2\pi] \times [0, 2\pi]$ 上。模型为 $y_i = \sum_{j=1}^{m} c_j \exp(-\gamma \|x_i - c_j\|^2) + \epsilon_i$。
+
+参数 $\gamma$ 控制基函数的宽度——$\gamma$ 越小，基函数越宽，模型越光滑；$\gamma$ 越大，基函数越窄，模型越灵活。$\gamma$ 和系数 $c_j$ 可以通过边际似然或交叉验证联合估计。
+\end{Example}
+
+RBF 方法的主要优势在于其\textbf{维数无关性}——即使在高维空间中，只要选择合适的中心点，RBF 也能有效逼近复杂函数。然而，当数据点很多时，RBF 的计算成本为 $O(n^2)$（核矩阵的构造和求逆），这限制了其在大规模数据中的应用。
+
+\section{Sobolev 空间与函数空间视角}\label{sec:sobolev-spaces}
+
+从更一般的角度看，样条函数属于一类特殊的函数空间——\textbf{Sobolev 空间}。Sobolev 空间 $W_2^k([0, 1])$ 定义为所有 $k$ 阶导数平方可积的函数构成的空间：
+\begin{equation}
+W_2^k([0, 1]) = \left\{ f : [0, 1] \to \mathbb{R} \mid f^{(j)} \in L^2([0, 1]),\ j = 0, 1, \ldots, k \right\}.
+\label{eq:sobolev-space-definition}
+\end{equation}
+对于 $k=2$，三次样条恰好是 Sobolev 空间 $W_2^2([0, 1])$ 中使得泛函 $\int |f''(x)|^2\, dx$ 最小的函数类。
+
+\textbf{为什么选择 $W_2^k$？}这里的上标 2 表示在 $L^2$ 空间（平方可积函数空间）中测量导数。Sobolev 选择 $L^2$ 而非 $L^1$ 或 $L^\infty$，是因为 $L^2$ 空间是 Hilbert 空间——具有内积结构，这使得泛函分析和谱理论工具得以应用。具体而言，$W_2^k$ 是一个再生核 Hilbert 空间（RKHS），这为核方法提供了几何基础。19 世纪末，Sobolev（以及更早的 Aronszajn）在研究偏微分方程时发展了这一理论，他们发现 $L^2$ 的选择使得许多分析问题在技术处理上比 $L^1$ 更加便利。
+
+\textbf{Sobolev 嵌入定理}：当 $k > \ell + 1/2$ 时，$W_2^k([0, 1])$ 紧嵌入到 $C^\ell([0, 1]$（$\ell$ 阶连续可导函数空间）。这意味着，在 $W_2^2$ 中的函数（$f, f' \in L^2$）自动是连续的——这正是样条函数具有连续导数的数学保证。
+
+这一函数空间视角揭示了样条方法与再生核 Hilbert 空间（RKHS）之间的深层联系。设 $K(x, x')$ 是满足再生性质的核函数，即 $\langle K(\cdot, x), K(\cdot, x') \rangle_H = K(x, x')$，则 $H = \{f : f(x) = \sum_i c_i K(x, x_i)\}$ 是 $L^2$ 的一个子空间。
+
+\textbf{核函数的统计意义}在于：RKHS 中的范数 $\|f\|_H^2$ 恰好度量了函数的光滑程度。对于高斯过程回归（我们将在下一章详细讨论），核函数 $K(x, x')$ 定义了过程的协方差函数；而对于样条惩罚 \eqref{eq:smoothing-spline-objective}，其解恰好位于由惩罚核生成的 RKHS 中。
+
+具体而言，平滑样条问题 \eqref{eq:smoothing-spline-objective} 的解空间可以表示为
+\begin{equation}
+\hat{f}(x) = \sum_{j=1}^{J} h_j(x) \beta_j,\quad \boldsymbol{\beta} \sim \mathrm{N}(0, \sigma^2 \lambda P^{-1}),
+\label{eq:sobolev-rkhs-representation}
+\end{equation}
+其中 $P_{ij} = \int h_i''(x) h_j''(x)\, dx$ 是惩罚矩阵。这表明从贝叶斯视角看，样条回归等价于在 RKHS 上施加正态先验。
+
+\textbf{核与惩罚的对偶性}是理解非参数贝叶斯方法的关键：高斯过程先验 $f \sim \mathrm{GP}(0, K)$ 等价于在 RKHS 上施加先验；惩罚泛函 $\int |f''(x)|^2\, dx$ 则对应于特定的核选择。这种对偶性使得我们可以在函数空间视角和系数空间视角之间自由切换——有时在系数空间更容易计算，有时在函数空间更容易理解。
+
+\section{小波方法}\label{sec:wavelet-methods}
+
+小波方法为非参数回归提供了另一种强大的工具。与样条函数通过分段多项式构造基函数不同，小波通过\textbf{伸缩（dilation）和平移（translation）}从单个母小波 $\psi$ 构造一族基函数：
+\begin{equation}
+\psi_{j,k}(x) = 2^{j/2} \psi(2^j x - k),\quad j, k \in \mathbb{Z}.
+\label{eq:wavelet-basis}
+\end{equation}
+其中 $j$ 控制频率（尺度），$k$ 控制位置（平移）。
+
+小波基函数具有两个显著特点：
+\begin{enumerate}
+\item \textbf{多分辨率性}：不同 $j$ 对应不同的空间分辨率。低 $j$ （大尺度）捕捉函数的整体轮廓；高 $j$ （小尺度）捕捉局部细节。
+\item \textbf{局部支撑性}：大多数小波（如 Daubechies 小波）在时域和频域都是局部化的，使得小波展开能够有效捕捉局部特征。
+\end{enumerate}
+
+小波回归模型为
+\begin{equation}
+y_i = f(x_i) + \epsilon_i = \sum_{j,k} \theta_{jk} \psi_{jk}(x_i) + \epsilon_i,
+\label{eq:wavelet-regression-model}
+\end{equation}
+其中 $\theta_{jk} = \langle f, \psi_{jk} \rangle$ 是小波系数。
+
+由于小波基函数是正交的，小波系数 $\theta_{jk}$ 的最小二乘估计为 $\hat{\theta}_{jk} = \langle \mathbf{y}, \psi_{jk} \rangle$——正交投影得到的系数之间是独立的。然而，在实际应用中，我们通常使用\textbf{阈值法（thresholding）}来获得更好的统计性质，这涉及跨系数的全局决策（哪些系数保留、哪些收缩）。
+
+\subsection{小波阈值法}\label{sec:wavelet-thresholding}
+
+Donoho 和 Johnstone 的著名结果表明，在一定条件下，\textbf{小波阈值估计器}能够同时达到最优的收敛速率。两种最常用的阈值规则是：
+
+\textbf{硬阈值（hard thresholding）}：
+\begin{equation}
+\hat{\theta}_{jk}^{\mathrm{hard}} = \hat{\theta}_{jk} \cdot \mathbb{I}\left(|\hat{\theta}_{jk}| > \lambda\right),
+\label{eq:hard-thresholding}
+\end{equation}
+\textbf{软阈值（soft thresholding）}：
+\begin{equation}
+\hat{\theta}_{jk}^{\mathrm{soft}} = \mathrm{sgn}(\hat{\theta}_{jk}) \cdot (|\hat{\theta}_{jk}| - \lambda)_+,
+\label{eq:soft-thresholding}
+\end{equation}
+其中 $\lambda$ 是阈值参数，$\mathbb{I}(\cdot)$ 是示性函数，$\mathrm{sgn}(\cdot)$ 是符号函数。
+
+阈值参数 $\lambda$ 的选择至关重要。Donoho 和 Johnstone 建议使用\textbf{通用阈值} $\lambda = \sigma \sqrt{2\log n}$，其中 $\sigma$ 是噪声标准差，$n$ 是样本量。这个阈值在大样本下能够保证估计器的一致性，但可能存在过度收缩的问题。
+
+实践中更常用的方法是\textbf{交叉验证阈值}或\textbf{Bayes 阈值}——后者假设小波系数服从双指数先验，通过边际似然最大化来选择 $\lambda$。
+
+从贝叶斯视角看，\textbf{贝叶斯阈值估计器}等价于假设小波系数服从一个分层先验：
+\begin{align}
+\theta_{jk} \mid \sigma_j^2 &\sim \mathrm{N}(0, \sigma_j^2), \label{eq:wavelet-hierarchical-prior1} \\
+\sigma_j^2 &\sim \text{Inverse-Gamma}(a, b), \label{eq:wavelet-hierarchical-prior2}
+\end{align}
+其中 $\sigma_j^2$ 是第 $j$ 个尺度上所有系数的共同方差。这种先验设计体现了小波系数的"稀疏性"先验——在大多数尺度上，只有少数系数有显著的非零值。
+
+后验均值可以通过以下近似公式计算：
+\begin{equation}
+\mathbb{E}(\theta_{jk} \mid \hat{\theta}_{jk}) \approx \frac{\hat{\theta}_{jk}}{1 + \lambda_{\mathrm{Bayes}} / \hat{\theta}_{jk}^2},
+\label{eq:wavelet-bayes-estimate}
+\end{equation}
+其中 $\lambda_{\mathrm{Bayes}}$ 是由先验超参数决定的收缩量。
+
+\begin{Example}[Haar 小波的简单例子]\label{ex:haar-wavelet}
+Haar 小波是最简单的正交小波，定义为
+\begin{equation}
+\psi(x) = \begin{cases} 1 & 0 \leq x < 1/2, \\ -1 & 1/2 \leq x < 1, \\ 0 & \text{otherwise}. \end{cases}
+\label{eq:haar-wavelet}
+\end{equation}
+在区间 $[0, 1]$ 上，Haar 小波系数的计算是直观的：$\theta_{00} = \int_0^1 f(x)\, dx$（尺度系数），$\theta_{jk} = 2^{j/2} \int_{k/2^j}^{(k+1/2)/2^j} f(x)\, dx - 2^{j/2} \int_{(k+1/2)/2^j}^{(k+1)/2^j} f(x)\, dx$（小波系数）。
+
+对于分段常数函数，Haar 小波给出了紧凑的表示；对于光滑函数，高尺度的小波系数趋于零，这正是小波压缩性的体现。
+\end{Example}
+\footnote{Haar 小波系数计算的详细推导，以及 Daubechies 小波的构造原理，见附录 \cref{sec:derivation-wavelet-coefficient}。}
+
+\subsection{小波与样条的比较}\label{sec:wavelet-vs-spline}
+
+小波方法和样条方法各有优劣，适用于不同的场景：
+
+\textbf{样条的优势}：
+\begin{itemize}
+\item 结点的显式几何解释；
+\item 在边界处自适应良好的表现；
+\item 与高斯过程（见下一章）的紧密联系。
+\end{itemize}
+
+\textbf{小波的优势}：
+\begin{itemize}
+\item 压缩性：对于光滑函数，仅需少量小波系数即可精确近似；
+\item 多分辨率分析：能够同时捕捉函数在不同尺度上的特征；
+\item 阈值估计的最优收敛速率。
+\end{itemize}
+
+在实际应用中，选择样条还是小波取决于数据的特征和分析目标。对于边界效应不明显的区域型数据，小波往往更高效；对于需要光滑解释的曲线型数据，样条更合适。
+
+\section{贝叶斯非参数推断的展望}\label{sec:basis-functions-outlook}
+
+本章介绍的基函数方法——样条、径向基函数、Sobolev 空间和小波——代表了贝叶斯非参数统计的四大支柱。它们共同的核心思想是：通过精心选择的基函数族，将无限维的函数估计问题转化为有限维的线性回归问题，然后利用贝叶斯推断同时估计系数和光滑参数。
+
+在下一章中，我们将看到这一思想的最优雅实现——\textbf{高斯过程（Gaussian Process）}回归。在高斯过程框架下，基函数的选择被隐含在核函数的设计中，而边际似然提供了自动选择光滑参数的原则性方法。高斯过程既是样条函数的贝叶斯极限，也能包容小波型的稀疏先验——它为我们提供了一个统一而灵活的非参数推断框架。
+
+\section{本章小结}
+
+本章我们学习了三种基函数方法：
+
+\begin{enumerate}
+\item \textbf{样条函数}（\cref{sec:spline-models}）：通过分段多项式和光滑性惩罚实现非线性建模。回归样条通过指定结点位置和个数构造基函数；平滑样条通过极小化带惩罚的残差平方和自动选择拟合函数。等效核和自由度是量化平滑样条性质的重要工具。B-样条的 de Boor 递推公式提供了局部支撑、高效计算的基函数构造方法（\cref{sec:b-spline-construction}）。
+\item \textbf{径向基函数}（\cref{sec:radial-basis-functions}）：通过径向函数 $\phi(\|x - c_i\|)$ 构造基函数，适用于多元函数逼近。高斯 RBF 和多谐波样条是两种最重要的径向基函数。RBF 方法等价于高斯过程先验的离散近似。
+\item \textbf{Sobolev 空间}（\cref{sec:sobolev-spaces}）：提供了理解非参数推断的函数空间视角。$W_2^k$ 空间的选择是因为 $L^2$ 是 Hilbert 空间，具有内积结构，便于应用泛函分析工具。样条空间是 Sobolev 空间的特例，惩罚泛函对应于 RKHS 的范数，核与惩罚之间存在对偶关系。
+\item \textbf{小波方法}（\cref{sec:wavelet-methods}）：通过伸缩和平移从母小波构造正交基，实现多分辨率分析。阈值法是小波估计的核心技术，硬阈值和软阈值各有优劣。贝叶斯分层先验为阈值选择提供了原则性框架。
+\end{enumerate}
+
+这四种方法为下一章的高斯过程模型奠定了概念基础。
+
+\section{附录：公式推导}\label{sec:appendix-chapter20}
+
+\subsection{三次样条回归的完整计算}\label{sec:derivation-cubic-spline}
+
+\textbf{背景}：在 \cref{ex:cubic-spline-example} 中，我们简要介绍了三次样条回归。本节给出 B-样条基函数的构造方法和先验协方差矩阵的组装细节。
+
+\textbf{参数定义}：设 $K$ 个结点 $\xi_1 < \cdots < \xi_K$ 分布在 $[a, b]$ 区间，扩展结点为 $\xi_0 = \xi_{-1} = \cdots = a$ 和 $\xi_{K+1} = \xi_{K+2} = \cdots = b$。
+
+\textbf{B-样条基函数的递推定义}：B-样条基函数 $B_{i,k}(x)$（次数为 $k-1$）由 de Boor 递推公式给出：
+\begin{align}
+B_{i,1}(x) &= \begin{cases} 1 & \xi_i \leq x < \xi_{i+1}, \\ 0 & \text{otherwise}, \end{cases} \label{eq:de-boor-base} \\
+B_{i,k}(x) &= \frac{x - \xi_i}{\xi_{i+k-1} - \xi_i} B_{i,k-1}(x) + \frac{\xi_{i+k} - x}{\xi_{i+k} - \xi_{i+1}} B_{i+1,k-1}(x). \label{eq:de-boor-recursion}
+\end{align}
+
+\textbf{光滑性惩罚矩阵}：对于三次样条（$k=4$），惩罚矩阵 $P$ 的元素为
+\begin{equation}
+P_{ij} = \int_a^b B_{i,4}''(x) B_{j,4}''(x)\, dx.
+\label{eq:spline-penalty-matrix}
+\end{equation}
+由于 B-样条基函数具有局部支撑性，$P$ 是一个带状矩阵，非零元素集中在对角线附近的三对角块中。
+
+\textbf{先验协方差}：设 $\Sigma_\beta = \tau^2 P^{-1}$，则先验 \eqref{eq:spline-g-prior} 等价于在惩罚泛函 $\int |f''(x)|^2\, dx$ 上施加 Inverse-Gamma 先验。
+
+\textbf{后验计算}：给定观测数据 $(x_i, y_i)$，后验分布 \eqref{eq:spline-posterior} 可以通过 Cholesky 分解高效计算。具体而言，设 $L$ 为 $H^{\mathsf{T}} H + \Sigma_\beta^{-1}$ 的 Cholesky 因子，则后验抽样可以通过前置-后向代换完成：
+\begin{equation}
+\boldsymbol{\beta}^* = L^{-\mathsf{T}} \mathbf{z} + L^{-1} H^{\mathsf{T}} \mathbf{y},
+\label{eq:spline-posterior-sampling}
+\end{equation}
+其中 $\mathbf{z} \sim \mathrm{N}(0, I)$。
+
+\subsection{等效核的推导}\label{sec:derivation-equivalent-kernel}
+
+\textbf{背景}：平滑样条的解 \eqref{eq:smoothing-spline-solution} 可以看作是对观测值 $y_i$ 的加权线性组合，权重由等效核 $S_\lambda(x, x_i)$ 给出。本节推导等效核的显式形式。
+
+\textbf{目标}：求满足
+\begin{equation}
+\hat{f}(x) = \int_0^1 S_\lambda(x, u) y(u)\, du
+\label{eq:equivalent-kernel-goal}
+\end{equation}
+的核函数 $S_\lambda(x, u)$。
+
+\textbf{特征分解方法}：设 $\{\phi_k, \lambda_k\}$ 为惩罚核 $P(x, u) = \sum_j h_j''(x) h_j''(u)$ 的特征函数和特征值，则等效核可以表示为
+\begin{equation}
+S_\lambda(x, u) = \sum_k \frac{\phi_k(x) \phi_k(u)}{\lambda_k + \lambda}.
+\label{eq:equivalent-kernel-eigenfunction}
+\end{equation}
+将 \eqref{eq:equivalent-kernel-eigenfunction} 代入目标函数并施加极小化条件，即可验证其正确性。
+
+\textbf{边界行为}：在边界点 $x \to 0$ 或 $x \to 1$ 处，等效核被截断并重新标准化，以确保 $\int_0^1 S_\lambda(x, u)\, du = 1$（无偏性）。这解释了平滑样条在边界处的自适应光滑行为。
+
+\subsection{等效核的边界行为}\label{sec:derivation-equivalent-kernel-boundary}
+
+\textbf{背景}：在 \cref{ex:equivalent-kernel-visualization} 中，我们指出等效核在边界点处形状不同。本节分析这一现象的数学机制。
+
+\textbf{Mercer 定理}：惩罚核 $P(x, u)$ 在 $[0, 1]^2$ 上是连续、对称、正定的，因此可以展开为
+\begin{equation}
+P(x, u) = \sum_{k=1}^{\infty} \mu_k \phi_k(x) \phi_k(u),
+\label{eq:penalty-kernel-mercer}
+\end{equation}
+其中 $\mu_k$ 是特征值，$\phi_k$ 是对应的特征函数，它们满足 $\int_0^1 P(x, u) \phi_k(u)\, du = \mu_k \phi_k(x)$。
+
+\textbf{边界效应的机制}：对于均匀设计 $x_i = i/n$，经验核矩阵 $S_{ij} = S_\lambda(x_i, x_j)$ 是 $P(x, u)$ 的离散近似。在边界点 $i=1$ 或 $i=n$ 处，$S$ 的行向量被截断，导致有效邻域减小，等效核的方差增大。
+
+这与核密度估计中的边界效应本质相同，但平滑样条通过数据驱动的 $\lambda$ 选择部分缓解了这个问题——在边界处 $\lambda$ 自动增大，使得估计更加保守。
+
+\subsection{Haar 小波系数计算}\label{sec:derivation-wavelet-coefficient}
+
+\textbf{背景}：在 \cref{ex:haar-wavelet} 中，我们给出了 Haar 小波系数的直观描述。本节给出严格的数学推导。
+
+\textbf{Haar 尺度函数和小波}：
+\begin{align}
+\phi(x) &= \mathbb{I}_{[0,1]}(x), \label{eq:haar-scaling} \\
+\psi(x) &= \mathbb{I}_{[0,1/2)}(x) - \mathbb{I}_{[1/2,1)}(x). \label{eq:haar-wavelet-function}
+\end{align}
+在尺度 $j$ 上，伸缩平移后的基函数为
+\begin{align}
+\phi_{j,k}(x) &= 2^{j/2} \phi(2^j x - k), \label{eq:haar-scaled-scaling} \\
+\psi_{j,k}(x) &= 2^{j/2} \psi(2^j x - k), \label{eq:haar-scaled-wavelet}
+\end{align}
+其中 $k = 0, 1, \ldots, 2^{-j} - 1$。
+
+\textbf{正交性验证}：利用 $\phi$ 和 $\psi$ 的定义，直接计算内积可以验证
+\begin{equation}
+\langle \phi_{j,k}, \phi_{j',k'} \rangle = \delta_{jj'} \delta_{kk'},\quad
+\langle \psi_{j,k}, \psi_{j',k'} \rangle = \delta_{jj'} \delta_{kk'},\quad
+\langle \phi_{j,k}, \psi_{j',k'} \rangle = 0.
+\label{eq:haar-orthogonality}
+\end{equation}
+
+\textbf{系数计算}：对于任意 $L^2[0,1]$ 函数 $f$，其小波展开为
+\begin{equation}
+f(x) = \sum_k \alpha_{0,k} \phi_{0,k}(x) + \sum_{j=0}^{\infty} \sum_k \beta_{jk} \psi_{jk}(x),
+\label{eq:wavelet-expansion}
+\end{equation}
+其中系数由内积给出：
+\begin{align}
+\alpha_{0,k} &= \int_0^1 f(x) \phi_{0,k}(x)\, dx, \label{eq:haar-scale-coefficient} \\
+\beta_{jk} &= \int_0^1 f(x) \psi_{jk}(x)\, dx. \label{eq:haar-wavelet-coefficient}
+\end{align}
+对于分段常数函数，这些系数可以直接计算；对于一般光滑函数，高尺度系数 $\beta_{jk}$ 随 $j$ 增大而快速衰减。
+
+\textbf{Daubechies 小波的构造原理}：Daubechies 小波通过要求消失矩条件来提高光滑性。设 $\psi$ 具有 $N$ 阶消失矩，即 $\int x^m \psi(x)\, dx = 0$ for $m = 0, 1, \ldots, N-1$，则对应的尺度函数需要满足更复杂的两尺度关系，其支撑长度随 $N$ 增加而增大。
+
+\endinput

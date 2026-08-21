@@ -1,0 +1,87 @@
+
+\subsection{独立性的深入理解}
+
+\textbf{为什么独立性如此重要？} 独立性假设是现代统计推断的基石之一。
+
+\textbf{1. 计算简化}：若 $X_1 \Perp X_2$，则
+\[
+\mathbb{E}[g(X_1)h(X_2)] = \mathbb{E}[g(X_1)] \cdot \mathbb{E}[h(X_2)].
+\]
+这大大简化了期望的计算。
+
+\textbf{2. 分解简化}：在许多统计问题中，我们假设观测独立。这使得复杂问题可以分解为简单问题的组合。例如，样本均值 $\bar{X} = n^{-1}\sum X_i$ 的方差，当 $X_i$ 独立同分布时，为 $\text{var}(\bar{X}) = \sigma^2/n$。没有独立性，这个公式不成立。
+
+\textbf{3. 乘积分布}：若 $X_1 \Perp X_2$，则联合分布是边缘分布的乘积——这是一个优雅的结构性陈述。
+
+\textbf{独立性的判别}：在实际问题中，我们如何判断两个变量是否独立？
+
+\textbf{1. 因子化判据}：若联合 pdf/pmf 可以写成 $f(x_1, x_2) = g(x_1)h(x_2)$ 的形式，则 $X_1$ 与 $X_2$ 独立。
+
+\textbf{2. 条件分布判据}：若条件分布等于边缘分布 $f_{X_2|X_1}(x_2|x_1) = f_{X_2}(x_2)$，则独立。
+
+\textbf{3. 协方差判据（反向）}：若 $\text{cov}(X_1, X_2) \neq 0$，则一定不独立。但 $\text{cov}(X_1, X_2) = 0$ 不能推出独立（除特殊情况外）。
+
+\textbf{独立 vs 不相关}：这是一个极其重要的区别。
+
+不相关（uncorrelated）只说明没有线性关系：$\text{cov}(X_1, X_2) = 0$。
+
+独立（independent）意味着知道一个变量的值对另一个变量的分布没有任何影响。
+
+独立 $\Rightarrow$ 不相关，但反过来一般不成立。
+
+\textbf{二元正态的特殊性}：在二元正态分布中，不相关 $\iff$ 独立。这是因为二元正态的联合分布完全由一阶矩和二阶矩决定。
+
+\textbf{在其他分布中}：对于非正态分布，$\text{cov} = 0$ 但不独立是可能的。
+
+\textbf{反例：$X$ 与 $Y = X^2$}：设 $X \sim \text{Uniform}(-1, 1)$，$Y = X^2$。则 $\text{cov}(X, Y) = 0$，但显然 $Y$ 完全由 $X$ 决定，不独立。\footnote{详细计算见附录 \cref{sec:derivation-ch2-independent-implies-uncorrelated}。}
+
+\begin{example}[独立性检验的更多方法]\label{ex:independence-tests-more-ch2}
+在实际数据分析中，独立性检验方法的选择取决于数据。
+
+\textbf{1. 连续变量的 Pearson 相关系数检验}：
+\begin{verbatim}
+# 检验 X 和 Y 是否独立（假设二元正态）
+x <- rnorm(100, mean = 0, sd = 1)
+y <- 0.5 * x + rnorm(100, mean = 0, sd = sqrt(1 - 0.5^2))
+cor.test(x, y, method = "pearson")
+\end{verbatim}
+
+\textbf{2. 秩相关（Spearman 和 Kendall）}：对非正态数据更鲁棒：
+\begin{verbatim}
+# Spearman 秩相关
+cor.test(x, y, method = "spearman")
+
+# Kendall tau 相关
+cor.test(x, y, method = "kendall")
+\end{verbatim}
+
+\textbf{3. 互信息}：度量变量的整体依赖关系（包括非线性）：
+\begin{verbatim}
+# 计算互信息（需要 infotheo 包）
+library(infotheo)
+discretize(cbind(x, y))
+mutualinformation(discretize(cbind(x, y)))
+\end{verbatim}
+
+\textbf{4. $\chi^2$ 检验}：适用于分类变量：
+\begin{verbatim}
+# 创建列联表
+smoke <- c(rep("Yes", 45), rep("No", 105))
+cancer <- c(rep("Yes", 20), rep("No", 25), rep("Yes", 15), rep("No", 90))
+table <- matrix(c(20, 25, 15, 90), nrow = 2, byrow = TRUE)
+
+# 卡方检验
+chisq.test(table)
+
+# Fisher 精确检验（样本量小时更可靠）
+fisher.test(table)
+\end{verbatim}
+\end{example}
+
+\textbf{独立性的实际应用}：
+
+\textbf{1. 金融风险管理的核心假设}：在金融工程中，资产收益率的独立性假设是 Black-Scholes 公式的基础。虽然这个假设在实践中经常被违反（存在"波动率聚集"等现象），但它提供了一个有用的基准模型。
+
+\textbf{2. 信号处理}：在噪声模型中，我们通常假设信号与噪声独立。这使得我们可以从噪声观测中恢复信号。
+
+\textbf{3. 机器学习}：许多算法假设训练样本独立同分布（i.i.d.）。当这个假设被违反时（如时间序列数据），需要使用专门的模型（如 RNN、LSTM）。

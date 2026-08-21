@@ -1,0 +1,324 @@
+% Chapter 14: Introduction to regression models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{回归模型入门}
+\label{ch:reg}
+
+\section{从多参数模型到回归：一个自然的延伸}
+
+在前几章中，我们研究了单参数和多参数模型的推断方法。在单参数模型中，我们学会了如何处理一个未知参数的估计和假设检验；在多参数模型中，我们掌握了处理 nuisance 参数的条件化和边际化技术，并理解了正态模型中均值与方差的联合推断。然而，这些方法在面对现实世界的数据时往往显得不足。
+
+现实中的数据很少只受单一因素的影响。例如，在教育研究中，学生的成绩可能受到家庭背景、学校质量、个人努力程度等多重因素的共同影响；在医学研究中，病人的康复速度可能同时取决于药物剂量、治疗方式、患者年龄等多种协变量。我们需要一个能够同时处理多个预测变量的统一框架。
+
+这正是回归模型所要解决的问题。回归分析是应用统计学的基石，它允许我们研究一个或多个响应变量与一组预测变量之间的关系。从贝叶斯视角看，回归模型本质上是一个多参数推断问题，其中参数向量 $\beta$ 表示各个预测变量的效应大小，$\sigma^2$ 控制噪声的 scale。
+
+历史地看，回归分析的发展经历了几个阶段。Adrien-Marie Legendre 和 Carl Friedrich Gauss 各自独立发展了最小二乘法：Legendre 于 1805 年首先公开发表，而 Gauss 早在 1801 年就用最小二乘法成功预测了谷神星的轨道（这也是他声名鹊起的原因），两人为此曾有过优先权之争。Ronald Fisher 在 20 世纪初将最小二乘法置于坚实的统计理论基础之上，证明了在正态误差假设下，最小二乘估计具有最优性。
+
+在贝叶斯传统中，回归分析长期以来被视为一个计算上的挑战——直到马尔科夫链蒙特卡洛方法的出现。1980 年前后，随着计算方法的进步，贝叶斯回归分析才真正进入实用阶段。然而，当我们从连续响应变量转向二分类响应变量时，解析方法将彻底失效——似然函数不再是 $\beta$ 的二次函数，后验分布不再具有闭式形式，我们必须借助模拟技术。这一转折将在逻辑回归一节详细展开。
+
+本章我们将系统研究贝叶斯回归模型，从最基础的正规线性回归出发，逐步扩展到逻辑回归和稳健回归。在整个过程中，我们将看到共轭先验与非信息先验如何塑造后验推断，以及当预测变量增多时如何选择先验分布。
+
+\section{正规线性回归模型}
+
+\subsection{模型设定}
+
+最简单的回归模型假设响应变量 $y$ 与预测变量 $x_1, \ldots, x_k$ 之间存在线性关系：
+
+\begin{equation}
+y_i = x_i^T \beta + \epsilon_i, \quad \epsilon_i \sim \text{Normal}(0, \sigma^2)
+\label{eq:linear-regression-model}
+\end{equation}
+
+其中 $x_i = (1, x_{i1}, \ldots, x_{ik})^T$ 是第 $i$ 个观测的预测变量向量（包含截距项），$\beta = (\beta_0, \beta_1, \ldots, \beta_k)^T$ 是回归系数向量，$\sigma^2$ 是误差方差。将所有观测堆叠，我们得到矩阵形式：
+
+\begin{equation}
+y = X\beta + \epsilon, \quad \epsilon \sim \text{Normal}(0, \sigma^2 I_n)
+\label{eq:linear-regression-matrix}
+\end{equation}
+
+其中 $y$ 是 $n \times 1$ 响应向量，$X$ 是 $n \times p$ 设计矩阵（$p = k+1$ 包含截距），$\epsilon$ 是 $n \times 1$ 误差向量。
+
+\subsection{正规线性回归的充分统计量}
+
+由多元正态分布理论，给定设计矩阵 $X$，响应向量 $y$ 的分布为：
+
+\begin{equation}
+y \sim \text{Normal}(X\beta, \sigma^2 I_n)
+\label{eq:y-normal}
+\end{equation}
+
+其似然函数为：
+
+\begin{equation}
+p(y|\beta, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left(-\frac{1}{2\sigma^2}\|y - X\beta\|^2\right)
+\label{eq:likelihood-normal-regression}
+\end{equation}
+
+充分统计量是：
+\[
+\hat{\beta} = (X^TX)^{-1}X^Ty, \quad \text{RSS} = \|y - X\hat{\beta}\|^2
+\]
+即最小二乘估计和残差平方和。\footnote{在正态误差假设下，$\hat{\beta}$ 既是最小二乘估计（通过最小化残差平方和得到），也是最大似然估计（通过最大化似然函数得到），两者等价。}
+
+\section{共轭正态线性回归}
+
+\subsection{Normal-Gamma 先验}
+
+对于正规线性回归模型 \cref{eq:linear-regression-model}，一个自然的共轭先验分布可以表示为：
+
+\begin{equation}
+\beta | \sigma^2 \sim \text{Normal}(\beta_0, \sigma^2 V_0), \quad \sigma^2 \sim \text{Inverse-Gamma}(\nu_0/2, \nu_0\sigma_0^2/2)
+\label{eq:normal-gamma-prior}
+\end{equation}
+
+这个先验分布在给定 $\sigma^2$ 的条件下对 $\beta$ 是正态分布，而 $\sigma^2$ 自身服从逆 gamma 分布。参数 $(\beta_0, V_0, \nu_0, \sigma_0^2)$ 允许我们表达先验信息。
+
+\begin{Remark}
+  逆 gamma 分布作为 $\sigma^2$ 先验的选择有其历史背景。当与正态似然函数结合时，逆 gamma 先验确保后验分布仍然是闭式可积的。这使得我们可以推导出回归系数的后验分布具有解析形式。
+\end{Remark}
+
+\subsection{后验分布}
+
+结合似然 \cref{eq:likelihood-normal-regression} 和先验 \cref{eq:normal-gamma-prior}，后验分布 $p(\beta, \sigma^2 | y)$ 仍然是一个 Normal-Gamma 分布：
+
+\begin{equation}
+\beta | \sigma^2, y \sim \text{Normal}(\beta_n, \sigma^2 V_n), \quad \sigma^2 | y \sim \text{Inverse-Gamma}(\nu_n/2, \nu_n\sigma_n^2/2)
+\label{eq:normal-gamma-posterior}
+\end{equation}
+
+其中后验参数由下式给出：\footnote{推导见附录 \cref{sec:normal-gamma-posterior-derivation}。}
+
+\[
+\beta_n = (X^TX + V_0^{-1})^{-1}(X^T X\hat{\beta} + V_0^{-1}\beta_0), \quad V_n = (X^TX + V_0^{-1})^{-1}
+\]
+
+\[
+\nu_n = \nu_0 + n, \quad \nu_n\sigma_n^2 = \nu_0\sigma_0^2 + \text{RSS} + (\hat{\beta} - \beta_0)^T(X^TX)(V_0 + V_n)(\hat{\beta} - \beta_0)
+\]
+
+值得注意的是，当 $V_0 = g(X^TX)^{-1}$ 时（即 Zellner g-先验的特殊情形），后验均值 $\beta_n$ 精确地等于数据的最大似然估计 $\hat{\beta}$ 与先验均值 $\beta_0$ 的线性插值，详见 \cref{eq:g-prior-posterior-mean}。
+当先验协方差 $V_0$ 与 $(X^TX)^{-1}$ 成正比时，这个加权平均关系尤为清晰。
+
+此外，$\sigma_n^2$ 表达式中的第三项
+\[
+(\hat{\beta} - \beta_0)^T(X^TX)(V_0 + V_n)(\hat{\beta} - \beta_0)
+\]
+衡量了先验均值 $\beta_0$ 与数据最大似然估计 $\hat{\beta}$ 之间的"距离"。当两者一致时，这一项接近零，后验方差主要由残差驱动；当两者冲突较大时，这一项增大，后验分布会表现出更大的不确定性——这就是所谓的\textbf{prior-data conflict}（先验-数据冲突）。
+
+\subsection{后验预测分布}
+
+给定新的预测变量 $x_{\text{new}}$，对应的响应变量的后验预测分布为：
+
+\begin{equation}
+\tilde{y} | y \sim \text{Student-t}(\nu_n, x_{\text{new}}^T\beta_n, \sigma_n^2(1 + x_{\text{new}}^TV_nx_{\text{new}}))
+\label{eq:posterior-predictive-regression}
+\end{equation}
+
+这是一个自由度为 $\nu_n$ 的 Student-t 分布，其位置参数是 $x_{\text{new}}^T\beta_n$，scale 参数包含两部分：$\sigma_n^2$ 反映噪声的不确定性，$x_{\text{new}}^TV_nx_{\text{new}}$ 反映 $\beta$ 的后验不确定性。
+
+\section{非信息先验分布}
+
+在许多实际应用中，我们缺乏可靠的先验信息，希望让数据主导推断。这就引出了非信息先验的选择问题。
+
+\subsection{均匀先验}
+
+一个朴素的非信息先验假设所有参数无差别对待：
+
+\begin{equation}
+p(\beta, \sigma^2) \propto \text{常数}
+\label{eq:uniform-prior}
+\end{equation}
+
+在形式上，这是一个异常（improper）先验——它在参数空间上不是正规的概率密度函数。但当我们将其与似然函数结合时，如果后验分布是正常的，这个先验仍然可以使用。
+
+均匀先验在回归问题中对应于假设 $\beta$ 和 $\log\sigma^2$ 在参数空间上是平权的。
+
+\subsection{Jeffreys' 先验}
+
+Jeffreys' 先验是另一种常用的非信息先验，它具有参数化不变性——无论我们如何重新参数化模型，先验分布都会相应变换以保持一致的后验推断。
+
+对于正规线性回归模型，Jeffreys' 先验为：
+
+\begin{equation}
+p(\beta, \sigma^2) \propto |X^TX|^{1/2} (\sigma^2)^{-(p+1)/2}
+\label{eq:jeffreys-prior-regression}
+\end{equation}
+
+其中 $p$ 是 $\beta$ 的维度。这个先验可以分解为 $p(\beta | \sigma^2) \propto |X^TX|^{1/2}(\sigma^2)^{-p/2}$ 和 $p(\sigma^2) \propto (\sigma^2)^{-1}$。
+
+\begin{Remark}
+Jeffreys' 先验与 Fisher 信息矩阵的行列式 $|I(\beta)|^{1/2}$ 成正比。稍微思考一下就会想到：Fisher 信息衡量的是参数空间中局部曲率的大小——数据对该方向的参数变化越敏感，该方向的 Fisher 信息越大。直觉上，曲率越大，我们应当给该方向分配更少的先验权重，从而让数据主导推断。$|I(\theta)|^{1/2}$ 正是这种"局部曲率度量"的数学实现：由于 $I(\theta)$ 是协方差矩阵，其行列式综合反映了所有方向的信息量——信息越大的方向，先验权重越小，反之亦然。这种自动的"倾斜"使得 Jeffreys' 先验在不同参数化下保持一致性。
+\end{Remark}
+
+一个更简单的近似是分层先验：
+
+\begin{equation}
+p(\beta, \sigma^2) \propto (\sigma^2)^{-1}
+\label{eq:scale-invariant-prior}
+\end{equation}
+
+这个先验在位置-尺度变换下不变，在实践中往往与 Jeffreys' 先验给出非常接近的结果。
+
+\section{多预测变量情形}
+
+当预测变量数量较多时，先验分布的选择变得更加微妙。特别地，如何平衡数据的拟合与模型的复杂度成为一个核心问题。
+
+\subsection{Zellner 的 g-先验}
+
+Zellner 的 g-先验是一类灵活的信息先验，它将先验信息编码为一个额外的观测：
+
+\begin{equation}
+\beta | \sigma^2 \sim \text{Normal}(\beta_0, g\sigma^2(X^TX)^{-1})
+\label{eq:zellner-g-prior}
+\end{equation}
+
+其中超参数 $g$ 控制先验的强度。当 $g \to \infty$ 时，先验变得越来越模糊，最终退化为非信息先验；当 $g$ 较小时，先验对后验有较强的收缩作用。
+
+g-先验的一个重要性质是后验均值可以在最小二乘估计 $\hat{\beta}$ 和先验均值 $\beta_0$ 之间实现线性插值：\footnote{推导见附录 \cref{sec:g-prior-derivation}。}
+
+\begin{equation}
+\mathbb{E}(\beta | y) = \frac{n}{n+g}\hat{\beta} + \frac{g}{n+g}\beta_0
+\label{eq:g-prior-posterior-mean}
+\end{equation}
+
+这体现了贝叶斯推断的核心特征——将先验信息与数据信息以加权平均的方式融合。
+
+\subsection{相关性预测变量的处理}
+
+当预测变量之间存在多重共线性时，$(X^TX)^{-1}$ 可能数值上不稳定。一种解决方案是在 $X^TX$ 的对角线上添加一个小的常数 $\lambda$（岭回归的思想）：
+
+\begin{equation}
+\beta | \sigma^2 \sim \text{Normal}(\beta_0, \sigma^2(X^TX + \lambda I)^{-1})
+\label{eq:ridge-prior}
+\end{equation}
+
+另一种思路是从变量选择的角度出发，使用 spike-and-slab 先验或 horseshoe 先验，将大多数回归系数推向零，同时允许少数重要变量保留非零系数。horseshoe 先验将每个系数 $\beta_j$ 表示为分层结构 $\beta_j = \lambda_j \tau \cdot \xi_j$，其中 $\lambda_j \sim \text{Cauchy}^+(0,1)$（局部正则化参数，控制单个系数的收缩程度），$\tau \sim \text{Cauchy}^+(0,1)$（全局正则化参数，控制整体的收缩强度），$\xi_j \sim \text{Normal}(0,1)$。这种结构使得大多数 $\lambda_j$ 接近零（从而 $\beta_j$ 被推向零），但允许少数 $\lambda_j$ 较大（从而对应的 $\beta_j$ 保留非零值），实现了数据自适应的稀疏估计。
+
+\section{逻辑回归}
+
+\subsection{二分类响应变量}
+
+当响应变量是二分类的（$y_i \in \{0, 1\}$）时，正规线性回归不再适用，因为线性模型可能给出超出 $[0,1]$ 区间的概率预测。逻辑回归通过引入 link 函数解决了这个问题。
+
+模型设定为：
+
+\begin{equation}
+y_i \mid \beta \sim \text{Bernoulli}(\pi_i), \quad \text{logit}(\pi_i) = x_i^T\beta
+\label{eq:logistic-regression-model}
+\end{equation}
+
+即：
+
+\begin{equation}
+\pi_i = \Pr(y_i = 1 | \beta) = \frac{1}{1 + \exp(-x_i^T\beta)}
+\label{eq:logistic-link}
+\end{equation}
+
+对数似然函数为：
+
+\begin{equation}
+\ell(\beta) = \sum_{i=1}^n [y_i x_i^T\beta - \log(1 + \exp(x_i^T\beta))]
+\label{eq:logistic-likelihood}
+\end{equation}
+
+\subsection{后验分布与计算}
+
+逻辑回归的后验分布 $p(\beta | y) \propto \exp(\ell(\beta)) \times p(\beta)$ 不再有解析形式。似然函数关于 $\beta$ 不是二次的，因此无法通过解析积分得到边际后验分布。
+
+这标志着一个重要的计算转折点：我们必须借助第 10-12 章介绍的模拟方法来处理这类非共轭模型。常用的策略及其适用场景如下：
+
+\begin{enumerate}
+  \item \textbf{Metropolis 算法}：使用对称提议分布（如正态提议）在后验分布上生成马尔科夫链。\textbf{适用场景}：低维参数空间（$p < 20$）；优点是简单通用，缺点是收敛较慢。
+  \item \textbf{Hamiltonian 蒙特卡洛}：利用梯度信息 $\nabla_\beta \log p(\beta|y)$ 构造更高效的提议机制，特别适合高维参数空间。\textbf{适用场景}：高维参数空间（$p \geq 20$）；优点是效率远高于随机游走 Metropolis，缺点是需要计算梯度且调参较敏感。
+  \item \textbf{拉普拉斯近似}：用正态分布 $\text{Normal}(\hat{\beta}, \Sigma)$ 逼近后验模式 $\hat{\beta}$ 附近的后验密度，结合重要性抽样或粒子滤波器。\textbf{适用场景}：快速原型探索；优点是计算极快，缺点是仅在模式附近精确，对多峰或高度非正态的后验分布效果较差。
+\end{enumerate}
+
+在实际应用中，通常先尝试拉普拉斯近似获得初始值，再用 HMC 或 Metropolis 进行精确采样。当参数维度特别高时（如 $p > 1000$），还需结合稀疏先验（如 horseshoe 先验）使用变分推断等近似方法。
+
+\section{稳健回归}
+
+正规线性回归假设误差服从正态分布，这一假设在某些实际数据中可能不成立。当数据中存在离群点或重尾噪声时，正态假设可能导致推断过度受到异常值的影响。
+
+\subsection{t 分布误差}
+
+一种自然的稳健化方案是假设误差服从 Student-t 分布而不是正态分布：
+
+\begin{equation}
+y_i = x_i^T\beta + \epsilon_i, \quad \epsilon_i \sim \text{Student-t}(\nu, 0, \sigma^2)
+\label{eq:t-distribution-errors}
+\end{equation}
+
+自由度 $\nu$ 控制尾部的厚度。当 $\nu \to \infty$ 时，t 分布收敛到正态分布；当 $\nu$ 较小时（如 $\nu = 4$），分布的尾部更厚，对离群点的敏感度更低。
+
+从层次化的视角看，Student-t 分布可以分解为一个正态分布与一个隐变量的混合：
+
+\[
+\epsilon_i | \lambda_i \sim \text{Normal}(0, \sigma^2/\lambda_i), \quad \lambda_i \sim \text{Gamma}(\nu/2, \nu/2)
+\]
+
+其中 $\lambda_i$ 是第 $i$ 个观测的精度尺度因子。这种分解使得我们可以使用 EM 算法或 Gibbs 抽样来计算后验分布。
+
+\subsection{分层混合模型}
+
+另一种稳健回归的框架是使用有限混合分布作为误差模型。例如，假设误差以概率 $(1-\pi)$ 来自正态分布，以概率 $\pi$ 来自某个污染分布（通常是尺度更大的正态或均匀分布）：
+
+\begin{equation}
+\epsilon_i \sim (1-\pi)\text{Normal}(0, \sigma_1^2) + \pi\text{Normal}(0, \sigma_2^2), \quad \sigma_2^2 > \sigma_1^2
+\label{eq:mixture-robust}
+\end{equation}
+
+这类模型允许数据自动识别并降低离群点的影响权重，同时保持对大部分"正常"数据的有效推断。
+
+\section{本章小结}
+
+本章我们从贝叶斯视角全面介绍了回归模型：
+
+\begin{enumerate}
+  \item \textbf{正规线性回归}：建立了从多参数正态模型到回归分析的自然过渡，介绍了 Normal-Gamma 共轭先验和后验分布的闭式形式。
+  \item \textbf{非信息先验}：讨论了均匀先验和 Jeffreys' 先验的选择，以及它们在缺乏先验信息时的应用。
+  \item \textbf{多预测变量}：介绍了 Zellner 的 g-先验作为信息先验与无信息先验之间的桥梁，以及处理高度相关预测变量的岭回归策略。
+  \item \textbf{逻辑回归}：从二分类响应变量出发，引入了 link 函数和后验分布的不可解析性，为后续章节的模拟计算方法埋下伏笔。
+  \item \textbf{稳健回归}：通过 t 分布误差和有限混合误差模型展示了如何处理偏离正态假设的数据。
+\end{enumerate}
+
+回归分析将我们在前几章学习的参数推断技术扩展到了更复杂的实际场景。同时，本章也展示了贝叶斯方法在处理不同数据类型（连续、二分类、存在离群点的数据）时的灵活性。
+
+\section{习题}\label{sec:ch14-exercises}
+
+\begin{Exercise}{\ref{exr:ch14-1} 正规线性回归的后验均值}
+\label{exr:ch14-1}
+证明在使用共轭 Normal-Gamma 先验 \cref{eq:normal-gamma-prior} 时，后验均值满足 \cref{eq:g-prior-posterior-mean} 的特例形式（即 $\beta_0 = 0$ 且 $V_0 = (X^TX)^{-1}$ 的情形）。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch14-2} Jeffreys' 先验的性质}
+\label{exr:ch14-2}
+验证 Jeffreys' 先验 \cref{eq:jeffreys-prior-regression} 可以分解为 $p(\beta | \sigma^2) \propto (\sigma^2)^{-p/2}$ 和 $p(\sigma^2) \propto (\sigma^2)^{-1}$ 两部分的乘积。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch14-3} 逻辑回归的 Metropolis 算法实现}
+\label{exr:ch14-3}
+给定先验 $p(\beta) \propto 1$（平坦先验）和数据集：$(x_i, y_i)$ 中 $y_i \in \{0,1\}$，$n=50$。描述使用 Metropolis 算法从后验分布 $p(\beta | y)$ 中抽取样本的完整步骤，包括：
+\begin{enumerate}
+  \item 提议分布的选择（例如 $\text{Normal}(\beta^{\text{cur}}, \Sigma)$），如何确定提议协方差 $\Sigma$？
+  \item 接受率 $\alpha = \min\{1, p(\beta^{\text{prop}}|y)/p(\beta^{\text{cur}}|y)\}$ 的计算，其中 $p(\beta|y) \propto \exp(\ell(\beta))$，$\ell(\beta)$ 如 \cref{eq:logistic-likelihood}。
+  \item 如何丢弃 burn-in 样本并验证链的收敛性。
+  \item 给定新预测变量 $x_{\text{new}}$，写出 $\Pr(\tilde{y}=1|y)$ 的蒙特卡洛估计公式，并说明如何用收集的样本计算该估计。
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch14-4} t 分布误差的层次表示}
+\label{exr:ch14-4}
+证明在层次表示 $\epsilon_i | \lambda_i \sim \text{Normal}(0, \sigma^2/\lambda_i)$，$\lambda_i \sim \text{Gamma}(\nu/2, \nu/2)$ 下，$\epsilon_i$ 的边际分布是 Student-t 分布 \cref{eq:t-distribution-errors}。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch14-5} g-先验的收缩性质}
+\label{exr:ch14-5}
+令 $g$ 为 Zellner g-先验 \cref{eq:zellner-g-prior} 中的超参数。证明后验均值 $\mathbb{E}(\beta | y)$ 可以写成 \cref{eq:g-prior-posterior-mean} 的形式，并说明当 $g$ 增大时，后验均值如何收缩向先验均值。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch14-6} 稳健回归与离群点}
+\label{exr:ch14-6}
+对比使用正态误差假设与 t 分布误差假设的线性回归在后验预测分布上的差异。通过直觉和数学两方面说明 t 分布误差为何对离群点更加稳健。
+\end{Exercise}
+
+\endinput

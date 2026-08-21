@@ -29,6 +29,16 @@
 \setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
 \setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
 
+\newcommand{\examstatement}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\bfseries #1}\par\nobreak\addvspace{0.28em}%
+}
+
+% Shared amsthm note/remark/theorem styles
+\input{../../../common/qe-math-extras.tex}
+\input{../../../common/qe-amsthm-envs.tex}
+\input{../../../common/qe-pdf-outline.tex}
+
 \title{\textbf{QUALIFYING EXAM: APPLIED MATHEMATICS}\\[0.5em]\Large FALL 2024}
 \date{}
 \author{}
@@ -38,54 +48,204 @@
 \maketitle
 \vspace{-3em}
 
+\tableofcontents
+
+\section{Statement of the problems}
+
+\examstatement{Problem 1. [20 points]}
+The \(n\)-th Chebyshev polynomial is defined by: \(T_{n}(x) = \cos(n \cdot \arccos(x))\). Answer the following questions related to \(T_{n}(x)\).
+\begin{enumerate}[label=(\roman*)]
+    \item (6 points) Prove that \(T_{n}(x)\) is a polynomial of degree \(n\).
+    \item (6 points) For any \(x\) with \(0 < x < 1\), show that \(T_{n}(2x - 1) = T_{2n}(\sqrt{x})\).
+    \item (8 points) Prove that the system of Chebyshev polynomials \(\{T_{k} : 0 \le k < n\}\) is orthogonal with respect to the discrete inner product \((u, v) = \sum_{k=1}^{n} u(x_{k}) v(x_{k})\), where \(\{x_{k}\}\) are the Chebyshev points \(x_{k} = \cos\bigl(\frac{2k-1}{2n}\pi\bigr)\).
+\end{enumerate}
+
+\examstatement{Problem 2. [15 points]}
+Let \(A\) be a symmetric positive definite matrix. Assume that the conjuage gradient method is applied to solve the linear system \(Ax = b\), where \(x^{*}\) is the exact solution.
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) Prove the following error estimate:
+    \[
+    \|x_{k} - x^{*}\|_{A} \le \left( \frac{\sqrt{\kappa_{2}(A)} - 1}{\sqrt{\kappa_{2}(A)} + 1} \right)^{k} \|x_{0} - x^{*}\|_{A},
+    \]
+    where \(x_{k}\) is the solution obtained by the \(k\)-th iteration, \(\|\cdot\|_{A}\) denotes the \(A\)-norm defined by \(\|x\|_{A} = \sqrt{x^{*} A x}\), and \(\kappa_{2}(A) = \dfrac{\max \lambda(A)}{\min \lambda(A)}\) denotes the condition number of \(A\) under the \(l_{2}\) norm. (If you apply any theorem from approximation theory, please state the theorem clearly. No need to prove that theorem.)
+    \item (5 points) Describe one Krylov subspace method for non-Hermitian matrices (\(A \neq A^{*}\)). (You can use pseudo-code or words/formulas as long as the steps are clear.)
+\end{enumerate}
+
+\examstatement{Problem 3. [15 points]}
+Consider Kepler's equation
+
+\[
+f(x) = x - \epsilon \sin x - \eta, \quad (0 < |\epsilon| < 1),\quad \eta \in \mathbb{R}.
+\]
+
+\begin{enumerate}[label=(\roman*)]
+    \item (5 points) Show that for each \(\epsilon, \eta\), there is exactly one real root \(\alpha = \alpha(\epsilon, \eta)\). Furthermore, \(\eta - |\epsilon| \le \alpha \le \eta + |\epsilon|\).
+    \item (5 points) Writing the equation in fixed point form:
+    \[
+    x = \varphi(x), \qquad \varphi(x) = \epsilon \sin x + \eta,
+    \]
+    show that the fixed point iteration \(x_{n+1} = \varphi(x_{n})\) converges for arbitrary staring value \(x_{0}\).
+    \item (5 points) Let \(m\) be an integer such that \(m\pi < \eta < (m+1)\pi\). Show that Newton's method with starting value
+    \[
+    x_{0} =
+    \begin{cases}
+    (m+1)\pi & \text{if } (-1)^{m} \epsilon > 0, \\
+    m\pi & \text{otherwise,}
+    \end{cases}
+    \]
+    is guaranteed to converge (monotonically) to \(\alpha(\epsilon, \eta)\).
+\end{enumerate}
+
+\examstatement{Problem 4. [15 points]}
+For the system
+
+\[
+u_{t} = v_{x}, \qquad v_{t} = u_{x},
+\]
+
+analyze the truncation error and stability of the scheme
+
+\[
+\frac{1}{\tau} \left( u_{j}^{n+1} - \frac12 (u_{j+1}^{n} + u_{j-1}^{n}) \right) = \frac{1}{2h} (v_{j+1}^{n} - v_{j-1}^{n}),
+\]
+
+\[
+\frac{1}{\tau} \left( v_{j}^{n+1} - \frac12 (v_{j+1}^{n} + v_{j-1}^{n}) \right) = \frac{1}{2h} (u_{j+1}^{n} - u_{j-1}^{n}).
+\]
+
+\examstatement{Problem 5. [15 points]}
+Write and prove the maximum principle of the centered finite difference scheme for discretizing the equation
+
+\[
+u_{xx} + u_{yy} + d(x,y) u_{x} + e(x,y) u_{y} + f(x,y) u = 0, \quad f < 0,
+\]
+
+under some suitable assumptions.
+
+\noindent\textbf{Remark: You can choose either (6) or (7). The points will be decided as \(\max((6), (7))\).}
+
+\examstatement{Problem 6. [20 points]}
+Consider the following boundary value problem for \(y = y(x)\) on \([0, 1]\) as \(0 < \epsilon \ll 1\),
+
+\[
+\epsilon y'' + \epsilon(1+x)^{2} y' - y = x - 1, \qquad y(0) = \alpha, \quad y(1) = -1.
+\]
+
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) Suppose \(\alpha = 1\). Construct a composite expansion of the above problem and sketch the solution.
+    \item (5 points) Construct a composite expansion of the above problem for \(\alpha = 0\).
+    \item (5 points) What is the accuracy of your solution in \(\epsilon\)? Formally explain your conclusion. Consider the first case only.
+\end{enumerate}
+
+\examstatement{Problem 7. [20 points]}
+Let \(f : \mathbb{R}^{n} \to \mathbb{R}\) be convex and define \(\partial f(x)\) to be the subgradient set of \(f\) at \(x\).
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) If \(x \in \operatorname{int} \operatorname{dom} f\), prove that \(\partial f(x)\) is nonempty and bounded.
+    \item (5 points) Assume \(f = \|x\|_{1} = \sum_{i=1}^{n} |x_{i}|\), write down the \(\partial f(x)\).
+    \item (5 points) Given \(y \in \mathbb{R}^{n}\) and \(\lambda > 0\), calculate the closed form solution of the problem:
+    \[
+    \min_{x} \tfrac12 \|x - y\|_{2}^{2} + \lambda \|x\|_{1}.
+    \]
+\end{enumerate}
+
 \noindent\rule{\linewidth}{0.4pt}
 
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{(20 points)} $T_n(x) = \cos(n \arccos(x))$.
-    \begin{enumerate}[label=(\roman*)]
-        \item Prove $T_n(x)$ is a polynomial of degree $n$.
-        \item Show $T_n(2x - 1) = T_{2n}(\sqrt{x})$ for $0 < x < 1$.
-        \item Prove $\{T_k : 0 \le k < n\}$ is orthogonal w.r.t.\ discrete inner product $(u, v) = \sum_{k=1}^n u(x_k)v(x_k)$ where $x_k = \cos(\frac{2k-1}{2n}\pi)$.
-    \end{enumerate}
+\section{Statement and solutions}
 
-    \item \textbf{(15 points)} $A$ symmetric positive definite. Conjugate gradient method solves $Ax = b$.
-    \begin{enumerate}[label=(\roman*)]
-        \item Prove error estimate $\|x_k - x^*\|_A \le \left(\frac{\sqrt{\kappa_2(A)} - 1}{\sqrt{\kappa_2(A)} + 1}\right)^k \|x_0 - x^*\|_A$.
-        \item Describe one Krylov subspace method for non-Hermitian matrices ($A \neq A^*$).
-    \end{enumerate}
+\subsection{Problem 1. [20 points]}
+The \(n\)-th Chebyshev polynomial is defined by: \(T_{n}(x) = \cos(n \cdot \arccos(x))\). Answer the following questions related to \(T_{n}(x)\).
+\begin{enumerate}[label=(\roman*)]
+    \item (6 points) Prove that \(T_{n}(x)\) is a polynomial of degree \(n\).
+    \item (6 points) For any \(x\) with \(0 < x < 1\), show that \(T_{n}(2x - 1) = T_{2n}(\sqrt{x})\).
+    \item (8 points) Prove that the system of Chebyshev polynomials \(\{T_{k} : 0 \le k < n\}\) is orthogonal with respect to the discrete inner product \((u, v) = \sum_{k=1}^{n} u(x_{k}) v(x_{k})\), where \(\{x_{k}\}\) are the Chebyshev points \(x_{k} = \cos\bigl(\frac{2k-1}{2n}\pi\bigr)\).
+\end{enumerate}
 
-    \item \textbf{(15 points)} Kepler's equation $f(x) = x - \epsilon \sin x - \eta$ ($0 < |\epsilon| < 1$).
-    \begin{enumerate}[label=(\roman*)]
-        \item Show exactly one real root $\alpha \in [\eta - |\epsilon|, \eta + |\epsilon|]$.
-        \item Show fixed point iteration $x_{n+1} = \epsilon \sin x_n + \eta$ converges for any $x_0$.
-        \item For $m\pi < \eta < (m+1)\pi$, prove Newton's method converges monotonically for specified $x_0$.
-    \end{enumerate}
-
-    \item \textbf{(15 points)} For $u_t = v_x, v_t = u_x$, analyze truncation error and stability of:
+\subsection{Problem 2. [15 points]}
+Let \(A\) be a symmetric positive definite matrix. Assume that the conjuage gradient method is applied to solve the linear system \(Ax = b\), where \(x^{*}\) is the exact solution.
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) Prove the following error estimate:
     \[
-    \frac{1}{\tau} \left(u_j^{n+1} - \frac{1}{2}(u_{j+1}^n + u_{j-1}^n)\right) = \frac{1}{2h}(v_{j+1}^n - v_{j-1}^n),
+    \|x_{k} - x^{*}\|_{A} \le \left( \frac{\sqrt{\kappa_{2}(A)} - 1}{\sqrt{\kappa_{2}(A)} + 1} \right)^{k} \|x_{0} - x^{*}\|_{A},
     \]
+    where \(x_{k}\) is the solution obtained by the \(k\)-th iteration, \(\|\cdot\|_{A}\) denotes the \(A\)-norm defined by \(\|x\|_{A} = \sqrt{x^{*} A x}\), and \(\kappa_{2}(A) = \dfrac{\max \lambda(A)}{\min \lambda(A)}\) denotes the condition number of \(A\) under the \(l_{2}\) norm. (If you apply any theorem from approximation theory, please state the theorem clearly. No need to prove that theorem.)
+    \item (5 points) Describe one Krylov subspace method for non-Hermitian matrices (\(A \neq A^{*}\)). (You can use pseudo-code or words/formulas as long as the steps are clear.)
+\end{enumerate}
+
+\subsection{Problem 3. [15 points]}
+Consider Kepler's equation
+
+\[
+f(x) = x - \epsilon \sin x - \eta, \quad (0 < |\epsilon| < 1),\quad \eta \in \mathbb{R}.
+\]
+
+\begin{enumerate}[label=(\roman*)]
+    \item (5 points) Show that for each \(\epsilon, \eta\), there is exactly one real root \(\alpha = \alpha(\epsilon, \eta)\). Furthermore, \(\eta - |\epsilon| \le \alpha \le \eta + |\epsilon|\).
+    \item (5 points) Writing the equation in fixed point form:
     \[
-    \frac{1}{\tau} \left(v_j^{n+1} - \frac{1}{2}(v_{j+1}^n + v_{j-1}^n)\right) = \frac{1}{2h}(u_{j+1}^n - u_{j-1}^n).
+    x = \varphi(x), \qquad \varphi(x) = \epsilon \sin x + \eta,
     \]
+    show that the fixed point iteration \(x_{n+1} = \varphi(x_{n})\) converges for arbitrary staring value \(x_{0}\).
+    \item (5 points) Let \(m\) be an integer such that \(m\pi < \eta < (m+1)\pi\). Show that Newton's method with starting value
+    \[
+    x_{0} =
+    \begin{cases}
+    (m+1)\pi & \text{if } (-1)^{m} \epsilon > 0, \\
+    m\pi & \text{otherwise,}
+    \end{cases}
+    \]
+    is guaranteed to converge (monotonically) to \(\alpha(\epsilon, \eta)\).
+\end{enumerate}
 
-    \item \textbf{(15 points)} Write and prove maximum principle of centered finite difference for $u_{xx} + u_{yy} + d(x,y)u_x + e(x,y)u_y + f(x,y)u = 0$ ($f < 0$).
+\subsection{Problem 4. [15 points]}
+For the system
 
-    \item[] \textit{Choose either (6) or (7):}
+\[
+u_{t} = v_{x}, \qquad v_{t} = u_{x},
+\]
 
-    \item \textbf{(20 points)} Boundary value problem $\epsilon y'' + \epsilon(1+x)^2 y' - y = x - 1$, $y(0) = \alpha, y(1) = -1$.
-    \begin{enumerate}[label=(\roman*)]
-        \item For $\alpha = 1$, construct composite expansion and sketch solution.
-        \item For $\alpha = 0$, construct composite expansion.
-        \item Estimate accuracy in $\epsilon$.
-    \end{enumerate}
+analyze the truncation error and stability of the scheme
 
-    \item \textbf{(20 points)} Convex $f : \mathbb{R}^n \to \mathbb{R}$, subgradient set $\partial f(x)$.
-    \begin{enumerate}[label=(\roman*)]
-        \item For $x \in \mathrm{int\,dom}\,f$, prove $\partial f(x)$ is nonempty and bounded.
-        \item For $f = \|x\|_1$, write down $\partial f(x)$.
-        \item Solve $\min_x \frac{1}{2}\|x - y\|_2^2 + \lambda \|x\|_1$.
-    \end{enumerate}
+\[
+\frac{1}{\tau} \left( u_{j}^{n+1} - \frac12 (u_{j+1}^{n} + u_{j-1}^{n}) \right) = \frac{1}{2h} (v_{j+1}^{n} - v_{j-1}^{n}),
+\]
+
+\[
+\frac{1}{\tau} \left( v_{j}^{n+1} - \frac12 (v_{j+1}^{n} + v_{j-1}^{n}) \right) = \frac{1}{2h} (u_{j+1}^{n} - u_{j-1}^{n}).
+\]
+
+\subsection{Problem 5. [15 points]}
+Write and prove the maximum principle of the centered finite difference scheme for discretizing the equation
+
+\[
+u_{xx} + u_{yy} + d(x,y) u_{x} + e(x,y) u_{y} + f(x,y) u = 0, \quad f < 0,
+\]
+
+under some suitable assumptions.
+
+\noindent\textbf{Remark: You can choose either (6) or (7). The points will be decided as \(\max((6), (7))\).}
+
+\subsection{Problem 6. [20 points]}
+Consider the following boundary value problem for \(y = y(x)\) on \([0, 1]\) as \(0 < \epsilon \ll 1\),
+
+\[
+\epsilon y'' + \epsilon(1+x)^{2} y' - y = x - 1, \qquad y(0) = \alpha, \quad y(1) = -1.
+\]
+
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) Suppose \(\alpha = 1\). Construct a composite expansion of the above problem and sketch the solution.
+    \item (5 points) Construct a composite expansion of the above problem for \(\alpha = 0\).
+    \item (5 points) What is the accuracy of your solution in \(\epsilon\)? Formally explain your conclusion. Consider the first case only.
+\end{enumerate}
+
+\subsection{Problem 7. [20 points]}
+Let \(f : \mathbb{R}^{n} \to \mathbb{R}\) be convex and define \(\partial f(x)\) to be the subgradient set of \(f\) at \(x\).
+\begin{enumerate}[label=(\roman*)]
+    \item (10 points) If \(x \in \operatorname{int} \operatorname{dom} f\), prove that \(\partial f(x)\) is nonempty and bounded.
+    \item (5 points) Assume \(f = \|x\|_{1} = \sum_{i=1}^{n} |x_{i}|\), write down the \(\partial f(x)\).
+    \item (5 points) Given \(y \in \mathbb{R}^{n}\) and \(\lambda > 0\), calculate the closed form solution of the problem:
+    \[
+    \min_{x} \tfrac12 \|x - y\|_{2}^{2} + \lambda \|x\|_{1}.
+    \]
 \end{enumerate}
 
 \end{document}

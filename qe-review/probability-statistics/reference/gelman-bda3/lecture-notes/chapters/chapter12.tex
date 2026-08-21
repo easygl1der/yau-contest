@@ -1,0 +1,183 @@
+% Chapter 12: Computationally Efficient Markov Chain Simulation
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{高效马尔可夫链模拟}
+
+\section{本章导论}
+
+在前两章中，我们介绍了马尔可夫链模拟的基本工具——Gibbs 采样器和 Metropolis 算法。这些方法具有广泛的适用性，但在处理复杂模型时可能面临效率问题。
+
+本章将基本 Gibbs 采样器和 Metropolis 算法视为构建更高级马尔可夫链模拟算法的基石。\footnote{HMC 的开创性工作是 Duane et al. (1987) 在物理学期刊上提出的，Neal (1993, 2011) 是 HMC 和 NUTS 的权威参考文献。}我们依次讨论参数化变换和调优参数设置以提高效率的方法、切片采样（slice sampling）\footnote{切片采样源于 Neal (2003) 的工作。}、可逆跳转采样（reversible jump sampling）\footnote{可逆跳转采样由 Green (1995) 提出。}以及模拟回火（simulated tempering）\footnote{模拟回火由 Marinari \& Parisi (1992) 引入。}等扩展技术。核心内容是哈密顿蒙特卡洛（Hamiltonian Monte Carlo，HMC），这是一种通过引入"动量"变量使每次迭代能在参数空间中移动更远的 Metropolis 算法推广。最后，我们介绍 Stan——一个实现 HMC 的通用软件环境。
+
+\section{高效 Gibbs 采样器}
+
+\subsection{变换与参数化}
+
+Gibbs 采样器在参数化为独立分量时效率最高。当参数高度相关时，收敛会变得缓慢。解决这一问题最简单的方法是对参数进行线性变换。
+
+\begin{Remark}
+  这一原则同样适用于 Metropolis 跳跃。在正态或近似正态的设定中，跳跃核的理想协方差结构应与目标分布相同。
+\end{Remark}
+
+\subsection{辅助变量与数据增广}
+
+通过添加辅助变量往往可以简化或加速 Gibbs 采样器的计算。\footnote{数据增广的思想可追溯到 Tanner \& Wong (1987) 的工作。}例如，混合分布的指标变量就是一种常见的辅助变量。这一思想也称为数据增广（data augmentation），在概念上和计算上都是有用的工具。
+
+\begin{Example}[$t$ 分布的正态混合表示]
+  辅助变量的一个简单而重要的例子出现在 $t$ 分布的建模中。$t$ 分布可以表示为正态分布的混合，这一表示在金融和信号处理中广泛应用。考虑从 $t_\nu(\mu, \sigma^2)$ 分布中抽取 $n$ 个独立数据点，给定 $\mu, \sigma^2$ 的似然等价于以下模型：
+
+  \[
+  y_i \sim \mathrm{N}(\mu, V_i), \quad V_i \sim \chi^{-2}(\nu, \sigma^2),
+  \]
+
+  其中 $V_i$ 是不可直接观测的辅助变量。
+\end{Example}
+
+该模型的联合后验分布 $p(\mu, \sigma^2, V | y)$ 可以使用 Gibbs 采样器进行模拟，最终关于 $\mu, \sigma$ 的模拟样本将代表原始 $t$ 模型下的后验分布。
+
+在 $t$ 模型的潜在参数形式中，如果 $\sigma$ 的模拟值接近零，收敛可能会很慢。通过添加一个额外参数——即参数扩展（parameter expansion）——可以打破 $\tau$ 与 $V_i$ 之间的相关性，从而改善收敛性。\footnote{参数扩展的详细讨论见 Liu \& Wu (1999) 和 van Dyk \& Meng (2001)。}
+
+\section{高效 Metropolis 跳跃规则}
+
+对于任何给定的后验分布，Metropolis-Hastings 算法都有无限多种实现方式。\footnote{Metropolis 跳跃规则的理论结果来自 Gelman, Roberts \& Gilks (1995)。}即使在重新参数化之后，跳跃规则 $J_t$ 仍有无穷多种选择。
+
+\subsection{两类主要跳跃规则}
+
+第一类是随机游走型跳跃规则，通常使用以当前参数值为中心、方差设定的正态跳跃核。第二类则构造与目标分布近似相同的提议分布，目的是尽可能多地接受样本，而 Metropolis-Hastings 接受步骤主要用于修正近似误差。
+
+\subsection{最优跳跃尺度}
+
+对于 $d$ 维后验分布（经适当变换后为多元正态），使用正态随机游走跳跃核时，最优尺度为
+
+\[
+c \approx 2.4 / \sqrt{d},
+\]
+
+其中效率是相对于从后验分布独立抽样定义的。\footnote{效率 $0.3/d$ 的推导见附录 \cref{sec:metropolis-efficiency}。}
+
+对于多元正态目标分布，这一最优 Metropolis 跳跃规则的效率约为 $0.3 / d$。
+
+最优接受率在一维约为 $0.44$，在高维（$d > 5$）下降至约 $0.23$。\footnote{关于随机游走 Metropolis 最优接受率的理论结果见 Gelman, Roberts \& Gilks (1995)。}这一结果提示了一种自适应模拟算法：在并行模拟开始时使用固定算法（如 Gibbs 采样器或正态随机游走 Metropolis 算法），经过一定次数的模拟后，根据接受率调整跳跃规则的尺度。
+
+\section{切片采样}
+
+切片采样的思想来自 Neal (2003)。从 $d$ 维目标分布 $p(\theta | y)$ 中随机抽取 $\theta$，等价于从该分布下的区域中均匀抽样。形式上，切片采样从 $(\theta, u)$ 的 $d+1$ 维分布中抽样，其中对任意 $\theta$，$p(\theta, u | y) \propto 1$ 当 $u \in [0, p(\theta | y)]$ 时，否则为 $0$。
+
+切片采样在 Gibbs 采样结构中特别有用，可用于抽样一维条件分布。
+
+\section{可逆跳转采样}
+
+在许多问题中，需要进行跨维度的马尔可夫链模拟，即参数空间的维度在迭代之间可能发生变化。\footnote{可逆跳转 MCMC 的开创性工作是 Green (1995)。}例如模型平均和有限混合模型就属于这种情况。
+
+可逆跳转采样仍可使用 Metropolis 算法实现。其核心思想是引入额外的随机变量来匹配不同模型间的参数空间维度。
+
+\section{模拟回火与并行回火}
+
+多峰分布对马尔可夫链模拟提出了特殊挑战。当两个（或多个）峰被极低后验密度的区域分隔时，链可能长时间停留在单个峰附近。\footnote{模拟回火由 Marinari \& Parisi (1992) 引入，并行回火见 Geyer \& Thompson (1993)。}
+
+模拟回火是改善这类问题性能的一种策略。该算法使用一族分布 $p_k(\theta | y)$，其中 $p_0(\theta | y) = p(\theta | y)$，而 $p_1, \ldots, p_K$ 具有相同的基本形状但混合性能更好。并行回火是其变体，在该方法中 $K+1$ 条并行链同时模拟，每条链对应一个密度 $q_k$。
+
+\section{哈密顿蒙特卡洛}
+
+Gibbs 采样器和 Metropolis 算法的一个固有低效之处在于其随机游走行为——在参数空间中移动时可能需要很长时间才能穿过目标分布。
+
+这一观察促使物理学家和统计学家将哈密顿动力学（描述行星运动、粒子碰撞等的确定性物理定律）引入蒙特卡洛模拟。\footnote{HMC 的开创性工作是 Duane et al. (1987)，Neal (2011) 是 HMC 和 NUTS 的权威参考文献。}哈密顿蒙特卡洛（Hamiltonian Monte Carlo，HMC）借鉴物理学中的思想来抑制 Metropolis 算法中的局部随机游走行为，从而使算法能够更快地穿过目标分布。HMC 也称为混合蒙特卡洛，因为它结合了马尔可夫链蒙特卡洛和确定性模拟方法。
+
+\subsection{物理直觉}
+
+想象一个粒子在势能 landscape 上运动。粒子的位置 $\theta$ 对应于我们要采样的参数，动量 $\phi$ 对应于粒子的运动速度。哈密顿动力学保证能量守恒：动能（与动量相关）和势能（与目标分布的对数密度相关）之和恒定。
+
+当粒子处于后验密度平坦区域时，梯度为零，动量保持不变，粒子以恒定速度"滑行"穿过参数空间。当粒子进入低密度区域时，梯度为负，动量减小，最终可能改变方向。这种机制使 HMC 能够有效地探索后验分布的各个区域，而不像随机游走那样在局部徘徊。正是这种确定性的轨迹探索，使得 HMC 在高维空间中比随机游走 Metropolis 效率高出数个量级。
+
+\subsection{动量分布}
+
+HMC 为目标空间中的每个分量 $\theta_j$ 添加一个"动量"变量 $\phi_j$。通常将 $\phi$ 设为多元正态分布，$\phi \sim \mathrm{N}(0, M)$，其中 $M$ 是质量矩阵。
+
+\subsection{HMC 迭代的三个步骤}
+
+HMC 每次迭代包含以下三个部分：
+
+\begin{enumerate}
+  \item 从动量的后验分布 $\phi \sim \mathrm{N}(0, M)$ 中抽取新值。
+  \item 通过 $L$ 个"蛙跳"步骤同时更新 $(\theta, \phi)$。
+  \item 执行接受-拒绝步骤。
+\end{enumerate}
+
+蛙跳步骤的核心是：
+\[
+\phi \gets \phi + \frac{1}{2} \epsilon \frac{d \log p(\theta | y)}{d \theta}, \quad
+\theta \gets \theta + \epsilon M^{-1} \phi, \quad
+\phi \gets \phi + \frac{1}{2} \epsilon \frac{d \log p(\theta | y)}{d \theta}.
+\]
+
+接受-拒绝步骤计算
+\[
+r = \frac{p(\theta^* | y) p(\phi^*)}{p(\theta^{t-1} | y) p(\phi^{t-1})},
+\]
+并以概率 $\min(r, 1)$ 接受新值。
+
+\begin{Remark}
+  HMC 需要后验密度（只需计算到乘法常数）和对数后验密度的梯度。在实际编程中，我们建议同时用数值方法编程梯度作为检查，但实际部署时应使用自动微分以提高效率。\footnote{自动微分的介绍见 Griewank \& Walther (2008)。}
+\end{Remark}
+
+\subsection{调优参数设置}
+
+HMC 可在三个地方调优：动量变量的概率分布 $p(\phi)$、蛙跳步骤的缩放因子 $\epsilon$ 以及每次迭代的蛙跳步数 $L$。
+
+理论表明，当接受率约为 $65\%$ 时 HMC 效率最优。\footnote{最优接受率 $65\%$ 的推导见附录 \cref{sec:hmc-acceptance-rate}。}如果接受率过低，应减小 $\epsilon$ 并相应增加 $L$；如果接受率过高，则增大 $\epsilon$ 并减小 $L$。
+
+\subsection{无 U 形转弯采样器}
+
+无 U 形转弯采样器（no-U-turn sampler）\footnote{NUTS 由 Hoffman \& Gelman (2013) 提出。}自适应地确定每次迭代的步数 $L$，而不是使用固定值。其核心思想是沿轨迹运行直到轨迹开始转向（更准确地说，直到动量变量 $\phi$ 与从迭代开始时位置 $\theta$ 行驶的距离之间的点积达到负值）。
+
+\subsection{Riemannian 适应}
+
+另一种优化方法是 Riemannian 适应，\footnote{Riemannian 适应由 Girolami \& Calderhead (2011) 提出。}将质量矩阵 $M$ 设置为与每一步对数后验密度局部曲率相符的值。该方法可与无 U 形转弯采样器结合使用。
+
+\subsection{教育测试示例}
+
+我们用第 5 章中的教育测试实验来说明 HMC 的调优过程。该模型中，参数向量 $\theta$ 有 $d = 10$ 维，对应 $\alpha_1, \ldots, \alpha_8, \mu, \tau$。
+
+HMC 需要计算对数后验密度关于每个参数的梯度。对于该正态层次模型，梯度可以解析地写出。\footnote{该例子的详细代码实现见附录 C.4。}在调优过程中，我们观察到不同链的接受率差异很大（从 $0.02$ 到 $0.87$），通过调整步长 $\epsilon$ 和步数 $L$（保持 $\epsilon_0 L_0 \approx 1$），最终达到约 $65\%$ 的目标接受率。
+
+该示例说明，虽然对于这个特定问题 Gibbs 采样器已经足够有效，但在更大更复杂的问题中，HMC 能够更有效地穿越高维参数空间。
+
+\section{Stan：计算环境的开发}
+
+哈密顿蒙特卡洛需要一定的编程和调优努力。在更复杂的设置中，我们开发了一个计算机程序 Stan（通过自适应邻域采样）来自动应用 HMC。\footnote{Stan 的原始参考文献是 Gelman et al. (2015)。}
+
+与 JAGS 和 OpenBUGS 等基于 Gibbs 采样的通用软件相比，Stan 的主要优势在于：
+\begin{itemize}
+  \item 使用 NUTS 采样器，自适应地确定轨迹长度
+  \item 利用自动微分计算梯度，避免手动求导
+  \item 在热身阶段自动调优步长和质量矩阵
+\end{itemize}
+
+Stan 的关键步骤包括：数据和模型的输入、对数后验密度（到任意常数）及其梯度的计算、热身阶段中调优参数的设置、使用无 U 形转弯采样器在参数空间中移动，以及最终的收敛监控和推理汇总。
+
+Stan 使用自动解析微分来计算梯度。对于任意 $\mathrm{C}++$ 表达式，它解析表达式并应用微分的基本规则来构建梯度的 $\mathrm{C}++$ 程序。这种自动微分通常比通过有限差分计算数值梯度快得多。
+
+Stan 还可以在热身阶段自适应地调整质量矩阵 $M$ 和步长 $\epsilon$。
+
+\section{本章小结}
+
+本章我们学习了提高马尔可夫链模拟效率的各种方法：
+
+\begin{enumerate}
+  \item \textbf{高效 Gibbs 采样器}：通过变换、参数化、添加辅助变量和参数扩展来加速收敛
+  \item \textbf{高效 Metropolis 跳跃规则}：最优跳跃尺度 $c \approx 2.4 / \sqrt{d}$，最优接受率约为 $0.44$（一维）至 $0.23$（高维）
+  \item \textbf{切片采样}：用于抽样一维条件分布的一般方法
+  \item \textbf{可逆跳转采样}：处理跨维度问题的 Metropolis 扩展
+  \item \textbf{模拟回火与并行回火}：处理多峰分布的技术
+  \item \textbf{哈密顿蒙特卡洛（HMC）}：通过引入动量变量消除局部随机游走行为，特别适合高维问题
+  \item \textbf{无 U 形转弯采样器}：HMC 的自适应扩展
+  \item \textbf{Stan}：实现 HMC 的通用软件环境
+\end{enumerate}
+
+这些技术共同构成了现代贝叶斯计算的核心工具集，使得处理复杂层次模型和高维问题成为可能。
+
+\section{下节预告}
+
+下一章我们将学习模态和分布近似（Modal and Distributional Approximations），这是处理无法使用马尔可夫链模拟的复杂模型的替代方法。
+
+\endinput

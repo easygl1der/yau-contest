@@ -1,0 +1,632 @@
+\subsection{Further learnings}
+\label{subsec:nlpu}
+
+The eight official problems of this section sit on \jump{sec:spr2025-nlp-syllabus}{the six-item syllabus map}: a factorisation (Problem~1), a vector parameterisation (Problem~2), a decoding rule (Problem~3), a synthesis (Problem~4), self-attention versus recurrence (Problem~5), a scaling diagnosis (Problem~6), a preference objective given a frozen reward model (Problem~7), and retrieval as uncompressed memory (Problem~8). Later papers ask for neighbouring objects that the map already named but did not derive: the InfoNCE gradient, a four-way embedding comparison, long-context attention, supervised LDA, Markov logic for information extraction, a quantitative RAG gain, and the Kaplan/Chinchilla display. The notes below collect those objects in the same format as the Machine Learning, Deep Learning, and Optimization further-learnings blocks. Problems~1--8 themselves are not re-proved. Text-to-image diffusion is \emph{not} rewritten here; it already occupies Part~B. DPO is a pointer into the RL supplement.
+
+
+\begin{remark}[The six items are layers, not rival solvers]
+\label{rem:nlpu-route}
+Item~1 announces a factorisable $p(\text{tokens})$. Items~2--3 change how each factor is parameterised. Item~4 changes the scalar being optimised. Item~5 diagnoses how test loss moves with data or parameters. Item~6 changes the condition, from $p(y\mid x)$ to $p(y\mid x,d_{i^\star})$. The split between a theoretical comparator and a data-dependent selection rule is the same dictionary as \jump{rem:mlu-pipeline}{the learning-theory pipeline}: announcing a class is not the same as running ERM, and retrieving a passage is not the same as redefining $h^\star$.
+\end{remark}
+
+
+\subsubsection{Word2vec and contrastive estimators}
+\label{subsubsec:nlpu-w2v}
+
+Problem~2 asks for the idea of representation learning. The official syllabus item is the mathematics of word2vec: a softmax of inner products, and the contrastive stand-in that later papers differentiate.
+
+\begin{definition}[Skip-gram softmax]
+\label{def:nlpu-skipgram}
+Fix a centre type $w$ and a context type $c$. Skip-gram learns embeddings $v_w,u_c\in\mathbb{R}^d$ and sets
+\[
+p(c\mid w)
+=
+\frac{\exp(\langle v_w,u_c\rangle)}{\sum_{c'\in\mathcal{V}}\exp(\langle v_w,u_{c'}\rangle)}.
+\]
+The denominator is a partition function over $\mathcal{V}$. Negative sampling replaces the log-partition by $k$ Bernoulli classifications: one true pair against $k$ draws $c_i\sim q$ from a noise distribution (usually $q(c)\propto\mathrm{freq}(c)^{3/4}$),
+\[
+\log\sigma(\langle v_w,u_c\rangle)
++
+\sum_{i=1}^k
+\log\sigma\bigl(-\langle v_w,u_{c_i}\rangle\bigr).
+\]
+InfoNCE is the softmax on the same small set. Both are the usable stand-in for the $|\mathcal{V}|$-sum.
+\end{definition}
+
+\begin{proposition}[InfoNCE gradient]
+\label{prop:nlpu-infonce}
+Let $z,z^+,z_1^-,\dots,z_n^-\in\mathbb{R}^d$ and $\tau>0$. Write
+\[
+\mathcal{L}
+=
+-\log\frac{\exp(\langle z,z^+\rangle/\tau)}{\exp(\langle z,z^+\rangle/\tau)+\sum_{i=1}^n\exp(\langle z,z_i^-\rangle/\tau)},
+\]
+and
+\[
+Z
+=
+\exp(\langle z,z^+\rangle/\tau)+\sum_{i=1}^n\exp(\langle z,z_i^-\rangle/\tau),
+\qquad
+\alpha^+
+=
+\frac{\exp(\langle z,z^+\rangle/\tau)}{Z},
+\qquad
+\alpha_i
+=
+\frac{\exp(\langle z,z_i^-\rangle/\tau)}{Z}.
+\]
+Then
+\[
+\nabla_z\mathcal{L}
+=
+\frac1\tau\Bigl(-(1-\alpha^+)z^++\sum_{i=1}^n\alpha_i z_i^-\Bigr).
+\]
+The first summand pulls $z$ toward $z^+$; the remaining summands push $z$ away from the negatives, with softmax weights. If $\|z\|_2=1$ is enforced, only the tangential part of this Euclidean gradient is used.
+\end{proposition}
+
+\begin{proof}
+Rewrite
+\[
+\mathcal{L}
+=
+-\frac{\langle z,z^+\rangle}{\tau}
++
+\log Z.
+\]
+Differentiate: $\nabla_z(-\langle z,z^+\rangle/\tau)=-z^+/\tau$, and
+\[
+\nabla_z\log Z
+=
+\frac1Z\cdot\frac1\tau\Bigl(\exp(\langle z,z^+\rangle/\tau)\,z^++\sum_i\exp(\langle z,z_i^-\rangle/\tau)\,z_i^-\Bigr)
+=
+\frac1\tau\Bigl(\alpha^+ z^++\sum_i\alpha_i z_i^-\Bigr).
+\]
+Add the two displays.
+\end{proof}
+
+\begin{remark}[Temperature, concentration, false negatives]
+\label{rem:nlpu-infonce-hd}
+Lowering $\tau$ sharpens $(\alpha^+,\alpha_i)$: the largest inner product dominates the softmax, so the pull/push concentrates on the current hardest negatives. In high dimension $d\gg 1$, if $z$ and an independent unit vector $z_i^-$ are roughly isotropic, then $\langle z,z_i^-\rangle$ has mean near $0$ and variance of order $1/d$. The largest of $n$ such inner products is typically of order $\sqrt{(2\log n)/d}$, not $O(1)$. A \emph{false negative} is a sampled $x_i^-$ that is semantically a neighbour of the anchor; then $\langle z,z_i^-\rangle$ is not $O(d^{-1/2})$ but stays large, and the push term treats a true neighbour as a repulsive force. That is Spring 2026 Problem~1(b).
+\end{remark}
+
+\begin{remark}[Four embedding paradigms]
+\label{rem:nlpu-four-emb}
+Fall 2025 Problem~1 asks for signal, objective, and inductive bias, not four definitions.
+\begin{center}
+\small
+\begin{tabular}{|l|p{0.20\textwidth}|p{0.28\textwidth}|p{0.28\textwidth}|}
+\hline
+\textbf{Method} & \textbf{Signal} & \textbf{Objective} & \textbf{Bias} \\ \hline
+Skip-gram & local window $(w,c)$ & predict $c$ from $w$ (softmax or negatives) & distributional: similar contexts, nearby $v_w$ \\ \hline
+GloVe & global counts $X_{wc}$ & weighted regression of $\langle v_w,u_c\rangle$ on $\log X_{wc}$ & the same geometry, fitted globally \\ \hline
+Node2Vec & biased random walks & Skip-gram on walk contexts & homophily vs structural equivalence ($p,q$) \\ \hline
+TransE & KB triple $(s,r,o)$ & $e_s+e_r\approx e_o$, margin on corruptions & relations act as translations \\ \hline
+\end{tabular}
+\end{center}
+Skip-gram and Node2Vec are predictive. GloVe is a global regression on a count table. TransE is relation-structured. Calling all four ``matrix factorization'' loses the signal.
+\end{remark}
+
+\begin{example}[Four types, one centre]
+\label{exmp:nlpu-skip-tiny}
+Let $\mathcal{V}=\{\texttt{bank},\texttt{river},\texttt{finance},\texttt{the}\}$, $d=2$, and $w=\texttt{bank}$. If $\langle v_{\texttt{bank}},u_{\texttt{finance}}\rangle$ is large and the other inner products are small, skip-gram puts most of $p(\cdot\mid\texttt{bank})$ on $\texttt{finance}$. A single static $v_{\texttt{bank}}$ cannot also sit next to $u_{\texttt{river}}$: that is the polysemy cost of item~2, which item~3 later repairs by making the vector depend on the sentence.
+\end{example}
+
+\begin{exercise}[Write the InfoNCE gradient]
+\label{ex:nlpu-infonce-grad}
+Starting from $\mathcal{L}=-\log(\exp(\langle z,z^+\rangle/\tau)/Z)$, derive $\nabla_z\mathcal{L}$ in the form of \cref{prop:nlpu-infonce}. Then, in one sentence, say what happens to the weights $\alpha_i$ if $\tau\to 0$ while one negative has a strictly larger inner product than the others.
+\end{exercise}
+
+\begin{solution}[Write the InfoNCE gradient]
+See \cref{prop:nlpu-infonce}. As $\tau\to 0$ the softmax on the logits $\langle z,\cdot\rangle/\tau$ concentrates on the unique maximizer. If a single negative wins, $\alpha_i\to 1$ for that $i$ and the push is almost entirely away from that hardest negative; $\alpha^+\to 0$, so the explicit pull toward $z^+$ vanishes in the softmax-weighted combination and the Euclidean gradient is dominated by the push.
+\end{solution}
+
+\begin{exercise}[False negatives in high dimension]
+\label{ex:nlpu-false-neg}
+Assume $d\gg 1$ and that genuine random negatives are isotropic on the unit sphere. Give the typical scale of $\langle z,z_i^-\rangle$ and of $\max_i\langle z,z_i^-\rangle$. Why can a false negative (same latent class as the anchor) dominate the loss even when $n$ is moderate?
+\end{exercise}
+
+\begin{solution}[False negatives in high dimension]
+Isotropic unit vectors have mean inner product near $0$ and variance $\Theta(1/d)$. The maximum of $n$ such coordinates is of order $\sqrt{(2\log n)/d}$ by a standard Gaussian-extreme heuristic. A false negative is \emph{not} isotropic relative to $z$: $\langle z,z_{\mathrm{fn}}^-\rangle$ stays $\Theta(1)$. For large $d$ this $\Theta(1)$ term dwarfs both a typical negative and the extreme of $n$ honest negatives unless $n$ is exponentially large in $d$. The softmax then puts mass on the false negative and the gradient pushes $z$ away from a true neighbour. That is why contrastive batches need class-aware sampling or a large $n$ together with a temperature that does not over-amplify accidental collisions.
+\end{solution}
+
+\begin{exercise}[Four embeddings, three clauses]
+\label{ex:nlpu-four-emb}
+In at most three sentences per method, give signal, objective, and inductive bias for GloVe, Skip-gram, Node2Vec, and TransE.
+\end{exercise}
+
+\begin{solution}[Four embeddings, three clauses]
+GloVe: global co-occurrence counts; weighted least squares of $\langle v_w,u_c\rangle$ against $\log X_{wc}$; meaning lives in the count table. Skip-gram: local windows; predict context from centre (softmax or negatives); similar usage yields nearby vectors. Node2Vec: biased walks; the same predictive objective on walk contexts; $p,q$ interpolate neighbours versus structural roles. TransE: triples $(s,r,o)$; translational scoring $e_s+e_r\approx e_o$ with a margin on corruptions; relations are translations. Do not collapse the last three into GloVe's regression.
+\end{solution}
+
+
+\subsubsection{Self-attention implementation and long context}
+\label{subsubsec:nlpu-attn}
+
+The $Q,K,V$ formula and the RNN comparison are already written for \jump{prob:spr2025-nlp-5}{Problem~5} (\cref{def:spr2025-nlp-attn-weights}, \cref{def:spr2025-nlp-softmax}). What later papers add is a causal mask, a cost, and a design that survives $L\gg 10^4$.
+
+\begin{proposition}[Causal mask and quadratic cost]
+\label{prop:nlpu-causal}
+Autoregressive training replaces the score $S_{ij}=\langle q_i,k_j\rangle/\sqrt{d}$ by $-\infty$ whenever $j>i$ (or $j>i$ after a padding convention), then applies row-wise $\softmax$. Position $i$ may read only $\{1,\dots,i\}$. One dense layer costs $\Theta(L^2 d)$ time and $\Theta(L^2)$ attention memory, from the $L\times L$ matrix $QK^\top$. Multi-head attention repeats the block $H$ times on thinner projections and concatenates; the leading $L^2$ does not disappear. Generation of new tokens remains sequential in the newly sampled positions even though training of one layer is parallel in $L$.
+\end{proposition}
+
+\begin{remark}[Where the official pictures already are]
+\label{rem:nlpu-attn-ptr}
+The incoming-vector-to-$(Q,K,V)$ diagram and the path-length comparison with an RNN are in the syllabus map and in the solution of Problem~5. Do not redraw them. The further object is a \emph{restriction} of the $L\times L$ pattern that keeps local and long-range paths while cutting the $L^2$ term.
+\end{remark}
+
+\begin{proposition}[Sliding window plus global tokens]
+\label{prop:nlpu-window-global}
+Fix a window $w$ and a set $G$ of $g$ global positions (CLS, or every $s$-th token). Position $i$ attends to
+\[
+\mathcal{N}(i)
+=
+\bigl\{j:\lvert i-j\rvert\le w\bigr\}
+\cup
+G.
+\]
+Equivalently, the mask satisfies $M_{ij}=0$ if $j\in\mathcal{N}(i)$ and $M_{ij}=-\infty$ otherwise. Per-layer time and attention memory are $\Theta\bigl(L(w+g)d\bigr)$ and $\Theta\bigl(L(w+g)\bigr)$, linear in $L$ at fixed $(w,g,d)$. Any position reaches a global token in one hop, and a global token reaches every position in one hop, so the attention graph has diameter $2$. Stacking layers does not change that diameter; it only lets the global slots mix more richly. This is one legal answer to Spring 2026 Problem~3. Block-sparse patterns, linear attention $\phi(Q)(\phi(K)^\top V)$, and an explicit recurrent memory are the other three listed options; each needs a mask, a feature map, or a read/write equation, a complexity, and a connectivity argument.
+\end{proposition}
+
+\begin{exercise}[Design one long-context pattern]
+\label{ex:nlpu-long-attn}
+Standard self-attention costs $O(L^2)$ in the length $L$. Choose one of: (i)~block-sparse attention, (ii)~sliding window plus global tokens, (iii)~low-rank / linear attention, (iv)~recurrent memory. Define the pattern or the computation, state the dominant per-layer time and memory in $(L,d)$ and your hyperparameters, and give one reason long-range interactions remain expressible.
+\end{exercise}
+
+\begin{solution}[Design one long-context pattern]
+We take (ii); \cref{prop:nlpu-window-global} is the writeup. Neighbour set $\mathcal{N}(i)=\{j:\lvert i-j\rvert\le w\}\cup G$ with $\lvert G\rvert=g$. Time $\Theta(L(w+g)d)$, memory $\Theta(L(w+g))$. Diameter $2$ via the global tokens. Local syntax stays in the window; a fact at position $1$ reaches position $L$ through any $g\in G$ in one layer.
+
+A one-line sketch of the others, if a later paper names them. (i)~Partition $\{1,\dots,L\}$ into blocks of size $b$; allow full attention inside a block and selected inter-block edges; cost $\Theta((L/b)\cdot b^2 d)=\Theta(Lbd)$ plus the extra edges. (iii)~Replace $\softmax(QK^\top)V$ by $\phi(Q)(\phi(K)^\top V)$ for a feature map $\phi:\mathbb{R}^d\to\mathbb{R}^r$; cost $\Theta(Lrd)$ after forming the $r\times d$ running sums. (iv)~Write a memory $m_t$ of length $m$ by a differentiable read/write; each position attends to a window plus $m_t$; cost $\Theta(L(w+m)d)$ and long-range flow through $m_t$.
+\end{solution}
+
+\begin{exercise}[Parallel training, serial generation]
+\label{ex:nlpu-serial-decode}
+Which claim is true?
+\begin{enumerate}[label=(\alph*)]
+    \item Self-attention makes the generation of a new token independent of previously sampled tokens.
+    \item One training layer of dense attention is parallel in the sequence length $L$, but emitting the next token at test time is still sequential.
+    \item Causal masking is optional for a left-to-right language model.
+    \item Multi-head attention reduces the $L^2$ cost to $L$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Parallel training, serial generation]
+(b). In training, all positions of a given layer read $Q,K,V$ together. At generation, token $t+1$ is sampled from $\pi_\theta(\cdot\mid x,y_{\le t})$ and then concatenated; the next call sees a longer prefix. That is the serial loop of Problem~3's decoding rules.
+
+\textit{(a) is the generation graph, not the training graph.}
+The next token is defined as a conditional on the prefix already emitted. A Transformer does not make $y_{t+1}$ independent of $y_t$.
+
+\textit{(c) would leak the future.}
+Without a causal mask, position $i$ reads $j>i$, which is teacher-forcing with the answer in the input. Left-to-right LMs require $M_{ij}=-\infty$ for $j>i$.
+
+\textit{(d) multiplies the $L^2$ block, it does not cancel it.}
+$H$ heads of dimension $d/H$ still form $H$ matrices of size $L\times L$. The leading term remains $\Theta(HL^2\cdot(d/H))=\Theta(L^2 d)$.
+\end{solution}
+
+
+\subsubsection{Alignment: stages, limits, one improvement}
+\label{subsubsec:nlpu-align}
+
+\jump{prob:spr2025-nlp-7}{Problem~7} already writes $J(\theta)$ and the score-function gradient after $r_\phi$ is frozen. The syllabus also asks for the surrounding pipeline, its failure modes, and a named improvement.
+
+\begin{remark}[Three stages, three data types]
+\label{rem:nlpu-three-stages}
+The objects are not interchangeable losses.
+\begin{itemize}
+    \item \textit{SFT.} Data: instruction--completion pairs. Objective: $\max_\theta\log\pi_\theta(y\mid x)$. This changes the support of the next-token distribution toward the desired format. It does not encode pairwise preferences.
+    \item \textit{Reward model.} Data: pairs $(x,y_w,y_l)$. Objective: Bradley--Terry / $\mathcal{L}_{\mathrm{RM}}$ as in \jump{def:spr2025-nlp-bradley-terry}{the syllabus definition}. Output: a frozen scalar $r_\phi(x,y)$. The pairs are consumed here, not in the RL step.
+    \item \textit{RL.} Data: prompts $x$, on-policy samples $y\sim\pi_\theta(\cdot\mid x)$, scores $r_\phi(x,y)$. Objective: the $J(\theta)$ of Problem~7, with a KL leash to $\pi_{\mathrm{ref}}$. Gradient: \jump{eq:policy-gradient}{the score-function identity} times a centred return.
+\end{itemize}
+\jump{rem:rlhf-overview}{The RL supplement overview} records the same split. Mixing the three stages is the standard exam error.
+\end{remark}
+
+\begin{remark}[Limits, and DPO as a change of variables]
+\label{rem:nlpu-align-limits}
+A misspecified or overfit $r_\phi$ is exploited: the policy maximises the judge, not the human (reward hacking). A small $\beta$ drops the KL leash and fluency collapses toward judge-pleasing gibberish. Preference labels are noisy and non-transitive; the BT model is an assumption. The policy after RL is off the SFT distribution, so $r_\phi$ is queried out of support.
+
+The named improvement that drops the reward model is DPO: \jump{rem:dpo}{the DPO remark in the RL supplement}. Invert the Gibbs maximizer of $J_{\mathrm{RLHF}}$, cancel $Z(x)$ in a pairwise difference, and obtain a supervised loss on $(y_w,y_l)$ that depends only on policy log-ratios against $\pi_{\mathrm{ref}}$. Same preference likelihood, no PPO loop, no on-policy exploration against a scalar $r_\phi$.
+\end{remark}
+
+\begin{exercise}[What the RL stage consumes]
+\label{ex:nlpu-rlhf-stage}
+After a reward model has been trained, the RLHF stage
+\begin{enumerate}[label=(\alph*)]
+    \item continues to train on the original preference pairs $(y_w,y_l)$;
+    \item samples completions from the current policy on prompts, scores them with the frozen $r_\phi$, and maximises $J(\theta)$ with a KL term;
+    \item replaces $r_\phi$ by a human in the loop at every gradient step;
+    \item is identical to SFT on the preferred completions $y_w$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[What the RL stage consumes]
+(b). This is \jump{prob:spr2025-nlp-7}{Problem~7}. The pairs trained $r_\phi$ and are not reread. The gradient is $\mathbb{E}[\nabla_\theta\log\pi_\theta(y\mid x)\,(r_\phi-\beta\log(\pi_\theta/\pi_{\mathrm{ref}})-b(x))]$.
+
+\textit{(a) is the RM stage.}
+Bradley--Terry on $(y_w,y_l)$ is $\mathcal{L}_{\mathrm{RM}}(\phi)$, already finished.
+
+\textit{(c) is not the implemented algorithm.}
+A human does not sit in the PPO loop. The judge is the frozen network $r_\phi$. Online human feedback is a different, slower protocol.
+
+\textit{(d) drops the KL and the on-policy sample.}
+SFT on $y_w$ maximises $\log\pi_\theta(y_w\mid x)$ and never sees a completion the current policy just invented. Reward hacking and the KL leash do not appear.
+\end{solution}
+
+\begin{exercise}[Where DPO lives]
+\label{ex:nlpu-dpo-ptr}
+A later paper asks for an alignment method that uses preference pairs and no reward model. Give the location and the one-sentence mechanism.
+\end{exercise}
+
+\begin{solution}[Where DPO lives]
+\jump{rem:dpo}{RL supplement, DPO remark}. Invert the KL-regularized optimum, cancel the partition function in a pairwise difference, and train $\pi_\theta$ by a logistic loss on log-ratio gaps $\log(\pi_\theta(y_w\mid x)/\pi_{\mathrm{ref}}(y_w\mid x))-\log(\pi_\theta(y_l\mid x)/\pi_{\mathrm{ref}}(y_l\mid x))$. Offline, no PPO.
+\end{solution}
+
+
+\subsubsection{Scaling laws as an exam display}
+\label{subsubsec:nlpu-scale}
+
+\jump{prob:spr2025-nlp-6}{Problem~6} is the approximation--estimation argument, without assuming Gaussian data. Fall 2025 asks for a concrete parametric curve and an architecture comparison.
+
+\begin{definition}[Parametric scaling display]
+\label{def:nlpu-scale}
+Over a finite but wide regime one fits
+\[
+L(P,T)
+=
+L_\infty
++
+A P^{-\alpha}
++
+B T^{-\beta},
+\qquad
+\alpha,\beta>0,
+\]
+where $P$ is the parameter count and $T$ is the number of training tokens. The floor $L_\infty$ is the irreducible / Bayes term for the task and the data. The $P$ term is an approximation residual of a finite class; the $T$ term is an estimation residual at finite sample size. This is the same split as \cref{def:spr2025-nlp-bias-variance} and \jump{prob:spr2025-nlp-6}{Problem~6}, written as a local power law rather than as an existence statement.
+\end{definition}
+
+\begin{remark}[Not a theorem]
+\label{rem:nlpu-scale-not-thm}
+The display is an empirical fit. It fails under duplicated tokens (the effective $T$ is smaller than the nominal $T$), under a train--test shift (the floor moves), and when optimisation, not statistics, dominates. Enlarging $P$ at fixed unique data can raise the estimation term, exactly as in \cref{rem:spr2025-nlp-finer-class}.
+\end{remark}
+
+\begin{exercise}[LSTM versus Transformer on the same $(P,T)$]
+\label{ex:nlpu-lstm-tf-scale}
+Assume $L_{\mathrm{arch}}(P,T)=L_\infty+A_{\mathrm{arch}}P^{-\alpha_{\mathrm{arch}}}+B_{\mathrm{arch}}T^{-\beta_{\mathrm{arch}}}$ with a common $L_\infty$. In the usual language-modelling regime, what qualitative relations are expected for $(\alpha,A)$ at fixed large $T$, and for $(\beta,B)$ at fixed $P$? Justify with long-range paths, parallelism, and inductive bias. (Fall 2025 Problem~2.)
+\end{exercise}
+
+\begin{solution}[LSTM versus Transformer on the same $(P,T)$]
+At fixed $T=T_0$,
+\[
+L_{\mathrm{arch}}(P,T_0)-L_\infty
+=
+B_{\mathrm{arch}}T_0^{-\beta_{\mathrm{arch}}}
++
+A_{\mathrm{arch}}P^{-\alpha_{\mathrm{arch}}}.
+\]
+A Transformer has direct $i\leftrightarrow j$ edges and a parallel training graph, so the same $P$ typically buys a smaller approximation residual: $A_{\mathrm{TF}}\lesssim A_{\mathrm{LSTM}}$ and $\alpha_{\mathrm{TF}}\gtrsim\alpha_{\mathrm{LSTM}}$. On a log--log plot of $L-L_\infty$ against $P$, the Transformer curve lies below the LSTM curve and is at least as steep.
+
+At fixed $P=P_0$, the $T$ term is $B_{\mathrm{arch}}T^{-\beta_{\mathrm{arch}}}$. Parallelism raises tokens per wall-clock second, and the attention inductive bias matches long-range language better than a length-$L$ recurrent chain, so $B_{\mathrm{TF}}\lesssim B_{\mathrm{LSTM}}$ and $\beta_{\mathrm{TF}}\gtrsim\beta_{\mathrm{LSTM}}$ in the usual regime. The Transformer $T$--curve sits below and is not shallower.
+
+These are qualitative comparisons of coefficients, not a claim that every LSTM is dominated at every finite $(P,T)$. A tiny Transformer can still lose to a well-tuned LSTM at a very small budget.
+\end{solution}
+
+\begin{exercise}[When the power law is not a law]
+\label{ex:nlpu-scale-break}
+Give two concrete regimes in which $L(P,T)=L_\infty+AP^{-\alpha}+BT^{-\beta}$ is a bad description, and name which term is being misread.
+\end{exercise}
+
+\begin{solution}[When the power law is not a law]
+(i)~The corpus is $T$ copies of the same $T/100$ tokens. Nominal $T$ grows and $BT^{-\beta}$ appears to fall, but the unique-sample size is unchanged, so the estimation term of Problem~6 does not fall. (ii)~Test documents shift to a new domain. $L_\infty$ (and possibly $A$) move; fitting a single floor on the old test set understates the new risk. A third, shorter, failure: $P$ is increased while $T$ is held at a size that already interpolates. Then one is watching optimisation / interpolation noise, not the $P^{-\alpha}$ approximation term.
+\end{solution}
+
+
+\subsubsection{RAG as external memory}
+\label{subsubsec:nlpu-rag}
+
+\jump{prob:spr2025-nlp-8}{Problem~8} is the system: chunk, embed, retrieve, generate, cite or abstain. Spring 2026 asks for a gain identity and an MDP sketch.
+
+\begin{proposition}[Memory gain]
+\label{prop:nlpu-gain}
+Let $s(\hat y,y^\star)\in[0,1]$ be an evaluation score, and
+\[
+\Delta_t
+=
+s\bigl(f_\theta(H_t,R_t),y_t^\star\bigr)
+-
+s\bigl(f_\theta(H_t,\varnothing),y_t^\star\bigr),
+\qquad
+\Delta
+=
+\mathbb{E}[\Delta_t].
+\]
+Let $C_t=1$ if $R_t$ contains the key memory, else $C_t=0$, with $\Pr(C_t=0)=\epsilon$. Write $g_c=\mathbb{E}[\Delta_t\mid C_t=1]$ and $g_{\neg c}=\mathbb{E}[\Delta_t\mid C_t=0]$. Then
+\[
+\Delta
+=
+(1-\epsilon)g_c+\epsilon g_{\neg c}.
+\]
+Hence $\Delta>0$ if and only if $(1-\epsilon)g_c+\epsilon g_{\neg c}>0$. When $g_c>g_{\neg c}$ this is
+\[
+\epsilon
+<
+\frac{g_c}{g_c-g_{\neg c}}.
+\]
+If wrong memories hurt, then $g_{\neg c}<0$ and the right-hand side is strictly less than $1$: a large miss rate $\epsilon$ makes a stable positive gain impossible no matter how large $g_c$ is.
+\end{proposition}
+
+\begin{proof}
+The law of total expectation is $\Delta=\mathbb{E}[\Delta_t\mid C_t=1]\Pr(C_t=1)+\mathbb{E}[\Delta_t\mid C_t=0]\Pr(C_t=0)$. Substitute $\Pr(C_t=1)=1-\epsilon$. The inequality $\Delta>0$ is $(1-\epsilon)g_c+\epsilon g_{\neg c}>0$, i.e.\ $g_c>\epsilon(g_c-g_{\neg c})$. If $g_c>g_{\neg c}$ one may divide and obtain the displayed bound on $\epsilon$.
+\end{proof}
+
+\begin{remark}[Nearest neighbour is not entailment]
+\label{rem:nlpu-sim-not-entail}
+The embedding $e$ of item~2 ranks chunks by $\operatorname{sim}(e(q),e(d_i))$. That inner product does not know whether $d_i$ answers $q$. Hybrid BM25 plus a cross-encoder reranker, a citation constraint, and abstention are repairs, not decorations. This is the failure mode already named in the Problem~8 solution; the gain identity makes it quantitative: it is a contribution to $\epsilon$ and to $g_{\neg c}$.
+\end{remark}
+
+\begin{example}[The Drug~A chunks, as a gain]
+\label{exmp:nlpu-drug}
+The three chunks of the Problem~8 example: $d_1$ is the contraindication, $d_2$ is the dosing, $d_3$ is about Drug~B. For $q=$ ``Can a pregnant patient take Drug~A?'', $C_t=1$ if $d_1\in R_t$. If the retriever returns only $d_2$, one may get a fluent wrong answer ($g_{\neg c}<0$). The condition $\epsilon<g_c/(g_c-g_{\neg c})$ says: a retriever that misses $d_1$ too often cannot be rescued by a better generator.
+\end{example}
+
+\begin{exercise}[Derive the gain threshold]
+\label{ex:nlpu-gain}
+Derive $\Delta=(1-\epsilon)g_c+\epsilon g_{\neg c}$ and the bound on $\epsilon$ when $g_c>g_{\neg c}$. In two sentences, explain why a large $\epsilon$ blocks a stable positive $\Delta$.
+\end{exercise}
+
+\begin{solution}[Derive the gain threshold]
+See \cref{prop:nlpu-gain}. A large $\epsilon$ puts most mass on the $g_{\neg c}$ term. If missed retrievals are harmful ($g_{\neg c}<0$), the convex combination stays negative unless $\epsilon$ is below the displayed ratio. Improving only the generator (raising $g_c$) cannot offset a retriever that rarely returns the key span.
+\end{solution}
+
+\begin{exercise}[RAG memory as an MDP]
+\label{ex:nlpu-rag-mdp}
+A dialog system writes a candidate memory $c_t=\mathrm{Memorize}(H_t)$ into a store $\mathcal{M}_t$, retrieves $R_t$, and answers $\hat y_t=f_\theta(H_t,R_t)$. Formulate the memory mechanism as an MDP: name $s_t$, $a_t$ (write/merge/evict and retrieval knobs), and a reward that trades answer quality against cost. Write the objective. (Spring 2026 Problem~5(b) skeleton.)
+\end{exercise}
+
+\begin{solution}[RAG memory as an MDP]
+State $s_t=(H_t,\mathcal{M}_t)$: the dialog so far and the current store (and, if needed, a token/byte budget). Action $a_t$ has two blocks: (i)~write / merge / evict $c_t$ under the budget; (ii)~retrieval knobs ($k$, hybrid BM25--dense weights, a rewritten query, a reranker on/off). Transition: $\mathcal{M}_{t+1}$ is the updated store; $H_{t+1}$ appends the new turn. Reward $r_t=\Delta_t-\lambda\cdot\mathrm{Cost}(a_t)$, with $\Delta_t$ as in \cref{prop:nlpu-gain} and $\mathrm{Cost}$ measuring bytes written, $k$, and latency. Objective: $\max\mathbb{E}[\sum_t\gamma^t r_t]$ for a discount $\gamma\in(0,1]$, or the average-reward analogue. This is an RL problem on the memory policy, not a second training run of the generator $f_\theta$. Do not reopen Problem~7's $r_\phi$ unless the paper asks to share the preference judge.
+\end{solution}
+
+
+\subsubsection{Richer factorisations: LDA and Markov logic}
+\label{subsubsec:nlpu-lda-mln}
+
+Item~1 is not only trigrams. The syllabus map already named topic models and Markov logic networks. Later papers ask for the generative joint and for a handful of weighted formulas.
+
+\begin{definition}[Latent Dirichlet allocation]
+\label{def:nlpu-lda}
+A corpus has documents $d=1,\dots,D$, each of length $N_d$, vocabulary size $V$, and $K$ topics. Draw $\phi_k\sim\mathrm{Dir}(\eta)$ for each topic and $\theta_d\sim\mathrm{Dir}(\alpha)$ for each document. For each token $n$ in document $d$,
+\[
+z_{dn}\sim\mathrm{Cat}(\theta_d),
+\qquad
+w_{dn}\sim\mathrm{Cat}(\phi_{z_{dn}}).
+\]
+The joint (priors included) factorises as
+\[
+p(\mathbf{w},\mathbf{z},\Theta,\Phi\mid\alpha,\eta)
+=
+\Bigl(\prod_{k=1}^K\mathrm{Dir}(\phi_k\mid\eta)\Bigr)
+\Bigl(\prod_{d=1}^D\mathrm{Dir}(\theta_d\mid\alpha)\Bigr)
+\prod_{d=1}^D\prod_{n=1}^{N_d}
+\theta_{d,z_{dn}}\,\phi_{z_{dn},w_{dn}}.
+\]
+Topics are mixtures that explain words. They need not be useful for a downstream label.
+\end{definition}
+
+\begin{proposition}[Supervised LDA, logistic label]
+\label{prop:nlpu-slda}
+Let $y_d\in\{0,1\}$ be an observed label and $\bar z_d\in\mathbb{R}^K$ the empirical topic frequencies, $\bar z_{dk}=N_d^{-1}\sum_n\mathbf{1}\{z_{dn}=k\}$. A logistic label model is
+\[
+p(y_d\mid\bar z_d,\beta)
+=
+\sigma(\beta^\top\bar z_d)^{y_d}
+\bigl(1-\sigma(\beta^\top\bar z_d)\bigr)^{1-y_d},
+\qquad
+\sigma(u)=(1+e^{-u})^{-1}.
+\]
+The coordinate $\beta_k$ says whether topic $k$ raises the log-odds of $y_d=1$. The joint of \cref{def:nlpu-lda} is multiplied by $\prod_d p(y_d\mid\bar z_d,\beta)$. Posterior inference then moves $z_{dn}$ not only to explain $w_{dn}$ but also to make $\bar z_d$ predictive of $y_d$. Vanilla LDA has no such term: it can spend its topics on frequent but label-irrelevant words (greetings, boilerplate), which is the failure mode Spring 2026 Problem~2 asks for.
+\end{proposition}
+
+\begin{definition}[Markov logic network]
+\label{def:nlpu-mln}
+A collection of first-order formulas $j=1,\dots,J$ with weights $w_j\in\mathbb{R}$ defines
+\[
+P(X=x\mid E)
+=
+\frac1{Z(E)}
+\exp\Bigl(\sum_{j=1}^J w_j n_j(x,E)\Bigr),
+\]
+where $n_j(x,E)$ is the number of true groundings of formula $j$ in the world $(x,E)$, and $Z(E)$ sums the same exponential over $x$. A large positive $w_j$ is a soft ``should''; $w_j=+\infty$ is a hard constraint (the world is dropped from the support if the formula fails). MAP inference maximises $\sum_j w_j n_j(x,E)$ and does \emph{not} need $Z(E)$.
+\end{definition}
+
+\begin{example}[Two atoms, one formula, no $Z$]
+\label{exmp:nlpu-mln-tiny}
+Atoms $A,B\in\{0,1\}$, evidence empty, one formula $A\Rightarrow B$ with weight $w=2$, and a unit prior weight $1$ on each of $A$ and $B$. The unnormalised log-score of $(A,B)=(1,0)$ is $1+0+2\cdot 0=1$ (implication false). The assignment $(1,1)$ scores $1+1+2\cdot 1=4$. MAP is $(1,1)$. Computing $Z=e^{s_{(0,0)}}+\cdots$ is unnecessary for that comparison. That is the Fall 2025 habit: compare log-scores.
+\end{example}
+
+\begin{exercise}[Supervised LDA joint]
+\label{ex:nlpu-slda}
+Why does adding $y_d$ change the learned topics relative to unsupervised LDA? Write $p(y_d\mid\bar z_d,\beta)$ for logistic regression, interpret $\beta$, and write the factorised joint $p(\mathbf{w},\mathbf{z},\Theta,\Phi,\mathbf{y}\mid\alpha,\eta,\beta)$. Then list the sampling steps for one document given $(\theta_d,\Phi,\beta)$.
+\end{exercise}
+
+\begin{solution}[Supervised LDA joint]
+Vanilla LDA maximises a likelihood of words only. Topics that explain frequent, label-irrelevant tokens are rewarded. The label term $p(y_d\mid\bar z_d,\beta)$ couples $\bar z_d$ to $y_d$, so a topic that predicts urgency (say) is preferred even if it is not the most frequent. Failure mode: unsupervised topics on ``hello''/``thanks'' while $y_d$ is driven by ``refund''/``legal''.
+
+Logistic model and $\beta$: \cref{prop:nlpu-slda}. Joint:
+\[
+p(\mathbf{w},\mathbf{z},\Theta,\Phi,\mathbf{y}\mid\alpha,\eta,\beta)
+=
+p(\mathbf{w},\mathbf{z},\Theta,\Phi\mid\alpha,\eta)
+\prod_{d=1}^D
+p(y_d\mid\bar z_d,\beta),
+\]
+with the LDA factor from \cref{def:nlpu-lda}. Sampling one document given $(\theta_d,\Phi,\beta)$: for $n=1,\dots,N_d$, draw $z_{dn}\sim\mathrm{Cat}(\theta_d)$ and $w_{dn}\sim\mathrm{Cat}(\phi_{z_{dn}})$; form $\bar z_d$; draw $y_d\sim\mathrm{Bernoulli}(\sigma(\beta^\top\bar z_d))$. (If $y_d$ is observed at training time, the last step is omitted and the factor $p(y_d\mid\bar z_d,\beta)$ is used only in the posterior for $z$.)
+\end{solution}
+
+\begin{exercise}[MLN formulas for information extraction]
+\label{ex:nlpu-mln-ie}
+Using $\mathrm{Link}(m,e)$, $\mathrm{Rel}(e_1,e_2,r)$, and evidence $\mathrm{Cand}$, $\mathrm{Type}$, $\mathrm{HighLink}$, $\mathrm{HighRel}$, write formulas that (i)~propagate local high-confidence links and relations, (ii)~allow at most one entity per mention, and (iii)~enforce argument types. Say which weights are hard versus soft. (Spring 2026 Problem~4(a) skeleton.)
+\end{exercise}
+
+\begin{solution}[MLN formulas for information extraction]
+(i)~Soft, large positive:
+\[
+\mathrm{HighLink}(m,e)\Rightarrow\mathrm{Link}(m,e),
+\]
+and $\mathrm{HighRel}(m_1,m_2,r)$ together with the two links implies $\mathrm{Rel}(e_1,e_2,r)$. (ii)~Hard or very large positive: a link requires $\mathrm{Cand}(m,e)$, and at most one $e$ per mention. (iii)~Type checks: $\mathrm{Rel}(e_1,e_2,\texttt{bornIn})$ forces Person and City. Local classifiers set the High-atoms by thresholding or top-$k$ scores (mention encoder plus candidates; pair encoder for relations). Hard constraints keep the world legal; soft weights trade local scores against consistency. MAP uses $\sum w_j n_j$; do not compute $Z$.
+\end{solution}
+
+\begin{exercise}[MAP does not need $Z$]
+\label{ex:nlpu-mln-map}
+In \cref{exmp:nlpu-mln-tiny}, which assignment wins, and why is $Z$ unnecessary? Add one contemporaneity constraint in words: two person entities whose birth years differ by $500$ years should not both participate in a ``met'' relation.
+\end{exercise}
+
+\begin{solution}[MAP does not need $Z$]
+$(A,B)=(1,1)$ scores $4$; $(1,0)$ scores $1$. The maximizer of the unnormalised log-score is the MAP world because $Z$ is a positive constant in $x$. Contemporaneity: introduce $\mathrm{BirthYear}(e,y)$ as evidence and a formula $\mathrm{Rel}(e,e',\texttt{met})\wedge\mathrm{BirthYear}(e,y)\wedge\mathrm{BirthYear}(e',y')\Rightarrow\lvert y-y'\rvert\le 80$ with a large positive weight (or $+\infty$). A mention that could link to $e_{\mathrm{old}}$ or $e_{\mathrm{new}}$ is then pulled toward the entity whose year is compatible with the other linked people in the document. That is the Spring 2026 name-disambiguation move, written as one extra rule rather than a full $7$-point script.
+\end{solution}
+
+\begin{exercise}[Two papers, two formulas]
+\label{ex:nlpu-mln-fall}
+Fall 2025's MLN has domain $\{P_1,P_2\}$ and formulas
+\[
+\mathrm{Cites}(p_1,p_2)\wedge\mathrm{InTopic}(p_1,\texttt{AI})\Rightarrow\mathrm{InTopic}(p_2,\texttt{AI})
+\quad (w_1=1.5),
+\qquad
+\mathrm{InTopic}(p,\texttt{AI})
+\quad (w_2=-1).
+\]
+Let $A_i=\mathrm{InTopic}(P_i,\texttt{AI})$ and $C_{12}=\mathrm{Cites}(P_1,P_2)$.
+\begin{enumerate}[label=(\alph*)]
+    \item Name the ground atoms (nodes) and the cliques coming from the two formulas.
+    \item In the world $x_1$ with $C_{12}=1$, $C_{21}=0$, $A_1=1$, $A_2=0$, compute $n_1(x_1)$, $n_2(x_1)$, and the unnormalised factor $\exp(w_1 n_1+w_2 n_2)$.
+    \item With $C_{12}$ observed true, compute the MAP assignment of $(A_1,A_2)$ from the four log-scores $1.5n_1-n_2$. Why is $Z$ unused?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Two papers, two formulas]
+(a)~Ground atoms: $A_1,A_2,C_{12},C_{21}$ (and, if the topic list is only ``AI'', those are all topic atoms). Formula~1 grounds over ordered pairs $(p_1,p_2)$; each grounding is a factor on $(C_{p_1p_2},A_{p_1},A_{p_2})$. Formula~2 grounds once per paper and is a unary factor on $A_i$. Nodes are the atoms; a clique is the scope of one grounding.
+
+(b)~Formula~1 has two groundings, $(P_1,P_2)$ and $(P_2,P_1)$. The first is $C_{12}\wedge A_1\Rightarrow A_2$, which is $1\wedge 1\Rightarrow 0$, hence false. The second is $C_{21}\wedge A_2\Rightarrow A_1$, which is $0\wedge 0\Rightarrow 1$, hence true. So $n_1(x_1)=1$. Formula~2 is true of $P_1$ and false of $P_2$, so $n_2(x_1)=1$. Unnormalised factor $\exp(1.5\cdot 1+(-1)\cdot 1)=\exp(0.5)$.
+
+(c)~Condition on $C_{12}=1$ and (as in the official study guide) ignore groundings that do not change across the four worlds when they cancel in a MAP comparison. The scores $1.5n_1-n_2$ are
+\[
+\begin{array}{c|c}
+(A_1,A_2) & 1.5n_1-n_2 \\
+\hline
+(0,0) & 1.5 \\
+(0,1) & 0.5 \\
+(1,0) & -1 \\
+(1,1) & -0.5
+\end{array}
+\]
+MAP is $(A_1,A_2)=(0,0)$: the negative unary $w_2$ penalises claiming AI, and the failed implication at $(1,0)$ is costly. $Z$ is the same positive constant for every $x$ in the comparison, so it does not change the argmax. Flipping $w_1$ to $-1.5$ would make propagation costly and move MAP toward $(1,0)$.
+\end{solution}
+
+\begin{remark}[Topic--ontology LDA, one extra layer]
+\label{rem:nlpu-onto-lda}
+Fall 2025 Problem~4 keeps the document mixture $\theta_d$ of \cref{def:nlpu-lda} and adds a small ontology: each fact triple has a latent category (or relation type) that then generates a surface form. The generative order is still ``draw a discrete code, then draw the observed tokens,'' but the code is typed. The exam answer is the factorised joint plus a naming rule (inspect high-probability $\phi$ or category--surface pairs). Do not invent a new inference algorithm; Gibbs or variational updates on the extra discrete code are enough to name.
+\end{remark}
+
+
+\subsubsection{Past-paper drills}
+\label{subsubsec:nlpu-drills}
+
+\begin{exercise}[Decoding rules]
+\label{ex:nlpu-decode-mcq}
+Which description of top-$P$ is the intended one?
+\begin{enumerate}[label=(\alph*)]
+    \item Keep a fixed number $K$ of tokens and sample.
+    \item Keep the smallest prefix of the sorted distribution whose mass reaches $P$, renormalize, and sample.
+    \item Return $\arg\max_y\pi_\theta(y\mid x)$ by a beam of infinite width.
+    \item Train the model with a truncated softmax.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Decoding rules]
+(b). This is \jump{def:spr2025-nlp-decoding}{the official four-rule definition}. The integer $m$ is a function of the current list $(p_{(j)})$, not a hyperparameter chosen before seeing $p$.
+
+\textit{(a) is top-$K$.}
+A flat distribution may need $K$ large; a peaked one wastes a large $K$ on near-zero atoms. Top-$P$ adapts $m$.
+
+\textit{(c) is beam / MAP.}
+Open-ended text then collapses to generic high-probability strings. Problem~3 exists because one does \emph{not} want that $\arg\max$.
+
+\textit{(d) is a training change.}
+Nucleus sampling is an inference rule on an already-trained $\pi_\theta$. It does not alter $\mathcal{L}_{\mathrm{LM}}$.
+\end{solution}
+
+\begin{exercise}[Static versus contextual]
+\label{ex:nlpu-static-ctx}
+Which statement is true?
+\begin{enumerate}[label=(\alph*)]
+    \item A skip-gram vector $v_w$ depends on the sentence in which $w$ occurs at test time.
+    \item A Transformer hidden state at a token depends on the other tokens in the window, and that is why one vector of ``bank'' is not enough.
+    \item GloVe solves polysemy because it uses global counts.
+    \item Contextualisation removes the need for item~2: there is no embedding table.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Static versus contextual]
+(b). Item~3 makes $z_i$ a function of $(x_1,\dots,x_L)$ through $Q,K,V$. ``Bank'' next to ``river'' and ``bank'' next to ``finance'' receive different states.
+
+\textit{(a) is the definition of a static embedding.}
+$v_w$ is a lookup table indexed by type, identical in every sentence.
+
+\textit{(c) global counts still produce one vector per type.}
+GloVe changes the objective, not the static/contextual distinction.
+
+\textit{(d) the first layer is still a type-to-vector map.}
+Self-attention reads those incoming vectors. Item~2 is absorbed, not deleted.
+\end{solution}
+
+\begin{exercise}[Fine-tune the corpus versus retrieve]
+\label{ex:nlpu-finetune-vs-rag}
+A general LLM lacks domain facts. A large unlabeled domain corpus is available; there are no QA pairs. Which design is the intended first move?
+\begin{enumerate}[label=(\alph*)]
+    \item Continue next-token training on the raw documents until the facts sit in $\theta$, then answer from the closed model.
+    \item Chunk and embed the corpus, retrieve at query time, and generate $y\sim\pi_\theta(\cdot\mid q,d_{i^\star})$ with a cite-or-abstain instruction.
+    \item Train a supervised QA head on synthetic pairs only, and discard the corpus at inference.
+    \item Replace top-$P$ by greedy decoding.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}[Fine-tune the corpus versus retrieve]
+(b). This is \jump{prob:spr2025-nlp-8}{Problem~8}. The corpus is uncompressed memory.
+
+\textit{(a) compresses facts into $\theta$.}
+Next-token training on documents does not produce question--answer behaviour, and the parameters go stale when a document is updated. It is an optional style patch, not the way to supply missing facts.
+
+\textit{(c) invents labels and throws away the knowledge base.}
+Synthetic pairs can be a later evaluation or distillation step; they are not a substitute for $d_{i^\star}$.
+
+\textit{(d) is Problem~3, a decoding rule.}
+It does not add domain knowledge.
+\end{solution}
+
+\begin{exercise}[Not every embedding is a factorization]
+\label{ex:nlpu-all-mf}
+True or false: GloVe, Skip-gram, Node2Vec, and TransE are four names for matrix factorization of a co-occurrence table. If false, give the distinguishing clause for each method that is not GloVe.
+\end{exercise}
+
+\begin{solution}[Not every embedding is a factorization]
+False. GloVe is a weighted regression on a global count table and is the one method that is literally a (weighted) factorization of transformed counts. Skip-gram predicts local context and is typically trained with negatives, not by forming $X_{wc}$. Node2Vec runs that predictor on walks; the signal is a graph, not a word--word matrix. TransE scores $(s,r,o)$ by a translation and a margin; there is no co-occurrence table. Fall 2025 Problem~1 grades the three-clause table of \cref{rem:nlpu-four-emb}, not a single slogan.
+\end{solution}
+
+\begin{exercise}[Text-to-image is not an NLP derivation]
+\label{ex:nlpu-diffusion-ptr}
+Fall 2025 places a text-to-image diffusion question in Section~D. Where is the generative object already written in this paper, and what does one \emph{not} restart here?
+\end{exercise}
+
+\begin{solution}[Text-to-image is not an NLP derivation]
+The continuous-time VP / score-matching object is Part~B Problem~2 and \jump{subsec:dlu}{the Deep Learning further-learnings block}. Section~D only adds the conditioning: a text embedding (item~2) becomes the condition of the same generator. Do not begin a second derivation of the reverse SDE.
+\end{solution}
+
+
+\begin{summary}[What this block added to Problems~1--8]
+\label{sum:nlpu}
+\begin{itemize}
+    \item Problem~2 named representation learning. This block wrote the skip-gram softmax, the InfoNCE gradient, the high-dimensional false-negative heuristic, and the four-way embedding table of Fall 2025.
+    \item Problem~5 compared Transformers to RNNs. This block added the causal mask, the $L^2$ cost, one long-context pattern with diameter $2$, and the training-versus-generation distinction.
+    \item Problem~7 assumed a frozen $r_\phi$. This block placed SFT / RM / RL in order, named reward hacking, and pointed DPO at the RL supplement.
+    \item Problem~6 gave the statistical scaling argument. This block added the $L(P,T)$ display and the LSTM-versus-Transformer coefficient comparison.
+    \item Problem~8 designed RAG. This block added the memory-gain identity and an MDP skeleton for write/retrieve.
+    \item Problem~1 was trigrams. This block wrote the LDA joint, a logistic supervised label, a one-line ontology-LDA remark, and MLN MAP without $Z$, including the two-paper Fall 2025 calculation.
+\end{itemize}
+\end{summary}

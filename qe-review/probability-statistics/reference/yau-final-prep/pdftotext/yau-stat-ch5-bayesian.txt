@@ -1,0 +1,365 @@
+5   BAYESIAN STATISTICS
+
+
+4.4 Confidence Intervals
+Definition 4.8 (Confidence Interval). A 100(1 − α)% confidence interval for parameter
+θ is an interval [L(X), U (X)] such that:
+
+                                 Pθ (L(X) ≤ θ ≤ U (X)) = 1 − α
+
+for all θ ∈ Θ.
+    The quantity 1 − α is called the confidence level or confidence coeﬀicient.
+                                                                               iid
+Theorem 4.6 (Confidence Intervals for Normal Parameters). Let X1 , . . . , Xn ∼ N (µ, σ 2 ).
+  Case 1: σ 2 known        [                             ]
+                                       σ             σ
+                             X̄ − zα/2 √ , X̄ + zα/2 √
+                                        n              n
+    Case 2: σ 2 unknown
+                    [                                             ]
+                                        S                     S
+                      X̄ − tα/2 (n − 1) √ , X̄ + tα/2 (n − 1) √
+                                         n                      n
+
+    Case 3: CI for σ 2            [                                   ]
+                                       (n − 1)S 2      (n − 1)S 2
+                                                   ,
+                                      χ2α/2 (n − 1) χ21−α/2 (n − 1)
+
+Theorem 4.7 (Asymptotic Confidence Intervals). If θ̂n is asymptotically normal with
+√            d
+  n(θ̂n − θ) → N (0, σ 2 (θ)), then an approximate 100(1 − α)% confidence interval is:
+                               [                                   ]
+                                           σ̂(θ̂n )       σ̂(θ̂n )
+                                 θ̂n − zα/2 √ , θ̂n + zα/2 √
+                                               n              n
+
+where σ̂ 2 (θ̂n ) is a consistent estimator of σ 2 (θ).
+
+
+5     Bayesian Statistics
+5.1 Fundamental Concepts
+Definition 5.1 (Bayesian Framework). In Bayesian statistics, the parameter θ is treated
+as a random variable with a prior distribution π(θ). Given data x, we update our belief
+about θ using Bayes’ theorem:
+   Bayes’ Theorem:
+                                            f (x|θ)π(θ)
+                                 π(θ|x) =
+                                               m(x)
+    where:
+
+    • π(θ) is the prior distribution
+
+    • f (x|θ) is the likelihood function
+
+    • π(θ|x) is the posterior distribution
+              ∫
+    • m(x) = f (x|θ)π(θ)dθ is the marginal likelihood
+
+                                                   47
+5   BAYESIAN STATISTICS
+
+
+Definition 5.2 (Prior Types).              1. Informative Prior: Incorporates substantial prior
+     knowledge about θ
+
+    2. Non-informative/Vague Prior: Represents minimal prior knowledge
+                        ∫
+    3. Improper Prior: π(θ)dθ = ∞ (may still lead to proper posterior)
+                             √
+    4. Jeffreys Prior: π(θ) ∝ I(θ) where I(θ) is Fisher information
+
+    5. Reference Prior: Maximizes expected information gain
+
+5.2 Conjugate Priors
+Definition 5.3 (Conjugate Prior). A prior distribution π(θ) is conjugate to the likelihood
+f (x|θ) if the posterior distribution π(θ|x) belongs to the same family as the prior.
+
+Theorem 5.1 (Beta-Binomial Conjugacy). Let X ∼ Binomial(n, p) and p ∼ Beta(α, β).
+Then:
+                      p|X = x ∼ Beta(α + x, β + n − x)
+    Posterior moments:
+                                          α+x
+                            E[p|X = x] =                                                  (36)
+                                        α+β+n
+                                            (α + x)(β + n − x)
+                         Var(p|X = x) =                                                   (37)
+                                        (α + β + n)2 (α + β + n + 1)
+
+Theorem 5.2 (Gamma-Poisson Conjugacy). Let X ∼ Poisson(λ) and λ ∼ Gamma(α, β).
+Then:
+                      λ|X = x ∼ Gamma(α + x, β + 1)
+    For n observations x1 , . . . , xn :
+                                                 (                         )
+                                                        ∑
+                                                        n
+                               λ|x ∼ Gamma α +                xi , β + n
+                                                        i=1
+
+                                                                                    iid
+Theorem 5.3 (Normal-Normal Conjugacy (Known Variance)). Let X1 , . . . , Xn ∼ N (µ, σ 2 )
+with σ 2 known, and µ ∼ N (µ0 , τ 2 ). Then:
+                                         ( µ0 nx̄             )
+                                              + σ2      1
+                            µ|x ∼ N 1      τ2
+                                                   ,
+                                           τ2
+                                              + σn2 τ12 + σn2
+
+    The posterior mean is a weighted average of the prior mean and sample mean:
+
+                                                  σ 2 µ0 + nτ 2 x̄
+                                       E[µ|x] =
+                                                     σ 2 + nτ 2
+                                                                                                 iid
+Theorem 5.4 (Inverse-Gamma-Normal Conjugacy (Unknown Variance)). Let X1 , . . . , Xn ∼
+N (µ, σ 2 ) with µ known, and σ 2 ∼ InverseGamma(α, β). Then:
+                                          (                          )
+                                               n     1 ∑n
+                    σ 2 |x ∼ InverseGamma α + , β +        (xi − µ)2
+                                               2     2 i=1
+
+                                                   48
+6   LARGE SAMPLE THEORY
+
+
+5.3 Bayesian Inference
+Definition 5.4 (Bayesian Point Estimation). Common Bayesian point estimators:
+                                        ∫
+  1. Posterior Mean: θ̂P M = E[θ|x] = θπ(θ|x)dθ
+    2. Posterior Median: The 50th percentile of the posterior distribution
+    3. Maximum A Posteriori (MAP): θ̂M AP = arg maxθ π(θ|x)
+Definition 5.5 (Credible Intervals). A 100(1 − α)% credible interval for θ is an interval
+[L, U ] such that:
+                               P (θ ∈ [L, U ]|x) = 1 − α
+    Types of credible intervals:
+    1. Equal-tailed: P (θ < L|x) = P (θ > U |x) = α/2
+    2. Highest Posterior Density (HPD): Shortest interval containing 100(1 − α)%
+       of posterior probability
+Theorem 5.5 (Bayesian Decision Theory). Let δ(x) be a decision rule and L(θ, δ) be a
+loss function. The Bayes risk is:
+                                      ∫
+                              rπ (δ) = ρ(π, δ(x))m(x)dx
+                  ∫
+where ρ(π, δ(x)) = L(θ, δ(x))π(θ|x)dθ is the posterior expected loss.
+   The Bayes estimator minimizes the Bayes risk.
+   Common loss functions:
+    1. Squared Error Loss: L(θ, δ) = (θ − δ)2 ⇒ Bayes estimator = Posterior mean
+    2. Absolute Error Loss: L(θ, δ) = |θ − δ| ⇒ Bayes estimator = Posterior median
+    3. 0-1 Loss: L(θ, δ) = 1{θ̸=δ} ⇒ Bayes estimator = Posterior mode
+
+
+6     Large Sample Theory
+6.1 Modes of Convergence
+Definition 6.1 (Types of Convergence). Let {Xn } be a sequence of random variables and
+X be a random variable.
+                                                d
+    1. Convergence in Distribution: Xn → X if Fn (x) → F (x) at all continuity points
+       of F
+                                            p
+    2. Convergence in Probability: Xn → X if P (|Xn − X| > ϵ) → 0 for all ϵ > 0
+                                         a.s.
+    3. Almost Sure Convergence: Xn → X if P (limn→∞ Xn = X) = 1
+                                 Lp
+    4. Convergence in Lp : Xn → X if E[|Xn − X|p ] → 0
+    Relationships:
+                            a.s. ⇒ probability ⇒ distribution
+                            Lp ⇒ probability ⇒ distribution
+
+                                           49
+6   LARGE SAMPLE THEORY
+
+
+6.2 Law of Large Numbers
+Theorem 6.1 (Weak Law of Large Numbers (WLLN)). Let X1 , X2 , . . . be i.i.d. random
+variables with E[Xi ] = µ and Var(Xi ) = σ 2 < ∞. Then:
+
+                                         1∑
+                                             n
+                                                  p
+                                   X̄n =       Xi → µ
+                                         n i=1
+
+Theorem 6.2 (Strong Law of Large Numbers (SLLN)). Let X1 , X2 , . . . be i.i.d. random
+variables with E[|Xi |] < ∞ and E[Xi ] = µ. Then:
+
+                                         1∑
+                                             n
+                                                  a.s.
+                                   X̄n =       Xi → µ
+                                         n i=1
+
+   Sketch of Proof: A common proof (for finite fourth moments) truncates the variables
+and uses the Borel-Cantelli lemma on the tail probabilities P (|X̄n − µ| > ϵ). The general
+proof is more technical and often relies on Kolmogorov’s maximal inequality.
+
+6.3 Central Limit Theorem
+Theorem 6.3 (Classical Central Limit Theorem). Let X1 , X2 , . . . be i.i.d. random vari-
+ables with E[Xi ] = µ and 0 < Var(Xi ) = σ 2 < ∞. Then:
+                                  √
+                                    n(X̄n − µ) d
+                                               → N (0, 1)
+                                       σ
+                  √             d
+    Equivalently: n(X̄n − µ) → N (0, σ 2 )
+    Sketch of Proof: Use characteristic functions (CFs). Taylor expand the CF of
+a single standardized variable around 0. The limit of the n-th power of this expansion
+converges to the CF of N (0, 1), which is e−t /2 . Then apply the Lévy continuity theorem.
+                                             2
+
+
+
+Theorem 6.4 (Lyapunov Central Limit Theorem). Let X1 ,∑       X2 , . . . be independent
+                                                                                    ∑ random
+variables with E[Xi ] = µi and Var(Xi ) = σi2 . Define Sn = ni=1 Xi and s2n = ni=1 σi2 .
+   If for some δ > 0:
+                                  1 ∑
+                                        n
+                              lim          E[|Xi − µi |2+δ ] = 0
+                             n→∞ s2+δ
+                                  n    i=1
+
+   Then: Sn −E[S
+                    d
+              sn
+                  n]
+                     → N (0, 1)
+   Sketch of Proof: This is a variant of the CLT for non-identical variables. The
+Lyapunov condition is stronger than the Lindeberg condition and is often easier to check. It
+ensures that the individual random variables are uniformly small enough not to disrupt the
+convergence to normality. The proof follows a similar path using characteristic functions.
+Theorem 6.5 (Multivariate Central Limit Theorem). Let X1 , X2 , . . . be i.i.d. p-dimensional
+random vectors with E[Xi ] = µ and Cov(Xi ) = Σ. Then:
+                              √             d
+                                n(Xn − µ) → Np (0, Σ)
+    Sketch of Proof: Use the Cramér-Wold device. Show that for any constant vector
+c, the linear combination cT (Xn − µ) converges in distribution to a univariate normal
+distribution using the classical CLT. This implies the joint convergence to a multivariate
+normal distribution.
+
+                                            50
+6   LARGE SAMPLE THEORY
+
+
+6.4 Delta Method
+Theorem 6.6 (Univariate Delta Method). Let {Xn } be a sequence of random variables
+such that:                  √           d
+                              n(Xn − θ) → N (0, σ 2 )
+    If g is differentiable at θ with g ′ (θ) ̸= 0, then:
+                             √
+                                 n(g(Xn ) − g(θ)) → N (0, [g ′ (θ)]2 σ 2 )
+                                                            d
+
+
+
+Theorem 6.7 (Multivariate Delta Method). Let {Xn } be a sequence of k-dimensional
+random vectors such that:  √            d
+                              n(Xn − θ) → Nk (0, Σ)
+    If g : Rk → Rm is differentiable at θ with Jacobian matrix J = ∇g(θ), then:
+                                 √                              d
+                                     n(g(Xn ) − g(θ)) → Nm (0, JΣJT )
+
+6.5 Asymptotic Properties of Estimators
+Definition 6.2 (Consistency). An estimator θ̂n is:
+                                           p
+    1. Weakly consistent if θ̂n → θ
+                                           a.s.
+    2. Strongly consistent if θ̂n → θ
+
+Definition 6.3 (Asymptotic Normality). An estimator θ̂n is asymptotically normal if:
+                                       √                d
+                                           n(θ̂n − θ) → N (0, σ 2 (θ))
+
+    The quantity σ 2 (θ) is called the asymptotic variance.
+
+Definition 6.4 (Asymptotic Eﬀiciency). Among all asymptotically normal estimators,
+θ̂n is asymptotically eﬀicient if its asymptotic variance achieves the Cramér-Rao lower
+bound:
+                                                   1
+                                        σ 2 (θ) =
+                                                  I(θ)
+where I(θ) is the Fisher information.
+
+Theorem 6.8 (Asymptotic Properties of MLE). Under regularity conditions, the MLE
+θ̂n satisfies:
+                             p
+    1. Consistency: θ̂n → θ0
+                                           √                        d
+    2. Asymptotic Normality:                   n(θ̂n − θ0 ) → N (0, I −1 (θ0 ))
+
+    3. Asymptotic Eﬀiciency: Achieves the Cramér-Rao lower bound
+
+    4. Invariance: If τ = g(θ), then g(θ̂n ) is the MLE of τ
+
+
+
+
+                                                       51
+7   ADVANCED TOPICS AND APPLICATIONS
+
+
+6.6 Chi-Square Approximations
+Theorem 6.9 (Pearson’s Chi-Square Test). Consider k multinomial cells with observed
+frequencies O1 , . . . , Ok and expected frequencies E1 , . . . , Ek . Under the null hypothesis:
+
+                                   ∑
+                                   k
+                                     (Oi − Ei )2       d
+                              2
+                             χ =                       → χ2 (k − 1 − p)
+                                    i=1
+                                             Ei
+
+where p is the number of parameters estimated from the data.
+
+Theorem 6.10 (Likelihood Ratio Test Asymptotic Distribution). For testing H0 : θ ∈ Θ0
+versus H1 : θ ∈ Θ1 :
+                                          d
+                                −2 log Λn → χ2 (r)
+where r = dim(Θ1 ) − dim(Θ0 ) under H0 .
+
+Theorem 6.11 (Wald Test). For testing H0 : g(θ) = 0 where g : Rk → Rr :
+
+                   Wn = n · g(θ̂n )T [G(θ̂n )I −1 (θ̂n )G(θ̂n )T ]−1 g(θ̂n ) → χ2 (r)
+                                                                           d
+
+
+
+where G(θ) = ∇g(θ) and I(θ) is the Fisher information matrix.
+
+Theorem 6.12 (Score Test (Lagrange Multiplier Test)). For testing H0 : g(θ) = 0:
+
+                             LMn = S(θ̃n )T I −1 (θ̃n )S(θ̃n ) → χ2 (r)
+                                                                 d
+
+
+
+where S(θ) = ∇ℓ(θ) is the score function and θ̃n is the constrained MLE under H0 .
+
+
+7     Advanced Topics and Applications
+7.1 Exponential Families
+Definition 7.1 (Exponential Family). A family of distributions belongs to the exponential
+family if the pdf/pmf can be written as:
+
+                            f (x; θ) = h(x) exp [η(θ) · T (x) − A(θ)]
+
+where:
+
+    • η(θ) is the natural parameter
+
+    • T (x) is the suﬀicient statistic
+
+    • A(θ) is the log-partition function
+
+    • h(x) is the base measure
+
+    For the canonical form with η(θ) = θ:
+
+                              f (x; θ) = h(x) exp[θ · T (x) − A(θ)]
+
+Theorem 7.1 (Properties of Exponential Families). For an exponential family in canon-
+ical form:
+
+                                                  52
+

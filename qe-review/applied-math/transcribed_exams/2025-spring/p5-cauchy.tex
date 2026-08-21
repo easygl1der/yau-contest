@@ -1,0 +1,477 @@
+\setcounter{section}{5}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: the Cauchy problem, and what a difference scheme for advection is}
+
+Problem~5 is not asking whether \(u_t+a u_x=0\) is well-posed. That PDE, on the line, is the model hyperbolic Cauchy problem: the solution is a pure translation, every \(L^p\) norm is conserved, and no boundary condition is needed. The exam asks two discrete questions on top of that object. Part~(i) is an \(\ell_2\) energy identity for the Lax--Wendroff scheme on \(\mathbb{Z}\), which is a stability certificate that does not use Fourier. Part~(ii) changes the domain to a bounded interval, where the Cauchy problem is replaced by an initial-boundary-value problem and Lax--Wendroff, being a three-point stencil, needs a numerical boundary condition at the outflow end.
+
+The official CAM syllabus names this circle as finite-difference methods, stability and convergence, and Lax equivalence. The standard references are LeVeque \cite{leveque07}, Gustafsson--Kreiss--Oliger \cite{gko95}, and Strikwerda \cite{strikwerda04}. The 2026 Spring notes compute the same objects by von Neumann; this paper asks for the energy identity instead. The definitions below are the ones that make the two parts well-posed.
+
+\paragraph{The continuous problem: Cauchy versus initial-boundary-value.}
+
+\begin{definition}[Cauchy problem for constant-coefficient advection]
+\label{def:cauchy-adv}
+Let \(a\in\mathbb{R}\) be given. The \emph{Cauchy problem} for the advection equation on the real line is: given \(u_0:\mathbb{R}\to\mathbb{R}\), find \(u=u(x,t)\) such that
+\begin{equation}
+\label{eq:cauchy-adv}
+\begin{cases}
+u_t + a u_x = 0, & x\in\mathbb{R},\ t>0, \\
+u(x,0) = u_0(x), & x\in\mathbb{R}.
+\end{cases}
+\end{equation}
+No boundary condition is imposed: the spatial domain has no boundary. If \(u_0\in L^2(\mathbb{R})\), one seeks a solution in \(C\bigl([0,\infty); L^2(\mathbb{R})\bigr)\). The exam's phrase ``the Cauchy problem imposed on the real line'' is this IVP, discretized on the grid \(\mathbb{Z}\) below.
+\end{definition}
+
+The PDE \(u_t+a u_x=0\) is the directional derivative of \(u\) along the vector \((a,1)\) in the \((x,t)\)-plane. Its characteristics are the straight lines \(x-at=\mathrm{const}\).
+
+\begin{proposition}[Solution by characteristics; \(L^2\) conservation]
+\label{prop:char}
+Assume \(u_0\) is \(C^1\) (or, after density, merely \(L^2\)). The unique solution of \eqref{eq:cauchy-adv} is the travelling wave
+\begin{equation}
+\label{eq:travelling}
+u(x,t)
+=
+u_0(x-at).
+\end{equation}
+In particular \(\|u(\,\cdot\,,t)\|_{L^2(\mathbb{R})}=\|u_0\|_{L^2(\mathbb{R})}\) for every \(t\ge 0\), and likewise in every \(L^p\). The problem is well-posed in \(L^2\): the solution operator is an isometry, of norm independent of \(t\).
+\end{proposition}
+
+\begin{proof}
+Along a characteristic \(x(t)=x_0+at\) one has \(\frac{\mathrm{d}}{\mathrm{d}t}u(x(t),t)=u_t+a u_x=0\), so \(u\) is constant on each such line. The line through \((x,t)\) hits \(t=0\) at \(x-at\), which is \eqref{eq:travelling}. The \(L^2\) identity is translation invariance of Lebesgue measure. Uniqueness for \(C^1\) data is the same characteristic computation run backwards; the \(L^2\) theory is the continuous extension of that isometry.
+\end{proof}
+
+Information travels at speed \(a\), and only in one direction. That is the distinction that appears the moment the spatial domain is cut down to an interval.
+
+\begin{definition}[Initial-boundary-value problem; inflow versus outflow]
+\label{def:ibvp-adv}
+On a bounded interval \((0,1)\), the same PDE must be supplemented by a boundary condition at the \emph{inflow} end, and must not be supplemented by a boundary condition at the \emph{outflow} end. For \(a>0\) the characteristics enter at \(x=0\) and leave at \(x=1\), so the IBVP is
+\begin{equation}
+\label{eq:ibvp-adv}
+\begin{cases}
+u_t + a u_x = 0, & 0<x<1,\ t>0, \\
+u(x,0) = u_0(x), & 0<x<1, \\
+u(0,t) = g(t), & t>0.
+\end{cases}
+\end{equation}
+The exam takes the homogeneous inflow datum \(g\equiv 0\). At \(x=1\) the trace \(u(1,t)\) is determined by the PDE (it equals \(u_0(1-at)\) for \(t<1/a\), and equals \(g(t-1/a)\) thereafter). Imposing an additional boundary condition at \(x=1\) would overdetermine the PDE.
+\end{definition}
+
+\begin{center}
+\begin{tikzpicture}[>=Latex, scale=1.15]
+  \draw[->] (-0.35,0) -- (4.6,0) node[right] {$x$};
+  \draw[->] (0,-0.25) -- (0,3.15) node[above] {$t$};
+  \draw[thick] (0,0) -- (0,2.85);
+  \draw[thick] (3.6,0) -- (3.6,2.85);
+  \node[below] at (0,0) {$0$};
+  \node[below] at (3.6,0) {$1$};
+  \foreach \b in {-0.9,-0.3,0.3,0.9,1.5,2.1,2.7}
+    \draw[blue!65!black] ({max(0,\b)}, {max(0,-0.55*\b)}) -- ({min(3.6,\b+3.6)}, {0.55*(min(3.6,\b+3.6)-\b)});
+  \node[font=\small, align=center, blue!65!black] at (1.85,2.55) {characteristics \(x-at=\mathrm{const}\)};
+  \node[font=\small, rotate=90, anchor=south] at (-0.22,1.35) {inflow};
+  \node[font=\small, rotate=90, anchor=south] at (3.82,1.35) {outflow};
+  \node[font=\small] at (1.8,-0.42) {Cauchy: the same lines on \(\mathbb{R}\), no walls};
+\end{tikzpicture}
+\end{center}
+
+A difference scheme does not automatically inherit this distinction. Lax--Wendroff at an interior node reads both neighbours. On \(\mathbb{Z}\) that is harmless. On \(\{0,1,\dots,J\}\) the node adjacent to \(x=1\) asks for a value to the right of the interval, which the PDE does not provide. That missing value is a \emph{numerical} boundary condition (\cref{def:nbc}), and it is the object of part~(ii).
+
+\paragraph{The discrete objects: grid, differences, \(\ell_2\).}
+
+\begin{notation}[Grid and Courant number]
+\label{not:grid-p5}
+Fix a mesh size \(h>0\) and a time step \(\tau>0\). Write \(x_j=jh\) and \(t_n=n\tau\). A \emph{grid function} \(v=(v_j)\) assigns a value to each node; a time-dependent grid function is written \(u_j^n\), intended to approximate \(u(x_j,t_n)\). For the Cauchy problem the spatial index runs over \(j\in\mathbb{Z}\). For the IBVP on \((0,1)\) one takes \(h=1/J\) and \(j=0,1,\dots,J\), with \(x_0=0\) and \(x_J=1\).
+
+The mesh Courant number (CFL number) is
+\[
+\nu
+\coloneqq
+\frac{a\tau}{h}.
+\]
+It is the number of mesh cells a characteristic travels in one time step. The scheme in the exam is written entirely in terms of \(\nu\).
+\end{notation}
+
+\begin{definition}[Forward and backward differences]
+\label{def:delta}
+For a grid function \(v=(v_j)\), the exam's undivided differences are
+\[
+\delta_x^+ v_j
+\coloneqq
+v_{j+1}-v_j,
+\qquad
+\delta_x^- v_j
+\coloneqq
+v_j-v_{j-1}.
+\]
+The corresponding divided (first-order) quotients, which approximate \(\partial_x\), are
+
+\begin{align*}
+D^+ v_j
+&\coloneqq
+\frac{\delta_x^+ v_j}{h}
+=
+\frac{v_{j+1}-v_j}{h},
+\\
+D^- v_j
+&\coloneqq
+\frac{\delta_x^- v_j}{h}
+=
+\frac{v_j-v_{j-1}}{h},
+\\
+D^0 v_j
+&\coloneqq
+\frac{v_{j+1}-v_{j-1}}{2h}
+=
+\frac{(\delta_x^++\delta_x^-)v_j}{2h}.
+\end{align*}
+
+The undivided second difference is
+\[
+\delta_x^+\delta_x^- v_j
+=
+\delta_x^-\delta_x^+ v_j
+=
+v_{j+1}-2v_j+v_{j-1}
+=
+h^2 D^+D^- v_j,
+\]
+and \(D^+D^-v_j=(v_{j+1}-2v_j+v_{j-1})/h^2\) approximates \(u_{xx}\) to order \(h^2\). On \(\mathbb{Z}\) one has the shift identity \(\delta_x^- v_j=\delta_x^+ v_{j-1}\).
+\end{definition}
+
+Taylor expansion at \(x_j\) gives \(D^\pm v=v_x\pm\tfrac12 h v_{xx}+O(h^2)\) and \(D^0 v=v_x+O(h^2)\), as in the 2026 notes. The energy identity of part~(i) is written in the undivided operators \(\delta_x^\pm\), which differ from \(D^\pm\) only by the factor \(h\); the two languages are interchangeable.
+
+\begin{definition}[Discrete \(\ell_2\) on \(\mathbb{Z}\)]
+\label{def:discrete-l2}
+For grid functions \(v,w\) on \(\mathbb{Z}\) (real-valued, in the exam),
+\[
+\|v\|_2^2
+\coloneqq
+\sum_{j\in\mathbb{Z}}\lvert v_j\rvert^2,
+\qquad
+\langle v,w\rangle
+\coloneqq
+\sum_{j\in\mathbb{Z}} v_j w_j,
+\]
+whenever the sums converge. Equivalently, \(v\in\ell_2(\mathbb{Z})\). This is the discrete analogue of \(L^2(\mathbb{R})\), and it is the space in which the Cauchy problem \eqref{eq:cauchy-adv} is discretized. There is no factor of \(h\) in the exam's definition: \(\|\cdot\|_2\) is the \(\ell_2\) sequence norm, not the trapezoid approximation to \(\|u\|_{L^2}\). For stability the missing \(h\) is a global constant and does not matter; for comparing to \(L^2(\mathbb{R})\) one would use \(h^{1/2}\|v\|_2\).
+\end{definition}
+
+On a bounded grid \(\{0,\dots,J\}\) the same formulae are used with the sum restricted to the interior nodes, and boundary terms appear after summation by parts. Part~(i) has no boundary: the line is \(\mathbb{Z}\).
+
+\begin{lemma}[Shift isometries and summation by parts on \(\mathbb{Z}\)]
+\label{lem:sbp}
+Let \(v,w\in\ell_2(\mathbb{Z})\). Then \(\|\delta_x^+ v\|_2=\|\delta_x^- v\|_2\), and
+\begin{equation}
+\label{eq:sbp}
+\langle \delta_x^+ v,\, w\rangle
+=
+-
+\langle v,\, \delta_x^- w\rangle.
+\end{equation}
+In particular \(\langle \delta_x^+ v,\, \delta_x^- v\rangle\le\|\delta_x^+ v\|_2^2\), hence
+\begin{equation}
+\label{eq:dissip-sign}
+\|\delta_x^+ v\|_2^2
+-
+\langle \delta_x^+ v,\, \delta_x^- v\rangle
+\ge
+0.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+The map \(v_j\mapsto v_{j-1}\) is an \(\ell_2\) isometry of \(\mathbb{Z}\), and \(\delta_x^- v_j=\delta_x^+ v_{j-1}\), so the two undivided gradients have equal norms. For \eqref{eq:sbp}, expand \(\sum_j(v_{j+1}-v_j)w_j=\sum_j v_{j+1}w_j-\sum_j v_j w_j\) and reindex the first sum (\(j\mapsto j-1\)); both rearrangements are justified by absolute convergence of the Cauchy--Schwarz estimates \(\sum\lvert v_{j+1}w_j\rvert\le\|v\|_2\|w\|_2\). The inequality \eqref{eq:dissip-sign} is Cauchy--Schwarz:
+\[
+\langle \delta_x^+ v,\, \delta_x^- v\rangle
+\le
+\|\delta_x^+ v\|_2\,\|\delta_x^- v\|_2
+=
+\|\delta_x^+ v\|_2^2.
+\]
+\end{proof}
+
+The remainder in the exam identity is a positive multiple of \eqref{eq:dissip-sign} whenever \(\lvert\nu\rvert\le 1\). That is why an algebraic \(\ell_2\) budget, with no Fourier transform, can prove stability of Lax--Wendroff on the line.
+
+\paragraph{Difference schemes: consistency, stability, convergence.}
+
+\begin{definition}[Linear one-step scheme]
+\label{def:scheme}
+A linear one-step finite-difference scheme on \(\mathbb{Z}\) is a marching rule
+\[
+U^{n+1}
+=
+S_{h,\tau} U^n,
+\]
+where \(S_{h,\tau}\) is a bounded linear operator on \(\ell_2(\mathbb{Z})\) (typically a finite stencil, i.e.\ a Laurent polynomial in the shift). The scheme is \emph{explicit} if \(U^{n+1}\) is a finite linear combination of already-known values \(U^n_{\,j+k}\); it is \emph{implicit} if computing \(U^{n+1}\) requires solving a linear system that couples several nodes at time \(t_{n+1}\). Lax--Wendroff is explicit and three-point.
+\end{definition}
+
+\begin{definition}[Local truncation error / consistency]
+\label{def:truncation-p5}
+Write the scheme in residual form \(\mathcal{L}_{h,\tau}U=0\). Let \(u\) be a smooth solution of \(u_t+a u_x=0\), and write \(u_j^n\coloneqq u(x_j,t_n)\) for its samples. The \emph{local truncation error} is the residual of those samples:
+\[
+\mathcal{T}_j^{n+1}
+\coloneqq
+\bigl(\mathcal{L}_{h,\tau} u\bigr)_j^{n+1}.
+\]
+The scheme is \emph{consistent} if \(\mathcal{T}_j^n\to 0\) as \(h,\tau\to 0\), at every fixed \((x,t)\), for every smooth solution \(u\). The order is the largest pair \((p,q)\) with \(\mathcal{T}=O(\tau^p+h^q)\). Consistency is a statement about \(u\), not about the computed grid function \(U\).
+\end{definition}
+
+\begin{definition}[Lax--Richtmyer stability]
+\label{def:stability-p5}
+The scheme \(U^{n+1}=S_{h,\tau}U^n\) is \emph{stable} on a time interval \([0,T]\), in the discrete norm \(\|\cdot\|_h\), if there exist \(C,\alpha\), independent of \(h\) and \(\tau\) (for all sufficiently small steps, possibly subject to a restriction such as \(\lvert\nu\rvert\le 1\)), such that
+\[
+\|U^n\|_h
+\le
+C\,e^{\alpha t_n}\,\|U^0\|_h,
+\qquad
+0\le t_n\le T.
+\]
+For advection, whose \(L^2\) solution operator is an isometry (\cref{prop:char}), the practical target is \(\|U^n\|_2\le\|U^0\|_2\), i.e.\ \(C=1\) and \(\alpha=0\). An identity of the form \(\|U^{n+1}\|_2^2=\|U^n\|_2^2-\text{(nonnegative)}\) is a stability proof in this sense.
+\end{definition}
+
+\begin{theorem}[Lax equivalence]
+\label{thm:lax-eq-p5}
+For a linear well-posed evolutionary IVP and a consistent finite-difference scheme, convergence of the grid function to the PDE solution (in the discrete norm, as \(h,\tau\to 0\) with \(t_n\le T\)) holds if and only if the scheme is stable \cite{laxrichtmyer56,leveque07,gko95}.
+\end{theorem}
+
+The exam does not ask one to quote \cref{thm:lax-eq-p5}. It asks one to prove the \(\ell_2\) bound that makes the ``if'' direction applicable. Von Neumann's criterion (Fourier substitution \(u_j^n=g(\xi)^n e^{\mathrm{i} j\xi}\), requiring \(\lvert g(\xi)\rvert\le 1\) for advection) is equivalent to that bound for constant-coefficient schemes on \(\mathbb{Z}\), and is the machine used on the 2026 paper. Part~(i) is the same bound, obtained by inner products.
+
+\paragraph{Lax--Wendroff.}
+
+\begin{definition}[Lax--Wendroff scheme]
+\label{def:lw}
+The Lax--Wendroff scheme for \(u_t+a u_x=0\) is the explicit three-point update
+\begin{equation}
+\label{eq:lw}
+u_j^{n+1}
+=
+-\tfrac12\nu(1-\nu)\,u_{j+1}^n
++
+(1-\nu^2)\,u_j^n
++
+\tfrac12\nu(1+\nu)\,u_{j-1}^n,
+\end{equation}
+with \(\nu=a\tau/h\). In undivided differences (\cref{def:delta}),
+\begin{equation}
+\label{eq:lw-delta}
+u^{n+1}
+=
+u^n
+-
+\frac{\nu}{2}(\delta_x^++\delta_x^-)u^n
++
+\frac{\nu^2}{2}\,\delta_x^+\delta_x^- u^n.
+\end{equation}
+The two forms are identical: \(\delta_x^++\delta_x^-\) is the centered undivided first difference, and \(\delta_x^+\delta_x^-\) is the undivided second difference.
+\end{definition}
+
+The scheme is the unique three-point explicit method that matches the Taylor expansion of the travelling wave through second order in \(\tau\). That is its definition, not an independent accuracy check.
+
+\begin{proposition}[Derivation of Lax--Wendroff]
+\label{prop:lw-derive}
+Let \(u\) be a smooth solution of \(u_t+a u_x=0\). Then \(u_{tt}=a^2 u_{xx}\), and
+\[
+u(x,t+\tau)
+=
+u
+-
+a\tau\, u_x
++
+\frac{a^2\tau^2}{2}\,u_{xx}
++
+O(\tau^3),
+\]
+the expansions being at \((x,t)\). Replacing \(u_x\) by the centered quotient \(D^0\) and \(u_{xx}\) by \(D^+D^-\), both at time \(t_n\), and dropping \(O(\tau^3+h^2\tau+\tau h^2)\) produces \eqref{eq:lw}.
+\end{proposition}
+
+\begin{proof}
+Taylor in time:
+\[
+u(x,t+\tau)
+=
+u+\tau u_t+\tfrac12\tau^2 u_{tt}+O(\tau^3).
+\]
+The PDE gives \(u_t=-a u_x\). Differentiating it in \(t\) and in \(x\) and comparing mixed derivatives gives \(u_{tt}=-a u_{xt}=-a\partial_x(u_t)=a^2 u_{xx}\). Substitute. On the grid, \(a\tau=\nu h\), and the standard centered replacements
+\[
+u_x
+=
+D^0 u+O(h^2),
+\qquad
+u_{xx}
+=
+D^+D^- u+O(h^2)
+\]
+turn the right-hand side into
+\[
+u_j^n
+-
+\frac{\nu}{2}\bigl(u_{j+1}^n-u_{j-1}^n\bigr)
++
+\frac{\nu^2}{2}\bigl(u_{j+1}^n-2u_j^n+u_{j-1}^n\bigr)
++
+O(\tau^3+\tau h^2).
+\]
+Collecting coefficients of \(u_{j+1}^n\), \(u_j^n\), and \(u_{j-1}^n\) is \eqref{eq:lw}. The operator form \eqref{eq:lw-delta} is the same collection written with \(\delta_x^\pm\).
+\end{proof}
+
+\begin{proposition}[Truncation of Lax--Wendroff]
+\label{prop:lw-trunc}
+On smooth solutions of \(u_t+a u_x=0\), the local truncation error of \eqref{eq:lw} is \(O(\tau^2+h^2)\). The scheme is consistent of order \(2\) in time and space. The leading terms may be written
+\[
+\mathcal{T}
+=
+-\frac{\tau^2}{6}u_{ttt}
+-
+\frac{a h^2}{6}u_{xxx}
++
+\frac{a^2\tau h^2}{24}(\cdots)
++
+O(\tau^3+h^4),
+\]
+after using \(u_{tt}=a^2 u_{xx}\) to replace mixed derivatives; the precise cubic polynomial is not needed on this paper.
+\end{proposition}
+
+The derivation already shows that every term through \(O(\tau^2)\) in time and \(O(h^2)\) in space has been matched, so the residual starts at the next order. Combined with stability under \(\lvert\nu\rvert\le 1\) (\cref{prop:lw-vn,prop:lw-energy-sign}), Lax equivalence yields second-order convergence on the Cauchy problem.
+
+\begin{definition}[CFL]
+\label{def:cfl-p5}
+An explicit scheme's \emph{numerical domain of dependence} at \((x_j,t_{n+1})\) is the set of nodes at time \(t_n\) that enter the update of \(u_j^{n+1}\). Courant--Friedrichs--Lewy: a necessary condition for convergence is that this set contain the characteristic foot \(x_j-a\tau\). For any explicit three-point stencil the numerical domain is \(\{x_{j-1},x_j,x_{j+1}\}\), hence the necessary restriction is
+\[
+\lvert a\tau\rvert
+\le
+h
+\qquad\text{i.e.}\qquad
+\lvert\nu\rvert\le 1.
+\]
+\end{definition}
+
+CFL is not a stability theorem. Explicit centered advection (\(u_j^{n+1}=u_j^n-\frac{\nu}{2}(u_{j+1}^n-u_{j-1}^n)\)) satisfies \(\lvert\nu\rvert\le 1\) as a domain-of-dependence restriction and is nevertheless unconditionally unstable by von Neumann. For Lax--Wendroff the CFL restriction and the \(\ell_2\) restriction happen to coincide.
+
+\begin{proposition}[von Neumann symbol of Lax--Wendroff]
+\label{prop:lw-vn}
+Substituting \(u_j^n=g^n e^{\mathrm{i} j\xi}\) into \eqref{eq:lw} produces
+\[
+g(\xi)
+=
+1-\nu^2\bigl(1-\cos\xi\bigr)
+-
+\mathrm{i}\,\nu\sin\xi,
+\]
+and
+\begin{equation}
+\label{eq:lw-gmod}
+\lvert g(\xi)\rvert^2
+=
+1-4\nu^2(1-\nu^2)\sin^4(\xi/2).
+\end{equation}
+Thus \(\lvert g(\xi)\rvert\le 1\) for all \(\xi\) if and only if \(\lvert\nu\rvert\le 1\). Under that restriction the scheme is Lax--Richtmyer stable in \(\ell_2(\mathbb{Z})\). For \(\lvert\nu\rvert<1\) one has \(\lvert g\rvert<1\) except at \(\xi\in 2\pi\mathbb{Z}\): the scheme is dissipative on high modes.
+\end{proposition}
+
+\begin{proof}
+The symbol of \(\delta_x^+\) is \(e^{\mathrm{i}\xi}-1\), of \(\delta_x^-\) is \(1-e^{-\mathrm{i}\xi}\), and of \(\delta_x^++\delta_x^-\) is \(2\mathrm{i}\sin\xi\). Substituting \eqref{eq:lw-delta} gives
+\[
+g
+=
+1
+-
+\frac{\nu}{2}\cdot 2\mathrm{i}\sin\xi
++
+\frac{\nu^2}{2}\cdot\bigl(e^{\mathrm{i}\xi}-2+e^{-\mathrm{i}\xi}\bigr)
+=
+1-\mathrm{i}\nu\sin\xi-\nu^2(1-\cos\xi).
+\]
+Then \(\lvert g\rvert^2=(1-\nu^2(1-\cos\xi))^2+\nu^2\sin^2\xi\). Expanding and using \(1-\cos\xi=2\sin^2(\xi/2)\), \(\sin\xi=2\sin(\xi/2)\cos(\xi/2)\) produces \eqref{eq:lw-gmod}. The factor \(4\nu^2(1-\nu^2)\sin^4(\xi/2)\) is nonnegative for all \(\xi\) precisely when \(\nu^2\in[0,1]\).
+\end{proof}
+
+The same factor \(\nu^2(1-\nu^2)\) sits in front of the discrete gradient remainder in part~(i). Fourier and the energy identity are two writings of one dissipation.
+
+\begin{proposition}[Sign of the exam remainder]
+\label{prop:lw-energy-sign}
+If \(\lvert\nu\rvert\le 1\) and \(u^n\in\ell_2(\mathbb{Z})\), then
+\[
+\frac12\nu^2(1-\nu^2)
+\bigl(
+\|\delta_x^+ u^n\|_2^2
+-
+\langle \delta_x^+ u^n,\,\delta_x^- u^n\rangle
+\bigr)
+\ge
+0.
+\]
+Consequently any identity of the form
+\[
+\|u^{n+1}\|_2^2
+=
+\|u^n\|_2^2
+-
+\frac12\nu^2(1-\nu^2)
+\bigl(
+\|\delta_x^+ u^n\|_2^2
+-
+\langle \delta_x^+ u^n,\,\delta_x^- u^n\rangle
+\bigr)
+\]
+implies \(\|u^{n+1}\|_2\le\|u^n\|_2\), hence Lax--Richtmyer stability on the Cauchy grid. The identity itself is the algebraic content of part~(i): expand \(\|u^{n+1}\|_2^2\) from \eqref{eq:lw-delta}, and reduce the cross terms by \cref{lem:sbp}.
+\end{proposition}
+
+\paragraph{Numerical boundary conditions.}
+
+\begin{definition}[Physical vs.\ numerical boundary conditions]
+\label{def:nbc}
+On a bounded grid \(j=0,1,\dots,J\),
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item a \emph{physical} (or PDE) boundary condition is a prescription of boundary data that the continuous IBVP \eqref{eq:ibvp-adv} actually requires;
+    \item a \emph{numerical} boundary condition is an additional closure, needed by the stencil but not by the PDE, that expresses an unknown near-boundary value in terms of interior (and physical-boundary) values.
+\end{enumerate}
+For \(a>0\), the physical condition is at inflow: \(u_0^n=g(t_n)\), and the exam takes \(g=0\). Lax--Wendroff at \(j=J-1\) (or at \(j=J\), depending on whether one treats \(x_J=1\) as an unknown) reads \(u_J^n\) and \(u_{J+1}^n\). The value \(u_{J+1}^n\) lies outside \((0,1)\) and is not supplied by \eqref{eq:ibvp-adv}. Closing it is a numerical boundary condition at outflow.
+\end{definition}
+
+A scheme that is stable on \(\mathbb{Z}\) can be destabilized by a bad numerical boundary condition. The precise theory is Gustafsson--Kreiss--Sundstr\"om (GKS): one freezes coefficients at the boundary, substitutes modes \(z^n\kappa^j\), and forbids incoming \(z\)-roots with \(\lvert z\rvert>1\) that the interior scheme does not already control \cite{gko95}. The exam asks for a \emph{simple} condition that is known to pass, not for the GKS test.
+
+\begin{construction}[A simple stable outflow condition, \(a>0\)]
+\label{con:nbc-simple}
+Keep the homogeneous physical condition \(u_0^n=0\). At the right end, do not apply Lax--Wendroff. Close the last unknown by the first-order upwind (backward Euler in space, forward Euler in time) scheme
+\begin{equation}
+\label{eq:nbc-upwind}
+\frac{u_J^{n+1}-u_J^n}{\tau}
++
+a\,\frac{u_J^n-u_{J-1}^n}{h}
+=
+0,
+\qquad\text{i.e.}\qquad
+u_J^{n+1}
+=
+(1-\nu)\,u_J^n
++
+\nu\,u_{J-1}^n.
+\end{equation}
+This uses only values inside \([0,1]\), is consistent of order \(O(\tau+h)\) with the PDE, and is stable for \(0\le\nu\le 1\) (it is the standard explicit upwind scheme, whose amplification factor is \(g=(1-\nu)+\nu e^{-\mathrm{i}\xi}\) with \(\lvert g\rvert\le 1\) iff \(0\le\nu\le 1\)). The interior Lax--Wendroff updates occupy \(j=1,\dots,J-1\).
+
+An equally standard alternative is first-order spatial extrapolation of a ghost node,
+\[
+u_{J+1}^n
+=
+u_J^n
+\qquad\text{or}\qquad
+u_{J+1}^n
+=
+2u_J^n-u_{J-1}^n,
+\]
+followed by Lax--Wendroff at \(j=J\). The constant extrapolation \(u_{J+1}^n=u_J^n\) is the simpler of the two; under \(0\le\nu\le 1\) it is GKS-stable for this outflow problem \cite{gko95}. Either closure is an acceptable answer to part~(ii). What is \emph{not} acceptable is to impose a physical Dirichlet condition at \(x=1\) (the PDE does not allow it), or to use a downwind stencil that looks to the right of \(x=1\) without defining the ghost.
+\end{construction}
+
+The order drop at a single boundary node does not destroy the global \(\ell_2\) rate on a fixed interval: the boundary is codimension one. For the exam, stability is the requirement, not preservation of second order.
+
+\begin{examnote}[What the two parts are]
+\label{examnote:p5}
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item Cauchy problem: \cref{def:cauchy-adv}, discrete space \cref{def:discrete-l2}. The scheme is \cref{def:lw} in the form \eqref{eq:lw-delta}. Expand \(\|u^{n+1}\|_2^2\), reduce shifts by \cref{lem:sbp}, and identify the remainder as the displayed combination of \(\|\delta_x^+\|_2^2\) and \(\langle\delta_x^+,\delta_x^-\rangle\). The sign \eqref{eq:dissip-sign} plus \(\lvert\nu\rvert\le 1\) is \(\ell_2\) stability, which is the reason the identity is asked.
+    \item IBVP: \cref{def:ibvp-adv}. Physical BC at \(x=0\); numerical BC at \(x=1\), \cref{def:nbc,con:nbc-simple}. Quote upwind \eqref{eq:nbc-upwind} or constant extrapolation, and the restriction \(0\le\nu\le 1\).
+\end{enumerate}
+\end{examnote}
+
+\begin{remark}[Relation to 2026 Spring Problems~4--5]
+\label{rem:p5-vs-2026}
+The 2026 P4 notes develop von Neumann, CFL, truncation, and Lax equivalence for three \emph{implicit} advection schemes. The objects in \cref{def:truncation-p5,def:stability-p5,thm:lax-eq-p5,def:cfl-p5} are the same objects, specialized to explicit Lax--Wendroff. The 2026 P5 notes develop a discrete maximum principle (\(\ell_\infty\), Dirichlet, variable coefficients). That machine does not apply to this paper: Lax--Wendroff is not monotone for all \(\nu\in(0,1)\), and part~(i) is an \(\ell_2\) identity on the line.
+\end{remark}

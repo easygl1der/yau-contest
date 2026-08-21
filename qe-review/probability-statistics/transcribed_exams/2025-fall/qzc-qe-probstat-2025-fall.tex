@@ -33,6 +33,17 @@
 \setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
 \setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
 
+\newcommand{\examstatement}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\bfseries #1}\par\nobreak\addvspace{0.28em}%
+}
+
+% Shared amsthm note/remark/theorem styles
+\input{../../../common/qe-math-extras.tex}
+\input{../../../common/qe-amsthm-envs.tex}
+\input{../../../common/qe-cleveref.tex}
+\input{../../../common/qe-pdf-outline.tex}
+
 \title{\textbf{QUALIFYING EXAM: PROBABILITY \& STATISTICS}\\[0.5em]\Large FALL 2025}
 \date{}
 \author{}
@@ -42,95 +53,3379 @@
 \maketitle
 \vspace{-3em}
 
-\section*{Instructions}
+\tableofcontents
+
+\section{Instructions}
 \begin{itemize}
-    \item There are 11 problems in this exam. You need to choose 8 of them to solve. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
+    \item There are 11 problems in this exam (3 pages). You need to choose 8 of them to solve. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
     \item You must follow all the rules of exam taking. Misconducts will be subject to proper disciplinary actions by the Center.
     \item You must provide all necessary details for full credits. A final answer with no or little explanation/derivation, even if correct, receives a minimal credit.
-    \item $\mathbb{R}$ denotes the set of real numbers and $\mathbb{N} = \{1, 2, 3, \dots\}$ denotes the set of positive integers. $\xrightarrow{(d)}$ and $\stackrel{(d)}{=}$ mean ``converges in distribution'' and ``equal in distribution'', respectively.
-    \item Beta function $\mathrm{Beta}(\alpha, \beta) = \int_0^1 x^{\alpha-1}(1-x)^{\beta-1} dx = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$.
-    \item For $\mu \in \mathbb{R}, \sigma > 0$, $\mathcal{N}(\mu, \sigma^2)$ density is $f(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$.
+    \item \( \mathbb{R} \) denotes the set of real numbers and \( \mathbb{N} = \{1, 2, 3, \dots\} \) denotes the set of positive integers. \( \xrightarrow{(d)} \) and \( \stackrel{(d)}{=} \) mean ``converges in distribution'' and ``equal in distribution'', respectively.
+    \item Beta function \( \mathrm{Beta}(\alpha, \beta) = \int_0^1 x^{\alpha-1}(1-x)^{\beta-1}\, dx = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \) where \( \Gamma(\cdot) \) is the gamma function. \( \Gamma(n) = (n-1)! \) for any positive integer \( n \).
+    \item For \( \mu \in \mathbb{R} \), \( \sigma > 0 \), the 1-dimensional normal distribution \( \mathcal{N}(\mu, \sigma^2) \) is defined by the density function
+
+    \[
+    f(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right).
+    \]
 \end{itemize}
+
+\section{Statement of the problems}
+
+\examstatement{Problem 1. [10 pts.]}
+Let \( X \) and \( N \) be two independent random variables. Suppose \( X \) follows the standard exponential distribution (i.e., with probability density function \( e^{-x} \mathbf{1}_{\{x>0\}} \)), and \( N \) follows the Poisson distribution with parameter \( \lambda > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Find all \( \lambda > 0 \) such that \( \mathbb{E}[X^N] < \infty \).
+    \item Calculate the expectation of \( \mathbb{E}[X^N] \) under the above condition on \( \lambda \).
+    \item Is there any \( \lambda > 0 \) such that \( \mathrm{Var}[X^N] < \infty \)? Justify your answer.
+\end{enumerate}
+
+\examstatement{Problem 2. [10 pts.]}
+Let \( X, Y \) be two independent random variables uniformly distributed on \( [0, 1] \), and define
+
+\[
+Z := \max\{X, Y\}.
+\]
+
+\begin{enumerate}[label=(\alph*)]
+    \item Determine the distribution of \( Z \) conditioned on \( \{X + Y \in [0, 1]\} \).
+    \item Determine the distribution of \( Z \) conditioned on \( \{X + Y \in [1, 2]\} \).
+\end{enumerate}
+
+\examstatement{Problem 3. [10 pts.]}
+Let \( (X_n, \mathcal{F}_n) \) be a martingale.
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that if \( (X_n^2, \mathcal{F}_n) \) is also a martingale, then \( X_m = X_n \) a.s.\ for any \( m, n \in \mathbb{N} \).
+    \item Prove that if \( (|X_n|^p, \mathcal{F}_n) \) is a martingale for some \( p > 1 \), then \( (|X_n|^q, \mathcal{F}_n) \) is also a martingale for every \( 1 \le q \le p \).
+\end{enumerate}
+
+\examstatement{Problem 4. [15 pts.]}
+Given independent random variables \( (X_n)_{n \in \mathbb{N}} \) satisfying
+
+\[
+\forall n \in \mathbb{N}, \qquad
+\mathbb{P}(X_n = -1) = \frac{1}{2}, \qquad
+\mathbb{P}(X_n = 4n) = \frac{1}{8n}, \qquad
+\mathbb{P}(X_n = 0) = \frac{1}{2} - \frac{1}{8n},
+\]
+
+and denote \( S_n := \sum_{k=1}^n X_k \). Prove that almost surely
+
+\[
+\liminf_{n \to \infty} \frac{S_n}{n} < 0 < \limsup_{n \to \infty} \frac{S_n}{n}.
+\]
+
+\examstatement{Problem 5. [10 pts.]}
+Let \( B_t \) be a one-dimensional (1D) standard Brownian motion starting from 0. Define \( X_t = \exp(B_t - \tfrac{1}{2} t) \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( X_t \) converges almost surely at \( t \to \infty \).
+    \item For any \( t > 0 \), calculate
+
+    \[
+    \mathbb{E} \int_0^t X_s\, ds, \qquad \text{and} \qquad \mathrm{Var} \int_0^t X_s\, ds.
+    \]
+    \item Show that
+
+    \[
+    \int_0^\infty X_t\, dt < \infty \qquad \text{a.s.}
+    \]
+\end{enumerate}
+
+\examstatement{Problem 6. [15 pts.]}
+Let \( M \) be a \( 2 \times 2 \) real symmetric random matrix of the form
+
+\[
+M = \begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix},
+\]
+
+where \( X_1, X_2 \), and \( Y \) are independent normal random variables: \( X_1 \) and \( X_2 \) follow the normal distribution \( \mathcal{N}(0, 2) \) with mean 0 and variance 2, and \( Y \) follows the standard normal distribution \( \mathcal{N}(0, 1) \) with mean 0 and variance 1. Let \( \lambda_1 \ge \lambda_2 \) denote the eigenvalues of \( M \), and let \( v_1 \) and \( v_2 \) be the corresponding unit eigenvectors.
+\begin{enumerate}[label=(\alph*)]
+    \item Find the distribution of \( \lambda_1 + \lambda_2 \).
+    \item Find the distribution of \( \lambda_1 - \lambda_2 \).
+    \item Are \( \lambda_1 \) and \( \lambda_2 \) independent? Prove your claim.
+    \item Prove that the joint distribution of \( (v_1, v_2) \) is invariant under orthogonal transformations, i.e., for any \( 2 \times 2 \) orthogonal matrix \( O \), \( (O v_1, O v_2) \) has the same distribution as \( (v_1, v_2) \).
+\end{enumerate}
+
+\examstatement{Problem 7. [10 pts.]}
+Suppose \( \hat{\theta}_n \) is a real-valued consistent estimator of a parameter of interest \( \theta \) based on \( n \) observations, and it is further known that \( \theta \in [-1, 1] \). Let \( T_n \) be a sufficient statistic for \( \theta \). Show there exists a consistent estimator of \( \theta \) based on \( T_n \).
+
+\examstatement{Problem 8. [15 pts.]}
+Let \( X_1, \dots, X_n \) be iid \( \sim \exp(\lambda) \) (with pdf \( \lambda e^{-\lambda x} \) for \( x > 0 \)). Let \( \phi = P_\lambda(X_1 > x) = e^{-\lambda x} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Find a complete and sufficient statistic for \( \lambda \).
+    \item Find the UMVUE of \( \phi \).
+\end{enumerate}
+
+\examstatement{Problem 9. [15 pts.]}
+Let \( X_1, \dots, X_n \) be iid Bernoulli\( (p) \) random variables with \( 0 < p < 1 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Let \( g(p) = p^k + (1-p)^{n-k} \) where \( k \) is a nonnegative integer and \( 0 \le k \le n \). Find the BUE (UMVUE) for \( g(p) \).
+    \item Prove that \( \overline{X} = \frac{\sum_{i=1}^n X_i}{n} \) is an admissible estimator/rule of \( p \) under the loss function \( l(p, a) = \frac{(p-a)^2}{p(1-p)} \).
+\end{enumerate}
+
+\examstatement{Problem 10. [10 pts.]}
+Let \( X_1, \dots, X_n \) be iid from the uniform distribution \( U(0, \theta) \) with \( \theta > 0 \) unknown. Suppose that the prior on \( \theta \) is lognormal, i.e., \( \ln \theta \) follows \( N(\mu_0, \sigma_0^2) \) distribution where \( \mu_0 \in \mathbb{R} \) and \( \sigma_0 > 0 \) are known constants.
+\begin{enumerate}[label=(\alph*)]
+    \item Find the posterior density of \( \ln \theta \).
+    \item Suppose that one defines the Bayes estimate for \( \theta \) as the value that maximizes the posterior density of \( \theta \). Find this Bayes estimator. Is it consistent for \( \theta \)? Please explain your answer.
+\end{enumerate}
+
+\examstatement{Problem 11. [10 pts.]}
+Let \( X_1, \dots, X_n \) be iid random variables following a discrete uniform distribution on the set \( 1, 2, \dots, \theta \), where \( \theta \) is an unknown positive integer. Let \( \theta_0 \) be a known positive integer. Let \( X_{(n)} \) be the largest order statistic and \( x_{(n)} \) be its realized value. We are interested in the hypothesis testing problems below at level \( 0 < \alpha < 1 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Consider testing \( H_0 : \theta \le \theta_0 \) versus \( H_1 : \theta > \theta_0 \). Show that
+
+    \[
+    \phi(x) =
+    \begin{cases}
+    1 & \text{if } x_{(n)} > \theta_0, \\
+    \alpha & \text{if } x_{(n)} \le \theta_0
+    \end{cases}
+    \]
+
+    is a (randomized) UMP test of size \( \alpha \).
+    \item Now consider testing \( H_0 : \theta = \theta_0 \) versus \( H_1 : \theta \neq \theta_0 \). Show that
+
+    \[
+    \phi(x) =
+    \begin{cases}
+    1 & \text{if } x_{(n)} > \theta_0 \text{ or } x_{(n)} \le \theta_0 \alpha^{1/n}, \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+
+    is a UMP test of size \( \alpha \) when \( \theta_0 \alpha^{1/n} \) is an integer.
+\end{enumerate}
 
 \noindent\rule{\linewidth}{0.4pt}
 
-\begin{enumerate}[label=\textbf{\arabic*.}]
-    \item \textbf{(10 points)} Let $X$ and $N$ be independent random variables. $X \sim \mathrm{Exp}(1)$ (density $e^{-x}\mathbf{1}_{\{x > 0\}}$) and $N \sim \mathrm{Poisson}(\lambda)$ for $\lambda > 0$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Find all $\lambda > 0$ such that $\E[X^N] < \infty$.
-        \item Calculate $\E[X^N]$ under the above condition on $\lambda$.
-        \item Is there any $\lambda > 0$ such that $\Var[X^N] < \infty$? Justify your answer.
-    \end{enumerate}
+\section{Statement and solutions}
 
-    \item \textbf{(10 points)} Let $X, Y$ be independent uniform on $[0, 1]$, and $Z \coloneqq \max\{X, Y\}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Determine the distribution of $Z$ conditioned on $\{X + Y \in [0, 1]\}$.
-        \item Determine the distribution of $Z$ conditioned on $\{X + Y \in [1, 2]\}$.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $(X_n, \mathcal{F}_n)$ be a martingale.
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that if $(X_n^2, \mathcal{F}_n)$ is also a martingale, then $X_m = X_n$ a.s.\ for any $m, n \in \mathbb{N}$.
-        \item Prove that if $(|X_n|^p, \mathcal{F}_n)$ is a martingale for some $p > 1$, then $(|X_n|^q, \mathcal{F}_n)$ is also a martingale for every $1 \le q \le p$.
-    \end{enumerate}
-
-    \item \textbf{(15 points)} Given independent random variables $(X_n)_{n \in \mathbb{N}}$ satisfying
-    \[
-    \forall n \in \mathbb{N}, \qquad \Pbb(X_n = -1) = \frac{1}{2}, \qquad \Pbb(X_n = 4n) = \frac{1}{8n}, \qquad \Pbb(X_n = 0) = \frac{1}{2} - \frac{1}{8n},
-    \]
-    and denote $S_n \coloneqq \sum_{k=1}^n X_k$. Prove that almost surely
-    \[
-    \liminf_{n \to \infty} \frac{S_n}{n} < 0 < \limsup_{n \to \infty} \frac{S_n}{n}.
-    \]
-
-    \item \textbf{(10 points)} Let $B_t$ be 1D standard Brownian motion with $B_0 = 0$. Define $X_t = \exp(B_t - \frac{1}{2}t)$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that $X_t$ converges almost surely as $t \to \infty$.
-        \item For $t > 0$, calculate $\E \int_0^t X_s ds$ and $\Var \int_0^t X_s ds$.
-        \item Show that $\int_0^\infty X_t dt < \infty$ a.s.
-    \end{enumerate}
-
-    \item \textbf{(15 points)} Let $M = \begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix}$ be a symmetric random matrix, where $X_1, X_2 \stackrel{\text{i.i.d.}}{\sim} \mathcal{N}(0, 2)$ and $Y \sim \mathcal{N}(0, 1)$ are independent. Let $\lambda_1 \ge \lambda_2$ be eigenvalues of $M$, and $\mathbf{v}_1, \mathbf{v}_2$ unit eigenvectors.
-    \begin{enumerate}[label=(\alph*)]
-        \item Find the distribution of $\lambda_1 + \lambda_2$.
-        \item Find the distribution of $\lambda_1 - \lambda_2$.
-        \item Are $\lambda_1$ and $\lambda_2$ independent? Prove your claim.
-        \item Prove that the joint distribution of $(\mathbf{v}_1, \mathbf{v}_2)$ is invariant under orthogonal transformations.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Suppose $\hat{\theta}_n$ is a real-valued consistent estimator of $\theta \in [-1, 1]$ based on $n$ observations. Let $T_n$ be a sufficient statistic for $\theta$. Show there exists a consistent estimator of $\theta$ based on $T_n$.
-
-    \item \textbf{(15 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Exp}(\lambda)$ (pdf $\lambda e^{-\lambda x}$ for $x > 0$). Let $\phi = P_\lambda(X_1 > x) = e^{-\lambda x}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Find a complete and sufficient statistic for $\lambda$.
-        \item Find the UMVUE of $\phi$.
-    \end{enumerate}
-
-    \item \textbf{(15 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Bernoulli}(p)$ with $0 < p < 1$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Let $g(p) = p^k + (1-p)^{n-k}$ ($0 \le k \le n$). Find the UMVUE for $g(p)$.
-        \item Prove that $\overline{X}$ is admissible for $p$ under loss $l(p, a) = \frac{(p-a)^2}{p(1-p)}$.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $X_1, \dots, X_n \stackrel{\text{i.i.d.}}{\sim} \mathrm{Uniform}(0, \theta)$ with $\theta > 0$. Prior on $\theta$ is lognormal ($\ln\theta \sim \mathcal{N}(\mu_0, \sigma_0^2)$).
-    \begin{enumerate}[label=(\alph*)]
-        \item Find the posterior density of $\ln\theta$.
-        \item Find the MAP (mode) estimator of $\theta$. Is it consistent? Explain.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $X_1, \dots, X_n$ be i.i.d.\ Discrete Uniform on $\{1, 2, \dots, \theta\}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item For testing $H_0 : \theta \le \theta_0$ vs. $H_1 : \theta > \theta_0$, show that
-        \[
-        \phi(\mathbf{x}) = \begin{cases} 1, & \text{if } x_{(n)} > \theta_0, \\ \alpha, & \text{if } x_{(n)} \le \theta_0 \end{cases}
-        \]
-        is a randomized UMP test of size $\alpha$.
-        \item For testing $H_0 : \theta = \theta_0$ vs. $H_1 : \theta \neq \theta_0$, show that
-        \[
-        \phi(\mathbf{x}) = \begin{cases} 1, & \text{if } x_{(n)} > \theta_0 \text{ or } x_{(n)} \le \theta_0 \alpha^{1/n}, \\ 0, & \text{otherwise} \end{cases}
-        \]
-        is a UMP test of size $\alpha$ when $\theta_0 \alpha^{1/n}$ is an integer.
-    \end{enumerate}
+\subsection{Problem 1. [10 pts.]}
+Let \( X \) and \( N \) be two independent random variables. Suppose \( X \) follows the standard exponential distribution (i.e., with probability density function \( e^{-x} \mathbf{1}_{\{x>0\}} \)), and \( N \) follows the Poisson distribution with parameter \( \lambda > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Find all \( \lambda > 0 \) such that \( \mathbb{E}[X^N] < \infty \).
+    \item Calculate the expectation of \( \mathbb{E}[X^N] \) under the above condition on \( \lambda \).
+    \item Is there any \( \lambda > 0 \) such that \( \mathrm{Var}[X^N] < \infty \)? Justify your answer.
 \end{enumerate}
+
+\setcounter{section}{1}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+\begin{lemma}[Moments of the standard exponential]
+\label{lem:p1-exp-mom}
+If \(X\sim\mathrm{Exp}(1)\) (density \(e^{-x}\mathbf{1}_{x>0}\)) and \(k\in\mathbb{N}\cup\{0\}\), then \(\E[X^k]=\Gamma(k+1)=k!\). (Convention: \(X^0=1\) and \(0!=1\).)
+\end{lemma}
+
+\begin{proof}
+\(\E[X^k]=\int_0^\infty x^k e^{-x}\,dx=\Gamma(k+1)=k!\).
+\end{proof}
+
+\begin{lemma}[Law of total expectation under independence]
+\label{lem:p1-tower}
+If \(X\perp N\) and \(g\ge 0\) is measurable, then \(\E[g(X,N)]=\E\bigl[\E[g(X,N)\mid N]\bigr]\). In particular, on \(\{N=n\}\) one has \(\E[X^N\mid N=n]=\E[X^n]\).
+\end{lemma}
+
+\begin{proof}
+Independence implies that the conditional law of \(X\) given \(N=n\) is the unconditional law of \(X\).
+\end{proof}
+
+\subsubsection{(a)--(b)}
+
+By \cref{lem:p1-tower,lem:p1-exp-mom} and nonnegativity (Tonelli),
+\[
+\E[X^N]
+=
+\E\bigl[\E[X^N\mid N]\bigr]
+=
+\sum_{n=0}^\infty \E[X^n]\,\Pbb(N=n)
+=
+\sum_{n=0}^\infty n!\cdot\frac{e^{-\lambda}\lambda^n}{n!}
+=
+e^{-\lambda}\sum_{n=0}^\infty \lambda^n.
+\]
+The geometric series \(\sum_{n=0}^\infty\lambda^n\) converges if and only if \(0<\lambda<1\) (since \(\lambda>0\)), in which case its sum is \(1/(1-\lambda)\). For \(\lambda\ge 1\) the general term does not tend to \(0\), so the series diverges and \(\E[X^N]=\infty\).
+
+Thus \(\E[X^N]<\infty\) if and only if \(\lambda\in(0,1)\), and then
+\[
+\E[X^N]
+=
+\frac{e^{-\lambda}}{1-\lambda}.
+\]
+\qed
+
+\subsubsection{(c)}
+
+We claim that \(\Var(X^N)=\infty\) for every \(\lambda>0\). Indeed,
+\[
+\Var(X^N)
+=
+\E[X^{2N}]-(\E[X^N])^2,
+\]
+so it is enough to show \(\E[X^{2N}]=\infty\). By the same conditioning,
+\[
+\E[X^{2N}]
+=
+\sum_{n=0}^\infty \E[X^{2n}]\,\Pbb(N=n)
+=
+e^{-\lambda}\sum_{n=0}^\infty \frac{(2n)!}{n!}\,\lambda^n.
+\]
+For \(n\ge 1\),
+\[
+\frac{(2n)!}{n!}
+=
+(n+1)\cdots(2n)
+\ge
+n^n,
+\]
+hence
+\[
+\frac{(2n)!}{n!}\,\lambda^n
+\ge
+(n\lambda)^n.
+\]
+For any fixed \(\lambda>0\) one has \((n\lambda)^n\to\infty\), so the general term of the series does not tend to \(0\). Therefore \(\E[X^{2N}]=\infty\), and \(\Var(X^N)=\infty\). In particular there is no \(\lambda>0\) with finite variance.
+\qed
+
+\begin{remark*}
+Your handwritten argument for (a)--(c) is correct in substance. The only polish needed in (c) is a clean lower bound such as \((2n)!/n!\ge n^n\), which avoids an informal appeal to Stirling.
+\end{remark*}
+
+\subsection{Problem 2. [10 pts.]}
+Let \( X, Y \) be two independent random variables uniformly distributed on \( [0, 1] \), and define
+
+\[
+Z := \max\{X, Y\}.
+\]
+
+\begin{enumerate}[label=(\alph*)]
+    \item Determine the distribution of \( Z \) conditioned on \( \{X + Y \in [0, 1]\} \).
+    \item Determine the distribution of \( Z \) conditioned on \( \{X + Y \in [1, 2]\} \).
+\end{enumerate}
+
+\setcounter{section}{2}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+The pair \((X,Y)\) is uniform on the unit square \([0,1]^2\), so probabilities equal areas. Note \(\{Z\le z\}=\{X\le z,\,Y\le z\}\). Also \(X+Y\in[0,2]\) a.s., and by symmetry
+\[
+\Pbb(X+Y\le 1)=\Pbb(X+Y\ge 1)=\tfrac12.
+\]
+
+\subsubsection{(a) Law of \(Z\mid X+Y\in[0,1]\)}
+
+For \(z\in\mathbb{R}\),
+\[
+\Pbb(Z\le z\mid X+Y\le 1)
+=
+\frac{\Pbb(X\le z,\,Y\le z,\,X+Y\le 1)}{1/2}
+=
+2\,\mathrm{Area}\bigl([0,z]^2\cap\{x+y\le 1\}\cap[0,1]^2\bigr).
+\]
+
+\textit{Case \(z\le 0\):} the probability is \(0\).
+
+\textit{Case \(0<z\le\tfrac12\):} the square \([0,z]^2\) lies entirely in \(\{x+y\le 1\}\), so the numerator area is \(z^2\) and
+\[
+\Pbb(Z\le z\mid X+Y\le 1)=2z^2.
+\]
+
+\textit{Case \(\tfrac12<z\le 1\):} the region is the square corner cut by the diagonal. Splitting the integral,
+\begin{align*}
+\mathrm{Area}
+&=
+\int_0^{1-z}\int_0^z\,dx\,dy
++
+\int_{1-z}^z\int_0^{1-y}\,dx\,dy
+=
+z(1-z)
++
+\int_{1-z}^z(1-y)\,dy
+=
+z(1-z)+\Bigl(z-\tfrac12\Bigr)
+=
+2z-z^2-\tfrac12.
+\end{align*}
+Hence the conditional CDF is \(4z-2z^2-1\).
+
+\textit{Case \(z>1\):} the probability is \(1\).
+
+Differentiating the CDF yields the conditional density
+\[
+f_{Z\mid X+Y\le 1}(z)
+=
+\begin{cases}
+4z,& 0<z\le\tfrac12,\\
+4-4z,& \tfrac12<z<1,\\
+0,& \text{otherwise}.
+\end{cases}
+\]
+\qed
+
+\subsubsection{(b) Law of \(Z\mid X+Y\in[1,2]\)}
+
+Now the denominator is again \(\tfrac12\). For \(z\le\tfrac12\), if \(X,Y\le z\) then \(X+Y\le 1\), so the intersection with \(\{X+Y\ge 1\}\) is empty and the conditional CDF vanishes. For \(z\ge 1\) it equals \(1\).
+
+For \(z\in(\tfrac12,1)\), the numerator area is
+\begin{align*}
+\int_{1-z}^z\int_{1-y}^z\,dx\,dy
+&=
+\int_{1-z}^z(y+z-1)\,dy
+=
+\tfrac12\bigl(z^2-(1-z)^2\bigr)+z(2z-1)-(2z-1)
+=
+\tfrac12(2z-1)^2.
+\end{align*}
+Dividing by \(\tfrac12\) gives the conditional CDF \((2z-1)^2\). Differentiating,
+\[
+f_{Z\mid X+Y\ge 1}(z)
+=
+(8z-4)\,\mathbf{1}_{(\frac12,1)}(z).
+\]
+(Equivalently \(4(2z-1)\) on \((\frac12,1)\).)
+
+\begin{remark*}
+Your CDF for (b) was correct; the density must be the derivative \(2(2z-1)\cdot 2=8z-4\), not \(4z-2\).
+\end{remark*}
+\qed
+
+\subsection{Problem 3. [10 pts.]}
+Let \( (X_n, \mathcal{F}_n) \) be a martingale.
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that if \( (X_n^2, \mathcal{F}_n) \) is also a martingale, then \( X_m = X_n \) a.s.\ for any \( m, n \in \mathbb{N} \).
+    \item Prove that if \( (|X_n|^p, \mathcal{F}_n) \) is a martingale for some \( p > 1 \), then \( (|X_n|^q, \mathcal{F}_n) \) is also a martingale for every \( 1 \le q \le p \).
+\end{enumerate}
+
+\setcounter{section}{3}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+\begin{lemma}[Conditional Jensen]
+\label{lem:p3-jensen}
+If \(\varphi:\mathbb{R}\to\mathbb{R}\) is convex and \(\E|\varphi(Y)|<\infty\), then \(\varphi(\E[Y\mid\mathcal{G}])\le\E[\varphi(Y)\mid\mathcal{G}]\) a.s. If \(\varphi\) is concave, the inequality reverses.
+\end{lemma}
+
+\begin{lemma}[Hölder]
+\label{lem:p3-holder}
+For conjugate exponents \(s,t\in(1,\infty)\) with \(\frac1s+\frac1t=1\) and nonnegative random variables \(A,B\),
+\[
+\E[AB]\le(\E[A^s])^{1/s}(\E[B^t])^{1/t}.
+\]
+\end{lemma}
+
+\subsubsection{(a) Proof}
+
+Assume \((X_n)\) and \((X_n^2)\) are martingales. Fix \(n\). Then
+\begin{align*}
+\E[(X_{n+1}-X_n)^2]
+&=
+\E\bigl[\E[(X_{n+1}-X_n)^2\mid\mathcal{F}_n]\bigr]
+=
+\E\bigl[
+\E[X_{n+1}^2\mid\mathcal{F}_n]
+-2X_n\E[X_{n+1}\mid\mathcal{F}_n]
++X_n^2
+\bigr]
+=
+\E[X_n^2-2X_n\cdot X_n+X_n^2]
+=
+0.
+\end{align*}
+Since \((X_{n+1}-X_n)^2\ge 0\), one concludes \(X_{n+1}=X_n\) a.s. For \(m>n\),
+\[
+\Pbb(X_n\neq X_m)
+\le
+\sum_{k=n}^{m-1}\Pbb(X_k\neq X_{k+1})=0,
+\]
+so \(X_n=X_m\) a.s. The case \(m<n\) is symmetric.
+\qed
+
+\begin{remark*}
+Your argument via \(\E[(X_{n+1}-X_n)^2]=0\) is exactly the standard one; the countable-union/Chebyshev route is unnecessary once the \(L^2\) identity is available.
+\end{remark*}
+
+\subsubsection{(b) Proof}
+
+Fix \(1\le q\le p\). We must show that \((|X_n|^q,\mathcal{F}_n)\) is a martingale.
+
+\paragraph{Integrability.}
+If \(q=1\), \(\E|X_n|<\infty\) by the standing martingale assumption on \(X\). If \(1<q\le p\), apply Hölder to \(|X_n|^q=|X_n|^q\cdot 1\) with exponents \(p/q\) and \(p/(p-q)\) (or note \(\E|X_n|^q\le 1+\E|X_n|^p<\infty\)).
+
+\paragraph{Upper bound (concave Jensen).}
+The map \(t\mapsto t^{q/p}\) is concave on \([0,\infty)\). Using that \(|X|^p\) is a martingale,
+\begin{align*}
+\E\bigl[|X_{n+1}|^q\bigm|\mathcal{F}_n\bigr]
+&=
+\E\bigl[(|X_{n+1}|^p)^{q/p}\bigm|\mathcal{F}_n\bigr]
+\le
+\bigl(\E[|X_{n+1}|^p\mid\mathcal{F}_n]\bigr)^{q/p}
+=
+(|X_n|^p)^{q/p}
+=
+|X_n|^q.
+\end{align*}
+
+\paragraph{Lower bound (convex Jensen on the original martingale).}
+The map \(x\mapsto|x|^q\) is convex for \(q\ge 1\), and \(X\) is a martingale, so
+\[
+\E\bigl[|X_{n+1}|^q\bigm|\mathcal{F}_n\bigr]
+\ge
+\bigl|\E[X_{n+1}\mid\mathcal{F}_n]\bigr|^q
+=
+|X_n|^q.
+\]
+
+\paragraph{Conclusion.}
+The two inequalities force
+\[
+\E\bigl[|X_{n+1}|^q\bigm|\mathcal{F}_n\bigr]
+=
+|X_n|^q
+\quad\text{a.s.}
+\]
+Together with adaptedness and integrability, \((|X_n|^q)\) is a martingale.
+\qed
+
+\begin{remark*}[Correction to the handwritten (b)]
+The claim is that \(|X_n|^q\) is a \emph{martingale}, not merely a submartingale. One inequality comes from concavity of \(t^{q/p}\) (using that \(|X|^p\) is a martingale), the other from convexity of \(|\cdot|^q\) (using that \(X\) is a martingale). Your notes had the convex/concave directions arranged so as to produce only a submartingale bound; both directions are needed for equality.
+\end{remark*}
+
+\subsection{Problem 4. [15 pts.]}
+Given independent random variables \( (X_n)_{n \in \mathbb{N}} \) satisfying
+
+\[
+\forall n \in \mathbb{N}, \qquad
+\mathbb{P}(X_n = -1) = \frac{1}{2}, \qquad
+\mathbb{P}(X_n = 4n) = \frac{1}{8n}, \qquad
+\mathbb{P}(X_n = 0) = \frac{1}{2} - \frac{1}{8n},
+\]
+
+and denote \( S_n := \sum_{k=1}^n X_k \). Prove that almost surely
+
+\[
+\liminf_{n \to \infty} \frac{S_n}{n} < 0 < \limsup_{n \to \infty} \frac{S_n}{n}.
+\]
+
+\setcounter{section}{4}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Strategy}
+
+Write \(A_n:=\{X_n=4n\}\) and \(S_n=\sum_{k=1}^n X_k\). The claim is a statement about the \emph{numerical} liminf/limsup of the sequence \(S_n/n\), not about liminf/limsup of events. (In particular, writing ``\(\limsup A_n\)'' for events is a different object; here the relevant events are of the form \(\{S_n/n>\varepsilon\}\), \(\{S_n/n<-\varepsilon\}\).)
+
+A first computation explains why a naive SLLN does not settle the problem: for each \(n\),
+\[
+\E[X_n]
+=
+(-1)\cdot\tfrac12
++
+4n\cdot\tfrac1{8n}
++
+0\cdot\Bigl(\tfrac12-\tfrac1{8n}\Bigr)
+=
+0,
+\]
+so the means vanish, but
+\[
+\E[X_n^2]
+\ge
+(4n)^2\cdot\tfrac1{8n}
+=
+2n\to\infty.
+\]
+Thus the variances explode and the usual Kolmogorov condition \(\sum_n\Var(X_n)/n^2<\infty\) fails. The large positive jumps \(\{X_n=4n\}\) are rare (\(\Pbb(A_n)=1/(8n)\)) but strong enough to push \(S_n/n\) above a fixed positive level infinitely often; between those jumps the truncated walk behaves like an i.i.d.\ average with negative mean. The proof therefore splits into two halves.
+
+\begin{itemize}
+    \item \textbf{Limsup \(>0\).} Borel--Cantelli II gives \(\Pbb(A_n\text{ i.o.})=1\). On \(A_n\) one has the elementary lower bound \(S_n/n>3\).
+    \item \textbf{Liminf \(<0\).} Truncate the jumps: \(X_n=Y_n+4n\mathbf{1}_{A_n}\) with \(Y_n\) i.i.d., \(\E Y_1=-\tfrac12\). Then
+    \[
+    \frac{S_n}{n}
+    =
+    \frac1n\sum_{k=1}^n Y_k
+    +
+    J_n,
+    \qquad
+    J_n:=\frac4n\sum_{k=1}^n k\,\mathbf{1}_{A_k}.
+    \]
+    The first average tends to \(-\tfrac12\) a.s.\ by the \(L^2\) SLLN. The jump average \(J_n\) need not tend to \(0\) (indeed \(\E J_n=\tfrac12\)), but it \emph{dilutes} along a sparse subsequence of dyadic times: \(\liminf_n J_n=0\) a.s. Hence \(\liminf_n S_n/n=-\tfrac12<0\) a.s.
+\end{itemize}
+
+\subsubsection{Preliminaries}
+
+Throughout, write \(A_n\text{ i.o.}\) for the event \(\limsup_n A_n=\bigcap_N\bigcup_{n\ge N}A_n\).
+
+\begin{lemma}[Borel--Cantelli I]
+\label{lem:p4-bc1}
+If \((A_n)_{n\ge 1}\) are events with \(\sum_n\Pbb(A_n)<\infty\), then \(\Pbb(A_n\text{ i.o.})=0\).
+\end{lemma}
+
+\begin{proof}
+For every \(N\),
+\[
+\Pbb(A_n\text{ i.o.})
+\le
+\Pbb\Bigl(\bigcup_{n\ge N}A_n\Bigr)
+\le
+\sum_{n\ge N}\Pbb(A_n).
+\]
+The right-hand side tends to \(0\) as \(N\to\infty\) because the series converges.
+\end{proof}
+
+\begin{lemma}[Borel--Cantelli II]
+\label{lem:p4-bc2}
+If \((A_n)_{n\ge 1}\) are independent and \(\sum_n\Pbb(A_n)=\infty\), then \(\Pbb(A_n\text{ i.o.})=1\).
+\end{lemma}
+
+\begin{proof}
+It is enough to show \(\Pbb\bigl(\bigcap_{n\ge N}A_n^c\bigr)=0\) for every \(N\). Independence and \(1-x\le e^{-x}\) give
+\[
+\Pbb\Bigl(\bigcap_{n=N}^{N+M}A_n^c\Bigr)
+=
+\prod_{n=N}^{N+M}\bigl(1-\Pbb(A_n)\bigr)
+\le
+\exp\Bigl(-\sum_{n=N}^{N+M}\Pbb(A_n)\Bigr).
+\]
+Letting \(M\to\infty\) and using \(\sum_{n\ge N}\Pbb(A_n)=\infty\) yields the claim.
+\end{proof}
+
+\begin{lemma}[Kolmogorov's maximal inequality]
+\label{lem:p4-maximal}
+Let \(Z_1,\dots,Z_n\) be independent with \(\E Z_k=0\) and \(\E Z_k^2<\infty\). Write \(T_m=\sum_{k=1}^m Z_k\). Then for every \(\varepsilon>0\),
+\[
+\Pbb\Bigl(\max_{1\le m\le n}\lvert T_m\rvert\ge\varepsilon\Bigr)
+\le
+\frac{1}{\varepsilon^2}\Var(T_n).
+\]
+\end{lemma}
+
+\begin{proof}
+Let \(\tau:=\min\{m\in\{1,\dots,n\}:\lvert T_m\rvert\ge\varepsilon\}\), with the convention \(\tau=n\) if the set is empty. Expanding \(T_n=T_\tau+(T_n-T_\tau)\) on \(\{\max_m\lvert T_m\rvert\ge\varepsilon\}\) and using independence of the future increments from \(\mathcal{F}_m:=\sigma(Z_1,\dots,Z_m)\) shows that the cross term vanishes:
+\[
+\E\bigl[T_m(T_n-T_m)\mathbf{1}_{\{\tau=m\}}\bigr]
+=
+\E\bigl[T_m\mathbf{1}_{\{\tau=m\}}\cdot\E[T_n-T_m\mid\mathcal{F}_m]\bigr]
+=
+0.
+\]
+The remainder \(\E[(T_n-T_\tau)^2\mathbf{1}_{\{\cdots\}}]\) is nonnegative, so
+\[
+\E[T_n^2]
+\ge
+\E[T_\tau^2\mathbf{1}_{\{\max_m\lvert T_m\rvert\ge\varepsilon\}}]
+\ge
+\varepsilon^2\Pbb\Bigl(\max_m\lvert T_m\rvert\ge\varepsilon\Bigr).
+\]
+\end{proof}
+
+\begin{lemma}[Kolmogorov's series criterion]
+\label{lem:p4-kolmogorov}
+Let \((Z_k)_{k\ge 1}\) be independent with \(\E Z_k=0\) and \(\sum_k\Var(Z_k)<\infty\). Then \(\sum_{k=1}^\infty Z_k\) converges almost surely.
+\end{lemma}
+
+\begin{proof}
+Let \(T_n=\sum_{k=1}^n Z_k\). For \(N<M\) and \(\varepsilon>0\), \cref{lem:p4-maximal} applied to \(Z_{N+1},\dots,Z_M\) yields
+\[
+\Pbb\Bigl(\max_{N\le m\le M}\lvert T_m-T_N\rvert\ge\varepsilon\Bigr)
+\le
+\frac{1}{\varepsilon^2}\sum_{k=N+1}^M\Var(Z_k).
+\]
+Letting \(M\to\infty\) and then \(N\to\infty\), the right-hand side tends to \(0\). Thus \((T_n)\) is a.s.\ Cauchy, hence converges a.s.
+\end{proof}
+
+\begin{lemma}[Kronecker]
+\label{lem:p4-kronecker}
+Let \((x_k)_{k\ge 1}\) be real numbers such that \(\sum_{k=1}^\infty x_k\) converges, and let \(0<b_k\uparrow\infty\). Then
+\[
+\frac{1}{b_n}\sum_{k=1}^n b_k x_k\to 0.
+\]
+\end{lemma}
+
+\begin{proof}
+Write \(s_n=\sum_{k=1}^n x_k\) and \(s_0=0\), so \(s_n\to s\in\mathbb{R}\). Summation by parts gives
+\[
+\sum_{k=1}^n b_k x_k
+=
+b_n s_n-\sum_{k=1}^{n-1}s_k(b_{k+1}-b_k),
+\]
+hence
+\[
+\frac{1}{b_n}\sum_{k=1}^n b_k x_k
+=
+s_n-\frac{1}{b_n}\sum_{k=1}^{n-1}s_k(b_{k+1}-b_k).
+\]
+Fix \(\varepsilon>0\) and choose \(K\) so that \(\lvert s_k-s\rvert<\varepsilon\) for all \(k\ge K\). Split the sum at \(K\). The finite initial piece, divided by \(b_n\), tends to \(0\). The remaining piece equals
+\[
+s\Bigl(1-\frac{b_K}{b_n}\Bigr)
++
+\theta_n\varepsilon\Bigl(1-\frac{b_K}{b_n}\Bigr)
+\]
+for some \(\lvert\theta_n\rvert\le 1\). Therefore
+\[
+\limsup_{n\to\infty}\Biggl\lvert\frac{1}{b_n}\sum_{k=1}^n b_k x_k-s_n+s\Biggr\rvert
+\le\varepsilon.
+\]
+Since \(\varepsilon\) is arbitrary and \(s_n\to s\), the claim follows.
+\end{proof}
+
+\begin{lemma}[SLLN for i.i.d.\ square-integrable variables]
+\label{lem:p4-slln}
+Let \((Y_k)_{k\ge 1}\) be i.i.d.\ with \(\E Y_1^2<\infty\). Then
+\[
+\frac{1}{n}\sum_{k=1}^n Y_k\to\E Y_1
+\qquad\text{a.s.}
+\]
+\end{lemma}
+
+\begin{proof}
+Replacing \(Y_k\) by \(Y_k-\E Y_1\), assume \(\E Y_1=0\). Set \(Z_k=Y_k/k\). Then \(\E Z_k=0\) and
+\[
+\sum_{k=1}^\infty\Var(Z_k)
+=
+\Var(Y_1)\sum_{k=1}^\infty\frac{1}{k^2}<\infty.
+\]
+\Cref{lem:p4-kolmogorov} yields a.s.\ convergence of \(\sum_k Y_k/k\). Applying \cref{lem:p4-kronecker} with \(x_k=Y_k/k\) and \(b_k=k\) gives \(\frac1n\sum_{k=1}^n Y_k\to 0\) a.s.
+\end{proof}
+
+\begin{lemma}[Dyadic jump blocks]
+\label{lem:p4-blocks}
+Let \(A_k=\{X_k=4k\}\) and, for \(i\ge 1\), set \(I_i=\{2^{i-1}+1,\dots,2^i\}\) and
+\[
+R_i
+:=
+\frac{4}{2^i}\sum_{k\in I_i}k\,\mathbf{1}_{A_k}.
+\]
+Then the following hold.
+\begin{enumerate}[label=(\roman*)]
+    \item The random variables \((R_i)_{i\ge 1}\) are independent.
+    \item \(\E R_i=\frac14\) and \(\sup_i\E[R_i^2]<\infty\).
+    \item \(\Pbb(R_i=0)\to 2^{-1/8}\in(0,1)\).
+    \item Almost surely, \(R_i\le i^2\) for all sufficiently large \(i\).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i)\, Each \(R_i\) is a measurable function of \((A_k)_{k\in I_i}\), and the blocks \(I_i\) are disjoint, so independence of \((A_k)\) yields independence of \((R_i)\).
+
+(ii)\, Since \(\Pbb(A_k)=\frac1{8k}\),
+\[
+\E R_i
+=
+\frac{4}{2^i}\sum_{k\in I_i}k\cdot\frac{1}{8k}
+=
+\frac{4}{2^i}\cdot\frac{\lvert I_i\rvert}{8}
+=
+\frac{\lvert I_i\rvert}{2^{i+1}}.
+\]
+As \(\lvert I_i\rvert=2^{i-1}\), one has \(\E R_i=\frac14\). Moreover,
+\begin{align*}
+\Var(R_i)
+&=
+\frac{16}{2^{2i}}\sum_{k\in I_i}k^2\Pbb(A_k)\bigl(1-\Pbb(A_k)\bigr)
+\le
+\frac{16}{2^{2i}}\sum_{k\in I_i}k^2\cdot\frac{1}{8k}
+=
+\frac{2}{2^{2i}}\sum_{k\in I_i}k
+\le
+\frac{2}{2^{2i}}\cdot 2^i\cdot 2^i
+=
+2,
+\end{align*}
+so \(\E[R_i^2]=\Var(R_i)+(\E R_i)^2\le 2+\tfrac1{16}\).
+
+(iii)\, Independence gives
+\[
+\Pbb(R_i=0)
+=
+\prod_{k\in I_i}\Bigl(1-\frac{1}{8k}\Bigr).
+\]
+Using \(\log(1-x)=-x+O(x^2)\) as \(x\to 0\),
+\[
+\log\Pbb(R_i=0)
+=
+\sum_{k\in I_i}\log\Bigl(1-\frac{1}{8k}\Bigr)
+=
+-\sum_{k\in I_i}\frac{1}{8k}
++
+O\Bigl(\sum_{k\in I_i}\frac{1}{k^2}\Bigr).
+\]
+The error is \(O(2^{-i})\), while \(\sum_{k=2^{i-1}+1}^{2^i}1/k=\log 2+o(1)\). Hence \(\log\Pbb(R_i=0)\to -\frac18\log 2\), i.e.\ \(\Pbb(R_i=0)\to 2^{-1/8}\).
+
+(iv)\, By (ii) and Markov,
+\[
+\Pbb(R_i>i^2)
+\le
+\frac{\E[R_i^2]}{i^4}
+\le
+\frac{C}{i^4}
+\]
+for a constant \(C\) independent of \(i\). Thus \(\sum_i\Pbb(R_i>i^2)<\infty\), and \cref{lem:p4-bc1} yields \(\Pbb(R_i>i^2\text{ i.o.})=0\).
+\end{proof}
+
+\begin{lemma}[Dilution of the jump contribution]
+\label{lem:p4-dilute}
+Almost surely,
+\[
+\liminf_{m\to\infty}J_{2^m}=0,
+\qquad
+\text{where}
+\qquad
+J_n
+:=
+\frac{4}{n}\sum_{k=1}^n k\,\mathbf{1}_{A_k}.
+\]
+In particular \(\liminf_{n\to\infty}J_n=0\) a.s.
+\end{lemma}
+
+\begin{proof}
+\textit{Step 1 (dyadic decomposition).}
+For \(n=2^m\) the indicators on the blocks \(I_i\) telescope:
+\[
+J_{2^m}
+=
+\sum_{i=1}^m 2^{i-m}R_i
+=
+\sum_{t=0}^{m-1}2^{-t}R_{m-t},
+\]
+with the convention \(R_0:=0\). Thus \(J_{2^m}\) is a weighted average of the recent block contributions \(R_m,R_{m-1},\dots\), with geometric weights. In particular, if the most recent \(K\) blocks vanish, then only the tail \(t\ge K\) remains.
+
+\textit{Step 2 (sparse independent no-jump windows).}
+Fix \(\varepsilon=\tfrac1{16}\). By \cref{lem:p4-blocks}(iii), there exists \(m_1\) large enough that
+\[
+\Pbb(R_i=0)
+\ge
+q
+:=
+2^{-1/8-\varepsilon}
+\qquad\text{for all }i\ge \tfrac12 m_1.
+\]
+Inductively set
+\[
+K(m):=\bigl\lfloor 4\log_2 m\bigr\rfloor,
+\qquad
+m_{\ell+1}:=m_\ell+\bigl\lfloor 8\log_2 m_\ell\bigr\rfloor,
+\qquad
+K_\ell:=K(m_\ell),
+\]
+and define the windows
+\[
+W_\ell:=\{m_\ell-K_\ell+1,\dots,m_\ell\}.
+\]
+(The gap \(8\log_2 m_\ell\) is twice the window length scale, which prevents overlap when \(K(\,\cdot\,)\) jumps.) Indeed, for large \(\ell\) one has \(m_{\ell+1}\le 2m_\ell\), hence \(K(m_{\ell+1})\le K(m_\ell)+4\), and therefore
+\[
+\min W_{\ell+1}
+=
+m_{\ell+1}-K(m_{\ell+1})+1
+\ge
+m_\ell+8\log_2 m_\ell-K(m_\ell)-4+1
+>
+m_\ell
+=
+\max W_\ell.
+\]
+Thus the windows are pairwise disjoint, and for large \(\ell\) one has \(W_\ell\subset\{i:i\ge\tfrac12 m_1\}\). Define
+\[
+G_\ell:=\{R_i=0\text{ for every }i\in W_\ell\}.
+\]
+Disjointness of the windows and independence of \((R_i)\) imply that the events \((G_\ell)_{\ell\ge 1}\) are independent. Moreover, for large \(\ell\),
+\[
+\Pbb(G_\ell)
+=
+\prod_{i\in W_\ell}\Pbb(R_i=0)
+\ge
+q^{K_\ell}
+=
+m_\ell^{4\log_2 q}
+=
+m_\ell^{-1/2-4\varepsilon}
+=
+m_\ell^{-3/4},
+\]
+because \(4\log_2 q=-1/2-4\varepsilon=-3/4\). Since \(m_\ell\to\infty\) at least linearly in \(\ell\) (in fact \(m_\ell\asymp\ell\log\ell\)), one has \(\sum_\ell\Pbb(G_\ell)=\infty\). \Cref{lem:p4-bc2} therefore yields \(\Pbb(G_\ell\text{ i.o.})=1\).
+
+\textit{Step 3 (dilution on \(G_\ell\)).}
+Work on the almost sure set where \(R_i\le i^2\) for all large \(i\) (\cref{lem:p4-blocks}(iv)) and where \(G_\ell\) occurs for infinitely many \(\ell\). On such an \(\ell\) the recent blocks vanish, so
+\begin{align*}
+J_{2^{m_\ell}}
+&=
+\sum_{t=K_\ell}^{m_\ell-1}2^{-t}R_{m_\ell-t}
+\le
+\sum_{t=K_\ell}^{m_\ell-1}2^{-t}(m_\ell-t)^2
+\le
+m_\ell^2\sum_{t=K_\ell}^\infty 2^{-t}
+\le
+m_\ell^2\cdot 2^{-K_\ell+1}.
+\end{align*}
+But \(2^{K_\ell}\ge\tfrac12 m_\ell^4\), hence \(J_{2^{m_\ell}}\le 4/m_\ell^2\to 0\). Therefore \(\liminf_m J_{2^m}=0\) a.s., and a fortiori \(\liminf_n J_n=0\) a.s.
+\end{proof}
+
+\begin{remark*}[Why dilution is needed]
+A single no-jump block \(\{R_m=0\}\) is not enough: even if \(R_m=0\), the previous blocks \(R_{m-1},R_{m-2},\dots\) still contribute to \(J_{2^m}\) with weights \(\tfrac12,\tfrac14,\dots\). One needs a \emph{long consecutive} stretch of vanishing blocks (length \(\asymp\log m\)) so that the surviving geometric tail is \(O(m^{-2})\). Thinning the candidate times \(m_\ell\) restores independence of these long windows and lets Borel--Cantelli II apply.
+\end{remark*}
+
+\subsubsection{Proof of the claim}
+
+\paragraph{Step A --- \(\limsup_n S_n/n>0\) a.s.}
+The events \((A_n)_{n\ge 1}\) are independent and
+\[
+\sum_{n=1}^\infty\Pbb(A_n)
+=
+\sum_{n=1}^\infty\frac{1}{8n}
+=
+\infty,
+\]
+so \cref{lem:p4-bc2} yields \(\Pbb(A_n\text{ i.o.})=1\).
+
+On the event \(A_n\) one has \(X_n=4n\). Since \(X_k\ge -1\) for every \(k\), one has \(S_{n-1}\ge-(n-1)\), and therefore
+\[
+\frac{S_n}{n}
+=
+\frac{S_{n-1}}{n}+4
+\ge
+-\frac{n-1}{n}+4
+=
+3+\frac{1}{n}
+>
+3.
+\]
+Consequently, on \(\{A_n\text{ i.o.}\}\) one has \(S_n/n>3\) for infinitely many \(n\), which forces
+\[
+\limsup_{n\to\infty}\frac{S_n}{n}
+\ge 3
+>
+0
+\qquad\text{a.s.}
+\]
+
+\paragraph{Step B --- truncation and SLLN.}
+Define the truncated variables
+\[
+Y_n
+:=
+X_n\mathbf{1}_{A_n^c}
+=
+\begin{cases}
+X_n,&\text{on }A_n^c,\\
+0,&\text{on }A_n.
+\end{cases}
+\]
+Then \(Y_n\in\{-1,0\}\). Moreover \(\{Y_n=-1\}=\{X_n=-1\}\) (the events \(\{X_n=-1\}\) and \(A_n\) are disjoint), so
+\[
+\Pbb(Y_n=-1)=\tfrac12,
+\qquad
+\Pbb(Y_n=0)
+=
+\Pbb(X_n=0)+\Pbb(A_n)
+=
+\bigl(\tfrac12-\tfrac1{8n}\bigr)+\tfrac1{8n}
+=
+\tfrac12.
+\]
+Thus \((Y_n)_{n\ge 1}\) is i.i.d.\ with \(\E Y_1=-\tfrac12\) and \(\E Y_1^2<\infty\). \Cref{lem:p4-slln} gives
+\[
+\frac{1}{n}\sum_{k=1}^n Y_k\to-\frac12
+\qquad\text{a.s.}
+\]
+Since \(X_n=Y_n+4n\,\mathbf{1}_{A_n}\),
+\[
+\frac{S_n}{n}
+=
+\frac{1}{n}\sum_{k=1}^n Y_k
++
+J_n,
+\qquad
+J_n
+:=
+\frac{4}{n}\sum_{k=1}^n k\,\mathbf{1}_{A_k}.
+\]
+
+\paragraph{Step C --- \(\liminf_n S_n/n<0\) a.s.}
+\Cref{lem:p4-dilute} yields \(\liminf_n J_n=0\) a.s. If \(a_n\to a\in\mathbb{R}\), then \(\liminf_n(a_n+b_n)=a+\liminf_n b_n\). Applying this with \(a_n=\frac1n\sum_{k=1}^n Y_k\) and \(b_n=J_n\) gives
+\[
+\liminf_{n\to\infty}\frac{S_n}{n}
+=
+-\frac12
++
+0
+=
+-\frac12
+<
+0
+\qquad\text{a.s.}
+\]
+
+Combining Steps A and C finishes the proof.
+\qed
+
+\begin{remark*}[Comparison with the handwritten attempt]
+The event-language identities \(\liminf A_n=\bigcup_n\bigcap_{k\ge n}A_k\) and \(\limsup A_n=\bigcap_n\bigcup_{k\ge n}A_k\) are correct, but the object here is \(\liminf/\limsup\) of the \emph{real sequence} \(S_n/n\). The truncation \(Y_n\) plus dyadic dilution of \(J_n\) is the standard way to turn the rare large jumps into a controllable error while retaining a negative SLLN drift.
+\end{remark*}
+
+\subsection{Problem 5. [10 pts.]}
+Let \( B_t \) be a one-dimensional (1D) standard Brownian motion starting from 0. Define \( X_t = \exp(B_t - \tfrac{1}{2} t) \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( X_t \) converges almost surely at \( t \to \infty \).
+    \item For any \( t > 0 \), calculate
+
+    \[
+    \mathbb{E} \int_0^t X_s\, ds, \qquad \text{and} \qquad \mathrm{Var} \int_0^t X_s\, ds.
+    \]
+    \item Show that
+
+    \[
+    \int_0^\infty X_t\, dt < \infty \qquad \text{a.s.}
+    \]
+\end{enumerate}
+
+\setcounter{section}{5}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{(a) Preliminaries}
+
+We work throughout with a standard one-dimensional Brownian motion \((B_t)_{t\ge 0}\) on a probability space \((\Omega,\mathcal{F},\Pbb)\): \(B_0=0\), continuous paths, and independent increments \(B_t-B_s\sim\mathcal{N}(0,t-s)\) for \(0\le s<t\). In particular \(B_t\sim\mathcal{N}(0,t)\) for each \(t>0\).
+
+The strategy for (a) is elementary and does not use martingale convergence: prove the strong law \(B_t/t\to 0\) almost surely, deduce \(B_t-\frac12 t\to-\infty\) a.s., and conclude \(X_t\to 0\) a.s.\ (hence the limit exists and is finite).
+
+\begin{lemma}[Borel--Cantelli I]
+\label{lem:p5a-bc1}
+If \((A_n)_{n\ge 1}\) are events with \(\sum_n\Pbb(A_n)<\infty\), then \(\Pbb(A_n\text{ i.o.})=0\).
+\end{lemma}
+
+\begin{proof}
+For every \(N\),
+\[
+\Pbb(A_n\text{ i.o.})
+\le
+\Pbb\Bigl(\bigcup_{n\ge N}A_n\Bigr)
+\le
+\sum_{n\ge N}\Pbb(A_n).
+\]
+The right-hand side tends to \(0\) as \(N\to\infty\).
+\end{proof}
+
+\begin{lemma}[Standard Gaussian tail]
+\label{lem:p5a-gauss-tail}
+Let \(Z\sim\mathcal{N}(0,1)\). For every \(x>0\),
+\[
+\Pbb(Z\ge x)
+\le
+\frac{1}{x\sqrt{2\pi}}\,e^{-x^2/2}.
+\]
+Consequently \(\Pbb(\lvert Z\rvert\ge x)\le \sqrt{2/\pi}\,x^{-1}e^{-x^2/2}\).
+\end{lemma}
+
+\begin{proof}
+For \(x>0\),
+\begin{align*}
+\Pbb(Z\ge x)
+&=
+\frac{1}{\sqrt{2\pi}}\int_x^\infty e^{-u^2/2}\,du
+\le
+\frac{1}{\sqrt{2\pi}}\int_x^\infty \frac{u}{x}\,e^{-u^2/2}\,du
+=
+\frac{1}{x\sqrt{2\pi}}\int_x^\infty u\,e^{-u^2/2}\,du
+=
+\frac{1}{x\sqrt{2\pi}}\,e^{-x^2/2}.
+\end{align*}
+The two-sided bound follows by symmetry.
+\end{proof}
+
+\begin{lemma}[Integer strong law for Brownian motion]
+\label{lem:p5a-integer}
+Almost surely, \(B_n/n\to 0\) as \(n\to\infty\) through the positive integers.
+\end{lemma}
+
+\begin{proof}
+Fix \(\varepsilon>0\). Since \(B_n/\sqrt{n}\sim\mathcal{N}(0,1)\), \cref{lem:p5a-gauss-tail} gives
+\[
+\Pbb\bigl(\lvert B_n\rvert\ge\varepsilon n\bigr)
+=
+\Pbb\Bigl(\Bigl\lvert\frac{B_n}{\sqrt{n}}\Bigr\rvert\ge\varepsilon\sqrt{n}\Bigr)
+\le
+\frac{C}{\varepsilon\sqrt{n}}\,\exp\Bigl(-\frac{\varepsilon^2 n}{2}\Bigr)
+\]
+for an absolute constant \(C\). The right-hand side is summable in \(n\), so
+\[
+\sum_{n=1}^\infty\Pbb\bigl(\lvert B_n\rvert\ge\varepsilon n\bigr)<\infty.
+\]
+\Cref{lem:p5a-bc1} yields \(\Pbb(\lvert B_n\rvert\ge\varepsilon n\text{ i.o.})=0\), i.e.\ \(\lvert B_n\rvert/n<\varepsilon\) for all large \(n\), almost surely. Intersecting over the countable set \(\varepsilon=1/m\), \(m\in\mathbb{N}\), gives \(B_n/n\to 0\) a.s.
+\end{proof}
+
+\begin{lemma}[Reflection bound for the running maximum]
+\label{lem:p5a-reflection}
+Let \((W_t)_{t\ge 0}\) be a standard Brownian motion. For every \(a>0\),
+\[
+\Pbb\Bigl(\sup_{0\le t\le 1}W_t\ge a\Bigr)
+=
+2\Pbb(W_1\ge a).
+\]
+Consequently
+\[
+\Pbb\Bigl(\sup_{0\le t\le 1}\lvert W_t\rvert\ge a\Bigr)
+\le
+4\Pbb(W_1\ge a).
+\]
+\end{lemma}
+
+\begin{proof}
+Write \(M_1:=\sup_{0\le t\le 1}W_t\) and \(\tau_a:=\inf\{t\ge 0:W_t=a\}\). Continuity of paths gives \(\{M_1\ge a\}=\{\tau_a\le 1\}\). On \(\{\tau_a\le 1\}\) define the reflected path
+\[
+\widetilde W_t
+:=
+\begin{cases}
+W_t,& t\le\tau_a,\\
+2a-W_t,& t>\tau_a.
+\end{cases}
+\]
+By the strong Markov property at \(\tau_a\), \(\widetilde W\) is again a standard Brownian motion. Moreover \(\widetilde W_1\ge a\) on \(\{\tau_a\le 1\}\), and the map \(W\mapsto\widetilde W\) is an involution that swaps the events \(\{\tau_a\le 1,\ W_1\ge a\}\) and \(\{\tau_a\le 1,\ W_1\le a\}\). Since \(W_1\) has a continuous distribution,
+\[
+\Pbb(\tau_a\le 1,\ W_1\ge a)
+=
+\Pbb(\tau_a\le 1,\ W_1\le a)
+=
+\tfrac12\Pbb(\tau_a\le 1).
+\]
+But \(\{W_1\ge a\}\subset\{\tau_a\le 1\}\), so \(\Pbb(W_1\ge a)=\frac12\Pbb(\tau_a\le 1)\). Therefore
+\[
+\Pbb(M_1\ge a)=\Pbb(\tau_a\le 1)=2\Pbb(W_1\ge a).
+\]
+
+For the two-sided bound, the union estimate
+\[
+\Bigl\{\sup_{t\le 1}\lvert W_t\rvert\ge a\Bigr\}
+\subset
+\Bigl\{\sup_{t\le 1}W_t\ge a\Bigr\}
+\cup
+\Bigl\{\sup_{t\le 1}(-W_t)\ge a\Bigr\}
+\]
+and the fact that \(-W\) is a standard Brownian motion yield
+\[
+\Pbb\Bigl(\sup_{t\le 1}\lvert W_t\rvert\ge a\Bigr)
+\le
+2\cdot 2\Pbb(W_1\ge a)
+=
+4\Pbb(W_1\ge a).
+\]
+\end{proof}
+
+\begin{lemma}[Continuous-time strong law]
+\label{lem:p5a-slln}
+Almost surely, \(B_t/t\to 0\) as \(t\to\infty\).
+\end{lemma}
+
+\begin{proof}
+By \cref{lem:p5a-integer} there is a set \(\Omega_0\) of probability \(1\) on which \(B_n/n\to 0\). It remains to control the oscillation of \(B\) between consecutive integers.
+
+For each integer \(n\ge 0\) define
+\[
+M_n
+:=
+\sup_{0\le s\le 1}\lvert B_{n+s}-B_n\rvert.
+\]
+Stationarity and independence of increments give that \(M_n\) has the same law as \(\sup_{0\le s\le 1}\lvert B_s\rvert\), and that the sequence \((M_n)_{n\ge 0}\) is i.i.d. Fix \(\varepsilon>0\). For \(n\ge 1\),
+\begin{align*}
+\Pbb(M_n\ge\varepsilon n)
+&=
+\Pbb\Bigl(\sup_{s\le 1}\lvert B_s\rvert\ge\varepsilon n\Bigr)
+\le
+4\Pbb(B_1\ge\varepsilon n)
+\le
+\frac{C}{\varepsilon n}\,\exp\Bigl(-\frac{\varepsilon^2 n^2}{2}\Bigr),
+\end{align*}
+where the first inequality is \cref{lem:p5a-reflection} and the second is \cref{lem:p5a-gauss-tail}. The series \(\sum_n\Pbb(M_n\ge\varepsilon n)\) converges, so \cref{lem:p5a-bc1} yields \(M_n/n\to 0\) almost surely (after intersecting over \(\varepsilon=1/m\)).
+
+Now take \(\omega\in\Omega_0\) such that also \(M_n(\omega)/n\to 0\). For \(t\in[n,n+1]\) one has
+\[
+\Bigl\lvert\frac{B_t}{t}\Bigr\rvert
+\le
+\frac{\lvert B_n\rvert}{n}\cdot\frac{n}{t}
++
+\frac{M_n}{n}\cdot\frac{n}{t}
+\le
+\frac{\lvert B_n\rvert}{n}
++
+\frac{M_n}{n},
+\]
+since \(t\ge n\). The right-hand side tends to \(0\) as \(n\to\infty\), uniformly for \(t\in[n,n+1]\). Therefore \(B_t/t\to 0\) as \(t\to\infty\), almost surely.
+\end{proof}
+
+\begin{corollary}[Linear drift dominates]
+\label{cor:p5a-drift}
+Almost surely, \(B_t-\frac12 t\to-\infty\) as \(t\to\infty\).
+\end{corollary}
+
+\begin{proof}
+On the almost sure set where \(B_t/t\to 0\),
+\[
+B_t-\frac12 t
+=
+t\Bigl(\frac{B_t}{t}-\frac12\Bigr).
+\]
+For all large \(t\) one has \(B_t/t<\frac14\), hence \(B_t-\frac12 t\le -\frac14 t\to-\infty\).
+\end{proof}
+
+\begin{remark*}[Why \(\E X_t=1\) does not contradict \(X_t\to 0\)]
+A direct Gaussian computation (completing the square in the density of \(B_t\)) yields \(\E X_t=1\) for every \(t\), and likewise \(\E X_t^2=e^t\). Thus \(\Var(X_t)=e^t-1\to\infty\), so \((X_t)_{t\ge 0}\) is not uniformly integrable. Fatou's lemma only gives \(\E[\lim_t X_t]\le\liminf_t\E X_t=1\); it does not force the almost sure limit to equal \(1\). In particular Chebyshev's inequality cannot prove \(X_t\to 1\) in probability, because the second-moment bound explodes.
+\end{remark*}
+
+\subsubsection{(a) Proof}
+
+By \cref{cor:p5a-drift}, there is a set \(\Omega_1\) with \(\Pbb(\Omega_1)=1\) on which \(B_t(\omega)-\frac12 t\to-\infty\). On \(\Omega_1\), the continuous function \(\exp:\mathbb{R}\to(0,\infty)\) sends this path to \(0\):
+\[
+X_t(\omega)
+=
+\exp\Bigl(B_t(\omega)-\tfrac12 t\Bigr)
+\to 0.
+\]
+In particular the limit \(\lim_{t\to\infty}X_t(\omega)\) exists in \(\mathbb{R}\) (and equals \(0\)). Therefore \(X_t\) converges almost surely as \(t\to\infty\).
+\qed
+
+\begin{remark*}
+An alternative existence proof treats \((X_t)_{t\ge 0}\) as a continuous nonnegative martingale and invokes the martingale convergence theorem; identifying the limit as \(0\) still requires \cref{cor:p5a-drift} (or an equivalent argument). The route above is self-contained and avoids continuous-time martingale machinery.
+\end{remark*}
+
+\subsubsection{(b) Preliminaries}
+
+\begin{lemma}[Gaussian moment generating function]
+\label{lem:p5b-mgf}
+If \(Z\sim\mathcal{N}(0,\sigma^2)\), then \(\E[e^{\theta Z}]=e^{\theta^2\sigma^2/2}\) for every \(\theta\in\mathbb{R}\). In particular, for Brownian motion, \(\E[e^{a B_u}]=e^{a^2 u/2}\) for every \(a\in\mathbb{R}\) and \(u\ge 0\).
+\end{lemma}
+
+\begin{proof}
+Completing the square in the Gaussian density:
+\[
+\E[e^{\theta Z}]
+=
+\frac{1}{\sqrt{2\pi\sigma^2}}\int_{\mathbb{R}}
+\exp\Bigl(\theta z-\frac{z^2}{2\sigma^2}\Bigr)\,dz
+=
+\exp\Bigl(\frac{\theta^2\sigma^2}{2}\Bigr).
+\]
+\end{proof}
+
+\begin{lemma}[Mean and covariance of geometric Brownian motion]
+\label{lem:p5b-moments}
+For every \(s,r\ge 0\),
+\[
+\E[X_s]=1,
+\qquad
+\E[X_s X_r]
+=
+\exp\bigl(\min(s,r)\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+By \cref{lem:p5b-mgf} with \(a=1\) and \(u=s\),
+\[
+\E[X_s]
+=
+e^{-s/2}\E[e^{B_s}]
+=
+e^{-s/2}e^{s/2}
+=
+1.
+\]
+For the product, assume without loss of generality that \(s\ge r\). Independence of increments gives \(B_s=(B_s-B_r)+B_r\) with \(B_s-B_r\sim\mathcal{N}(0,s-r)\) independent of \(B_r\), so
+\begin{align*}
+\E[X_s X_r]
+&=
+\E\Bigl[\exp\Bigl(B_s+B_r-\tfrac12(s+r)\Bigr)\Bigr]
+=
+e^{-\frac12(s+r)}
+\E\bigl[e^{B_s-B_r}\bigr]
+\E\bigl[e^{2B_r}\bigr]
+=
+e^{-\frac12(s+r)}\,e^{\frac{s-r}{2}}\,e^{2r}
+=
+e^{r}.
+\end{align*}
+The case \(r\ge s\) is symmetric and yields \(e^{s}\). Hence \(\E[X_s X_r]=e^{\min(s,r)}\).
+\end{proof}
+
+\begin{lemma}[Fubini for the pathwise integral]
+\label{lem:p5b-fubini}
+Fix \(t>0\). The map \(s\mapsto X_s(\omega)\) is continuous and nonnegative for every \(\omega\), so \(\int_0^t X_s\,ds\) is a well-defined \([0,\infty]\)-valued random variable. Moreover
+\[
+\E\Bigl[\int_0^t X_s\,ds\Bigr]
+=
+\int_0^t \E[X_s]\,ds,
+\qquad
+\E\Bigl[\Bigl(\int_0^t X_s\,ds\Bigr)^2\Bigr]
+=
+\int_0^t\int_0^t \E[X_s X_r]\,ds\,dr.
+\]
+\end{lemma}
+
+\begin{proof}
+Nonnegativity and path-continuity give Tonelli/Fubini without integrability hypotheses for the first identity. For the second, expand the square as a double integral of the nonnegative integrand \(X_s X_r\) and apply Tonelli again.
+\end{proof}
+
+\subsubsection{(b) Proof}
+
+Fix \(t>0\). By \cref{lem:p5b-fubini,lem:p5b-moments},
+\[
+\E\Bigl[\int_0^t X_s\,ds\Bigr]
+=
+\int_0^t 1\,ds
+=
+t.
+\]
+
+For the second moment, the same lemmas and symmetry of the integrand yield
+\begin{align*}
+\E\Bigl[\Bigl(\int_0^t X_s\,ds\Bigr)^2\Bigr]
+&=
+\int_0^t\int_0^t e^{\min(s,r)}\,ds\,dr
+=
+2\int_0^t\int_0^s e^{r}\,dr\,ds
+=
+2\int_0^t\bigl(e^{s}-1\bigr)\,ds
+=
+2\bigl(e^{t}-t-1\bigr).
+\end{align*}
+(Equivalently, after the change of order \(\int_0^t\int_0^t=2\int_0^t\int_r^t\), one obtains \(2\int_0^t(t-r)e^{r}\,dr\), which integrates by parts to the same value.) Therefore
+\begin{align*}
+\Var\Bigl(\int_0^t X_s\,ds\Bigr)
+&=
+\E\Bigl[\Bigl(\int_0^t X_s\,ds\Bigr)^2\Bigr]
+-
+\Bigl(\E\Bigl[\int_0^t X_s\,ds\Bigr]\Bigr)^2
+=
+2(e^{t}-t-1)-t^2
+=
+2e^{t}-t^2-2t-2.
+\end{align*}
+\qed
+
+\begin{remark*}
+Your handwritten computation is correct in every essential step: \(\E X_s=1\), the increment factorization giving \(\E[X_s X_r]=e^{r}\) for \(s\ge r\), the double-integral evaluation \(2(e^{t}-t-1)\), and the final variance \(2e^{t}-t^{2}-2t-2\). The only polish for an exam writeup is to cite Tonelli explicitly (so that Fubini is justified without a separate integrability check) and to record the Gaussian mgf \(\E[e^{aB_u}]=e^{a^{2}u/2}\) once, rather than recomputing the completing-the-square integral for each coefficient.
+\end{remark*}
+
+\subsubsection{(c) Proof}
+
+The integral \(\int_0^\infty X_t\,dt\) is a well-defined \([0,\infty]\)-valued random variable because \(t\mapsto X_t\) is continuous and nonnegative, so
+\[
+\int_0^\infty X_t\,dt
+=
+\lim_{N\to\infty}\int_0^N X_t\,dt
+\in[0,\infty]
+\]
+pathwise (monotone limit). We claim the limit is finite almost surely.
+
+By \cref{lem:p5a-slln}, there is a set \(\Omega_0\) with \(\Pbb(\Omega_0)=1\) on which \(B_t/t\to 0\). Fix \(\omega\in\Omega_0\). Then there exists a (finite, random) time \(T=T(\omega)<\infty\) such that
+\[
+\frac{B_t(\omega)}{t}
+<
+\frac14
+\qquad\text{for all }t\ge T.
+\]
+Consequently, for all \(t\ge T\),
+\[
+X_t(\omega)
+=
+\exp\Bigl(t\Bigl(\frac{B_t(\omega)}{t}-\frac12\Bigr)\Bigr)
+\le
+\exp\Bigl(-\frac{t}{4}\Bigr).
+\]
+Therefore
+\[
+\int_T^\infty X_t(\omega)\,dt
+\le
+\int_T^\infty e^{-t/4}\,dt
+=
+4\,e^{-T/4}
+<
+\infty.
+\]
+On the compact interval \([0,T]\) the continuous path \(t\mapsto X_t(\omega)\) is bounded, so \(\int_0^T X_t(\omega)\,dt<\infty\). Adding the two pieces yields \(\int_0^\infty X_t(\omega)\,dt<\infty\). Since \(\omega\in\Omega_0\) was arbitrary,
+\[
+\int_0^\infty X_t\,dt
+<
+\infty
+\qquad\text{a.s.}
+\]
+\qed
+
+\begin{remark*}[Why the handwritten Borel--Cantelli argument does not work]
+For each fixed horizon \(N<\infty\), the events \(A_n^N:=\{\int_0^N X_t\,dt>n\}\) satisfy \(\sum_n\Pbb(A_n^N)<\infty\) by Markov (or Chebyshev), hence \(\Pbb(A_n^N\text{ i.o.\ in }n)=0\). This only recovers the trivial fact that \(\int_0^N X_t\,dt<\infty\) a.s., which already follows from path-continuity on a compact interval.
+
+To pass to the perpetual integral one would need control on
+\[
+A_n^\infty
+:=
+\Bigl\{\int_0^\infty X_t\,dt>n\Bigr\}
+=
+\bigcup_{N\ge 1}A_n^N.
+\]
+The inclusion used in the draft,
+\[
+\limsup_n\bigcup_N A_n^N
+\subset
+\bigcup_N\limsup_n A_n^N,
+\]
+is false in general: the left-hand side is precisely \(\{\int_0^\infty X=\infty\}\), while the right-hand side is \(\bigcup_N\{\int_0^N X=\infty\}\), which is empty for continuous paths. Thus \(\sum_N\Pbb(A_n^N\text{ i.o.})=0\) does not force \(\Pbb(\int_0^\infty X=\infty)=0\).
+
+A mean argument is also unavailable: Tonelli and \(\E X_t=1\) give \(\E\int_0^\infty X_t\,dt=\infty\), so finiteness of the expectation cannot be used. The exponential tail coming from \(B_t/t\to 0\) (already proved in (a)) is the direct route.
+\end{remark*}
+
+\begin{note*}
+A minor slip in the draft: the identity \(2e^N-N^2-2N-2\) is the \emph{variance} from (b), not the second moment. The second moment is \(2(e^N-N-1)\). This does not affect the conclusion above, which does not use second moments.
+\end{note*}
+
+\subsection{Problem 6. [15 pts.]}
+Let \( M \) be a \( 2 \times 2 \) real symmetric random matrix of the form
+
+\[
+M = \begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix},
+\]
+
+where \( X_1, X_2 \), and \( Y \) are independent normal random variables: \( X_1 \) and \( X_2 \) follow the normal distribution \( \mathcal{N}(0, 2) \) with mean 0 and variance 2, and \( Y \) follows the standard normal distribution \( \mathcal{N}(0, 1) \) with mean 0 and variance 1. Let \( \lambda_1 \ge \lambda_2 \) denote the eigenvalues of \( M \), and let \( v_1 \) and \( v_2 \) be the corresponding unit eigenvectors.
+\begin{enumerate}[label=(\alph*)]
+    \item Find the distribution of \( \lambda_1 + \lambda_2 \).
+    \item Find the distribution of \( \lambda_1 - \lambda_2 \).
+    \item Are \( \lambda_1 \) and \( \lambda_2 \) independent? Prove your claim.
+    \item Prove that the joint distribution of \( (v_1, v_2) \) is invariant under orthogonal transformations, i.e., for any \( 2 \times 2 \) orthogonal matrix \( O \), \( (O v_1, O v_2) \) has the same distribution as \( (v_1, v_2) \).
+\end{enumerate}
+
+\setcounter{section}{6}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+Throughout, \(X_1,X_2,Y\) are independent with \(X_1,X_2\sim\mathcal{N}(0,2)\) and \(Y\sim\mathcal{N}(0,1)\), and
+\[
+M
+=
+\begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix}.
+\]
+We write \(\lambda_1\ge\lambda_2\) for the eigenvalues of \(M\) (which are real because \(M\) is symmetric), and
+\[
+S:=\lambda_1+\lambda_2,
+\qquad
+D:=\lambda_1-\lambda_2\ge 0.
+\]
+Thus \(\lambda_1=(S+D)/2\) and \(\lambda_2=(S-D)/2\).
+
+\begin{lemma}[Characteristic polynomial and elementary symmetric identities]
+\label{lem:p6-char}
+The eigenvalues of \(M\) are the roots of
+\[
+\det(M-\lambda I)
+=
+(X_1-\lambda)(X_2-\lambda)-Y^2
+=
+\lambda^2-(X_1+X_2)\lambda+(X_1X_2-Y^2)
+=
+0.
+\]
+Consequently
+\begin{align}
+\label{eq:p6-sum}
+S
+&=
+\lambda_1+\lambda_2
+=
+X_1+X_2
+=
+\mathrm{tr}\,M,
+\\
+\label{eq:p6-prod}
+\lambda_1\lambda_2
+&=
+X_1X_2-Y^2
+=
+\det M,
+\end{align}
+and the discriminant of the quadratic is
+\begin{equation}
+\label{eq:p6-delta}
+\Delta
+:=
+(X_1+X_2)^2-4(X_1X_2-Y^2)
+=
+(X_1-X_2)^2+4Y^2.
+\end{equation}
+In particular
+\begin{equation}
+\label{eq:p6-diff}
+D
+=
+\lambda_1-\lambda_2
+=
+\sqrt{\Delta}
+=
+\sqrt{(X_1-X_2)^2+4Y^2}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Expanding the determinant gives the displayed monic quadratic. For a monic quadratic \(\lambda^2-s\lambda+p=0\) with roots \(\lambda_1,\lambda_2\), Vieta's formulas yield \(\lambda_1+\lambda_2=s\) and \(\lambda_1\lambda_2=p\), which is \eqref{eq:p6-sum}--\eqref{eq:p6-prod}. The discriminant identity
+\[
+(X_1+X_2)^2-4X_1X_2+4Y^2
+=
+X_1^2+2X_1X_2+X_2^2-4X_1X_2+4Y^2
+=
+(X_1-X_2)^2+4Y^2
+\]
+is elementary algebra. Since \(\lambda_1\ge\lambda_2\), one has \(\lambda_1-\lambda_2=\sqrt{\Delta}\).
+\end{proof}
+
+\begin{lemma}[Gaussian linear algebra]
+\label{lem:p6-UV}
+Define
+\[
+U
+:=
+\frac{X_1+X_2}{2},
+\qquad
+V
+:=
+\frac{X_1-X_2}{2}.
+\]
+Then \(U,V,Y\) are independent, and each is standard normal: \(U,V,Y\sim\mathcal{N}(0,1)\). Equivalently,
+\[
+S=2U,
+\qquad
+D=2\sqrt{V^2+Y^2}.
+\]
+\end{lemma}
+
+\begin{proof}
+The vector \((X_1,X_2,Y)\) is centred Gaussian (as a vector of independent centred Gaussians). Hence any linear image is centred Gaussian, and independence is equivalent to vanishing covariances.
+
+First,
+\[
+\Var(X_1+X_2)
+=
+\Var(X_1)+\Var(X_2)
+=
+4,
+\qquad
+\Var(X_1-X_2)
+=
+4,
+\]
+so \(U=(X_1+X_2)/2\sim\mathcal{N}(0,1)\) and \(V=(X_1-X_2)/2\sim\mathcal{N}(0,1)\). Moreover
+\[
+\Cov(X_1+X_2,\,X_1-X_2)
+=
+\Var(X_1)-\Var(X_2)
+=
+0,
+\]
+so \(U\) and \(V\) are uncorrelated jointly Gaussian, hence independent. Finally \(Y\) is independent of \((X_1,X_2)\) by hypothesis, and therefore independent of \((U,V)\). Thus \(U,V,Y\) are i.i.d.\ \(\mathcal{N}(0,1)\).
+
+The identities \(S=X_1+X_2=2U\) and
+\[
+D
+=
+\sqrt{(X_1-X_2)^2+4Y^2}
+=
+\sqrt{4V^2+4Y^2}
+=
+2\sqrt{V^2+Y^2}
+\]
+are immediate from \cref{lem:p6-char}.
+\end{proof}
+
+\begin{lemma}[Chi-square of two degrees of freedom]
+\label{lem:p6-chi2}
+If \(V,Y\) are i.i.d.\ \(\mathcal{N}(0,1)\), then \(W:=V^2+Y^2\sim\chi^2(2)\). Equivalently, \(W\) has density
+\[
+f_W(w)
+=
+\frac12\,e^{-w/2}\mathbf{1}_{\{w>0\}}
+\]
+(i.e.\ the exponential law with mean \(2\)).
+\end{lemma}
+
+\begin{proof}
+The joint density of \((V,Y)\) is \((2\pi)^{-1}\exp(-(v^2+y^2)/2)\). Passing to polar coordinates \(v=r\cos\phi\), \(y=r\sin\phi\) with Jacobian \(r\), one finds that \(R^2=V^2+Y^2\) has density \(\frac12 e^{-w/2}\) on \((0,\infty)\), which is the \(\chi^2(2)\) density. (Alternatively: \(V^2\sim\chi^2(1)\), \(Y^2\sim\chi^2(1)\) independent, and the sum of independent \(\chi^2\) is \(\chi^2\) with summed degrees of freedom.)
+\end{proof}
+
+\begin{proposition}[Independence of the sum and the gap]
+\label{prop:p6-SD}
+The random variables \(S=\lambda_1+\lambda_2\) and \(D=\lambda_1-\lambda_2\) are independent. Moreover \(S\sim\mathcal{N}(0,4)\) and \(D=2\sqrt{W}\) with \(W\sim\chi^2(2)\).
+\end{proposition}
+
+\begin{proof}
+By \cref{lem:p6-UV}, \(S=2U\) is a (measurable) function of \(U\) alone, while \(D=2\sqrt{V^2+Y^2}\) is a (measurable) function of \((V,Y)\) alone. Since \(U\) is independent of \((V,Y)\), the \(\sigma\)-algebras \(\sigma(U)\) and \(\sigma(V,Y)\) are independent, and therefore \(S\) and \(D\) are independent.
+
+The law of \(S\) is immediate: \(U\sim\mathcal{N}(0,1)\) implies \(S=2U\sim\mathcal{N}(0,4)\). The representation of \(D\) follows from \cref{lem:p6-UV} and \cref{lem:p6-chi2}.
+\end{proof}
+
+\begin{lemma}[{Orthogonal invariance of the GOE covariance}]
+\label{lem:p6-goe}
+For every \(2\times 2\) real orthogonal matrix \(O\), one has
+\[
+OMO^\top\ \stackrel{d}{=}\ M.
+\]
+\end{lemma}
+
+\begin{proof}
+Write
+\[
+M
+=
+\begin{pmatrix} X_1 & Y \\ Y & X_2 \end{pmatrix},
+\qquad
+M'
+:=
+OMO^\top
+=
+\begin{pmatrix} X_1' & Y' \\ Y' & X_2' \end{pmatrix}.
+\]
+The claim is simply \((X_1',X_2',Y')\stackrel{d}{=}(X_1,X_2,Y)\). Intuitively: conjugating by \(O\) is a change of orthonormal basis, and the GOE law was defined without preferring any basis, so the new matrix should look the same.
+
+\paragraph{What must be checked.}
+The vector \((X_1,X_2,Y)\) is centred Gaussian (independent coordinates, each Gaussian). The map \(M\mapsto M'\) is linear in those three coordinates, so \((X_1',X_2',Y')\) is also a centred Gaussian vector. A centred Gaussian law is determined by its covariance, so it is enough to check the six numbers
+\[
+\E[(X_1')^2]=\E[(X_2')^2]=2,
+\qquad
+\E[(Y')^2]=1,
+\qquad
+\E[X_1'X_2']=\E[X_1'Y']=\E[X_2'Y']=0.
+\]
+(The same three numbers that define the law of \(M\).) We first do this on two explicit rotations, then record a coordinate-free reason why it cannot fail.
+
+\paragraph{Example 1: a \(90^\circ\) rotation.}
+Take
+\[
+O
+=
+\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix},
+\qquad
+O^\top
+=
+\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}.
+\]
+A direct matrix product gives
+\[
+M'
+=
+\begin{pmatrix} X_2 & -Y \\ -Y & X_1 \end{pmatrix},
+\]
+i.e.\ \(X_1'=X_2\), \(X_2'=X_1\), \(Y'=-Y\). Swapping two i.i.d.\ \(\mathcal{N}(0,2)\) coordinates and flipping the sign of an independent \(\mathcal{N}(0,1)\) does not change the joint law, so \(M'\stackrel{d}{=}M\).
+
+\paragraph{Example 2: a general rotation.}
+Now take the one-parameter family
+\[
+O
+=
+\begin{pmatrix} c & -s \\ s & c \end{pmatrix},
+\qquad
+c=\cos\theta,\quad s=\sin\theta
+\]
+(\(O^\top O=I\) because \(c^2+s^2=1\)). The entries of \(M'\) are the quadratic forms
+\[
+X_1'
+=
+u^\top M u,
+\qquad
+X_2'
+=
+v^\top M v,
+\qquad
+Y'
+=
+u^\top M v,
+\]
+where \(u=O^\top e_1=(c,-s)^\top\) and \(v=O^\top e_2=(s,c)^\top\) are the two columns of \(O^\top\) (an orthonormal basis). Expanding,
+\begin{align*}
+X_1'
+&=
+c^2 X_1 + s^2 X_2 - 2cs\, Y,\\
+X_2'
+&=
+s^2 X_1 + c^2 X_2 + 2cs\, Y,\\
+Y'
+&=
+cs(X_1-X_2)+(c^2-s^2)Y.
+\end{align*}
+Independence and the given second moments give
+\begin{align*}
+\E[(X_1')^2]
+&=
+c^4\cdot 2 + s^4\cdot 2 + 4c^2s^2\cdot 1
+=
+2(c^2+s^2)^2
+=
+2,\\
+\E[(X_2')^2]
+&=
+2,\\
+\E[(Y')^2]
+&=
+c^2s^2\cdot 2 + c^2s^2\cdot 2 + (c^2-s^2)^2\cdot 1
+=
+(c^2+s^2)^2
+=
+1,
+\end{align*}
+and the three cross terms cancel:
+\begin{align*}
+\E[X_1'X_2']
+&=
+c^2s^2\cdot 2 + s^2c^2\cdot 2 + (-2cs)(2cs)\cdot 1
+=
+0,\\
+\E[X_1'Y']
+&=
+c^3s\cdot 2 - cs^3\cdot 2 + (-2cs)(c^2-s^2)\cdot 1
+=
+2cs(c^2-s^2)-2cs(c^2-s^2)
+=
+0
+\end{align*}
+(and likewise \(\E[X_2'Y']=0\)). Thus \(M'\) has exactly the same three free-entry moments as \(M\), hence the same law.
+
+(The remaining orthogonal matrices are reflections, \(O=\bigl(\begin{smallmatrix}c&s\\s&-c\end{smallmatrix}\bigr)\). The same expansion works, with a sign change in one column.)
+
+\paragraph{Coordinate-free check (optional, same computation).}
+The six moment identities above are packaged by the single quadratic form
+\begin{equation}
+\label{eq:p6-quadratic}
+\E\bigl[(\mathrm{tr}(MA))^2\bigr]
+=
+2\,\mathrm{tr}(A^2)
+\end{equation}
+for every real symmetric \(A=(a_{ij})\). Indeed \(\mathrm{tr}(MA)=a_{11}X_1+a_{22}X_2+2a_{12}Y\), so the left-hand side is \(2a_{11}^2+2a_{22}^2+4a_{12}^2=2\mathrm{tr}(A^2)\). Replacing \(M\) by \(OMO^\top\) and using cyclicity,
+\[
+\E\bigl[(\mathrm{tr}(OMO^\top A))^2\bigr]
+=
+\E\bigl[(\mathrm{tr}(M(O^\top AO)))^2\bigr]
+=
+2\,\mathrm{tr}\bigl((O^\top AO)^2\bigr)
+=
+2\,\mathrm{tr}(A^2).
+\]
+So \(M'\) and \(M\) induce the same Gaussian quadratic form, which is the same matching of covariances as in Example~2, written without choosing a basis.
+\end{proof}
+
+\begin{remark*}[Gaussian toolkit used above]
+See the 2025~Spring QE notes (Problem~2). Also 2023~Fall Problem~6(a) for \(UXV\stackrel{d}{=}X\). Checklist:
+
+\begin{enumerate}[label=(\roman*)]
+    \item
+    \textbf{Definition.} A random vector \(V\in\mathbb{R}^{d}\) is Gaussian iff every linear form \(a^{T}V\) is univariate Gaussian, equivalently
+    \[
+    \E\bigl[e^{it^{T}V}\bigr]
+    =
+    \exp\bigl(it^{T}\mu-\tfrac12 t^{T}\Sigma t\bigr).
+    \]
+    Independent centred Gaussians assemble into a Gaussian vector with diagonal covariance.
+    \item
+    \textbf{Linear images.} If \(V\sim\mathcal{N}(\mu,\Sigma)\) and \(A\) is deterministic, then \(AV\sim\mathcal{N}(A\mu,\,A\Sigma A^{T})\). In particular affine combinations of jointly Gaussian coordinates remain Gaussian.
+    \item
+    \textbf{Law determined by mean and covariance.} Two centred Gaussian vectors (or two centred Gaussian laws on the free coordinates of a symmetric matrix) are equal in law as soon as their covariance matrices coincide. Checking \(\E[(\mathrm{tr}(MA))^2]=2\,\mathrm{tr}(A^2)\) for every symmetric \(A\), as above, is exactly this matching.
+    \item
+    \textbf{Uncorrelated \(\Rightarrow\) independent} (joint Gaussianity required). If \(V\) is a Gaussian vector and \(\Cov(V)\) is diagonal, then the coordinates are mutually independent. This is what licenses the phrase ``uncorrelated jointly Gaussian, hence independent'' in \cref{lem:p6-UV}, and what makes the three free entries of \(OMO^\top\) independent once they are uncorrelated.
+    \item
+    \textbf{Sums of independent Gaussians.} If \(Z_{j}\sim\mathcal{N}(m_{j},\sigma_{j}^{2})\) are independent, then \(\sum_{j}Z_{j}\sim\mathcal{N}(\sum m_{j},\sum\sigma_{j}^{2})\). Entrywise expansions of \(OMO^\top\) are instances of this.
+    \item
+    \textbf{Orthogonal conjugacy vs.\ rectangular invariance.} Here \(M\mapsto OMO^\top\) preserves the \emph{GOE} covariance (\(\E X_{i}^{2}=2\), \(\E Y^{2}=1\), off-diagonals independent of diagonals). This is not the same statement as 2023~Fall's \(UXV\stackrel{d}{=}X\) for a matrix with i.i.d.\ \(\mathcal{N}(0,1)\) entries (no factor of \(2\) on the diagonal), but the proof pattern is identical: the pushforward is centred Gaussian, and the covariance is invariant under the orthogonal action.
+\end{enumerate}
+\end{remark*}
+
+\begin{remark*}[Convention on eigenvectors]
+Unit eigenvectors are defined only up to sign. We fix any measurable version \((v_1,v_2)\) of ordered unit eigenvectors associated with \(\lambda_1\ge\lambda_2\) (e.g.\ by requiring the first nonzero coordinate of each \(v_i\) to be positive). The invariance statement is understood for such a version.
+\end{remark*}
+
+\subsubsection{(a) Law of \(\lambda_1+\lambda_2\)}
+
+By \eqref{eq:p6-sum} and independence of \(X_1,X_2\sim\mathcal{N}(0,2)\),
+\[
+\lambda_1+\lambda_2
+=
+X_1+X_2
+\sim
+\mathcal{N}(0,4).
+\]
+(Equivalently, \cref{prop:p6-SD} gives \(S\sim\mathcal{N}(0,4)\).)
+\qed
+
+\subsubsection{(b) Law of \(\lambda_1-\lambda_2\)}
+
+By \cref{prop:p6-SD} (or directly from \cref{lem:p6-UV,lem:p6-chi2}),
+\[
+\lambda_1-\lambda_2
+=
+D
+=
+2\sqrt{W},
+\qquad
+W\sim\chi^2(2).
+\]
+Thus the law of \(\lambda_1-\lambda_2\) is the pushforward of \(\chi^2(2)\) under \(w\mapsto 2\sqrt{w}\). Explicitly, for \(d>0\),
+\[
+\Pbb(D\le d)
+=
+\Pbb\bigl(W\le d^2/4\bigr)
+=
+\int_0^{d^2/4}\tfrac12 e^{-w/2}\,dw
+=
+1-e^{-d^2/8},
+\]
+so \(D\) has density \(f_D(d)=\frac{d}{4}\,e^{-d^2/8}\mathbf{1}_{\{d>0\}}\) (a scaled Rayleigh law).
+\qed
+
+\subsubsection{(c) \(\lambda_1\) and \(\lambda_2\) are not independent}
+
+We claim that \(\lambda_1\) and \(\lambda_2\) are \emph{not} independent.
+
+\paragraph{Support argument.}
+By definition \(\lambda_1\ge\lambda_2\) almost surely, hence
+\[
+\Pbb(\lambda_1<0,\ \lambda_2>0)
+=
+0.
+\]
+On the other hand, \cref{prop:p6-SD} gives \(S\sim\mathcal{N}(0,4)\) and \(D=2\sqrt{W}\) with \(W\sim\chi^2(2)\) independent of \(S\), and \(D\) has a density positive on \((0,\infty)\). Therefore
+\begin{align*}
+\Pbb(\lambda_1<0)
+&=
+\Pbb\bigl((S+D)/2<0\bigr)
+=
+\Pbb(S<-D)
+>
+0,
+\\
+\Pbb(\lambda_2>0)
+&=
+\Pbb\bigl((S-D)/2>0\bigr)
+=
+\Pbb(S>D)
+>
+0,
+\end{align*}
+because, for instance, on the event \(\{0<D<1\}\) (which has positive probability) the Gaussian random variable \(S\) charges both \((-\infty,-1)\) and \((1,\infty)\) with positive probability. If \(\lambda_1\) and \(\lambda_2\) were independent one would have
+\[
+\Pbb(\lambda_1<0,\ \lambda_2>0)
+=
+\Pbb(\lambda_1<0)\,\Pbb(\lambda_2>0)
+>
+0,
+\]
+a contradiction.
+
+\paragraph{Remark via \cref{prop:p6-SD}.}
+The same proposition explains the dependence structurally: \(\lambda_1=(S+D)/2\) and \(\lambda_2=(S-D)/2\) are coupled through the common sum \(S\) (and through the common gap \(D\)), even though \(S\perp D\). Independence of the sum and the gap does \emph{not} imply independence of the two eigenvalues.
+\qed
+
+\subsubsection{(d) Orthogonal invariance of \((v_1,v_2)\)}
+
+Fix an arbitrary \(2\times 2\) real orthogonal matrix \(O\). By \cref{lem:p6-goe}, \(M':=OMO^\top\) has the same law as \(M\).
+
+Let \(\lambda_1\ge\lambda_2\) be the eigenvalues of \(M\) with corresponding unit eigenvectors \(v_1,v_2\), so \(Mv_i=\lambda_i v_i\). Then
+\[
+M'(Ov_i)
+=
+OMO^\top(Ov_i)
+=
+OM v_i
+=
+O(\lambda_i v_i)
+=
+\lambda_i(Ov_i).
+\]
+Moreover \(\lvert Ov_i\rvert=\lvert v_i\rvert=1\) because \(O\) is orthogonal. Thus \((Ov_1,Ov_2)\) is a pair of unit eigenvectors of \(M'\) for the ordered eigenvalues \(\lambda_1\ge\lambda_2\).
+
+Since \(M'\stackrel{d}{=}M\), the ordered eigenpairs of \(M'\) have the same joint law as those of \(M\). Therefore
+\[
+(Ov_1,Ov_2)
+\ \stackrel{d}{=}\
+(v_1,v_2),
+\]
+as claimed. (If a measurable sign convention is fixed for eigenvectors as in the remark above, apply the same convention to both sides; the equality in law is unaffected.)
+\qed
+
+\subsection{Problem 7. [10 pts.]}
+Suppose \( \hat{\theta}_n \) is a real-valued consistent estimator of a parameter of interest \( \theta \) based on \( n \) observations, and it is further known that \( \theta \in [-1, 1] \). Let \( T_n \) be a sufficient statistic for \( \theta \). Show there exists a consistent estimator of \( \theta \) based on \( T_n \).
+
+\setcounter{section}{7}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+Let \(X^{(n)}\) denote the sample of size \(n\), with law \(P_\theta\) for a parameter \(\theta\in\Theta\). An estimator \(\hat\theta_n=\hat\theta_n(X^{(n)})\) is \emph{consistent} for \(\theta\) if
+\[
+\hat\theta_n\xrightarrow{P_\theta}\theta
+\qquad\text{for every }\theta\in\Theta,
+\]
+i.e.\ \(\Pbb_\theta\bigl(\lvert\hat\theta_n-\theta\rvert>\varepsilon\bigr)\to 0\) as \(n\to\infty\), for every \(\varepsilon>0\).
+
+\begin{definition}[Sufficiency]
+\label{def:p7-suff}
+A statistic \(T_n=T_n(X^{(n)})\) is \emph{sufficient} for \(\theta\) if for every \(\theta\in\Theta\), the conditional distribution of \(X^{(n)}\) given \(T_n\) does not depend on \(\theta\). Equivalently, for every integrable \(g(X^{(n)})\), there exists a version of the conditional expectation \(\E_\theta\bigl[g(X^{(n)})\bigm|T_n\bigr]\) that does not depend on \(\theta\); we write it simply \(\E\bigl[g(X^{(n)})\bigm|T_n\bigr]\).
+\end{definition}
+
+In particular, if \(T_n\) is sufficient and \(\hat\theta_n\) is any estimator, then \(\E[\hat\theta_n\mid T_n]\) is a (measurable) function of \(T_n\) alone: it is an estimator ``based on \(T_n\)''.
+
+\begin{lemma}[{Projection onto $[-1,1]$}]
+\label{lem:p7-proj}
+Define \(\pi:\mathbb{R}\to[-1,1]\) by \(\pi(x)=\max\{-1,\min\{1,x\}\}\). If \(\theta\in[-1,1]\) and \(\hat\theta_n\xrightarrow{P_\theta}\theta\), then \(\pi(\hat\theta_n)\xrightarrow{P_\theta}\theta\).
+\end{lemma}
+
+\begin{proof}
+The map \(\pi\) is continuous and \(\pi(\theta)=\theta\), so the continuous mapping theorem yields \(\pi(\hat\theta_n)\to\pi(\theta)=\theta\) in \(P_\theta\)-probability.
+\end{proof}
+
+\begin{lemma}[Bounded convergence in probability \(\Rightarrow\) \(L^1\)]
+\label{lem:p7-L1}
+Let \(Z_n\) be random variables with \(\lvert Z_n\rvert\le M\) a.s.\ for some finite \(M\) independent of \(n\), and suppose \(Z_n\xrightarrow{P}0\). Then \(\E\lvert Z_n\rvert\to 0\).
+\end{lemma}
+
+\begin{proof}
+Fix \(\varepsilon>0\). Then
+\[
+\E\lvert Z_n\rvert
+=
+\E\bigl[\lvert Z_n\rvert\mathbf{1}_{\{\lvert Z_n\rvert\le\varepsilon\}}\bigr]
++
+\E\bigl[\lvert Z_n\rvert\mathbf{1}_{\{\lvert Z_n\rvert>\varepsilon\}}\bigr]
+\le
+\varepsilon
++
+M\,\Pbb(\lvert Z_n\rvert>\varepsilon).
+\]
+Letting \(n\to\infty\) gives \(\limsup_n\E\lvert Z_n\rvert\le\varepsilon\). Since \(\varepsilon\) is arbitrary, \(\E\lvert Z_n\rvert\to 0\).
+\end{proof}
+
+\subsubsection{Inequality toolkit}
+
+Kolmogorov's maximal inequality is in Problem~4, not here.
+
+\begin{lemma}[Jensen]
+\label{lem:p7-jensen}
+Let \(\varphi:\mathbb{R}\to\mathbb{R}\) be convex, and let \(Z\) be a real random variable with \(\E\lvert Z\rvert<\infty\) and \(\E\lvert\varphi(Z)\rvert<\infty\). Then
+\[
+\varphi\bigl(\E[Z]\bigr)
+\le
+\E\bigl[\varphi(Z)\bigr].
+\]
+If \(\mathcal{G}\) is a sub-\(\sigma\)-algebra, the same convexity gives the conditional form
+\[
+\varphi\bigl(\E[Z\mid\mathcal{G}]\bigr)
+\le
+\E\bigl[\varphi(Z)\bigm|\mathcal{G}\bigr]
+\qquad\text{a.s.}
+\]
+If \(\varphi\) is concave, both inequalities reverse. If \(\varphi\) is strictly convex, equality in the unconditional statement holds if and only if \(Z\) is a.s.\ constant.
+\end{lemma}
+
+\begin{proof}
+Convexity on \(\mathbb{R}\) is equivalent to the existence of a supporting line at every point: for each \(x_0\in\mathbb{R}\) there is a slope \(a(x_0)\in\mathbb{R}\) such that
+\[
+\varphi(x)
+\ge
+\varphi(x_0)+a(x_0)\,(x-x_0)
+\qquad\text{for all }x\in\mathbb{R}.
+\]
+(If \(\varphi\) is \(C^1\), one may take \(a(x_0)=\varphi'(x_0)\); in general \(a(x_0)\) is any element of the subdifferential.)
+
+For the unconditional statement, set \(x_0=\E[Z]\) and substitute \(x=Z\):
+\[
+\varphi(Z)
+\ge
+\varphi(\E[Z])+a(\E[Z])\,\bigl(Z-\E[Z]\bigr).
+\]
+Taking expectations, the linear term vanishes and one obtains \(\E[\varphi(Z)]\ge\varphi(\E[Z])\).
+
+For the conditional statement, apply the supporting line at the random point \(x_0=\E[Z\mid\mathcal{G}]\) (which is a.s.\ finite because \(\E\lvert Z\rvert<\infty\)):
+\[
+\varphi(Z)
+\ge
+\varphi\bigl(\E[Z\mid\mathcal{G}]\bigr)
++
+a\bigl(\E[Z\mid\mathcal{G}]\bigr)\,
+\bigl(Z-\E[Z\mid\mathcal{G}]\bigr)
+\qquad\text{a.s.}
+\]
+Take \(\E[\,\cdot\mid\mathcal{G}]\). The slope is \(\mathcal{G}\)-measurable, and \(\E[Z-\E[Z\mid\mathcal{G}]\mid\mathcal{G}]=0\), so the correction term drops and one is left with \(\E[\varphi(Z)\mid\mathcal{G}]\ge\varphi(\E[Z\mid\mathcal{G}])\) a.s.
+
+If \(\varphi\) is concave then \(-\varphi\) is convex, and the inequalities reverse. If \(\varphi\) is strictly convex, the supporting-line inequality is strict off \(x_0\), so \(\E[\varphi(Z)]=\varphi(\E[Z])\) forces \(Z=\E[Z]\) a.s.
+\end{proof}
+
+Take \(\varphi(z)=\lvert z\rvert\) in \cref{lem:p7-jensen}. We get:
+
+\begin{lemma}[Conditional triangle inequality]
+\label{lem:p7-cond-jensen}
+If \(\E\lvert Z\rvert<\infty\) and \(\mathcal{G}\) is a sub-\(\sigma\)-algebra, then
+\[
+\bigl\lvert\E[Z\mid\mathcal{G}]\bigr\rvert
+\le
+\E\bigl[\lvert Z\rvert\bigm|\mathcal{G}\bigr]
+\qquad\text{a.s.}
+\]
+In particular \(\E\bigl\lvert\E[Z\mid\mathcal{G}]\bigr\rvert\le\E\lvert Z\rvert\).
+\end{lemma}
+
+Take \(\varphi(z)=z^2\) in \cref{lem:p7-jensen}. We get \(\bigl(\E[Z]\bigr)^2\le\E[Z^2]\), i.e.\ \(\Var(Z)\ge 0\).
+
+Take \(\varphi(z)=e^{z}\) in \cref{lem:p7-jensen}. We get \(\exp(\E[Z])\le\E[e^{Z}]\).
+
+Take \(\varphi=-\log\) in \cref{lem:p7-jensen}, on the empirical measure of \(a_1,\dots,a_n>0\). We get AM--GM:
+\[
+\frac1n\sum_{i=1}^n a_i
+\ge
+(a_1\cdots a_n)^{1/n}.
+\]
+
+Take \(\varphi(u)=e^{u}\) in \cref{lem:p7-jensen}, on the two-point measure with weights \(\frac1p,\frac1q\) where \(\frac1p+\frac1q=1\). We get:
+
+\begin{lemma}[Young]
+\label{lem:p7-young}
+If \(p,q\in(1,\infty)\) satisfy \(\frac1p+\frac1q=1\) and \(a,b\ge 0\), then \(ab\le\frac{a^p}{p}+\frac{b^q}{q}\).
+\end{lemma}
+
+\begin{lemma}[H\"older]
+\label{lem:p7-holder}
+If \(p,q\in(1,\infty)\) satisfy \(\frac1p+\frac1q=1\), then \(\E\lvert XY\rvert\le(\E\lvert X\rvert^p)^{1/p}(\E\lvert Y\rvert^q)^{1/q}\). The endpoint \(p=1\), \(q=\infty\) is \(\E\lvert XY\rvert\le(\E\lvert X\rvert)\,\|Y\|_\infty\).
+\end{lemma}
+
+\begin{proof}
+Write \(A=(\E\lvert X\rvert^p)^{1/p}\) and \(B=(\E\lvert Y\rvert^q)^{1/q}\). If \(A=0\) or \(B=0\) the claim is immediate. Otherwise apply \cref{lem:p7-young} to \(a=\lvert X\rvert/A\) and \(b=\lvert Y\rvert/B\), then take expectations:
+\[
+\frac{\E\lvert XY\rvert}{AB}
+\le
+\frac{\E\lvert X\rvert^p}{pA^p}
++
+\frac{\E\lvert Y\rvert^q}{qB^q}
+=
+\frac1p+\frac1q
+=
+1.
+\]
+The \(p=1\) case is \(\lvert XY\rvert\le\lvert X\rvert\,\|Y\|_\infty\) a.s.
+\end{proof}
+
+Take \(p=q=2\) in \cref{lem:p7-holder}. We get:
+
+\begin{lemma}[Cauchy--Schwarz]
+\label{lem:p7-cs}
+If \(\E[X^2]<\infty\) and \(\E[Y^2]<\infty\), then \(\bigl\lvert\E[XY]\bigr\rvert\le\sqrt{\E[X^2]\,\E[Y^2]}\). In particular \(\lvert\E[X]\rvert\le\sqrt{\E[X^2]}\).
+\end{lemma}
+
+Take the pair \(\lvert X\rvert^{r}\) and \(1\) in \cref{lem:p7-holder}, with conjugate exponents \(s/r\) and \(s/(s-r)\), for \(1\le r\le s<\infty\). We get:
+
+\begin{lemma}[Lyapunov]
+\label{lem:p7-lyapunov}
+If \(1\le r\le s<\infty\) and \(\E\lvert X\rvert^s<\infty\), then
+\[
+\bigl(\E\lvert X\rvert^r\bigr)^{1/r}
+\le
+\bigl(\E\lvert X\rvert^s\bigr)^{1/s}.
+\]
+\end{lemma}
+
+Take the factorisation \(\lvert X+Y\rvert^p=\lvert X+Y\rvert\cdot\lvert X+Y\rvert^{p-1}\) in \cref{lem:p7-holder}, with conjugate \(q=p/(p-1)\). We get:
+
+\begin{lemma}[Minkowski]
+\label{lem:p7-minkowski}
+For \(p\in[1,\infty)\),
+\[
+\bigl(\E\lvert X+Y\rvert^p\bigr)^{1/p}
+\le
+\bigl(\E\lvert X\rvert^p\bigr)^{1/p}
++
+\bigl(\E\lvert Y\rvert^p\bigr)^{1/p}.
+\]
+\end{lemma}
+
+\begin{lemma}[Markov]
+\label{lem:p7-markov}
+If \(Z\ge 0\) a.s.\ and \(a>0\), then \(\Pbb(Z\ge a)\le a^{-1}\E[Z]\).
+\end{lemma}
+
+\begin{proof}
+\(Z\ge a\mathbf{1}_{\{Z\ge a\}}\), so \(\E[Z]\ge a\,\Pbb(Z\ge a)\).
+\end{proof}
+
+Take \(Z=\lvert W-\E[W]\rvert^2\) and \(a=\varepsilon^2\) in \cref{lem:p7-markov}. We get:
+
+\begin{lemma}[Chebyshev]
+\label{lem:p7-chebyshev}
+If \(\E[W^2]<\infty\) and \(\varepsilon>0\), then \(\Pbb\bigl(\lvert W-\E[W]\rvert\ge\varepsilon\bigr)\le\varepsilon^{-2}\Var(W)\).
+\end{lemma}
+
+Take \(Z=\lvert W\rvert^p\) and \(a=\varepsilon^p\) in \cref{lem:p7-markov}. We get \(\Pbb(\lvert W\rvert\ge\varepsilon)\le\varepsilon^{-p}\E\lvert W\rvert^p\).
+
+\begin{remark*}[{Role of $\Theta=[-1,1]$}]
+Sufficiency alone produces an estimator based on \(T_n\), namely \(\E[\hat\theta_n\mid T_n]\). Without a compact parameter space this Rao--Blackwellization need \emph{not} preserve consistency. The restriction \(\theta\in[-1,1]\) lets us replace \(\hat\theta_n\) by the bounded estimator \(\pi(\hat\theta_n)\in[-1,1]\). Boundedness gives uniform integrability, hence \(L^1\) consistency, which passes to the conditional expectation by \cref{lem:p7-cond-jensen}. That is the nontrivial step linking sufficiency, consistency, and the interval \([-1,1]\).
+\end{remark*}
+
+\subsubsection{Proof}
+
+Fix an arbitrary \(\theta\in[-1,1]\); all probabilities and expectations below are under \(P_\theta\).
+
+\paragraph{Step 1: a bounded consistent estimator.}
+Let \(\hat\theta_n\) be the given consistent estimator, and set
+\[
+\theta_n^\star
+:=
+\pi(\hat\theta_n)
+=
+\max\bigl\{-1,\min\{1,\hat\theta_n\}\bigr\}
+\in[-1,1].
+\]
+By \cref{lem:p7-proj}, \(\theta_n^\star\xrightarrow{P}\theta\). Moreover \(\lvert\theta_n^\star-\theta\rvert\le 2\) almost surely, so \cref{lem:p7-L1} yields
+\begin{equation}
+\label{eq:p7-L1}
+\E\lvert\theta_n^\star-\theta\rvert\to 0.
+\end{equation}
+
+\paragraph{Step 2: Rao--Blackwellization / conditioning on \(T_n\).}
+Since \(T_n\) is sufficient for \(\theta\) (\cref{def:p7-suff}), the conditional expectation
+\[
+\tilde\theta_n
+:=
+\E\bigl[\theta_n^\star\bigm|T_n\bigr]
+\]
+admits a version that does \emph{not} depend on \(\theta\). In particular \(\tilde\theta_n\) is a measurable function of \(T_n\) alone: it is an estimator based on \(T_n\). (As a conditional expectation of a \([-1,1]\)-valued random variable one may choose the version so that \(\tilde\theta_n\in[-1,1]\) a.s.)
+
+\paragraph{Step 3: \(L^1\) consistency of \(\tilde\theta_n\).}
+By \cref{lem:p7-cond-jensen},
+\[
+\bigl\lvert\tilde\theta_n-\theta\bigr\rvert
+=
+\bigl\lvert\E[\theta_n^\star-\theta\mid T_n]\bigr\rvert
+\le
+\E\bigl[\lvert\theta_n^\star-\theta\rvert\bigm|T_n\bigr]
+\qquad\text{a.s.},
+\]
+and therefore
+\[
+\E\lvert\tilde\theta_n-\theta\rvert
+\le
+\E\lvert\theta_n^\star-\theta\rvert.
+\]
+Combined with \eqref{eq:p7-L1} one obtains \(\E\lvert\tilde\theta_n-\theta\rvert\to 0\).
+
+\paragraph{Step 4: consistency in probability.}
+Markov's inequality gives, for every \(\varepsilon>0\),
+\[
+\Pbb\bigl(\lvert\tilde\theta_n-\theta\rvert>\varepsilon\bigr)
+\le
+\frac{1}{\varepsilon}\,\E\lvert\tilde\theta_n-\theta\rvert
+\to 0.
+\]
+Thus \(\tilde\theta_n\xrightarrow{P_\theta}\theta\). Since \(\theta\in[-1,1]\) was arbitrary, \(\tilde\theta_n\) is a consistent estimator of \(\theta\) based on \(T_n\).
+\qed
+
+\begin{remark*}[Intuition in one line]
+Start from any consistent \(\hat\theta_n\); project it into the known compact set \([-1,1]\) to get \(L^1\) consistency; average it conditionally on the sufficient statistic \(T_n\) (legal without knowing \(\theta\)); the \(L^1\) error cannot increase, so the new estimator remains consistent and depends on the data only through \(T_n\).
+\end{remark*}
+
+\subsection{Problem 8. [15 pts.]}
+Let \( X_1, \dots, X_n \) be iid \( \sim \exp(\lambda) \) (with pdf \( \lambda e^{-\lambda x} \) for \( x > 0 \)). Let \( \phi = P_\lambda(X_1 > x) = e^{-\lambda x} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Find a complete and sufficient statistic for \( \lambda \).
+    \item Find the UMVUE of \( \phi \).
+\end{enumerate}
+
+\setcounter{section}{8}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+Throughout, \(X_1,\dots,X_n\) are i.i.d.\ with density \(\lambda e^{-\lambda y}\mathbf{1}_{\{y>0\}}\), for an unknown rate \(\lambda>0\). The number \(x>0\) in the definition of \(\phi\) is treated as a fixed, known constant (it is not a sample point). Write
+\[
+T
+:=
+\sum_{i=1}^n X_i.
+\]
+We assume \(n\ge 2\) in the density computations below; the case \(n=1\) is recorded at the end of (b).
+
+\begin{lemma}[Factorization / sufficiency]
+\label{lem:p8-suff}
+The joint density of the sample is
+\[
+f_\lambda(x_1,\dots,x_n)
+=
+\lambda^n\exp\bigl(-\lambda t\bigr)
+\mathbf{1}_{\{x_1>0,\dots,x_n>0\}},
+\qquad
+t=\sum_{i=1}^n x_i.
+\]
+Hence \(T\) is sufficient for \(\lambda\).
+\end{lemma}
+
+\begin{proof}
+The product of the marginal densities is exactly the displayed formula. Fisher's factorization theorem gives sufficiency: the joint density is \(g_\lambda(T)\,h(X_1,\dots,X_n)\) with \(h=\mathbf{1}_{\{X_i>0\text{ all }i\}}\) free of \(\lambda\).
+\end{proof}
+
+\begin{lemma}[One-parameter exponential family; completeness]
+\label{lem:p8-complete}
+The family of laws of \(T\) is a full-rank one-parameter exponential family on \((0,\infty)\), and \(T\) is complete for \(\lambda\). Equivalently, \(T\sim\mathrm{Gamma}(n,\lambda)\) (shape-rate), with density
+\[
+f_T(t)
+=
+\frac{\lambda^n}{\Gamma(n)}\,t^{n-1}e^{-\lambda t}\mathbf{1}_{\{t>0\}},
+\]
+and this Gamma family is complete.
+\end{lemma}
+
+\begin{proof}
+From \cref{lem:p8-suff} the density of the sample is of exponential-family form \(\exp\bigl(n\log\lambda-\lambda T\bigr)h\). The natural parameter \(\lambda\) ranges over an open interval, so the family has full rank and the natural sufficient statistic \(T\) is complete.
+
+Alternatively, completeness can be read off the Gamma density: if \(g\) is measurable and \(\E_\lambda[g(T)]=0\) for every \(\lambda>0\), then
+\[
+\int_0^\infty g(t)\,t^{n-1}e^{-\lambda t}\,dt
+=
+0
+\qquad\text{for all }\lambda>0.
+\]
+The left-hand side is the Laplace transform of \(t\mapsto g(t)t^{n-1}\). Uniqueness of Laplace transforms forces \(g(t)t^{n-1}=0\) for Lebesgue-almost every \(t>0\), hence \(g=0\) a.e.
+\end{proof}
+
+\begin{lemma}[Rao--Blackwell]
+\label{lem:p8-rb}
+Let \(\tilde\delta\) be an estimator of \(\psi(\lambda)\) with \(\E_\lambda[\tilde\delta^2]<\infty\) for every \(\lambda\), and let \(T\) be a sufficient statistic for \(\lambda\). Set \(\delta_0(T):=\E[\tilde\delta\mid T]\) (a version independent of \(\lambda\), by sufficiency). Then:
+\begin{enumerate}[label=(\roman*)]
+    \item
+    \(\E_\lambda[\delta_0(T)]=\E_\lambda[\tilde\delta]\) for every \(\lambda\). In particular, if \(\tilde\delta\) is unbiased for \(\psi(\lambda)\), so is \(\delta_0(T)\).
+    \item
+    \(\Var_\lambda(\delta_0(T))\le\Var_\lambda(\tilde\delta)\) for every \(\lambda\), with equality if and only if \(\tilde\delta=\delta_0(T)\) a.s.
+\end{enumerate}
+Thus conditioning an unbiased estimator on a sufficient statistic produces another unbiased estimator, of \(T\) alone, that is at least as good in MSE.
+\end{lemma}
+
+\begin{proof}
+Sufficiency makes \(\E_\lambda[\tilde\delta\mid T]\) a function of \(T\) only, so \(\delta_0\) is a statistic. The tower property is \(\E_\lambda[\delta_0(T)]=\E_\lambda[\tilde\delta]\). For the variance,
+\[
+\Var_\lambda(\tilde\delta)
+=
+\E_\lambda\bigl[\Var_\lambda(\tilde\delta\mid T)\bigr]
++
+\Var_\lambda\bigl(\E_\lambda[\tilde\delta\mid T]\bigr)
+\ge
+\Var_\lambda(\delta_0(T)),
+\]
+since a conditional variance is nonnegative. Equality holds iff \(\Var_\lambda(\tilde\delta\mid T)=0\) a.s., i.e.\ \(\tilde\delta\) is already \(T\)-measurable.
+\end{proof}
+
+\begin{lemma}[Lehmann--Scheff\'e]
+\label{lem:p8-ls}
+If \(T\) is complete and sufficient for \(\lambda\), and \(\delta(T)\) is unbiased for a functional \(\psi(\lambda)\), then \(\delta(T)\) is the UMVUE of \(\psi(\lambda)\): it is the unique (a.s.) unbiased estimator of \(\psi\) with uniformly minimal variance, and it is the unique unbiased function of \(T\).
+\end{lemma}
+
+\begin{proof}
+If \(\delta'(T)\) is another unbiased estimator based on \(T\), then \(\E_\lambda[\delta(T)-\delta'(T)]=0\) for all \(\lambda\), so completeness gives \(\delta(T)=\delta'(T)\) a.s. If \(\tilde\delta\) is any unbiased estimator, \cref{lem:p8-rb} produces the unbiased competitor \(\E[\tilde\delta\mid T]\), which is a function of \(T\) and has variance no larger than that of \(\tilde\delta\). Uniqueness forces \(\E[\tilde\delta\mid T]=\delta(T)\) a.s., so no unbiased estimator can improve on \(\delta(T)\).
+\end{proof}
+
+\begin{remark*}[What sufficiency is doing in Lehmann--Scheff\'e]
+The working construction is: start from any unbiased estimator \(\tilde\delta\) of \(\psi(\lambda)\), and replace it by the conditional expectation \(\E[\tilde\delta\mid T]\). Completeness then identifies this object with the unique unbiased function of \(T\), which is the UMVUE.
+
+Two properties of \(\E[\tilde\delta\mid T]\) do \emph{not} use sufficiency, and hold for an arbitrary statistic \(T\):
+\begin{enumerate}[label=(\roman*)]
+    \item
+    \emph{Unbiasedness is automatic.} The tower property gives \(\E_\lambda\bigl[\E_\lambda[\tilde\delta\mid T]\bigr]=\E_\lambda[\tilde\delta]=\psi(\lambda)\), for every \(\lambda\).
+    \item
+    \emph{Variance cannot increase.} Conditional Jensen (or the \(L^2\) projection property) gives \(\Var_\lambda\bigl(\E_\lambda[\tilde\delta\mid T]\bigr)\le\Var_\lambda(\tilde\delta)\).
+\end{enumerate}
+Neither (i) nor (ii) produces an \emph{estimator} unless the map \(t\mapsto\E_\lambda[\tilde\delta\mid T=t]\) can be written down without knowing \(\lambda\). In general this regular conditional expectation \emph{does} depend on \(\lambda\): it is a family of functions, one for each parameter value, and evaluating it would require the unknown parameter. That object is not a statistic.
+
+Sufficiency is exactly the statement that the conditional law of the sample given \(T\) does not depend on \(\lambda\). Since \(\tilde\delta\) is a function of the sample, the same is true of the conditional law of \(\tilde\delta\) given \(T\). Therefore there is a single Borel function \(\delta_0\) such that
+\[
+\E_\lambda[\tilde\delta\mid T]
+=
+\delta_0(T)
+\qquad\text{a.s., for every }\lambda.
+\]
+This \(\delta_0(T)\) is a genuine estimator: it can be computed from the data alone. In the present problem that is why \(\Pbb(X_1>x\mid T)\) may be evaluated from the \(\lambda\)-free density in \cref{lem:p8-cond}.
+
+Completeness is a separate, uniqueness ingredient. Without it, Rao--Blackwell still improves \(\tilde\delta\), but different unbiased starting points could produce different functions of \(T\), and one would only have a partial order on variances rather than a single UMVUE. Sufficiency without completeness is still useful (Rao--Blackwellization stays legal); completeness without sufficiency does not make \(\E_\lambda[\tilde\delta\mid T]\) computable.
+
+In short: sufficiency turns the conditional expectation into a statistic; the tower property keeps it unbiased; \(L^2\) projection lowers the variance; completeness makes the result unique. All four are used; only the first is the ``conditional distribution free of \(\lambda\)'' property.
+\end{remark*}
+
+\begin{lemma}[Change of variables]
+\label{lem:p8-jac}
+Let \(Z\) take values in an open set \(U\subset\mathbb{R}^d\) and admit a density \(f_Z\). Let \(\psi:U\to V\) be a \(C^1\)-diffeomorphism onto an open set \(V\subset\mathbb{R}^d\), with inverse \(\psi^{-1}\) and Jacobian matrix \(D\psi^{-1}\). Then \(W:=\psi(Z)\) has density
+\[
+f_W(w)
+=
+f_Z\bigl(\psi^{-1}(w)\bigr)\,
+\bigl\lvert\det D\psi^{-1}(w)\bigr\rvert,
+\qquad
+w\in V.
+\]
+\end{lemma}
+
+\begin{proof}
+For every bounded continuous test function \(g\) on \(V\),
+\[
+\E\bigl[g(W)\bigr]
+=
+\int_U g\bigl(\psi(z)\bigr)\,f_Z(z)\,dz.
+\]
+Substitute \(w=\psi(z)\), so \(z=\psi^{-1}(w)\) and \(dz=\lvert\det D\psi^{-1}(w)\rvert\,dw\). The integral becomes
+\[
+\int_V g(w)\,f_Z\bigl(\psi^{-1}(w)\bigr)\,\lvert\det D\psi^{-1}(w)\rvert\,dw,
+\]
+which is the claim.
+\end{proof}
+
+\begin{lemma}[The map \((X_1,S)\mapsto(X_1,T)\)]
+\label{lem:p8-sum-map}
+Let \(S:=T-X_1\). The map
+\[
+\psi(u,s)
+:=
+(u,\,u+s)
+\]
+is a \(C^1\)-diffeomorphism from \(\{(u,s):u>0,\,s>0\}\) onto \(\{(u,t):t>u>0\}\), with inverse \(\psi^{-1}(u,t)=(u,t-u)\) and
+\[
+D\psi^{-1}(u,t)
+=
+\begin{pmatrix}
+1 & 0 \\
+-1 & 1
+\end{pmatrix},
+\qquad
+\det D\psi^{-1}(u,t)
+=
+1.
+\]
+\end{lemma}
+
+\begin{proof}
+The inverse is immediate: if \((u,t)=\psi(u,s)\) then \(s=t-u\). Differentiating the inverse in the order \((u,t)\) gives the displayed Jacobian matrix, whose determinant is \(1\cdot 1-0\cdot(-1)=1\). The image of the open first quadrant is the open half-plane region \(t>u>0\).
+\end{proof}
+
+\begin{lemma}[Law of \(T\) and of the remainder]
+\label{lem:p8-gamma-split}
+Writing \(S:=T-X_1=\sum_{i=2}^n X_i\), one has \(X_1\perp S\), \(X_1\sim\mathrm{Exp}(\lambda)\), \(S\sim\mathrm{Gamma}(n-1,\lambda)\), and \(T\sim\mathrm{Gamma}(n,\lambda)\). Explicitly, for \(n\ge 2\),
+\begin{align*}
+f_{X_1}(u)
+&=
+\lambda e^{-\lambda u}\mathbf{1}_{\{u>0\}},
+\qquad
+f_S(s)
+=
+\frac{\lambda^{n-1}}{\Gamma(n-1)}\,s^{n-2}e^{-\lambda s}\mathbf{1}_{\{s>0\}},
+\\
+f_T(t)
+&=
+\frac{\lambda^n}{\Gamma(n)}\,t^{n-1}e^{-\lambda t}\mathbf{1}_{\{t>0\}}.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Independence of \(X_1\) from \((X_2,\dots,X_n)\) gives \(X_1\perp S\). The \(\mathrm{Exp}(\lambda)\) density is the claim for \(X_1\). The sum of \(n-1\) i.i.d.\ \(\mathrm{Exp}(\lambda)\) is \(\mathrm{Gamma}(n-1,\lambda)\): this is the \(m=1\) case of the fact that the sum of independent \(\mathrm{Gamma}(m_j,\lambda)\) (common rate) is \(\mathrm{Gamma}(\sum m_j,\lambda)\), or by induction on the convolution
+\[
+(f_S*f_{X_n})(t)
+=
+\int_0^t\frac{\lambda^{n-1}}{\Gamma(n-1)}s^{n-2}e^{-\lambda s}\cdot\lambda e^{-\lambda(t-s)}\,ds
+=
+\frac{\lambda^n e^{-\lambda t}}{\Gamma(n-1)}\int_0^t s^{n-2}\,ds
+=
+\frac{\lambda^n}{\Gamma(n)}\,t^{n-1}e^{-\lambda t}.
+\]
+The same convolution with one more exponential (or the \(n\)-fold sum) gives the law of \(T\).
+\end{proof}
+
+\begin{lemma}[Conditional law of \(X_1\) given \(T\)]
+\label{lem:p8-cond}
+For \(n\ge 2\) and \(t>0\), the regular conditional law of \(X_1\) given \(T=t\) is supported on \((0,t)\), with density
+\[
+f_{X_1\mid T}(u\mid t)
+=
+\frac{n-1}{t}\Bigl(1-\frac{u}{t}\Bigr)^{n-2}
+\mathbf{1}_{\{0<u<t\}}.
+\]
+Equivalently, \(X_1/T\) is independent of \(T\) and has the \(\mathrm{Beta}(1,n-1)\) law (density \((n-1)(1-v)^{n-2}\) on \((0,1)\)).
+\end{lemma}
+
+\begin{proof}
+\textit{Step 1 (joint density of \((X_1,S)\)).}
+By \cref{lem:p8-gamma-split} and independence,
+\begin{align*}
+f_{X_1,S}(u,s)
+&=
+\bigl(\lambda e^{-\lambda u}\bigr)
+\cdot
+\Bigl(\frac{\lambda^{n-1}}{\Gamma(n-1)}\,s^{n-2}e^{-\lambda s}\Bigr)
+=
+\frac{\lambda^n}{\Gamma(n-1)}\,s^{n-2}e^{-\lambda(u+s)},
+\qquad
+u>0,\ s>0.
+\end{align*}
+
+\textit{Step 2 (pass to \((X_1,T)\)).}
+Apply \cref{lem:p8-jac} to the diffeomorphism of \cref{lem:p8-sum-map}: \(\psi^{-1}(u,t)=(u,t-u)\) and \(\lvert\det D\psi^{-1}\rvert=1\), so
+\begin{align*}
+f_{X_1,T}(u,t)
+&=
+f_{X_1,S}(u,t-u)\cdot 1
+=
+\frac{\lambda^n}{\Gamma(n-1)}\,(t-u)^{n-2}e^{-\lambda t}
+\mathbf{1}_{\{t>u>0\}}.
+\end{align*}
+
+\textit{Step 3 (marginal of \(T\), as a check).}
+Integrate out \(u\in(0,t)\). The substitution \(v=u/t\), \(du=t\,dv\), gives
+\begin{align*}
+f_T(t)
+&=
+\frac{\lambda^n e^{-\lambda t}}{\Gamma(n-1)}
+\int_0^t(t-u)^{n-2}\,du
+=
+\frac{\lambda^n e^{-\lambda t}}{\Gamma(n-1)}\,t^{n-1}
+\int_0^1(1-v)^{n-2}\,dv
+=
+\frac{\lambda^n e^{-\lambda t}}{\Gamma(n-1)}\,t^{n-1}\cdot\frac{1}{n-1}
+=
+\frac{\lambda^n}{\Gamma(n)}\,t^{n-1}e^{-\lambda t},
+\end{align*}
+since \(\Gamma(n)=(n-1)\Gamma(n-1)\). This matches \cref{lem:p8-gamma-split}.
+
+\textit{Step 4 (conditional density).}
+For \(t>0\),
+\begin{align*}
+f_{X_1\mid T}(u\mid t)
+&=
+\frac{f_{X_1,T}(u,t)}{f_T(t)}
+=
+\frac{\lambda^n(t-u)^{n-2}e^{-\lambda t}/\Gamma(n-1)}{\lambda^n t^{n-1}e^{-\lambda t}/\Gamma(n)}
+=
+\frac{\Gamma(n)}{\Gamma(n-1)}\,\frac{(t-u)^{n-2}}{t^{n-1}}
+=
+(n-1)\,t^{-1}\Bigl(1-\frac{u}{t}\Bigr)^{n-2},
+\qquad
+0<u<t.
+\end{align*}
+Every factor of \(\lambda\) cancels, as required by sufficiency of \(T\).
+
+\textit{Step 5 (the ratio \(V=X_1/T\)).}
+Fix \(t>0\) and set \(V=X_1/T\), so \(u=vt\) on the slice \(\{T=t\}\). This is the one-dimensional diffeomorphism \(v\mapsto vt\) of \((0,1)\) onto \((0,t)\), with inverse \(u\mapsto u/t\) and derivative \(t\). \Cref{lem:p8-jac} (now \(d=1\)) yields
+\begin{align*}
+f_{V\mid T}(v\mid t)
+&=
+f_{X_1\mid T}(vt\mid t)\cdot t
+=
+(n-1)\,t^{-1}(1-v)^{n-2}\cdot t
+=
+(n-1)(1-v)^{n-2},
+\qquad
+0<v<1.
+\end{align*}
+The right-hand side does not depend on \(t\), so \(V\perp T\) and \(V\sim\mathrm{Beta}(1,n-1)\).
+\end{proof}
+
+\subsubsection{(a) Proof}
+
+By \cref{lem:p8-suff,lem:p8-complete}, the statistic
+\[
+T
+=
+\sum_{i=1}^n X_i
+\]
+is complete and sufficient for \(\lambda\). (Any one-to-one measurable function of \(T\), such as \(\overline{X}=T/n\) or \(2\lambda T\sim\chi^2(2n)\) after a parameter-dependent rescaling, is likewise sufficient; completeness is stated for \(T\) itself.)
+\qed
+
+\subsubsection{(b) Proof}
+
+The indicator \(\mathbf{1}_{\{X_1>x\}}\) is unbiased for \(\phi\):
+\[
+\E_\lambda\bigl[\mathbf{1}_{\{X_1>x\}}\bigr]
+=
+\Pbb_\lambda(X_1>x)
+=
+e^{-\lambda x}
+=
+\phi.
+\]
+It is not a function of \(T\). Rao--Blackwellize it: set
+\[
+\delta(T)
+:=
+\E\bigl[\mathbf{1}_{\{X_1>x\}}\bigm|T\bigr]
+=
+\Pbb(X_1>x\mid T).
+\]
+By sufficiency the right-hand side does not depend on \(\lambda\). By \cref{lem:p8-ls}, \(\delta(T)\) is the UMVUE of \(\phi\).
+
+It remains only to evaluate the conditional probability. If \(T\le x\) then \(X_1\le T\le x\), so \(\delta(T)=0\). If \(T>x\), \cref{lem:p8-cond} gives
+\begin{align*}
+\Pbb(X_1>x\mid T=t)
+&=
+\int_x^t\frac{n-1}{t}\Bigl(1-\frac{u}{t}\Bigr)^{n-2}\,du
+=
+\int_{x/t}^1(n-1)(1-v)^{n-2}\,dv
+=
+\bigl(1-x/t\bigr)^{n-1},
+\end{align*}
+via the substitution \(v=u/t\). Therefore
+\[
+\delta(T)
+=
+\Bigl(1-\frac{x}{T}\Bigr)_+^{n-1}
+:=
+\begin{cases}
+\bigl(1-x/T\bigr)^{n-1},& T>x,\\
+0,& T\le x.
+\end{cases}
+\]
+This is the UMVUE of \(\phi\).
+
+If \(n=1\), then \(T=X_1\) is complete and sufficient, and \(\mathbf{1}_{\{T>x\}}\) is already a function of \(T\), hence is itself the UMVUE; this agrees with the same formula, since \((1-x/T)_+^{0}=\mathbf{1}_{\{T>x\}}\).
+\qed
+
+\begin{remark*}[UMVUE does not commute with nonlinear maps]
+In general, if \(\widehat\theta\) is the UMVUE of a parameter \(\theta\), then \(g(\widehat\theta)\) is \emph{not} the UMVUE of \(g(\theta)\) when \(g\) is nonlinear. It typically fails even to be unbiased: Jensen's inequality gives \(\E[g(\widehat\theta)]\neq g(\E\widehat\theta)=g(\theta)\) whenever \(g\) is strictly convex or concave. Lehmann--Scheff\'e applies to each estimable functional separately: the UMVUE of \(\phi(\theta)\) is the unique unbiased function of a complete sufficient statistic \(T\) with expectation \(\phi(\theta)\), and changing \(\phi\) generally changes that function.
+
+The present problem illustrates the point. For \(n\ge 2\), the UMVUE of \(\lambda\) is \(\widehat\lambda=(n-1)/T\) with \(T=\sum_{i=1}^n X_i\), while the UMVUE of \(\phi=e^{-\lambda x}\) is \(\bigl(1-x/T\bigr)_+^{n-1}\). These are not related by substituting \(\widehat\lambda\) into the exponential: \(e^{-\widehat\lambda\, x}=e^{-(n-1)x/T}\) is a different estimator. The only routine case where the functional calculus works is affine: if \(g(\theta)=a\theta+b\), then \(a\widehat\theta+b\) remains the UMVUE of \(g(\theta)\).
+\end{remark*}
+
+\subsection{Problem 9. [15 pts.]}
+Let \( X_1, \dots, X_n \) be iid Bernoulli\( (p) \) random variables with \( 0 < p < 1 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Let \( g(p) = p^k + (1-p)^{n-k} \) where \( k \) is a nonnegative integer and \( 0 \le k \le n \). Find the BUE (UMVUE) for \( g(p) \).
+    \item Prove that \( \overline{X} = \frac{\sum_{i=1}^n X_i}{n} \) is an admissible estimator/rule of \( p \) under the loss function \( l(p, a) = \frac{(p-a)^2}{p(1-p)} \).
+\end{enumerate}
+
+\setcounter{section}{9}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+Write \(T:=\sum_{i=1}^n X_i\), so \(T\sim\mathrm{Binomial}(n,p)\) and \(\overline{X}=T/n\). Falling factorials are \(a^{\underline{m}}:=a(a-1)\cdots(a-m+1)\) for \(m\ge 1\), and \(a^{\underline{0}}:=1\). If \(a\) is a nonnegative integer and \(m>a\), then \(a^{\underline{m}}=0\).
+
+\begin{lemma}[Complete sufficiency]
+\label{lem:p9-complete}
+\(T\) is complete and sufficient for \(p\in(0,1)\).
+\end{lemma}
+
+\begin{proof}
+The joint pmf is \(p^{T}(1-p)^{n-T}\mathbf{1}_{\{0,1\}^n}(X)\), so factorization gives sufficiency. For completeness: if \(\E_p[h(T)]=0\) for every \(p\in(0,1)\), then
+\[
+\sum_{t=0}^n h(t)\binom{n}{t}p^t(1-p)^{n-t}
+=
+0.
+\]
+Dividing by \((1-p)^n\) yields \(\sum_{t=0}^n h(t)\binom{n}{t}\eta^t=0\) for all \(\eta=p/(1-p)>0\). A power series vanishing on \((0,\infty)\) has all coefficients zero, so \(h(t)\binom{n}{t}=0\) and therefore \(h\equiv 0\).
+\end{proof}
+
+\begin{lemma}[Lehmann--Scheff\'e]
+\label{lem:p9-ls}
+If \(\delta(T)\) is unbiased for \(\psi(p)\), then \(\delta(T)\) is the UMVUE (BUE) of \(\psi(p)\).
+\end{lemma}
+
+\begin{proof}
+Same argument as \cref{lem:p8-ls}: completeness gives uniqueness among functions of \(T\), and Rao--Blackwell sends every unbiased estimator to a function of \(T\).
+\end{proof}
+
+\begin{lemma}[Hypergeometric conditionals]
+\label{lem:p9-hyper}
+For \(0\le k\le n\),
+\[
+\Pbb(X_1=\cdots=X_k=1\mid T=t)
+=
+\frac{T^{\underline{k}}}{n^{\underline{k}}}
+\Bigm|_{T=t}
+=
+\frac{\binom{t}{k}}{\binom{n}{k}}\,\mathbf{1}_{\{t\ge k\}},
+\]
+and
+\[
+\Pbb(X_{k+1}=\cdots=X_n=0\mid T=t)
+=
+\frac{(n-T)^{\underline{n-k}}}{n^{\underline{n-k}}}
+\Bigm|_{T=t}
+=
+\frac{\binom{k}{t}}{\binom{n}{t}}\,\mathbf{1}_{\{t\le k\}}.
+\]
+(The binomial-coefficient forms use the convention \(\binom{a}{b}=0\) if \(b<0\) or \(b>a\).)
+\end{lemma}
+
+\begin{proof}
+Given \(T=t\), the vector \(X\) is uniformly distributed over the \(\binom{n}{t}\) binary sequences with exactly \(t\) ones.
+
+The event \(\{X_1=\cdots=X_k=1\}\) forces the remaining \(t-k\) ones to lie among the last \(n-k\) coordinates, which is possible iff \(t\ge k\), and then occurs for \(\binom{n-k}{t-k}\) sequences. Hence the conditional probability is \(\binom{n-k}{t-k}/\binom{n}{t}=\binom{t}{k}/\binom{n}{k}\). The falling-factorial form is the same ratio:
+\[
+\frac{\binom{t}{k}}{\binom{n}{k}}
+=
+\frac{t^{\underline{k}}}{n^{\underline{k}}}.
+\]
+
+The event \(\{X_{k+1}=\cdots=X_n=0\}\) forces all \(t\) ones to lie among the first \(k\) coordinates, possible iff \(t\le k\), and then occurs for \(\binom{k}{t}\) sequences. The ratio is \(\binom{k}{t}/\binom{n}{t}=(n-t)^{\underline{n-k}}/n^{\underline{n-k}}\).
+\end{proof}
+
+\begin{definition}[Risk and admissibility]
+\label{def:p9-adm}
+The risk of an estimator \(\delta\) under the given loss is
+\[
+R(p,\delta)
+:=
+\E_p\bigl[l(p,\delta)\bigr]
+=
+\frac{\E_p[(\delta-p)^2]}{p(1-p)},
+\qquad
+p\in(0,1).
+\]
+The estimator \(\overline{X}\) is \emph{admissible} if no \(\delta'\) satisfies \(R(p,\delta')\le R(p,\overline{X})\) for every \(p\in(0,1)\) with strict inequality for at least one \(p\).
+\end{definition}
+
+\begin{lemma}[Blyth]
+\label{lem:p9-blyth}
+Let \(\{\pi_\alpha\}_{\alpha>1}\) be a family of priors on \((0,1)\) with strictly positive continuous densities, and let \(\delta_\alpha\) be a Bayes estimator for \(\pi_\alpha\). If
+\[
+r(\pi_\alpha,\overline{X})-r(\pi_\alpha,\delta_\alpha)
+\to
+0
+\qquad\text{as }\alpha\downarrow 1,
+\]
+where \(r(\pi,\delta):=\int_0^1 R(p,\delta)\,\pi(p)\,dp\), then \(\overline{X}\) is admissible.
+\end{lemma}
+
+\begin{proof}
+Suppose some \(\delta'\) satisfies \(R(\,\cdot\,,\delta')\le R(\,\cdot\,,\overline{X})\) with strict inequality at even a single point \(p_0\in(0,1)\). The risk functions are continuous on \((0,1)\) (finite mixtures of the continuous functions \(p\mapsto(a-p)^2/(p(1-p))\)), so the inequality is strict on a nonempty open interval \(I\subset(0,1)\). Then
+\[
+r(\pi_\alpha,\overline{X})-r(\pi_\alpha,\delta_\alpha)
+\ge
+r(\pi_\alpha,\overline{X})-r(\pi_\alpha,\delta')
+=
+\int_0^1\bigl(R(p,\overline{X})-R(p,\delta')\bigr)\pi_\alpha(p)\,dp
+\ge
+\int_I\bigl(R(p,\overline{X})-R(p,\delta')\bigr)\pi_\alpha(p)\,dp.
+\]
+As \(\alpha\downarrow 1\), the Beta\((\alpha,\alpha)\) densities used below converge uniformly on compact subintervals of \((0,1)\) to the Uniform\((0,1)\) density, which is bounded below by a positive constant on a nonempty compact \(K\subset I\). The integrand is positive and continuous on \(K\), so the last integral stays bounded away from \(0\), contradicting the assumed vanishing of the Bayes-risk gap.
+\end{proof}
+
+\subsubsection{(a) Proof}
+
+The indicators \(\mathbf{1}_{\{X_1=\cdots=X_k=1\}}\) and \(\mathbf{1}_{\{X_{k+1}=\cdots=X_n=0\}}\) (interpreted as \(1\) if the corresponding index range is empty) are unbiased for \(p^k\) and \((1-p)^{n-k}\) respectively. Rao--Blackwellize onto \(T\) and apply \cref{lem:p9-hyper}:
+\[
+\E\bigl[\mathbf{1}_{\{X_1=\cdots=X_k=1\}}\bigm|T\bigr]
+=
+\frac{T^{\underline{k}}}{n^{\underline{k}}},
+\qquad
+\E\bigl[\mathbf{1}_{\{X_{k+1}=\cdots=X_n=0\}}\bigm|T\bigr]
+=
+\frac{(n-T)^{\underline{n-k}}}{n^{\underline{n-k}}}.
+\]
+Their sum is unbiased for \(g(p)\) and is a function of the complete sufficient statistic \(T\). \Cref{lem:p9-ls} therefore yields the UMVUE
+\[
+\delta(T)
+=
+\frac{T^{\underline{k}}}{n^{\underline{k}}}
++
+\frac{(n-T)^{\underline{n-k}}}{n^{\underline{n-k}}}.
+\]
+Equivalently,
+\[
+\delta(T)
+=
+\frac{\binom{T}{k}}{\binom{n}{k}}
++
+\frac{\binom{k}{T}}{\binom{n}{T}},
+\]
+with the usual vanishing conventions for binomial coefficients. (When \(k=0\) the first summand is \(1\); when \(k=n\) the second summand is \(1\).)
+\qed
+
+\subsubsection{(b) Proof}
+
+\paragraph{Step 1: constant risk of \(\overline{X}\).}
+Since \(\E_p[\overline{X}]=p\) and \(\Var_p(\overline{X})=p(1-p)/n\),
+\[
+R(p,\overline{X})
+=
+\frac{\Var_p(\overline{X})}{p(1-p)}
+=
+\frac{1}{n},
+\qquad
+p\in(0,1).
+\]
+
+\paragraph{Step 2: a family of proper Bayes rules.}
+Fix \(\alpha>1\) and let \(\pi_\alpha\) be the \(\mathrm{Beta}(\alpha,\alpha)\) prior, with density
+\[
+\pi_\alpha(p)
+=
+\frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}\,p^{\alpha-1}(1-p)^{\alpha-1},
+\qquad
+p\in(0,1).
+\]
+The posterior expected loss of an action \(a\), given \(T=t\), is
+\[
+\int_0^1\frac{(p-a)^2}{p(1-p)}\,\pi_\alpha(p\mid t)\,dp.
+\]
+This is the second moment of \(p-a\) under the finite measure \(dp\,\pi_\alpha(p\mid t)/(p(1-p))\). The unique minimizer is the barycentre of that measure (the loss is strictly convex in \(a\)). The un-normalized weight is
+\[
+\frac{p^t(1-p)^{n-t}\,p^{\alpha-1}(1-p)^{\alpha-1}}{p(1-p)}
+=
+p^{t+\alpha-2}(1-p)^{n-t+\alpha-2},
+\]
+which is integrable on \((0,1)\) because \(\alpha>1\) forces \(t+\alpha-1\ge\alpha-1>0\) and \(n-t+\alpha-1\ge\alpha-1>0\). Therefore the Bayes estimator is
+\[
+\delta_\alpha(t)
+=
+\frac{B(t+\alpha,\,n-t+\alpha-1)}{B(t+\alpha-1,\,n-t+\alpha-1)}
+=
+\frac{t+\alpha-1}{n+2\alpha-2}.
+\]
+In particular \(\delta_\alpha(T)=(T+\alpha-1)/(n+2\alpha-2)\), and \(\delta_\alpha\) is the unique Bayes rule for \(\pi_\alpha\).
+
+\paragraph{Step 3: the Bayes-risk gap vanishes as \(\alpha\downarrow 1\).}
+A direct expansion gives
+\[
+\E_p[(\delta_\alpha-p)^2]
+=
+\frac{np(1-p)}{(n+2\alpha-2)^2}
++
+\frac{(\alpha-1)^2(1-2p)^2}{(n+2\alpha-2)^2},
+\]
+hence
+\[
+R(p,\delta_\alpha)
+=
+\frac{n}{(n+2\alpha-2)^2}
++
+\frac{(\alpha-1)^2(1-2p)^2}{(n+2\alpha-2)^2\,p(1-p)}.
+\]
+Integrating against \(\pi_\alpha\),
+\begin{align*}
+r(\pi_\alpha,\overline{X})-r(\pi_\alpha,\delta_\alpha)
+&=
+\frac1n
+-
+\frac{n}{(n+2\alpha-2)^2}
+-
+\frac{(\alpha-1)^2}{(n+2\alpha-2)^2}\,I_\alpha,
+\end{align*}
+where
+\[
+I_\alpha
+=
+\frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}
+\int_0^1(1-2p)^2\,p^{\alpha-2}(1-p)^{\alpha-2}\,dp
+=
+\frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}\,B(\alpha-1,\alpha-1)\,\E[(1-2U)^2]
+\]
+and \(U\sim\mathrm{Beta}(\alpha-1,\alpha-1)\). Since \((1-2U)^2\le 1\) and
+\[
+\frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}\,B(\alpha-1,\alpha-1)
+=
+\frac{(2\alpha-1)(2\alpha-2)}{(\alpha-1)^2},
+\]
+one has \(0\le(\alpha-1)^2 I_\alpha\le(2\alpha-1)(2\alpha-2)\to 0\) as \(\alpha\downarrow 1\). The remaining elementary term satisfies
+\[
+\frac1n-\frac{n}{(n+2\alpha-2)^2}
+\to
+0.
+\]
+Thus \(r(\pi_\alpha,\overline{X})-r(\pi_\alpha,\delta_\alpha)\to 0\).
+
+\paragraph{Step 4: apply Blyth.}
+The family \(\{\pi_\alpha\}_{\alpha>1}\) meets the hypotheses of \cref{lem:p9-blyth}. Therefore \(\overline{X}\) is admissible for \(p\) under \(l(p,a)=(p-a)^2/(p(1-p))\).
+\qed
+
+\begin{remark*}
+Constant risk alone does not give admissibility (it gives a candidate for minimaxity). The point of the Beta\((\alpha,\alpha)\) approximation is that \(\overline{X}\) is the \(\alpha\downarrow 1\) limit of unique proper Bayes rules, with a vanishing Bayes-risk gap; Blyth upgrades the limit to admissibility. (The formal \(\alpha=1\) computation already yields \(T/n\), but the weight \(1/(p(1-p))\) fails to be integrable at \(T\in\{0,n\}\), so \(\overline{X}\) is not itself a proper Bayes rule.)
+\end{remark*}
+
+\subsection{Problem 10. [10 pts.]}
+Let \( X_1, \dots, X_n \) be iid from the uniform distribution \( U(0, \theta) \) with \( \theta > 0 \) unknown. Suppose that the prior on \( \theta \) is lognormal, i.e., \( \ln \theta \) follows \( N(\mu_0, \sigma_0^2) \) distribution where \( \mu_0 \in \mathbb{R} \) and \( \sigma_0 > 0 \) are known constants.
+\begin{enumerate}[label=(\alph*)]
+    \item Find the posterior density of \( \ln \theta \).
+    \item Suppose that one defines the Bayes estimate for \( \theta \) as the value that maximizes the posterior density of \( \theta \). Find this Bayes estimator. Is it consistent for \( \theta \)? Please explain your answer.
+\end{enumerate}
+
+\setcounter{section}{10}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{(a) Preliminaries}
+
+Write \(M_n:=X_{(n)}=\max_{1\le i\le n}X_i\) and \(U:=\ln\theta\), so \(\theta=e^U\) with \(U\in\mathbb{R}\). The prior specification is exactly \(U\sim\mathcal{N}(\mu_0,\sigma_0^2)\). Throughout, the observed sample \(x=(x_1,\dots,x_n)\) is fixed, and densities in the parameter are understood as functions of the parameter with \(x\) held fixed.
+
+\begin{lemma}[Likelihood for \(U(0,\theta)\)]
+\label{lem:p10a-lik}
+For \(\theta>0\),
+\[
+L(x\mid\theta)
+=
+\theta^{-n}\mathbf{1}_{\{\theta\ge M_n\}}.
+\]
+In the coordinate \(U=\ln\theta\) this is
+\[
+L(x\mid e^u)
+=
+e^{-nu}\,\mathbf{1}_{\{u\ge\ln M_n\}}.
+\]
+\end{lemma}
+
+\begin{proof}
+Each density is \(\theta^{-1}\mathbf{1}_{(0,\theta)}(x_i)\), so the joint density is \(\theta^{-n}\) on \(\{\theta\ge M_n\}\) and \(0\) otherwise. Substitute \(\theta=e^u\).
+\end{proof}
+
+\begin{lemma}[Prior density of \(U\)]
+\label{lem:p10a-prior}
+The prior density of \(U=\ln\theta\) is
+\[
+\pi_U(u)
+=
+\frac{1}{\sqrt{2\pi}\,\sigma_0}
+\exp\Bigl(-\frac{(u-\mu_0)^2}{2\sigma_0^2}\Bigr),
+\qquad
+u\in\mathbb{R}.
+\]
+\end{lemma}
+
+\begin{proof}
+Immediate from \(U\sim\mathcal{N}(\mu_0,\sigma_0^2)\).
+\end{proof}
+
+\begin{lemma}[Completing the square]
+\label{lem:p10a-square}
+For \(u\in\mathbb{R}\),
+\[
+-nu-\frac{(u-\mu_0)^2}{2\sigma_0^2}
+=
+-\frac{(u-\mu_n)^2}{2\sigma_0^2}
++
+C(\mu_0,\sigma_0,n),
+\]
+where
+\[
+\mu_n
+:=
+\mu_0-n\sigma_0^2
+\]
+and \(C(\mu_0,\sigma_0,n)\) does not depend on \(u\).
+\end{lemma}
+
+\begin{proof}
+Expand
+\[
+\frac{(u-\mu_0)^2}{2\sigma_0^2}+nu
+=
+\frac{1}{2\sigma_0^2}\Bigl(u^2-2\mu_0 u+\mu_0^2+2n\sigma_0^2 u\Bigr)
+=
+\frac{1}{2\sigma_0^2}\Bigl((u-(\mu_0-n\sigma_0^2))^2-\mu_n^2+\mu_0^2\Bigr).
+\]
+Negating both sides yields the claim.
+\end{proof}
+
+\begin{remark*}[Densities may (and must) depend on the parameter]
+The posterior density \(\pi(u\mid x)\) is a function of the variable \(u\). Appearance of \(u\) (or \(\theta=e^u\)) on the right-hand side of Bayes' formula is the definition of that function, not a circularity. The data \(x\) enter only through the sufficient cutoff \(M_n\) and the normalizing constant.
+\end{remark*}
+
+\subsubsection{(a) Proof}
+
+By Bayes' theorem on the \(U\)-scale,
+\[
+\pi(u\mid x)
+\propto
+L(x\mid e^u)\,\pi_U(u).
+\]
+\Cref{lem:p10a-lik,lem:p10a-prior} give, for \(u\in\mathbb{R}\),
+\begin{align*}
+\pi(u\mid x)
+&\propto
+\exp(-nu)
+\cdot
+\frac{1}{\sqrt{2\pi}\,\sigma_0}
+\exp\Bigl(-\frac{(u-\mu_0)^2}{2\sigma_0^2}\Bigr)
+\cdot
+\mathbf{1}_{\{u\ge\ln M_n\}}
+\\
+&\propto
+\exp\Bigl(-nu-\frac{(u-\mu_0)^2}{2\sigma_0^2}\Bigr)
+\mathbf{1}_{\{u\ge\ln M_n\}}.
+\end{align*}
+\Cref{lem:p10a-square} rewrites the exponent as \(-\frac{(u-\mu_n)^2}{2\sigma_0^2}\) up to a \(u\)-free factor, with \(\mu_n=\mu_0-n\sigma_0^2\). Therefore the unnormalized posterior is that of a \(\mathcal{N}(\mu_n,\sigma_0^2)\) density restricted to the half-line \([\ln M_n,\infty)\).
+
+Normalizing, let \(\varphi_{\mu,\sigma^2}\) denote the \(\mathcal{N}(\mu,\sigma^2)\) density and \(\Phi\) the standard normal cdf. Then for \(u\ge\ln M_n\),
+\begin{equation}
+\label{eq:p10a-post}
+\pi(u\mid x)
+=
+\frac{\varphi_{\mu_n,\sigma_0^2}(u)}{1-\Phi\bigl((\ln M_n-\mu_n)/\sigma_0\bigr)},
+\end{equation}
+and \(\pi(u\mid x)=0\) for \(u<\ln M_n\). Equivalently: the posterior law of \(\ln\theta\) given the sample is the
+\[
+\mathcal{N}(\mu_0-n\sigma_0^2,\,\sigma_0^2)
+\]
+distribution \emph{truncated} to \([\ln M_n,\infty)\), where \(M_n=\max_i X_i\).
+
+(If one prefers an explicit formula without \(\Phi\), the denominator is
+\[
+\int_{\ln M_n}^\infty
+\frac{1}{\sqrt{2\pi}\,\sigma_0}
+\exp\Bigl(-\frac{(u-\mu_n)^2}{2\sigma_0^2}\Bigr)\,du.
+\])
+\qed
+
+\subsubsection{(b) Preliminaries: which posterior are we maximising?}
+
+Part~(b) asks for a Bayes estimator defined as a maximiser of the posterior density of \(\theta\) (not of \(\ln\theta\)). These two maximisation problems are different.
+
+\begin{lemma}[Change of variables for densities]
+\label{lem:p10b-jac}
+If \(U=\ln\theta\) has posterior density \(\pi_U(u\mid x)\) on \(\mathbb{R}\), then \(\theta=e^U\) has posterior density
+\[
+\pi_\theta(\theta\mid x)
+=
+\pi_U(\ln\theta\mid x)\cdot\frac{1}{\theta},
+\qquad
+\theta>0.
+\]
+Consequently, a maximiser of \(\pi_U(\,\cdot\mid x)\) need not maximise \(\pi_\theta(\,\cdot\mid x)\), because of the extra factor \(\theta^{-1}\).
+\end{lemma}
+
+\begin{proof}
+The map \(u\mapsto e^u\) has derivative \(e^u=\theta\), so the absolute Jacobian from \(u\) to \(\theta\) contributes the factor \(\theta^{-1}\).
+\end{proof}
+
+\begin{remark*}[Why the two MAPs differ]
+Maximising \(\pi_U(u\mid x)\) is the MAP for \(\ln\theta\). Maximising \(\pi_\theta(\theta\mid x)\) is the MAP for \(\theta\). Part~(b) explicitly requires the latter. Equivalently, one may maximise \(\log\pi_\theta(\theta\mid x)\), which differs from \(\log\pi_U(\ln\theta\mid x)\) by an additive \(-\log\theta\).
+\end{remark*}
+
+\begin{lemma}[Prior density on the \(\theta\)-scale]
+\label{lem:p10b-prior-theta}
+The lognormal prior \(U=\ln\theta\sim\mathcal{N}(\mu_0,\sigma_0^2)\) induces
+\[
+\pi(\theta)
+=
+\frac{1}{\theta\sqrt{2\pi}\,\sigma_0}
+\exp\Bigl(-\frac{(\ln\theta-\mu_0)^2}{2\sigma_0^2}\Bigr),
+\qquad
+\theta>0.
+\]
+\end{lemma}
+
+\begin{proof}
+Apply \cref{lem:p10b-jac} to the prior (or differentiate \(\Pbb(\theta\le t)=\Pbb(U\le\ln t)\)).
+\end{proof}
+
+\begin{lemma}[Posterior density of \(\theta\)]
+\label{lem:p10b-post-theta}
+With \(M_n=\max_i X_i\),
+\begin{equation}
+\label{eq:p10b-post}
+\pi(\theta\mid x)
+\propto
+\theta^{-(n+1)}
+\exp\Bigl(-\frac{(\ln\theta-\mu_0)^2}{2\sigma_0^2}\Bigr)
+\mathbf{1}_{\{\theta\ge M_n\}}.
+\end{equation}
+In particular \(\pi(\theta\mid x)=0\) for all \(\theta<M_n\).
+\end{lemma}
+
+\begin{proof}
+Multiply the likelihood \(L(x\mid\theta)=\theta^{-n}\mathbf{1}_{\{\theta\ge M_n\}}\) by \cref{lem:p10b-prior-theta}. The product of the two powers of \(\theta\) is \(\theta^{-(n+1)}\).
+\end{proof}
+
+\begin{remark*}[Where \(M_n\) enters]
+The sample appears in the posterior in exactly one place: the indicator \(\mathbf{1}_{\{\theta\ge M_n\}}\). Inside the open half-line \((M_n,\infty)\) the unnormalized density is a smooth function of \(\theta\) whose shape depends on \((n,\mu_0,\sigma_0)\) but not on the individual \(x_i\). Thus any interior critical point will be data-free; the data can affect the MAP only by cutting the domain at \(M_n\) (and possibly forcing the maximiser onto that boundary).
+\end{remark*}
+
+\begin{lemma}[Log-posterior and its derivative on \((M_n,\infty)\)]
+\label{lem:p10b-logderiv}
+For \(\theta>M_n\) define
+\[
+\ell(\theta)
+:=
+\log\Bigl(
+\theta^{-(n+1)}
+\exp\Bigl(-\frac{(\ln\theta-\mu_0)^2}{2\sigma_0^2}\Bigr)
+\Bigr)
+=
+-(n+1)\log\theta
+-
+\frac{(\ln\theta-\mu_0)^2}{2\sigma_0^2}.
+\]
+Equivalently, with \(v=\ln\theta\),
+\[
+h(v)
+:=
+\ell(e^v)
+=
+-(n+1)v
+-
+\frac{(v-\mu_0)^2}{2\sigma_0^2},
+\qquad
+v>\ln M_n.
+\]
+Then
+\begin{equation}
+\label{eq:p10b-hprime}
+h'(v)
+=
+-(n+1)-\frac{v-\mu_0}{\sigma_0^2}.
+\end{equation}
+In particular \(h'(v)=0\) if and only if
+\[
+v
+=
+v^*
+:=
+\mu_0-(n+1)\sigma_0^2,
+\]
+and
+\[
+h'(v)>0\iff v<v^*,
+\qquad
+h'(v)<0\iff v>v^*.
+\]
+Hence \(h\) (and therefore \(\ell\)) increases on \((-\infty,v^*]\) and decreases on \([v^*,\infty)\).
+\end{lemma}
+
+\begin{proof}
+Differentiate \(h\) directly. The sign statements are rearrangements of \eqref{eq:p10b-hprime}.
+\end{proof}
+
+\begin{remark*}[Contrast with the mode of \(\ln\theta\)]
+If one maximised \(\pi_U(u\mid x)\) from part~(a) instead, the Gaussian factor would contribute only the likelihood power \(\theta^{-n}=e^{-nu}\), yielding the critical point \(\mu_0-n\sigma_0^2\), not \(\mu_0-(n+1)\sigma_0^2\). The extra \(-1\) here is precisely the Jacobian \(\theta^{-1}\) from \cref{lem:p10b-jac}.
+\end{remark*}
+
+\subsubsection{(b) Proof}
+
+\paragraph{Step 1: state the optimisation problem.}
+By definition the Bayes estimator in part~(b) is any
+\[
+\widehat\theta_n
+\in
+\argmax_{\theta>0}\,\pi(\theta\mid x).
+\]
+\Cref{lem:p10b-post-theta} forces \(\widehat\theta_n\ge M_n\), and on \([M_n,\infty)\) it is equivalent to maximise \(\ell\) from \cref{lem:p10b-logderiv} (the normalizing constant does not depend on \(\theta\)).
+
+\paragraph{Step 2: unconstrained critical point.}
+By \cref{lem:p10b-logderiv}, the unique critical point of \(h\) on \(\mathbb{R}\) is
+\[
+v^*=\mu_0-(n+1)\sigma_0^2,
+\qquad
+\theta^*
+:=
+e^{v^*}
+=
+\exp\bigl(\mu_0-(n+1)\sigma_0^2\bigr).
+\]
+This \(\theta^*\) does not depend on the sample. That is expected: inside \(\{\theta>M_n\}\) the posterior shape is free of \(x\), cf.\ the remark after \cref{lem:p10b-post-theta}.
+
+\paragraph{Step 3: impose the constraint \(\theta\ge M_n\) by monotonicity.}
+We maximise the unimodal function \(h\) on the half-line \([\ln M_n,\infty)\).
+
+\textit{Case A:} \(\theta^*\ge M_n\), i.e.\ \(v^*\ge\ln M_n\). Then \(v^*\) lies in the feasible set. Since \(h\) increases up to \(v^*\) and decreases after, the unique maximiser is \(v^*\), hence \(\widehat\theta_n=\theta^*\).
+
+\textit{Case B:} \(\theta^*<M_n\), i.e.\ \(v^*<\ln M_n\). Then every feasible \(v\ge\ln M_n\) satisfies \(v>v^*\), so \(h'(v)<0\) throughout the feasible set: \(h\) is strictly decreasing on \([\ln M_n,\infty)\). The unique maximiser is the left endpoint \(v=\ln M_n\), hence \(\widehat\theta_n=M_n\).
+
+Combining the two cases,
+\begin{equation}
+\label{eq:p10b-map}
+\widehat\theta_n
+=
+\max\Bigl\{
+M_n,\;
+\exp\bigl(\mu_0-(n+1)\sigma_0^2\bigr)
+\Bigr\},
+\qquad
+M_n=\max_{1\le i\le n}X_i.
+\end{equation}
+This is a genuine estimator: it equals \(M_n\) whenever the data maximum exceeds the prior-driven constant \(\theta^*\), and equals that constant otherwise.
+
+\begin{remark*}[Reading the \(\max\)]
+One should not think of \(\max\) here as an arbitrary algebraic trick. It is the standard truncated-unimodal rule: the mode of a density that increases then decreases, restricted to \([M_n,\infty)\), is the unconstrained mode if feasible, otherwise the boundary \(M_n\).
+\end{remark*}
+
+\paragraph{Step 4: consistency.}
+Let \(\theta_0>0\) denote the true parameter. It is classical that \(M_n\to\theta_0\) almost surely (equivalently in probability): indeed \(\Pbb_{\theta_0}(M_n\le\theta_0-\varepsilon)=((\theta_0-\varepsilon)/\theta_0)^n\to 0\) for every \(\varepsilon\in(0,\theta_0)\), while \(M_n\le\theta_0\) a.s. On the other hand,
+\[
+\exp\bigl(\mu_0-(n+1)\sigma_0^2\bigr)\to 0
+\qquad(n\to\infty).
+\]
+Therefore there exists (a.s.) a random \(N\) such that for all \(n\ge N\),
+\[
+\exp\bigl(\mu_0-(n+1)\sigma_0^2\bigr)
+<
+M_n,
+\]
+and \eqref{eq:p10b-map} yields \(\widehat\theta_n=M_n\). Combined with \(M_n\to\theta_0\) we obtain \(\widehat\theta_n\to\theta_0\) almost surely, hence \(\widehat\theta_n\) is consistent for \(\theta\).
+
+\begin{remark*}[Why consistency is not spoiled by the data-free critical point]
+For large \(n\) the constant \(\theta^*\) is driven to \(0\) by the factor \(e^{-(n+1)\sigma_0^2}\), while \(M_n\) stays near the positive true \(\theta_0\). So the boundary \(M_n\) eventually dominates the \(\max\), and the estimator behaves like the classical sufficient statistic \(X_{(n)}\).
+\end{remark*}
+\qed
+
+\begin{examnote}[A miniature Bayes calculation: coin flips, Beta--Binomial]
+\label{note:p10-beta-binomial}
+The following is the standard conjugate toy model behind ``Bayesian updating for a biased coin''. It is not part of Problem~10, but the same formal pattern (prior \(\times\) likelihood \(\propto\) posterior) appears there with a lognormal prior and a uniform likelihood.
+
+\paragraph{Model.}
+Let \(p\in(0,1)\) be the unknown heads probability. Observe \(X\mid p\sim\mathrm{Binomial}(n,p)\) (equivalently: \(n\) i.i.d.\ Bernoulli\((p)\) tosses, \(X=\) number of heads). Take the Beta prior
+\[
+p\sim\mathrm{Beta}(\alpha,\beta),
+\qquad
+\pi(p)
+=
+\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\,p^{\alpha-1}(1-p)^{\beta-1},
+\qquad
+\alpha,\beta>0.
+\]
+(The uniform prior on \([0,1]\) is the special case \(\alpha=\beta=1\).)
+
+\paragraph{Posterior.}
+The likelihood is \(L(p\mid x)=\binom{n}{x}p^x(1-p)^{n-x}\). Bayes' rule gives
+\begin{align*}
+\pi(p\mid x)
+&\propto
+\pi(p)\,L(p\mid x)
+\propto
+p^{\alpha-1}(1-p)^{\beta-1}\cdot p^x(1-p)^{n-x}
+=
+p^{\alpha+x-1}(1-p)^{\beta+n-x-1}.
+\end{align*}
+Recognizing the Beta kernel,
+\[
+p\mid X=x
+\sim
+\mathrm{Beta}(\alpha+x,\,\beta+n-x).
+\]
+In words: each head increments the first Beta parameter by \(1\), each tail increments the second by \(1\). The posterior stays inside the same parametric family as the prior; this is what ``conjugate'' means here.
+
+\paragraph{Bayes estimators (common choices).}
+Under squared error loss the Bayes estimator is the posterior mean:
+\[
+\widehat p_{\mathrm{Bayes}}
+=
+\E[p\mid X]
+=
+\frac{\alpha+X}{\alpha+\beta+n}.
+\]
+Under \(0\)--\(1\) loss near a point mass (MAP), one maximises the posterior density and obtains (for \(\alpha,\beta\ge 1\))
+\[
+\widehat p_{\mathrm{MAP}}
+=
+\frac{\alpha+X-1}{\alpha+\beta+n-2}
+\]
+when the mode lies in \((0,1)\). Neither is in general equal to the MLE \(X/n\); the prior pulls the estimate toward \(\alpha/(\alpha+\beta)\).
+
+\paragraph{Posterior predictive (optional).}
+A future toss \(X_{\mathrm{new}}\mid p\sim\mathrm{Bernoulli}(p)\), independent of the data given \(p\), has
+\[
+\Pbb(X_{\mathrm{new}}=1\mid X=x)
+=
+\E[p\mid X=x]
+=
+\frac{\alpha+x}{\alpha+\beta+n}.
+\]
+If instead one predicts another block of \(m\) tosses, the marginal predictive law of the number of heads is \emph{Beta--Binomial}\((\alpha+x,\beta+n-x;m)\). So: likelihood Binomial, prior Beta, posterior Beta, predictive Beta--Binomial.
+
+\paragraph{Takeaway for Problem~10.}
+Write \(\text{posterior}\propto\text{prior}\times\text{likelihood}\), identify the resulting density (here Beta; in Problem~10, a truncated/reweighted lognormal on \(\ln\theta\)), then read off the Bayes estimator from the loss (mean, mode, \ldots). Conjugacy is convenient but not required---Problem~10 is deliberately non-conjugate.
+\end{examnote}
+
+\subsection{Problem 11. [10 pts.]}
+Let \( X_1, \dots, X_n \) be iid random variables following a discrete uniform distribution on the set \( 1, 2, \dots, \theta \), where \( \theta \) is an unknown positive integer. Let \( \theta_0 \) be a known positive integer. Let \( X_{(n)} \) be the largest order statistic and \( x_{(n)} \) be its realized value. We are interested in the hypothesis testing problems below at level \( 0 < \alpha < 1 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Consider testing \( H_0 : \theta \le \theta_0 \) versus \( H_1 : \theta > \theta_0 \). Show that
+
+    \[
+    \phi(x) =
+    \begin{cases}
+    1 & \text{if } x_{(n)} > \theta_0, \\
+    \alpha & \text{if } x_{(n)} \le \theta_0
+    \end{cases}
+    \]
+
+    is a (randomized) UMP test of size \( \alpha \).
+    \item Now consider testing \( H_0 : \theta = \theta_0 \) versus \( H_1 : \theta \neq \theta_0 \). Show that
+
+    \[
+    \phi(x) =
+    \begin{cases}
+    1 & \text{if } x_{(n)} > \theta_0 \text{ or } x_{(n)} \le \theta_0 \alpha^{1/n}, \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+
+    is a UMP test of size \( \alpha \) when \( \theta_0 \alpha^{1/n} \) is an integer.
+\end{enumerate}
+
+\setcounter{section}{11}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{(a) Preliminaries: test functions and UMP}
+
+The object appearing in the problem statement is not a rejection \emph{set}, but a \emph{test function}. The classical rejection-region picture is the special case in which that function is an indicator; part~(a) needs the more general (randomized) language.
+
+\begin{definition}[Test function / critical function]
+\label{def:p11a-phi}
+A \emph{test} of a hypothesis about the law of a sample \(X\) is a measurable function
+\[
+\phi
+=
+\phi(X)
+\in[0,1].
+\]
+After observing \(X=x\), one rejects the null hypothesis with probability \(\phi(x)\) and retains it with probability \(1-\phi(x)\). In particular:
+\begin{itemize}
+    \item \(\phi(x)=1\): reject with certainty;
+    \item \(\phi(x)=0\): do not reject;
+    \item \(\phi(x)=\gamma\in(0,1)\): reject after an independent Bernoulli\((\gamma)\) draw (randomization).
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Nonrandomized tests and rejection regions]
+\label{def:p11a-region}
+A test is \emph{nonrandomized} if \(\phi\in\{0,1\}\) almost surely. Then
+\[
+R:=\{x:\phi(x)=1\}
+\]
+is the \emph{rejection region}, and \(\phi=\mathbf{1}_R\). Conversely, every rejection region \(R\) defines a nonrandomized test by \(\phi=\mathbf{1}_R\). Thus ``UMP as an optimal rejection region'' is exactly ``UMP among tests with values in \(\{0,1\}\)''.
+\end{definition}
+
+\begin{remark*}[No contradiction with the classical picture]
+There is no conflict between \cref{def:p11a-phi} and \cref{def:p11a-region}: the rejection-region definition is the restriction of the test-function definition to extreme values \(0\) and \(1\). Discrete models (as here) and composite boundaries often force \(\phi\) to take an intermediate value on a null atom in order to achieve an exact size \(\alpha\in(0,1)\). That is why part~(a) writes \(\phi=\alpha\) on \(\{x_{(n)}\le\theta_0\}\).
+\end{remark*}
+
+\begin{definition}[Power function, size, level]
+\label{def:p11a-size}
+For a test \(\phi\) and parameter \(\theta\), the \emph{power} (rejection probability) is
+\[
+\beta_\phi(\theta)
+:=
+\E_\theta\bigl[\phi(X)\bigr]
+=
+\Pbb_\theta(\text{reject }H_0).
+\]
+When testing \(H_0:\theta\in\Theta_0\) versus \(H_1:\theta\in\Theta_1\), one says that \(\phi\) has \emph{level} \(\alpha\) if
+\[
+\beta_\phi(\theta)\le\alpha
+\qquad\text{for all }\theta\in\Theta_0,
+\]
+and has \emph{size} \(\alpha\) if moreover
+\[
+\sup_{\theta\in\Theta_0}\beta_\phi(\theta)=\alpha.
+\]
+\end{definition}
+
+\begin{definition}[UMP test]
+\label{def:p11a-ump}
+A level-\(\alpha\) test \(\phi\) is \emph{uniformly most powerful} (UMP) for \(H_0:\theta\in\Theta_0\) versus \(H_1:\theta\in\Theta_1\) if, for every competing level-\(\alpha\) test \(\psi\) and every \(\theta\in\Theta_1\),
+\[
+\beta_\phi(\theta)
+\ge
+\beta_\psi(\theta).
+\]
+In words: among all tests whose Type~I error is controlled by \(\alpha\) on the whole null, \(\phi\) maximises power at every alternative point simultaneously.
+\end{definition}
+
+\begin{remark*}[Reading the displayed \(\phi\) in part~(a)]
+For \(H_0:\theta\le\theta_0\) versus \(H_1:\theta>\theta_0\), the given
+\[
+\phi(x)
+=
+\begin{cases}
+1 & \text{if }x_{(n)}>\theta_0,\\
+\alpha & \text{if }x_{(n)}\le\theta_0
+\end{cases}
+\]
+means: if the maximal observation already exceeds \(\theta_0\), reject \(H_0\) for sure (this event is impossible under every \(\theta\le\theta_0\)); otherwise flip a coin with success probability \(\alpha\) and reject on success. The second clause is the randomization that raises the null rejection probability exactly up to size \(\alpha\). Proving that this \(\phi\) is UMP of size \(\alpha\) is the content of part~(a); the definitions above are what that claim means.
+\end{remark*}
+
+\begin{lemma}[Law of the maximum]
+\label{lem:p11-max}
+Let \(M:=X_{(n)}=\max_{1\le i\le n}X_i\). For every integer \(\theta\ge 1\) and every integer \(k\in\{1,\dots,\theta\}\),
+\[
+\Pbb_\theta(M\le k)
+=
+\Bigl(\frac{k}{\theta}\Bigr)^n,
+\qquad
+\Pbb_\theta(M=k)
+=
+\Bigl(\frac{k}{\theta}\Bigr)^n-\Bigl(\frac{k-1}{\theta}\Bigr)^n,
+\]
+with the convention \(0^n=0\). In particular \(\Pbb_\theta(M>\theta)=0\), and if \(k\ge\theta\) then \(\Pbb_\theta(M\le k)=1\).
+\end{lemma}
+
+\begin{proof}
+\(\{M\le k\}=\{X_1\le k,\dots,X_n\le k\}\). Under \(P_\theta\) each \(X_i\) is uniform on \(\{1,\dots,\theta\}\), so for \(1\le k\le\theta\) one has \(\Pbb_\theta(X_i\le k)=k/\theta\), and independence gives the first display. The second is a telescoping difference.
+\end{proof}
+
+\begin{lemma}[Neyman--Pearson lemma, randomized form]
+\label{lem:p11-NP}
+Let \(P_0,P_1\) be two probability measures on a discrete space, with densities \(f_0,f_1\) with respect to counting measure. For testing \(H_0:P=P_0\) versus \(H_1:P=P_1\) at size \(\alpha\in(0,1)\), a test \(\phi\) is most powerful of size \(\alpha\) if there exist a threshold \(c\in[0,\infty]\) and a constant \(\gamma\in[0,1]\) such that
+\[
+\phi(x)
+=
+\begin{cases}
+1 & \text{when }f_1(x)>c\,f_0(x),\\
+\gamma & \text{when }f_1(x)=c\,f_0(x),\\
+0 & \text{when }f_1(x)<c\,f_0(x),
+\end{cases}
+\]
+and \(\E_0\phi=\alpha\). (If \(f_0(x)=0<f_1(x)\), one interprets the ratio as \(+\infty\) and rejects.)
+\end{lemma}
+
+\begin{proof}
+This is the standard Neyman--Pearson lemma for dominated discrete experiments; see e.g.\ Lehmann--Romano, Theorem~3.2.1. We use it as a black box below, and always verify the size constraint \(\E_0\phi=\alpha\) by hand.
+\end{proof}
+
+\subsubsection{(a) Proof}
+
+Write \(M=X_{(n)}\) and let \(\phi\) be the test displayed in the problem. All expectations below are with respect to the sample \((X_1,\dots,X_n)\), or equivalently with respect to \(M\) since \(\phi\) depends on the data only through \(M\).
+
+\paragraph{Step 1: size \(\alpha\) under the composite null.}
+Fix \(\theta\le\theta_0\). By \cref{lem:p11-max}, \(\Pbb_\theta(M>\theta_0)=0\) (since \(M\le\theta\le\theta_0\) a.s.). Therefore
+\[
+\beta_\phi(\theta)
+=
+\E_\theta\phi
+=
+\E_\theta\bigl[\mathbf{1}_{\{M>\theta_0\}}+\alpha\mathbf{1}_{\{M\le\theta_0\}}\bigr]
+=
+\alpha\,\Pbb_\theta(M\le\theta_0)
+=
+\alpha.
+\]
+Hence \(\sup_{\theta\le\theta_0}\beta_\phi(\theta)=\alpha\): \(\phi\) has size \(\alpha\) for \(H_0:\theta\le\theta_0\).
+
+\paragraph{Step 2: most powerful against every simple alternative \(\theta_1>\theta_0\).}
+Fix \(\theta_1>\theta_0\). Consider the simple problem \(H_0':\theta=\theta_0\) versus \(H_1':\theta=\theta_1\). The joint density (probability mass) of the sample is \(\theta^{-n}\) on \(\{1,\dots,\theta\}^n\). Equivalently, work with the sufficient statistic \(M\): for an integer \(m\),
+\begin{itemize}
+    \item if \(m>\theta_0\), then \(f_{\theta_0}(m)=0\) while \(f_{\theta_1}(m)>0\) (since \(\theta_1>\theta_0\)), so the likelihood ratio is \(+\infty\);
+    \item if \(m\le\theta_0\), then both masses are positive and
+    \[
+    \frac{f_{\theta_1}(m)}{f_{\theta_0}(m)}
+    =
+    \frac{m^n-(m-1)^n}{\theta_1^n}
+    \Big/
+    \frac{m^n-(m-1)^n}{\theta_0^n}
+    =
+    \Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n,
+    \]
+    a constant independent of \(m\).
+\end{itemize}
+By \cref{lem:p11-NP}, every most powerful test of size \(\alpha\) therefore rejects with probability \(1\) on \(\{M>\theta_0\}\), and rejects with one and the same probability \(\gamma\) on the whole set \(\{M\le\theta_0\}\). The size constraint under \(\theta_0\) reads
+\[
+\E_{\theta_0}\phi
+=
+\Pbb_{\theta_0}(M>\theta_0)+\gamma\Pbb_{\theta_0}(M\le\theta_0)
+=
+\gamma
+=
+\alpha,
+\]
+so \(\gamma=\alpha\). Thus the displayed \(\phi\) is most powerful of size \(\alpha\) for \(\theta=\theta_0\) versus \(\theta=\theta_1\).
+
+\paragraph{Step 3: upgrade to the composite null.}
+Let \(\psi\) be an arbitrary level-\(\alpha\) test for the composite problem \(H_0:\theta\le\theta_0\) versus \(H_1:\theta>\theta_0\). Then in particular \(\E_{\theta_0}\psi\le\alpha\). For any fixed \(\theta_1>\theta_0\), the Neyman--Pearson lemma implies that among all tests with \(\E_{\theta_0}\psi\le\alpha\), the power at \(\theta_1\) is maximised by \(\phi\). Hence \(\beta_\phi(\theta_1)\ge\beta_\psi(\theta_1)\). Since \(\theta_1>\theta_0\) was arbitrary, \(\phi\) is UMP of size \(\alpha\) for the composite one-sided problem.
+\qed
+
+\begin{remark*}[Explicit power on the alternative]
+For completeness, if \(\theta_1>\theta_0\) then \cref{lem:p11-max} gives
+\[
+\beta_\phi(\theta_1)
+=
+1-\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n
++
+\alpha\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n
+=
+1-(1-\alpha)\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n.
+\]
+\end{remark*}
+
+\subsubsection{(b) Preliminaries}
+
+Write again \(M=X_{(n)}\). Assume \(c:=\theta_0\alpha^{1/n}\) is an integer (as hypothesized), and let \(\phi\) be the nonrandomized test
+\[
+\phi
+=
+\mathbf{1}_{\{M>\theta_0\}\cup\{M\le c\}}.
+\]
+
+\begin{remark*}[Structure of the two-sided rejection region]
+The region has two arms: \(M>\theta_0\) detects alternatives \(\theta>\theta_0\) (impossible under the null), while \(M\le c\) detects alternatives \(\theta<\theta_0\). The threshold \(c\) is chosen so that the left arm alone already spends the entire Type~I budget \(\alpha\) under \(\theta=\theta_0\).
+\end{remark*}
+
+\subsubsection{(b) Proof}
+
+\paragraph{Step 1: size \(\alpha\).}
+Under \(\theta=\theta_0\), \cref{lem:p11-max} yields \(\Pbb_{\theta_0}(M>\theta_0)=0\) and
+\[
+\Pbb_{\theta_0}(M\le c)
+=
+\Bigl(\frac{c}{\theta_0}\Bigr)^n
+=
+\bigl(\alpha^{1/n}\bigr)^n
+=
+\alpha,
+\]
+where the middle equality used \(c=\theta_0\alpha^{1/n}\). Therefore \(\beta_\phi(\theta_0)=\alpha\): the test has size \(\alpha\).
+
+\paragraph{Step 2: power envelope for every simple alternative.}
+We show that \(\phi\) matches the Neyman--Pearson power against every \(\theta_1\neq\theta_0\). Combined with size \(\alpha\), this yields UMP for \(H_0:\theta=\theta_0\) versus \(H_1:\theta\neq\theta_0\).
+
+\textit{Right alternatives \(\theta_1>\theta_0\).}
+As in part~(a), Step~2, every MP test of size \(\alpha\) for \(\theta=\theta_0\) versus \(\theta=\theta_1\) rejects a.s.\ on \(\{M>\theta_0\}\) and rejects with constant conditional probability \(\alpha\) on \(\{M\le\theta_0\}\). Its power equals
+\[
+1-(1-\alpha)\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n.
+\]
+For the present \(\phi\),
+\begin{align*}
+\beta_\phi(\theta_1)
+&=
+\Pbb_{\theta_1}(M>\theta_0)+\Pbb_{\theta_1}(M\le c)
+=
+1-\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n
++
+\Bigl(\frac{c}{\theta_1}\Bigr)^n
+=
+1-\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n
++
+\alpha\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n
+=
+1-(1-\alpha)\Bigl(\frac{\theta_0}{\theta_1}\Bigr)^n,
+\end{align*}
+which is exactly the NP envelope. (Intuitively: under \(\theta_1\), the mass of \(\{M\le c\}\) equals \(\alpha\) times the mass of \(\{M\le\theta_0\}\), so rejecting on \(\{M\le c\}\) has the same power contribution as randomizing with probability \(\alpha\) on all of \(\{M\le\theta_0\}\).)
+
+\textit{Left alternatives \(\theta_1<\theta_0\).}
+Now \(M\le\theta_1<\theta_0\) a.s., so \(\{M>\theta_0\}\) has probability \(0\) under \(P_{\theta_1}\). The likelihood ratio for \(\theta_1\) versus \(\theta_0\) on the possible values of \(M\) satisfies: \(f_{\theta_1}(m)=0\) for \(m>\theta_1\), while for \(1\le m\le\theta_1\) the ratio \(f_{\theta_1}(m)/f_{\theta_0}(m)=(\theta_0/\theta_1)^n\) is constant. By \cref{lem:p11-NP}, every MP size-\(\alpha\) test therefore rejects on a lower set \(\{M\le c'\}\) (with possible randomization on a single atom). Choosing \(c'=c\) gives size \(\Pbb_{\theta_0}(M\le c)=\alpha\). The resulting NP power is \(\Pbb_{\theta_1}(M\le c)\). But under \(P_{\theta_1}\) our \(\phi\) rejects precisely on \(\{M\le c\}\) (the event \(\{M>\theta_0\}\) never occurs), so \(\beta_\phi(\theta_1)=\Pbb_{\theta_1}(M\le c)\), again matching the envelope. In particular, if \(\theta_1\le c\) then the power equals \(1\).
+
+\paragraph{Step 3: conclusion.}
+For every \(\theta_1\neq\theta_0\), \(\phi\) attains the maximal possible power among size-\(\alpha\) tests of \(\theta=\theta_0\) versus \(\theta=\theta_1\). Therefore \(\phi\) is UMP of size \(\alpha\) for \(H_0:\theta=\theta_0\) versus \(H_1:\theta\neq\theta_0\).
+\qed
+
+\begin{remark*}[Why the integrality hypothesis?]
+If \(\theta_0\alpha^{1/n}\) is not an integer, one cannot realise size exactly \(\alpha\) by a nonrandomized lower threshold alone; a randomized atom on the boundary would be needed. The problem assumes integrality precisely so that the displayed indicator test has size \(\alpha\) with no further randomization.
+\end{remark*}
 
 \end{document}

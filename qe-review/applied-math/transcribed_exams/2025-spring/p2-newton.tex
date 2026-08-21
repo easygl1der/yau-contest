@@ -1,0 +1,441 @@
+\setcounter{section}{2}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: Newton's iteration, and the theorems the three parts invoke}
+
+The official CAM syllabus names this circle as iterative methods for nonlinear equations: bisection, Newton, quasi-Newton, and fixed-point iteration, together with their convergence analysis \cite{conte00}. Problem~2 is the Newton package in one question. Part~(i) is the local quadratic theorem at a simple zero (the same statement as 2023 Fall Problem~1, without the secant companion). Part~(ii) is what that theorem becomes when \(f'(\alpha)=0\). Part~(iii) is the standard repair when the multiplicity is unknown.
+
+The iteration is not defined in the exam statement. The three parts are unintelligible until it is, and until ``rate of convergence'' is a precise limit rather than a synonym of ``fast''.
+
+\paragraph{Qiuzhen's Newton questions, 2023--2026.}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.45cm}
+                   >{\raggedright\arraybackslash}p{4.35cm}
+                   >{\raggedright\arraybackslash}p{3.45cm}
+                   >{\raggedright\arraybackslash}p{3.55cm}@{}}
+\toprule
+Paper & Typical ask & Machine & Relation to 2025 \\
+\midrule
+2023 Fall P1 & simple zero: quadratic limit; secant: product of two errors & Taylor of \(f\) at \(\alpha\); \(g'(\alpha)=0\) & (i) is this theorem \\
+2024 Fall P1 & Newton on a concrete transcendental, with a prescribed start & same local theorem, plus a basin argument & not needed here \\
+2025 Spring P2 & simple / multiple / unknown multiplicity & factorization \(f=(x-\alpha)^m h\) & this problem \\
+2026 Spring P1 & derivative-free one-step map, order \(2\) & same \(Q\)-order machine, different \(\varphi\) & Newton is the model case \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+\begin{definition}[Newton's iteration]
+\label{def:newton}
+Let \(f\) be differentiable on an interval, and suppose \(f'(x)\neq 0\) at the points that arise. Newton's iteration for a root of \(f(x)=0\), started at \(x_0\), is the recurrence
+\begin{equation}
+\label{eq:newton}
+x_{k+1}
+=
+x_k
+-
+\frac{f(x_k)}{f'(x_k)},
+\qquad
+k=0,1,2,\dots.
+\end{equation}
+Equivalently, \(x_{k+1}\) is the unique root of the tangent line to \(y=f(x)\) at \(x_k\):
+\[
+y
+=
+f(x_k)
++
+f'(x_k)\,(x-x_k).
+\]
+Setting \(y=0\) and solving for \(x\) recovers \eqref{eq:newton}. The map is well-defined at \(x_k\) if and only if \(f'(x_k)\neq 0\).
+\end{definition}
+
+The geometric content of \cref{def:newton} is that one replaces \(f\) by its first-order Taylor polynomial at the current guess and solves that linear equation exactly. If the graph is locally well approximated by its tangent, the next intercept is much closer to the root than the current guess; that is the source of quadratic convergence at a simple zero, and it is also why a flat tangent (\(f'(\alpha)=0\)) destroys the rate.
+
+\begin{center}
+\begin{tikzpicture}[>=Latex, scale=1.05]
+  \draw[->] (-0.25,0) -- (5.15,0) node[right] {$x$};
+  \draw[->] (0,-1.55) -- (0,2.65) node[above] {$y$};
+  \draw[thick, domain=0.35:4.55, samples=120]
+    plot (\x, {0.22*(\x-0.3)*(\x-0.3)-1.35});
+  \node[font=\small] at (4.42,2.05) {$y=f(x)$};
+  % simple root of 0.22(x-0.3)^2-1.35=0
+  \fill (2.777,0) circle (1.5pt);
+  \node[below] at (2.777,-0.08) {\(\alpha\)};
+  \pgfmathsetmacro{\xzero}{4.20}
+  \pgfmathsetmacro{\yzero}{0.22*(\xzero-0.3)*(\xzero-0.3)-1.35}
+  \pgfmathsetmacro{\fpzero}{0.44*(\xzero-0.3)}
+  \pgfmathsetmacro{\xone}{\xzero-\yzero/\fpzero}
+  \fill (\xzero,0) circle (1.5pt);
+  \node[below] at (\xzero,-0.08) {\(x_0\)};
+  \draw[densely dashed] (\xzero,0) -- (\xzero,\yzero);
+  \fill (\xzero,\yzero) circle (1.5pt);
+  \draw[thick] (2.45, {\yzero+\fpzero*(2.45-\xzero)}) -- (4.50, {\yzero+\fpzero*(4.50-\xzero)});
+  \fill (\xone,0) circle (1.5pt);
+  \node[below] at (\xone,-0.08) {\(x_1\)};
+\end{tikzpicture}
+\end{center}
+
+\begin{notation}[Error, and the Newton map]
+\label{not:newton-map}
+Write \(e_k\coloneqq x_k-\alpha\). Whenever \(f'(x)\neq 0\), the iteration is the fixed-point map
+\[
+g(x)
+\coloneqq
+x
+-
+\frac{f(x)}{f'(x)},
+\qquad
+x_{k+1}=g(x_k).
+\]
+A root \(\alpha\) of \(f\) is a fixed point of \(g\) as soon as \(g\) extends continuously through \(\alpha\). At a simple root this is automatic: \(f'(\alpha)\neq 0\), so \(g(\alpha)=\alpha\). At a multiple root \(f'(\alpha)=0=f(\alpha)\), and \(g(\alpha)\) is an indeterminate form; the continuous extension is computed from the factorization in \cref{def:multiplicity} and equals \(\alpha\) still.
+\end{notation}
+
+\begin{definition}[Multiplicity]
+\label{def:multiplicity}
+Let \(f\) be \(C^m\) near \(\alpha\), with \(m\ge 1\). The point \(\alpha\) is a root of multiplicity \(m\) if
+\[
+f(\alpha)
+=
+f'(\alpha)
+=
+\cdots
+=
+f^{(m-1)}(\alpha)
+=
+0
+\qquad\text{and}\qquad
+f^{(m)}(\alpha)\neq 0.
+\]
+Equivalently, one may factor
+\[
+f(x)
+=
+(x-\alpha)^m h(x)
+\]
+in a neighborhood of \(\alpha\), with \(h\) continuous and \(h(\alpha)\neq 0\). (If \(f\in C^{m+1}\) then \(h\in C^1\) and \(h(\alpha)=f^{(m)}(\alpha)/m!\).) The exam's standing hypothesis is exactly this factorization. The root is \emph{simple} when \(m=1\), i.e.\ when \(f(\alpha)=0\) and \(f'(\alpha)\neq 0\).
+\end{definition}
+
+\begin{definition}[\(Q\)-order of convergence]
+\label{def:q-order}
+Let \(x_k\to\alpha\) with \(x_k\neq\alpha\) for all \(k\). The convergence is
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item \emph{\(Q\)-linear} with rate \(\mu\in(0,1)\) if
+    \[
+    \lim_{k\to\infty}
+    \frac{\lvert x_{k+1}-\alpha\rvert}{\lvert x_k-\alpha\rvert}
+    =
+    \mu;
+    \]
+    \item \emph{\(Q\)-superlinear} if the same limit exists and equals \(0\);
+    \item of \emph{\(Q\)-order \(p>1\)} if
+    \[
+    \lim_{k\to\infty}
+    \frac{x_{k+1}-\alpha}{(x_k-\alpha)^p}
+    =
+    C
+    \in\mathbb{R}\setminus\{0\}.
+    \]
+\end{enumerate}
+The case \(p=2\) is \emph{quadratic}. A weaker, and often more convenient, form of order \(p\) is the existence of \(M,\delta>0\) such that \(\lvert x-\alpha\rvert<\delta\) implies \(\lvert g(x)-\alpha\rvert\le M\lvert x-\alpha\rvert^p\); combined with the restriction \(M\delta^{p-1}\le\tfrac12\), this already forces local attraction and is what one proves first. The limit \(C\), when it exists, is the \emph{asymptotic error constant}.
+\end{definition}
+
+Linear convergence with rate \(\mu\) close to \(1\) is slow: errors shrink by a fixed fraction each step. Superlinear means that fraction itself tends to \(0\). Quadratic means the number of correct digits roughly doubles at each step, once one is already close. The exam's ``rate of convergence is quadratic'' in (i) is \cref{def:q-order}(iii) with \(p=2\), not merely \(x_k\to\alpha\).
+
+The one-step theory is Ostrowski's theorem: the derivatives of \(g\) at the fixed point determine the order. Newton's method is the special case in which those derivatives can be read off from \(f\).
+
+\begin{theorem}[Ostrowski]
+\label{thm:ostrowski}
+Let \(g\) be \(C^p\) near a fixed point \(\alpha\), with \(p\ge 1\). Write \(x_{k+1}=g(x_k)\).
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item If \(\lvert g'(\alpha)\rvert<1\), there is a neighborhood \(D(\alpha,\delta)=\{x:\lvert x-\alpha\rvert\le\delta\}\) such that \(x_0\in D(\alpha,\delta)\) implies \(x_k\to\alpha\). If \(g'(\alpha)\neq 0\), the convergence is \(Q\)-linear with rate \(\lvert g'(\alpha)\rvert\).
+    \item If \(g'(\alpha)=\cdots=g^{(p-1)}(\alpha)=0\) and \(g^{(p)}(\alpha)\neq 0\), the convergence is of \(Q\)-order \(p\), with
+    \[
+    \lim_{k\to\infty}
+    \frac{x_{k+1}-\alpha}{(x_k-\alpha)^p}
+    =
+    \frac{g^{(p)}(\alpha)}{p!},
+    \]
+    provided \(x_0\) is sufficiently close to \(\alpha\) and \(x_k\neq\alpha\).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Taylor's formula with Lagrange remainder gives
+\[
+g(x)-\alpha
+=
+g(\alpha)
++
+g'(\alpha)(x-\alpha)
++
+\cdots
++
+\frac{g^{(p-1)}(\alpha)}{(p-1)!}(x-\alpha)^{p-1}
++
+\frac{g^{(p)}(\xi_x)}{p!}(x-\alpha)^p
+\]
+for some \(\xi_x\) between \(x\) and \(\alpha\). Under (i) one has \(g(x)-\alpha=g'(\alpha)(x-\alpha)+o(x-\alpha)\). Choose \(\delta\) so that \(\lvert x-\alpha\rvert\le\delta\) implies \(\lvert g(x)-\alpha\rvert\le q\lvert x-\alpha\rvert\) with \(\lvert g'(\alpha)\rvert<q<1\). Then \(D(\alpha,\delta)\) is invariant and \(\lvert e_k\rvert\le q^k\lvert e_0\rvert\to 0\). Dividing by \(e_k\) and passing to the limit yields the rate \(\lvert g'(\alpha)\rvert\) as soon as \(e_k\neq 0\) and \(g'\) is continuous.
+
+Under (ii) the same expansion collapses to
+\[
+g(x)-\alpha
+=
+\frac{g^{(p)}(\xi_x)}{p!}(x-\alpha)^p.
+\]
+Continuity of \(g^{(p)}\) at \(\alpha\) produces a bound \(\lvert g(x)-\alpha\rvert\le M\lvert x-\alpha\rvert^p\) on a small ball. Shrinking the ball so that \(M\delta^{p-1}\le\tfrac12\) gives local attraction as in \cref{thm:newton-simple} below, and the displayed limit follows by sending \(\xi_{x_k}\to\alpha\).
+\end{proof}
+
+The hypothesis \(\lvert g'(\alpha)\rvert<1\) is sharp for attraction: if \(\lvert g'(\alpha)\rvert>1\) then \(\alpha\) is a repeller, and if \(\lvert g'(\alpha)\rvert=1\) the linearization does not decide. For Newton at a simple root one will find \(g'(\alpha)=0\), which is the strongest possible case of (i) and triggers (ii) with \(p=2\).
+
+\begin{lemma}[Newton map at a simple root]
+\label{lem:g-simple}
+Suppose \(f\in C^2\) near \(\alpha\), with \(f(\alpha)=0\) and \(f'(\alpha)\neq 0\). Then \(g\) is \(C^1\) near \(\alpha\), \(g(\alpha)=\alpha\), and
+\[
+g'(\alpha)
+=
+0,
+\qquad
+g''(\alpha)
+=
+\frac{f''(\alpha)}{f'(\alpha)}.
+\]
+In particular Ostrowski's theorem applies with \(p=2\), and the asymptotic constant is \(f''(\alpha)/(2f'(\alpha))\).
+\end{lemma}
+
+\begin{proof}
+Differentiating \(g(x)=x-f(x)/f'(x)\) on \(\{f'\neq 0\}\) gives
+\[
+g'(x)
+=
+\frac{f(x)f''(x)}{\bigl(f'(x)\bigr)^2}.
+\]
+At \(x=\alpha\) the numerator vanishes and the denominator does not, so \(g'(\alpha)=0\). A second differentiation, or L'H\^{o}pital on \(g'(x)\) as \(x\to\alpha\), yields \(g''(\alpha)=f''(\alpha)/f'(\alpha)\).
+\end{proof}
+
+\begin{theorem}[Newton: simple root, local quadratic convergence]
+\label{thm:newton-simple}
+Let \(f\) be \(C^2\) in a neighborhood of \(\alpha\), with \(f(\alpha)=0\) and \(f'(\alpha)\neq 0\). There exists \(\delta>0\) such that for every \(x_0\in D(\alpha,\delta)=\{x:\lvert x-\alpha\rvert\le\delta\}\), Newton's iteration \eqref{eq:newton} is well-defined, remains in \(D(\alpha,\delta)\), converges to \(\alpha\), and is quadratic: there is \(M>0\) with
+\[
+\bigl\lvert x_{k+1}-\alpha\bigr\rvert
+\le
+M\bigl\lvert x_k-\alpha\bigr\rvert^2.
+\]
+If \(x_k\neq\alpha\) for all \(k\), the asymptotic constant exists and equals
+\begin{equation}
+\label{eq:newton-const}
+\lim_{k\to\infty}
+\frac{x_{k+1}-\alpha}{(x_k-\alpha)^2}
+=
+\frac{f''(\alpha)}{2f'(\alpha)}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Since \(f'(\alpha)\neq 0\) and \(f'\) is continuous, there is \(\delta_0>0\) such that \(\lvert x-\alpha\rvert\le\delta_0\) implies \(f'(x)\neq 0\). Thus \(g\) is well-defined on \(D(\alpha,\delta_0)\).
+
+Taylor-expand \(f\) at \(x_k\) and evaluate at \(\alpha\). For some \(\xi_k\) between \(x_k\) and \(\alpha\),
+\[
+0
+=
+f(\alpha)
+=
+f(x_k)
++
+f'(x_k)(\alpha-x_k)
++
+\tfrac12 f''(\xi_k)(\alpha-x_k)^2,
+\]
+hence
+\[
+\frac{f(x_k)}{f'(x_k)}
+=
+x_k-\alpha
+-
+\frac{f''(\xi_k)}{2f'(x_k)}(x_k-\alpha)^2.
+\]
+Subtracting from \(x_k\) produces the exact error formula
+\begin{equation}
+\label{eq:newton-lagrange}
+x_{k+1}-\alpha
+=
+\frac{f''(\xi_k)}{2f'(x_k)}(x_k-\alpha)^2.
+\end{equation}
+On the compact ball \(D(\alpha,\delta_0)\) the continuous function \(\lvert f''\rvert/(2\lvert f'\rvert)\) attains a finite maximum \(M\). Therefore
+\[
+\bigl\lvert g(x)-\alpha\bigr\rvert
+\le
+M\bigl\lvert x-\alpha\bigr\rvert^2
+\qquad\text{whenever}\qquad
+\lvert x-\alpha\rvert\le\delta_0.
+\]
+Shrink to \(\delta\in(0,\delta_0]\) with \(M\delta\le\tfrac12\). If \(\lvert e_0\rvert\le\delta\), then \(\lvert e_1\rvert\le M\lvert e_0\rvert^2\le\tfrac12\lvert e_0\rvert\le\delta\), and by induction the orbit remains in \(D(\alpha,\delta)\), stays well-defined, and satisfies \(\lvert e_{k+1}\rvert\le\tfrac12\lvert e_k\rvert\). Hence \(e_k\to 0\). The same bound is the \(Q\)-order \(2\) estimate.
+
+For the limit, send \(k\to\infty\) in \eqref{eq:newton-lagrange}: \(\xi_k\to\alpha\) and \(f'(x_k)\to f'(\alpha)\neq 0\), which is \eqref{eq:newton-const}. (If \(f''(\alpha)=0\) the order is at least \(2\), and may be higher; the exam's \(C^m\) hypothesis with \(m=1\) does not force \(f''(\alpha)\neq 0\), so ``quadratic'' is the guaranteed lower bound.)
+\end{proof}
+
+The neighborhood \(D(\alpha,\delta)\) is the object the exam asks one to produce. It is not unique, and no explicit \(\delta\) is required: existence follows from continuity of \(f'\) at a simple root, plus the smallness \(M\delta\le\tfrac12\) that turns a quadratic bound into a contraction of the error. The argument is local. Global convergence of Newton is a different theorem (Kantorovich), and is not asked.
+
+\begin{lemma}[Newton map at a multiple root]
+\label{lem:g-multiple}
+Let \(f(x)=(x-\alpha)^m h(x)\) with \(m\ge 2\), \(h(\alpha)\neq 0\), and \(h\in C^1\) near \(\alpha\). Then, in a punctured neighborhood of \(\alpha\),
+\[
+\frac{f(x)}{f'(x)}
+=
+\frac{(x-\alpha)\,h(x)}{m h(x)+(x-\alpha)h'(x)},
+\]
+and the Newton map extends continuously through \(\alpha\) by \(g(\alpha)=\alpha\), with
+\begin{equation}
+\label{eq:gprime-mult}
+g'(\alpha)
+=
+1-\frac{1}{m}.
+\end{equation}
+In particular \(\lvert g'(\alpha)\rvert=\lvert 1-1/m\rvert\in(0,1)\).
+\end{lemma}
+
+\begin{proof}
+Differentiating the factorization gives
+\[
+f'(x)
+=
+(x-\alpha)^{m-1}\bigl(m h(x)+(x-\alpha)h'(x)\bigr).
+\]
+The displayed quotient for \(f/f'\) follows by cancelling \((x-\alpha)^{m-1}\), which is legal for \(x\neq\alpha\). The denominator at \(\alpha\) equals \(m h(\alpha)\neq 0\), so the right-hand side extends continuously, and
+\[
+g(x)-\alpha
+=
+(x-\alpha)
+-
+\frac{(x-\alpha)\,h(x)}{m h(x)+(x-\alpha)h'(x)}
+=
+(x-\alpha)\cdot
+\frac{(m-1)h(x)+(x-\alpha)h'(x)}{m h(x)+(x-\alpha)h'(x)}.
+\]
+Dividing by \(x-\alpha\) and sending \(x\to\alpha\) yields \(g'(\alpha)=(m-1)/m=1-1/m\).
+\end{proof}
+
+\begin{theorem}[Newton: multiple root, \(Q\)-linear convergence]
+\label{thm:newton-multiple}
+Under the hypotheses of \cref{lem:g-multiple}, there is a neighborhood of \(\alpha\) in which Newton's iteration is well-defined and converges to \(\alpha\), and the convergence is \(Q\)-linear with rate
+\[
+\lim_{k\to\infty}
+\frac{x_{k+1}-\alpha}{x_k-\alpha}
+=
+1-\frac{1}{m}.
+\]
+The rate is independent of \(h\), hence of \(f^{(m)}(\alpha)\). It tends to \(1\) as \(m\to\infty\): high multiplicity makes Newton arbitrarily slow.
+\end{theorem}
+
+\begin{proof}
+\Cref{lem:g-multiple} supplies \(g'(\alpha)=1-1/m\in(0,1)\). Ostrowski's theorem~(\cref{thm:ostrowski}(i)) gives local attraction and the stated \(Q\)-linear rate. Well-definedness on a small ball follows from \(m h(x)+(x-\alpha)h'(x)\neq 0\) near \(\alpha\), which is the continuous denominator of \(f/f'\).
+\end{proof}
+
+The linearization \(e_{k+1}\approx\bigl(1-1/m\bigr)e_k\) is the whole of part~(ii) for unmodified Newton. For \(m=2\) the errors are (asymptotically) halved each step; for \(m=10\) they shrink by only \(10\%\). The quadratic picture of \cref{thm:newton-simple} is gone because the tangent at \(\alpha\) is horizontal, so \cref{def:newton} cannot even be evaluated at the root.
+
+If the multiplicity is known, the standard repair is to take an \(m\)-fold Newton step.
+
+\begin{definition}[Modified Newton iteration]
+\label{def:modified-newton}
+If \(\alpha\) is known to have multiplicity \(m\ge 1\), the modified Newton iteration is
+\begin{equation}
+\label{eq:modified-newton}
+x_{k+1}
+=
+x_k
+-
+m\,\frac{f(x_k)}{f'(x_k)}.
+\end{equation}
+The associated map is \(g_m(x)=x-m f(x)/f'(x)\). For \(m=1\) this is ordinary Newton.
+\end{definition}
+
+\begin{theorem}[Modified Newton is quadratic]
+\label{thm:newton-modified}
+Under the hypotheses of \cref{lem:g-multiple}, the map \(g_m\) extends through \(\alpha\) by \(g_m(\alpha)=\alpha\), and
+\[
+g_m(x)-\alpha
+=
+\frac{(x-\alpha)^2 h'(x)}{m h(x)+(x-\alpha)h'(x)}.
+\]
+In particular \(g_m'(\alpha)=0\), and modified Newton is locally quadratic. If \(h'(\alpha)\neq 0\), the exact \(Q\)-order is \(2\), with asymptotic constant \(h'(\alpha)/(m h(\alpha))\).
+\end{theorem}
+
+\begin{proof}
+From the quotient in \cref{lem:g-multiple},
+\[
+g_m(x)
+=
+x
+-
+m\cdot
+\frac{(x-\alpha)\,h(x)}{m h(x)+(x-\alpha)h'(x)}.
+\]
+A direct rearrangement of the numerator, using \(x=\alpha+(x-\alpha)\), produces
+\[
+g_m(x)-\alpha
+=
+\frac{(x-\alpha)^2 h'(x)}{m h(x)+(x-\alpha)h'(x)},
+\]
+which is \(O\bigl((x-\alpha)^2\bigr)\) with a continuous coefficient. Thus \(g_m'(\alpha)=0\). If \(h'(\alpha)\neq 0\) the leading coefficient at \(\alpha\) is \(h'(\alpha)/(m h(\alpha))\neq 0\), and \cref{thm:ostrowski}(ii) with \(p=2\) applies. If \(h'(\alpha)=0\) the order is at least \(2\). Local attraction is the same \(M\delta\le\tfrac12\) argument as in \cref{thm:newton-simple}.
+\end{proof}
+
+The identity \(g_m'(\alpha)=0\) is the reason one multiplies by \(m\): ordinary Newton overshoots by the factor \(1-1/m\) still left in \(g'\); scaling the step by \(m\) cancels that factor exactly.
+
+When \(m>1\) is unknown, \eqref{eq:modified-newton} cannot be formed. The standard device is to observe that the rational function \(u=f/f'\) has a \emph{simple} zero at \(\alpha\), independently of \(m\), and to apply ordinary Newton to \(u\).
+
+\begin{proposition}[Newton on \(f/f'\), unknown multiplicity]
+\label{prop:newton-u}
+Let \(f(x)=(x-\alpha)^m h(x)\) with \(m\ge 1\), \(h(\alpha)\neq 0\), and \(h\in C^2\) near \(\alpha\). Set
+\[
+u(x)
+\coloneqq
+\frac{f(x)}{f'(x)}
+=
+\frac{(x-\alpha)\,h(x)}{m h(x)+(x-\alpha)h'(x)}
+\qquad (x\neq\alpha),
+\]
+and extend by \(u(\alpha)=0\). Then \(u'(\alpha)=1/m\neq 0\), so \(\alpha\) is a simple zero of \(u\). Newton's iteration for \(u\),
+\begin{equation}
+\label{eq:schroeder}
+x_{k+1}
+=
+x_k
+-
+\frac{u(x_k)}{u'(x_k)}
+=
+x_k
+-
+\frac{f(x_k)\,f'(x_k)}{\bigl(f'(x_k)\bigr)^2-f(x_k)f''(x_k)},
+\end{equation}
+is therefore locally quadratic at \(\alpha\) by \cref{thm:newton-simple}, hence in particular \(Q\)-superlinear. The second formula is the identity \(u'=1-f f''/(f')^2\).
+\end{proposition}
+
+\begin{proof}
+The continuous extension \(u(\alpha)=0\) is \cref{lem:g-multiple}. Differentiating the extended quotient, or writing \(u(x)=(x-\alpha)/\bigl(m+(x-\alpha)h'(x)/h(x)\bigr)\) and evaluating the derivative at \(\alpha\), gives \(u'(\alpha)=1/m\neq 0\). The hypotheses of \cref{thm:newton-simple} hold for \(u\) in place of \(f\). Differentiating \(u=f/f'\) produces
+\[
+u'
+=
+\frac{(f')^2-f f''}{(f')^2},
+\]
+and substituting into \(x-u/u'\) is \eqref{eq:schroeder}.
+\end{proof}
+
+This is Schr\"oder's iteration (Newton applied to \(f/f'\)). It uses \(f''\), which the standing \(C^m\) hypothesis supplies for \(m\ge 2\). It is the natural answer to part~(iii): a single, explicitly written one-step map, with superlinear (in fact quadratic) local convergence, and with no a priori knowledge of \(m\).
+
+\begin{examnote}[What the three parts are]
+\label{examnote:p2}
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item \Cref{def:newton} plus \cref{thm:newton-simple}. Produce \(D(\alpha,\delta)\), check well-definedness from \(f'(\alpha)\neq 0\), and quote either the Lagrange formula \eqref{eq:newton-lagrange} or Ostrowski with \(g'(\alpha)=0\). The quadratic bound with \(M\delta\le\tfrac12\) is the attraction argument; the limit \eqref{eq:newton-const} is optional but matches the 2023 Fall wording.
+    \item Unmodified Newton is \cref{thm:newton-multiple}: \(Q\)-linear, rate \(1-1/m\). Modified Newton \eqref{eq:modified-newton} is \cref{thm:newton-modified}: locally quadratic. Both proofs go through the factorization of \cref{def:multiplicity}, not through \eqref{eq:newton-lagrange} (the latter assumes \(f'(x_k)\neq 0\) at the root).
+    \item Propose \eqref{eq:schroeder}. The one-line reason is that \(u=f/f'\) has a simple zero, so \cref{thm:newton-simple} applies to \(u\). The exam does not ask for the proof.
+\end{enumerate}
+\end{examnote}
+
+\begin{remark}[What this is not]
+\label{rem:newton-not}
+The local theory above is not Kantorovich's theorem (a semiglobal existence statement from bounds on \(f''\) in a whole ball, producing a root that was not assumed). It is not a quasi-Newton method: the derivative is exact, not a secant or Broyden approximation (that is 2023 Fall P1(2) and 2026 Spring P1). It is not a statement about Newton's method for optimization, which is the same map applied to \(\nabla F=0\) and lives in the CAM optimization syllabus rather than in this question.
+\end{remark}

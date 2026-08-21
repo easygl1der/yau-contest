@@ -1,0 +1,251 @@
+\setcounter{section}{5}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{What ``analyze the stability'' means}
+
+The PDE \(u_{tt}=u_{xx}\) is the one-dimensional wave equation. On the line it is well-posed: energy \(\int(u_t^2+u_x^2)\) is conserved, and solutions oscillate rather than explode. The exam is not asking whether the PDE is stable. It asks whether \emph{this difference scheme} can manufacture exponentially growing grid functions that the PDE does not have.
+
+The machine is von Neumann analysis, already defined in Problem~4 (\cref{def:von-neumann,def:lax-richtmyer,def:cond-uncond}). The calculation below does not assume that those definitions have been memorized: every algebraic step is written out. The target is a single inequality. Insert a Fourier mode \(U_j^n=g^n e^{\mathrm i j\xi}\). After one time step the mode is multiplied by a complex number \(g=g(\xi;\tau,h)\). After \(n\) steps it is multiplied by \(g^n\). If some frequency has \(|g|>1\), then \(|g|^{t_n/\tau}\) explodes as the mesh is refined with \(t_n\) fixed, and the scheme is unstable. If \(|g|\le 1\) for every \(\xi\) and every \(\tau,h>0\), the scheme is unconditionally von Neumann stable.
+
+The scheme is three-level, so \(g\) solves a quadratic and there are two roots \(g_\pm\). Both must satisfy \(|g|\le 1\). One is the physical oscillation; the other is a parasitic computational mode created by the extra time level.
+
+Consistency is not asked. Do not Taylor-expand the residual.
+
+\paragraph{Step 0. Rewrite the stencil.}
+
+The three fractions on the right-hand side are the same centered second difference, evaluated at three consecutive times, with weights \(\frac14,\frac12,\frac14\). Write
+\[
+\delta_{xx}V_j
+\coloneqq
+\frac{V_{j+1}-2V_j+V_{j-1}}{h^2}.
+\]
+The scheme is
+\[
+\frac{U_j^{n+1}-2U_j^n+U_j^{n-1}}{\tau^2}
+=
+\frac14\,\delta_{xx}U_j^{n+1}
++
+\frac12\,\delta_{xx}U_j^n
++
+\frac14\,\delta_{xx}U_j^{n-1}.
+\]
+The unknown \(U^{n+1}\) appears on both sides, so a linear system in the spatial index \(j\) is solved at each step: the scheme is implicit in space, two-step in time.
+
+\paragraph{Step 1. Substitute a Fourier mode.}
+
+On the infinite line (or a periodic interval) the shift \(j\mapsto j\pm 1\) is diagonalized by complex exponentials. It is therefore enough to test the scheme on
+\[
+U_j^n
+=
+g^n e^{\mathrm i j\xi},
+\qquad
+\xi\in\mathbb R,\quad g\in\mathbb C.
+\]
+The number \(\xi\) is a dimensionless spatial frequency. The number \(g\) is the unknown amplification factor: it is the ratio of the mode at time \(t_{n+1}\) to the same mode at time \(t_n\). Different frequencies may have different \(g\); that is why one writes \(g(\xi)\). The calculation must hold for \emph{every} \(\xi\), not just for \(\xi=0\) or \(\xi=\pi\).
+
+Write the eight terms that appear. The left-hand side is
+\[
+\frac{g^{n+1}e^{\mathrm i j\xi}-2g^n e^{\mathrm i j\xi}+g^{n-1}e^{\mathrm i j\xi}}{\tau^2}
+=
+g^{n-1}e^{\mathrm i j\xi}\cdot\frac{g^2-2g+1}{\tau^2}
+=
+g^{n-1}e^{\mathrm i j\xi}\cdot\frac{(g-1)^2}{\tau^2}.
+\]
+Each spatial second difference acts on a pure exponential, so it factors. This is the step that, if skipped, produces a page of complex moduli.
+
+\paragraph{Step 2. The spatial symbol (do not write \((e^{\mathrm i j\xi}-1)^2\)).}
+
+Compute the centered second difference of \(e^{\mathrm i j\xi}\) by shifting the index, not by a formal square:
+\begin{align*}
+e^{\mathrm i(j+1)\xi}-2e^{\mathrm i j\xi}+e^{\mathrm i(j-1)\xi}
+&=
+e^{\mathrm i j\xi}\bigl(e^{\mathrm i\xi}-2+e^{-\mathrm i\xi}\bigr)
+\\
+&=
+e^{\mathrm i j\xi}\bigl(2\cos\xi-2\bigr)
+\\
+&=
+-4\sin^2(\xi/2)\,e^{\mathrm i j\xi}.
+\end{align*}
+The last line is \(1-\cos\xi=2\sin^2(\xi/2)\). In particular the result is a \emph{real} multiple of \(e^{\mathrm i j\xi}\), and the multiple does not depend on the grid point \(j\).
+
+The expression \((e^{\mathrm i j\xi}-1)^2=e^{2\mathrm i j\xi}-2e^{\mathrm i j\xi}+1\) is a different polynomial. It still contains \(j\), so it cannot be the symbol of a translation-invariant stencil. Replacing \(\delta_{xx}\) by that square is the error that forces one to compute \(|B\pm\sqrt{\Delta}|/|2A|\) with complex \(A,B\).
+
+Dividing by \(h^2\),
+\[
+\delta_{xx}\bigl(e^{\mathrm i j\xi}\bigr)
+=
+\lambda(\xi)\,e^{\mathrm i j\xi},
+\qquad
+\lambda(\xi)
+\coloneqq
+-\frac{4\sin^2(\xi/2)}{h^2}
+\le 0.
+\]
+The same factor \(\lambda(\xi)\) multiplies the mode at every time level. The right-hand side of the scheme is therefore
+\[
+\lambda(\xi)\,g^{n-1}e^{\mathrm i j\xi}
+\left(
+\frac14 g^2+\frac12 g+\frac14
+\right)
+=
+\lambda(\xi)\,g^{n-1}e^{\mathrm i j\xi}\cdot\frac{(g+1)^2}{4}.
+\]
+
+\paragraph{Step 3. Cancel the common factor.}
+
+The mode \(g^{n-1}e^{\mathrm i j\xi}\) is never zero. Cancel it from both sides:
+\[
+\frac{(g-1)^2}{\tau^2}
+=
+\frac{\lambda(\xi)}{4}(g+1)^2.
+\]
+The coefficients are now ordinary complex numbers built from \(\tau,h,\xi\) only. There is no \(j\) left, and no uncancelled exponential.
+
+Introduce the nonnegative mesh quantity
+\[
+q
+\coloneqq
+\frac{\tau^2}{h^2}\sin^2\frac{\xi}{2}
+\ge 0.
+\]
+Then \(\lambda(\xi)\tau^2/4=-q\), and the cancelled equation is
+\[
+(g-1)^2
+=
+-q\,(g+1)^2.
+\]
+If \(g=0\), the left side is \(1\) and the right side is \(-q\le 0\), so \(1=-q\) is impossible. If \(g=-1\), the left side is \(4\) and the right side is \(0\), so \(4=0\) is impossible. Thus \(g\notin\{0,-1\}\), and one may divide.
+
+\paragraph{Step 4. Reduce to \(g+1/g\).}
+
+Divide \((g-1)^2=-q(g+1)^2\) by \(g\):
+\[
+\frac{g-2+g^{-1}}{\tau^2}
+=
+\frac{\lambda(\xi)}{4}\bigl(g+2+g^{-1}\bigr),
+\]
+which is the same as
+\[
+g+\frac{1}{g}-2
+=
+-q\left(g+2+\frac{1}{g}\right).
+\]
+Collect the terms that contain \(g+1/g\):
+\[
+\left(1+q\right)\left(g+\frac{1}{g}\right)
+=
+2-2q,
+\]
+hence
+\[
+g+\frac{1}{g}
+=
+2\frac{1-q}{1+q}.
+\]
+Call the right-hand side \(z\). For every \(q\ge 0\) one has \(-1\le(1-q)/(1+q)\le 1\), so
+\[
+z
+=
+2\frac{1-q}{1+q}
+\in[-2,2].
+\]
+This interval membership is the whole stability proof. It uses only \(q\ge 0\), which holds for every \(\tau,h>0\) and every \(\xi\). No restriction of CFL type appears.
+
+\paragraph{Step 5. A real number \(z\in[-2,2]\) forces \(|g|=1\).}
+
+The identity \(g+1/g=z\) rearranges to the quadratic
+\[
+g^2-z g+1=0.
+\]
+The product of the two roots is \(1\). The discriminant is \(z^2-4\le 0\) because \(|z|\le 2\). Hence the roots are complex conjugates (or a double real root \(\pm 1\) when \(z=\pm 2\)). A pair of conjugate numbers whose product is \(1\) lies on the unit circle:
+\[
+|g|^2
+=
+g\,\overline{g}
+=
+1.
+\]
+Equivalently, the quadratic formula gives
+\[
+g
+=
+\frac{z\pm\mathrm i\sqrt{4-z^2}}{2},
+\]
+and
+\[
+|g|^2
+=
+\frac{z^2+(4-z^2)}{4}
+=
+1.
+\]
+Both roots satisfy \(|g|=1\). This is von Neumann stability, and it is stronger than the inequality \(|g|\le 1\): every Fourier mode of the scheme oscillates at constant amplitude, matching the conservative character of \(u_{tt}=u_{xx}\).
+
+The same conclusion in trigonometric language: since \(z\in[-2,2]\), there is a real angle \(\varphi\) with \(\cos\varphi=z/2=(1-q)/(1+q)\), and \(g=e^{\pm\mathrm i\varphi}\).
+
+\paragraph{Step 6. Unconditional stability.}
+
+The argument never restricted \(\tau/h\). For the explicit centered leapfrog scheme
+\[
+\frac{U_j^{n+1}-2U_j^n+U_j^{n-1}}{\tau^2}
+=
+\delta_{xx}U_j^n,
+\]
+the analogous computation produces \(g+1/g=2-4(\tau/h)^2\sin^2(\xi/2)\), which exits \([-2,2]\) as soon as \(\tau/h>1\). The \(\frac14,\frac12,\frac14\) average is what keeps \(z\) inside \([-2,2]\) for every mesh: the implicit Laplacian at time \(n+1\) supplies enough dissipation in the amplification polynomial to kill the CFL barrier, without introducing amplitude decay (\(|g|\) stays exactly \(1\), not \(<1\)).
+
+\begin{theorem}[Von Neumann stability of the exam scheme]
+\label{thm:p5-stable}
+The scheme is unconditionally von Neumann stable: for every \(\tau,h>0\) and every frequency \(\xi\), both amplification factors satisfy \(|g_\pm(\xi)|=1\).
+\end{theorem}
+
+\paragraph{The quadratic you were trying to write, with real coefficients.}
+
+After Step~3, move every term to the left:
+\[
+\left(\frac{1}{\tau^2}-\frac{\lambda}{4}\right)g^2
+-
+\left(\frac{2}{\tau^2}+\frac{\lambda}{2}\right)g
++
+\left(\frac{1}{\tau^2}-\frac{\lambda}{4}\right)
+=
+0.
+\]
+In the \(q\)-notation this is
+\[
+(1+q)\,g^2-2(1-q)\,g+(1+q)=0.
+\]
+Write \(A=1+q>0\), \(B=-2(1-q)\), \(C=A\). These are real. The palindromic shape \(A=C\) is exactly \(g\cdot(1/g)=1\), which is the product-of-roots observation on the handwritten page. The discriminant is
+\[
+\Delta
+=
+4(1-q)^2-4(1+q)^2
+=
+-16q
+\le 0.
+\]
+For real palindromic quadratics, \(\Delta\le 0\) plus \(C/A=1\) is \(|g|=1\), which is Step~5 again. One does not insert these \(A,B\) into
+\[
+g=\frac{-B\pm\sqrt{\Delta}}{2A}
+\]
+and then take moduli of complex numerators and denominators. That expansion is valid but pointless: \(\Delta\le 0\) has already placed the square root on the imaginary axis, and \(A=C\) has already placed the roots on the unit circle.
+
+Jury's criterion (\cref{prop:jury}) is a third packaging of the same three inequalities \(p(1)\ge 0\), \(p(-1)\ge 0\), \(|C|\le A\), all true for every \(q\ge 0\). On a script, Step~4 plus Step~5 is shorter.
+
+\begin{remark}[What the two roots are]
+\label{rem:p5-two-roots}
+A two-step scheme needs two starting time levels, and its symbol is quadratic, so two modes live at each \(\xi\). The root with \(g\to 1\) as \(\xi\to 0\) is the physical wave (it approximates \(e^{\pm\mathrm i(\tau/h)\xi}\) to second order). The second root is parasitic: it is an artefact of writing a second-order equation as a three-level recurrence. Because \(|g|=1\) for that root as well, the parasite does not grow. It can still pollute the solution if the second initial level is chosen inconsistently; that is a question about starting the march, not about von Neumann stability of the recurrence.
+\end{remark}
+
+\begin{remark}[What this does not prove]
+\label{rem:p5-not-proved}
+Stability is not consistency, and it is not convergence. The scheme is in fact consistent of order \(O(\tau^2+h^2)\) with \(u_{tt}=u_{xx}\) (Taylor-expand at \((x_j,t_n)\); the \(\frac14,\frac12,\frac14\) weights are the Simpson average of \(\delta_{xx}\) in time, and no \(\tau^2/h^2\) remainder of Du~Fort--Frankel type appears). Combined with \cref{thm:p5-stable} and Lax equivalence (\cref{thm:lax-eq}), one would get convergence. The exam did not ask for that sentence. Phase error (the discrete \(\varphi\) versus the PDE frequency) is also not a stability question: \(|g|=1\) says nothing about whether the numerical wave speed is accurate.
+\end{remark}
+
+\begin{examnote}[What belongs on a script]
+\label{examnote:p5}
+Four lines. (i)~Rewrite as \(\frac14,\frac12,\frac14\) on \(\delta_{xx}\). (ii)~Substitute \(g^n e^{\mathrm i j\xi}\) and use \(\delta_{xx}e^{\mathrm i j\xi}=-4\sin^2(\xi/2)\,e^{\mathrm i j\xi}/h^2\). (iii)~Cancel, set \(q=(\tau/h)^2\sin^2(\xi/2)\), obtain \(g+1/g=2(1-q)/(1+q)\in[-2,2]\). (iv)~Conclude \(|g_\pm|=1\) for every \(\tau,h,\xi\). Do not expand \(|B\pm\sqrt{\Delta}|/|2A|\). Do not replace the second difference by \((e^{\mathrm i j\xi}-1)^2\).
+\end{examnote}

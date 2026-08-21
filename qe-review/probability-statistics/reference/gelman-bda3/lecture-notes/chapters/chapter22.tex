@@ -1,0 +1,305 @@
+% Chapter 22: Finite Mixture Models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{有限混合模型}
+
+\section{本章导论}
+
+在前面各章中，我们学习的模型大多假设数据来自某个特定的参数分布族——例如正态分布、二项分布或泊松分布。然而，现实世界的数据往往远比这复杂：一个总体可能包含多个异质性子群体，而每个子群体内部的行为相对简单。这种\textbf{异质性}（heterogeneity）在社会科学、生物统计学、金融和机器学习中无处不在。
+
+如何为这类异质性数据构建统计模型？一个自然的想法是：将总体视为若干个简单分布的混合，每个简单分布代表一个潜在的子群体。这就是\textbf{混合模型}（mixture model）的核心思想。
+
+本章研究有限混合模型（finite mixture models），即假设总体由有限个分量（component）混合而成的模型。我们将讨论：
+\begin{enumerate}
+  \item 混合模型的动机与应用场景
+  \item 有限混合分布的数学形式
+  \item 贝叶斯框架下的推断方法
+  \item 标签切换问题及其处理
+  \item 实际应用案例
+\end{enumerate}
+
+\section{异质性数据与混合模型的引入}
+
+\subsection{为什么需要混合模型？}
+
+考虑以下实际场景：
+
+一个天文数据库中记录了星系的退行速度（redshift）。物理学家知道星系形成于不同的演化阶段，因此观测到的速度分布可能不是单峰的正态分布，而是多个峰值——每个峰值对应一类星系。
+
+或者，考虑医学研究中的生存时间数据：患者在接受治疗后，有些人对治疗反应良好（生存时间较长），有些人对治疗反应不佳（生存时间较短）。如果我们忽略这种异质性，用单一分布建模，可能会得到误导性的结论。
+
+在这些场景中，数据的异质性来源于\textbf{未观测到的分组结构}（unobserved grouping structure）。混合模型提供了一种原则性的方法来刻画这种结构。
+
+\subsection{从潜在类别到混合模型}
+
+设我们有一组数据 $y = (y_1, \ldots, y_n)$。假设每个观测 $y_i$ 属于某个潜在的类别 $z_i \in \{1, 2, \ldots, K\}$，其中 $K$ 是类别总数。类别 $z_i$ 是未被观测到的（latent）。
+
+给定类别 $z_i = k$ 时，$y_i$ 的分布为某个简单的参数分布：
+\[
+y_i \mid z_i = k \sim f_k(y_i \mid \theta_k)
+\]
+其中 $f_k$ 是第 $k$ 个分量的密度函数，$\theta_k$ 是对应的参数。
+
+类别变量 $z_i$ 本身服从多项分布：
+\[
+z_i \sim \text{Categorical}(\pi_1, \ldots, \pi_K)
+\]
+其中 $\pi_k = \mathbb{P}(z_i = k)$ 是第 $k$ 个类别的先验概率。
+
+将潜在类别边缘化，我们得到观测数据的边际分布：
+\[
+p(y_i) = \sum_{k=1}^{K} \pi_k \cdot f_k(y_i \mid \theta_k)
+\label{eq:finite-mixture-marginal}
+\]
+
+这就是\textbf{有限混合分布}（finite mixture distribution）的数学形式。
+
+\section{有限混合分布的形式与性质}
+
+\subsection{混合分布的基本形式}
+
+有限混合模型的核心是\cref{eq:finite-mixture-marginal} 所示的加权求和形式。权重 $\pi_k$ 满足 $\pi_k \geq 0$ 且 $\sum_{k=1}^{K} \pi_k = 1$，因此构成一个概率分布。
+
+\begin{Definition}[有限混合分布]
+  设 $f_1(y), \ldots, f_K(y)$ 为 $K$ 个密度函数（或质量函数），$\theta = (\pi_1, \ldots, \pi_K, \theta_1, \ldots, \theta_K)$ 为参数向量，其中 $\pi_k \geq 0$，$\sum_{k=1}^K \pi_k = 1$。则由
+  \[
+  p(y \mid \theta) = \sum_{k=1}^{K} \pi_k \cdot f_k(y \mid \theta_k)
+  \]
+  定义的分布称为\textbf{有限混合分布}（finite mixture distribution），$K$ 称为混合分量数（number of components）。
+\end{Definition}
+
+混合分布的矩可以通过各分量的矩加权平均得到。例如，混合分布的均值为
+\[
+\mathbb{E}(y) = \sum_{k=1}^{K} \pi_k \cdot \mathbb{E}(y \mid z=k) = \sum_{k=1}^{K} \pi_k \cdot \mu_k
+\]
+其中 $\mu_k$ 是第 $k$ 个分量的均值。
+
+混合分布的方差更为复杂，需要考虑组内方差和组间方差的叠加。
+
+\subsection{混合正态分布}
+
+最常用的混合分布是\textbf{混合正态分布}（Gaussian mixture model）：
+\[
+p(y \mid \theta) = \sum_{k=1}^{K} \pi_k \cdot \mathrm{N}(y \mid \mu_k, \sigma_k^2)
+\]
+其中 $\theta_k = (\mu_k, \sigma_k^2)$。
+
+混合正态分布具有以下性质：
+\begin{enumerate}
+  \item 任何平滑的密度函数都可以用足够多分量的混合正态分布任意逼近（根据 Stone-Weierstrass 逼近定理）
+  \item 混合正态分布本身不再是正态分布，但其对数是凹函数（当 $K > 1$ 时）
+  \item 混合正态分布可以表示多峰、偏态等复杂形态
+\end{enumerate}
+
+\begin{Example}[双正态混合]
+  设 $K=2$，$\pi_1 = \pi_2 = 0.5$，$\mu_1 = -2$，$\sigma_1^2 = 1$，$\mu_2 = 2$，$\sigma_2^2 = 1$。则混合分布为
+  \[
+  p(y) = 0.5 \cdot \mathrm{N}(y \mid -2, 1) + 0.5 \cdot \mathrm{N}(y \mid 2, 1)
+  \]
+  这个分布是双峰的，两个峰分别位于 $y = -2$ 和 $y = 2$ 附近。
+\end{Example}
+
+混合正态分布在聚类分析（clustering）中应用广泛：每个分量对应一个潜在的类别，我们可以用贝叶斯推断来同时估计类别参数和每个观测的类别归属概率。
+
+\section{EM算法与混合模型的推断}
+
+\subsection{潜在变量的引入}
+
+混合模型的难点在于：潜在类别 $z_i$ 是未被观测到的。如果 $z_i$ 被观测到（即我们已知每个观测属于哪个分量），则问题将大大简化——我们可以分别对每个分量进行推断。
+
+EM算法（Expectation-Maximization）由 Dempster, Laird 和 Rubin \cite{Dempster1977} 于 1977 年提出，正是利用了这种思想：通过迭代地估计潜在变量（E步）和更新参数（M步），来最大化观测数据的似然。
+
+设 $\theta = (\pi, \theta_1, \ldots, \theta_K)$ 为全部参数，其中 $\pi = (\pi_1, \ldots, \pi_K)$。观测数据的对数似然为
+\[
+\ell(\theta) = \sum_{i=1}^{n} \log \left( \sum_{k=1}^{K} \pi_k \cdot f_k(y_i \mid \theta_k) \right)
+\]
+
+这个对数似然包含对潜在变量的求和，导致直接最大化困难。EM算法通过引入潜在变量的后验分布来解决这个问题。
+
+\subsection{E步：计算潜在变量的后验}
+
+在第 $t$ 次迭代，假设当前参数估计为 $\theta^{(t)}$。E步计算给定观测数据和当前参数下，每个观测属于各分量的后验概率：
+\[
+\gamma_{ik}^{(t)} = \mathbb{P}(z_i = k \mid y_i, \theta^{(t)}) = \frac{\pi_k^{(t)} \cdot f_k(y_i \mid \theta_k^{(t)})}{\sum_{j=1}^{K} \pi_j^{(t)} \cdot f_j(y_i \mid \theta_j^{(t)})}
+\label{eq:mixture-responsibility}
+\]
+
+$\gamma_{ik}$ 被称为"责任"（responsibility）：第 $k$ 个分量对观测 $y_i$ 的责任程度。
+
+从贝叶斯的角度，$\gamma_{ik}$ 就是给定 $y_i$ 后，$z_i = k$ 的后验概率。
+
+\subsection{M步：更新参数估计}
+
+M步在"完全数据"（观测数据 + 潜在变量）上最大化期望对数似然。完全数据的对数似然为
+\[
+\ell_c(\theta) = \sum_{i=1}^{n} \sum_{k=1}^{K} \mathbb{I}(z_i = k) \cdot \left[ \log \pi_k + \log f_k(y_i \mid \theta_k) \right]
+\]
+
+取期望（关于 $z_i$ 的后验分布），得到期望完全数据对数似然：
+\[
+Q(\theta, \theta^{(t)}) = \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{ik}^{(t)} \cdot \left[ \log \pi_k + \log f_k(y_i \mid \theta_k) \right]
+\]
+
+M步通过对 $Q$ 关于 $\theta$ 最大化来更新参数。对于混合正态模型，更新公式为：
+\[
+\pi_k^{(t+1)} = \frac{1}{n} \sum_{i=1}^{n} \gamma_{ik}^{(t)}
+\]
+\[
+\mu_k^{(t+1)} = \frac{\sum_{i=1}^{n} \gamma_{ik}^{(t)} \cdot y_i}{\sum_{i=1}^{n} \gamma_{ik}^{(t)}}
+\]
+\[
+(\sigma_k^2)^{(t+1)} = \frac{\sum_{i=1}^{n} \gamma_{ik}^{(t)} \cdot (y_i - \mu_k^{(t+1)})^2}{\sum_{i=1}^{n} \gamma_{ik}^{(t)}}
+\label{eq:mixture-variance-update}
+\]\footnote{方差更新公式的推导见附录 \cref{sec:derivation-em-updates}。}
+
+\subsection{EM算法的收敛性}
+
+EM算法保证观测数据似然的单调递增：$\ell(\theta^{(t+1)}) \geq \ell(\theta^{(t)})$。但收敛到的点可能是局部极大值，而非全局极大值。因此，EM算法对初始值敏感，通常需要多次随机初始化。
+
+对于混合模型的贝叶斯推断，我们通常关注后验分布 $p(\theta, z \mid y)$，而不仅仅是点估计。这需要使用MCMC方法（如Gibbs采样），我们将在下一节讨论。
+
+\section{贝叶斯混合模型推断}
+
+\subsection{完全条件分布}
+
+在贝叶斯框架下，我们为所有参数指定先验分布 $p(\theta)$，然后推断后验分布 $p(\theta, z \mid y)$。
+
+对于混合正态模型，一个方便的选择是共轭先验：
+\[
+\pi \sim \text{Dirichlet}(\alpha_1, \ldots, \alpha_K)
+\]
+\[
+\mu_k \mid \sigma_k^2 \sim \mathrm{N}(\mu_0, \sigma_k^2 / n_0)
+\]
+\[
+\sigma_k^2 \sim \text{Inverse-Gamma}(\nu_0/2, \nu_0 \sigma_0^2/2)
+\]
+
+给定这些先验，可以推导出各参数的完全条件分布（Gibbs采样所需）。
+
+第 $k$ 个分量的混合比例 $\pi_k$ 的完全条件分布为：
+\[
+\pi \mid y, z, \theta_{-\pi} \sim \text{Dirichlet}(\alpha_1 + n_1, \ldots, \alpha_K + n_K)
+\]
+其中 $n_k = \sum_{i=1}^{n} \mathbb{I}(z_i = k)$ 是属于第 $k$ 个分量的观测数。
+
+第 $k$ 个分量的均值和方差的完全条件分布为正态-逆Gamma分布。
+
+潜在类别变量 $z_i$ 的完全条件分布为：
+\[
+\mathbb{P}(z_i = k \mid y_i, \theta) \propto \pi_k \cdot \mathrm{N}(y_i \mid \mu_k, \sigma_k^2)
+\label{eq:z-complete-conditional}
+\]
+
+这就是\cref{eq:mixture-responsibility} 中的后验概率——在贝叶斯版本中，它是完全条件分布，而非EM算法中的点估计。
+
+\subsection{Gibbs采样算法}
+
+基于完全条件分布，我们可以设计Gibbs采样器来从后验分布中抽样：
+
+\begin{enumerate}
+  \item 初始化参数 $\theta^{(0)}$
+  \item 对 $t = 1, 2, \ldots$ 迭代：
+  \begin{enumerate}
+    \item 对每个 $i = 1, \ldots, n$，从 \cref{eq:z-complete-conditional} 抽取 $z_i^{(t)}$
+    \item 从 $\pi$ 的完全条件分布抽取 $\pi^{(t)}$
+    \item 对每个 $k = 1, \ldots, K$，从 $\mu_k, \sigma_k^2$ 的完全条件分布抽取
+  \end{enumerate}
+\end{enumerate}
+
+Gibbs采样器的收敛性可以通过监控多链的 Gelman-Rubin 统计量 \cite{GelmanRubin1992} 来诊断。
+
+\section{标签切换问题}
+
+\subsection{问题的本质}
+
+混合模型的一个核心问题是\textbf{标签切换}（label switching）：由于似然函数在分量标签的置换下保持不变，后验分布是关于分量标签对称的。
+
+具体来说，如果 $(z_i, \pi_k, \theta_k)$ 是一个合法的后验样本，那么对任意置换 $\sigma$，$(\sigma(z_i), \pi_{\sigma(k)}, \theta_{\sigma(k)})$ 同样是合法的后验样本。
+
+这导致两个问题：
+\begin{enumerate}
+  \item 后验均值失去意义：$K$ 个分量的后验均值相互混合
+  \item 迭代收敛后，每次迭代的标签可能不一致
+\end{enumerate}
+
+\subsection{标签切换的解决}
+
+解决标签切换问题的方法主要有：
+
+\begin{enumerate}
+  \item \textbf{排序约束}：通过对参数施加排序约束（如 $\mu_1 < \mu_2 < \cdots < \mu_K$）来打破对称性。这是最简单的方法，但可能不适合所有场景。
+  \item \textbf{标签切换检测与对齐}：在MCMC采样后，检测标签切换事件，并通过对齐链来恢复因果顺序。
+  \item \textbf{后处理}：使用递归分区或聚类方法将后验样本分类到各个分量。
+\end{enumerate}
+
+排序约束是最常用的方法，但需要谨慎使用，因为人为的约束可能影响推断结果。
+
+\section{应用实例：星系速度数据}
+
+本节我们用混合正态模型分析星系退行速度数据。\footnote{数据来源见 \cite{ROBERT1995}。}
+
+设 $y_i$ 为第 $i$ 个星系的退行速度（单位：km/s）。我们用双正态混合模型：
+\[
+y_i \sim \pi \cdot \mathrm{N}(\mu_1, \sigma_1^2) + (1-\pi) \cdot \mathrm{N}(\mu_2, \sigma_2^2)
+\]
+
+贝叶斯推断的目标是：
+\begin{enumerate}
+  \item 估计两个星族（population）的速度分布参数
+  \item 计算每个星系属于各星族的后验概率
+  \item 评估混合比例 $\pi$
+\end{enumerate}
+
+使用Gibbs采样，我们可以从后验分布中抽取样本，然后计算各参数的后验均值和置信区间。
+
+\begin{Remark}
+  混合模型的一个优势是它提供了\textbf{软聚类}（soft clustering）：与硬聚类（每个观测必须属于某一类）不同，混合模型给出每个观测属于各类的概率。这对于边界情况特别有价值。
+\end{Remark}
+
+\section{混合模型的其他应用}
+
+混合模型在统计学和机器学习中有广泛的应用：
+
+\begin{enumerate}
+  \item \textbf{密度估计}：混合模型可以用于非参数密度估计，用有限个参数的混合分布逼近任意复杂的密度函数。
+  \item \textbf{聚类分析}：如上所述，混合模型提供了一种基于概率的聚类方法。
+  \item \textbf{缺失数据插补}：在存在缺失值的问题中，可以将缺失数据的插补值视为潜在变量，用混合模型进行多重插补。
+  \item \textbf{生存分析}：考虑未观测到的异质性来源（如未观测到的风险因素），混合模型可以用于建模生存数据中的非比例风险。
+  \item \textbf{时间序列}：隐马尔可夫模型（Hidden Markov Model）是混合模型在时间序列中的推广。
+\end{enumerate}
+
+\section{混合模型的扩展}
+
+有限混合模型是更广泛模型类别的特例：
+
+\begin{enumerate}
+  \item \textbf{无限混合模型}（Infinite mixture models）：当分量数 $K \to \infty$ 时，得到非参数贝叶斯方法，如狄利克雷过程混合（Dirichlet process mixture）。这将在第23章讨论。
+  \item \textbf{半参数混合模型}：放松对分量分布的假设，允许非参数形式的分量分布。
+  \item \textbf{高斯过程混合}：在函数空间中进行混合，用于非参数回归和分类。
+\end{enumerate}
+
+\section{本章小结}
+
+本章我们学习了有限混合模型：
+
+\begin{enumerate}
+  \item 混合模型用于建模具有未观测到的异质性的数据
+  \item 有限混合分布是各分量分布的加权平均
+  \item EM算法提供了一种寻找最大似然估计的迭代方法
+  \item 贝叶斯推断使用Gibbs采样从后验分布中抽样
+  \item 标签切换问题需要特殊处理
+  \item 混合模型在聚类、密度估计、生存分析等领域有广泛应用
+\end{enumerate}
+
+\section{延伸阅读}
+
+关于混合模型的更多信息，推荐以下参考文献：
+
+\begin{itemize}
+  \item \cite{McLachlan2007}：混合模型的经典教材
+  \item \cite{Fruwirth2006}：有限混合模型的统计推断
+  \item \cite{Robert1995}：贝叶斯混合模型的方法与应用
+\end{itemize}
+
+\endinput

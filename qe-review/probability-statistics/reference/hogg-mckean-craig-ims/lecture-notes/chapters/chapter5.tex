@@ -1,0 +1,1328 @@
+\chapter{Asymptotic Theory}\label{chap:asymptotic-theory}
+
+\section*{Chapter 5 Overview}
+
+在前四章中，我们建立了描述概率分布和统计推断的理论框架。现在我们面临一个根本性问题：
+
+\begin{center}
+\textit{当样本量趋向无穷大时，统计量的行为如何？}
+\end{center}
+
+这个问题——即\textbf{渐近理论（asymptotic theory）}——是现代统计学的核心。在实际应用中，我们往往无法获得精确的有限样本分布，但通过渐近分析，我们可以理解统计量在大样本下的行为。
+
+本章介绍三种关键的收敛概念和中心极限定理：
+
+\begin{itemize}
+\item \textbf{依概率收敛}（Convergence in Probability）：统计量越来越接近参数真值
+\item \textbf{依分布收敛}（Convergence in Distribution）：统计量的分布越来越接近某个极限分布
+\item \textbf{中心极限定理}（Central Limit Theorem）：样本均值标准化后趋向正态分布
+\end{itemize}
+
+这三种收敛是渐近统计学的基石。依概率收敛保证估计量的\textbf{一致性（consistency）}；依分布收敛结合中心极限定理，使得我们能够对大样本下的统计推断进行近似计算；而 Slutsky 定理和 $\Delta$ 方法则提供了处理统计量函数的通用工具。
+
+\textbf{本章路线图}：依概率收敛 $\to$ 依分布收敛 $\to$ 中心极限定理 $\to$ 多元扩展 $\to$ $\Delta$ 方法
+
+\section{5.1 Convergence in Probability}\label{sec:5.1}
+
+\subsection{收敛性的定义}
+
+本节，我们形式化地描述随机变量序列 ${X_n}$ "接近"另一个随机变量 $X$ 的方式。
+
+\textbf{为什么需要收敛性？} 在统计中，我们通常不知道总体的精确分布，但希望知道当样本量增大时，估计量是否越来越准确。收敛性正是描述这种"越来越准确"的数学语言。
+
+\begin{definition}{依概率收敛}\label{def:convergence-in-probability}
+设 ${X_n}$ 是一列随机变量，$X$ 是定义在同一样本空间上的随机变量。若对所有 $\epsilon > 0$，
+\[
+\lim_{n \to \infty} \mathbb{P}[|X_n - X| \geq \epsilon] = 0,
+\]
+或等价地，
+\[
+\lim_{n \to \infty} \mathbb{P}[|X_n - X| < \epsilon] = 1,
+\]
+则称 $X_n$ 依概率收敛到 $X$，记作
+\[
+X_n \xrightarrow{P} X.
+\]
+\end{definition}
+
+\textbf{直观理解}：无论你设定多小的误差界 $\epsilon$，当 $n$ 足够大时，$X_n$ 与 $X$ 的差异超过 $\epsilon$ 的概率可以任意小。
+
+\textbf{统计中的特殊情况}：在统计学中，渐近随机变量 $X$ 往往是常数——即所有概率质量集中在某个常数 $a$ 上的退化分布。此时记 $X_n \xrightarrow{P} a$。
+
+\textbf{例：数列收敛是依概率收敛的特殊情况}（习题 5.1.1）：若 ${a_n}$ 是普通数列（可视为退化的随机变量），则 $a_n \to a$ 等价于 $a_n \xrightarrow{P} a$。
+
+\subsection{弱大数定律}
+
+展示依概率收敛的一个经典方法是使用 Chebyshev 不等式。
+
+\begin{example}{弱大数定律（WLLN）}\label{ex:wlln}
+设 ${X_n}$ 是 iid 随机变量序列，具有共同均值 $\mu$ 和有限方差 $\sigma^2$。令 $\overline{X}_n = n^{-1}\sum_{i=1}^n X_i$。则
+\[
+\overline{X}_n \xrightarrow{P} \mu.
+\]
+
+\textbf{证明}：由例 2.8.1，$\overline{X}_n$ 的均值和方差分别为 $\mu$ 和 $\sigma^2/n$。因此，由 Chebyshev 不等式，对 $\epsilon > 0$，
+\[
+\mathbb{P}[|\overline{X}_n - \mu| \geq \epsilon] = \mathbb{P}[|\overline{X}_n - \mu| \geq (\epsilon\sqrt{n}/\sigma)(\sigma/\sqrt{n})] \leq \frac{\sigma^2}{n\epsilon^2} \to 0.
+\label{eq:wlln-proof}
+\]
+
+\textbf{意义}：这个定理表明，当 $n \to \infty$ 时，样本均值 $\overline{X}_n$ 的概率质量越来越集中在 $\mu$ 附近。从某种意义上看，当 $n$ 足够大时，$\overline{X}_n$ "接近" $\mu$。% 弱大数定律的完整推导见附录 \cref{sec:normal-bounded}。
+
+\textbf{强化的注记}：在更高级的课程中，可以证明强大数定律——它只需要每个随机变量有有限均值 $\mu$（不要求方差存在）。这说明强大数定律是"一阶矩定理"，而弱大数定律需要二阶矩存在。
+\end{example}
+
+\subsection{依概率收敛的性质}
+
+以下定理表明，依概率收敛在线性运算下是封闭的。
+
+\begin{theorem}{和的收敛性}\label{th:convergence-sum}
+若 $X_n \xrightarrow{P} X$ 且 $Y_n \xrightarrow{P} Y$，则 $X_n + Y_n \xrightarrow{P} X + Y$。
+\end{theorem}
+
+\textbf{证明}：由三角不等式，
+\[
+|X_n + Y_n - (X + Y)| \leq |X_n - X| + |Y_n - Y|.
+\]
+
+对 $\epsilon > 0$，有
+\[
+\mathbb{P}[|X_n + Y_n - (X + Y)| \geq \epsilon] \leq \mathbb{P}[|X_n - X| \geq \epsilon/2] + \mathbb{P}[|Y_n - Y| \geq \epsilon/2] \to 0.
+\label{eq:convergence-sum-proof}
+\]
+
+\begin{theorem}{常数乘积的收敛性}\label{th:convergence-scalar}
+若 $X_n \xrightarrow{P} X$ 且 $a$ 是常数，则 $aX_n \xrightarrow{P} aX$。
+\end{theorem}
+
+\textbf{证明}：若 $a = 0$，结论显然。若 $a \neq 0$，
+\[
+\mathbb{P}[|aX_n - aX| \geq \epsilon] = \mathbb{P}[|X_n - X| \geq \epsilon/|a|] \to 0.
+\label{eq:convergence-scalar-proof}
+\]
+
+\begin{theorem}{连续函数变换}\label{th:continuous-mapping}
+若 $X_n \xrightarrow{P} a$ 且实函数 $g$ 在 $a$ 处连续，则 $g(X_n) \xrightarrow{P} g(a)$。
+\end{theorem}
+
+\textbf{证明}：由于 $g$ 在 $a$ 处连续，对 $\epsilon > 0$，存在 $\delta > 0$，使得若 $|x - a| < \delta$，则 $|g(x) - g(a)| < \epsilon$。因此
+\[
+\mathbb{P}[|g(X_n) - g(a)| \geq \epsilon] \leq \mathbb{P}[|X_n - a| \geq \delta] \to 0.
+\label{eq:continuous-mapping-proof}
+\]
+
+\textbf{重要推论}：由该定理，若 $X_n \xrightarrow{P} a$，则：
+\[
+X_n^2 \xrightarrow{P} a^2,\quad \frac{1}{X_n} \xrightarrow{P} \frac{1}{a}\ (a \neq 0),\quad \sqrt{X_n} \xrightarrow{P} \sqrt{a}\ (a \geq 0).
+\]
+
+\begin{theorem}{乘积的收敛性}\label{th:convergence-product}
+若 $X_n \xrightarrow{P} X$ 且 $Y_n \xrightarrow{P} Y$，则 $X_n Y_n \xrightarrow{P} XY$。
+\end{theorem}
+
+\textbf{证明}：利用恒等式 $2X_nY_n = X_n^2 + Y_n^2 - (X_n - Y_n)^2$，结合上述结果可得。% 乘积收敛性的完整证明见附录 \cref{sec:chi-square-delta-method}。
+
+\subsection{5.1.1 抽样与统计量}
+
+考虑随机变量 $X$，其 pdf（或 pmf）为 $f(x;\theta)$，其中 $\theta \in \Omega$ 是未知参数。例如：
+
+\begin{itemize}
+\item $X \sim N(\mu, \sigma^2)$，$\theta = (\mu, \sigma^2)$
+\item $X \sim \Gamma(1,\beta)$，$\beta > 0$ 未知
+\end{itemize}
+
+设 $X_1, X_2, \ldots, X_n$ 是来自 $f(x;\theta)$ 的随机样本（即 iid）。我们称统计量 $T = T(X_1, \ldots, X_n)$ 为\textbf{估计量（estimator）}。
+
+\textbf{两个关键性质}：
+\begin{enumerate}
+\item \textbf{无偏性（Unbiasedness）}：$\mathbb{E}T = \theta$
+\item \textbf{一致性（Consistency）}：$T_n \xrightarrow{P} \theta$
+\end{enumerate}
+
+\begin{definition}{一致性估计量}\label{def:consistency}
+设 $X$ 是具有 cdf $F(x;\theta)$ 的随机变量，$\theta \in \Omega$。设 $X_1, \ldots, X_n$ 是来自该分布的样本，$T_n$ 是统计量。若
+\[
+T_n \xrightarrow{P} \theta,
+\]
+则称 $T_n$ 是 $\theta$ 的\textbf{一致估计量（consistent estimator）}。
+\end{definition}
+
+\textbf{注}：一致性是估计量最重要的性质之一——如果估计量随着样本量增大都不能接近真实参数，那它就是一个"糟糕"的估计量。无偏性则不能保证这一点。例如，有偏估计量 $V = \frac{1}{n}\sum_{i=1}^n (X_i - \overline{X})^2$ 是一致的（有偏但偏差随 $n \to \infty$ 消失），而 $S^2$ 是无偏的。
+
+\begin{example}{样本方差的一致性}\label{ex:sample-variance-consistency}
+设 $X_1, \ldots, X_n$ 是来自均值为 $\mu$、方差为 $\sigma^2$ 的分布的随机样本。在例 2.8.7 中，我们证明了样本方差 $S_n^2$ 是 $\sigma^2$ 的无偏估计。
+
+进一步，假设 $\mathbb{E}[X_1^4] < \infty$（有限四阶矩），则 $S_n^2 \xrightarrow{P} \sigma^2$。
+
+\textbf{证明思路}：由弱大数定律，$\overline{X}_n \xrightarrow{P} \mu$，$\frac{1}{n}\sum X_i^2 \xrightarrow{P} \mathbb{E}(X_1^2)$。利用
+\[
+S_n^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum X_i^2 - \overline{X}_n^2\right) \xrightarrow{P} \mathbb{E}(X_1^2) - \mu^2 = \sigma^2.
+\label{eq:sample-variance-consistency}
+\]
+
+因此，样本标准差 $S_n \xrightarrow{P} \sigma$ 也是一致的。\footnote{样本方差一致性的完整推导见附录 \cref{sec:normal-bounded}。}
+\end{example}
+
+\begin{example}{均匀分布最大值的收敛}\label{ex:uniform-max-convergence}
+设 $X_1, \ldots, X_n \sim \mathrm{Uniform}(0, \theta)$，$\theta$ 未知。令 $Y_n = \max{X_1, \ldots, X_n}$。
+
+$Y_n$ 的 cdf 为（习题 5.1.4）
+\[
+F_{Y_n}(t) = \begin{cases}
+0, & t \leq 0 \\
+(t/\theta)^n, & 0 < t \leq \theta \\
+1, & t > \theta
+\end{cases}
+\label{eq:uniform-max-cdf}
+\]
+
+由此可得 $Y_n \xrightarrow{P} \theta$，即样本最大值是 $\theta$ 的一致估计。注意，虽然 $\mathbb{E}(Y_n) = \frac{n}{n+1}\theta$（有偏），但 $(n+1)/n \cdot Y_n$ 是无偏且一致的。% 均匀分布最大值的详细分析见附录 \cref{sec:chi-square-delta-method}。
+\end{example}
+
+\section{5.2 Convergence in Distribution}\label{sec:5.2}
+
+上一节我们介绍了依概率收敛的概念。利用这个概念，我们可以形式化地说统计量收敛到参数。但"有多接近"？我们能否量化估计的误差？本节介绍的依分布收敛与前述结果结合，给出了这些问题的肯定答案。
+
+\begin{definition}{依分布收敛}\label{def:convergence-in-distribution}
+设 ${X_n}$ 是一列随机变量，$X$ 是一随机变量。设 $F_{X_n}$ 和 $F_X$ 分别是 $X_n$ 和 $X$ 的 cdf。设 $C(F_X)$ 表示 $F_X$ 的所有连续点集合。若
+\[
+\lim_{n \to \infty} F_{X_n}(x) = F_X(x),\quad \forall x \in C(F_X),
+\]
+则称 $X_n$ 依分布收敛到 $X$，记作
+\[
+X_n \xrightarrow{D} X.
+\]
+\end{definition}
+
+\textbf{注}：在统计学和概率论中，依分布收敛常称为\textbf{弱收敛（weak convergence）}。
+
+\textbf{简化记号}：若 $X_n \xrightarrow{D} X$，其中 $X \sim N(0,1)$，我们可以简短地写作
+\[
+X_n \xrightarrow{D} N(0,1).
+\label{eq:normal-convergence-notation}
+\]
+
+\textbf{为什么只要求在 $F_X$ 的连续点收敛？} 考虑一个简单例子：$X_n$ 所有概率质量集中在 $1/n$，$X$ 所有质量集中在 $0$。则在 $F_X$ 的间断点 $0$ 处，$\lim F_{X_n}(0) = 0 \neq 1 = F_X(0)$；但在所有其他点，两者的 CDF 收敛。因此 $X_n \xrightarrow{D} X$。
+
+\begin{example}{样本均值的退化分布}\label{ex:sample-mean-degenerate}
+设 $\overline{X}_n$ 的 cdf 为
+\[
+F_n(\overline{x}) = \int_{-\infty}^{\overline{x}} \frac{1}{\sqrt{1/n}\sqrt{2\pi}} e^{-nw^2/2}\,dw.
+\]
+
+令 $v = \sqrt{n}w$，有
+\[
+F_n(\overline{x}) = \int_{-\infty}^{\sqrt{n}\,\overline{x}} \frac{1}{\sqrt{2\pi}} e^{-v^2/2}\,dv.
+\]
+
+当 $n \to \infty$，
+\[
+\lim_{n \to \infty} F_n(\overline{x}) = \begin{cases}
+0, & \overline{x} < 0 \\
+\frac{1}{2}, & \overline{x} = 0 \\
+1, & \overline{x} > 0
+\end{cases}
+\label{eq:degenerate-cdf}
+\]
+
+这正是集中在 $\overline{x} = 0$ 的退化分布。因此 $\overline{X}_n$ 依分布收敛到该退化分布。% 该例子的详细分析见附录 \cref{sec:t-distribution-derivation}。
+\end{example}
+
+\begin{example}{$t$ 分布趋近正态分布}\label{ex:t-to-normal}
+设 $T_n$ 服从自由度为 $n$ 的 $t$ 分布。其 cdf 为
+\[
+F_n(t) = \int_{-\infty}^{t} \frac{\Gamma[(n+1)/2]}{\sqrt{\pi n}\,\Gamma(n/2)} \frac{1}{(1+y^2/n)^{(n+1)/2}}\,dy.
+\label{eq:t-distribution-cdf}
+\]
+
+由 Lebesgue 控制收敛定理，可以交换极限和积分次序。计算表明
+\[
+\lim_{n \to \infty} F_n(t) = \int_{-\infty}^{t} \frac{1}{\sqrt{2\pi}} e^{-y^2/2}\,dy,
+\]
+即标准正态分布的 cdf。因此 $T_n \xrightarrow{D} N(0,1)$。% 该证明利用了 Stirling 公式，见附录 \cref{sec:normal-bounded}。
+\end{example}
+
+\begin{example}{均匀分布最大值的渐近指数分布}\label{ex:uniform-max-exponential}
+回顾例 5.1.2：$Y_n = \max{X_1, \ldots, X_n}$，其中 $X_i \sim \mathrm{Uniform}(0,\theta)$。考虑 $Z_n = n(\theta - Y_n)$。
+
+对 $t \in (0, n\theta)$，利用 $Y_n$ 的 cdf，可得
+\[
+\mathbb{P}[Z_n \leq t] = 1 - \left(1 - \frac{t/\theta}{n}\right)^n \to 1 - e^{-t/\theta}.
+\label{eq:exponential-limit}
+\]
+
+因此 $Z_n \xrightarrow{D} \Gamma(1,\theta)$（指数分布）。这是一个典型的"最大值标准化后收敛到指数分布"的例子。% 均匀分布最大值的完整推导见附录 \cref{sec:normal-bounded}。
+\end{example}
+
+\subsection{依概率收敛与依分布收敛的关系}
+
+\begin{theorem}{依概率收敛推出依分布收敛}\label{th:prob-to-dist}
+若 $X_n \xrightarrow{P} X$，则 $X_n \xrightarrow{D} X$。
+\end{theorem}
+
+\textbf{证明梗概}：设 $x$ 是 $F_X$ 的连续点。对 $\epsilon > 0$，
+\[
+F_{X_n}(x) = \mathbb{P}[X_n \leq x] \leq \mathbb{P}[X \leq x + \epsilon] + \mathbb{P}[|X_n - X| \geq \epsilon].
+\]
+
+令 $n \to \infty$，再令 $\epsilon \to 0$，利用 $X_n \xrightarrow{P} X$ 可得上确界收敛到 $F_X(x)$。类似地可得到下界。\footnote{完整证明见附录 \cref{sec:t-distribution-derivation}。}
+
+\textbf{注}：反过来一般不成立。但若极限 $X$ 是常数，则两者等价。
+
+\begin{theorem}{常数情形下两种收敛等价}\label{th:constant-equivalence}
+若 $X_n \xrightarrow{D} b$（常数），则 $X_n \xrightarrow{P} b$。
+\end{theorem}
+
+\begin{theorem}{和的极限分布}\label{th:sum-convergence}
+设 $X_n \xrightarrow{D} X$ 且 $Y_n \xrightarrow{P} 0$。则 $X_n + Y_n \xrightarrow{D} X$。
+\end{theorem}
+
+\textbf{应用场景}：若难以直接证明 $X_n \xrightarrow{D} X$，但容易证明 $Y_n \xrightarrow{D} X$ 且 $X_n - Y_n \xrightarrow{P} 0$，则 $X_n = Y_n + (X_n - Y_n) \xrightarrow{D} X$。
+
+\begin{theorem}{连续函数变换保持依分布收敛}\label{th:continuous-distribution}
+设 $X_n \xrightarrow{D} X$ 且 $g$ 是支撑上的连续函数，则 $g(X_n) \xrightarrow{D} g(X)$。
+\end{theorem}
+
+\textbf{重要应用}：若 $Z_n \xrightarrow{D} Z \sim N(0,1)$，则 $Z_n^2 \xrightarrow{D} \chi^2(1)$（因为 $Z^2 \sim \chi^2(1)$）。
+
+\begin{theorem}{Slutsky 定理}\label{th:slutsky}
+设 $X_n, X, A_n, B_n$ 是随机变量，$a, b$ 是常数。若 $X_n \xrightarrow{D} X$，$A_n \xrightarrow{P} a$，$B_n \xrightarrow{P} b$，则
+\[
+A_n + B_n X_n \xrightarrow{D} a + bX.
+\label{eq:slutsky-theorem}
+\]
+\end{theorem}
+
+\textbf{核心思想}：依分布收敛允许与依概率收敛的随机变量相乘——这是中心极限定理应用中最重要的工具。% Slutsky 定理的详细证明见附录 \cref{sec:chi-square-test-derivation}。
+
+\subsection{5.2.1 有界概率}
+
+另一个有用的概念是随机变量序列的\textbf{概率有界性}。
+
+\begin{definition}{有界概率}\label{def:bounded-in-probability}
+称随机变量序列 ${X_n}$ 概率有界，若对所有 $\epsilon > 0$，存在常数 $B_\epsilon > 0$ 和整数 $N_\epsilon$，使得
+\[
+n \geq N_\epsilon \Rightarrow \mathbb{P}[|X_n| \leq B_\epsilon] \geq 1 - \epsilon.
+\label{eq:bounded-in-probability}
+\]
+\end{definition}
+
+\textbf{直观理解}：概率有界意味着序列的概率质量不会"逃逸"到无穷。
+
+\begin{example}{标准正态分布是有界概率}\label{ex:normal-bounded}
+设 $X \sim N(0,1)$。对 $\epsilon > 0$，可以找到 $\eta$ 使得 $\mathbb{P}[|X| \leq \eta] \geq 1 - \epsilon$。这是因为正态分布的尾部概率可以任意小。\footnote{该性质的证明见附录 \cref{sec:normal-bounded}。}
+\end{example}
+
+\begin{theorem}{依分布收敛蕴含概率有界}\label{th:dist-to-bounded}
+若 $X_n \xrightarrow{D} X$，则 ${X_n}$ 概率有界。
+\end{theorem}
+
+\begin{example}{有界但不依分布收敛}\label{ex:bounded-not-converge}
+令 $n = 2m$（偶数）时 $X_{2m} = 2 + 1/(2m)$；$n = 2m-1$（奇数）时 $X_{2m-1} = 1 + 1/(2m)$。则偶数子序列依分布收敛到常数 $2$，奇数子序列依分布收敛到常数 $1$。整个序列不依分布收敛（两个极限不同），但所有项都在 $[1, 5/2]$ 中，因此是概率有界的。
+\end{example}
+
+\begin{theorem}{乘积的收敛性}\label{th:product-convergence}
+设 ${X_n}$ 概率有界，$Y_n \xrightarrow{P} 0$。则 $X_n Y_n \xrightarrow{P} 0$。
+\end{theorem}
+
+\textbf{证明梗概}：由概率有界性，$|X_n|$ 在大概率下被某个常数控制。再由 $Y_n \to 0$ 的概率，可得上确界收敛到 $0$。% 完整证明见附录 \cref{sec:poisson-approximation-proof}。
+
+\subsection{5.2.2 $\Delta$ 方法}
+
+$\Delta$ 方法是处理统计量函数渐近分布的强大工具。
+
+\textbf{背景}：在渐近理论中，我们常需确定一个函数的分布。设 $\sqrt{n}(X_n - \theta) \xrightarrow{D} N(0, \sigma^2)$，如何求 $g(X_n)$ 的渐近分布？
+
+\textbf{关键工具——Taylor 展开}：若 $g(x)$ 在 $x$ 处可微，则
+\[
+g(y) = g(x) + g'(x)(y-x) + o(|y-x|).
+\label{eq:taylor-expansion}
+\]
+
+记号 $o_p$ 和 $O_p$（小 $o$ 和大 $O$ 的概率版本）：
+\[
+Y_n = o_p(X_n) \iff \frac{Y_n}{X_n} \xrightarrow{P} 0,\qquad
+Y_n = O_p(X_n) \iff \frac{Y_n}{X_n} \text{ 概率有界}.
+\label{eq:op-notation}
+\]
+
+这两个记号的作用，是把 Taylor 展开的余项放回概率论语言中。比如 $Y_n=o_p(1)$ 表示 $Y_n$ 本身依概率趋于 $0$；而 $Y_n=O_p(1)$ 表示 $Y_n$ 不一定收敛，却不会以正概率逃向无穷。于是若 $A_n=O_p(1)$ 且 $B_n=o_p(1)$，则 $A_nB_n=o_p(1)$。这个简单乘法规则正是 $\Delta$ 方法证明中消去余项的关键。
+
+\begin{remark}
+\textbf{为什么要引入 $o_p$ 和 $O_p$？} 普通 Taylor 展开给出的是确定性余项，而统计量本身是随机的。渐近统计中的许多证明都长成同一种形状：主项由中心极限定理给出极限分布，余项则用 $o_p$ 证明可以忽略。因此 $o_p/O_p$ 不是额外抽象，而是把``主项主导、余项消失''这句话写成可检验的数学语言。
+\end{remark}
+
+\begin{example}{$\Delta$ 方法的应用}\label{ex:delta-method-example}
+设 $\sqrt{n}(X_n - \theta) \xrightarrow{D} N(0, \sigma^2)$，$g$ 在 $\theta$ 处可微且 $g'(\theta) \neq 0$。则
+\[
+\sqrt{n}(g(X_n) - g(\theta)) \xrightarrow{D} N(0, \sigma^2 [g'(\theta)]^2).
+\label{eq:delta-method-result}
+\]
+
+这称为 $\Delta$ 方法。% $\Delta$ 方法的完整推导见附录 \cref{sec:chi-square-delta-method}。
+\end{example}
+
+\begin{example}{卡方分布标准化}\label{ex:chi-square-standardized}
+在例 5.2.7 中，我们证明了 $Z_n \sim \chi^2(n)$，则
+\[
+Y_n = \frac{Z_n - n}{\sqrt{2n}} \xrightarrow{D} N(0,1).
+\label{eq:chi-square-standardized}
+\]
+
+利用 $\Delta$ 方法，取 $g(t) = \sqrt{t}$，则 $W_n = g(Z_n/(\sqrt{2}n)) = (Z_n/(\sqrt{2}n))^{1/2}$ 的渐近分布为
+\[
+\sqrt{n}[W_n - 1/2^{1/4}] \xrightarrow{D} N(0, 2^{-3/2}).
+\label{eq:chi-square-delta-method}
+\]
+
+这在实践中非常有用，例如当我们对卡方变量的标准差感兴趣时。\footnote{卡方分布 $\Delta$ 方法的详细推导见附录 \cref{sec:chi-square-delta-method}。}
+\end{example}
+
+\subsection{5.2.3 矩母函数技巧}
+
+矩母函数（MGF）提供了一种确定渐近分布的系统方法。
+
+\begin{theorem}{MGF 收敛定理}\label{th:mgf-convergence}
+设 ${X_n}$ 是随机变量序列，每个 $X_n$ 的 mgf $M_{X_n}(t)$ 在 $-h < t < h$ 上存在。设 $X$ 的 mgf $M(t)$ 在 $|t| \leq h_1 \leq h$ 上存在。若
+\[
+\lim_{n \to \infty} M_{X_n}(t) = M(t),\quad |t| \leq h_1,
+\]
+则 $X_n \xrightarrow{D} X$。
+\end{theorem}
+
+\textbf{应用：二项分布趋近泊松分布}。设 $Y_n \sim b(n,p)$，其中 $p = \mu/n$（$\mu$ 固定）。则
+\[
+M_{Y_n}(t) = [1 + p(e^t - 1)]^n = \left[1 + \frac{\mu(e^t - 1)}{n}\right]^n \to e^{\mu(e^t - 1)},
+\]
+这正是参数为 $\mu$ 的泊松分布的 mgf。因此当 $n$ 大、$p$ 小时，二项分布可用泊松分布近似。% 该近似的误差分析和更精确的估计见附录 \cref{sec:poisson-approximation-proof}。
+
+\textbf{应用：卡方分布标准化趋近正态}。设 $Z_n \sim \chi^2(n)$，可计算其 mgf 并证明
+\[
+\frac{Z_n - n}{\sqrt{2n}} \xrightarrow{D} N(0,1).
+\label{eq:chi-square-to-normal}
+\]
+
+\section{5.3 Central Limit Theorem}\label{sec:5.3}
+
+本节介绍统计学中最重要、最优雅的定理之一——中心极限定理（CLT）。
+
+\textbf{背景}：在第 3 章中，我们知道若 $X_1, \ldots, X_n$ 来自均值为 $\mu$、方差为 $\sigma^2$ 的正态分布，则
+\[
+\frac{\sum_{i=1}^n X_i - n\mu}{\sigma\sqrt{n}} = \frac{\sqrt{n}(\overline{X}_n - \mu)}{\sigma} \sim N(0,1)
+\]
+对每个正整数 $n$ 都成立。
+
+\textbf{中心极限定理的核心发现}：这一定理告诉我们，即使总体分布不是正态，只要满足某些温和条件（有限方差），上述统计量在大样本下仍然近似服从标准正态分布！
+
+\begin{theorem}{中心极限定理（CLT）}\label{th:clt}
+设 $X_1, X_2, \ldots, X_n$ 是来自均值为 $\mu$、正方差为 $\sigma^2$ 的分布的随机样本。则随机变量
+\[
+Y_n = \frac{\sum_{i=1}^n X_i - n\mu}{\sqrt{n}\sigma} = \frac{\sqrt{n}(\overline{X}_n - \mu)}{\sigma}
+\]
+依分布收敛到标准正态随机变量：
+\[
+Y_n \xrightarrow{D} N(0,1).
+\label{eq:clt-statement}
+\]
+\end{theorem}
+
+\textbf{实践意义}：当 $n$ 足够大（通常 $n \geq 30$），我们可以将 $\overline{X}$ 近似为 $N(\mu, \sigma^2/n)$，从而计算概率近似值。% 中心极限定理的完整证明（包括 MGF 方法）见附录 \cref{sec:chi-square-delta-method}。
+
+\textbf{等价的表述}：
+\[
+\sqrt{n}(\overline{X} - \mu) \xrightarrow{D} N(0, \sigma^2).
+\label{eq:clt-alternative}
+\]
+
+这一表述在实践中更方便使用。
+
+\begin{example}{均匀分布样本均值的概率}\label{ex:uniform-sample-mean}
+设 $\overline{X}$ 是来自 $\mathrm{Uniform}(0,1)$ 分布、样本量为 $75$ 的样本均值。对于该分布，$\mu = 1/2$，$\sigma^2 = 1/12$。
+
+要计算 $\mathbb{P}(0.45 < \overline{X} < 0.55)$，直接计算需要知道 $\overline{X}$ 的精确分布（由 $75$ 个不同多项式片段组成的复杂函数）。但由 CLT，
+\[
+\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma} \approx N(0,1),
+\]
+因此
+\[
+\mathbb{P}(0.45 < \overline{X} < 0.55) \approx \Phi(1.5) - \Phi(-1.5) = 0.8663.
+\label{eq:uniform-clt-approx}
+\]
+
+这个近似相当准确，尽管 $\overline{X}$ 的精确分布并不正态！% 均匀分布样本均值概率的详细计算见附录 \cref{sec:normal-bounded}。
+\end{example}
+
+\begin{example}{二项分布的正态近似}\label{ex:binomial-normal-approx}
+设 $Y_n \sim b(n,p)$。则 $Y_n = \sum_{i=1}^n X_i$，其中 $X_i \sim \mathrm{Bernoulli}(p)$。由 CLT，
+\[
+\frac{Y_n - np}{\sqrt{np(1-p)}} = \frac{\sqrt{n}(\overline{X}_n - p)}{\sqrt{p(1-p)}} \xrightarrow{D} N(0,1).
+\label{eq:binomial-clt}
+\]
+
+因此，$Y_n$ 近似服从 $N(np, np(1-p))$。
+
+图 5.3.1 展示了 $b(10, 1/2)$ 的二项分布与 $N(5, 5/2)$ 正态近似的对比。即使 $n=10$，拟合效果已相当不错。
+
+\textbf{连续性校正}：对于离散分布，通常使用 $\pm 0.5$ 的校正来提高近似精度。例如，
+\[
+\mathbb{P}(Y = 48, 49, 50, 51, 52) = \mathbb{P}(47.5 < Y < 52.5).
+\label{eq:continuity-correction}
+\]
+\end{example}
+
+\begin{example}{大样本比例推断}\label{ex:proportion-inference}
+设 $X_1, \ldots, X_n \sim \mathrm{Bernoulli}(p)$，$\widehat{p} = \overline{X}$。则
+\[
+\frac{\widehat{p} - p}{\sqrt{\widehat{p}(1-\widehat{p})/n}} \xrightarrow{D} N(0,1).
+\label{eq:proportion-clt}
+\]
+
+这是大样本置信区间和假设检验（第 4 章）的基础。% 比例推断的详细讨论见附录 \cref{sec:t-distribution-derivation}。
+\end{example}
+
+\begin{example}{卡方检验的渐近分布}\label{ex:chi-square-test}
+由 CLT 和定理 5.2.4，
+\[
+\left(\frac{Y_n - np}{\sqrt{np(1-p)}}\right)^2 \xrightarrow{D} \chi^2(1).
+\label{eq:chi-square-from-clt}
+\]
+
+这正是第 4 章中拟合优度 $\chi^2$ 检验的理论基础。\footnote{卡方检验的详细推导见附录 \cref{sec:chi-square-test-derivation}。}
+\end{example}
+
+\begin{example}{$\Delta$ 方法与函数变换}\label{ex:delta-method-variance}
+设 $X_1, \ldots, X_n$ 是来自均值为 $\mu$、方差为 $\sigma^2$ 的分布的随机样本。由 CLT，
+\[
+\sqrt{n}(\overline{X} - \mu) \xrightarrow{D} N(0, \sigma^2).
+\label{eq:clt-for-delta}
+\]
+
+对连续变换 $g$，由 $\Delta$ 方法，
+\[
+\sqrt{n}[g(\overline{X}) - g(\mu)] \xrightarrow{D} N(0, \sigma^2 [g'(\mu)]^2).
+\label{eq:delta-method-clt}
+\]
+
+\textbf{应用：反正弦变换}。在二项情形（$X_i \sim \mathrm{Bernoulli}(p)$），为了获得渐近方差与 $p$ 无关的估计，取 $g(p) = \arcsin(\sqrt{p})$，则
+\[
+\sqrt{n}[\arcsin(\sqrt{\overline{X}}) - \arcsin(\sqrt{p})] \xrightarrow{D} N(0, 1/4).
+\label{eq:arcsin-transform}
+\]
+
+这一变换在方差稳定化中有重要应用。% 方差稳定化变换的详细讨论见附录 \cref{sec:normal-bounded}。
+\end{example}
+
+\section{5.4 Extensions to Multivariate Distributions}\label{sec:5.4}
+
+本节简要讨论随机向量序列的渐近概念。
+
+\textbf{为什么需要多元扩展？} 在多参数统计中，我们经常同时估计多个参数，需要知道这些估计量的联合渐近分布。
+
+记 $\mathbf{v} \in \mathbb{R}^p$ 的 Euclidean 范数为
+\[
+\|\mathbf{v}\| = \sqrt{\sum_{i=1}^p v_i^2}.
+\label{eq:euclidean-norm}
+\]
+
+\begin{definition}{随机向量的依概率收敛}\label{def:vector-convergence-probability}
+设 ${\mathbf{X}_n}$ 是一列 $p$ 维随机向量，$\mathbf{X}$ 是随机向量。若对所有 $\epsilon > 0$，
+\[
+\lim_{n \to \infty} \mathbb{P}[\|\mathbf{X}_n - \mathbf{X}\| \geq \epsilon] = 0,
+\]
+则称 $\mathbf{X}_n \xrightarrow{P} \mathbf{X}$。
+\end{definition}
+
+\begin{theorem}{向量收敛等价于分量收敛}\label{th:vector-component-wise}
+$\mathbf{X}_n \xrightarrow{P} \mathbf{X}$ 当且仅当对每个 $j = 1, \ldots, p$，$X_{nj} \xrightarrow{P} X_j$。
+\end{theorem}
+
+\textbf{应用}：设 $\mathbf{X}_1, \ldots, \mathbf{X}_n$ 是 iid 随机向量，均值向量为 $\boldsymbol{\mu}$，协方差矩阵为 $\boldsymbol{\Sigma}$。则样本均值向量
+\[
+\overline{\mathbf{X}}_n = \frac{1}{n}\sum_{i=1}^n \mathbf{X}_i \xrightarrow{P} \boldsymbol{\mu}.
+\label{eq:sample-mean-vector}
+\]
+
+样本协方差矩阵 $\mathbf{S} \xrightarrow{P} \boldsymbol{\Sigma}$。
+
+\begin{example}{多元中心极限定理}\label{th:multivariate-clt}
+设 ${\mathbf{X}_n}$ 是 iid 随机向量序列，均值向量为 $\boldsymbol{\mu}$、协方差矩阵为 $\boldsymbol{\Sigma}$（正定）。则
+\[
+\sqrt{n}(\overline{\mathbf{X}}_n - \boldsymbol{\mu}) \xrightarrow{D} N_p(\mathbf{0}, \boldsymbol{\Sigma}).
+\label{eq:multivariate-clt}
+\]
+\end{example}
+
+\textbf{证明思路}：将问题转化为一元情形。设 $\mathbf{t} \in \mathbb{R}^p$，则 $\mathbf{t}'\mathbf{X}_i$ 是均值为 $\mathbf{t}'\boldsymbol{\mu}$、方差为 $\mathbf{t}'\boldsymbol{\Sigma}\mathbf{t}$ 的随机变量。对一维随机变量应用 CLT，再利用 mgf 的性质可得多元情形。% 多元 CLT 的完整证明见附录 \cref{sec:t-distribution-derivation}。
+
+\begin{example}{线性变换的正态性}\label{th:linear-transformation}
+设 $\mathbf{X}_n \xrightarrow{D} N(\boldsymbol{\mu}, \boldsymbol{\Sigma})$。则对任意常数矩阵 $\mathbf{A}$（$m \times p$）和向量 $\mathbf{b}$（$m$ 维），
+\[
+\mathbf{A}\mathbf{X}_n + \mathbf{b} \xrightarrow{D} N(\mathbf{A}\boldsymbol{\mu} + \mathbf{b}, \mathbf{A}\boldsymbol{\Sigma}\mathbf{A}').
+\label{eq:linear-normal}
+\]
+\end{example}
+
+\textbf{多元 $\Delta$ 方法}：设
+\[
+\sqrt{n}(\mathbf{X}_n - \boldsymbol{\mu}_0) \xrightarrow{D} N_p(\mathbf{0}, \boldsymbol{\Sigma}),
+\]
+$g: \mathbb{R}^p \to \mathbb{R}^k$ 是可微变换，Jacobian 矩阵 $\mathbf{B} = \partial g / \partial \mathbf{x}$ 在 $\boldsymbol{\mu}_0$ 处非奇异。则
+\[
+\sqrt{n}(\mathbf{g}(\mathbf{X}_n) - \mathbf{g}(\boldsymbol{\mu}_0)) \xrightarrow{D} N_k(\mathbf{0}, \mathbf{B}_0\boldsymbol{\Sigma}\mathbf{B}_0').
+\label{eq:multivariate-delta-method}
+\]
+
+% === 习题 ===
+\section*{Exercises}\label{sec:chapter5-exercises}
+
+\begin{exercise}{\ref{exr:5-1} Sequence Convergence}\label{exr:5-1}
+Let ${a_n}$ be a sequence of real numbers (degenerate random variables). Let $a$ be a real number. Show that $a_n \to a$ is equivalent to $a_n \xrightarrow{P} a$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-2} Binomial Convergence}\label{exr:5-2}
+Let $Y_n \sim b(n,p)$.
+\begin{enumerate}
+\item[(a)] Prove that $Y_n/n$ converges in probability to $p$. This is one form of the weak law of large numbers.
+\item[(b)] Prove that $1 - Y_n/n$ converges in probability to $1 - p$.
+\item[(c)] Prove that $(Y_n/n)(1 - Y_n/n)$ converges in probability to $p(1-p)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-3} Variance Convergence}\label{exr:5-3}
+Let $W_n$ denote a random variable with mean $\mu$ and variance $b/n^p$, where $p > 0$, $\mu$, and $b$ are constants (not functions of $n$). Prove that $W_n$ converges in probability to $\mu$.
+
+Hint: Use Chebyshev's inequality.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-4} Uniform Maximum CDF}\label{exr:5-4}
+Derive the cdf given in expression \eqref{eq:uniform-max-cdf}.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-5} Sample Median Convergence}\label{exr:5-5}
+Consider the R function consistmean which produces the plot shown in Figure 5.1.1. Obtain a similar plot for the sample median when the distribution sampled is the $N(0,1)$ distribution. Compare the mean and median plots.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-6} Uniform Maximum Plot}\label{exr:5-6}
+Write an R function that obtains a plot similar to Figure 5.1.1 for the situation described in Example 5.1.2. For the plot choose $\theta = 10$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-7} Shifted Exponential Minimum}\label{exr:5-7}
+Let $X_1, \ldots, X_n$ be iid random variables with common pdf
+\[
+f(x) = \begin{cases}
+e^{-(x-\theta)} & x > \theta, -\infty < \theta < \infty \\
+0 & \text{elsewhere}.
+\end{cases}
+\label{eq:shifted-exponential}
+\]
+This pdf is called the shifted exponential. Let $Y_n = \min{X_1, \ldots, X_n}$. Prove that $Y_n \to \theta$ in probability by first obtaining the cdf of $Y_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-8} Ratio Convergence}\label{exr:5-8}
+Using the assumptions behind the confidence interval given in expression \eqref{eq:ci-normal-unknown}, show that
+\[
+\sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}} \Big/ \sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}} \xrightarrow{P} 1.
+\]
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-9} Shifted Exponential Mean}\label{exr:5-9}
+For Exercise 5.1.7, obtain the mean of $Y_n$. Is $Y_n$ an unbiased estimator of $\theta$? Obtain an unbiased estimator of $\theta$ based on $Y_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-10} Normal Sample Mean Limit}\label{exr:5-10}
+Let $\overline{X}_n$ denote the mean of a random sample of size $n$ from a distribution that is $N(\mu, \sigma^2)$. Find the limiting distribution of $\overline{X}_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-11} Exponential Minimum Limit}\label{exr:5-11}
+Let $Y_1$ denote the minimum of a random sample of size $n$ from a distribution that has pdf $f(x) = e^{-(x-\theta)}$, $\theta < x < \infty$, zero elsewhere. Let $Z_n = n(Y_1 - \theta)$. Investigate the limiting distribution of $Z_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-12} Maximum Limit Distribution}\label{exr:5-12}
+Let $Y_n$ denote the maximum of a random sample of size $n$ from a distribution of the continuous type that has cdf $F(x)$ and pdf $f(x) = F'(x)$. Find the limiting distribution of $Z_n = n[1 - F(Y_n)]$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-13} Second Minimum Limit}\label{exr:5-13}
+Let $Y_2$ denote the second smallest item of a random sample of size $n$ from a distribution of the continuous type that has cdf $F(x)$ and pdf $f(x) = F'(x)$. Find the limiting distribution of $W_n = nF(Y_2)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-14} No Limiting Distribution}\label{exr:5-14}
+Let the pmf of $Y_n$ be $p_n(y) = 1$, $y = n$, zero elsewhere. Show that $Y_n$ does not have a limiting distribution. (In this case, the probability has "escaped" to infinity.)
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-15} Normal Sum No Limit}\label{exr:5-15}
+Let $X_1, X_2, \ldots, X_n$ be a random sample of size $n$ from a distribution that is $N(\mu, \sigma^2)$, where $\sigma^2 > 0$. Show that the sum $Z_n = \sum_{i=1}^n X_i$ does not have a limiting distribution.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-16} Gamma Limit}\label{exr:5-16}
+Let $X_n$ have a gamma distribution with parameter $\alpha = n$ and $\beta$, where $\beta$ is not a function of $n$. Let $Y_n = X_n/n$. Find the limiting distribution of $Y_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-17} Chi-Square Ratio Limit}\label{exr:5-17}
+Let $Z_n$ be $\chi^2(n)$ and let $W_n = Z_n/n^2$. Find the limiting distribution of $W_n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-18} Chi-Square Probability}\label{exr:5-18}
+Let $X$ be $\chi^2(50)$. Using the limiting distribution discussed in Example 5.2.7, approximate $P(40 < X < 60)$. Compare your answer with that calculated by R.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-19} Poisson Binomial Approximation}\label{exr:5-19}
+Let $p = 0.95$ be the probability that a man, in a certain age group, lives at least 5 years.
+\begin{enumerate}
+\item[(a)] If we are to observe 60 such men and if we assume independence, use R to compute the probability that at least 56 of them live 5 or more years.
+\item[(b)] Find an approximation to the result of part (a) by using the Poisson distribution.
+
+Hint: Redefine $p$ to be 0.05 and $1-p = 0.95$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-20} Poisson to Normal}\label{exr:5-20}
+Let the random variable $Z_n$ have a Poisson distribution with parameter $\mu = n$. Show that the limiting distribution of the random variable $Y_n = (Z_n - n)/\sqrt{n}$ is normal with mean zero and variance 1.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-21} Normal Sample Chi-Square}\label{exr:5-21}
+Let $\overline{X}_n$ denote the mean of a random sample of size 100 from a distribution that is $\chi^2(50)$. Compute an approximate value of $P(49 < \overline{X} < 51)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-22} Gamma Sample Mean}\label{exr:5-22}
+Let $\overline{X}_n$ denote the mean of a random sample of size 128 from a gamma distribution with $\alpha = 2$ and $\beta = 4$. Approximate $P(7 < \overline{X} < 9)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-23} Binomial Probability}\label{exr:5-23}
+Let $Y$ be $b(72, 1/3)$. Approximate $P(22 \leq Y \leq 28)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-24} Beta Sample Mean}\label{exr:5-24}
+Compute an approximate probability that the mean of a random sample of size 15 from a distribution having pdf $f(x) = 3x^2$, $0 < x < 1$, zero elsewhere, is between $\frac{3}{5}$ and $\frac{4}{5}$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-25} Discrete Sample Sum}\label{exr:5-25}
+Let $Y$ denote the sum of the observations of a random sample of size 12 from a distribution having pmf $p(x) = 1/6$, $x = 1, 2, 3, 4, 5, 6$, zero elsewhere. Compute an approximate value of $P(36 \leq Y \leq 48)$.
+
+Hint: Since the event of interest is $Y = 36, 37, \ldots, 48$, rewrite the probability as $P(35.5 < Y < 48.5)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-26} Binomial Proportion}\label{exr:5-26}
+Let $Y$ be $b(400, 1/5)$. Compute an approximate value of $P(0.25 < Y/400)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-27} Binomial Point Probability}\label{exr:5-27}
+If $Y$ is $b(100, 1/2)$, approximate the value of $P(Y = 50)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-28} Sample Size for Proportion}\label{exr:5-28}
+Let $Y$ be $b(n, 0.55)$. Find the smallest value of $n$ such that (approximately) $P(Y/n > 1/2) \geq 0.95$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-29} Tail Probability Approximation}\label{exr:5-29}
+Let $f(x) = 1/x^2$, $1 < x < \infty$, zero elsewhere, be the pdf of a random variable $X$. Consider a random sample of size 72 from the distribution having this pdf. Compute approximately the probability that more than 50 of the observations of the random sample are less than 3.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-30} Rounding Error Approximation}\label{exr:5-30}
+Forty-eight measurements are recorded to several decimal places. Each of these 48 numbers is rounded off to the nearest integer. The sum of the original 48 numbers is approximated by the sum of these integers. If we assume that the errors made by rounding off are iid and have a uniform distribution over the interval $(-1/2, 1/2)$, compute approximately the probability that the sum of the integers is within two units of the true sum.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-31} Cube Transformation}\label{exr:5-31}
+We know that $\overline{X}$ is approximately $N(\mu, \sigma^2/n)$ for large $n$. Find the approximate distribution of $u(\overline{X}) = \overline{X}^3$, provided that $\mu \neq 0$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-32} Variance Stabilization}\label{exr:5-32}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from a Poisson distribution with mean $\mu$. Thus, $Y = \sum_{i=1}^n X_i$ has a Poisson distribution with mean $n\mu$. Moreover, $\overline{X} = Y/n$ is approximately $N(\mu, \mu/n)$ for large $n$. Show that $u(Y/n) = \sqrt{Y/n}$ is a function of $Y/n$ whose variance is essentially free of $\mu$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-33} Proportion CLT}\label{exr:5-33}
+Using the notation of Example 5.3.5, show that equation \eqref{eq:proportion-clt} is true.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-34} Gamma Asymptotics}\label{exr:5-34}
+Assume that $X_1, \ldots, X_n$ is a random sample from a $\Gamma(1,\beta)$ distribution. Determine the asymptotic distribution of $\sqrt{n}(\overline{X} - \beta)$. Then find a transformation $g(\overline{X})$ whose asymptotic variance is free of $\beta$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-35} Multivariate Convergence}\label{exr:5-35}
+Let ${\mathbf{X}_n}$ be a sequence of $p$-dimensional random vectors. Show that
+\[
+\mathbf{X}_n \xrightarrow{D} N_p(\boldsymbol{\mu}, \boldsymbol{\Sigma}) \text{ if and only if } \mathbf{a}'\mathbf{X}_n \xrightarrow{D} N_1(\mathbf{a}'\boldsymbol{\mu}, \mathbf{a}'\boldsymbol{\Sigma}\mathbf{a}),
+\]
+for all vectors $\mathbf{a} \in \mathbb{R}^p$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:5-36} Uniform Vector Convergence}\label{exr:5-36}
+Let $X_1, \ldots, X_n$ be a random sample from a $\mathrm{Uniform}(a,b)$ distribution. Let $Y_1 = \min X_i$ and let $Y_2 = \max X_i$. Show that $(Y_1, Y_2)'$ converges in probability to the vector $(a,b)'$.
+\end{exercise}
+
+\section*{本章小结}
+
+\textbf{核心概念}：
+\begin{itemize}
+\item \textbf{依概率收敛}：$X_n \xrightarrow{P} X$，概率质量越来越集中在目标附近
+\item \textbf{依分布收敛}：$X_n \xrightarrow{D} X$，分布函数在连续点处收敛
+\item \textbf{弱大数定律}：样本均值依概率收敛到总体均值
+\item \textbf{中心极限定理}：标准化样本均值趋向标准正态分布
+\item \textbf{Slutsky 定理}：允许依概率收敛的随机变量参与依分布收敛的线性组合
+\item \textbf{$\Delta$ 方法}：处理统计量函数渐近分布的工具
+\item \textbf{一致性}：估计量的基本要求，$T_n \xrightarrow{P} \theta$
+\end{itemize}
+
+\textbf{重要公式}：
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{场景} & \textbf{渐近分布} \\ \hline
+$\sqrt{n}(\overline{X} - \mu)/\sigma$ & $N(0,1)$（CLT）\\ \hline
+$\overline{X}_n$ & $N(\mu, \sigma^2/n)$（大样本）\\ \hline
+$\sqrt{n}(g(\overline{X}) - g(\mu))$ & $N(0, \sigma^2[g'(\mu)]^2)$（$\Delta$ 方法）\\ \hline
+$\widehat{p}$ 样本比例 & $N(p, p(1-p)/n)$（大样本）\\ \hline
+$(Y_n - np)/\sqrt{np(1-p)}$ & $N(0,1)$（二项正态近似）\\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{收敛关系图}：
+\[
+\text{依概率收敛} + \text{连续函数} \Rightarrow \text{依概率收敛}
+\]
+\[
+\text{依概率收敛} \Rightarrow \text{依分布收敛}
+\]
+\[
+\text{依分布收敛（常数）} \Leftrightarrow \text{依概率收敛}
+\]
+
+\section{附录：公式推导}\label{sec:appendix-ch5}
+
+\subsection{弱大数定律的完整证明}\label{sec:wlln-proof}
+
+\textbf{背景（Background）}：弱大数定律（WLLN）是最基本的渐近结果之一，说明样本均值依概率收敛到总体均值。
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item $X_1, X_2, \ldots, X_n$ 是 iid 随机变量
+\item $\mathbb{E}X_i = \mu$
+\item $\text{var}(X_i) = \sigma^2 < \infty$
+\item $\overline{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$
+\end{itemize}
+
+\textbf{目标（Goal）}：证明 $\overline{X}_n \xrightarrow{P} \mu$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 计算 $\overline{X}_n$ 的均值和方差：
+\[
+\mathbb{E}(\overline{X}_n) = \mathbb{E}\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n}\sum_{i=1}^n \mathbb{E}(X_i) = \mu,
+\]
+\[
+\text{var}(\overline{X}_n) = \text{var}\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n^2}\sum_{i=1}^n \text{var}(X_i) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}.
+\]
+
+2. 对任意 $\epsilon > 0$，应用 Chebyshev 不等式：
+\[
+\mathbb{P}(|\overline{X}_n - \mu| \geq \epsilon) \leq \frac{\text{var}(\overline{X}_n)}{\epsilon^2} = \frac{\sigma^2}{n\epsilon^2}.
+\]
+
+3. 当 $n \to \infty$ 时，右边趋于 $0$，故
+\[
+\lim_{n \to \infty} \mathbb{P}(|\overline{X}_n - \mu| \geq \epsilon) = 0.
+\]
+
+\textbf{结论}：由定义，$\overline{X}_n \xrightarrow{P} \mu$。
+
+\subsection{依概率收敛性质证明}\label{sec:convergence-product-proof}
+
+\textbf{背景}：证明若 $X_n \xrightarrow{P} X$ 和 $Y_n \xrightarrow{P} Y$，则 $X_n Y_n \xrightarrow{P} XY$。
+
+\textbf{推导步骤}：
+
+1. 利用恒等式：
+\[
+X_n Y_n = \frac{1}{2}X_n^2 + \frac{1}{2}Y_n^2 - \frac{1}{2}(X_n - Y_n)^2.
+\]
+
+2. 由定理 5.1.3（标量乘积收敛）和定理 5.1.2（和的收敛），$X_n^2 \xrightarrow{P} X^2$，$Y_n^2 \xrightarrow{P} Y^2$，$(X_n - Y_n)^2 \xrightarrow{P} (X - Y)^2$。
+
+3. 因此
+\[
+X_n Y_n \xrightarrow{P} \frac{1}{2}X^2 + \frac{1}{2}Y^2 - \frac{1}{2}(X - Y)^2 = XY.
+\]
+
+证毕。
+
+\subsection{样本方差一致性的详细推导}\label{sec:sample-variance-consistency}
+
+\textbf{背景}：证明样本方差 $S_n^2$ 是 $\sigma^2$ 的一致估计量。
+
+\textbf{已知条件}：
+\begin{itemize}
+\item $\mathbb{E}X_i = \mu$，$\text{var}(X_i) = \sigma^2$
+\item $\mathbb{E}(X_i^4) < \infty$（有限四阶矩）
+\end{itemize}
+
+\textbf{推导步骤}：
+
+1. 由弱大数定律：
+\[
+\overline{X}_n \xrightarrow{P} \mu,\qquad \frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{P} \mathbb{E}(X_1^2).
+\]
+
+2. 利用恒等式：
+\[
+S_n^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \overline{X}_n)^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2 - \overline{X}_n^2\right).
+\]
+
+3. 由连续映射定理（定理 5.1.4），$\overline{X}_n^2 \xrightarrow{P} \mu^2$。
+
+4. 因此
+\[
+\frac{1}{n}\sum_{i=1}^n X_i^2 - \overline{X}_n^2 \xrightarrow{P} \mathbb{E}(X_1^2) - \mu^2 = \sigma^2.
+\]
+
+5. 由于 $\frac{n}{n-1} \to 1$，故 $S_n^2 \xrightarrow{P} \sigma^2$。
+
+\textbf{结论}：$S_n^2$ 是 $\sigma^2$ 的一致估计。
+
+\subsection{均匀分布最大值分析}\label{sec:uniform-max-derivation}
+
+\textbf{背景}：分析 $\mathrm{Uniform}(0, \theta)$ 分布最大值的渐近行为。
+
+\textbf{已知条件}：$Y_n = \max{X_1, \ldots, X_n}$，其中 $X_i \sim \mathrm{Uniform}(0, \theta)$。
+
+\textbf{推导步骤}：
+
+1. 求 $Y_n$ 的 CDF：
+\[
+F_{Y_n}(t) = \mathbb{P}(Y_n \leq t) = \mathbb{P}(X_1 \leq t, \ldots, X_n \leq t) = [F_X(t)]^n = \left(\frac{t}{\theta}\right)^n,
+\]
+对 $0 < t \leq \theta$。
+
+2. 求 $Y_n$ 的 PDF：
+\[
+f_{Y_n}(t) = \frac{d}{dt}F_{Y_n}(t) = \frac{n}{\theta^n}t^{n-1},\quad 0 < t \leq \theta.
+\]
+
+3. 计算期望：
+\[
+\mathbb{E}(Y_n) = \int_0^\theta t \cdot \frac{n}{\theta^n}t^{n-1}\,dt = \frac{n}{n+1}\theta.
+\]
+
+\textbf{关键发现}：$Y_n \xrightarrow{P} \theta$，因为对任意 $\epsilon > 0$，
+\[
+\mathbb{P}(|Y_n - \theta| \geq \epsilon) = \mathbb{P}(Y_n \leq \theta - \epsilon) = \left(\frac{\theta - \epsilon}{\theta}\right)^n \to 0.
+\]
+
+\textbf{渐近分布}：标准化后 $n(\theta - Y_n) \xrightarrow{D} \Gamma(1, \theta)$（见例 5.2.4）。
+
+\subsection{退化分布的例子}\label{sec:degenerate-distribution}
+
+\textbf{背景}：说明为什么在 CDF 的间断点处不要求收敛。
+
+\textbf{例子}：设 $X_n$ 所有概率质量集中在 $1/n$，$X$ 所有概率质量集中在 $0$。
+
+\begin{enumerate}
+\item 若 $x < 0$，则 $F_{X_n}(x) = 0 = F_X(x)$。
+\item 若 $x > 0$，则 $F_{X_n}(x) = 1 = F_X(x)$。
+\item 若 $x = 0$（$F_X$ 的间断点），则 $F_{X_n}(0) = 0 \neq 1 = F_X(0)$。
+\end{enumerate}
+
+因此 $\lim_{n \to \infty} F_{X_n}(x) = F_X(x)$ 对所有 $x \in C(F_X)$（即 $x \neq 0$）成立，故 $X_n \xrightarrow{D} X$。
+
+\subsection{Stirling 公式}\label{sec:stirling-formula}
+
+\textbf{背景}：Stirling 公式在渐近分析中非常重要。
+
+\textbf{公式}：
+\[
+\Gamma(k + 1) \approx \sqrt{2\pi}\,k^{k+1/2}e^{-k}.
+\label{eq:stirling}
+\]
+
+\textbf{应用}：在例 5.2.3 中，证明 $t$ 分布趋向标准正态分布时，需要用到
+\[
+\lim_{n \to \infty} \frac{\Gamma[(n+1)/2]}{\sqrt{n/2}\,\Gamma(n/2)} = 1.
+\]
+
+使用 Stirling 公式：
+\[
+\frac{\Gamma[(n+1)/2]}{\sqrt{n/2}\,\Gamma(n/2)} \approx \frac{\sqrt{2\pi}\,(n/2)^{n/2+1/2}e^{-n/2}}{\sqrt{n/2}\,\sqrt{2\pi}\,(n/2-1)^{n/2-1/2}e^{-(n/2-1)}} = 1.
+\]
+
+\subsection{均匀分布到指数分布的极限}\label{sec:uniform-to-exponential}
+
+\textbf{背景}：证明 $n(\theta - Y_n) \xrightarrow{D} \Gamma(1, \theta)$。
+
+\textbf{推导}：
+
+对 $t > 0$，
+\[
+\mathbb{P}[n(\theta - Y_n) \leq t] = \mathbb{P}[Y_n \geq \theta - t/n] = 1 - F_{Y_n}(\theta - t/n).
+\]
+
+由 $F_{Y_n}(t) = (t/\theta)^n$（对 $0 < t \leq \theta$），
+\[
+1 - F_{Y_n}(\theta - t/n) = 1 - \left(\frac{\theta - t/n}{\theta}\right)^n = 1 - \left(1 - \frac{t}{n\theta}\right)^n.
+\]
+
+令 $n \to \infty$，
+\[
+\lim_{n \to \infty} \left(1 - \frac{t}{n\theta}\right)^n = e^{-t/\theta}.
+\]
+
+因此
+\[
+\lim_{n \to \infty} \mathbb{P}[n(\theta - Y_n) \leq t] = 1 - e^{-t/\theta},
+\]
+这正是 $\Gamma(1, \theta)$（指数分布）的 CDF。
+
+\subsection{依概率收敛推出依分布收敛的证明}\label{sec:prob-to-dist-proof}
+
+\textbf{背景}：证明定理 5.2.1。
+
+\textbf{目标}：若 $X_n \xrightarrow{P} X$，则 $X_n \xrightarrow{D} X$。
+
+\textbf{推导步骤}：
+
+1. 设 $x$ 是 $F_X$ 的连续点。对 $\epsilon > 0$，
+\[
+F_{X_n}(x) = \mathbb{P}[X_n \leq x] = \mathbb{P}[X_n \leq x, |X_n - X| < \epsilon] + \mathbb{P}[X_n \leq x, |X_n - X| \geq \epsilon].
+\]
+
+2. 第一个概率 $\leq \mathbb{P}[X \leq x + \epsilon]$，第二个概率 $\leq \mathbb{P}[|X_n - X| \geq \epsilon]$。因此
+\[
+F_{X_n}(x) \leq F_X(x + \epsilon) + \mathbb{P}[|X_n - X| \geq \epsilon].
+\]
+
+3. 取上确界并令 $n \to \infty$（利用 $X_n \xrightarrow{P} X$），再令 $\epsilon \to 0$（利用 $x$ 是连续点），可得
+\[
+\varlimsup_{n \to \infty} F_{X_n}(x) \leq F_X(x).
+\]
+
+4. 类似地可得
+\[
+\varliminf_{n \to \infty} F_{X_n}(x) \geq F_X(x).
+\]
+
+5. 因此 $\lim_{n \to \infty} F_{X_n}(x) = F_X(x)$。
+
+证毕。
+
+\subsection{Slutsky 定理的详细证明}\label{sec:slutsky-proof}
+
+\textbf{背景}：Slutsky 定理是连接依概率收敛和依分布收敛的关键工具。
+
+\textbf{定理陈述}：若 $X_n \xrightarrow{D} X$，$A_n \xrightarrow{P} a$，$B_n \xrightarrow{P} b$，则 $A_n + B_n X_n \xrightarrow{D} a + bX$。
+
+\textbf{推导步骤}：
+
+1. 首先证明 $B_n X_n \xrightarrow{D} bX$。
+
+考虑 $B_n X_n = bX_n + (B_n - b)X_n$。由 $B_n \xrightarrow{P} b$，有 $B_n - b \xrightarrow{P} 0$。
+
+2. 由定理 5.2.6（依分布收敛蕴含概率有界），${X_n}$ 概率有界。
+
+3. 应用定理 5.2.7（概率有界序列与依概率收敛到零的乘积趋于零）：
+\[
+(B_n - b)X_n \xrightarrow{P} 0.
+\]
+
+4. 由定理 5.2.3（和的极限分布），$bX_n + (B_n - b)X_n \xrightarrow{D} bX$。
+
+5. 再考虑 $A_n + B_n X_n = a + bX + (A_n - a) + (B_n X_n - bX)$。
+
+由于 $(A_n - a) \xrightarrow{P} 0$ 和 $(B_n X_n - bX) \xrightarrow{P} 0$，再次应用定理 5.2.3 可得
+\[
+A_n + B_n X_n \xrightarrow{D} a + bX.
+\]
+
+证毕。
+
+\textbf{核心洞察}：Slutsky 定理允许我们将依概率收敛的随机变量"替换"为其极限常数，而不影响依分布收敛性。
+
+\subsection{概率有界与乘积收敛的证明}\label{sec:product-convergence-proof}
+
+\textbf{背景}：证明定理 5.2.7。
+
+\textbf{目标}：若 ${X_n}$ 概率有界，$Y_n \xrightarrow{P} 0$，则 $X_n Y_n \xrightarrow{P} 0$。
+
+\textbf{推导步骤}：
+
+1. 由概率有界性，对 $\epsilon > 0$，存在 $B_\epsilon$ 和 $N_\epsilon$ 使得
+\[
+n \geq N_\epsilon \Rightarrow \mathbb{P}[|X_n| \leq B_\epsilon] \geq 1 - \epsilon.
+\]
+
+2. 对任意 $\delta > 0$，
+\[
+\mathbb{P}[|X_n Y_n| \geq \delta] = \mathbb{P}[|X_n Y_n| \geq \delta, |X_n| \leq B_\epsilon] + \mathbb{P}[|X_n Y_n| \geq \delta, |X_n| > B_\epsilon].
+\]
+
+3. 第一个概率 $\leq \mathbb{P}[|Y_n| \geq \delta/B_\epsilon]$，第二个概率 $\leq \mathbb{P}[|X_n| > B_\epsilon] \leq \epsilon$。
+
+4. 由于 $Y_n \xrightarrow{P} 0$，当 $n$ 足够大时，第一个概率 $< \epsilon$。
+
+5. 因此对足够大的 $n$，$\mathbb{P}[|X_n Y_n| \geq \delta] \leq 2\epsilon$。
+
+由 $\epsilon$ 和 $\delta$ 的任意性，$X_n Y_n \xrightarrow{P} 0$。
+
+证毕。
+
+\subsection{$\Delta$ 方法的完整推导}\label{sec:delta-method-proof}
+
+\textbf{背景}：$\Delta$ 方法提供了一种计算统计量函数渐近分布的系统方法。
+
+\textbf{定理陈述}：设 $\sqrt{n}(X_n - \theta) \xrightarrow{D} N(0, \sigma^2)$，$g$ 在 $\theta$ 处可微且 $g'(\theta) \neq 0$。则
+\[
+\sqrt{n}(g(X_n) - g(\theta)) \xrightarrow{D} N(0, \sigma^2 [g'(\theta)]^2).
+\]
+
+\textbf{推导步骤}：
+
+1. 由 Taylor 展开（带余项）：
+\[
+g(X_n) = g(\theta) + g'(\theta)(X_n - \theta) + o_p(|X_n - \theta|).
+\]
+
+2. 两边乘以 $\sqrt{n}$：
+\[
+\sqrt{n}(g(X_n) - g(\theta)) = g'(\theta)\sqrt{n}(X_n - \theta) + o_p(\sqrt{n}|X_n - \theta|).
+\]
+
+3. 由假设，$\sqrt{n}(X_n - \theta) \xrightarrow{D} N(0, \sigma^2)$，故 ${ \sqrt{n}|X_n - \theta| }$ 概率有界。
+
+4. 由 $o_p$ 的定义，$o_p(\sqrt{n}|X_n - \theta|) \xrightarrow{P} 0$。
+
+5. 应用 Slutsky 定理（或更精确地，定理 5.2.3），可得
+\[
+\sqrt{n}(g(X_n) - g(\theta)) \xrightarrow{D} N(0, \sigma^2 [g'(\theta)]^2).
+\]
+
+证毕。
+
+\textbf{应用举例}：卡方分布的平方根。设 $Z_n \sim \chi^2(n)$，则
+\[
+\sqrt{n}\left(\frac{Z_n}{n} - 1\right) \xrightarrow{D} N(0, 2).
+\]
+
+取 $g(t) = \sqrt{t}$，则 $g'(1) = 1/2$，故
+\[
+\sqrt{n}(\sqrt{Z_n/n} - 1) \xrightarrow{D} N(0, 2 \cdot (1/2)^2) = N(0, 1/2).
+\]
+
+\subsection{二项分布的正态近似误差分析}\label{sec:binomial-poisson-approximation}
+
+\textbf{背景}：二项分布 $b(n,p)$ 在大样本下可用正态分布近似。
+
+\textbf{误差分析}：
+
+设 $Y \sim b(n,p)$，$\mu = np$，$\sigma^2 = np(1-p)$。则
+\[
+Z = \frac{Y - \mu}{\sigma} \xrightarrow{D} N(0,1).
+\]
+
+Berry-Esseen 不等式给出了收敛速度的估计：
+\[
+\sup_x |\mathbb{P}(Z \leq x) - \Phi(x)| \leq \frac{C \cdot \rho}{\sigma^3\sqrt{n}},
+\]
+其中 $\rho = \mathbb{E}(|X - \mu|^3)$，$C$ 是某个绝对常数（约 $0.4748$）。
+
+\textbf{实践意义}：当 $np(1-p) \geq 10$ 时，正态近似效果较好。
+
+\textbf{连续性校正的效果}：对于离散分布，使用 $\pm 0.5$ 的校正通常可以将误差减少一半。
+
+\subsection{中心极限定理的 MGF 证明}\label{sec:clt-proof}
+
+\textbf{背景}：中心极限定理（CLT）的矩母函数证明。
+
+\textbf{假设}：$X_1, \ldots, X_n$ 是 iid 随机变量，$\mathbb{E}X_i = \mu$，$\text{var}(X_i) = \sigma^2$，矩母函数 $M(t) = \mathbb{E}(e^{tX})$ 在 $0$ 的邻域内存在。
+
+\textbf{目标}：证明
+\[
+Y_n = \frac{\sum_{i=1}^n X_i - n\mu}{\sqrt{n}\sigma} \xrightarrow{D} N(0,1).
+\]
+
+\textbf{推导步骤}：
+
+1. 考虑 $X_i - \mu$ 的矩母函数 $m(t) = \mathbb{E}(e^{t(X_i - \mu)})$。则 $m(0) = 1$，$m'(0) = 0$，$m''(0) = \sigma^2$。
+
+2. 由 Taylor 公式，存在 $\xi$（介于 $0$ 和 $t$ 之间）使得
+\[
+m(t) = 1 + \frac{\sigma^2 t^2}{2} + \frac{[m''(\xi) - \sigma^2]t^2}{2}.
+\label{eq:clt-mgf-step}
+\]
+
+3. $Y_n$ 的矩母函数为
+\[
+M_{Y_n}(t) = \mathbb{E}\left[\exp\left(t\frac{\sum X_i - n\mu}{\sqrt{n}\sigma}\right)\right] = [m(t/(\sigma\sqrt{n}))]^n.
+\label{eq:clt-mgf}
+\]
+
+4. 将 $t/(\sigma\sqrt{n})$ 代入 \eqref{eq:clt-mgf-step}：
+\[
+m\left(\frac{t}{\sigma\sqrt{n}}\right) = 1 + \frac{t^2}{2n} + \frac{[m''(\xi) - \sigma^2]t^2}{2n\sigma^2},
+\]
+其中 $\xi$ 介于 $0$ 和 $t/(\sigma\sqrt{n})$ 之间。
+
+5. 因此
+\[
+M_{Y_n}(t) = \left[1 + \frac{t^2}{2n} + \frac{[m''(\xi) - \sigma^2]t^2}{2n\sigma^2}\right]^n.
+\]
+
+6. 由于 $m''(t)$ 在 $0$ 处连续，且 $\xi \to 0$ 当 $n \to \infty$，故
+\[
+\lim_{n \to \infty} [m''(\xi) - \sigma^2] = 0.
+\]
+
+7. 应用极限定理（5.2.16）：
+\[
+\lim_{n \to \infty} M_{Y_n}(t) = \lim_{n \to \infty} \left[1 + \frac{t^2}{2n}\right]^n = e^{t^2/2},
+\]
+这正是 $N(0,1)$ 的矩母函数。
+
+\textbf{结论}：由矩母函数收敛定理，$Y_n \xrightarrow{D} N(0,1)$。
+
+证毕。
+
+\textbf{注}：若不使用矩母函数而使用特征函数，则证明对所有分布成立（特征函数总是存在的）。
+
+\subsection{均匀分布样本均值的概率计算}\label{sec:uniform-mean-probability}
+
+\textbf{背景}：计算 $\mathbb{P}(0.45 < \overline{X} < 0.55)$ 的近似值。
+
+\textbf{已知条件}：
+\begin{itemize}
+\item $X_i \sim \mathrm{Uniform}(0,1)$
+\item $n = 75$
+\item $\mu = 1/2$，$\sigma^2 = 1/12$
+\end{itemize}
+
+\textbf{推导步骤}：
+
+1. 由 CLT，
+\[
+\frac{\sqrt{n}(\overline{X} - \mu)}{\sigma} \approx N(0,1).
+\]
+
+2. 标准化：
+\[
+\mathbb{P}(0.45 < \overline{X} < 0.55) = \mathbb{P}\left(\frac{\sqrt{n}(0.45 - \mu)}{\sigma} < \frac{\sqrt{n}(\overline{X} - \mu)}{\sigma} < \frac{\sqrt{n}(0.55 - \mu)}{\sigma}\right).
+\]
+
+3. 代入数值：
+\[
+\frac{\sqrt{75}(0.5 - 0.5)}{1/\sqrt{12}} = 0,\qquad \frac{\sqrt{75}(0.55 - 0.5)}{1/\sqrt{12}} = \sqrt{75} \cdot 0.05 \cdot \sqrt{12} \approx 1.5.
+\]
+
+4. 因此
+\[
+\mathbb{P}(0.45 < \overline{X} < 0.55) \approx \Phi(1.5) - \Phi(-1.5) = 2\Phi(1.5) - 1 \approx 2(0.9332) - 1 = 0.8664.
+\]
+
+\textbf{精确值比较}：使用 R 计算精确概率约为 $0.864$，近似值 $0.866$ 非常接近。
+
+\subsection{比例推断的详细讨论}\label{sec:proportion-inference}
+
+\textbf{背景}：大样本比例推断的理论基础。
+
+\textbf{设} $X_1, \ldots, X_n \sim \mathrm{Bernoulli}(p)$，$\widehat{p} = \overline{X}$。
+
+\textbf{推导步骤}：
+
+1. 由 CLT，
+\[
+\frac{\sqrt{n}(\widehat{p} - p)}{\sqrt{p(1-p)}} \xrightarrow{D} N(0,1).
+\label{eq:proportion-clt-full}
+\]
+
+2. 但 $p$ 未知！用 $\widehat{p}$ 替代 $p$。需证明
+\[
+\frac{\widehat{p}(1 - \widehat{p})}{p(1-p)} \xrightarrow{P} 1.
+\label{eq:proportion-ratio}
+\]
+
+3. 由弱大数定律，$\widehat{p} \xrightarrow{P} p$，再由连续映射定理，
+\[
+\widehat{p}(1 - \widehat{p}) \xrightarrow{P} p(1-p).
+\]
+
+4. 由 Slutsky 定理，
+\[
+\frac{\widehat{p} - p}{\sqrt{\widehat{p}(1-\widehat{p})/n}} = \frac{\sigma}{\sqrt{\widehat{p}(1-\widehat{p})}} \cdot \frac{\sqrt{n}(\widehat{p} - p)}{\sigma} \xrightarrow{D} N(0,1).
+\label{eq:proportion-slutsky}
+\]
+
+这正是大样本比例置信区间和假设检验的理论基础。
+
+\textbf{置信区间}：$p$ 的 $100(1-\alpha)\%$ 置信区间为
+\[
+\left[\widehat{p} - z_{\alpha/2}\sqrt{\frac{\widehat{p}(1-\widehat{p})}{n}},\quad \widehat{p} + z_{\alpha/2}\sqrt{\frac{\widehat{p}(1-\widehat{p})}{n}}\right].
+\label{eq:proportion-ci}
+\]
+
+\textbf{假设检验}：检验 $H_0: p = p_0$ 的检验统计量为
+\[
+Z = \frac{\widehat{p} - p_0}{\sqrt{p_0(1-p_0)/n}} \xrightarrow{H_0} N(0,1).
+\label{eq:proportion-test}
+\]
+
+\subsection{方差稳定化变换}\label{sec:variance-stabilizing}
+
+\textbf{背景}：在例 5.3.7 中，我们寻求一个变换使渐近方差与参数无关。
+
+\textbf{问题}：设 $X \sim \mathrm{Binomial}(1, p)$，$\widehat{p} = \overline{X}$。求变换 $g$ 使得 $\text{var}[\sqrt{n}g(\widehat{p})]$ 与 $p$ 无关。
+
+\textbf{推导步骤}：
+
+1. 由 $\Delta$ 方法，
+\[
+\text{var}[\sqrt{n}g(\widehat{p})] \approx \sigma^2 [g'(p)]^2 = p(1-p)[g'(p)]^2.
+\label{eq:variance-stabilization-1}
+\]
+
+2. 要求 $p(1-p)[g'(p)]^2 = c$（常数），即
+\[
+g'(p) = \frac{c}{\sqrt{p(1-p)}}.
+\label{eq:variance-stabilization-2}
+\]
+
+3. 积分得
+\[
+g(p) = c \int \frac{1}{\sqrt{p(1-p)}}\,dp = 2c \arcsin(\sqrt{p}) + \text{常数}.
+\label{eq:variance-stabilization-3}
+\]
+
+4. 取 $c = 1/2$ 可得最简单的形式 $g(p) = \arcsin(\sqrt{p})$。
+
+\textbf{结论}：变换 $g(\widehat{p}) = \arcsin(\sqrt{\widehat{p}})$ 的渐近方差为 $1/(4n)$，与 $p$ 无关。\footnote{方差稳定化变换的更多应用见 DeGroot 和 Schervish 的《概率与统计》。}
+
+\subsection{多元中心极限定理的证明}\label{sec:multivariate-clt-proof}
+
+\textbf{背景}：多元中心极限定理说明样本均值向量的标准化形式依分布收敛到多元正态分布。
+
+\textbf{定理陈述}：设 $\mathbf{X}_1, \ldots, \mathbf{X}_n$ 是 iid 随机向量，均值向量为 $\boldsymbol{\mu}$、协方差矩阵为 $\boldsymbol{\Sigma}$（正定）。则
+\[
+\sqrt{n}(\overline{\mathbf{X}}_n - \boldsymbol{\mu}) \xrightarrow{D} N_p(\mathbf{0}, \boldsymbol{\Sigma}).
+\label{eq:multivariate-clt-full}
+\]
+
+\textbf{推导步骤}：
+
+1. 对任意固定向量 $\mathbf{t} \in \mathbb{R}^p$，考虑随机变量 $W_i = \mathbf{t}'\mathbf{X}_i$。
+
+2. 则 $\mathbb{E}W_i = \mathbf{t}'\boldsymbol{\mu}$，$\text{var}(W_i) = \mathbf{t}'\boldsymbol{\Sigma}\mathbf{t}$。
+
+3. 对 $W_1, \ldots, W_n$ 应用一元 CLT：
+\[
+\sqrt{n}(\overline{W}_n - \mathbf{t}'\boldsymbol{\mu}) \xrightarrow{D} N(0, \mathbf{t}'\boldsymbol{\Sigma}\mathbf{t}).
+\label{eq:multivariate-clt-linear}
+\]
+
+4. 但 $\overline{W}_n = \mathbf{t}'\overline{\mathbf{X}}_n$，故
+\[
+\sqrt{n}(\mathbf{t}'\overline{\mathbf{X}}_n - \mathbf{t}'\boldsymbol{\mu}) \xrightarrow{D} N(0, \mathbf{t}'\boldsymbol{\Sigma}\mathbf{t}).
+\label{eq:multivariate-clt-linear2}
+\]
+
+5. 由 Cramer-Wold 定理（若对所有 $\mathbf{t}$，$\mathbf{t}'\mathbf{X}_n \xrightarrow{D} \mathbf{t}'\mathbf{X}$，则 $\mathbf{X}_n \xrightarrow{D} \mathbf{X}$），可得
+\[
+\sqrt{n}(\overline{\mathbf{X}}_n - \boldsymbol{\mu}) \xrightarrow{D} N_p(\mathbf{0}, \boldsymbol{\Sigma}).
+\label{eq:multivariate-clt-final}
+\]
+
+证毕。
+
+\textbf{注}：Cramer-Wold 定理的证明依赖于特征函数的一致有界性和逆转公式。

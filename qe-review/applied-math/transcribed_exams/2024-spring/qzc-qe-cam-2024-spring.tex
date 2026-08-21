@@ -29,6 +29,16 @@
 \setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
 \setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
 
+\newcommand{\examstatement}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\bfseries #1}\par\nobreak\addvspace{0.28em}%
+}
+
+% Shared amsthm note/remark/theorem styles
+\input{../../../common/qe-math-extras.tex}
+\input{../../../common/qe-amsthm-envs.tex}
+\input{../../../common/qe-pdf-outline.tex}
+
 \title{\textbf{QUALIFYING EXAM: APPLIED MATHEMATICS}\\[0.5em]\Large SPRING 2024}
 \date{}
 \author{}
@@ -38,51 +48,166 @@
 \maketitle
 \vspace{-3em}
 
+\tableofcontents
+
+\section{Statement of the problems}
+
+\examstatement{Problem 1. [15 points]}
+Suppose \(k \leqslant n \leqslant m\), and \(A \in \mathbb{C}^{m \times n}\).
+\begin{itemize}
+    \item find a rank-\(k\) matrix \(X\) satsifying \(\|A - X\|_{2} \leqslant \|A - B\|_{2}\) for any rank-\(k\) matrix \(B\). Here \(\|\cdot\|_{2}\) is the spectral norm.
+    \item find a rank-\(k\) matrix \(X\) satsifying \(\|A - X\|_{F} \leqslant \|A - B\|_{F}\) for any rank-\(k\) matrix \(B\). Here \(\|\cdot\|_{F}\) is the Frobenius norm.
+\end{itemize}
+
+\examstatement{Problem 2. [20 points]}
+Consider the Gauss--Seidel iteration for solving the linear equation \(Ax = b\) for \(A = [a_{ij}] \in \mathbb{R}^{n \times n}\), \(b = [b_{i}] \in \mathbb{R}^{n}\) with \(a_{ii} \neq 0\) for \(i = 1, \dots, n\).
+\begin{enumerate}[label=\arabic*:,leftmargin=2em]
+    \item determine \(x^{(0)} \in \mathbb{R}^{n}\).
+    \item for \(k = 0, 1, 2, \dots\) do
+    \item \(x_{i}^{(k+1)} = \dfrac{1}{a_{ii}} \bigl( b_{i} - \sum_{j=1}^{i-1} a_{ij} x_{j}^{(k+1)} - \sum_{j=i+1}^{n} a_{ij} x_{j}^{(k)} \bigr)\) for \(i = 1, 2, \dots, n\).
+    \item end for
+\end{enumerate}
+\begin{itemize}
+    \item Write \(x^{(k)} = [x_{i}^{(k)}]\) and \(A = D - L - U\) where \(D, -L, -U\) are the diagonal, strictly lower triangular, strictly upper triangular parts of \(A\) respectively. Show that \(x^{(k+1)} = (D - L)^{-1} U x^{(k)} + (D - L)^{-1} b\).
+    \item Prove that if \(A\) is diagonally dominant, then \(A\) is invertible, and the Gauss--Seidel iteration converges, namely \(\lim_{k \to \infty} x^{(k)} = A^{-1} b\) for any \(x^{(0)}\). (A matrix \(A\) is called diagonally dominant, if \(|a_{ii}| > \sum_{j \neq i} |a_{ij}|\) for \(i = 1, \dots, n\).)
+    \item Prove that if \(A\) is symmetric and positive definite, then \(A\) is invertible, and the Gauss--Seidel iteration converges.
+\end{itemize}
+
+\examstatement{Problem 3. [20 points]}
+Given the Hilbert matrix \(H_{n} = \bigl[\frac{1}{i+j-1}\bigr]_{i,j=1,\dots,n}\). Prove:
+\begin{itemize}
+    \item \(H_{n}\) is positive definite.
+    \item the spectral radius \(\rho(H_{n})\) of \(H_{n}\) is strictly monotonically increasing with respect to \(n\).
+    \item \(\rho(H_{n}) \to \pi\) as \(n \to \infty\).
+\end{itemize}
+
+\examstatement{Problem 4. [10 points]}
+Apply the following three-step method with a parameter \(\theta \geqslant 0\) for solving the heat equation \(u_{t} - a^{2} u_{xx} = 0\) (Cauchy or periodic problem):
+
+\[
+(1 + \theta) \frac{u_{j}^{n+1} - u_{j}^{n}}{k} - \theta \frac{u_{j}^{n} - u_{j}^{n-1}}{k} = a^{2} \frac{u_{j+1}^{n+1} - 2u_{j}^{n+1} + u_{j-1}^{n+1}}{h^{2}}.
+\]
+
+Give its truncation error and stability. Particularly, give the value of \(\theta\) such that the truncation error attains its highest order.
+
+\examstatement{Problem 5. [15 points]}
+Denote the grid \(I_{h} = \{x_{j}\}_{j=0}^{M}\), \(x_{0} < x_{1} < \dots < x_{M}\). Set \(u = \{u_{j}\}_{j=0}^{M}\) as a grid function on \(I_{h}\). Suppose
+
+\[
+L u_{j} = -(a_{j} u_{j-1} - b_{j} u_{j} + c_{j} u_{j+1}) + q_{j} u_{j}, \qquad j = 1, \dots, M-1,
+\]
+
+where \(a_{j}, b_{j}, c_{j} > 0\), \(q_{j} \geqslant 0\) and \(a_{j} + c_{j} \leqslant b_{j}\).
+\begin{itemize}
+    \item Assume \(L u_{j} \leqslant 0\) for all \(1 \leqslant j \leqslant M-1\). Show that \(u_{j}\) can't attain positive maximum at inner points (\(1 \leqslant j \leqslant M-1\)) unless \(u_{j} \equiv C\);
+    \item Suppose \(d_{j} = b_{j} - a_{j} - c_{j} + q_{j} > 0\) (\(j = 1, \dots, M-1\)). Show the solution of the difference equation
+    \[
+    L u_{j} = \varphi_{j}, \quad j = 1, \dots, M-1; \qquad u_{0} = u_{M} = 0,
+    \]
+    satisfies \(\|u\|_{\infty} = \max_{j} |u_{j}| \leqslant \max_{j} \dfrac{|\varphi_{j}|}{d_{j}}\).
+\end{itemize}
+
+\examstatement{Problem 6. [10 points]}
+Let \(S \subset \mathbb{R}^{n}\) be a non-empty closed convex set, \(f \in C^{2}(S)\) is convex. For any \(x^{0} \in S\), define \(L(f(x^{0})) = \{x \in S \mid f(x) \le f(x^{0})\}\), if there exists some \(m > 0\) such that
+
+\[
+d^{\top} \nabla^{2} f(x) d \ge m \|d\|^{2}, \qquad \forall x \in L(f(x^{0})),\ d \in \mathbb{R}^{n}.
+\]
+
+Prove that \(L(f(x^{0}))\) is a bounded and closed convex set.
+
+\examstatement{Problem 7. [10 points]}
+Given a linear programming (LP):
+\begin{align*}
+\max\quad & 3x_{1} + 2x_{2} + 15x_{3} \\
+\text{s.t.}\quad & x_{1} + x_{2} + x_{3} \le 12, \\
+& 2x_{1} + x_{2} + 5x_{3} \le 18, \\
+& x_{1}, x_{2}, x_{3} \ge 0.
+\end{align*}
+\begin{itemize}
+    \item Write down the standard LP form.
+    \item Compute the optimal solution and optimal value of the problem.
+\end{itemize}
+
 \noindent\rule{\linewidth}{0.4pt}
 
-\begin{enumerate}[label=\textbf{(\arabic*)}]
-    \item \textbf{(15 points)} Suppose $k \le n \le m$, and $A \in \mathbb{C}^{m \times n}$.
-    \begin{itemize}
-        \item Find a rank-$k$ matrix $X$ satisfying $\|A - X\|_2 \le \|A - B\|_2$ for any rank-$k$ matrix $B$.
-        \item Find a rank-$k$ matrix $X$ satisfying $\|A - X\|_F \le \|A - B\|_F$ for any rank-$k$ matrix $B$.
-    \end{itemize}
+\section{Statement and solutions}
 
-    \item \textbf{(20 points)} Consider Gauss-Seidel iteration for $Ax = b$ ($a_{ii} \neq 0$):
-    \[
-    x_i^{(k+1)} = \frac{1}{a_{ii}} \left( b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{(k+1)} - \sum_{j=i+1}^n a_{ij} x_j^{(k)} \right).
-    \]
-    \begin{itemize}
-        \item Show that $x^{(k+1)} = (D - L)^{-1} U x^{(k)} + (D - L)^{-1} b$, where $A = D - L - U$.
-        \item Prove that if $A$ is strictly diagonally dominant, Gauss-Seidel iteration converges to $A^{-1}b$.
-        \item Prove that if $A$ is symmetric and positive definite, Gauss-Seidel iteration converges to $A^{-1}b$.
-    \end{itemize}
+\subsection{Problem 1. [15 points]}
+Suppose \(k \leqslant n \leqslant m\), and \(A \in \mathbb{C}^{m \times n}\).
+\begin{itemize}
+    \item find a rank-\(k\) matrix \(X\) satsifying \(\|A - X\|_{2} \leqslant \|A - B\|_{2}\) for any rank-\(k\) matrix \(B\). Here \(\|\cdot\|_{2}\) is the spectral norm.
+    \item find a rank-\(k\) matrix \(X\) satsifying \(\|A - X\|_{F} \leqslant \|A - B\|_{F}\) for any rank-\(k\) matrix \(B\). Here \(\|\cdot\|_{F}\) is the Frobenius norm.
+\end{itemize}
 
-    \item \textbf{(20 points)} Given the Hilbert matrix $H_n = \left[\frac{1}{i+j-1}\right]_{i,j=1,\dots,n}$. Prove:
-    \begin{itemize}
-        \item $H_n$ is positive definite.
-        \item The spectral radius $\rho(H_n)$ is strictly monotonically increasing with respect to $n$.
-        \item $\rho(H_n) \to \pi$ as $n \to \infty$.
-    \end{itemize}
-
-    \item \textbf{(10 points)} Apply the three-step method ($\theta \ge 0$) for $u_t - a^2 u_{xx} = 0$:
-    \[
-    (1 + \theta) \frac{u_j^{n+1} - u_j^n}{k} - \theta \frac{u_j^n - u_j^{n-1}}{k} = a^2 \frac{u_{j+1}^{n+1} - 2u_j^{n+1} + u_{j-1}^{n+1}}{h^2}.
-    \]
-    Give its truncation error and stability. Find $\theta$ giving highest order truncation error.
-
-    \item \textbf{(15 points)} Grid $I_h = \{x_j\}_{j=0}^M$. $L u_j = -(a_j u_{j-1} - b_j u_j + c_j u_{j+1}) + q_j u_j$ ($a_j, b_j, c_j > 0, q_j \ge 0, a_j + c_j \le b_j$).
-    \begin{itemize}
-        \item Assume $L u_j \le 0$. Show $u_j$ cannot attain a positive maximum at interior points unless constant.
-        \item Suppose $d_j = b_j - a_j - c_j + q_j > 0$. Show $\|u\|_\infty \le \max_j \frac{|\varphi_j|}{d_j}$ for $L u_j = \varphi_j, u_0 = u_M = 0$.
-    \end{itemize}
-
-    \item \textbf{(10 points)} Let $S \subset \mathbb{R}^n$ be closed, convex. $f \in C^2(S)$ convex. $L(f(x^0)) = \{x \in S \mid f(x) \le f(x^0)\}$. If $d^T \nabla^2 f(x) d \ge m \|d\|^2$ ($\forall x \in L(f(x^0)), m > 0$), prove $L(f(x^0))$ is bounded and closed.
-
-    \item \textbf{(10 points)} LP: $\max 3x_1 + 2x_2 + 15x_3$ s.t. $x_1 + x_2 + x_3 \le 12$, $2x_1 + x_2 + 5x_3 \le 18$, $x_1, x_2, x_3 \ge 0$.
-    \begin{itemize}
-        \item Write standard form.
-        \item Compute optimal solution and value.
-    \end{itemize}
+\subsection{Problem 2. [20 points]}
+Consider the Gauss--Seidel iteration for solving the linear equation \(Ax = b\) for \(A = [a_{ij}] \in \mathbb{R}^{n \times n}\), \(b = [b_{i}] \in \mathbb{R}^{n}\) with \(a_{ii} \neq 0\) for \(i = 1, \dots, n\).
+\begin{enumerate}[label=\arabic*:,leftmargin=2em]
+    \item determine \(x^{(0)} \in \mathbb{R}^{n}\).
+    \item for \(k = 0, 1, 2, \dots\) do
+    \item \(x_{i}^{(k+1)} = \dfrac{1}{a_{ii}} \bigl( b_{i} - \sum_{j=1}^{i-1} a_{ij} x_{j}^{(k+1)} - \sum_{j=i+1}^{n} a_{ij} x_{j}^{(k)} \bigr)\) for \(i = 1, 2, \dots, n\).
+    \item end for
 \end{enumerate}
+\begin{itemize}
+    \item Write \(x^{(k)} = [x_{i}^{(k)}]\) and \(A = D - L - U\) where \(D, -L, -U\) are the diagonal, strictly lower triangular, strictly upper triangular parts of \(A\) respectively. Show that \(x^{(k+1)} = (D - L)^{-1} U x^{(k)} + (D - L)^{-1} b\).
+    \item Prove that if \(A\) is diagonally dominant, then \(A\) is invertible, and the Gauss--Seidel iteration converges, namely \(\lim_{k \to \infty} x^{(k)} = A^{-1} b\) for any \(x^{(0)}\). (A matrix \(A\) is called diagonally dominant, if \(|a_{ii}| > \sum_{j \neq i} |a_{ij}|\) for \(i = 1, \dots, n\).)
+    \item Prove that if \(A\) is symmetric and positive definite, then \(A\) is invertible, and the Gauss--Seidel iteration converges.
+\end{itemize}
+
+\subsection{Problem 3. [20 points]}
+Given the Hilbert matrix \(H_{n} = \bigl[\frac{1}{i+j-1}\bigr]_{i,j=1,\dots,n}\). Prove:
+\begin{itemize}
+    \item \(H_{n}\) is positive definite.
+    \item the spectral radius \(\rho(H_{n})\) of \(H_{n}\) is strictly monotonically increasing with respect to \(n\).
+    \item \(\rho(H_{n}) \to \pi\) as \(n \to \infty\).
+\end{itemize}
+
+\subsection{Problem 4. [10 points]}
+Apply the following three-step method with a parameter \(\theta \geqslant 0\) for solving the heat equation \(u_{t} - a^{2} u_{xx} = 0\) (Cauchy or periodic problem):
+
+\[
+(1 + \theta) \frac{u_{j}^{n+1} - u_{j}^{n}}{k} - \theta \frac{u_{j}^{n} - u_{j}^{n-1}}{k} = a^{2} \frac{u_{j+1}^{n+1} - 2u_{j}^{n+1} + u_{j-1}^{n+1}}{h^{2}}.
+\]
+
+Give its truncation error and stability. Particularly, give the value of \(\theta\) such that the truncation error attains its highest order.
+
+\subsection{Problem 5. [15 points]}
+Denote the grid \(I_{h} = \{x_{j}\}_{j=0}^{M}\), \(x_{0} < x_{1} < \dots < x_{M}\). Set \(u = \{u_{j}\}_{j=0}^{M}\) as a grid function on \(I_{h}\). Suppose
+
+\[
+L u_{j} = -(a_{j} u_{j-1} - b_{j} u_{j} + c_{j} u_{j+1}) + q_{j} u_{j}, \qquad j = 1, \dots, M-1,
+\]
+
+where \(a_{j}, b_{j}, c_{j} > 0\), \(q_{j} \geqslant 0\) and \(a_{j} + c_{j} \leqslant b_{j}\).
+\begin{itemize}
+    \item Assume \(L u_{j} \leqslant 0\) for all \(1 \leqslant j \leqslant M-1\). Show that \(u_{j}\) can't attain positive maximum at inner points (\(1 \leqslant j \leqslant M-1\)) unless \(u_{j} \equiv C\);
+    \item Suppose \(d_{j} = b_{j} - a_{j} - c_{j} + q_{j} > 0\) (\(j = 1, \dots, M-1\)). Show the solution of the difference equation
+    \[
+    L u_{j} = \varphi_{j}, \quad j = 1, \dots, M-1; \qquad u_{0} = u_{M} = 0,
+    \]
+    satisfies \(\|u\|_{\infty} = \max_{j} |u_{j}| \leqslant \max_{j} \dfrac{|\varphi_{j}|}{d_{j}}\).
+\end{itemize}
+
+\subsection{Problem 6. [10 points]}
+Let \(S \subset \mathbb{R}^{n}\) be a non-empty closed convex set, \(f \in C^{2}(S)\) is convex. For any \(x^{0} \in S\), define \(L(f(x^{0})) = \{x \in S \mid f(x) \le f(x^{0})\}\), if there exists some \(m > 0\) such that
+
+\[
+d^{\top} \nabla^{2} f(x) d \ge m \|d\|^{2}, \qquad \forall x \in L(f(x^{0})),\ d \in \mathbb{R}^{n}.
+\]
+
+Prove that \(L(f(x^{0}))\) is a bounded and closed convex set.
+
+\subsection{Problem 7. [10 points]}
+Given a linear programming (LP):
+\begin{align*}
+\max\quad & 3x_{1} + 2x_{2} + 15x_{3} \\
+\text{s.t.}\quad & x_{1} + x_{2} + x_{3} \le 12, \\
+& 2x_{1} + x_{2} + 5x_{3} \le 18, \\
+& x_{1}, x_{2}, x_{3} \ge 0.
+\end{align*}
+\begin{itemize}
+    \item Write down the standard LP form.
+    \item Compute the optimal solution and optimal value of the problem.
+\end{itemize}
 
 \end{document}

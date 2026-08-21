@@ -32,6 +32,17 @@
 \setlist[itemize]{topsep=3pt,itemsep=2pt,parsep=0pt}
 \setlist[enumerate]{topsep=3pt,itemsep=2pt,parsep=0pt}
 
+\newcommand{\examstatement}[1]{%
+  \par\addvspace{0.85em}%
+  \noindent{\bfseries #1}\par\nobreak\addvspace{0.28em}%
+}
+
+% Shared amsthm note/remark/theorem styles
+\input{../../../common/qe-math-extras.tex}
+\input{../../../common/qe-amsthm-envs.tex}
+\input{../../../common/qe-cleveref.tex}
+\input{../../../common/qe-pdf-outline.tex}
+
 \title{\textbf{QUALIFYING EXAM: PROBABILITY \& STATISTICS}\\[0.5em]\Large SPRING 2024}
 \date{}
 \author{}
@@ -41,75 +52,374 @@
 \maketitle
 \vspace{-3em}
 
-\section*{Instructions}
+\tableofcontents
+
+\section{Instructions}
 \begin{itemize}
-    \item There are 11 problems in this exam. You choose 8 of them to finish. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
+    \item There are 11 problems in this exam (2 pages). You choose 8 of them to finish. If you select more than 8, only the first 8 that you have worked on will be graded. Note that 4 of the problems are worth 15 points each and the rest 10 points each.
     \item You must follow all the rules of exam taking. Misconducts will be subject to proper disciplinary actions by the Center.
     \item You must provide all necessary details for full credits. A final answer with no or little explanation/derivation, even if correct, receives a minimal credit.
-    \item Note: $\ln x \coloneqq \log_e x$. $\mathbb{R}$ represents the set of all real numbers. $\mathbb{N} \coloneqq \{1, 2, 3, \dots\}$ denotes the set of all positive integers.
 \end{itemize}
+
+Note: \( \ln x := \log_e x \). \( \mathbb{R} \) represents the set of all real numbers. \( \mathbb{N} := \{1, 2, 3, \dots\} \) denotes the set of all positive integers.
+
+\section{Statement of the problems}
+
+\examstatement{Problem 1. [10 pts.]}
+Let \( X_1, X_2, \dots \) be independent identically distributed random variables with density
+
+\[
+f(x) =
+\begin{cases}
+|x|^{-3}, & |x| > 1, \\
+0, & \text{otherwise},
+\end{cases}
+\]
+
+and characteristic function \( \phi(t) := \mathbb{E} e^{it X_1} \). Let \( S_n := X_1 + X_2 + \cdots + X_n \) for each \( n \in \mathbb{N} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( \mathbb{E}(X_1^2) = \infty \).
+    \item It is known that \( \lim_{t \to 0} \frac{1-\phi(t)}{t^2 \ln |t|} = -1 \); you do not need to prove this. Using this fact, find a sequence \( (a_n)_{n \in \mathbb{N}} \) and prove that \( S_n / a_n \) converges in distribution to the standard normal distribution (i.e., mean 0 and variance 1).
+\end{enumerate}
+
+\examstatement{Problem 2. [15 pts.]}
+Let \( X_1, X_2, \dots \) be independent identically distributed random variables with exponential distribution: \( \mathbb{P}(X_k > x) = e^{-x} \) for \( x \ge 0 \). Let \( M_n := \max_{1 \le k \le n} X_k \). Show that
+\begin{enumerate}[label=(\alph*)]
+    \item \( \limsup_{n \to \infty} X_n / \ln n = 1 \) almost surely.
+    \item \( \lim_{n \to \infty} M_n / \ln n = 1 \) almost surely.
+\end{enumerate}
+
+\examstatement{Problem 3. [10 pts.]}
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that: if \( X_n \xrightarrow{\mathbb{P}} X \) (i.e., \( X_n \) converges to \( X \) in probability) and \( Y_n \xrightarrow{\mathbb{P}} Y \) then \( X_n Y_n \xrightarrow{\mathbb{P}} XY \).
+    \item Is the following true or false: if \( X_n \xrightarrow{L^1} X \) (i.e., \( X_n \) converges to \( X \) in \( L^1 \)) and \( Y_n \xrightarrow{L^1} Y \) then \( X_n Y_n \xrightarrow{L^1} XY \)? Either prove it or give a counter example.
+\end{enumerate}
+
+\examstatement{Problem 4. [15 pts.]}
+Let \( p \in (0, 1) \) and \( k \in \mathbb{N} \). Let \( X_1, X_2, \cdots \) be independent random variables with \( \mathbb{P}(X_n = 1) = p = 1 - \mathbb{P}(X_n = -1) \) for each \( n \in \mathbb{N} \). Let \( X_0 := 0 \) and \( S_n := X_0 + X_1 + \cdots + X_n \) for each \( n \in \mathbb{N} \cup \{0\} \). Let \( T_k := \inf\{n \in \mathbb{N} : S_n = k\} \) with \( \inf \emptyset = \infty \). For each \( t \in \mathbb{R} \), let \( M(t) := \mathbb{E} e^{t X_1} \).
+\begin{enumerate}[label=(\alph*)]
+    \item If \( p \in [1/2, 1) \), prove that \( e^{tk} \mathbb{E} M(t)^{-T_k} = 1 \) for all \( t > 0 \).
+    \item If \( p \in (0, 1/2) \), compute \( \mathbb{P}(T_k < \infty) \).
+    \item If \( p \in (0, 1/2) \), find the distribution of \( Y := 1 + \sup_{n \ge 0} S_n \).
+\end{enumerate}
+
+\examstatement{Problem 5. [10 pts.]}
+Let \( S \) be a countable state space and \( (Z_n, n \in \mathbb{N}) \) be a sequence of independent identically distributed random variables taking values in a measurable space \( (E, \mathcal{E}) \).
+\begin{enumerate}[label=(\alph*)]
+    \item Suppose that \( f : S \times E \to S \) is a measurable mapping and \( X_0 \) is independent of all \( Z_n \). Let
+
+    \begin{equation}
+    X_n := f(X_{n-1}, Z_n), \qquad n \in \mathbb{N}. \tag{1}
+    \end{equation}
+
+    Prove that \( (X_n, n \in \mathbb{N} \cup \{0\}) \) is a Markov chain, and determine its transition probability.
+    \item Prove that any (discrete) time-homogeneous Markov chain on \( S \) can be written in the form (1).
+\end{enumerate}
+
+\examstatement{Problem 6. [10 pts.]}
+Let \( (B_t, t \ge 0) \) be a one-dimensional Brownian motion starting from the origin (i.e, \( B_0 = 0 \)). Let \( \mathcal{F}_t := \sigma(B_s : s \le t) \) be the filtration generated by \( B_t \). For \( a > 0 \), define \( T_a := \inf\{t > 0 : B_t \ge a\} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( T_a \) is a \( \mathcal{F}_t \) stopping time.
+    \item Compute \( \mathbb{E} e^{-\lambda T_a} \) for \( \lambda > 0 \), and prove that \( \mathbb{P}(T_a < \infty) = 1 \). Hint: one may consider \( M_t := e^{u B_t - u^2 t/2} \).
+\end{enumerate}
+
+\examstatement{Problem 7. [15 pts.]}
+Let \( X_i \) be independent \( N(\mu_i, 1) \), \( i = 1, \dots, n \). Let \( \mu = (\mu_1, \dots, \mu_n)^T \), \( X = (X_1, \dots, X_n)^T \), \( a = (a_1, \dots, a_n)^T \). Consider the following loss function
+
+\[
+l(\mu, a) = \sum_{i=1}^n (a_i - \mu_i)^2,
+\]
+
+prove that \( \delta(X) = X \) is minimax.
+
+\examstatement{Problem 8. [10 pts.]}
+Suppose \( X_1, X_2, \dots, X_n \) are i.i.d.\ random variables from \( \mathrm{Uniform}(\theta, \theta + 10) \) distribution with \( \theta > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( \hat{\theta} = \min(X_1, \dots, X_n) \) is a consistent estimator of \( \theta \).
+    \item Find the asymptotic distribution of
+
+    \[
+    \sqrt{12n} \left( \frac{\overline{X} - 5 - \theta}{\hat{\theta}} \right),
+    \]
+
+    where \( \overline{X} \) is the sample mean and \( \hat{\theta} \) is the consistent estimator for \( \theta \) in part (a).
+\end{enumerate}
+
+\examstatement{Problem 9. [10 pts.]}
+Let \( (X_1, \dots, X_n) \) be a random sample and assume that \( \log X_i \) is distributed as \( N(\theta, \theta) \) with an unknown parameter \( \theta > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Derive the MLE of \( \theta \), \( \hat{\theta} \).
+    \item What is the asymptotic distribution of \( \hat{\theta} \)?
+\end{enumerate}
+
+\examstatement{Problem 10. [10 pts.]}
+Let \( X_1, \dots, X_n \) be the incomes of \( n \) persons chosen at random from a certain population. Assume that \( X_i \) has the following Pareto density
+
+\[
+f(x \mid \theta) = 100^{\theta} \theta x^{-(1+\theta)}, \qquad x > 100,
+\]
+
+where \( \theta > 1 \). Let \( \mu = \mathbb{E}(X) \) be the mean of the income, write down the rejection region of the UMP level \( \alpha \) (\( 0 < \alpha < 1 \)) test of testing \( H_0 : \mu = \mu_0 \) versus \( H_1 : \mu > \mu_0 \).
+
+\examstatement{Problem 11. [15 pts.]}
+Let \( \theta_1, \theta_2 \) and \( \theta_3 \) be nonnegative parameters with the constraint \( \theta_1 + \theta_2 + \theta_3 = 1 \). We observe \( X_{i1} = \theta_1 + \epsilon_{i1} \), \( X_{i2} = \theta_2 + \epsilon_{i2} \), \( X_{i3} = \theta_3 + \epsilon_{i3} \) for \( i = 1, 2, \dots, n \), where \( \epsilon_{ik} \sim N(0, 1) \) are independent normal random variables (\( k = 1, 2, 3 \)). Derive the uniformly minimum-variance unbiased estimator (UMVUE) for \( \theta_1 \).
 
 \noindent\rule{\linewidth}{0.4pt}
 
-\begin{enumerate}[label=\textbf{\arabic*.}]
-    \item \textbf{(10 points)} Let $X_1, X_2, \dots$ be independent identically distributed random variables with density
-    \[
-    f(x) = \begin{cases} |x|^{-3}, & |x| > 1, \\ 0, & \text{otherwise}, \end{cases}
-    \]
-    and characteristic function $\phi(t) \coloneqq \E e^{i t X_1}$. Let $S_n \coloneqq X_1 + \dots + X_n$ for each $n \in \mathbb{N}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that $\E(X_1^2) = \infty$.
-        \item It is known that $\lim_{t \to 0} \frac{1 - \phi(t)}{t^2 \ln |t|} = -1$. Using this fact, find a sequence $(a_n)_{n \in \mathbb{N}}$ and prove that $S_n / a_n$ converges in distribution to the standard normal distribution $\mathcal{N}(0, 1)$.
-    \end{enumerate}
+\section{Statement and solutions}
 
-    \item \textbf{(15 points)} Let $X_1, X_2, \dots$ be i.i.d.\ random variables with exponential distribution: $\Pbb(X_k > x) = e^{-x}$ for $x \ge 0$. Let $M_n \coloneqq \max_{1 \le k \le n} X_k$. Show that:
-    \begin{enumerate}[label=(\alph*)]
-        \item $\limsup_{n \to \infty} X_n / \ln n = 1$ almost surely.
-        \item $\lim_{n \to \infty} M_n / \ln n = 1$ almost surely.
-    \end{enumerate}
+\subsection{Problem 1. [10 pts.]}
+Let \( X_1, X_2, \dots \) be independent identically distributed random variables with density
 
-    \item \textbf{(10 points)}
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that: if $X_n \xrightarrow{\Pbb} X$ (i.e., $X_n$ converges to $X$ in probability) and $Y_n \xrightarrow{\Pbb} Y$, then $X_n Y_n \xrightarrow{\Pbb} XY$.
-        \item Is the following true or false: if $X_n \xrightarrow{L^1} X$ and $Y_n \xrightarrow{L^1} Y$, then $X_n Y_n \xrightarrow{L^1} XY$? Either prove it or give a counterexample.
-    \end{enumerate}
+\[
+f(x) =
+\begin{cases}
+|x|^{-3}, & |x| > 1, \\
+0, & \text{otherwise},
+\end{cases}
+\]
 
-    \item \textbf{(15 points)} Let $p \in (0, 1)$ and $k \in \mathbb{N}$. Let $X_1, X_2, \dots$ be independent random variables with $\Pbb(X_n = 1) = p = 1 - \Pbb(X_n = -1)$ for each $n \in \mathbb{N}$. Let $X_0 \coloneqq 0$ and $S_n \coloneqq X_0 + X_1 + \dots + X_n$ for $n \in \mathbb{N} \cup \{0\}$. Let $T_k \coloneqq \inf \{n \in \mathbb{N} : S_n = k\}$ with $\inf \varnothing = \infty$. For $t \in \mathbb{R}$, let $M(t) \coloneqq \E e^{t X_1}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item If $p \in [1/2, 1)$, prove that $e^{t k} \E [M(t)^{-T_k}] = 1$ for all $t > 0$.
-        \item If $p \in (0, 1/2)$, compute $\Pbb(T_k < \infty)$.
-        \item If $p \in (0, 1/2)$, find the distribution of $Y \coloneqq 1 + \sup_{n > 0} S_n$.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $S$ be a countable state space and $(Z_n, n \in \mathbb{N})$ be a sequence of i.i.d.\ random variables taking values in a measurable space $(E, \mathcal{E})$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Suppose that $f : S \times E \to S$ is a measurable mapping and $X_0$ is independent of all $Z_n$. Let $X_n \coloneqq f(X_{n-1}, Z_n), n \in \mathbb{N}$. Prove that $(X_n, n \in \mathbb{N} \cup \{0\})$ is a Markov chain, and determine its transition probability.
-        \item Prove that any (discrete) time-homogeneous Markov chain on $S$ can be written in the form above.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $(B_t, t \ge 0)$ be a 1D Brownian motion starting from $0$. Let $\mathcal{F}_t \coloneqq \sigma(B_s : s \le t)$ be the filtration generated by $B_t$. For $a > 0$, define $T_a \coloneqq \inf \{t > 0 : B_t \ge a\}$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that $T_a$ is an $\mathcal{F}_t$ stopping time.
-        \item Compute $\E e^{-\lambda T_a}$ for $\lambda > 0$, and prove that $\Pbb(T_a < \infty) = 1$. (\textit{Hint:} Consider $M_t \coloneqq e^{u B_t - u^2 t / 2}$.)
-    \end{enumerate}
-
-    \item \textbf{(15 points)} Let $X_i \sim \mathcal{N}(\mu_i, 1)$ independently for $i = 1, \dots, n$. Let $\bm{\mu} = (\mu_1, \dots, \mu_n)^T$, $\mathbf{X} = (X_1, \dots, X_n)^T$, $\mathbf{a} = (a_1, \dots, a_n)^T$. Consider the loss function $l(\bm{\mu}, \mathbf{a}) = \sum_{i=1}^n (a_i - \mu_i)^2$. Prove that $\delta(\mathbf{X}) = \mathbf{X}$ is minimax.
-
-    \item \textbf{(10 points)} Suppose $X_1, \dots, X_n$ are i.i.d.\ Uniform$(\theta, \theta + 10)$ with $\theta > 0$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Prove that $\hat{\theta} = \min(X_1, \dots, X_n)$ is a consistent estimator of $\theta$.
-        \item Find the asymptotic distribution of $\sqrt{12n} \left(\frac{\overline{X} - 5 - \theta}{\hat{\theta}}\right)$, where $\overline{X}$ is the sample mean.
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $(X_1, \dots, X_n)$ be a random sample where $\log X_i \sim \mathcal{N}(\theta, \theta)$ with unknown $\theta > 0$.
-    \begin{enumerate}[label=(\alph*)]
-        \item Derive the MLE of $\theta$, denoted by $\hat{\theta}$.
-        \item What is the asymptotic distribution of $\hat{\theta}$?
-    \end{enumerate}
-
-    \item \textbf{(10 points)} Let $X_1, \dots, X_n$ be incomes of $n$ persons with Pareto density $f(x \mid \theta) = 100^\theta \theta x^{-(1+\theta)}$ for $x > 100$, where $\theta > 1$. Let $\mu = \E(X)$ be the mean income. Write down the rejection region of the UMP level $\alpha$ ($0 < \alpha < 1$) test of $H_0 : \mu = \mu_0$ versus $H_1 : \mu > \mu_0$.
-
-    \item \textbf{(15 points)} Let $\theta_1, \theta_2, \theta_3 \ge 0$ with constraint $\theta_1 + \theta_2 + \theta_3 = 1$. We observe $X_{i1} = \theta_1 + \epsilon_{i1}, X_{i2} = \theta_2 + \epsilon_{i2}, X_{i3} = \theta_3 + \epsilon_{i3}$ for $i = 1, \dots, n$, where $\epsilon_{ik} \sim \mathcal{N}(0, 1)$ are independent. Derive the uniformly minimum-variance unbiased estimator (UMVUE) for $\theta_1$.
+and characteristic function \( \phi(t) := \mathbb{E} e^{it X_1} \). Let \( S_n := X_1 + X_2 + \cdots + X_n \) for each \( n \in \mathbb{N} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( \mathbb{E}(X_1^2) = \infty \).
+    \item It is known that \( \lim_{t \to 0} \frac{1-\phi(t)}{t^2 \ln |t|} = -1 \); you do not need to prove this. Using this fact, find a sequence \( (a_n)_{n \in \mathbb{N}} \) and prove that \( S_n / a_n \) converges in distribution to the standard normal distribution (i.e., mean 0 and variance 1).
 \end{enumerate}
 
+\subsection{Problem 2. [15 pts.]}
+Let \( X_1, X_2, \dots \) be independent identically distributed random variables with exponential distribution: \( \mathbb{P}(X_k > x) = e^{-x} \) for \( x \ge 0 \). Let \( M_n := \max_{1 \le k \le n} X_k \). Show that
+\begin{enumerate}[label=(\alph*)]
+    \item \( \limsup_{n \to \infty} X_n / \ln n = 1 \) almost surely.
+    \item \( \lim_{n \to \infty} M_n / \ln n = 1 \) almost surely.
+\end{enumerate}
+
+\subsection{Problem 3. [10 pts.]}
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that: if \( X_n \xrightarrow{\mathbb{P}} X \) (i.e., \( X_n \) converges to \( X \) in probability) and \( Y_n \xrightarrow{\mathbb{P}} Y \) then \( X_n Y_n \xrightarrow{\mathbb{P}} XY \).
+    \item Is the following true or false: if \( X_n \xrightarrow{L^1} X \) (i.e., \( X_n \) converges to \( X \) in \( L^1 \)) and \( Y_n \xrightarrow{L^1} Y \) then \( X_n Y_n \xrightarrow{L^1} XY \)? Either prove it or give a counter example.
+\end{enumerate}
+
+\subsection{Problem 4. [15 pts.]}
+Let \( p \in (0, 1) \) and \( k \in \mathbb{N} \). Let \( X_1, X_2, \cdots \) be independent random variables with \( \mathbb{P}(X_n = 1) = p = 1 - \mathbb{P}(X_n = -1) \) for each \( n \in \mathbb{N} \). Let \( X_0 := 0 \) and \( S_n := X_0 + X_1 + \cdots + X_n \) for each \( n \in \mathbb{N} \cup \{0\} \). Let \( T_k := \inf\{n \in \mathbb{N} : S_n = k\} \) with \( \inf \emptyset = \infty \). For each \( t \in \mathbb{R} \), let \( M(t) := \mathbb{E} e^{t X_1} \).
+\begin{enumerate}[label=(\alph*)]
+    \item If \( p \in [1/2, 1) \), prove that \( e^{tk} \mathbb{E} M(t)^{-T_k} = 1 \) for all \( t > 0 \).
+    \item If \( p \in (0, 1/2) \), compute \( \mathbb{P}(T_k < \infty) \).
+    \item If \( p \in (0, 1/2) \), find the distribution of \( Y := 1 + \sup_{n \ge 0} S_n \).
+\end{enumerate}
+
+\subsection{Problem 5. [10 pts.]}
+Let \( S \) be a countable state space and \( (Z_n, n \in \mathbb{N}) \) be a sequence of independent identically distributed random variables taking values in a measurable space \( (E, \mathcal{E}) \).
+\begin{enumerate}[label=(\alph*)]
+    \item Suppose that \( f : S \times E \to S \) is a measurable mapping and \( X_0 \) is independent of all \( Z_n \). Let
+
+    \begin{equation}
+    X_n := f(X_{n-1}, Z_n), \qquad n \in \mathbb{N}. \tag{1}
+    \end{equation}
+
+    Prove that \( (X_n, n \in \mathbb{N} \cup \{0\}) \) is a Markov chain, and determine its transition probability.
+    \item Prove that any (discrete) time-homogeneous Markov chain on \( S \) can be written in the form (1).
+\end{enumerate}
+
+\setcounter{section}{5}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries}
+
+The problem is the stochastic recursive representation of a discrete-time Markov chain on a countable state space. Part~(a) starts from an i.i.d.\ driven recursion and produces the Markov property together with an explicit kernel. Part~(b) reverses the arrow: every time-homogeneous kernel on \(S\) is realised by some measurable update \(f\) and some i.i.d.\ driving sequence. The only inputs needed below are the countable-state Markov property, time-homogeneity, independence of the next noise from the past, and the inverse-transform realisation of a discrete law. (Here ``discrete'' in the problem statement means discrete time, not a second restriction on \(S\); countability of \(S\) is already assumed.) Sources: Brzeźniak--Zastawniak, Definitions~5.1--5.2.
+
+Throughout, \(S\) carries the discrete \(\sigma\)-algebra \(2^{S}\). The product space \(S\times E\) carries \(2^{S}\otimes\mathcal{E}\). Write \(\mu\) for the common law of the driving variables \(Z_n\).
+
+\begin{definition}[Measurable update]
+\label{def:p5-update}
+A map \(f:S\times E\to S\) is \emph{measurable} if it is \(2^{S}\otimes\mathcal{E}/2^{S}\)-measurable. Equivalently, since \(S\) is discrete, for every fixed \(x\in S\) and every \(y\in S\) one has
+\[
+\{z\in E:f(x,z)=y\}\in\mathcal{E}.
+\]
+Then \(X_n=f(X_{n-1},Z_n)\) is an \(S\)-valued random variable whenever \(X_{n-1}\) and \(Z_n\) are.
+\end{definition}
+
+\begin{definition}[Conditional probability, countable case]
+\label{def:p5-cond}
+If \(A\) is an event and \(W\) is an \(S\)-valued random variable with \(\Pbb(W=x)>0\),
+\[
+\Pbb(A\mid W=x)
+=
+\frac{\Pbb(A\cap\{W=x\})}{\Pbb(W=x)}.
+\]
+The \(\sigma\)-field form \(\Pbb(A\mid\mathcal{G})\) is any integrable \(\mathcal{G}\)-measurable random variable satisfying the integral identity on every set in \(\mathcal{G}\). On a countable space the two pictures agree: \(\Pbb(A\mid X_0,\dots,X_n)\) equals the pointwise ratio on each atom \(\{X_0=x_0,\dots,X_n=x_n\}\) of positive probability.
+\end{definition}
+
+\begin{definition}[Markov chain]
+\label{def:p5-mc}
+An \(S\)-valued sequence \((X_n)_{n\ge 0}\) is a \emph{Markov chain} on \(S\) if, for every \(n\in\mathbb{N}\cup\{0\}\) and every \(y\in S\),
+\[
+\Pbb(X_{n+1}=y\mid X_0,\dots,X_n)
+=
+\Pbb(X_{n+1}=y\mid X_n).
+\]
+Equivalently, whenever the conditioning event has positive probability,
+\[
+\Pbb(X_{n+1}=y\mid X_0=x_0,\dots,X_n=x_n)
+=
+\Pbb(X_{n+1}=y\mid X_n=x_n).
+\]
+The first display is Brzeźniak--Zastawniak~(5.10). The second is the form written in an exam proof.
+\end{definition}
+
+\begin{definition}[Time-homogeneity and transition probability]
+\label{def:p5-hom}
+A Markov chain on \(S\) is \emph{time-homogeneous} if the one-step law does not depend on the clock: for all \(n\in\mathbb{N}\cup\{0\}\) and all \(x,y\in S\),
+\[
+\Pbb(X_{n+1}=y\mid X_n=x)
+=
+\Pbb(X_1=y\mid X_0=x).
+\]
+The common value is the \emph{transition probability} \(p(y\mid x)\). The array \(P=[p(y\mid x)]_{y,x\in S}\) is the transition matrix. It is a stochastic matrix in the sense that
+\[
+p(y\mid x)\ge 0,
+\qquad
+\sum_{y\in S}p(y\mid x)=1
+\qquad\text{for every }x\in S.
+\]
+(Row-versus-column conventions differ across books; only the displayed identities are used below.)
+\end{definition}
+
+What part~(a) asks one to ``determine'' is the kernel of the recursion: under \cref{def:p5-update} and the standing independence \(X_0\perp(Z_n)_{n\ge 1}\),
+\[
+p(y\mid x)
+=
+\Pbb\bigl(f(x,Z_1)=y\bigr)
+=
+\mu\bigl(\{z\in E:f(x,z)=y\}\bigr).
+\]
+Homogeneity is then immediate from the identical distribution of the \(Z_n\).
+
+\begin{lemma}[The next noise is independent of the past]
+\label{lem:p5-next-noise}
+Assume \(X_0\perp(Z_n)_{n\ge 1}\) and \(X_n=f(X_{n-1},Z_n)\) for \(n\ge 1\), with \(f\) as in \cref{def:p5-update}. Then each \(X_n\) is \(\sigma(X_0,Z_1,\dots,Z_n)\)-measurable, and therefore
+\[
+Z_{n+1}\perp(X_0,\dots,X_n).
+\]
+In particular, the conditional law of \(Z_{n+1}\) given \(\{X_0=x_0,\dots,X_n=x\}\) is the unconditional law \(\mu\).
+\end{lemma}
+
+\begin{proof}
+The claim \(X_n\in\sigma(X_0,Z_1,\dots,Z_n)\) is induction on \(n\): the base \(n=0\) is tautological, and the inductive step is the composition \(X_n=f(X_{n-1},Z_n)\). Hence
+\[
+\sigma(X_0,\dots,X_n)\subset\sigma(X_0,Z_1,\dots,Z_n).
+\]
+The sequence \((Z_n)_{n\ge 1}\) is i.i.d.\ and independent of \(X_0\), so \(Z_{n+1}\) is independent of \(\sigma(X_0,Z_1,\dots,Z_n)\), and therefore of \(\sigma(X_0,\dots,X_n)\).
+\end{proof}
+
+The Markov property in part~(a) is the observation that \(X_{n+1}=f(X_n,Z_{n+1})\) together with \cref{lem:p5-next-noise}: given the whole past, the only information that enters the next state is the current state \(X_n=x\), and then one just evaluates \(f(x,\,\cdot\,)\) at an independent copy of \(Z_1\).
+
+\begin{lemma}[Inverse transform on a countable set]
+\label{lem:p5-inv}
+Let \(q=(q_y)_{y\in S}\) be a probability distribution on \(S\), and fix an enumeration \(S=\{s_1,s_2,\dots\}\) (finite or countably infinite). Write \(F_0:=0\) and
+\[
+F_k
+:=
+\sum_{i=1}^{k}q_{s_i},
+\qquad k\ge 1,
+\]
+and define \(G_q:[0,1]\to S\) by \(G_q(0):=s_1\) and
+\[
+G_q(u)
+:=
+s_k
+\qquad\text{for }u\in(F_{k-1},F_k].
+\]
+If \(U\sim\mathrm{Unif}[0,1]\), then \(\Pbb(G_q(U)=s_k)=q_{s_k}\) for every \(k\). Equivalently,
+\[
+G_q(u)
+=
+\inf\bigl\{s_k:F_k\ge u\bigr\},
+\qquad u\in(0,1].
+\]
+\end{lemma}
+
+\begin{proof}
+The intervals \((F_{k-1},F_k]\) are pairwise disjoint, and their union is \((0,1]\) up to a null set of unused atoms (those \(s_k\) with \(q_{s_k}=0\) contribute empty intervals). Hence
+\[
+\Pbb(G_q(U)=s_k)
+=
+\Pbb\bigl(U\in(F_{k-1},F_k]\bigr)
+=
+F_k-F_{k-1}
+=
+q_{s_k}.
+\]
+The infimum formula selects the same \(s_k\) on each such interval.
+\end{proof}
+
+\begin{construction}[{A kernel realised by a map \(S\times[0,1]\to S\)}]
+\label{con:p5-kernel-map}
+Let \(p(\,\cdot\mid x)\) be any transition probability on \(S\), in the sense of \cref{def:p5-hom}. Apply \cref{lem:p5-inv} to the discrete law \(q=p(\,\cdot\mid x)\) at each \(x\), with one fixed enumeration of \(S\). The resulting map
+\[
+f(x,u)
+:=
+G_{p(\,\cdot\mid x)}(u)
+\]
+is measurable in the sense of \cref{def:p5-update} (for each \(x\), it is constant on Borel intervals). If \(Z_n\) are i.i.d.\ \(\mathrm{Unif}[0,1]\) and independent of a given initial state \(X_0\), the recursion \(X_n=f(X_{n-1},Z_n)\) has
+\[
+\Pbb\bigl(f(x,Z_1)=y\bigr)
+=
+p(y\mid x)
+\qquad\text{for all }x,y\in S.
+\]
+\end{construction}
+
+\begin{remark*}[What ``written in the form~(1)'' means]
+Part~(b) is a statement about laws, not about the original probability space already containing a driving sequence. Given a time-homogeneous chain \((Y_n)_{n\ge 0}\) with kernel \(p\), one may (if needed) enlarge the space so as to carry an i.i.d.\ \(\mathrm{Unif}[0,1]\) sequence independent of \(Y_0\), set \(X_0:=Y_0\), and run \cref{con:p5-kernel-map}. The resulting \((X_n)\) is a time-homogeneous Markov chain with the same initial law and the same kernel as \((Y_n)\), hence the same finite-dimensional distributions. The map \(f\) is not unique: any measurable \(f\) satisfying \(\mathrm{Law}(f(x,Z_1))=p(\,\cdot\mid x)\) for every \(x\) works.
+\end{remark*}
+
+\subsection{Problem 6. [10 pts.]}
+Let \( (B_t, t \ge 0) \) be a one-dimensional Brownian motion starting from the origin (i.e, \( B_0 = 0 \)). Let \( \mathcal{F}_t := \sigma(B_s : s \le t) \) be the filtration generated by \( B_t \). For \( a > 0 \), define \( T_a := \inf\{t > 0 : B_t \ge a\} \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( T_a \) is a \( \mathcal{F}_t \) stopping time.
+    \item Compute \( \mathbb{E} e^{-\lambda T_a} \) for \( \lambda > 0 \), and prove that \( \mathbb{P}(T_a < \infty) = 1 \). Hint: one may consider \( M_t := e^{u B_t - u^2 t/2} \).
+\end{enumerate}
+
+\subsection{Problem 7. [15 pts.]}
+Let \( X_i \) be independent \( N(\mu_i, 1) \), \( i = 1, \dots, n \). Let \( \mu = (\mu_1, \dots, \mu_n)^T \), \( X = (X_1, \dots, X_n)^T \), \( a = (a_1, \dots, a_n)^T \). Consider the following loss function
+
+\[
+l(\mu, a) = \sum_{i=1}^n (a_i - \mu_i)^2,
+\]
+
+prove that \( \delta(X) = X \) is minimax.
+
+\subsection{Problem 8. [10 pts.]}
+Suppose \( X_1, X_2, \dots, X_n \) are i.i.d.\ random variables from \( \mathrm{Uniform}(\theta, \theta + 10) \) distribution with \( \theta > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Prove that \( \hat{\theta} = \min(X_1, \dots, X_n) \) is a consistent estimator of \( \theta \).
+    \item Find the asymptotic distribution of
+
+    \[
+    \sqrt{12n} \left( \frac{\overline{X} - 5 - \theta}{\hat{\theta}} \right),
+    \]
+
+    where \( \overline{X} \) is the sample mean and \( \hat{\theta} \) is the consistent estimator for \( \theta \) in part (a).
+\end{enumerate}
+
+\subsection{Problem 9. [10 pts.]}
+Let \( (X_1, \dots, X_n) \) be a random sample and assume that \( \log X_i \) is distributed as \( N(\theta, \theta) \) with an unknown parameter \( \theta > 0 \).
+\begin{enumerate}[label=(\alph*)]
+    \item Derive the MLE of \( \theta \), \( \hat{\theta} \).
+    \item What is the asymptotic distribution of \( \hat{\theta} \)?
+\end{enumerate}
+
+\subsection{Problem 10. [10 pts.]}
+Let \( X_1, \dots, X_n \) be the incomes of \( n \) persons chosen at random from a certain population. Assume that \( X_i \) has the following Pareto density
+
+\[
+f(x \mid \theta) = 100^{\theta} \theta x^{-(1+\theta)}, \qquad x > 100,
+\]
+
+where \( \theta > 1 \). Let \( \mu = \mathbb{E}(X) \) be the mean of the income, write down the rejection region of the UMP level \( \alpha \) (\( 0 < \alpha < 1 \)) test of testing \( H_0 : \mu = \mu_0 \) versus \( H_1 : \mu > \mu_0 \).
+
+\subsection{Problem 11. [15 pts.]}
+Let \( \theta_1, \theta_2 \) and \( \theta_3 \) be nonnegative parameters with the constraint \( \theta_1 + \theta_2 + \theta_3 = 1 \). We observe \( X_{i1} = \theta_1 + \epsilon_{i1} \), \( X_{i2} = \theta_2 + \epsilon_{i2} \), \( X_{i3} = \theta_3 + \epsilon_{i3} \) for \( i = 1, 2, \dots, n \), where \( \epsilon_{ik} \sim N(0, 1) \) are independent normal random variables (\( k = 1, 2, 3 \)). Derive the uniformly minimum-variance unbiased estimator (UMVUE) for \( \theta_1 \).
 \end{document}

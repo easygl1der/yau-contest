@@ -1,0 +1,412 @@
+% Chapter 5: Hierarchical models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{分层模型}
+
+\section{本章导论}
+
+在许多统计应用中，我们面对的不是一个单一的参数，而是多个彼此存在某种联系的参数。当我们为每个参数独立指定先验时，我们实际上假设它们之间没有任何关系——然而，在许多应用中，我们有理由相信这些参数来自某个公共分布。
+
+\textbf{核心理念}：如果我们假设 $\theta_j$ 是从一个未知的总体分布中抽取的样本，那么就可以用一种自然的方式将数据中的信息传递给参数——每个实验的数据不仅告诉我们关于该实验的 $\theta_j$，还告诉我们关于总体分布本身的特征。
+
+\textbf{关键问题}：当我们只有有限的数据时，是应该为每个参数使用独立的先验，还是应该利用参数之间的相似性？分层模型提供了一种优雅的解决方案。
+
+这种层次化思维不仅帮助我们理解多参数问题，还在计算策略的发展中发挥重要作用。更重要的是，简单的非分层模型通常不适合分层数据——参数太少则无法准确拟合数据，参数太多则容易过拟合。
+
+\section{可交换性与分层模型的建立}
+
+\subsection{从历史数据到先验分布}
+
+我们从一个具体例子开始，阐述分层模型的基本思想。
+
+考虑估计参数 $\theta$ 的问题：我们有当前小规模实验的数据，以及从类似历史实验构建的先验分布。关键问题是：我们如何\textbf{合理地}利用历史数据来帮助估计当前实验的参数？
+
+一个看似合理的方法是：用历史数据估计先验分布的参数（如 beta 分布的 $\alpha, \beta$），然后将这个估计的先验用于当前实验。然而，这样做存在逻辑问题：当我们用全部数据来同时估计先验参数和当前参数时，数据被使用了两次。
+
+\textbf{核心理念}：与其将先验分布视为固定或估计的对象，不如将整个层次结构——从数据到参数、从参数到超参数——放入概率模型中，对所有参数进行联合贝叶斯推断。这种方法在统计上更加一致，也更充分地利用了数据中的信息。
+
+\begin{Example}[估计一组大鼠的肿瘤风险]\label{ex:rat-tumor}
+  在药物评估中，研究人员通常对啮齿动物进行实验。假设我们的目标是估计 $\theta$——对照组雌性 F344 实验室大鼠发生子宫内膜基质息肉（一种肿瘤）的概率。
+
+  数据显示，14 只大鼠中有 4 只发生了息肉。给定 $\theta$，假设肿瘤数量的二项模型是很自然的。为方便起见，我们从共轭族中选择先验分布：$\theta \sim \mathrm{Beta}(\alpha, \beta)$。
+
+  后验分布为 $\theta \mid y \sim \mathrm{Beta}(\alpha + y, \beta + n - y)$，其中 $y = 4$，$n = 14$。
+\end{Example}
+
+现在，假设我们有来自历史数据的信息：历史实验中的肿瘤概率 $\theta_j$ 近似服从某个 beta 分布，其均值和标准差已知。设历史数据包含 70 组实验的肿瘤发生率 $(y_j/n_j)$，其样本均值为 0.136，标准差为 0.103。
+
+如果设总体分布的均值和标准差分别为这些值，可以解出对应的 $(\alpha, \beta)$ 估计值为 $(1.4, 8.6)$。使用这个估计的先验分布，得到当前实验的 $\mathrm{Beta}(5.4, 18.6)$ 后验分布，后验均值是 0.223。
+
+这比原始比例 $4/14 = 0.286$ 低得多——因为历史数据的权重表明，当前实验的肿瘤发生率异常高。
+
+然而，这种直接用数据估计先验分布的方法存在逻辑问题：如果我们用全部数据来估计先验分布，然后再用同样的数据对每个 $\theta_j$ 进行推断，数据被使用了两次，这会导致我们高估精确度。
+
+\textbf{解决之道}：将整个参数集合和实验的联合分布放入概率模型中，然后对所有模型参数的联合分布执行完整的贝叶斯分析。这种方法的历史脉络可以追溯到 de Finetti 的可交换性定理，以及 Lindley 与 Smith (1972)、Morris (1983) 等人在层次模型方面的开创性工作。
+
+\subsection{可交换性}
+
+当我们除了数据 $y$ 之外，没有任何信息可以区分各个 $\theta_j$ 时，必须在先验分布中对参数施加对称性。这种对称性在概率上用\textbf{可交换性}（exchangeability）来表示：如果参数 $(\theta_1, \ldots, \theta_J)$ 的联合分布 $p(\theta_1, \ldots, \theta_J)$ 在指标 $(1, \ldots, J)$ 的任意置换下保持不变，则这些参数是\textbf{可交换的}。
+
+可交换性的概念在 de Finetti (1930) 的工作中得到了深刻的形式化——他证明，一个参数序列 $(\theta_1, \ldots, \theta_J)$ 是可交换的，当且仅当它可以表示为某个潜在参数 $\phi$ 的条件独立混合。这意味着，如果我们完全不知道参数的顺序或分组关系，最合理的假设就是可交换性。
+
+可交换性最简单的形式是将每个参数 $\theta_j$ 视为来自某个由超参数向量 $\phi$ 控制的先验（或总体）分布的独立同分布样本：
+
+\[
+p(\theta \mid \phi) = \prod_{j=1}^{J} p(\theta_j \mid \phi). \label{eq:exchangeable-theta}
+\]
+
+一般情况下 $\phi$ 是未知的，因此我们必须在整个 $\theta$ 的分布上对 $\phi$ 的不确定性进行平均：
+
+\[
+p(\theta) = \int \left[ \prod_{j=1}^{J} p(\theta_j \mid \phi) \right] p(\phi) \, d\phi. \label{eq:marginal-theta}
+\]
+
+这种独立同分布的混合形式，通常足以在实践中捕捉可交换性。
+
+\begin{Remark}
+  可交换性并不意味着参数是独立同分布的——它只意味着在参数值被交换时，联合分布不变。独立同分布是可交换性的一种特殊形式。
+\end{Remark}
+
+\subsection{分层模型设置}
+
+一般地，考虑 $j = 1, \ldots, J$ 个实验，其中实验 $j$ 有数据（向量）$y_j$ 和参数（向量）$\theta_j$，似然函数为 $p(y_j \mid \theta_j)$。
+
+\textbf{两层分层模型}的标准形式为：
+
+\begin{enumerate}
+  \item \textbf{数据层}：$y_{ij} \mid \theta_j \sim p(y_{ij} \mid \theta_j)$（独立）
+  \item \textbf{参数层}：$\theta_j \mid \phi \sim p(\theta_j \mid \phi)$（独立，来自共同先验）
+  \item \textbf{超参数层}：$\phi \sim p(\phi)$（先验）
+\end{enumerate}
+
+联合后验分布为：\footnote{推导见附录 \cref{sec:joint-posterior-hierarchical}}
+
+\[
+p(\theta, \phi \mid y) \propto p(\phi) \prod_{j=1}^{J} p(\theta_j \mid \phi) \prod_{i=1}^{n_j} p(y_{ij} \mid \theta_j). \label{eq:joint-posterior-hierarchical}
+\]
+
+\section{伪贝叶斯估计与经验贝叶斯}
+
+\subsection{两阶段估计}
+
+在完全贝叶斯分析之前，一个实用的替代方法是将估计过程分为两个阶段：
+
+\textbf{第一阶段}：对每个 $\theta_j$，使用其自身数据 $y_j$ 计算估计量 $\hat{\theta}_j$。
+
+\textbf{第二阶段}：假设 $\hat{\theta}_j$ 是从某个分布 $p(\theta_j \mid \phi)$ 中抽取的样本，用所有 $\hat{\theta}_j$ 来估计 $\phi$，然后用估计的 $\phi$ 重新计算每个 $\theta_j$ 的后验均值。
+
+这种方法被称为\textbf{伪贝叶斯}（pseudo-Bayes）或\textbf{经验贝叶斯}（empirical Bayes）估计。
+
+\subsection{经验贝叶斯的原理}
+
+设 $\hat{\theta}_j$ 是给定 $\theta_j$ 和已知方差 $\sigma_j^2$ 下的充分统计量。在正态模型中，$\hat{\theta}_j \sim \mathrm{N}(\theta_j, \sigma_j^2)$。
+
+假设 $\theta_j \sim \mathrm{N}(\mu, \tau^2)$，则 $\hat{\theta}_j \sim \mathrm{N}(\mu, \sigma_j^2 + \tau^2)$。
+
+我们可以用加权最小二乘法估计 $\mu$ 和 $\tau^2$：
+
+\[
+\hat{\mu} = \frac{\sum_{j=1}^{J} \hat{\theta}_j / (\sigma_j^2 + \hat{\tau}^2)}{\sum_{j=1}^{J} 1 / (\sigma_j^2 + \hat{\tau}^2)}, \label{eq:eb-mu-estimate}
+\]
+
+其中 $\hat{\tau}^2$ 由矩估计或方差分析估计得到。
+
+然后，每个 $\theta_j$ 的经验贝叶斯估计为：
+
+\[
+\tilde{\theta}_j = \frac{\hat{\theta}_j / \sigma_j^2 + \hat{\mu} / \hat{\tau}^2}{1 / \sigma_j^2 + 1 / \hat{\tau}^2}. \label{eq:eb-theta-estimate}
+\]
+
+\begin{Remark}
+  经验贝叶斯方法的核心问题：用点估计 $\hat{\phi}$ 代替超参数的后验分布，忽略了对 $\phi$ 的不确定性。在小样本情况下，这种不确定性可能很大。但当 $J$（实验数）较大时，这种近似的偏差通常可以忽略不计。
+\end{Remark}
+
+\section{共轭分层模型的完全贝叶斯分析}
+
+完全贝叶斯分析与伪贝叶斯的根本区别在于：超参数 $\phi$ 本身也被赋予先验分布 $p(\phi)$，并在后验推断中对其不确定性进行正确量化。
+
+\subsection{超先验分布}
+
+为了建立 $(\phi, \theta)$ 的联合概率分布，我们必须为 $\phi$ 指定先验分布 $p(\phi)$。如果对 $\phi$ 了解甚少，可以指定一个扩散先验分布，但使用非正常先验密度时必须小心，要检查得到的后验分布是否是正常的。
+
+在大鼠肿瘤例子中，超参数是 $(\alpha, \beta)$，它们决定 $\theta$ 的 beta 分布。
+
+\subsection{后验预测分布}
+
+分层模型的特点是同时存在超参数 $\phi$ 和参数 $\theta$。有两类后验预测分布值得关注：
+
+\begin{enumerate}
+  \item 现有 $\theta_j$ 对应的未来观测 $\tilde{y}$ 的分布；
+  \item 从相同超总体中抽取的未来 $\theta_j$（记为 $\tilde{\theta}$）对应的观测 $\tilde{y}$ 的分布。
+\end{enumerate}
+
+在大鼠肿瘤例子中，未来观测可以是来自现有实验的额外大鼠，或来自未来实验的结果。
+
+\subsection{Beta-Binomial 层次模型}\label{sec:beta-binomial-hierarchical}
+
+假设我们有 $J$ 个独立实验，每个实验有 $n_j$ 次试验和 $y_j$ 次成功。模型为：
+
+\begin{enumerate}
+  \item $y_j \mid \theta_j \sim \mathrm{Binomial}(n_j, \theta_j)$
+  \item $\theta_j \mid \alpha, \beta \sim \mathrm{Beta}(\alpha, \beta)$
+  \item $(\alpha, \beta)$ 的先验：需要指定 $p(\alpha, \beta)$
+\end{enumerate}
+
+完全贝叶斯分析的关键是理解层次模型如何允许数据"告知"超参数。给定超参数 $(\alpha, \beta)$，$\theta_j$ 的后验分布为：\footnote{详细推导见附录 \cref{sec:beta-binomial-conditional-posterior}}
+
+\[
+p(\theta_j \mid \alpha, \beta, y) \propto \theta_j^{\alpha + y_j - 1} (1 - \theta_j)^{\beta + n_j - y_j - 1}, \label{eq:beta-binomial-posterior}
+\]
+
+即 $\theta_j \mid \alpha, \beta, y \sim \mathrm{Beta}(\alpha + y_j, \beta + n_j - y_j)$。
+
+边缘化超参数后，$\theta_j$ 的后验预测分布为：
+
+\[
+p(\theta_j \mid y) = \iint p(\theta_j \mid \alpha, \beta) \, p(\alpha, \beta \mid y) \, d\alpha \, d\beta.
+\]
+\addtocounter{footnote}{-1}\footnote{详细推导见附录 \cref{sec:beta-binomial-marginal}}
+
+这个积分通常需要数值方法或马尔科夫链蒙特卡洛（MCMC）来计算。
+
+\section{正态模型中可交换参数的估计}\label{sec:normal-hierarchical}
+
+一个特别重要的情况是：当数据 $y_j$ 是来自正态分布的样本均值，并且参数 $\theta_j$ 在变换后是正态分布时。
+
+\subsection{正态层次模型}
+
+考虑 $J$ 个独立实验，实验 $j$ 从正态分布 $y_{ij} \mid \theta_j \sim \mathrm{N}(\theta_j, \sigma^2)$ 中抽取 $n_j$ 个独立数据点，其中 $\sigma^2$ 已知。
+
+\textbf{正态层次模型}设定：
+
+\begin{enumerate}
+  \item $y_j \mid \theta_j, \sigma_j^2 \sim \mathrm{N}(\theta_j, \sigma_j^2)$，其中 $\sigma_j^2$ 已知
+  \item $\theta_j \mid \mu, \tau^2 \sim \mathrm{N}(\mu, \tau^2)$
+  \item $(\mu, \tau^2)$ 有适当的先验
+\end{enumerate}
+
+超参数 $\mu$ 是总体均值，$\tau^2$ 是组间方差。
+
+为方便起见（更准确地说是部分共轭），我们假设参数 $\theta_j$ 来自以超参数 $(\mu, \tau)$ 为参数的正态分布：
+
+\[
+p(\theta_1, \ldots, \theta_J \mid \mu, \tau) = \prod_{j=1}^{J} \mathrm{N}(\theta_j \mid \mu, \tau^2). \label{eq:normal-hierarchical-prior}
+\]
+
+即给定 $(\mu, \tau)$ 时，$\theta_j$ 是条件独立的。
+
+\subsection{后验分布}\label{sec:normal-posterior}
+
+给定数据 $y_j$，$\theta_j$ 的后验分布可以分解为：
+
+\[
+p(\theta_j \mid y, \mu, \tau^2) \propto p(\theta_j \mid \mu, \tau^2) \prod_{j=1}^{J} p(y_j \mid \theta_j).
+\]
+
+结果是：\footnote{推导见附录 \cref{sec:normal-hierarchical-derivation}}
+
+\[
+\theta_j \mid y, \mu, \tau^2 \sim \mathrm{N}\left( \hat{\theta}_j, V_j \right), \label{eq:normal-hierarchical-posterior}
+\]
+
+其中
+
+\[
+\hat{\theta}_j = \frac{\bar{y}_j/\sigma_j^2 + \mu/\tau^2}{1/\sigma_j^2 + 1/\tau^2}, \quad \frac{1}{V_j} = \frac{1}{\sigma_j^2} + \frac{1}{\tau^2}. \label{eq:normal-hierarchical-posterior-mean}
+\]
+
+这个结果表明：后验均值是先验均值 $\mu$ 和数据均值 $\bar{y}_j$ 的\textbf{精度加权平均}。
+
+\section{收缩的性质}\label{sec:shrinkage-benefits}
+
+层次模型的一个核心特征是\textbf{收缩}（shrinkage）——每个 $\theta_j$ 的后验估计被拉向总体均值 $\mu$。
+
+\subsection{收缩机制}
+
+当 $\tau^2$ 较大（组间变异大）时，估计接近原始数据 $\bar{y}_j$；当 $\tau^2$ 较小（组间变异小）时，估计收缩到共同均值 $\mu$。
+
+从 \eqref{eq:normal-hierarchical-posterior-mean} 可以看出，后验均值可以写成：\footnote{详细推导见附录 \cref{sec:shrinkage-form-derivation}}
+
+\[
+\hat{\theta}_j = \lambda_j \bar{y}_j + (1 - \lambda_j) \mu, \label{eq:shrinkage-form}
+\]
+
+其中 $\lambda_j = \frac{1/\sigma_j^2}{1/\sigma_j^2 + 1/\tau^2}$ 是收缩因子，取值在 0 和 1 之间。
+
+\subsection{完全收缩 vs 无收缩}
+
+\begin{enumerate}
+  \item 当 $\tau^2 \to 0$ 时，$\lambda_j \to 0$，$\hat{\theta}_j \to \mu$（完全收缩到公共均值）
+  \item 当 $\tau^2 \to \infty$ 时，$\lambda_j \to 1$，$\hat{\theta}_j \to \bar{y}_j$（无收缩，使用原始数据）
+\end{enumerate}
+
+\textbf{收缩的收益}：当实验间真实差异较小时，收缩可以显著提高估计的精度；当某些实验的数据很少或噪声很大时，收缩尤其有益。
+
+在极端情况下，如果某个实验只有 1-2 个观测值，其样本均值几乎完全不可靠，收缩会将其拉向可靠的公共均值，从而提高整体估计质量。
+
+\section{示例：SAT 培训效果研究}
+
+这是一个经典的层次模型例子，来自 BDA 原书第 5.9 节，展示了分层建模在 meta 分析中的应用。
+
+\textbf{为什么这是层次模型最自然的应用场景？}：在 meta 分析中，我们既希望获得每个学校的特异性估计（了解特定学校的培训效果），又希望获得总体效应的估计（了解培训项目整体是否有效）。固定效应模型只能给出前者，而随机效应模型可以同时给出两者——这正是层次模型的核心优势。
+
+\subsection{问题背景}
+
+1982 年，Campbell 与 Powers 报告了一项研究，8 所学校参加了 SAT 辅导培训项目。每所学校都报告了培训效果估计 $y_j$（以 SAT 分数衡量）及其标准误 $\sigma_j$。
+
+数据如下：\footnote{数据来源：BDA3 Table 5.2, p.121}
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+学校 $j$ & 估计 $y_j$ & 标准误 $\sigma_j$ \\
+\hline
+A & 28 & 14 \\
+B & 8 & 10 \\
+C & -3 & 16 \\
+D & 7 & 11 \\
+E & -1 & 9 \\
+F & 1 & 8 \\
+G & 18 & 12 \\
+H & 12 & 15 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{层次模型}
+
+我们设定模型：\footnote{模型设定见 BDA3, p.121}
+
+\[
+y_j \mid \theta_j, \sigma_j \sim \mathrm{N}(\theta_j, \sigma_j^2), \quad \theta_j \mid \mu, \tau \sim \mathrm{N}(\mu, \tau^2), \label{eq:sat-model}
+\]
+
+其中 $\sigma_j$ 已知，$(\mu, \tau)$ 有适当的先验。
+
+这里 $\theta_j$ 代表学校 $j$ 的真实培训效果，$\mu$ 是所有学校的平均培训效果，$\tau$ 量化了学校间的变异。
+
+\subsection{后验推断}\label{sec:sat-posterior}
+
+后验分布 $p(\theta, \mu, \tau \mid y)$ 可以通过 MCMC 获得。关键理解是：\footnote{详细分析见 BDA3, pp.122-127}
+
+\begin{Remark}
+  层次模型提供了在\textbf{合并信息}和\textbf{保持学校特异性估计}之间的自然权衡。参数 $\tau$ 控制了这种权衡：当 $\tau$ 小时，所有 $\theta_j$ 被强烈收缩到公共均值 $\mu$；当 $\tau$ 大时，每个 $\theta_j$ 主要由其自身数据决定。
+\end{Remark}
+
+后验均值 $\hat{\theta}_j$ 可以用 \eqref{eq:normal-hierarchical-posterior-mean} 计算。由于 $\tau$ 未知，需要先从其后验分布中抽样，再计算每个 $\theta_j$ 的后验均值。
+
+\section{分层建模在 meta 分析中的应用}
+
+Meta 分析是将多项研究结果合并的统计方法。层次模型为 meta 分析提供了自然的框架。
+
+\subsection{固定效应与随机效应}
+
+在 meta 分析中，我们通常考虑两种模型：
+
+\begin{enumerate}
+  \item \textbf{固定效应模型}：假设所有研究估计相同的真实效应 $\theta$，观测差异仅由抽样误差解释。
+  \item \textbf{随机效应模型}：假设研究间的效应是可交换的，来自某个分布 $p(\theta_j \mid \mu, \tau^2)$。
+\end{enumerate}
+
+随机效应模型是层次模型的一个特例，其中 $\theta_j$ 被视为从公共分布中抽取的样本。
+
+在随机效应模型中，我们不仅估计总体效应 $\mu$，还估计研究间的变异 $\tau^2$。这使得我们能够量化研究间的异质性，并相应地调整推断。
+
+固定效应模型假设所有研究的效应完全相同，这在实践中很少合理——不同研究在受试者特征、干预方式、测量方法等方面总会有差异，这些差异在随机效应模型中被量化为组间变异 $\tau^2$。
+
+\section{分层方差参数的弱信息先验}
+
+层次模型的一个关键挑战是估计方差参数 $\tau^2$。当数据稀疏时，方差参数的估计可能极不稳定。
+
+\subsection{问题}
+
+在后验分布中，$\tau^2$ 通常信息不足，导致后验尾部过重或甚至不当。此外，经典的方差分析估计 $\hat{\tau}^2$ 可能是负数，这在物理上是不可能的。
+
+设置 $\hat{\tau}^2 = 0$ 当 $MSW$（组内均方，Mean Square Within） $> MSB$（组间均方，Mean Square Between）似乎过于强烈——这相当于声称所有组均值完全相同，而不是说样本量太小无法区分 $\tau^2$ 与零。
+
+\subsection{弱信息先验}
+
+一种解决方案是使用弱信息先验：
+
+\begin{enumerate}
+  \item \textbf{Half-$t$ 先验}：对 $\tau$ 使用 $t$ 分布在正半轴
+  \item \textbf{$\log(\tau)$ 上的正态先验}：使用宽窗口的正态先验
+  \item \textbf{缩放逆 $\chi^2$ 先验}：方差参数的自然选择
+\end{enumerate}
+
+实践中，通常需要确定 $\tau$ 的最佳猜测和上界，然后可以从缩放逆 $\chi^2$ 族构建合理的先验分布，将最佳猜测匹配到缩放逆 $\chi^2$ 密度的均值，上界匹配到某个上百分位（如 99th）。
+
+\begin{Remark}
+  选择先验时，应该考虑参数的尺度。例如，在 meta 分析中，如果研究间的效应范围大致已知，可以据此设定 $\tau$ 的先验。在 $\log(\tau)$ 上指定先验通常比在 $\tau$ 上更合理，因为 $\tau$ 必须非负。
+\end{Remark}
+
+\section{本章小结}
+
+本章我们学习了：
+
+\begin{enumerate}
+  \item \textbf{层次模型的基本思想}：通过分层结构处理相关参数，允许数据告知超参数
+  \item \textbf{可交换性}（Exchangeability）的概念：当除了数据之外没有任何信息可以区分参数时，必须假设对称性；这一概念可追溯到 de Finetti 的经典工作
+  \item \textbf{伪贝叶斯与经验贝叶斯估计}：两阶段估计方法及其与完全贝叶斯分析的关系
+  \item \textbf{两层层次模型的构建}：数据层、参数层、超参数层
+  \item \textbf{后验分布的收缩性质}：当 $\tau^2$ 小时，$\theta_j$ 的估计被收缩到公共均值 $\mu$
+  \item \textbf{Beta-Binomial 和正态层次模型}的完全贝叶斯分析
+  \item \textbf{SAT 培训效果研究}：层次模型在 meta 分析中的经典应用
+  \item \textbf{固定效应 vs. 随机效应模型}的区别
+  \item \textbf{层次方差参数的弱信息先验}
+\end{enumerate}
+
+层次模型是贝叶斯统计中最重要的工具之一，它允许我们：
+
+\begin{enumerate}
+  \item 在保持参数特异性估计的同时合并信息
+  \item 自然地处理分组或聚类数据结构
+  \item 为 meta 分析提供有原则的框架
+  \item 通过完全贝叶斯分析正确量化不确定性
+  \item 通过收缩机制在小样本情况下提高估计稳定性
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习模型检查（Model Checking），这是贝叶斯数据分析中验证模型合理性的关键步骤。我们将讨论如何评估模型对数据的拟合程度，以及如何识别模型的可能问题。
+
+\section{习题}\label{sec:chapter5-exercises}
+
+\begin{Exercise}{\ref{exr:5-1} 可交换性的判断}\label{exr:5-1}
+考虑以下情形，判断参数是否可交换，并解释你的推理：
+\begin{enumerate}
+  \item $J$ 个不同城市的气温测量，每个城市有多个观测值
+  \item $J$ 个学生的考试分数，其中一些学生来自同一个学校
+  \item $J$ 个医院的心脏手术成功率
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:5-2} 收缩估计量的极限性质}\label{exr:5-2}
+在正态层次模型中，证明：
+\begin{enumerate}
+  \item 当 $\tau^2 \to 0$ 时，后验均值 $\hat{\theta}_j$ 收敛到公共均值 $\mu$
+  \item 当 $\tau^2 \to \infty$ 时，$\hat{\theta}_j$ 收敛到原始数据均值 $\bar{y}_j$
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:5-3} Beta-Binomial 层次模型的后验分布}\label{exr:5-3}
+假设 $y_j \mid \theta_j \sim \mathrm{Binomial}(n_j, \theta_j)$，$\theta_j \mid \alpha, \beta \sim \mathrm{Beta}(\alpha, \beta)$。推导：
+\begin{enumerate}
+  \item 给定超参数 $(\alpha, \beta)$ 时 $\theta_j$ 的后验分布
+  \item 边缘化超参数后的后验预测分布表达式
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:5-4} SAT 培训效果研究的后验均值}\label{exr:5-4}
+使用 \eqref{eq:normal-hierarchical-posterior-mean} 计算 SAT 例子中每所学校后验均值的大致范围，并说明当 $\tau$ 增大和减小时，估计量如何变化。假设 $\mu \approx 10$，$\tau \approx 15$。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:5-5} 固定效应 vs. 随机效应的 meta 分析}\label{exr:5-5}
+解释在 meta 分析中，为什么随机效应模型通常比固定效应模型更合理。当研究间异质性很大时（$\tau^2$ 大），两种方法可能给出不同结论；当异质性很小（$\tau^2 \to 0$）时，两种方法趋于一致。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:5-6} 经验贝叶斯与完全贝叶斯的比较}\label{exr:5-6}
+比较经验贝叶斯估计与完全贝叶斯估计的主要区别。解释为什么完全贝叶斯分析在估计 $\tau^2$ 时可能给出更大的不确定性。
+\end{Exercise}
+
+\endinput

@@ -1,0 +1,1704 @@
+\chapter{Special Distributions}\label{chap:special-distributions-ch3}
+
+\section*{Chapter 3 Overview}
+
+在前两章中，我们建立了描述单一和多元随机变量的数学框架。现在我们面临一个根本性问题：
+
+\begin{center}
+\textit{哪些概率分布值得我们特别关注？为什么？}
+\end{center}
+
+答案蕴藏在统计学本身的核心之中。某些分布在自然界、实验中和理论研究里反复出现——这不是任意的选择，而是来自简单、重复模式的自然涌现：独立试验中成功次数的计数、等待时间的测量、测量误差的建模，以及描述平均值的行为。
+
+本章介绍统计学理论及实践中最重要的分布族。我们将发现这些分布如何从基本原理中产生，欣赏它们之间错综复杂的联系，理解每个分布在统计工作中的不可替代性。
+
+\textbf{本章路线图}：
+\begin{itemize}
+\item Bernoulli $\to$ Binomial（二项分布）$\to$ Negative Binomial/Geometric（负二项/几何分布）$\to$ Multinomial（多项分布）$\to$ Hypergeometric（超几何分布）
+\item Poisson（作为二项分布的极限形式）
+\item Gamma（Gamma 分布）$\to$ $\chi^{2}$（卡方分布）$\to$ Beta（BETA 分布）
+\item Normal（正态分布）$\to$ Bivariate Normal（二元正态分布）$\to$ Multivariate Normal（多元正态分布）
+\item $t$ 和 $F$ 分布（由正态理论导出）
+\end{itemize}
+
+这些分布之间的关系并非偶然——它们反映了将贯穿整个统计推断的深层数学结构。
+
+\section{3.1 二项分布及其相关分布}\label{sec:binomial-related-ch3}
+
+\subsection{为什么研究二项分布？}
+
+考虑以下场景：抛掷一枚硬币 100 次，出现多少次正面？一袋 1000 件产品中有多少件次品？接受实验治疗后有多少患者康复？
+
+这些问题共享一个共同的数学结构：我们进行 $n$ 次独立试验，每次试验只有两个可能结果（成功或失败），然后计算成功出现的总次数。这个"计数问题"遍布统计学，而二项分布正是其天然数学模型。
+
+二项分布起源于 18 世纪对赌博游戏的研究。Jakob Bernoulli（1713 年）为 Bernoulli 试验（Bernoulli trial）建立了大数定律（弱律），奠定了理论基础。随后 Abraham de Moivre 和 Pierre-Simon Laplace 发展出了逼近方法，最终导致了中心极限定理——这是数学最卓越的成果之一。
+
+\subsection{Bernoulli 试验（Bernoulli Trial）}\label{sub:bernoulli-trials-ch3}
+
+\textbf{Bernoulli 试验}是最简单的随机实验：结果只有两个互斥且穷举的可能性——成功或失败。
+
+设随机变量 $X$ 表示结果：
+\[
+X(\text{成功}) = 1, \quad X(\text{失败}) = 0.
+\]
+
+概率质量函数（pmf）为：
+\begin{equation}\label{eq:bernoulli-pmf-ch3}
+p(x) = p^{x}(1-p)^{1-x}, \quad x = 0, 1,
+\end{equation}
+其中 $p$ 是成功概率。
+
+Bernoulli 分布的均值和方差为：
+\begin{equation}\label{eq:bernoulli-moments-ch3}
+\mathbb{E}X = p, \quad \text{var}(X) = p(1-p).
+\end{equation}
+
+\begin{example}[抛硬币]\label{ex:coin-toss-ch3}
+如果抛一枚均匀硬币（$p = 1/2$），则 $\mathbb{E}X = 1/2$，$\text{var}(X) = 1/4$。标准差为 $0.5$，意味着典型偏差约为半次硬币翻转。
+\end{example}
+
+\textbf{为什么 Bernoulli 分布如此基础？} 它是最简单但非平凡的随机变量——既不是确定性常数，也不是均匀分布。它捕捉了"是/否"决策不确定性的本质。每个二元结果的实验都可以建模为 Bernoulli 试验。
+
+\subsection{二项分布（Binomial Distribution）}\label{sub:binomial-distribution-ch3}
+
+现在我们问：\textbf{$n$ 次独立 Bernoulli 试验中成功次数的分布是什么？}
+
+设 $X_i$ 是第 $i$ 次试验的 Bernoulli 变量，我们关心 $X = \sum_{i=1}^{n} X_i$。
+
+恰好有 $x$ 次成功意味着：我们在 $n$ 个位置中选择 $x$ 个作为成功（共有 $\binom{n}{x}$ 种方式），其余 $n-x$ 个位置是失败。每种排列的概率为 $p^x(1-p)^{n-x}$。
+
+因此，pmf 为：
+\begin{equation}\label{eq:binomial-pmf-ch3}
+p(x) = \binom{n}{x} p^{x}(1-p)^{n-x}, \quad x = 0, 1, \ldots, n.
+\end{equation}
+
+记作 $X \sim \text{Bin}(n, p)$，称 $n$ 和 $p$ 为二项分布的参数。
+
+\textbf{验证 $p(x)$ 之和为 1}：由二项式定理，
+\[
+\sum_{x=0}^{n} \binom{n}{x} p^{x}(1-p)^{n-x} = [(1-p) + p]^{n} = 1^{n} = 1.
+\]
+
+\begin{example}[骰子问题]\label{ex:binomial-dice-ch3}
+掷一枚均匀六面骰子 3 次，恰好出现 2 次六点的概率是多少？
+
+设 $X$ 为六点出现的次数，则 $X \sim \text{Bin}(n=3, p=1/6)$：
+\[
+\mathbb{P}(X=2) = \binom{3}{2} \left(\frac{1}{6}\right)^{2} \left(\frac{5}{6}\right)^{1} = 3 \times \frac{1}{36} \times \frac{5}{6} = \frac{15}{216} \approx 0.06944.
+\]
+
+在 R 中计算：\texttt{dbinom(2, 3, 1/6)}。
+\end{example}
+
+\textbf{矩母函数（mgf）}：二项分布的 mgf 为：
+\begin{equation}\label{eq:binomial-mgf-ch3}
+M(t) = \mathbb{E}[e^{tX}] = \sum_{x=0}^{n} e^{tx} \binom{n}{x} p^{x}(1-p)^{n-x} = [(1-p) + pe^{t}]^{n}.
+\end{equation}
+
+由此可得均值和方差：\footnote{二项分布矩母函数的推导见附录 \cref{sec:derivation-binomial-moments}。}
+\begin{equation}\label{eq:binomial-moments-ch3}
+\mathbb{E}X = M'(0) = np, \quad \text{var}(X) = M''(0) - [M'(0)]^{2} = np(1-p).
+\end{equation}
+
+\begin{example}[电池寿命]\label{ex:binomial-battery-ch3}
+假设一枚电池有概率 $p = 0.95$ 可以使用至少 100 小时。一包 $n = 10$ 枚电池中，预期有 $np = 9.5$ 枚可以使用至少 100 小时，方差为 $np(1-p) = 0.475$。
+
+至少 8 枚电池可用的概率为：
+\[
+\mathbb{P}(X \geq 8) = \sum_{x=8}^{10} \binom{10}{x} (0.95)^{x} (0.05)^{10-x}.
+\]
+
+在 R 中：\texttt{1 - pbinom(7, 10, 0.95) = 0.9885}。
+\end{example}
+
+\subsection*{二项分布的可加性}
+
+二项分布最重要的性质之一是在相同成功概率下的可加性。
+
+\begin{theorem}[二项分布的可加性]\label{th:binomial-additivity-ch3}
+若 $X_1 \sim \text{Bin}(n_1, p)$ 和 $X_2 \sim \text{Bin}(n_2, p)$ 独立，则
+\[
+X_1 + X_2 \sim \text{Bin}(n_1 + n_2, p).
+\]
+\end{theorem}
+
+\textbf{直观理解}：想象两堆独立的硬币翻转。第一堆 $n_1$ 枚硬币产生 $X_1$ 个正面，第二堆 $n_2$ 枚硬币产生 $X_2$ 个正面。合并后，我们有 $n_1 + n_2$ 枚硬币，总正面数为 $X_1 + X_2$。这仍然服从二项分布，样本量是合并后的总量。\footnote{二项分布可加性的证明见附录 \cref{sec:derivation-binomial-additivity}。}
+
+这种可加性反映了计数的本质：如果我们在两批试验（每批具有相同成功概率）中计数成功次数，总数就是简单求和。
+
+\begin{example}\label{rmk:binomial-mode-ch3}
+$\text{Bin}(n, p)$ 分布的众数（最可能取值）为 $\lfloor (n+1)p \rfloor$。这很直观：成功次数的期望值是 $np$，众数应该接近这个值。
+\end{example}
+
+\subsection{负二项分布与几何分布}\label{sub:negative-binomial-ch3}
+
+\textbf{一个不同的问题}：不是计数 $n$ 次试验中的成功次数，而是问：\textbf{需要多少次试验才能实现第 $r$ 次成功？}
+
+这个问题引出了负二项分布。设 $Y$ 为第 $r$ 次成功前的失败次数，则试验总次数为 $Y + r$。
+
+恰好有 $y$ 次失败发生在第 $r$ 次成功之前意味着：前 $y+r-1$ 次试验恰好包含 $r-1$ 次成功和 $y$ 次失败（任意顺序），而最后一次（第 $y+r$ 次）必须是成功。这样的序列数为 $\binom{y+r-1}{r-1}$：
+
+\begin{equation}\label{eq:negative-binomial-pmf-ch3}
+p_Y(y) = \binom{y+r-1}{r-1} p^{r}(1-p)^{y}, \quad y = 0, 1, 2, \ldots
+\end{equation}
+
+记作 $Y \sim \text{NB}(r, p)$。该分布的名称来源于 $p_Y(y)$ 是 $p^{r}[1-(1-p)]^{-r}$ 展开式中的通项。\footnote{推导见附录 \cref{sec:derivation-negative-binomial}。}
+
+当 $r=1$ 时，得到\textbf{几何分布（geometric distribution）}：
+\begin{equation}\label{eq:geometric-pmf-ch3}
+p_Y(y) = p(1-p)^{y}, \quad y = 0, 1, 2, \ldots
+\end{equation}
+
+从 Bernoulli 试验的角度看，$Y$ 是直到第一次成功前的失败次数。
+
+\begin{example}[血型问题]\label{ex:blood-type-ch3}
+设一个人拥有 B 型血的概率为 $p = 0.12$。抽取患者直到获得 10 个 B 型血的人。最多需要检测 30 个患者的概率是多少？
+
+设 $Y \sim \text{NB}(r=10, p=0.12)$。我们需要 $\mathbb{P}(Y \leq 20)$（因为第 10 次成功发生在试验 $y+r = y+10$，$y \leq 20$ 意味着最多 30 次试验）。
+
+在 R 中：\texttt{pnbinom(20, 10, 0.12) = 0.0019}。概率相当小！
+\end{example}
+
+\begin{example}[首次成功等待时间]\label{ex:first-success-ch3}
+对于 $p = 0.12$ 的几何分布，必须恰好检测 11 个患者才能找到第一个 B 型血的人的概率为：
+\[
+\mathbb{P}(Y = 11) = (0.12)(0.88)^{11} \approx 0.0294.
+\]
+
+在 R 中：\texttt{dgeom(11, 0.12)}。
+\end{example}
+
+\begin{example}[几何分布的无记忆性]\label{th:geometric-memoryless-ch3}
+几何分布具有独特的\textbf{无记忆性（memorylessness property）}：
+\begin{equation}\label{eq:memoryless-property-ch3}
+\mathbb{P}(Y \geq k+j \mid Y \geq k) = \mathbb{P}(Y \geq j), \quad k, j \geq 0.
+\end{equation}
+\end{example}
+
+\textbf{这是什么意思？} 如果你已经失败了 $k$ 次，那么距离第一次成功的剩余等待时间与开始时完全相同。过去的失败不会改变未来的期望。这个性质刻画了 $\{0,1,2,\ldots\}$ 上所有离散分布中几何分布的独特地位。\footnote{几何分布无记忆性的证明见附录 \cref{sec:derivation-memoryless}。}
+
+几何分布（支撑集为 $\{0,1,2,\ldots\}$）的均值和方差为：\footnote{几何分布矩的推导见附录 \cref{sec:derivation-geometric-moments}。}
+\begin{equation}\label{eq:geometric-moments-ch3}
+\mathbb{E}Y = \frac{1-p}{p}, \quad \text{var}(Y) = \frac{1-p}{p^{2}}.
+\end{equation}
+
+\begin{example}\label{rmk:negative-binomial-mgf-ch3}
+负二项分布的 mgf 为：
+\[
+M(t) = \frac{p^{r}}{[1 - (1-p)e^{t}]^{r}}, \quad t < -\log(1-p).
+\]
+
+这可以用负二项级数推导。\footnote{负二项分布矩母函数的推导见附录 \cref{sec:derivation-nb-mgf}。}
+\end{example}
+
+\subsection{多项分布（Multinomial Distribution）}\label{sub:multinomial-ch3}
+
+二项分布自然推广到 $k$ 个类别。每次试验恰好发生 $k$ 个互斥类别中的一个。
+
+设类别为 $C_1, C_2, \ldots, C_k$，概率分别为 $p_1, p_2, \ldots, p_k$（其中 $\sum_{i=1}^{k} p_i = 1$）。独立重复实验 $n$ 次。设 $X_i$ 为类别 $i$ 出现的次数。
+
+$(X_1, X_2, \ldots, X_k)$ 的联合 pmf 为：
+\begin{equation}\label{eq:multinomial-pmf-ch3}
+\mathbb{P}(X_1 = x_1, \ldots, X_k = x_k) = \frac{n!}{x_1! x_2! \cdots x_k!} p_1^{x_1} \cdots p_k^{x_k},
+\end{equation}
+其中 $\sum_{i=1}^{k} x_i = n$。
+
+称 $(X_1, \ldots, X_k)$ 服从参数为 $n$ 和 $p_1, \ldots, p_k$ 的\textbf{多项分布}。二项分布是 $k=2$ 的特殊情形。\footnote{多项分布的推导见附录 \cref{sec:derivation-multinomial}。}
+
+\textbf{性质}：对每个 $i$，$X_i$ 的边缘分布为 $\text{Bin}(n, p_i)$。$X_i$ 和 $X_j$（$i \neq j$）之间的协方差为：
+\begin{equation}\label{eq:multinomial-covariance-ch3}
+\text{cov}(X_i, X_j) = -np_i p_j.
+\end{equation}
+
+\begin{example}[掷骰子]\label{ex:multinomial-dice-ch3}
+掷一枚均匀六面骰子 $n = 30$ 次。恰好得到 5 个一点、4 个两点、6 个三点、3 个四点、7 个五点和 5 个六点的概率是多少？
+
+这里 $k=6$，对所有 $i$ 有 $p_i = 1/6$。概率为：
+\[
+\frac{30!}{5!4!6!3!7!5!} \left(\frac{1}{6}\right)^{30} \approx 0.0028.
+\]
+\end{example}
+
+\begin{example}\label{rmk:multinomial-correlation-ch3}
+$X_i$ 和 $X_j$ 的相关系数为：
+\[
+\rho_{ij} = -\sqrt{\frac{p_i p_j}{(1-p_i)(1-p_j)}}.
+\]
+
+这种负相关很直观：如果我们观察到类别 $i$ 出现更多，那么剩余给类别 $j$ 的试验次数就更少。
+\end{example}
+
+\subsection{超几何分布（Hypergeometric Distribution）}\label{sub:hypergeometric-ch3}
+
+\textbf{核心问题}：\textbf{不放回抽样}时成功次数的分布是什么？
+
+考虑一批 $N$ 件产品，其中 $D$ 件次品。我们不放回地抽取 $n$ 件，$X$ 为样本中次品的个数。与二项情形不同，连续抽取不独立，因为抽样过程中组成成分在变化。
+
+pmf 为：
+\begin{equation}\label{eq:hypergeometric-pmf-ch3}
+p(x) = \frac{\binom{N-D}{n-x}\binom{D}{x}}{\binom{N}{n}}, \quad x = 0, 1, \ldots, \min(n, D).
+\end{equation}
+
+记作 $X \sim \text{Hypergeometric}(N, D, n)$。
+
+\textbf{均值和方差}：
+\begin{equation}\label{eq:hypergeometric-moments-ch3}
+\mathbb{E}X = n\frac{D}{N}, \quad \text{var}(X) = n\frac{D}{N}\left(1-\frac{D}{N}\right)\frac{N-n}{N-1}.
+\end{equation}
+
+因子 $\frac{N-n}{N-1}$ 是\textbf{有限总体校正因子（finite population correction factor）}。当 $N \gg n$ 时，它趋近于 1，超几何分布近似于 $p = D/N$ 的二项分布。\footnote{超几何分布的推导见附录 \cref{sec:derivation-hypergeometric}。}
+
+这个近似反映了一个重要原理：当样本量相对于总体较小时，不放回抽样几乎等同于放回抽样。
+
+\begin{example}[抽牌]\label{ex:hypergeometric-cards-ch3}
+从一副 52 张牌中不放回地抽取 2 张。恰好得到 1 张 A 的概率是多少？
+
+这里 $N=52$，$D=4$（A 的数量），$n=2$。我们需要 $\mathbb{P}(X=1)$：
+\[
+\mathbb{P}(X=1) = \frac{\binom{48}{1}\binom{4}{1}}{\binom{52}{2}} = \frac{48 \times 4}{1326} \approx 0.1448.
+\]
+
+作为对比，放回抽样（二项分布）的概率为：
+\[
+\binom{2}{1}\left(\frac{4}{52}\right)\left(\frac{48}{52}\right) \approx 0.1412.
+\]
+
+概率非常接近！
+\end{example}
+
+\section{3.2 Poisson 分布}\label{sec:poisson-distribution-ch3}
+
+在自然界和社会中存在一类显著的现象：\textbf{在固定时间或空间区间内发生的事件次数}。例子包括：
+\begin{itemize}
+\item 每小时到达银行的客户数
+\item 手稿每页的印刷错误数
+\item 一个地区每年的地震次数
+\item 放射性物质的衰变事件数
+\item 每周一个路口的事故数
+\end{itemize}
+
+这些现象有一个共同特征：\textbf{每个单独事件的概率很小，但机会数量很大}。这正是 Poisson 分布出现的领域。
+
+历史注记：Poisson 分布由 Siméon Denis Poisson 于 1837 年引入，最初用于分析法国法院判决数据——法官在给定时间段内做出一定数量判决的概率。Poisson 当时并不知道，他的分布会成为整个统计学中最广泛使用的工具之一。
+
+\subsection{定义与性质}\label{sub:poisson-definition-ch3}
+
+若离散随机变量 $X$ 的 pmf 为：
+\begin{equation}\label{eq:poisson-pmf-ch3}
+p(x) = \mathbb{P}(X=x) = \frac{\lambda^{x} e^{-\lambda}}{x!}, \quad x = 0, 1, 2, \ldots
+\end{equation}
+则称 $X$ 服从参数为 $\lambda > 0$ 的 Poisson 分布。
+
+记作 $X \sim \text{Poisson}(\lambda)$。
+
+\textbf{验证}：因为 $e^{\lambda} = \sum_{x=0}^{\infty} \frac{\lambda^{x}}{x!}$，
+\[
+\sum_{x=0}^{\infty} p(x) = e^{-\lambda} \sum_{x=0}^{\infty} \frac{\lambda^{x}}{x!} = e^{-\lambda} \cdot e^{\lambda} = 1.
+\label{eq:poisson-normalization-ch3}
+\]
+
+参数 $\lambda$ 有一个优美的解释：它是分布的均值和方差：
+\begin{equation}\label{eq:poisson-moments-ch3}
+\mathbb{E}X = \lambda, \quad \text{var}(X) = \lambda.
+\end{equation}\footnote{推导见附录 \cref{sec:poisson-mgf-derivation}。}
+
+\textbf{这里有一个令人惊讶且有用的性质}：均值等于方差！这是 Poisson 分布的标志特征，可用于检验数据是否可能服从 Poisson 模型。
+
+\begin{example}[汽车事故]\label{ex:poisson-accidents-ch3}
+设 $X$ 为一个繁忙路口每周的汽车事故数。假设 $X \sim \text{Poisson}(\lambda = 2)$。
+
+则 $\mathbb{E}X = 2$，$\text{std}(X) = \sqrt{2} \approx 1.41$。
+
+\begin{itemize}
+\item $\mathbb{P}(X \geq 1) = 1 - \mathbb{P}(X = 0) = 1 - e^{-2} \approx 0.8647$
+\item $\mathbb{P}(3 \leq X \leq 8) = \mathbb{P}(X \leq 8) - \mathbb{P}(X \leq 2) \approx 0.3231$
+\end{itemize}
+
+在 R 中：\texttt{1 - ppois(0, 2)} 和 \texttt{ppois(8, 2) - ppois(2, 2)}。
+\end{example}
+
+\begin{example}[巧克力碎片]\label{ex:chocolate-chips-ch3}
+一块饼干中巧克力碎片的数量服从 Poisson 分布。我们希望至少含有 2 片碎片的概率大于 0.99。求最小的均值 $\lambda$。
+
+我们需要：
+\[
+\mathbb{P}(X \geq 2) = 1 - \mathbb{P}(X = 0) - \mathbb{P}(X = 1) = 1 - e^{-\lambda} - \lambda e^{-\lambda} > 0.99.
+\]
+
+求解：$e^{-\lambda}(1 + \lambda) < 0.01$。通过试错，$\lambda \approx 6$ 有效，因为 $e^{-6}(7) \approx 0.007$。
+
+所以平均至少需要 6 片！
+\end{example}
+
+\subsection{Poisson 分布对二项分布的近似}\label{sub:poisson-approximation-ch3}
+
+概率论中最重要的极限定理之一，连接了二项分布和 Poisson 分布。
+
+\begin{theorem}[Poisson 分布对二项分布的近似]\label{th:poisson-approximation-ch3}
+若 $X_n \sim \text{Bin}(n, p_n)$，且当 $n \to \infty$ 时 $np_n \to \lambda$，则对任意固定的 $k$：
+\[
+\lim_{n \to \infty} \mathbb{P}(X_n = k) = \frac{\lambda^{k} e^{-\lambda}}{k!}.
+\]
+
+即 $X_n \xrightarrow{d} \text{Poisson}(\lambda)$。
+\end{theorem}
+
+\textbf{直观理解}：当 $n$ 很大且 $p$ 很小时，二项分布的行为几乎与 Poisson 分布完全相同。关键洞见是：在极限中只有 $\lambda = np$（均值）起作用。\footnote{Poisson 近似二项分布的证明见附录 \cref{sec:derivation-poisson-limit}。}
+
+\begin{example}[印刷错误]\label{ex:poisson-errors-ch3}
+一份手稿有 500 页，每页约 300 个单词。一个单词拼写错误的概率为 $p = 1/10{,}000$，则每页错误数服从 $\text{Bin}(300, 1/10000) \approx \text{Poisson}(0.03)$。
+
+使用 Poisson 模型：
+\[
+\mathbb{P}(\text{至少 1 个错误}) \approx 1 - e^{-0.03} \approx 0.03.
+\]
+
+这就解释了为什么 Poisson 分布常用于稀有事件计数！
+\end{example}
+
+\begin{example}\label{rmk:poisson-additivity-ch3}
+若 $X_1 \sim \text{Poisson}(\lambda_1)$ 和 $X_2 \sim \text{Poisson}(\lambda_2)$ 独立，则 $X_1 + X_2 \sim \text{Poisson}(\lambda_1 + \lambda_2)$。这种可加性反映了独立 Poisson 过程（Poisson process）的叠加性质。
+\end{example}
+
+\section{3.3 Gamma、$\chi^{2}$ 与 Beta 分布}\label{sec:gamma-family-ch3}
+
+这三种分布构成了连续统计推断的支柱。理解它们之间的关系对于掌握统计学的数学基础至关重要。
+
+\subsection{Gamma 函数}\label{sub:gamma-function-ch3}
+
+Gamma 函数架起了阶乘与积分之间的桥梁——这是数学中最美的恒等式之一。
+
+\begin{definition}[Gamma 函数]\label{def:gamma-function-ch3}
+对于 $\alpha > 0$，Gamma 函数定义为：
+\[
+\Gamma(\alpha) = \int_{0}^{\infty} x^{\alpha-1} e^{-x} \, dx.
+\label{eq:gamma-function-def-ch3}
+\]
+\end{definition}
+
+\textbf{关键性质}（递归公式）：
+\[
+\Gamma(\alpha+1) = \alpha\Gamma(\alpha).
+\label{eq:gamma-recursion-ch3}
+\]
+
+这来自分部积分：\footnote{Gamma 函数递归公式的推导见附录 \cref{sec:derivation-gamma-function}。}：
+\[
+\Gamma(\alpha+1) = \int_{0}^{\infty} x^{\alpha} e^{-x} dx = \left[-x^{\alpha} e^{-x}\right]_{0}^{\infty} + \alpha \int_{0}^{\infty} x^{\alpha-1} e^{-x} dx = \alpha\Gamma(\alpha).
+\]
+
+对于正整数 $n$：
+\[
+\Gamma(n) = (n-1)!.
+\]
+
+Gamma 函数还与 Beta 函数有联系：
+\[
+B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} = \int_{0}^{1} t^{\alpha-1}(1-t)^{\beta-1} dt.
+\label{eq:beta-function-ch3}
+\]
+
+\begin{example}[Gamma 函数的值]\label{ex:gamma-values-ch3}
+\begin{itemize}
+\item $\Gamma(1) = 0! = 1$
+\item $\Gamma(2) = 1! = 1$
+\item $\Gamma(3) = 2! = 2$
+\item $\Gamma(4) = 3! = 6$
+\item $\Gamma(\frac{1}{2}) = \sqrt{\pi}$（一个惊人的结果！）
+\end{itemize}
+\end{example}
+
+\subsection{Gamma 分布}\label{sub:gamma-distribution-ch3}
+
+Gamma 分布是 $(0, \infty)$ 上的连续分布，它统一了指数分布和卡方分布。
+
+\begin{definition}[Gamma 分布]\label{def:gamma-distribution-ch3}
+若连续随机变量 $X$ 的 pdf 为：
+\[
+f(x) = \begin{cases}
+\frac{1}{\Gamma(\alpha)\beta^{\alpha}} x^{\alpha-1} e^{-x/\beta} & x > 0 \\[4pt]
+0 & \text{elsewhere}.
+\end{cases}
+\label{eq:gamma-pdf-ch3}
+\]
+则称 $X$ 服从参数为 $\alpha > 0$（形状参数）和 $\beta > 0$（尺度参数）的 Gamma 分布，记作 $X \sim \Gamma(\alpha, \beta)$。
+\end{definition}
+
+\textbf{验证 $f(x)$ 积分等于 1}：使用代换 $z = x/\beta$，$dz = dx/\beta$：
+\[
+\int_{0}^{\infty} \frac{1}{\Gamma(\alpha)\beta^{\alpha}} x^{\alpha-1} e^{-x/\beta} dx = \frac{1}{\Gamma(\alpha)} \int_{0}^{\infty} z^{\alpha-1} e^{-z} dz = 1.
+\]
+
+\textbf{参数的含义}：
+\begin{itemize}
+\item $\alpha$（形状参数，shape）：控制分布的形状。较大的 $\alpha$ 意味着更多质量集中在均值附近。
+\item $\beta$（尺度参数，scale）：控制分散程度。较大的 $\beta$ 意味着在较大值处有更多概率。
+\end{itemize}
+
+\textbf{特殊情形}：
+\begin{itemize}
+\item $\Gamma(1, \beta) = \text{Exp}(1/\beta)$（指数分布，exponential distribution）
+\item $\Gamma(n/2, 2) = \chi^{2}(n)$（自由度为 $n$ 的卡方分布，chi-square distribution）
+\end{itemize}
+
+\textbf{矩母函数}：
+\[
+M(t) = (1 - \beta t)^{-\alpha}, \quad t < \frac{1}{\beta}.
+\label{eq:gamma-mgf-ch3}
+\]
+
+由此可得均值和方差：\footnote{Gamma 分布矩母函数的推导见附录 \cref{sec:derivation-gamma-mgf}。}
+\[
+\mathbb{E}X = \alpha\beta, \quad \text{var}(X) = \alpha\beta^{2}.
+\label{eq:gamma-moments-ch3}
+\]
+
+\begin{example}[电池寿命]\label{ex:battery-lifetime-ch3}
+设 $X$ 为某种电池在极寒条件下的寿命（小时）。假设 $X \sim \Gamma(5, 4)$。
+
+则：
+\begin{itemize}
+\item 平均寿命：$\mathbb{E}X = 5 \times 4 = 20$ 小时
+\item 标准差：$\sqrt{5 \times 16} = 8.94$ 小时
+\item 至少使用 50 小时的概率：$1 - F(50) = 0.0053$（在 R 中：\texttt{1 - pgamma(50, shape=5, scale=4)}）
+\item 中位寿命：$F^{-1}(0.5) = 18.68$ 小时（在 R 中：\texttt{qgamma(0.5, shape=5, scale=4)}）
+\end{itemize}
+\end{example}
+
+\begin{example}\label{rmk:gamma-additivity-ch3}
+若 $X_1 \sim \Gamma(\alpha_1, \beta)$ 和 $X_2 \sim \Gamma(\alpha_2, \beta)$ 独立，则 $X_1 + X_2 \sim \Gamma(\alpha_1 + \alpha_2, \beta)$。这种可加性反映了 Gamma 分布等待时间的自然结构。\footnote{Gamma 分布可加性的证明见附录 \cref{sec:derivation-gamma-additivity}。}
+\end{example}
+
+\begin{example}\label{rmk:hazard-function-ch3}
+Gamma 分布的危险函数（hazard function）为 $r(x) = \frac{x^{\alpha-1} e^{-x/\beta}}{\beta^{\alpha} \Gamma(\alpha) (1 - F(x))}$。对于指数分布（$\alpha=1$），$r(x) = 1/\beta$ 是常数；对于 $\alpha > 1$，$r(x)$ 递增；对于 $\alpha < 1$，$r(x)$ 递减。
+\end{example}
+
+\subsection{$\chi^{2}$ 分布}\label{sub:chi-square-ch3}
+
+卡方分布在统计学中处于核心地位，它自然出现在涉及方差和平方正态变量和的问题中。
+
+\begin{definition}[卡方分布]\label{def:chi-square-ch3}
+设 $Z_1, Z_2, \ldots, Z_n \sim N(0, 1)$ iid，则
+\[
+X = \sum_{i=1}^{n} Z_i^{2} \sim \chi^{2}(n).
+\label{eq:chi-square-definition-ch3}
+\]
+参数 $n$ 称为自由度（degrees of freedom）数目。
+\end{definition}
+
+$\chi^{2}$ 分布是 $\Gamma(n/2, 2)$ 的特殊情形：如果 $X \sim \chi^{2}(n)$，则 $X \sim \Gamma(n/2, 2)$。
+
+\textbf{均值和方差}：
+\[
+\mathbb{E}X = n, \quad \text{var}(X) = 2n.
+\label{eq:chi-square-moments-ch3}
+\]
+
+\begin{example}\label{rmk:chi-square-additivity-ch3}
+若 $X_1 \sim \chi^{2}(m)$ 和 $X_2 \sim \chi^{2}(n)$ 独立，则 $X_1 + X_2 \sim \chi^{2}(m+n)$。这直接来自 Gamma 分布的可加性。
+\end{example}
+
+\textbf{为什么它很重要？} 样本方差的抽样分布与 $\chi^{2}$ 分布密切相关，这使它成为方差估计和假设检验的基础。
+
+\begin{example}[样本方差分布]\label{ex:sample-variance-ch3}
+对于 iid $X_1, \ldots, X_n \sim N(\mu, \sigma^{2})$，样本方差 $S^{2}$ 满足：
+\[
+\frac{(n-1)S^{2}}{\sigma^{2}} \sim \chi^{2}(n-1).
+\label{eq:sample-variance-chi-square-ch3}
+\]
+
+这个基本结果告诉我们：偏离均值的缩放平方和服从卡方分布。它是方差置信区间和 ANOVA 的基础。
+\end{example}
+
+\begin{example}[卡方分位数]\label{ex:chi-square-percentiles-ch3}
+假设 $X \sim \chi^{2}(10)$。在 R 中：
+\begin{itemize}
+\item 均值：$\mathbb{E}X = 10$，标准差：$\sqrt{20} = 4.47$
+\item 四分位数：\texttt{qchisq(c(0.25, 0.5, 0.75), 10)} = (6.74, 9.34, 12.55)
+\end{itemize}
+\end{example}
+
+\subsection{Beta 分布}\label{sub:beta-distribution-ch3}
+
+Beta 分布是区间 $(0,1)$ 上的连续分布，特别适用于建模概率和比例。
+
+\begin{definition}[Beta 分布]\label{def:beta-distribution-ch3}
+若 $X$ 的 pdf 为：
+\[
+f(x) = \begin{cases}
+\frac{1}{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1} & 0 < x < 1 \\[4pt]
+0 & \text{elsewhere},
+\end{cases}
+\label{eq:beta-pdf-ch3}
+\]
+其中 $B(\alpha,\beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$，则 $X \sim \text{Beta}(\alpha, \beta)$。
+\end{definition}
+
+Beta 函数 $B(\alpha, \beta)$ 使分布归一化，确保 $\int_{0}^{1} f(x) dx = 1$。
+
+\textbf{均值和方差}：
+\[
+\mathbb{E}X = \frac{\alpha}{\alpha+\beta}, \quad \text{var}(X) = \frac{\alpha\beta}{(\alpha+\beta)^{2}(\alpha+\beta+1)}.
+\label{eq:beta-moments-ch3}
+\]\footnote{推导见附录 \cref{sec:beta-mean-variance}。}
+
+\textbf{特殊情形}：
+\begin{itemize}
+\item $\text{Beta}(1,1) = \text{Uniform}(0,1)$（均匀分布）
+\item $\text{Beta}(\alpha, 1) = \text{Power}(1/\alpha)$（$(0,1)$ 上的幂分布）
+\end{itemize}
+
+\begin{example}[Beta 分布的形状]\label{ex:beta-shapes-ch3}
+Beta 分布提供了丰富多样的形状：
+\begin{itemize}
+\item $\alpha = \beta = 1$：均匀分布
+\item $\alpha = \beta > 1$：对称、峰形
+\item $\alpha > \beta$：右偏
+\item $\alpha < \beta$：左偏
+\end{itemize}
+\end{example}
+
+\begin{example}\label{rmk:beta-conjugate-ch3}
+在贝叶斯统计中，当我们用 Beta 分布作为二项分布参数 $p$ 的先验时，后验分布仍然是 Beta 分布。这称为\textbf{共轭先验（conjugate prior）}关系。Beta-二项模型是贝叶斯分析中最重要的共轭对之一。
+\end{example}
+
+Beta 分布的灵活性——通过不同的 $\alpha, \beta$ 值在 $(0,1)$ 上捕捉各种形状——使其成为建模不确定概率的理想选择。
+
+\section{3.4 正态分布（Normal Distribution）}\label{sec:normal-distribution-ch3}
+
+在所有概率分布中，\textbf{正态分布（normal distribution）}占据至高无上的地位。它构成了统计推断、计量经济学、信号处理及许多其他领域的基石。
+
+正态分布的重要性源于三个关键事实：
+\begin{enumerate}
+\item \textbf{中心极限定理（Central Limit Theorem）}：许多独立小因素的和近似正态分布
+\item \textbf{数学优美性（Mathematical elegance）}：正态变量的线性组合仍然是正态的
+\item \textbf{可解释的参数（Interpretable parameters）}：均值和方差都有清晰、直观的含义
+\end{enumerate}
+
+历史注记：正态分布由 Carl Friedrich Gauss 于 1809 年在研究测量误差时引入。虽然 Laplace 早些时候讨论过误差分布，但 Gauss 的工作巩固了正态分布在统计学中的核心地位。这就是为什么我们经常称它为"高斯分布（Gaussian distribution）"。
+
+\subsection{定义与基本性质}\label{sub:normal-definition-ch3}
+
+\begin{definition}[正态分布]\label{def:normal-distribution-ch3}
+若随机变量 $X$ 的 pdf 为：
+\[
+f(x) = \frac{1}{\sqrt{2\pi}\sigma} \exp\left\{ -\frac{(x-\mu)^{2}}{2\sigma^{2}} \right\}, \quad -\infty < x < \infty.
+\label{eq:normal-pdf-ch3}
+\]
+则称 $X$ 服从正态分布，记作 $X \sim N(\mu, \sigma^{2})$，其中 $\mu$ 是均值，$\sigma^{2}$ 是方差。
+\end{definition}
+
+标准正态分布是 $N(0,1)$，其 pdf 为 $\phi(z) = \frac{1}{\sqrt{2\pi}} e^{-z^{2}/2}$，cdf 为 $\Phi(z)$。
+
+\textbf{关键性质}：若 $X \sim N(\mu, \sigma^{2})$，则 $Z = \frac{X-\mu}{\sigma} \sim N(0,1)$。这种标准化使得任何正态概率计算都可以转化为标准正态计算：
+\[
+\mathbb{P}(X \leq x) = \Phi\!\left(\frac{x-\mu}{\sigma}\right).
+\label{eq:normal-cdf-standardization-ch3}
+\]
+
+\begin{example}[身高分布]\label{ex:height-normal-ch3}
+假设成年男性的身高为 $N(\mu=70, \sigma^{2}=16)$（英寸）。则：
+\begin{itemize}
+\item 一个男性超过 6 英尺（$72$ 英寸）的概率：$Z = (72-70)/4 = 0.5$，所以 $\mathbb{P}(X > 72) = 1 - \Phi(0.5) \approx 0.3085$
+\item 95 分位数：$x_{0.95} = 70 + 4 \cdot \Phi^{-1}(0.95) \approx 76.6$ 英寸
+\item 在一个标准差内的概率：$\Phi(1) - \Phi(-1) \approx 0.6827$
+\end{itemize}
+\end{example}
+
+$N(\mu, \sigma^{2})$ 的 mgf 为：
+\[
+M(t) = \exp\left\{\mu t + \frac{1}{2}\sigma^{2}t^{2}\right\}, \quad -\infty < t < \infty.
+\label{eq:normal-mgf-ch3}
+\]\footnote{推导见附录 \cref{sec:normal-mgf-derivation}。}
+
+由此得 $\mathbb{E}X = \mu$，$\text{var}(X) = \sigma^{2}$。
+
+\begin{theorem}[正态变量的线性组合]\label{th:normal-linear-combination-ch3}
+若 $X_1 \sim N(\mu_1, \sigma_1^{2})$ 和 $X_2 \sim N(\mu_2, \sigma_2^{2})$ 独立，则对任意常数 $a, b$：
+\[
+aX_1 + bX_2 \sim N(a\mu_1 + b\mu_2, a^{2}\sigma_1^{2} + b^{2}\sigma_2^{2}).
+\label{eq:normal-linear-combination-ch3}
+\]
+\end{theorem}
+
+\textbf{为什么这个性质重要？} 它意味着正态分布在线性变换下闭合——这使它成为线性模型的理论基础。
+
+\begin{example}\label{rmk:normal-location-scale-ch3}
+均值 $\mu$ 是\textbf{位置参数（location parameter）}：改变 $\mu$ 只平移整个分布而不改变形状。标准差 $\sigma$ 是\textbf{尺度参数（scale parameter）}：改变 $\sigma$ 拉伸或压缩分布。
+\end{example}
+
+\begin{example}\label{rmk:empirical-rule-ch3}
+对于任何正态分布：
+\begin{itemize}
+\item $\mathbb{P}(\mu - \sigma < X < \mu + \sigma) \approx 0.6827$
+\item $\mathbb{P}(\mu - 2\sigma < X < \mu + 2\sigma) \approx 0.9545$
+\item $\mathbb{P}(\mu - 3\sigma < X < \mu + 3\sigma) \approx 0.9973$
+\end{itemize}
+这些有时被称为\textbf{经验法则（empirical rule）}或 68-95-99.7 法则。
+\end{example}
+
+\begin{example}[正态平方到卡方]\label{th:normal-to-chi-square-ch3}
+若 $X \sim N(\mu, \sigma^{2})$，则 $\frac{(X-\mu)^{2}}{\sigma^{2}} \sim \chi^{2}(1)$。
+\end{example}
+
+这连接了正态分布和卡方分布，解释了为什么自由度为 $n$ 的卡方分布涉及 $n$ 个平方标准正态的和。
+
+\section{3.5 多元正态分布}\label{sec:multivariate-normal-ch3}
+
+正态分布到高维的自然推广，为建模相关变量提供了强大工具。
+
+\subsection{二元正态分布（Bivariate Normal Distribution）}\label{sub:bivariate-normal-ch3}
+
+二元正态分布不仅仅是一元正态的二维版本——它的相关结构创造了椭圆轮廓的丰富几何学。
+
+\begin{definition}[二元正态分布]\label{def:bivariate-normal-ch3}
+若 $(X_1, X_2)$ 的联合 pdf 为：
+\[
+f(x_1, x_2) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^{2}}} \exp\left\{ -\frac{Q(x_1, x_2)}{2(1-\rho^{2})} \right\},
+\label{eq:bivariate-normal-pdf-ch3}
+\]
+其中
+\[
+Q = \frac{(x_1-\mu_1)^{2}}{\sigma_1^{2}} - 2\rho\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} + \frac{(x_2-\mu_2)^{2}}{\sigma_2^{2}},
+\]
+则 $(X_1, X_2)$ 服从二元正态分布，记作 $(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^{2}, \sigma_2^{2}, \rho)$。
+\end{definition}
+
+五个参数有清晰的解释：
+\begin{itemize}
+\item $\mu_1, \mu_2$：边缘分布的均值
+\item $\sigma_1^{2}, \sigma_2^{2}$：边缘分布的方差
+\item $\rho$：$X_1$ 和 $X_2$ 之间的相关系数
+\end{itemize}
+
+\begin{theorem}[二元正态分布的性质]\label{th:bivariate-normal-properties-ch3}
+若 $(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^{2}, \sigma_2^{2}, \rho)$，则：
+\begin{enumerate}
+\item 边缘分布：$X_1 \sim N(\mu_1, \sigma_1^{2})$，$X_2 \sim N(\mu_2, \sigma_2^{2})$
+\item 条件分布：$X_2 \mid X_1 = x_1 \sim N\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1-\mu_1), \ \sigma_2^{2}(1-\rho^{2})\right)$
+\item $X_1 \Perp X_2 \iff \rho = 0$（对正态变量，不相关等价于独立）
+\item 任何线性组合 $aX_1 + bX_2$ 服从正态分布
+\end{enumerate}
+\end{theorem}
+
+\textbf{关键洞见}：条件均值是 $x_1$ 的线性函数。这意味着给定一个变量，对另一个变量的最佳预测也是线性的。斜率 $\rho\sigma_2/\sigma_1$ 告诉我们 $X_2$ 相对于 $X_1$ 每个标准差变化多少（以标准差计）。
+
+条件方差 $\sigma_2^{2}(1-\rho^{2})$ 始终小于边缘方差 $\sigma_2^{2}$——知道 $X_1$ 降低了对 $X_2$ 的不确定性。当 $|\rho| = 1$ 时，条件方差为零：$X_2$ 完全由 $X_1$ 决定。
+
+\begin{example}[夫妻身高]\label{ex:height-correlation-ch3}
+在某人群中，丈夫身高 $X_1 \sim N(5.8, 0.04)$ 英尺，妻子身高 $X_2 \sim N(5.3, 0.04)$ 英尺，相关系数 $\rho = 0.6$。
+
+给定丈夫身高为 6.3 英尺，妻子身高的条件分布为：
+\[
+X_2 \mid X_1 = 6.3 \sim N\left(5.3 + 0.6 \cdot \frac{0.2}{0.2}(6.3-5.8), 0.04(1-0.36)\right) = N(5.6, 0.0256).
+\]
+
+因此预测妻子身高为 5.6 英尺，标准差为 $0.16$ 英尺。95\% 预测区间为 $5.6 \pm 1.96 \times 0.16 = (5.29, 5.91)$ 英尺。
+\end{example}
+
+二元正态分布的联合 mgf 为：\footnote{二元正态分布矩母函数的推导见附录 \cref{sec:derivation-bivariate-mgf}。}
+\[
+M(t_1, t_2) = \exp\left\{ t_1\mu_1 + t_2\mu_2 + \frac{1}{2}(t_1^{2}\sigma_1^{2} + 2t_1 t_2 \rho\sigma_1\sigma_2 + t_2^{2}\sigma_2^{2}) \right\}.
+\label{eq:bivariate-normal-mgf-ch3}
+\]
+
+\section{3.6 $t$ 分布与 $F$ 分布}\label{sec:t-f-distributions-ch3}
+
+这两个分布源于一个实际问题：\textbf{当总体方差未知时，我们如何进行推断？}
+
+这个问题处于统计推断的核心：当我们用样本均值估计总体均值时，通常不知道真实的方差。$t$ 和 $F$ 分布使我们能够考虑这种额外的不确定性。
+
+历史注记：William Gosset（笔名"Student"）于 1908 年在 Guinness 啤酒厂工作时引入了 $t$ 分布。由于雇主禁止员工发表研究，他以笔名"Student"发表。Fisher 后来为 ANOVA 开发了 $F$ 分布。
+
+\subsection{$t$ 分布}\label{sub:t-distribution-ch3}
+
+\begin{definition}[$t$ 分布]\label{def:t-distribution-ch3}
+若 $Z \sim N(0,1)$ 和 $X \sim \chi^{2}(n)$ 独立，则
+\[
+T = \frac{Z}{\sqrt{X/n}} \sim t(n).
+\label{eq:t-distribution-ch3}
+\]
+称 $T$ 服从自由度为 $n$ 的 $t$ 分布。
+\end{definition}
+
+$t$ 分布的 pdf 为：
+\[
+f(t) = \frac{\Gamma((n+1)/2)}{\sqrt{\pi n}\,\Gamma(n/2)} \left(1 + \frac{t^{2}}{n}\right)^{-(n+1)/2}, \quad -\infty < t < \infty.
+\label{eq:t-pdf-ch3}
+\]\footnote{推导见附录 \cref{sec:t-distribution-derivation}。}
+
+$t$ 分布的尾部比正态分布更厚，反映了估计方差时引入的额外不确定性。
+
+\textbf{均值和方差}：
+\[
+\mathbb{E}T = 0 \ (n>1), \quad \text{var}(T) = \frac{n}{n-2} \ (n>2).
+\label{eq:t-moments-ch3}
+\]
+
+当 $n=1$ 时，得到柯西分布——一种"危险"的分布，没有均值（积分发散）。
+
+\textbf{与正态的关系}：当 $n \to \infty$ 时，$t(n) \xrightarrow{d} N(0,1)$。这反映了直观思想：随着样本量增大，对方差的了解改善，$t$ 分布收敛到标准正态。
+
+\begin{example}[$t$ 分布应用]\label{ex:t-distribution-ch3}
+设 $T \sim t(10)$。求 $\mathbb{P}(|T| > 2.228)$。
+
+由表得 $t_{0.025, 10} = 2.228$，所以 $\mathbb{P}(|T| > 2.228) = 0.05$。
+
+与正态对比：对于 $Z \sim N(0,1)$，$\mathbb{P}(|Z| > 1.96) = 0.05$。$t$ 分布的临界值更大，因为尾部更厚。
+
+在 R 中：\texttt{2 * (1 - pt(2.228, 10)) = 0.05}。
+\end{example}
+
+$t$ 分布在总体方差未知时构造均值的置信区间中起基础作用。当我们用样本标准差 $S$ 替换总体标准差 $\sigma$ 时，所得统计量服从 $t$ 分布。\footnote{这是第四章置信区间理论的基础。}
+
+\subsection{$F$ 分布}\label{sub:f-distribution-ch3}
+
+\begin{definition}[$F$ 分布]\label{def:f-distribution-ch3}
+若 $X_1 \sim \chi^{2}(m)$ 和 $X_2 \sim \chi^{2}(n)$ 独立，则
+\[
+F = \frac{X_1/m}{X_2/n} \sim F(m, n).
+\label{eq:f-distribution-ch3}
+\]
+称 $F$ 服从自由度为 $(m, n)$ 的 $F$ 分布。
+\end{definition}
+
+pdf 为：
+\[
+f(w) = \begin{cases}
+\frac{\Gamma((m+n)/2)}{\Gamma(m/2)\Gamma(n/2)} \left(\frac{m}{n}\right)^{m/2} \frac{w^{m/2-1}}{(1 + mw/n)^{(m+n)/2}} & w > 0 \\[4pt]
+0 & \text{elsewhere}.
+\end{cases}
+\label{eq:f-pdf-ch3}
+\]
+
+$F$ 分布是两个独立卡方变量的比值，每个除以各自的自由度。
+
+\textbf{均值和方差}：
+\[
+\mathbb{E}F = \frac{n}{n-2} \ (n>2), \quad \text{var}(F) = \frac{2n^{2}(m+n-2)}{m(n-2)^{2}(n-4)} \ (n>4).
+\label{eq:f-moments-ch3}
+\]
+
+\textbf{倒数性质}：若 $F \sim F(m, n)$，则 $1/F \sim F(n, m)$。这个对称性对计算尾部概率很有用。
+
+\begin{example}\label{rmk:f-to-t-relationship-ch3}
+若 $T \sim t(n)$，则 $T^{2} \sim F(1, n)$。这从定义可得：$T = Z/\sqrt{\chi^{2}(n)/n}$，所以 $T^{2} = Z^{2}/(\chi^{2}(n)/n) = \chi^{2}(1)/(\chi^{2}(n)/n) \sim F(1, n)$。
+\end{example}
+
+\textbf{为什么 $F$ 分布重要？} 它是 ANOVA（方差分析）和回归分析的核心——我们用它比较两个方差是否相等，或模型解释的方差是否显著大于残差方差。
+
+ANOVA 中的 $F$ 统计量比较组间均值方差与组内方差。如果组间方差相对于组内方差较大，我们拒绝所有组具有相同均值的原假设。
+
+\section*{本章小结}\label{sec:chapter-summary-ch3}
+
+本章介绍了统计学中最重要的分布族：
+
+\textbf{离散分布}：
+\begin{itemize}
+\item Bernoulli $\to$ Binomial $\to$ Negative Binomial/Geometric
+\item Multinomial $\to$ Hypergeometric
+\item Poisson（二项分布在稀有事件下的极限）
+\end{itemize}
+
+\textbf{连续分布}：
+\begin{itemize}
+\item Uniform $\to$ Exponential $\to$ Gamma $\to$ Chi-square
+\item Beta（在单位区间上）
+\item Normal $\to$ Bivariate Normal
+\item $t$ 和 $F$（由正态 + 卡方结构导出）
+\end{itemize}
+
+\section*{习题}\label{sec:exercises-ch3}
+
+\begin{exercise}{3.1.1}
+If the mgf of a random variable $X$ is $\left(\frac{1}{3} + \frac{2}{3} e^t\right)^5$, find $P(X = 2 \text{ or } 3)$. Verify using the R function \texttt{dbinom}.
+\end{exercise}
+
+\begin{exercise}{3.1.2}
+The mgf of a random variable $X$ is $(\frac{2}{3} + \frac{1}{3} e^t)^9$.
+\begin{enumerate}
+\item Show that $P(\mu - 2\sigma < X < \mu + 2\sigma) = \sum_{x=1}^{5} \binom{9}{x} \left(\frac{1}{3}\right)^x \left(\frac{2}{3}\right)^{9-x}$.
+\item Use R to compute the probability in Part (a).
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.3}
+If $X$ is $b(n,p)$, show that $E(X/n) = p$ and $E[(X/n - p)^2] = p(1-p)/n$.
+\end{exercise}
+
+\begin{exercise}{3.1.4}
+Let the independent random variables $X_1, X_2, \ldots, X_{40}$ be iid with the common pdf $f(x) = 3x^2$, $0 < x < 1$, zero elsewhere. Find the probability that at least 35 of the $X_i$'s exceed $\frac{1}{2}$.
+\end{exercise}
+
+\begin{exercise}{3.1.5}
+Over the years, the percentage of candidates passing an entrance exam to a prestigious law school is 20\%. At one of the testing centers, a group of 50 candidates take the exam and 20 pass. Is this odd? Answer on the basis that $X \geq 20$ where $X$ is the number that pass in a group of 50 when the probability of a pass is 0.2.
+\end{exercise}
+
+\begin{exercise}{3.1.6}
+Let $Y$ be the number of successes throughout $n$ independent repetitions of a random experiment with probability of success $p = \frac{1}{4}$. Determine the smallest value of $n$ so that $P(1 \leq Y) \geq 0.70$.
+\end{exercise}
+
+\begin{exercise}{3.1.7}
+Let the independent random variables $X_1$ and $X_2$ have binomial distribution with parameters $n_1 = 3$, $p = \frac{2}{3}$ and $n_2 = 4$, $p = \frac{1}{2}$, respectively. Compute $P(X_1 = X_2)$.
+
+Hint: List the four mutually exclusive ways that $X_1 = X_2$ and compute the probability of each.
+\end{exercise}
+
+\begin{exercise}{3.1.8}
+For this exercise, the reader must have access to a statistical package that obtains the binomial distribution. Hints are given for R code, but other packages can be used too.
+\begin{enumerate}
+\item Obtain the plot of the pmf for the $b(15, 0.2)$ distribution.
+\item Repeat part (a) for the binomial distributions with $n = 15$ and with $p = 0.10, 0.20, \ldots, 0.90$. Comment on the shapes of the pmf's as $p$ increases.
+\item Let $Y = X/n$, where $X$ has a $b(n, 0.05)$ distribution. Obtain the plots of the pmfs of $Y$ for $n = 10, 20, 50, 200$. Comment on the plots.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.9}
+If $x = r$ is the unique mode of a distribution that is $b(n,p)$, show that $(n+1)p - 1 < r < (n+1)p$.
+
+Hint: Determine the values of $x$ for which $p(x+1)/p(x) > 1$.
+\end{exercise}
+
+\begin{exercise}{3.1.10}
+Suppose $X$ is $b(n,p)$. Then by definition the pmf is symmetric if and only if $p(x) = p(n-x)$, for $x = 0, \ldots, n$. Show that the pmf is symmetric if and only if $p = 1/2$.
+\end{exercise}
+
+\begin{exercise}{3.1.11}
+Toss two nickels and three dimes at random. Make appropriate assumptions and compute the probability that there are more heads showing on the nickels than on the dimes.
+\end{exercise}
+
+\begin{exercise}{3.1.12}
+Let $X_1, X_2, \ldots, X_{k-1}$ have a multinomial distribution.
+\begin{enumerate}
+\item Find the mgf of $X_2, X_3, \ldots, X_{k-1}$.
+\item What is the pmf of $X_2, X_3, \ldots, X_{k-1}$?
+\item Determine the conditional pmf of $X_1$ given that $X_2 = x_2, \ldots, X_{k-1} = x_{k-1}$.
+\item What is the conditional expectation $E(X_1 \mid x_2, \ldots, x_{k-1})$?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.13}
+Let $X$ be $b(2,p)$ and let $Y$ be $b(4,p)$. If $P(X \geq 1) = \frac{5}{9}$, find $P(Y \geq 1)$.
+\end{exercise}
+
+\begin{exercise}{3.1.14}
+Let $X$ have a binomial distribution with parameters $n$ and $p = \frac{1}{3}$. Determine the smallest integer $n$ can be such that $P(X \geq 1) \geq 0.85$.
+\end{exercise}
+
+\begin{exercise}{3.1.15}
+Let $X$ have the pmf $p(x) = \left(\frac{1}{3}\right)\left(\frac{2}{3}\right)^x$, $x = 0, 1, 2, 3, \ldots$, zero elsewhere. Find the conditional pmf of $X$ given that $X \geq 3$.
+\end{exercise}
+
+\begin{exercise}{3.1.16}
+One of the numbers $1, 2, \ldots, 6$ is to be chosen by casting an unbiased die. Let this random experiment be repeated five independent times. Let the random variable $X_1$ be the number of terminations in the set $\{x: x = 1, 2, 3\}$ and let the random variable $X_2$ be the number of terminations in the set $\{x: x = 4, 5\}$. Compute $P(X_1 = 2, X_2 = 1)$.
+\end{exercise}
+
+\begin{exercise}{3.1.17}
+Show that the moment generating function of the negative binomial distribution is $M(t) = p^r[1 - (1-p)e^t]^{-r}$. Find the mean and the variance of this distribution.
+
+Hint: In the summation representing $M(t)$, make use of the negative binomial series.
+\end{exercise}
+
+\begin{exercise}{3.1.18}
+One way of estimating the number of fish in a lake is the following capture-recapture sampling scheme. Suppose there are $N$ fish in the lake where $N$ is unknown. A specified number of fish $T$ are captured, tagged, and released back to the lake. Then at a specified time and for a specified positive integer $r$, fish are captured until the $r$th tagged fish is caught. The random variable of interest is $Y$ the number of nontagged fish caught.
+\begin{enumerate}
+\item What is the distribution of $Y$? Identify all parameters.
+\item What is $\mathbb{E}(Y)$ and the $\text{var}(Y)$?
+\item The method of moment estimate of $N$ is to set $Y$ equal to the expression for $E(Y)$ and solve this equation for $N$. Call the solution $\hat{N}$. Determine $\hat{N}$.
+\item Determine the mean and variance of $\hat{N}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.19}
+Consider a multinomial trial with outcomes $1, 2, \ldots, k$ and respective probabilities $p_1, p_2, \ldots, p_k$.
+\begin{enumerate}
+\item Compute 10 random trials if $p_1 = 0.3, p_2 = 0.2, p_3 = 0.2, p_4 = 0.2, p_5 = 0.1$.
+\item Compute 10,000 random trials for the above probabilities. Check to see how close the estimates of $p_i$ are with $p_i$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.20}
+Using the experiment in part (a) of Exercise 3.1.19, consider a game when a person pays \$5 to play. If the trial results in a 1 or 2, she receives nothing; if a 3, she receives \$1; if a 4, she receives \$2; and if a 5, she receives \$20. Let $G$ be her gain.
+\begin{enumerate}
+\item Determine $E(G)$.
+\item Write R code that simulates the gain. Then simulate it 10,000 times, collecting the gains. Compute the average of these 10,000 gains and compare it with $E(G)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.21}
+Let $X_1$ and $X_2$ have a trinomial distribution. Differentiate the moment-generating function to show that their covariance is $-np_1 p_2$.
+\end{exercise}
+
+\begin{exercise}{3.1.22}
+If a fair coin is tossed at random five independent times, find the conditional probability of five heads given that there are at least four heads.
+\end{exercise}
+
+\begin{exercise}{3.1.23}
+Let an unbiased die be cast at random seven independent times. Compute the conditional probability that each side appears at least once given that side 1 appears exactly twice.
+\end{exercise}
+
+\begin{exercise}{3.1.24}
+Compute the measures of skewness and kurtosis of the binomial distribution $b(n,p)$.
+\end{exercise}
+
+\begin{exercise}{3.1.27}
+Let $X$ have a geometric distribution. Show that $P(X \geq k+j \mid X \geq k) = P(X \geq j)$, where $k$ and $j$ are nonnegative integers. Note that we sometimes say in this situation that $X$ is memoryless.
+\end{exercise}
+
+\begin{exercise}{3.1.28}
+Let $X$ equal the number of independent tosses of a fair coin that are required to observe heads on consecutive tosses. Let $u_n$ equal the $n$th Fibonacci number, where $u_1 = u_2 = 1$ and $u_n = u_{n-1} + u_{n-2}$, $n = 3, 4, 5, \ldots$.
+\begin{enumerate}
+\item Show that the pmf of $X$ is $p(x) = \frac{u_{x-1}}{2^x}$, $x = 2, 3, 4, \ldots$.
+\item Use the fact that $u_n = \frac{1}{\sqrt{5}}\left[\left(\frac{1+\sqrt{5}}{2}\right)^n - \left(\frac{1-\sqrt{5}}{2}\right)^n\right]$ to show that $\sum_{x=2}^{\infty} p(x) = 1$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.30}
+Consider a shipment of 1000 items into a factory. Suppose the factory can tolerate about 5\% defective items. Let $X$ be the number of defective items in a sample without replacement of size $n = 10$. Suppose the factory returns the shipment if $X \geq 2$.
+\begin{enumerate}
+\item Obtain the probability that the factory returns a shipment of items that has 5\% defective items.
+\item Suppose the shipment has 10\% defective items. Obtain the probability that the factory returns such a shipment.
+\item Obtain approximations to the probabilities in parts (a) and (b) using appropriate binomial distributions.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.1.31}
+Show that the variance of a hypergeometric $(N, D, n)$ distribution is given by expression (3.1.8).
+
+Hint: First obtain $E[X(X-1)]$ by proceeding in the same way as the derivation of the mean given in Section 3.1.3.
+\end{exercise}
+
+\begin{exercise}{3.2.1}
+If the random variable $X$ has a Poisson distribution such that $P(X = 1) = P(X = 2)$, find $P(X = 4)$.
+\end{exercise}
+
+\begin{exercise}{3.2.2}
+The mgf of a random variable $X$ is $e^{4(e^t - 1)}$. Show that $P(\mu - 2\sigma < X < \mu + 2\sigma) = 0.931$.
+\end{exercise}
+
+\begin{exercise}{3.2.3}
+In a lengthy manuscript, it is discovered that only 13.5 percent of the pages contain no typing errors. If we assume that the number of errors per page is a random variable with a Poisson distribution, find the percentage of pages that have exactly one error.
+\end{exercise}
+
+\begin{exercise}{3.2.4}
+Let the pmf $p(x)$ be positive on and only on the nonnegative integers. Given that $p(x) = (4/x)p(x-1)$, $x = 1, 2, 3, \ldots$, find the formula for $p(x)$.
+
+Hint: Note that $p(1) = 4p(0)$, $p(2) = (4^2/2!)p(0)$, and so on. That is, find each $p(x)$ in terms of $p(0)$ and then determine $p(0)$ from $1 = p(0) + p(1) + p(2) + \cdots$.
+\end{exercise}
+
+\begin{exercise}{3.2.5}
+Let $X$ have a Poisson distribution with $\mu = 100$. Use Chebyshev's inequality to determine a lower bound for $P(75 < X < 125)$. Next, calculate the probability using R. Is the approximation by Chebyshev's inequality accurate?
+\end{exercise}
+
+\begin{exercise}{3.2.7}
+By Exercise 3.2.6 it seems that the Poisson pmf peaks at its mean $\lambda$. Show that this is the case by solving the inequalities $[p(x+1)/p(x)] > 1$ and $[p(x+1)/p(x)] < 1$, where $p(x)$ is the pmf of a Poisson distribution with parameter $\lambda$.
+\end{exercise}
+
+\begin{exercise}{3.2.10}
+The approximation discussed in Exercise 3.2.8 can be made precise in the following way. Suppose $X_n$ is binomial with the parameters $n$ and $p = \lambda/n$, for a given $\lambda > 0$. Let $Y$ be Poisson with mean $\lambda$. Show that $P(X_n = k) \to P(Y = k)$, as $n \to \infty$, for an arbitrary but fixed value of $k$.
+
+Hint: First show that $P(X_n = k) = \frac{\lambda^k}{k!}\left[\frac{n(n-1)\cdots(n-k+1)}{n^k}\left(1-\frac{\lambda}{n}\right)^{-k}\right]\left(1-\frac{\lambda}{n}\right)^n$.
+\end{exercise}
+
+\begin{exercise}{3.2.11}
+Let the number of chocolate chips in a certain type of cookie have a Poisson distribution. We want the probability that a cookie of this type contains at least two chocolate chips to be greater than 0.99. Find the smallest value of the mean that the distribution can take.
+\end{exercise}
+
+\begin{exercise}{3.2.12}
+Compute the measures of skewness and kurtosis of the Poisson distribution with mean $\mu$.
+\end{exercise}
+
+\begin{exercise}{3.2.13}
+On the average, a grocer sells three of a certain article per week. How many of these should he have in stock so that the chance of his running out within a week is less than 0.01? Assume a Poisson distribution.
+\end{exercise}
+
+\begin{exercise}{3.2.14}
+Let $X$ have a Poisson distribution. If $P(X = 1) = P(X = 3)$, find the mode of the distribution.
+\end{exercise}
+
+\begin{exercise}{3.3.2}
+If $X$ is $\chi^2(5)$, determine the constants $c$ and $d$ so that $P(c < X < d) = 0.95$ and $P(X < c) = 0.025$.
+\end{exercise}
+
+\begin{exercise}{3.3.3}
+Suppose the lifetime in months of an engine, working under hazardous conditions, has a $\Gamma$ distribution with a mean of 10 months and a variance of 20 months squared.
+\begin{enumerate}
+\item Determine the median lifetime of an engine.
+\item Suppose such an engine is termed successful if its lifetime exceeds 15 months. In a sample of 10 engines, determine the probability of at least 3 successful engines.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.3.4}
+Let $X$ be a random variable such that $E(X^m) = (m+1)!2^m$, $m = 1, 2, 3, \ldots$. Determine the mgf and the distribution of $X$.
+
+Hint: Write out the Taylor series of the mgf.
+\end{exercise}
+
+\begin{exercise}{3.3.6}
+Let $X_1, X_2, X_3$ be iid random variables, each with pdf $f(x) = e^{-x}$, $0 < x < \infty$, zero elsewhere.
+\begin{enumerate}
+\item Find the distribution of $Y = \text{minimum}(X_1, X_2, X_3)$.
+
+Hint: $P(Y \leq y) = 1 - P(Y > y) = 1 - P(X_i > y, i = 1, 2, 3)$.
+\item Find the distribution of $Y = \text{maximum}(X_1, X_2, X_3)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.3.7}
+Let $X$ have a gamma distribution with pdf $f(x) = \frac{1}{\beta^2}xe^{-x/\beta}$, $0 < x < \infty$, zero elsewhere. If $x = 2$ is the unique mode of the distribution, find the parameter $\beta$ and $P(X < 9.49)$.
+\end{exercise}
+
+\begin{exercise}{3.3.8}
+Compute the measures of skewness and kurtosis of a gamma distribution that has parameters $\alpha$ and $\beta$.
+\end{exercise}
+
+\begin{exercise}{3.3.9}
+Let $X$ have a gamma distribution with parameters $\alpha$ and $\beta$. Show that $P(X \geq 2\alpha\beta) \leq (2/e)^{\alpha}$.
+
+Hint: Use the result of Exercise 1.10.5.
+\end{exercise}
+
+\begin{exercise}{3.3.11}
+Using the computer, obtain plots of the pdfs of chi-squared distributions with degrees of freedom $r = 1, 2, 5, 10, 20$. Comment on the plots.
+\end{exercise}
+
+\begin{exercise}{3.3.12}
+Using the computer, plot the cdf of a $\Gamma(5,4)$ distribution and use it to guess the median. Confirm it with a computer command that returns the median. In R, use the command \texttt{qgamma(.5, shape=5, scale=4)}.
+\end{exercise}
+
+\begin{exercise}{3.3.13}
+Using the computer, obtain plots of beta pdfs for $\alpha = 1, 5, 10$ and $\beta = 1, 2, 5, 10, 20$.
+\end{exercise}
+
+\begin{exercise}{3.3.16}
+Let $X$ have the uniform distribution with pdf $f(x) = 1$, $0 < x < 1$, zero elsewhere. Find the cdf of $Y = -2\log X$. What is the pdf of $Y$?
+\end{exercise}
+
+\begin{exercise}{3.3.17}
+Find the uniform distribution of the continuous type on the interval $(b, c)$ that has the same mean and the same variance as those of a chi-square distribution with 8 degrees of freedom. That is, find $b$ and $c$.
+\end{exercise}
+
+\begin{exercise}{3.3.18}
+Find the mean and variance of the $\beta$ distribution.
+
+Hint: From the pdf, we know that $\int_0^1 y^{\alpha-1}(1-y)^{\beta-1}dy = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$ for all $\alpha > 0$, $\beta > 0$.
+\end{exercise}
+
+\begin{exercise}{3.3.19}
+Determine the constant $c$ in each of the following so that each $f(x)$ is a $\beta$ pdf:
+\begin{enumerate}
+\item $f(x) = cx(1-x)^3$, $0 < x < 1$, zero elsewhere.
+\item $f(x) = cx^4(1-x)^5$, $0 < x < 1$, zero elsewhere.
+\item $f(x) = cx^2(1-x)^8$, $0 < x < 1$, zero elsewhere.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.3.25}
+Let $X$ have an exponential distribution.
+\begin{enumerate}
+\item For $x > 0$ and $y > 0$, show that $P(X > x+y \mid X > x) = P(X > y)$. Hence, the exponential distribution has the memoryless property.
+\item Let $F(x)$ be the cdf of a continuous random variable $Y$. Assume that $F(0) = 0$ and $0 < F(y) < 1$ for $y > 0$. Suppose property $P(X > x+y \mid X > x) = P(X > y)$ holds for $Y$. Show that $F_Y(y) = 1 - e^{-\lambda y}$ for $y > 0$.
+
+Hint: Show that $g(y) = 1 - F_Y(y)$ satisfies the equation $g(y+z) = g(y)g(z)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.4.1}
+If $\Phi(z) = \int_{-\infty}^z \frac{1}{\sqrt{2\pi}}e^{-w^2/2}dw$, show that $\Phi(-z) = 1 - \Phi(z)$.
+\end{exercise}
+
+\begin{exercise}{3.4.2}
+If $X$ is $N(75, 100)$, find $P(X < 60)$ and $P(70 < X < 100)$ by using either Table II or the R command \texttt{pnorm}.
+\end{exercise}
+
+\begin{exercise}{3.4.3}
+If $X$ is $N(\mu, \sigma^2)$, find $b$ so that $P[-b < (X-\mu)/\sigma < b] = 0.90$, by using either Table II of Appendix D or the R command \texttt{qnorm}.
+\end{exercise}
+
+\begin{exercise}{3.4.4}
+Let $X$ be $N(\mu, \sigma^2)$ so that $P(X < 89) = 0.90$ and $P(X < 94) = 0.95$. Find $\mu$ and $\sigma^2$.
+\end{exercise}
+
+\begin{exercise}{3.4.6}
+If $X$ is $N(\mu, \sigma^2)$, show that $E(|X-\mu|) = \sigma\sqrt{2/\pi}$.
+\end{exercise}
+
+\begin{exercise}{3.4.7}
+Show that the graph of a pdf $N(\mu, \sigma^2)$ has points of inflection at $x = \mu - \sigma$ and $x = \mu + \sigma$.
+\end{exercise}
+
+\begin{exercise}{3.4.9}
+Determine the 90th percentile of the distribution which is $N(65, 25)$.
+\end{exercise}
+
+\begin{exercise}{3.4.10}
+If $e^{3t+8t^2}$ is the mgf of the random variable $X$, find $P(-1 < X < 9)$.
+\end{exercise}
+
+\begin{exercise}{3.4.12}
+Let $X$ be $N(5, 10)$. Find $P[0.04 < (X-5)^2 < 38.4]$.
+\end{exercise}
+
+\begin{exercise}{3.4.13}
+If $X$ is $N(1, 4)$, compute the probability $P(1 < X^2 < 9)$.
+\end{exercise}
+
+\begin{exercise}{3.4.17}
+Compute the measures of skewness and kurtosis of a distribution which is $N(\mu, \sigma^2)$. See Exercises 1.9.14 and 1.9.15 for the definitions of skewness and kurtosis, respectively.
+\end{exercise}
+
+\begin{exercise}{3.4.29}
+Let $X_1$ and $X_2$ be independent with normal distributions $N(6, 1)$ and $N(7, 1)$, respectively. Find $P(X_1 > X_2)$.
+
+Hint: Write $P(X_1 > X_2) = P(X_1 - X_2 > 0)$ and determine the distribution of $X_1 - X_2$.
+\end{exercise}
+
+\begin{exercise}{3.4.30}
+Compute $P(X_1 + 2X_2 - 2X_3 > 7)$ if $X_1, X_2, X_3$ are iid with common distribution $N(1, 4)$.
+\end{exercise}
+
+\begin{exercise}{3.4.32}
+Let $X$ be $N(0, 1)$. Use the moment generating function technique to show that $Y = X^2$ is $\chi^2(1)$.
+
+Hint: Evaluate the integral that represents $E(e^{tX^2})$ by writing $w = x\sqrt{1-2t}$, $t < 1/2$.
+\end{exercise}
+
+\begin{exercise}{3.5.1}
+Let $X$ and $Y$ have a bivariate normal distribution with respective parameters $\mu_x = 2.8$, $\mu_y = 110$, $\sigma_x^2 = 0.16$, $\sigma_y^2 = 100$, and $\rho = 0.6$. Using R, compute:
+\begin{enumerate}
+\item $P(106 < Y < 124)$.
+\item $P(106 < Y < 124 \mid X = 3.2)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.5.2}
+Let $X$ and $Y$ have a bivariate normal distribution with parameters $\mu_1 = 3$, $\mu_2 = 1$, $\sigma_1^2 = 16$, $\sigma_2^2 = 25$, and $\rho = \frac{3}{5}$. Using R, determine the following probabilities:
+\begin{enumerate}
+\item $P(3 < Y < 8)$
+\item $P(3 < Y < 8 \mid X = 7)$
+\item $P(-3 < X < 3)$
+\item $P(-3 < X < 3 \mid Y = -4)$
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{3.5.3}
+Show that $E(XY) = \rho\sigma_1\sigma_2 + \mu_1\mu_2$ for the bivariate normal distribution.
+\end{exercise}
+
+\begin{exercise}{3.5.7}
+Let $X$ and $Y$ have a bivariate normal distribution with parameters $\mu_1 = 5$, $\mu_2 = 10$, $\sigma_1^2 = 1$, $\sigma_2^2 = 25$, and $\rho > 0$. If $P(4 < Y < 16 \mid X = 5) = 0.954$, determine $\rho$.
+\end{exercise}
+
+\begin{exercise}{3.5.9}
+Say the correlation coefficient between the heights of husbands and wives is 0.70 and the mean male height is 5 feet 10 inches with standard deviation 2 inches, and the mean female height is 5 feet 4 inches with standard deviation $1.5$ inches. Assuming a bivariate normal distribution, what is the best guess of the height of a woman whose husband's height is 6 feet? Find a 95\% prediction interval for her height.
+\end{exercise}
+
+\begin{exercise}{3.6.1}
+Let $T$ have a $t$-distribution with 10 degrees of freedom. Find $P(|T| > 2.228)$ from either Table III or by using R.
+\end{exercise}
+
+\begin{exercise}{3.6.2}
+Let $T$ have a $t$-distribution with 14 degrees of freedom. Determine $b$ so that $P(-b < T < b) = 0.90$. Use either Table III or by using R.
+\end{exercise}
+
+\begin{exercise}{3.6.3}
+Let $T$ have a $t$-distribution with $r > 4$ degrees of freedom. Use expression (3.6.4) to determine the kurtosis of $T$. See Exercise 1.9.15 for the definition of kurtosis.
+\end{exercise}
+
+\begin{exercise}{3.6.7}
+Let $F$ have an $F$-distribution with parameters $r_1$ and $r_2$. Assuming that $r_2 > 2k$, continue with Example 3.6.2 and derive the $E(F^k)$.
+\end{exercise}
+
+\begin{exercise}{3.6.9}
+Let $F$ have an $F$-distribution with parameters $r_1$ and $r_2$. Argue that $1/F$ has an $F$-distribution with parameters $r_2$ and $r_1$.
+\end{exercise}
+
+\begin{exercise}{3.6.11}
+Let $T = W/\sqrt{V/r}$, where the independent variables $W$ and $V$ are, respectively, normal with mean zero and variance 1 and chi-square with $r$ degrees of freedom. Show that $T^2$ has an $F$-distribution with parameters $r_1 = 1$ and $r_2 = r$.
+\end{exercise}
+
+\begin{exercise}{3.6.12}
+Show that the $t$-distribution with $r = 1$ degree of freedom and the Cauchy distribution are the same.
+\end{exercise}
+
+\begin{exercise}{3.6.15}
+Let $X_1, X_2$ be iid with common distribution having the pdf $f(x) = e^{-x}$, $0 < x < \infty$, zero elsewhere. Show that $Z = X_1/X_2$ has an $F$-distribution.
+\end{exercise}
+
+\begin{exercise}{3.7.1}
+Suppose $Y$ has a $\Gamma(\alpha, \beta)$ distribution. Let $X = e^Y$. Show that the pdf of $X$ is given by expression (3.7.5). Determine the cdf of $X$ in terms of the cdf of a $\Gamma$-distribution. Derive the mean and variance of $X$.
+\end{exercise}
+
+\begin{exercise}{3.7.3}
+In Example 3.7.1, derive the pdf of the mixture distribution given in expression (3.7.6), then obtain its mean and variance as given in expressions (3.7.7) and (3.7.8).
+\end{exercise}
+
+\begin{exercise}{3.7.5}
+Consider the mixture distribution $(9/10)N(0,1) + (1/10)N(0,9)$. Show that its kurtosis is 8.34.
+\end{exercise}
+
+\begin{exercise}{3.7.14}
+If $X$ has a Pareto distribution with parameters $\alpha$ and $\beta$ and if $c$ is a positive constant, show that $Y = cX$ has a Pareto distribution with parameters $\alpha$ and $\beta/c$.
+\end{exercise}
+
+% === 附录：公式推导 ===
+\section{附录：公式推导}\label{sec:appendix-ch3}
+
+\subsection{二项分布矩母函数的推导}\label{sec:derivation-binomial-moments}
+
+\textbf{背景}：二项分布 $X \sim \text{Bin}(n, p)$ 的矩母函数定义为 $M(t) = \mathbb{E}[e^{tX}]$。
+
+\textbf{目标}：求 $M(t)$，并由此导出均值和方差。
+
+\textbf{推导步骤}：
+
+由定义：
+\[
+M(t) = \sum_{x=0}^{n} e^{tx} \binom{n}{x} p^{x}(1-p)^{n-x}.
+\]
+
+将 $e^{tx} p^{x} = (pe^{t})^{x}$ 提取出来：
+\[
+M(t) = \sum_{x=0}^{n} \binom{n}{x} (pe^{t})^{x} (1-p)^{n-x} = [(1-p) + pe^{t}]^{n},
+\]
+其中最后一步使用了二项式定理。
+
+对 $M(t)$ 求导：
+\[
+M'(t) = n[(1-p) + pe^{t}]^{n-1} \cdot pe^{t},
+\]
+\[
+M''(t) = n(n-1)[(1-p) + pe^{t}]^{n-2} \cdot (pe^{t})^{2} + n[(1-p) + pe^{t}]^{n-1} \cdot pe^{t}.
+\]
+
+在 $t=0$ 处求值：
+\[
+M'(0) = n[(1-p) + p]^{n-1} \cdot p = np,
+\]
+\[
+M''(0) = n(n-1)[(1-p) + p]^{n-2} \cdot p^{2} + n[(1-p) + p]^{n-1} \cdot p = n(n-1)p^{2} + np.
+\]
+
+因此：
+\[
+\text{var}(X) = M''(0) - [M'(0)]^{2} = [n(n-1)p^{2} + np] - n^{2}p^{2} = np(1-p).
+\]
+
+\subsection{二项分布可加性的证明}\label{sec:derivation-binomial-additivity}
+
+\textbf{背景}：若 $X_1 \sim \text{Bin}(n_1, p)$ 和 $X_2 \sim \text{Bin}(n_2, p)$ 独立，证明 $X_1 + X_2 \sim \text{Bin}(n_1 + n_2, p)$。
+
+\textbf{推导步骤}：
+
+使用矩母函数方法。两独立随机变量和的 mgf 是它们 mgf 的乘积：
+
+$X_1 + X_2$ 的 mgf 为：
+\[
+M_{X_1+X_2}(t) = M_{X_1}(t) \cdot M_{X_2}(t) = [(1-p) + pe^{t}]^{n_1} \cdot [(1-p) + pe^{t}]^{n_2} = [(1-p) + pe^{t}]^{n_1+n_2}.
+\]
+
+这正是 $\text{Bin}(n_1 + n_2, p)$ 的 mgf。由于 mgf 唯一确定分布，结论得证。
+
+\subsection{负二项分布的推导}\label{sec:derivation-negative-binomial}
+
+\textbf{背景}：负二项分布描述"第 $r$ 次成功前失败次数"的分布。
+
+\textbf{目标}：推导 pmf $p_Y(y) = \mathbb{P}(Y = y)$。
+
+\textbf{推导步骤}：
+
+恰好有 $y$ 次失败发生在第 $r$ 次成功之前，当且仅当：
+\begin{enumerate}
+\item 前 $y+r-1$ 次试验中恰好有 $r-1$ 次成功和 $y$ 次失败
+\item 第 $y+r$ 次试验是成功
+\end{enumerate}
+
+第一步的概率由二项分布给出：$\binom{y+r-1}{r-1} p^{r-1}(1-p)^{y}$。
+
+第二步的成功概率为 $p$。
+
+由独立性，总概率为：
+\[
+p_Y(y) = \binom{y+r-1}{r-1} p^{r-1}(1-p)^{y} \cdot p = \binom{y+r-1}{r-1} p^{r}(1-p)^{y}, \quad y = 0, 1, 2, \ldots
+\]
+
+验证归一性：利用负二项级数 $\sum_{y=0}^{\infty} \binom{y+r-1}{r-1} (1-p)^{y} = p^{-r}$，可得 $\sum_{y} p_Y(y) = 1$。
+
+\subsection{几何分布无记忆性的证明}\label{sec:derivation-memoryless}
+
+\textbf{背景}：几何分布具有独特的无记忆性：$\mathbb{P}(Y \geq k+j \mid Y \geq k) = \mathbb{P}(Y \geq j)$。
+
+\textbf{推导步骤}：
+
+由条件概率定义：
+\[
+\mathbb{P}(Y \geq k+j \mid Y \geq k) = \frac{\mathbb{P}(Y \geq k+j)}{\mathbb{P}(Y \geq k)}.
+\]
+
+几何分布下，$\mathbb{P}(Y \geq y) = (1-p)^{y}$（对于 $y = 0, 1, 2, \ldots$）。
+
+因此：
+\[
+\frac{\mathbb{P}(Y \geq k+j)}{\mathbb{P}(Y \geq k)} = \frac{(1-p)^{k+j}}{(1-p)^{k}} = (1-p)^{j} = \mathbb{P}(Y \geq j).
+\]
+
+证毕。
+
+\subsection{几何分布矩的推导}\label{sec:derivation-geometric-moments}
+
+\textbf{目标}：求几何分布 $Y \sim \text{Geom}(p)$（支撑集 $\{0,1,2,\ldots\}$）的均值和方差。
+
+\textbf{推导步骤}：
+
+均值：使用几何级数求和技巧。
+\[
+\mathbb{E}Y = \sum_{y=0}^{\infty} y \cdot p(1-p)^{y} = p(1-p) \sum_{y=1}^{\infty} y (1-p)^{y-1}.
+\]
+
+利用 $\sum_{y=1}^{\infty} y x^{y-1} = \frac{1}{(1-x)^{2}}$（$|x| < 1$），得：
+\[
+\mathbb{E}Y = p(1-p) \cdot \frac{1}{p^{2}} = \frac{1-p}{p}.
+\]
+
+方差：先求 $\mathbb{E}[Y(Y-1)]$：
+\[
+\mathbb{E}[Y(Y-1)] = \sum_{y=0}^{\infty} y(y-1) p(1-p)^{y} = p(1-p)^{2} \sum_{y=2}^{\infty} y(y-1)(1-p)^{y-2} = p(1-p)^{2} \cdot \frac{2}{p^{3}} = \frac{2(1-p)^{2}}{p^{2}}.
+\]
+
+由 $\text{var}(Y) = \mathbb{E}[Y^{2}] - (\mathbb{E}Y)^{2}$ 和 $\mathbb{E}[Y(Y-1)] = \mathbb{E}[Y^{2}] - \mathbb{E}[Y]$，得：
+\[
+\mathbb{E}[Y^{2}] = \mathbb{E}[Y(Y-1)] + \mathbb{E}[Y] = \frac{2(1-p)^{2}}{p^{2}} + \frac{1-p}{p} = \frac{(1-p)(2-p)}{p^{2}}.
+\]
+
+因此：
+\[
+\text{var}(Y) = \mathbb{E}[Y^{2}] - (\mathbb{E}Y)^{2} = \frac{(1-p)(2-p)}{p^{2}} - \frac{(1-p)^{2}}{p^{2}} = \frac{1-p}{p^{2}}.
+\]
+
+\subsection{负二项分布矩母函数的推导}\label{sec:derivation-nb-mgf}
+
+\textbf{目标}：推导负二项分布 $Y \sim \text{NB}(r, p)$ 的 mgf。
+
+\textbf{推导步骤}：
+
+使用概率生成函数的性质。负二项分布可以分解为 $r$ 个独立几何随机变量之和：
+\[
+Y = G_1 + G_2 + \cdots + G_r,
+\]
+其中每个 $G_i \sim \text{Geom}(p)$（支撑集 $\{0,1,2,\ldots\}$）。
+
+几何分布的 mgf 为 $M_G(t) = \frac{p}{1 - (1-p)e^{t}}$（$t < -\log(1-p)$）。
+
+由于独立同分布之和：
+\[
+M_Y(t) = [M_G(t)]^{r} = \left[\frac{p}{1 - (1-p)e^{t}}\right]^{r} = \frac{p^{r}}{[1 - (1-p)e^{t}]^{r}}.
+\]
+
+\subsection{多项分布的推导}\label{sec:derivation-multinomial}
+
+\textbf{背景}：多项分布是二项分布对 $k$ 个类别的推广。
+
+\textbf{目标}：推导联合 pmf。
+
+\textbf{推导步骤}：
+
+在 $n$ 次独立试验中，第 $i$ 个类别出现 $x_i$ 次的概率为 $\binom{n}{x_1, x_2, \ldots, x_k} \prod_{i=1}^{k} p_i^{x_i}$，其中 $\binom{n}{x_1, x_2, \ldots, x_k} = \frac{n!}{x_1! x_2! \cdots x_k!}$ 是多项式系数。
+
+这正是 pmf 的形式。验证归一性：由多项式定理，$\sum_{x_1+\cdots+x_k=n} \binom{n}{x_1, \ldots, x_k} \prod p_i^{x_i} = (p_1 + \cdots + p_k)^{n} = 1$。
+
+边缘分布：$X_i$ 的边缘分布为 $\text{Bin}(n, p_i)$，因为忽略其他类别后，每次试验中类别 $i$ 出现的概率为 $p_i$。
+
+协方差：对于 $i \neq j$，
+\[
+\text{cov}(X_i, X_j) = \mathbb{E}[X_i X_j] - \mathbb{E}[X_i]\mathbb{E}[X_j].
+\]
+
+利用多项分布的性质可得 $\text{cov}(X_i, X_j) = -np_i p_j$。
+
+\subsection{超几何分布的推导}\label{sec:derivation-hypergeometric}
+
+\textbf{背景}：超几何分布描述不放回抽样。
+
+\textbf{目标}：推导 pmf 和矩。
+
+\textbf{推导步骤}：
+
+pmf：从 $N$ 件产品中不放回抽取 $n$ 件，恰好得到 $x$ 件次品的概率为：
+\[
+p(x) = \frac{\binom{D}{x} \binom{N-D}{n-x}}{\binom{N}{n}}.
+\]
+
+这来自组合计数：选择 $x$ 件次品的方式数乘以选择 $n-x$ 件好品的方式数，除以从 $N$ 件中选择 $n$ 件的总方式数。
+
+均值：$\mathbb{E}X = n\frac{D}{N}$。直观理解：每次抽取次品的"概率"在不放回情况下仍为 $D/N$（对称性）。
+
+方差：$\text{var}(X) = n\frac{D}{N}\left(1-\frac{D}{N}\right)\frac{N-n}{N-1}$。
+
+有限总体校正因子 $\frac{N-n}{N-1}$ 反映了不放回抽样与放回抽样的差异。当 $N \gg n$ 时，此因子接近 1。
+
+\subsection{Poisson 分布矩的推导}\label{sec:derivation-poisson-moments}
+
+\textbf{目标}：求 Poisson 分布的均值和方差。
+
+\textbf{推导步骤}：
+
+均值：
+\[
+\mathbb{E}X = \sum_{x=0}^{\infty} x \cdot \frac{\lambda^{x} e^{-\lambda}}{x!} = \lambda e^{-\lambda} \sum_{x=1}^{\infty} \frac{\lambda^{x-1}}{(x-1)!} = \lambda e^{-\lambda} \cdot e^{\lambda} = \lambda.
+\]
+
+方差：先求 $\mathbb{E}[X(X-1)]$：
+\[
+\mathbb{E}[X(X-1)] = \sum_{x=0}^{\infty} x(x-1) \cdot \frac{\lambda^{x} e^{-\lambda}}{x!} = \lambda^{2} e^{-\lambda} \sum_{x=2}^{\infty} \frac{\lambda^{x-2}}{(x-2)!} = \lambda^{2} e^{-\lambda} \cdot e^{\lambda} = \lambda^{2}.
+\]
+
+因此 $\mathbb{E}[X^{2}] = \mathbb{E}[X(X-1)] + \mathbb{E}[X] = \lambda^{2} + \lambda$，方差为：
+\[
+\text{var}(X) = \mathbb{E}[X^{2}] - (\mathbb{E}X)^{2} = (\lambda^{2} + \lambda) - \lambda^{2} = \lambda.
+\]
+
+\subsection{Poisson 近似二项分布的证明}\label{sec:derivation-poisson-limit}
+
+\textbf{背景}：当 $n$ 很大、$p$ 很小时，二项分布 $\text{Bin}(n, p)$ 近似 $\text{Poisson}(np)$。
+
+\textbf{推导步骤}：
+
+设 $X_n \sim \text{Bin}(n, p_n)$，其中 $np_n \to \lambda$。对固定的 $k$：
+\[
+\mathbb{P}(X_n = k) = \binom{n}{k} p_n^{k} (1-p_n)^{n-k}.
+\]
+
+写成：
+\[
+= \frac{n(n-1)\cdots(n-k+1)}{k!} p_n^{k} (1-p_n)^{n-k} = \frac{n^{k}p_n^{k}}{k!} (1-p_n)^{n} \cdot \frac{(1-p_n^{-1})(1-2p_n^{-1})\cdots(1-(k-1)p_n^{-1})}{(1-p_n)^{k}}.
+\]
+
+当 $n \to \infty$ 时，$n p_n \to \lambda$，所以 $p_n \to 0$。因此：
+\[
+\lim_{n\to\infty} \mathbb{P}(X_n = k) = \frac{\lambda^{k}}{k!} \cdot \lim_{n\to\infty} (1-p_n)^{n} = \frac{\lambda^{k}}{k!} e^{-\lambda}.
+\]
+
+证毕。
+
+\subsection{Gamma 函数递归公式的推导}\label{sec:derivation-gamma-function}
+
+\textbf{目标}：证明 $\Gamma(\alpha+1) = \alpha\Gamma(\alpha)$。
+
+\textbf{推导步骤}：
+
+由定义：
+\[
+\Gamma(\alpha+1) = \int_{0}^{\infty} x^{\alpha} e^{-x} dx.
+\]
+
+使用分部积分（$u = x^{\alpha}$，$dv = e^{-x}dx$）：
+\[
+\Gamma(\alpha+1) = \left[-x^{\alpha} e^{-x}\right]_{0}^{\infty} + \alpha \int_{0}^{\infty} x^{\alpha-1} e^{-x} dx = 0 + \alpha\Gamma(\alpha) = \alpha\Gamma(\alpha).
+\]
+
+边界项在两端均为零，因为 $x^{\alpha} e^{-x} \to 0$ 当 $x \to \infty$（指数衰减快于多项增长），且当 $x \to 0$ 时 $x^{\alpha} \to 0$（$\alpha > 0$）。
+
+\subsection{Gamma 分布矩母函数的推导}\label{sec:derivation-gamma-mgf}
+
+\textbf{目标}：推导 $\Gamma(\alpha, \beta)$ 分布的 mgf，并求均值和方差。
+
+\textbf{推导步骤}：
+
+由定义：
+\[
+M(t) = \mathbb{E}[e^{tX}] = \int_{0}^{\infty} e^{tx} \frac{1}{\Gamma(\alpha)\beta^{\alpha}} x^{\alpha-1} e^{-x/\beta} dx.
+\]
+
+令 $z = x/\beta$，$dx = \beta dz$：
+\[
+M(t) = \frac{1}{\Gamma(\alpha)} \int_{0}^{\infty} e^{t\beta z} z^{\alpha-1} e^{-z} dz = \frac{1}{\Gamma(\alpha)} \int_{0}^{\infty} z^{\alpha-1} e^{-(1-t\beta)z} dz.
+\]
+
+利用 $\int_{0}^{\infty} z^{\alpha-1} e^{-sz} dz = \Gamma(\alpha)/s^{\alpha}$（$\text{Re}(s) > 0$），得：
+\[
+M(t) = (1 - \beta t)^{-\alpha}, \quad t < \frac{1}{\beta}.
+\]
+
+求导：
+\[
+M'(t) = \alpha\beta(1-\beta t)^{-\alpha-1}, \quad M''(t) = \alpha(\alpha+1)\beta^{2}(1-\beta t)^{-\alpha-2}.
+\]
+
+在 $t=0$ 处求值：
+\[
+\mathbb{E}X = M'(0) = \alpha\beta, \quad \mathbb{E}[X^{2}] = M''(0) = \alpha(\alpha+1)\beta^{2}.
+\]
+
+因此 $\text{var}(X) = \alpha(\alpha+1)\beta^{2} - (\alpha\beta)^{2} = \alpha\beta^{2}$。
+
+\subsection{Gamma 分布可加性的证明}\label{sec:derivation-gamma-additivity}
+
+\textbf{背景}：若 $X_1 \sim \Gamma(\alpha_1, \beta)$ 和 $X_2 \sim \Gamma(\alpha_2, \beta)$ 独立，证明 $X_1 + X_2 \sim \Gamma(\alpha_1 + \alpha_2, \beta)$。
+
+\textbf{推导步骤}：
+
+使用 mgf 方法。独立随机变量和的 mgf 是 mgf 的乘积：
+\[
+M_{X_1+X_2}(t) = M_{X_1}(t) \cdot M_{X_2}(t) = (1-\beta t)^{-\alpha_1} \cdot (1-\beta t)^{-\alpha_2} = (1-\beta t)^{-(\alpha_1+\alpha_2)}.
+\]
+
+这正是 $\Gamma(\alpha_1 + \alpha_2, \beta)$ 的 mgf。证毕。
+
+\subsection{Beta 分布矩的推导}\label{sec:derivation-beta-moments}
+
+\textbf{目标}：推导 $\text{Beta}(\alpha, \beta)$ 分布的均值和方差。
+
+\textbf{推导步骤}：
+
+均值：
+\[
+\mathbb{E}X = \frac{1}{B(\alpha,\beta)} \int_{0}^{1} x \cdot x^{\alpha-1}(1-x)^{\beta-1} dx = \frac{1}{B(\alpha,\beta)} \int_{0}^{1} x^{\alpha}(1-x)^{\beta-1} dx = \frac{B(\alpha+1,\beta)}{B(\alpha,\beta)}.
+\]
+
+利用 $B(\alpha+1,\beta) = \frac{\Gamma(\alpha+1)\Gamma(\beta)}{\Gamma(\alpha+\beta+1)} = \frac{\alpha}{\alpha+\beta} \cdot \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} = \frac{\alpha}{\alpha+\beta} B(\alpha,\beta)$，得：
+\[
+\mathbb{E}X = \frac{\alpha}{\alpha+\beta}.
+\]
+
+方差：先求 $\mathbb{E}[X^{2}]$：
+\[
+\mathbb{E}[X^{2}] = \frac{B(\alpha+2,\beta)}{B(\alpha,\beta)} = \frac{\alpha(\alpha+1)}{(\alpha+\beta)(\alpha+\beta+1)}.
+\]
+
+因此：
+\[
+\text{var}(X) = \mathbb{E}[X^{2}] - (\mathbb{E}X)^{2} = \frac{\alpha(\alpha+1)}{(\alpha+\beta)(\alpha+\beta+1)} - \frac{\alpha^{2}}{(\alpha+\beta)^{2}} = \frac{\alpha\beta}{(\alpha+\beta)^{2}(\alpha+\beta+1)}.
+\]
+
+\subsection{Beta-二项共轭关系}\label{sec:beta-binomial-conjugate}
+
+\textbf{背景}：在贝叶斯统计中，Beta 分布是二项分布的共轭先验。
+
+\textbf{推导步骤}：
+
+设 $X \sim \text{Bin}(n, p)$，先验 $p \sim \text{Beta}(\alpha, \beta)$。
+
+似然：$L(p) \propto p^{x}(1-p)^{n-x}$。
+
+先验：$\pi(p) \propto p^{\alpha-1}(1-p)^{\beta-1}$。
+
+后验：
+\[
+\pi(p \mid x) \propto p^{x}(1-p)^{n-x} \cdot p^{\alpha-1}(1-p)^{\beta-1} = p^{\alpha+x-1}(1-p)^{\beta+n-x-1}.
+\]
+
+这正是 $\text{Beta}(\alpha+x, \beta+n-x)$ 的核。因此后验仍是 Beta 分布。
+
+这就是"共轭先验"的含义：先验和后验属于同一分布族。
+
+\subsection{正态分布矩母函数的推导}\label{sec:derivation-normal-mgf}
+
+\textbf{目标}：推导 $N(\mu, \sigma^{2})$ 的 mgf。
+
+\textbf{推导步骤}：
+
+标准化方法。设 $Z \sim N(0,1)$，则 $X = \mu + \sigma Z$。
+\[
+M_X(t) = \mathbb{E}[e^{tX}] = \mathbb{E}[e^{t(\mu+\sigma Z)}] = e^{\mu t} \mathbb{E}[e^{\sigma t Z}] = e^{\mu t} M_Z(\sigma t).
+\]
+
+对 $Z \sim N(0,1)$，完成平方：
+\[
+M_Z(s) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} e^{sz - z^{2}/2} dz = e^{s^{2}/2} \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} e^{-(z-s)^{2}/2} dz = e^{s^{2}/2}.
+\]
+
+因此：
+\[
+M_X(t) = \exp\left\{\mu t + \frac{1}{2}\sigma^{2}t^{2}\right\}.
+\]
+
+\subsection{正态变量线性组合的证明}\label{sec:derivation-normal-linear-combination}
+
+\textbf{背景}：正态分布在线性变换下闭合。
+
+\textbf{推导步骤}：
+
+设 $X_1 \sim N(\mu_1, \sigma_1^{2})$，$X_2 \sim N(\mu_2, \sigma_2^{2})$ 独立。
+
+$Y = aX_1 + bX_2$ 的 mgf：
+\[
+M_Y(t) = \mathbb{E}[e^{t(aX_1+bX_2)}] = \mathbb{E}[e^{(a t)X_1}] \cdot \mathbb{E}[e^{(b t)X_2}] = M_{X_1}(at) \cdot M_{X_2}(bt).
+\]
+
+代入正态 mgf：
+\[
+M_Y(t) = \exp\left\{\mu_1(at) + \frac{1}{2}\sigma_1^{2}(at)^{2}\right\} \cdot \exp\left\{\mu_2(bt) + \frac{1}{2}\sigma_2^{2}(bt)^{2}\right\} = \exp\left\{(a\mu_1+b\mu_2)t + \frac{1}{2}(a^{2}\sigma_1^{2}+b^{2}\sigma_2^{2})t^{2}\right\}.
+\]
+
+这正是 $N(a\mu_1+b\mu_2, a^{2}\sigma_1^{2}+b^{2}\sigma_2^{2})$ 的 mgf。证毕。
+
+\subsection{二元正态分布矩母函数的推导}\label{sec:derivation-bivariate-mgf}
+
+\textbf{目标}：推导二元正态分布的联合 mgf。
+
+\textbf{推导步骤}：
+
+由二元正态的定义，$(X_1, X_2)$ 的联合 pdf 可写成矩阵形式。联合 mgf 为：
+\[
+M(t_1, t_2) = \mathbb{E}[e^{t_1 X_1 + t_2 X_2}].
+\]
+
+利用条件分布或矩阵形式可证：
+\[
+M(t_1, t_2) = \exp\left\{ t_1\mu_1 + t_2\mu_2 + \frac{1}{2}(t_1^{2}\sigma_1^{2} + 2t_1 t_2 \rho\sigma_1\sigma_2 + t_2^{2}\sigma_2^{2}) \right\}.
+\]
+
+\subsection{$t$ 分布 pdf 的推导}\label{sec:derivation-t-distribution}
+
+\textbf{背景}：$t$ 分布由 $T = Z/\sqrt{\chi^{2}(n)/n}$ 定义，其中 $Z \sim N(0,1)$，$\chi^{2}(n)$ 独立。
+
+\textbf{推导步骤}：
+
+使用变量变换法。设 $U = \chi^{2}(n)$，则 $T = Z/\sqrt{U/n}$，$U$ 与 $Z$ 独立。
+
+联合分布：$f_{Z,U}(z,u) = \phi(z) \cdot f_{\chi^{2}(n)}(u)$。
+
+变换 $(T, U) \to (Z, U)$ 的雅可比为 $|\partial z/\partial t| = \sqrt{u/n}$。
+
+因此 $T$ 的边缘 pdf 为：
+\[
+f_T(t) = \int_{0}^{\infty} f_{Z,U}(t\sqrt{u/n}, u) \sqrt{u/n} \, du.
+\]
+
+完成积分（标准推导）可得：
+\[
+f(t) = \frac{\Gamma((n+1)/2)}{\sqrt{\pi n}\,\Gamma(n/2)} \left(1 + \frac{t^{2}}{n}\right)^{-(n+1)/2}.
+\]
+
+\subsection{$F$ 分布 pdf 的推导}\label{sec:derivation-f-distribution}
+
+\textbf{背景}：$F$ 分布由 $F = \frac{X_1/m}{X_2/n}$ 定义，其中 $X_1 \sim \chi^{2}(m)$，$X_2 \sim \chi^{2}(n)$ 独立。
+
+\textbf{推导步骤}：
+
+设 $W = F$，$V = X_2$，则 $X_1 = W \cdot \frac{m}{n} V$。
+
+变换的雅可比为 $|\partial(x_1,x_2)/\partial(w,v)| = \frac{m}{n}v$。
+
+积分掉 $v$ 可得 $W$ 的 pdf：
+\[
+f(w) = \frac{\Gamma((m+n)/2)}{\Gamma(m/2)\Gamma(n/2)} \left(\frac{m}{n}\right)^{m/2} \frac{w^{m/2-1}}{(1 + mw/n)^{(m+n)/2}}, \quad w > 0.
+\]
+
+\subsection{$F$ 分布矩的推导}\label{sec:derivation-f-moments}
+
+\textbf{目标}：求 $F(m, n)$ 分布的均值和方差。
+
+\textbf{推导步骤}：
+
+由定义 $F = \frac{X_1/m}{X_2/n} = \frac{n}{m} \cdot \frac{X_1}{X_2}$，其中 $X_1 \sim \chi^{2}(m)$，$X_2 \sim \chi^{2}(n)$ 独立。
+
+$E(F)$ 的存在性要求 $n > 2$：
+\[
+\mathbb{E}F = \frac{n}{m} \cdot \frac{\mathbb{E}[X_1]}{\mathbb{E}[X_2]} = \frac{n}{m} \cdot \frac{m}{n} = \frac{n}{n-2}, \quad n > 2.
+\]
+
+方差的计算类似，需要 $\mathbb{E}[F^{2}]$，要求 $n > 4$：
+\[
+\text{var}(F) = \frac{2n^{2}(m+n-2)}{m(n-2)^{2}(n-4)}, \quad n > 4.
+\]

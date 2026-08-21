@@ -1,0 +1,423 @@
+% Chapter 11: Basics of Markov chain simulation
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{马尔可夫链模拟基础}
+
+\section{本章导论}
+
+在前几章中，我们学习了如何通过共轭先验和解析计算来处理贝叶斯推断。然而，现实世界中的大多数贝叶斯模型都无法得到解析解——后验分布涉及高维积分，这些积分通常没有闭式形式。
+
+这就引出了一个根本性的问题：\textbf{如何从无法解析表达的分布中抽取样本？}
+
+答案在统计物理和概率论中早有先例。物理学家 Metropolis 和 Ulam 在 20 世纪 40 年代就发现，通过模拟随机过程可以从复杂分布中抽取样本。这一思想后来发展成为马尔可夫链蒙特卡洛（MCMC）方法，成为现代贝叶斯统计的计算基石。
+
+本章我们将学习两类核心的模拟技术：
+\begin{enumerate}
+  \item \textbf{重要性抽样（Importance Sampling）}和\textbf{拒绝抽样（Rejection Sampling）}：直接从目标分布抽样的技术
+  \item \textbf{马尔可夫链模拟（Markov Chain Simulation）}：通过构造马尔可夫链来探索目标分布的技术
+\end{enumerate}
+
+这些方法共同构成了贝叶斯计算的工具箱，使我们能够处理从前无法解决的复杂模型。
+
+\section{重要性抽样}
+
+\subsection{基本思想}
+
+考虑一个简单的问题：我们希望计算某个函数 $h(\theta)$ 在后验分布下的期望
+\begin{equation}\label{eq:posterior-expectation}
+\mathbb{E}(h(\theta) | y) = \int h(\theta) \, p(\theta | y) \, d\theta
+\end{equation}
+但直接计算这个积分通常是不可行的。
+
+重要性抽样的核心思想是：\textbf{不直接从 $p(\theta | y)$ 抽样，而是从一个更容易抽样的分布 $g(\theta)$ 中抽取样本，然后用权重调整来估计期望。}
+
+具体地，如果我们从 $g(\theta)$ 中抽取样本 $\theta^{(1)}, \ldots, \theta^{(m)}$，则
+\begin{equation}\label{eq:is-estimate}
+\mathbb{E}(h(\theta) | y) \approx \frac{1}{m} \sum_{i=1}^{m} h(\theta^{(i)}) \cdot \frac{p(\theta^{(i)} | y)}{g(\theta^{(i)})}
+\end{equation}
+其中比值 $\frac{p(\theta | y)}{g(\theta)}$ 称为\textbf{重要性权重（importance weight）}。
+
+\subsection{重要性权重的计算}
+
+注意到 $p(\theta | y) \propto p(y | \theta) p(\theta)$，因此重要性权重可以写成
+\begin{equation}\label{eq:importance-weight}
+w(\theta) = \frac{p(y | \theta) p(\theta)}{g(\theta)}
+\end{equation}
+这个权重不需要归一化常数——只要 $g(\theta)$ 的支撑包含 $p(\theta | y)$ 的支撑即可。
+
+\begin{Remark}
+  重要性抽样的效果高度依赖于 $g(\theta)$ 和 $p(\theta | y)$ 的匹配程度。如果 $g(\theta)$ 在 $p(\theta | y)$ 重要的区域取值很小，重要性权重会变得极不稳定（方差可能趋于无穷大）。
+\end{Remark}
+
+\section{拒绝抽样}
+
+\subsection{动机：为什么需要拒绝？}
+
+重要性抽样虽然简单，但有一个根本缺陷：当 $g(\theta)$ 和 $p(\theta | y)$ 匹配不好时，重要性权重的方差会爆炸。
+
+拒绝抽样（Rejection Sampling）提供了一种保证收敛精度的替代方案。其思想是：\textbf{找到一个可抽样的覆盖分布，并在接受率上引入随机拒绝机制。}
+
+\subsection{算法}
+
+设 $p(\theta)$ 是目标分布（可以是未归一化的），$g(\theta)$ 是我们能抽样的提议分布，$M$ 是一个常数使得对所有 $\theta$ 都有
+\begin{equation}\label{eq:coverage-condition}
+p(\theta) \leq M \cdot g(\theta)
+\end{equation}
+
+拒绝抽样的步骤如下：
+\begin{enumerate}
+  \item 从 $g(\theta)$ 中抽取候选样本 $\theta^*$
+  \item 计算接受概率 $u = \frac{p(\theta^*)}{M \cdot g(\theta^*)}$
+  \item 从 $\mathrm{Uniform}(0,1)$ 抽取 $u^*$
+  \item 如果 $u^* \leq u$，则接受 $\theta^*$；否则拒绝
+\end{enumerate}
+
+被接受的样本 $\theta^*$ 确实来自目标分布 $p(\theta)$。\footnote{严格证明见附录 \cref{sec:derivation-rejection-sampling}}
+
+\begin{Example}[拒绝抽样的几何直观]
+  想象在 $p(\theta)$ 曲线下方投掷飞镖。如果我们的提议分布 $g(\theta)$ 是均匀的，那么 $M$ 就是 $p(\theta)$ 的最大值的倒数（归一化后）。只有落在 $p(\theta)$ 曲线下方的点才会被接受。
+\end{Example}
+
+\subsection{接受率的计算}
+
+拒绝抽样的期望接受率为下式。\footnote{推导见附录 \cref{sec:derivation-rejection-acceptance}}
+\begin{equation}\label{eq:rejection-acceptance-rate}
+\text{accept rate} = \frac{1}{M} \int \min\bigl(p(\theta), M g(\theta)\bigr) \, d\theta
+\end{equation}
+当覆盖条件 \cref{eq:coverage-condition} 成立时，上式简化为 $\frac{1}{M} \int p(\theta) \, d\theta = \frac{1}{M}$。
+
+因此，我们需要选择尽可能小的 $M$ 来提高接受率，但 $M$ 必须满足对所有 $\theta$ 的覆盖条件。
+
+这个条件是拒绝抽样的主要限制：对于高维分布或支撑集不规则的分布，找到一个有效的覆盖分布 $g(\theta)$ 和常数 $M$ 往往非常困难。
+
+\section{重要性重抽样（SIR）}
+
+\subsection{动机：结合两种方法的优势}
+
+拒绝抽样保证了精度，但接受率可能极低；重要性抽样效率高，但方差可能失控。
+
+\textbf{重要性重抽样（SIR, Sampling Importance Resampling）}结合了两者的优点：首先用重要性抽样生成大量加权样本，然后通过重抽样来消除权重的不均匀性。
+
+\subsection{算法}
+
+SIR 的步骤：
+\begin{enumerate}
+  \item 从提议分布 $g(\theta)$ 抽取 $m$ 个候选样本 $\theta^{(1)}, \ldots, \theta^{(m)}$
+  \item 计算每个样本的重要性权重 $w^{(i)} = \frac{p(\theta^{(i)} | y)}{g(\theta^{(i)})}$
+  \item 归一化权重：$\tilde{w}^{(i)} = \frac{w^{(i)}}{\sum_{j=1}^{m} w^{(j)}}$
+  \item 从 $\{ \theta^{(1)}, \ldots, \theta^{(m)} \}$ 中按概率 $\tilde{w}^{(i)}$ 有放回抽取 $n$ 个样本
+\end{enumerate}
+
+最终得到的 $n$ 个样本近似服从目标分布 $p(\theta | y)$。
+
+\begin{Remark}
+  SIR 的有效性依赖于 $m$ 足够大——$m$ 越大，重抽样得到的分布越接近真实目标分布。通常取 $m = 5n$ 到 $m = 10n$。
+\end{Remark}
+
+SIR 方法在实际应用中非常广泛，特别是在处理层次模型和混合模型时。它的缺点是仍然依赖于选择合适的提议分布 $g(\theta)$。
+
+\section{马尔可夫链基础}
+
+\subsection{从独立抽样到依赖抽样}
+
+前述方法有一个共同特点：每次抽样都是独立的。但对于复杂的高维分布，找到一个好的提议分布本身就是一个难题。
+
+马尔可夫链模拟提供了一种革命性的替代思路：\textbf{不追求独立同分布抽样，而是构造一个马尔可夫链，使其平稳分布恰好是我们想要的目标分布。}
+
+这样，只需要运行马尔可夫链足够长时间，就可以从目标分布中抽样——即使我们永远无法写出这个分布的解析形式。
+
+\subsection{马尔可夫链的定义}
+
+回忆一下，\textbf{马尔可夫链}是一个随机过程 $\theta^{(1)}, \theta^{(2)}, \ldots$，满足马尔可夫性质：
+\begin{equation}\label{eq:markov-property}
+\theta^{(t+1)} | \theta^{(1)}, \ldots, \theta^{(t)} \sim P(\theta^{(t+1)} | \theta^{(t)})
+\end{equation}
+也就是说，下一个状态只依赖于当前状态，与历史无关。
+
+转移核 $P(\theta' | \theta)$ 完全决定了链的行为。
+
+\subsection{平稳分布}
+
+如果存在分布 $\pi(\theta)$ 使得
+\begin{equation}\label{eq:stationary-distribution}
+\pi(\theta') = \int P(\theta' | \theta) \, \pi(\theta) \, d\theta
+\end{equation}
+则称 $\pi(\theta)$ 为该马尔可夫链的\textbf{平稳分布（stationary distribution）}。
+
+我们的目标是：构造一个马尔可夫链，使其平稳分布 $\pi(\theta) = p(\theta | y)$（后验分布）。
+
+\subsection{细致平衡条件}
+
+一个充分条件是\textbf{细致平衡（detailed balance）}：\footnote{推导见附录 \cref{sec:derivation-detailed-balance}}
+\begin{equation}\label{eq:detailed-balance}
+P(\theta' | \theta) \, \pi(\theta) = P(\theta | \theta') \, \pi(\theta')
+\end{equation}
+如果转移核满足细致平衡，则平稳分布存在且就是 $\pi(\theta)$。
+
+\subsection{收敛性}
+
+对于大多数我们构造的马尔可夫链，在适当条件下，链会从任何初始值出发，在运行足够多步后，收敛到平稳分布。这意味着：
+
+\begin{enumerate}
+  \item 我们可以用链的样本近似目标分布
+  \item 收敛所需的步数称为"\textbf{混合时间（mixing time）}"
+  \item 我们通常需要"\textbf{预烧期（burn-in）}"——丢弃前若干步的样本
+\end{enumerate}
+
+理解马尔可夫链的收敛行为是有效使用 MCMC 方法的关键。
+
+\section{Metropolis 算法}
+
+\subsection{历史背景}
+
+1953 年，Metropolis、Rosenbluth、Rosenbluth、Teller 和 Teller 在一项关于分子物理的工作中提出了著名的 Metropolis 算法。\cite{metropolis1953equation} 这一算法后来被 Hastings 在 1970 年推广为更一般的形式。\cite{hastings1970monte}
+
+\textbf{毫不夸张地说，Metropolis 算法彻底改变了贝叶斯统计的计算格局。}
+
+\subsection{算法思想}
+
+Metropolis 算法的巧妙之处在于：它只需要能计算目标分布的\textbf{非归一化}形式 $p^*(\theta) = c \cdot p(\theta | y)$，而不需要知道归一化常数 $c$。
+
+算法的步骤：
+\begin{enumerate}
+  \item 选择一个对称的提议分布 $q(\theta' | \theta) = q(\theta | \theta')$（例如，以当前值为均值的高斯分布）
+  \item 从 $q(\cdot | \theta^{(t)})$ 抽取候选样本 $\theta^*$
+  \item 计算接受比 $r = \frac{p^*(\theta^*)}{p^*(\theta^{(t)})}$
+  \item 以概率 $\min(1, r)$ 接受候选值 $\theta^{(t+1)} = \theta^*$；否则 $\theta^{(t+1)} = \theta^{(t)}$
+\end{enumerate}
+
+\subsection{为什么有效？}
+
+可以验证，Metropolis 算法构造的马尔可夫链满足细致平衡 \cref{eq:detailed-balance}，因此其平稳分布正是目标分布 $p(\theta | y)$。\footnote{详细证明见附录 \cref{sec:derivation-metropolis}}
+
+关键的洞察是：即使我们不知道归一化常数，比值 $r = \frac{p^*(\theta^*)}{p^*(\theta^{(t)})}$ 也不依赖于归一化常数，因为它们被抵消了。
+
+\begin{Example}[一维高斯目标分布]
+  假设目标分布是标准正态分布 $p(\theta) = \phi(\theta)$。使用对称的随机游走提议分布 $q(\theta' | \theta) = \mathrm{N}(\theta', \theta, \sigma^2)$。
+
+  接受比为
+  \begin{equation}\label{eq:gaussian-acceptance-ratio}
+  r = \frac{p(\theta^*)}{p(\theta^{(t)})} = \exp\!\left(-\frac{1}{2}(\theta^*)^2 + \frac{1}{2}(\theta^{(t)})^2\right)
+  \end{equation}
+  候选值以概率 $\min(1, r)$ 被接受。
+
+  如果候选值在概率密度更高的区域（更接近 0），则 $r > 1$，必然被接受；如果在更低区域（$r < 1$），则以概率 $r$ 接受，以概率 $1 - r$ 拒绝。
+\end{Example}
+
+\subsection{提议分布的选择}
+
+提议分布的选择直接影响 Metropolis 算法的效率：
+
+\begin{enumerate}
+  \item \textbf{步长（scale）}：如果步长太大，接受率会很低，链几乎不动；如果步长太小，混合会很慢
+  \item \textbf{形状}：提议分布应该与目标分布的形状大致匹配
+  \item 经验法则：目标接受率约为 0.25 到 0.5
+\end{enumerate}
+
+调参是使用 Metropolis 算法的重要技巧，需要根据具体问题摸索。
+
+\section{Metropolis-Hastings 算法}
+
+\subsection{推广到非对称提议}
+
+Metropolis 算法要求提议分布对称，这在很多情况下限制了灵活性。Hastings 在 1970 年提出了一个更一般的版本，允许使用非对称的提议分布。
+
+\subsection{算法}
+
+Metropolis-Hastings 算法的步骤：
+\begin{enumerate}
+  \item 从提议分布 $q(\theta' | \theta^{(t)})$ 抽取候选样本 $\theta^*$
+  \item 计算接受比
+    \begin{equation}\label{eq:mh-acceptance-ratio}
+    r = \frac{p^*(\theta^*)}{p^*(\theta^{(t)})} \cdot \frac{q(\theta^{(t)} | \theta^*)}{q(\theta^* | \theta^{(t)})}
+    \end{equation}
+  \item 以概率 $\min(1, r)$ 接受或拒绝
+\end{enumerate}
+
+接受比中的额外因子 $\frac{q(\theta^{(t)} | \theta^*)}{q(\theta^* | \theta^{(t)})}$ 纠正了非对称提议带来的偏差。
+
+当 $q$ 是对称的时，这个因子等于 1，Metropolis-Hastings 算法就退化为普通的 Metropolis 算法。
+
+\section{Gibbs 抽样}
+
+\subsection{条件分布的神奇作用}
+
+在多参数问题中，直接从联合后验分布抽样通常是不可能的。但如果我们可以从各个参数的\textbf{条件分布}中抽样，就会大大简化问题。
+
+\textbf{Gibbs 抽样}正是利用了这一思想。它是 Metropolis-Hastings 算法的一种特殊形式，提议分布就是条件分布，因此接受率恒为 1。
+
+这一方法由 Geman 和 Geman 在 1984 年提出，\cite{geman1984stochastic} 最初用于图像恢复，后来成为贝叶斯统计的核心计算工具。
+
+\subsection{算法}
+
+对于 $d$ 维参数 $\theta = (\theta_1, \ldots, \theta_d)$，Gibbs 抽样的步骤：
+
+\begin{enumerate}
+  \item 初始化 $\theta^{(0)} = (\theta_1^{(0)}, \ldots, \theta_d^{(0)})$
+  \item 对于 $t = 1, 2, \ldots$：
+    \begin{enumerate}
+      \item 从 $p(\theta_1 | \theta_2^{(t)}, \ldots, \theta_d^{(t)}, y)$ 抽取 $\theta_1^{(t+1)}$
+      \item 从 $p(\theta_2 | \theta_1^{(t+1)}, \theta_3^{(t)}, \ldots, \theta_d^{(t)}, y)$ 抽取 $\theta_2^{(t+1)}$
+      \item $\ldots$
+      \item 从 $p(\theta_d | \theta_1^{(t+1)}, \ldots, \theta_{d-1}^{(t+1)}, y)$ 抽取 $\theta_d^{(t+1)}$
+    \end{enumerate}
+\end{enumerate}
+
+一轮更新完成后，$\theta^{(t+1)} = (\theta_1^{(t+1)}, \ldots, \theta_d^{(t+1)})$。
+
+\subsection{为什么接受率为 1？}
+
+考虑更新 $\theta_j$ 时，提议分布就是条件分布 $q(\theta_j' | \theta_{-j}) = p(\theta_j' | \theta_{-j}, y)$。\footnote{详细推导见附录 \cref{sec:derivation-gibbs-acceptance}}
+
+接受比为
+\begin{equation}\label{eq:gibbs-acceptance-ratio}
+r = \frac{p^*(\theta_j', \theta_{-j})}{p^*(\theta_j, \theta_{-j})} \cdot \frac{p(\theta_j | \theta_{-j}, y)}{p(\theta_j' | \theta_{-j}, y)}
+\end{equation}
+由于 $p^*(\theta_j', \theta_{-j}) = p^*(\theta_{-j}) \cdot p(\theta_j' | \theta_{-j}, y)$，类似地 $p^*(\theta_j, \theta_{-j}) = p^*(\theta_{-j}) \cdot p(\theta_j | \theta_{-j}, y)$，于是两个因子互为倒数，$r = 1$。因此 Gibbs 抽样总是接受提议值。
+
+\subsection{Gibbs 抽样的优势与局限}
+
+\begin{Remark}
+  Gibbs 抽样的优势在于：
+  \begin{enumerate}
+    \item 无需调参（没有接受率问题）
+    \item 每步只需要从一元条件分布抽样，通常比较简单
+    \item 自然地利用了问题的条件结构
+  \end{enumerate}
+
+  局限性在于：
+  \begin{enumerate}
+    \item 必须能够从所有条件分布有效抽样
+    \item 当条件分布不是标准形式时，可能需要其他 MCMC 步骤（\textbf{混合 MCMC}）
+    \item 参数高度相关时，收敛可能很慢
+  \end{enumerate}
+\end{Remark}
+
+\section{从后验分布抽样的实践}
+
+\subsection{构建 MCMC 策略}
+
+在实际应用中，构建一个有效的 MCMC 抽样器通常需要结合多种技术：
+
+\begin{enumerate}
+  \item \textbf{识别条件结构}：首先分析模型，找出哪些条件分布是共轭的或容易抽样的
+  \item \textbf{Gibbs 为主}：优先使用 Gibbs 抽样处理条件分布可解析处理的部分
+  \item \textbf{Metropolis-Hastings 补充}：对难以抽样的条件分布，使用 Metropolis-Hastings 步骤
+  \item \textbf{块更新}：有时需要对多个参数进行联合更新以加速收敛
+\end{enumerate}
+
+\subsection{收敛诊断}
+
+MCMC 的一个核心问题是判断链是否已经收敛到目标分布。常用的诊断方法包括：
+
+\begin{enumerate}
+  \item \textbf{图形诊断}：绘制链的轨迹图（trace plot），检查是否"平稳"
+  \item \textbf{Gelman-Rubin 统计量}：比较多条链的方差
+  \item \textbf{自相关函数（ACF）}：检查样本之间的相关性
+  \item \textbf{有效样本量（ESS）}：考虑自相关后的等效独立样本数
+\end{enumerate}
+
+需要强调的是，这些诊断方法只能检测\textbf{未收敛}，而不能保证收敛。良好的建模实践要求使用多种诊断并谨慎解释结果。
+
+\subsection{预烧期和 thinning}
+
+\begin{enumerate}
+  \item \textbf{预烧期（burn-in）}：丢弃前 $b$ 次迭代，因为链在达到平稳分布之前可能处于"预热"状态
+  \item \textbf{Thinning（稀疏化）}：每隔 $k$ 步取一个样本，以减少样本自相关
+\end{enumerate}
+
+这些技术虽然会减少有效样本量，但可以提高估计的独立性，是实践中常用的策略。
+
+\section{示例：从分层模型抽样}
+
+为了说明 MCMC 的实际应用，考虑一个简单的分层模型：
+
+\begin{equation}\label{eq:hierarchical-model}
+y_j | \theta_j \sim \mathrm{N}(\theta_j, \sigma^2), \quad \theta_j | \mu, \tau \sim \mathrm{N}(\mu, \tau^2)
+\end{equation}
+
+其中 $\sigma^2$ 已知，我们希望从后验分布 $p(\mu, \tau, \theta | y)$ 中抽样。
+
+使用 Gibbs 抽样，我们可以依次从以下条件分布抽样：\footnote{具体推导见附录 \cref{sec:derivation-hierarchical-conditionals}}
+
+\begin{enumerate}
+  \item $p(\theta_j | \mu, \tau, y)$：这是正态分布
+    \[
+    \theta_j | \mu, \tau, y \sim \mathrm{N}\!\left(\frac{\frac{\mu}{\tau^2} + \frac{y_j}{\sigma^2}}{\frac{1}{\tau^2} + \frac{1}{\sigma^2}}, \left(\frac{1}{\tau^2} + \frac{1}{\sigma^2}\right)^{-1}\right)
+    \]
+  \item $p(\mu | \theta, \tau, y)$：$\mu$ 的条件后验也是正态的
+    \[
+    \mu | \theta, \tau, y \sim \mathrm{N}\!\left(\frac{1}{J}\sum_{j=1}^J \theta_j, \frac{\tau^2}{J}\right)
+    \]
+  \item $p(\tau | \theta, \mu, y)$：这个条件分布通常不是标准形式，需要 Metropolis 步骤
+\end{enumerate}
+
+这个例子展示了\textbf{混合 MCMC}的价值：利用 Gibbs 抽样的简便性，同时用 Metropolis 处理非标准条件分布。
+
+\section{简单代码示例}
+
+为完整起见，以下是 Metropolis 算法的 R 语言实现示例：
+
+\begin{verbatim}
+# Metropolis algorithm for sampling from N(0,1)
+metropolis <- function(n, sigma_proposal = 1) {
+  samples <- numeric(n)
+  theta <- 0  # initial value
+
+  for (i in 1:n) {
+    # Propose new value
+    theta_star <- rnorm(1, mean = theta, sd = sigma_proposal)
+
+    # Compute acceptance ratio (unnormalized)
+    log_r <- -0.5 * (theta_star^2 - theta^2)
+
+    # Accept or reject
+    if (log(runif(1)) < log_r) {
+      theta <- theta_star
+    }
+    samples[i] <- theta
+  }
+  return(samples)
+}
+
+# Run the algorithm
+set.seed(123)
+samples <- metropolis(10000, sigma_proposal = 0.5)
+
+# Check results
+hist(samples, prob = TRUE, breaks = 50)
+curve(dnorm(x), add = TRUE, col = "red")
+\end{verbatim}
+
+这个简单的例子展示了 Metropolis 算法的核心逻辑：提议 $\rightarrow$ 计算接受比 $\rightarrow$ 接受或拒绝。
+
+\section{本章小结}
+
+本章我们学习了贝叶斯计算的核心技术——马尔可夫链模拟：
+
+\begin{enumerate}
+  \item \textbf{重要性抽样}：通过提议分布和权重估计期望，但方差可能不稳定
+  \item \textbf{拒绝抽样}：保证精度的覆盖抽样方法，但接受率可能很低
+  \item \textbf{SIR}：结合重要性抽样和重抽样，实用性强
+  \item \textbf{马尔可夫链基础}：平稳分布、细致平衡、收敛性概念
+  \item \textbf{Metropolis 算法}：利用对称提议分布从目标分布抽样
+  \item \textbf{Metropolis-Hastings 算法}：推广到非对称提议分布
+  \item \textbf{Gibbs 抽样}：利用条件分布的特殊结构，接受率恒为 1
+  \item \textbf{实践要点}：收敛诊断、预烧期、混合 MCMC 策略
+\end{enumerate}
+
+这些技术共同构成了现代贝叶斯统计的计算基础，使我们能够处理从前无法解决的高维复杂模型。
+
+下一章我们将学习如何进一步提高 MCMC 的计算效率，包括切片抽样（slice sampling）、Hamiltonian Monte Carlo 等高级技术。
+
+\section{参考文献}
+
+\begin{thebibliography}{99}
+  \bibitem{metropolis1953equation} Metropolis, N., Rosenbluth, A. W., Rosenbluth, M. N., Teller, A. H., \& Teller, E. (1953). Equation of state calculations by fast computing machines. \textit{The Journal of Chemical Physics}, 21(6), 1087--1092.
+
+  \bibitem{hastings1970monte} Hastings, W. K. (1970). Monte Carlo sampling methods using Markov chains and their applications. \textit{Biometrika}, 57(1), 97--109.
+
+  \bibitem{geman1984stochastic} Geman, S., \& Geman, D. (1984). Stochastic relaxation, Gibbs distributions, and the Bayesian restoration of images. \textit{IEEE Transactions on Pattern Analysis and Machine Intelligence}, (6), 721--741.
+\end{thebibliography}
+
+\endinput

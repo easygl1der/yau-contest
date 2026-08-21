@@ -1,0 +1,184 @@
+\chapter*{引言：从随机性中学习}\label{chap:intro}
+\addcontentsline{toc}{chapter}{引言：从随机性中学习}
+
+\section{为什么需要概率论？}\label{sec:why-probability}
+
+当我们掷一枚硬币时，结果是"正面"还是"反面\"？在单次实验中，答案似乎是确定的——但我们无法准确预测。这看似矛盾的现象揭示了一个深刻的真理：\textbf{随机性并非无知，而是世界的固有属性}。
+
+数理统计（mathematical statistics）的核心问题是：\textit{给定一组带有随机性的观测数据，我们如何从中提取关于未知真理的信息？}
+
+要回答这个问题，我们必须首先拥有描述随机现象的数学语言。这正是概率论（probability theory）存在的意义。概率论提供了一套严谨的公理体系，使我们能够：
+\begin{itemize}
+    \item 量化"可能性\"的大小（概率）；
+    \item 描述随机变量的行为（分布）；
+    \item 研究多个随机变量之间的关系（相关性、独立性）；
+    \item 在大样本极限下揭示隐藏的规律（中心极限定理）。
+\end{itemize}
+
+正如微积分为物理学提供了描述连续变化的工具，概率论为数理统计提供了描述随机性的工具。\textbf{没有坚实的概率论基础，统计推断将成为无本之木。}
+
+\userannotation{这部分类比是否恰当？微积分 vs 概率论}
+
+\section{教材内容预览}\label{sec:textbook-preview}
+
+本书（Hogg, McKean \& Craig, \textit{Introduction to Mathematical Statistics}）的前三章构建了概率论的基础设施，为后续的统计推断做好铺垫。这是一场从具体到抽象、从低维到高维的旅程。
+
+\subsection{第一章：概率与分布（Probability and Distributions）}\label{sec:ch1-preview}
+
+第一章从最基本的问题出发：\textit{如何用数学语言描述"可能性\"？}
+
+\vskip 0.3em
+\noindent\textbf{1. 概率公理化.} 我们从集合论开始，建立样本空间（sample space）和事件（event）的概念。然后引入概率集函数（probability set function）$P$，这是一个满足非负性、归一化、可列可加性的集合函数。\textit{为什么需要公理化？因为我们需要一套在任何情况下都适用的严格规则，而不是依赖直觉。}
+
+\vskip 0.3em
+\noindent\textbf{2. 分布函数.} 随机变量（random variable）是将随机现象数量化的桥梁。对于随机变量 $X$，其累积分布函数（cumulative distribution function, CDF）定义为
+\[
+F_X(x) = \mathbb{P}(X \leq x).
+\]
+CDF 完整描述了随机变量的概率行为。对于离散型随机变量，我们用概率质量函数（probability mass function, pmf）$p_X(x) = \mathbb{P}(X = x)$；对于连续型随机变量，我们用概率密度函数（probability density function, pdf）$f_X(x)$，满足 $\mathbb{P}(a < X \leq b) = \int_a^b f_X(x)\,dx$。
+
+\textit{为什么需要同时引入 CDF、pmf、pdf？这三种描述适用于不同场景。CDF 是最一般的概念；pmf 适用于离散型变量（如二项分布）；pdf 适用于连续型变量（如正态分布）。}
+
+\vskip 0.3em
+\noindent\textbf{3. 条件概率与贝叶斯公式.} 条件概率（conditional probability）$P(A \mid B)$ 刻画了在已知 $B$ 发生的前提下 $A$ 发生的可能性。贝叶斯公式（Bayes' theorem）
+\[
+P(B \mid A) = \frac{P(A \mid B) P(B)}{P(A)}
+\]
+是统计推断的基石——它允许我们从"结果\"反向推断"原因\"的概率。
+
+\vskip 0.3em
+\noindent\textbf{4. 条件期望.} 条件期望（conditional expectation）$\mathbb{E}(X \mid Y=y)$ 是期望的概念在知道另一个变量信息下的推广。这在预测问题中至关重要：当我们知道 $Y$ 的值时，$X$ 的最佳预测恰好是条件期望。
+
+\vskip 0.3em
+\noindent\textbf{5. 变换（Transformations）.} 如果 $X$ 是一个随机变量，当我们对其进行变换 $Y = g(X)$ 时，如何求 $Y$ 的分布？这是统计学中的核心操作——我们经常需要对数据进行函数变换以简化分析。
+
+\vskip 0.3em
+\noindent\textbf{6. 重要不等式.} 本章以马尔可夫不等式（Markov inequality）和切比雪夫不等式（Chebyshev inequality）结尾。这些不等式建立了概率与矩之间的关系，尽管比较粗糙，但它们是证明大数定律等深刻结果的工具。
+
+\begin{itemize}
+    \item \textbf{马尔可夫不等式:} 若 $X \geq 0$，则 $\mathbb{P}(X \geq t) \leq \mathbb{E}(X)/t$
+    \item \textbf{切比雪夫不等式:} $\mathbb{P}(|X - \mathbb{E}X| \geq t) \leq \text{var}(X)/t^2$
+\end{itemize}
+
+\textit{为什么关注不等式而不是精确概率？因为在信息不完整时，不等式提供了我们能获得的最好估计。}
+
+本章还包含 R 语言的基本使用——通过 Monte Carlo 模拟来验证理论结果。这体现了统计学的实践性：\textit{理论必须经受计算的检验。}
+
+\subsection{第二章：多元分布（Multivariate Distributions）}\label{sec:ch2-preview}
+
+第二章将我们从单变量世界带入多变量世界。\textit{为什么要研究多个随机变量？因为现实中的现象往往是多因素共同作用的结果——人的身高与体重、教育的投入与产出、药物的剂量与疗效。}
+
+\vskip 0.3em
+\noindent\textbf{1. 联合分布与边缘分布.} 对于两个随机变量 $X$ 和 $Y$，其联合分布（joint distribution）$F_{XY}(x,y) = \mathbb{P}(X \leq x, Y \leq y)$ 完整描述了它们的共同行为。从联合分布，我们可以"消去\"一个变量得到边缘分布（marginal distribution）：
+\[
+F_X(x) = \lim_{y \to \infty} F_{XY}(x,y).
+\]
+
+\textit{为什么需要边缘分布？因为我们有时只关心其中一个变量，而忽略另一个的影响。}
+
+\vskip 0.3em
+\noindent\textbf{2. 条件分布与条件期望.} 给定 $Y=y$ 下 $X$ 的条件分布为
+\[
+F_{X \mid Y}(x \mid y) = \mathbb{P}(X \leq x \mid Y = y).
+\]
+条件期望 $\mathbb{E}(X \mid Y = y)$ 是最佳预测——在均方误差意义下，它最小化了 $X$ 的预测误差。
+
+\vskip 0.3em
+\noindent\textbf{3. 相关系数.} 相关系数（correlation coefficient）
+\[
+\text{corr}(X,Y) = \frac{\text{cov}(X,Y)}{\sqrt{\text{var}(X)\text{var}(Y)}}
+\]
+度量了两个变量之间的线性关系强度。\textit{为什么关注"线性\"关系？因为线性相关是最容易处理的依赖形式，它连接了概率论与线性代数。}
+
+\vskip 0.3em
+\noindent\textbf{4. 矩阵形式与线性变换.} 当我们推广到 $n$ 维随机向量 $\mathbf{X} = (X_1, \ldots, X_n)'$ 时，协方差矩阵（covariance matrix）
+\[
+\boldsymbol{\Sigma} = \text{cov}(\mathbf{X}) = \mathbb{E}[(\mathbf{X} - \boldsymbol{\mu})(\mathbf{X} - \boldsymbol{\mu})']
+\]
+成为了描述多变量随机性的核心工具。线性变换 $\mathbf{Y} = \mathbf{A}\mathbf{X} + \mathbf{b}$ 的协方差矩阵为 $\mathbf{A}\boldsymbol{\Sigma}\mathbf{A}'$。
+
+\textit{为什么使用矩阵语言？因为矩阵提供了处理高维数据的紧凑 notation，同时揭示了线性变换与二次型之间的深刻联系。}
+
+\vskip 0.3em
+\noindent\textbf{5. 变换.} 与单变量情况类似，我们需要研究多变量变换：若 $(X,Y)$ 的联合分布已知，如何求 $(U,V) = g(X,Y)$ 的联合分布？在 $g$ 是双射时，我们有变量变换公式。
+
+\subsection{第三章：一些特殊分布（Some Special Distributions）}\label{sec:ch3-preview}
+
+第三章介绍统计学中最常用的概率分布。\textit{为什么要专门研究这些分布？因为它们在理论和应用中反复出现——掌握它们就像掌握基本词汇表。}
+
+\vskip 0.3em
+\noindent\textbf{1. 二项分布与相关分布.} 二项分布（binomial distribution）$B(n,p)$ 描述了 $n$ 次独立 Bernoulli 试验中成功次数的分布。其近亲包括：
+\begin{itemize}
+    \item \textbf{几何分布:} 首次成功出现的试验次数
+    \item \textbf{负二项分布:} 第 $r$ 次成功出现的试验次数
+    \item \textbf{超几何分布:} 不放回抽样时的成功次数（用于总体规模有限的情形）
+\end{itemize}
+
+\vskip 0.3em
+\noindent\textbf{2. 泊松分布.} 泊松分布（Poisson distribution）$P(\lambda)$ 是稀有事件发生次数的极限分布。它具有独特的性质：若 $X \sim P(\lambda_1)$，$Y \sim P(\lambda_2)$ 且独立，则 $X+Y \sim P(\lambda_1 + \lambda_2)$（可加性）。
+
+\vskip 0.3em
+\noindent\textbf{3. 伽马分布与卡方分布.} 伽马分布（gamma distribution）$\Gamma(\alpha, \beta)$ 是连接多种分布的统一框架：
+\begin{itemize}
+    \item 当 $\alpha = n/2$，$\beta = 1/2$ 时，得到\textbf{卡方分布} $\chi^2(n)$——在方差估计和拟合优度检验中核心地位
+    \item 当 $\alpha = 1$ 时，得到指数分布
+    \item 卡方分布的加法性质：若 $X_1 \sim \chi^2(n_1)$，$X_2 \sim \chi^2(n_2)$ 独立，则 $X_1 + X_2 \sim \chi^2(n_1 + n_2)$
+\end{itemize}
+
+\textit{为什么卡方分布如此重要？因为它出现在样本方差的抽样分布中——而样本方差是统计推断的核心量。}
+
+\vskip 0.3em
+\noindent\textbf{4. 贝塔分布.} 贝塔分布（beta distribution）$\text{Beta}(\alpha, \beta)$ 是定义在 $(0,1)$ 区间上的连续分布，常用于建模概率本身（当我们对概率参数 $p$ 进行贝叶斯推断时，其后验分布往往是贝塔分布）。
+
+\vskip 0.3em
+\noindent\textbf{5. 正态分布.} 正态分布（normal distribution）$N(\mu, \sigma^2)$ 是统计学中最重要的分布。高斯（Gauss）发现测量误差服从正态分布；中心极限定理表明大量独立小因素的总和近似正态分布。其特殊地位体现在：
+\begin{itemize}
+    \item 样本均值 $\bar{X}$ 的精确分布（若总体正态）或渐近分布（CLT）
+    \item $t$ 分布、$F$ 分布的构造基础
+    \item 多元正态分布是线性模型的理论支柱
+\end{itemize}
+
+\vskip 0.3em
+\noindent\textbf{6. $t$ 分布与 $F$ 分布.} 这两个分布起源于小样本推断。当我们用样本标准差 $S$ 替代总体标准差 $\sigma$ 时，统计量
+\[
+T = \frac{\bar{X} - \mu}{S/\sqrt{n}}
+\]
+服从学生 $t$ 分布（Student's $t$ distribution）。在方差分析和回归分析中，$F$ 分布用于比较模型拟合优度。
+
+\section{这三章的内在逻辑}\label{sec:inner-logic}
+
+纵观前三章，我们可以看到一条清晰的主线：
+
+\begin{enumerate}
+    \item \textbf{描述单个随机变量.} 概率函数 $\to$ CDF/PDF $\to$ 期望与矩 $\to$ 特殊分布（第一、三章）
+    \item \textbf{描述多个随机变量的关系.} 联合分布 $\to$ 边缘/条件分布 $\to$ 相关系数 $\to$ 线性变换（第二、七章）
+    \item \textbf{连接理论与计算.} 理论结果 $\leftrightarrow$ R 模拟验证（每一章都有）
+\end{enumerate}
+
+这条主线将在后续章节中继续延伸：当我们研究估计量的大样本性质时（第五章），概率论的极限定理会再次登场；当我们构建最优检验时（第八章），充分性（第七章）的概念将揭示降维的奥秘。
+
+\textit{统计学不是孤立的技巧集合，而是一个有机联系的理论体系。掌握这个体系的内在逻辑，比记住具体公式更为重要。}
+
+\section{学习方法建议}\label{sec:learning-advice}
+
+基于前三章的内容特点，我们建议：
+
+\begin{itemize}
+    \item \textbf{重视定义.} 统计学的每一个概念——随机变量、分布函数、独立性、条件期望——都需要精确理解其定义。
+    \item \textbf{多做计算.} 通过具体例子（如正态分布的标准化、二项分布的概率计算）来巩固抽象概念。
+    \item \textbf{理解证明.} 关键定理（如全概率公式、贝叶斯公式、变量变换公式）的证明揭示了概念的深层联系。
+    \item \textbf{结合 R 实践.} Monte Carlo 模拟帮助我们将抽象概率与具体数值联系起来。
+    \item \textbf{建立联系.} 时刻问自己：这个概念与之前学过的内容有什么关联？
+\end{itemize}
+
+\section{习题说明}\label{sec:exercise-note}
+
+每章末尾的习题（Exercises）是学习的重要组成部分。习题类型包括：
+\begin{itemize}
+    \item 概念验证题：检验对基本定义和定理的理解
+    \item 计算题：练习具体概率和期望的计算
+    \item 证明题：训练数学推导能力
+    \item R 编程题：通过模拟验证理论结果
+\end{itemize}
+
+\textit{我们强烈建议在阅读正文后独立完成所有习题。统计学的理解只有在解决问题的过程中才能真正深化。}

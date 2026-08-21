@@ -1,0 +1,173 @@
+
+\subsection{R 计算：条件分布的应用}
+
+继续展示条件分布在 R 中的实际计算。
+
+\begin{example}[二元正态条件分布可视化]\label{ex:bivariate-normal-conditional-visualization-ch2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.7)$。绘制不同 $x_1$ 条件下 $X_2$ 的条件密度。
+
+\begin{verbatim}
+library(mvtnorm)
+library ggplot2)
+
+# 设置参数
+mu1 <- mu2 <- 0
+sigma1 <- sigma2 <- 1
+rho <- 0.7
+
+# 条件分布参数
+cond_mean <- function(x1) mu2 + rho * (sigma2/sigma1) * (x1 - mu1)
+cond_var <- sigma2^2 * (1 - rho^2)
+
+# 绘制条件密度
+x1_vals <- c(-2, -1, 0, 1, 2)
+colors <- c("blue", "green", "red", "orange", "purple")
+
+plot(NULL, xlim = c(-4, 4), ylim = c(0, 0.5),
+     xlab = expression(x[2]), ylab = "Density",
+     main = "Conditional densities of X2 given X1")
+
+for (i in seq_along(x1_vals)) {
+  curve(dnorm(x, cond_mean(x1_vals[i]), sqrt(cond_var)),
+        add = TRUE, col = colors[i], lwd = 2)
+  abline(v = cond_mean(x1_vals[i]), col = colors[i], lty = 2)
+}
+
+legend("topright", legend = paste("X1 =", x1_vals),
+       col = colors, lwd = 2, cex = 0.8)
+\end{verbatim}
+
+观察：条件均值随 $x_1$ 线性变化（回归效应），条件方差保持不变（正态分布的特殊性质）。
+\end{example}
+
+\begin{example}[分层抽样的方差分解]\label{ex:stratified-sampling-variance-ch2}
+设某大学有 10000 名学生，按专业分为 5 个阶层（strata）。我们想估计学生的平均每周学习时间。
+
+假设各阶层的样本均值和方差如下：
+
+\[
+\begin{array}{c|c|c|c}
+\text{专业} & n_h & \bar{X}_h & s_h^2 \\ \hline
+\text{理工} & 3000 & 20 & 25 \\
+\text{文科} & 2500 & 25 & 20 \\
+\text{商科} & 2000 & 22 & 30 \\
+\text{法学} & 1500 & 18 & 15 \\
+\text{医学} & 1000 & 28 & 35
+\end{array}
+\]
+
+边缘分布的方差分解：
+\[
+\text{var}(\bar{X}) = \mathbb{E}[\text{var}(X \mid H)] + \text{var}[\mathbb{E}(X \mid H)].
+\]
+
+第一项（层内方差）是各阶层方差的加权平均：
+\[
+\mathbb{E}[\text{var}(X \mid H)] = \sum_h \frac{n_h}{N} s_h^2.
+\]
+
+第二项（层间方差）是各阶层均值方差的加权平均：
+\[
+\text{var}[\mathbb{E}(X \mid H)] = \sum_h \frac{n_h}{N} (\bar{X}_h - \bar{X})^2,
+\]
+其中 $\bar{X}$ 是总体均值。
+
+R 计算：
+\begin{verbatim}
+# 阶层数据
+n_h <- c(3000, 2500, 2000, 1500, 1000)
+Xbar_h <- c(20, 25, 22, 18, 28)
+s2_h <- c(25, 20, 30, 15, 35)
+N <- sum(n_h)
+
+# 总体均值
+Xbar <- sum(n_h * Xbar_h) / N
+
+# 层内方差期望
+within_var <- sum(n_h * s2_h) / N
+
+# 层间方差
+between_var <- sum(n_h * (Xbar_h - Xbar)^2) / N
+
+# 总方差
+total_var <- within_var + between_var
+
+# 分层抽样估计的方差
+# 简单随机抽样的方差（比较基准）
+srs_var <- total_var / N  # 简单随机抽样
+
+# 分层抽样的效率
+strat_efficiency <- srs_var / (within_var/N)
+cat("层内方差期望:", within_var, "\n")
+cat("层间方差:", between_var, "\n")
+cat("总方差:", total_var, "\n")
+cat("分层抽样相对效率:", round(strat_efficiency, 2), "倍\n")
+\end{verbatim}
+\end{example}
+
+\subsection{条件分布的贝叶斯视角}
+
+贝叶斯统计的核心思想是：参数 $\theta$ 也是随机变量，我们应该用条件分布来描述我们对参数的认知。
+
+\textbf{先验分布}：$\theta$ 在观测数据之前的分布，记作 $f(\theta)$。
+
+\textbf{似然函数}：$L(\theta \mid x) = f(x \mid \theta)$，描述数据如何更新我们对 $\theta$ 的认知。
+
+\textbf{后验分布}：\footnote{贝叶斯公式推导见附录 \cref{sec:derivation-ch2-bayes-theorem}。}
+\[
+f(\theta \mid x) = \frac{f(x \mid \theta) f(\theta)}{f(x)},
+\]
+其中 $f(x) = \int f(x \mid \theta) f(\theta) \, d\theta$ 是归一化常数。
+
+\textbf{后验均值}：$\mathbb{E}(\theta \mid x)$ 是贝叶斯估计量，它优于普通样本均值——尤其在样本量较小时。
+
+\textbf{后验方差}：$\text{var}(\theta \mid x)$ 度量了参数估计的不确定性。它在统计决策理论和置信区间构建中都有重要应用。
+
+\textbf{历史注记}：Thomas Bayes（1702-1761）在其论文《An Essay Towards Solving a Problem in the Doctrine of Chances》中首次提出了贝叶斯公式。拉普拉斯（Laplace）后来独立发展了贝叶斯方法，并将其应用于天文学、人口统计等领域。贝叶斯方法在 20 世纪经历了从被忽视到复兴的过程——部分原因是计算限制（马尔可夫链蒙特卡洛方法解决了这个问题），部分原因是哲学层面的争论。\footnote{贝叶斯方法的详细历史讨论见附录 \cref{sec:derivation-ch2-bayes-history}。}
+
+\begin{example}[Beta-Binomial 共轭]\label{ex:beta-binomial-conjugate-ch2}
+设 $X \mid \theta \sim \text{Binomial}(n, \theta)$，$\theta \sim \text{Beta}(\alpha, \beta)$。
+
+则后验分布为
+\[
+\theta \mid X = x \sim \text{Beta}(\alpha + x, \beta + n - x).
+\]
+
+后验均值为
+\[
+\mathbb{E}(\theta \mid X = x) = \frac{\alpha + x}{\alpha + \beta + n}.
+\]
+
+这个估计量是样本比例 $\hat{p} = x/n$ 和先验均值 $\frac{\alpha}{\alpha+\beta}$ 的加权平均——数据越多，权重越倾向于数据一方。
+
+R 验证：
+\begin{verbatim}
+# 先验参数
+alpha <- 2
+beta <- 3
+
+# 观测数据
+n <- 10
+x <- 7
+
+# 后验参数
+alpha_post <- alpha + x
+beta_post <- beta + n - x
+
+# 后验均值
+post_mean <- alpha_post / (alpha_post + beta_post)
+
+# 样本比例
+sample_prop <- x / n
+
+# 先验均值
+prior_mean <- alpha / (alpha + beta)
+
+# 贝叶斯估计量（后验均值）
+cat("先验均值:", prior_mean, "\n")
+cat("样本比例:", sample_prop, "\n")
+cat("后验均值:", post_mean, "\n")
+cat("后验均值 = (n/(n+α+β)) * 样本比例 + ((α+β)/(n+α+β)) * 先验均值\n")
+cat("= (10/15)*0.7 + (5/15)*0.4 =", 10/15*0.7 + 5/15*0.4, "\n")
+\end{verbatim}
+\end{example}

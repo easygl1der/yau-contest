@@ -1,0 +1,1100 @@
+% Chapter 8: Optimal Statistical Tests
+% Hogg, McKean, Craig - Introduction to Mathematical Statistics
+
+\chapter{Optimal Statistical Tests}\label{chap:optimal-tests}
+
+\section*{Chapter 8 Overview}
+
+前几章已经给出了假设检验的基本语言：原假设、备择假设、显著性水平、功效函数，以及似然比思想。可是，一旦这些语言建立起来，一个更尖锐的问题就不可避免地出现了：同一个检验问题往往有许多临界区域，它们都能把第一类错误控制在同一个水平；那么我们凭什么选择其中一个，而不是另一个？
+
+\begin{center}
+\textit{在所有可能的检验中，哪个检验是``最好''的？}
+\end{center}
+
+这个问题就是\textbf{最优检验理论（optimal test theory）}的起点。假设检验的困难不在于写出一个拒绝域，而在于处理两类错误之间的张力：若把拒绝域取得太大，第一类错误会上升；若取得太小，又会牺牲发现备择假设的能力。最优性理论的基本思想是：先把第一类错误控制在给定水平 $\alpha$，再在这个约束下尽可能提高功效（power）。
+
+\textbf{为什么需要最优性理论？} 以医学筛查为例，若我们把误报率控制在 $5\%$，接下来真正关心的就是：当患者确实患病时，检验能否以尽可能高的概率发现它。没有最优性理论，检验的选择只是经验判断；有了最优性理论，我们至少能在清楚的数学标准下说明某个检验为什么不可改进。
+
+本章按从理想到现实的顺序展开：
+
+\begin{enumerate}
+\item \textbf{Neyman-Pearson 引理}（8.1 节）：对于简单假设对简单假设的情况，给出了最优检验的完整刻画——这是整个理论的基石。
+\item \textbf{一致最大功效检验（UMP）}（8.2 节）：将最优性概念推广到复合备择假设。介绍 monotone likelihood ratio（MLR）和 Karlin-Rubin 定理——单参数指数族存在 UMP 检验。
+\item \textbf{似然比检验（LRT）}（8.3 节）：在一般复合假设下，LRT 提供了一种构造检验的通用方法。虽然 LRT 不一定是最优的，但在很多情况下它是渐近最优的。
+\item \textbf{序贯概率比检验（SPRT）}（8.4 节）：打破固定样本量的束缚，允许检验在数据积累过程中随时停止——Wald 的革命性贡献。
+\item \textbf{极小化极大分类}（8.5 节）：将决策论框架应用于假设检验和分类问题。
+\end{enumerate}
+
+\section{8.1 Most Powerful Tests}\label{sec:8.1}
+
+\subsection{问题的起源：什么是``最好''的检验}
+
+在 4.5 节中，我们引入了假设检验的基本框架：给定原假设 $H_0$ 和备择假设 $H_1$，构造一个临界区域 $C$，当样本落入 $C$ 时拒绝 $H_0$。这个定义看似完整，却留下了最重要的自由度：临界区域 $C$ 并不唯一。许多不同的 $C$ 都可能有同样的显著性水平，但它们发现备择假设的能力可能完全不同。
+
+\begin{center}
+\textit{在所有这些检验中，我们凭什么说一个比另一个更好？}
+\end{center}
+
+要回答这个问题，必须先固定比较的规则。在假设检验中，这个规则就是\textbf{功效（power）}——当 $H_1$ 为真时拒绝 $H_0$ 的概率。直观上，我们希望：
+
+\begin{enumerate}
+\item 在 $H_0$ 为真时，拒绝 $H_0$ 的概率（即 $\alpha$，显著性水平）不超过预设值；
+\item 在 $H_1$ 为真时，拒绝 $H_0$ 的概率（即功效）尽可能高。
+\end{enumerate}
+
+这就引出了"最好检验"的定义。
+
+在这一章里，第一类错误、第二类错误和功效函数需要同时看。对临界区域 $C$，第一类错误概率是 $\mathbb{P}_{H_0}(\mathbf{X}\in C)$，第二类错误概率是在备择为真时没有拒绝 $H_0$ 的概率，而功效函数
+\[
+\gamma_C(\theta)=\mathbb{P}_{\theta}(\mathbf{X}\in C)
+\]
+记录的是各个参数值下拒绝 $H_0$ 的概率。所谓最优检验，并不是无条件地让拒绝概率越大越好，而是在先把 $H_0$ 下的拒绝概率控制住以后，再让备择下的拒绝概率尽可能大。
+
+\subsection{简单假设对简单假设的最优检验}
+
+设 $X_1, \ldots, X_n$ 是来自分布 $f(x;\theta)$ 的随机样本，其中 $\theta \in \Omega = \{\theta', \theta''\}$（即只有两个可能的参数值）。我们考虑检验：
+
+\[
+H_0: \theta = \theta' \quad \text{versus} \quad H_1: \theta = \theta''. \label{eq:simple-vs-simple}
+\]
+
+\begin{definition}[最佳临界区域]\label{def:best-critical-region}
+设 $C$ 是样本空间的一个子集。如果
+\begin{enumerate}
+\item[(a)] $\mathbb{P}_{\theta'}(\mathbf{X} \in C) = \alpha$（大小为 $\alpha$）；
+\item[(b)] 对每一个满足 $\mathbb{P}_{\theta'}(\mathbf{X} \in A) = \alpha$ 的子集 $A$，都有
+\[
+\mathbb{P}_{\theta''}(\mathbf{X} \in C) \geq \mathbb{P}_{\theta''}(\mathbf{X} \in A),
+\]
+\end{enumerate}
+则称 $C$ 是检验 $H_0: \theta = \theta'$ 对 $H_1: \theta = \theta''$ 的\textbf{大小为 $\alpha$ 的最佳临界区域（best critical region of size $\alpha$）}。
+\end{definition}
+
+\textbf{定义的直观含义}：在所有满足显著性水平 $\alpha$ 的检验中，最佳临界区域对应的检验在 $H_1$ 为真时具有最高的拒绝概率——这正是我们想要的。
+
+\textbf{为什么要关心最佳检验？} 设想你在设计一个药物试验。你设定 $\alpha = 0.05$（即当药物无效时，只有 5\% 的概率错误地拒绝 $H_0$）。在所有满足这个条件的检验中，你当然希望当药物真的有效时，以最高概率检测出来——这就是最佳检验的价值。
+
+那么，这样的最佳检验是否存在？Neyman-Pearson 定理给出了答案。
+
+\subsection{Neyman-Pearson 定理}
+
+\begin{center}
+\textit{有没有一种系统性的方法构造最佳检验？}
+\end{center}
+
+Neyman-Pearson 定理不仅回答了"最佳检验是否存在"的问题，还给出了构造方法——它是以似然比（likelihood ratio）为基础的。
+
+\begin{theorem}[Neyman-Pearson]\label{th:neyman-pearson}
+设 $X_1, \ldots, X_n$ 是来自分布 $f(x;\theta)$ 的随机样本，记似然函数为
+\[
+L(\theta; \mathbf{x}) = \prod_{i=1}^n f(x_i; \theta).
+\]
+
+设 $\theta'$ 和 $\theta''$ 是 $\theta$ 的两个不同取值，$\Omega = \{\theta', \theta''\}$。设 $k > 0$ 是一个常数，$C$ 是样本空间的一个子集，满足：
+
+\begin{enumerate}
+\item[(a)] $\dfrac{L(\theta';\mathbf{x})}{L(\theta'';\mathbf{x})} \leq k$ 对所有 $\mathbf{x} \in C$；
+\item[(b)] $\dfrac{L(\theta';\mathbf{x})}{L(\theta'';\mathbf{x})} \geq k$ 对所有 $\mathbf{x} \in C^c$；
+\item[(c)] $\alpha = \mathbb{P}_{H_0}(\mathbf{X} \in C)$。
+\end{enumerate}
+
+则 $C$ 是检验简单假设 $H_0: \theta = \theta'$ 对 $H_1: \theta = \theta''$ 的、\textbf{大小为 $\alpha$ 的最佳临界区域}。
+\end{theorem}
+
+\textbf{核心思想}：似然比 $L(\theta';\mathbf{x}) / L(\theta'';\mathbf{x})$ 衡量了数据 $\mathbf{x}$ 更支持 $H_0$ 还是更支持 $H_1$。当这个比值很小时，说明同一组数据在 $H_0$ 下相对不容易出现，而在 $H_1$ 下相对容易出现；于是最自然的动作就是拒绝 $H_0$。
+
+\textbf{物理直觉}：想象你在两个解释之间做选择。$L(\theta';\mathbf{x})$ 告诉我们``如果 $H_0$ 为真，观察到这组数据的可能性有多大''；$L(\theta'';\mathbf{x})$ 告诉我们同一组数据在 $H_1$ 下有多自然。如果观察到的数据在 $H_0$ 下很牵强、在 $H_1$ 下很自然，那么拒绝 $H_0$ 就不是主观偏好，而是似然原则的直接要求。
+
+\textbf{必要性}：值得注意的是，教材中的证明还说明了一个更强的事实：如果存在大小为 $\alpha$ 的最佳检验，那么它必须具有这种似然比形式。连续型情形下，这个最佳区域除了零概率集外是唯一的；离散型情形中，因为边界点可能需要随机化或有并列比值，最佳区域可能不唯一。
+\begin{example}[二项分布下的最佳检验]\label{ex:binomial-most-powerful}
+设 $X \sim \mathrm{Binomial}(n=5, p=\theta)$，考虑检验：
+\[
+H_0: \theta = \tfrac{1}{2} \quad \text{versus} \quad H_1: \theta = \tfrac{3}{4}.
+\]
+
+下表给出 $f(x;1/2)$、$f(x;3/4)$ 以及它们的比值：
+
+\begin{tabular}{c|cccccc}
+$x$ & 0 & 1 & 2 & 3 & 4 & 5 \\ \hline
+$f(x;1/2)$ & $1/32$ & $5/32$ & $10/32$ & $10/32$ & $5/32$ & $1/32$ \\
+$f(x;3/4)$ & $1/1024$ & $15/1024$ & $90/1024$ & $270/1024$ & $405/1024$ & $243/1024$ \\
+$f(x;1/2)/f(x;3/4)$ & $32/1$ & $32/3$ & $32/9$ & $32/27$ & $32/81$ & $32/243$
+\end{tabular}
+
+\textbf{问题}：构造大小 $\alpha = 1/32$ 的最佳检验。
+
+比值 $f(x;1/2)/f(x;3/4)$ 在 $x=5$ 处取得最小值（$32/243$）。因此，最佳临界区域应包含那些使 $H_0$ 看起来极不可能而 $H_1$ 看起来极可能的数据点——即 $C = \{x = 5\}$。
+
+验证：$\mathbb{P}_{H_0}(X \in C) = f(5; 1/2) = 1/32 = \alpha$，
+且 $\mathbb{P}_{H_1}(X \in C) = f(5; 3/4) = 243/1024 \approx 0.237$。
+
+如果取 $\alpha = 6/32$，则最佳临界区域为 $\{x = 4, 5\}$，因为 $x=4$ 和 $x=5$ 的比值最小。此时
+\[
+\mathbb{P}_{H_1}(X \in \{4,5\}) = \frac{405}{1024} + \frac{243}{1024} = \frac{648}{1024} \approx 0.633.
+\]
+
+\textbf{关键洞察}：最佳检验包含了"最支持 $H_1$ 而最不支持 $H_0$"的数据点——这正是似然比方法告诉我们的。\end{example}
+
+\begin{example}[正态均值差假设的最优检验]\label{ex:normal-mean-np}
+设 $X_1, \ldots, X_n \sim N(\theta, 1)$，考虑检验：
+\[
+H_0: \theta = 0 \quad \text{versus} \quad H_1: \theta = 1.
+\]
+
+\textbf{构造最佳检验}：似然函数为
+\[
+L(\theta; \mathbf{x}) = (2\pi)^{-n/2} \exp\left[-\frac{1}{2}\sum_{i=1}^n (x_i - \theta)^2\right].
+\]
+
+似然比为
+\[
+\frac{L(0; \mathbf{x})}{L(1; \mathbf{x})} = \exp\left(-\sum_{i=1}^n x_i + \frac{n}{2}\right).
+\]
+
+令 $\frac{L(0; \mathbf{x})}{L(1; \mathbf{x})} \leq k$，等价于
+\[
+\sum_{i=1}^n x_i \geq \frac{n}{2} - \log k = c.
+\]
+
+因此，最佳临界区域是 $C = \{\mathbf{x}: \sum_{i=1}^n x_i \geq c\}$，即基于样本均值 $\overline{X}$ 的检验。
+
+\textbf{确定临界值}：当 $H_0$ 为真时，$\overline{X} \sim N(0, 1/n)$，故
+\[
+c_1 = \frac{c}{n} = \frac{\frac{n}{2} - \log k}{n} = \frac{1}{2} - \frac{\log k}{n}.
+\]
+
+给定显著性水平 $\alpha$，临界值为 $c_1 = q_{\alpha}(0, 1/\sqrt{n})$（$N(0,1/n)$ 的上 $\alpha$ 分位数）。
+
+\textbf{数值示例}：设 $n = 25$，$\alpha = 0.05$，则 $c_1 = \mathbf{qnorm}(0.95, 0, 1/5) = 0.329$。
+
+\textbf{功效计算}：当 $H_1$ 为真时，$\overline{X} \sim N(1, 1/25)$，功效为
+\[
+\text{Power} = \mathbb{P}_{H_1}(\overline{X} \geq 0.329) = 1 - \Phi\left(\frac{0.329 - 1}{1/5}\right) = 1 - \Phi(-3.355) \approx 0.9996.
+\]
+
+也就是说，当 $\theta = 1$ 时，这个检验有约 $99.96\%$ 的概率正确拒绝 $H_0$。\end{example}
+
+\begin{example}[Poisson 对 Geometric 的检验]\label{ex:poisson-vs-geometric}
+设 $X_1, \ldots, X_n \sim f(x)$，其中
+\[
+H_0: f(x) = \frac{e^{-1}}{x!}, \quad x = 0,1,2,\ldots \quad (\text{Poisson}(\lambda=1)),
+\]
+\[
+H_1: f(x) = \left(\frac{1}{2}\right)^{x+1}, \quad x = 0,1,2,\ldots \quad (\text{Geometric}(p=1/2)).
+\]
+
+\textbf{构造最佳检验}：似然比为
+\[
+\frac{L(\theta'; \mathbf{x})}{L(\theta''; \mathbf{x})} = \frac{(2e^{-1})^n \cdot 2^{\sum x_i}}{\prod_{i=1}^n (x_i!)}.
+\]
+
+令 $k=1$（对应某个特定的 $\alpha$），不等式化为
+\[
+\frac{2^{\sum x_i}}{\prod_{i=1}^n (x_i!)} \leq \frac{e}{2}.
+\]
+
+取 $n=1$，则临界区域为 $C = \{x_1: x_1 = 0, 3, 4, 5, \ldots\}$。
+
+\textbf{验证}：
+\[
+\alpha = \mathbb{P}_{H_0}(X \in C) = 1 - \frac{e^{-1}}{1!} - \frac{e^{-1}}{2!} = 1 - \frac{2}{e} \approx 0.4482,
+\]
+\[
+\text{Power} = \mathbb{P}_{H_1}(X \in C) = 1 - \frac{1}{4} - \frac{1}{8} = 0.625.
+\]
+
+这符合无偏性要求（功效大于显著性水平）。\end{example}
+
+\textbf{无偏性（Unbiasedness）}：注意到所有最佳检验都满足一个共同性质——功效大于等于显著性水平。这意味着拒绝 $H_0$（当它为假时）的概率不小于错误拒绝它的概率。这在经济决策中是完全合理的——如果检验的功效低于 $\alpha$，那它的行为还不如随机猜测。
+
+\begin{definition}[无偏检验]\label{def:unbiased-test}
+设 $C$ 是显著性水平为 $\alpha$ 的检验的临界区域。如果对所有 $\theta \in \omega_1$，
+\[
+\mathbb{P}_\theta(\mathbf{X} \in C) \geq \alpha,
+\]
+则称该检验是\textbf{无偏的（unbiased）}。
+\end{definition}
+
+推论 8.1.1 表明 Neyman-Pearson 最佳检验是无偏的——在 $H_0$ 为假时拒绝它的概率不低于在 $H_0$ 为真时错误拒绝它的概率。
+\section{8.2 Uniformly Most Powerful Tests}\label{sec:8.2}
+
+\subsection{从简单假设到复合假设}
+
+上一节的 Neyman-Pearson 定理解决的是``简单假设对简单假设''的问题——$H_0$ 和 $H_1$ 都各只有一个参数值。这是最干净的理论模型，但它也太理想化了：实际问题中，我们通常不知道备择假设会落在哪一个具体点上，只知道它属于某个方向或某个范围。例如：
+
+\[
+H_0: \theta \leq \theta' \quad \text{versus} \quad H_1: \theta > \theta'.
+\]
+
+这里 $H_1$ 包含无穷多个参数值。若我们对每一个固定的 $\theta'' > \theta'$ 分别使用 Neyman-Pearson 定理，可能会得到一族不同的最佳临界区域。真正有用的检验应当更强：它不仅要对某一个备择点最佳，而且要同时对整个备择方向都最佳。
+
+\begin{center}
+\textit{能否找到一个检验，它对 $\theta > \theta'$ 中的每一个 $\theta$ 都是最佳检验？}
+\end{center}
+
+这就是"一致最大功效（Uniformly Most Powerful，UMP）"检验的思想。
+
+\begin{definition}[UMP 检验]\label{def:ump-test}
+设 $C$ 是显著性水平为 $\alpha$ 的检验的临界区域。如果 $C$ 是 $H_0$ 对 $H_1$ 中每一个简单假设的最佳临界区域，则称 $C$ 为\textbf{大小为 $\alpha$ 的一致最大功效临界区域（UMP critical region）}，相应的检验称为\textbf{UMP 检验（Uniformly Most Powerful test）}。
+\end{definition}
+
+但 UMP 检验并不总是存在。例 8.2.3 展示了：对于正态均值 $\sigma^2 = 1$ 已知时，检验 $H_0: \theta = \theta'$ 对 $H_1: \theta \neq \theta'$（双向备择）不存在 UMP 检验——因为对 $\theta'' > \theta'$ 的最佳临界区域（拒绝域在右尾）与对 $\theta'' < \theta'$ 的最佳临界区域（拒绝域在左尾）形式完全不同，无法统一。
+
+这个例子揭示了一个深刻的事实：\textbf{UMP 检验只在单向备择假设（one-sided alternatives）下才可能存在}。
+
+\subsection{单调似然比与 Karlin-Rubin 定理}
+
+那么，在什么条件下 UMP 检验存在呢？答案藏在一种叫做"单调似然比（Monotone Likelihood Ratio，MLR）"的性质中。
+
+\begin{definition}[单调似然比]\label{def:mlr}
+设 $L(\theta, \mathbf{x})$ 是似然函数。如果对 $\theta_1 < \theta_2$，比值
+\[
+\frac{L(\theta_1; \mathbf{x})}{L(\theta_2; \mathbf{x})}
+\]
+是统计量 $y = u(\mathbf{x})$ 的单调递减函数，则称似然函数在 $y = u(\mathbf{x})$ 中有\textbf{单调似然比（monotone likelihood ratio, mlr）}。
+\end{definition}
+
+\textbf{为什么 MLR 如此重要？} MLR 性质说的是：无论把较大的参数值取成哪一个，数据对大参数的支持程度都可以由同一个统计量 $Y$ 排序。于是``证据更强''这件事有了统一方向：$Y$ 越大，越支持 $\theta$ 较大的备择假设。正因为这个排序不随具体的 $\theta''$ 改变，我们才有可能得到同一个拒绝域，而不是为每个备择点重新设计检验。
+
+\begin{theorem}[Karlin-Rubin 定理]\label{th:karlin-rubin}
+设随机样本来自密度 $f(x;\theta)$，似然函数 $L(\theta, \mathbf{x})$ 在统计量 $Y = u(\mathbf{X})$ 中有单调似然比。考虑单向假设：
+\[
+H_0: \theta \leq \theta' \quad \text{versus} \quad H_1: \theta > \theta'.
+\]
+
+则对任意显著性水平 $\alpha$，UMP 检验为：
+\[
+\text{Reject } H_0 \quad \text{if} \quad Y \geq c_Y,
+\]
+其中临界值 $c_Y$ 满足 $\mathbb{P}_{\theta'}(Y \geq c_Y) = \alpha$。
+\end{theorem}
+
+\textbf{核心洞察}：由于 MLR 性质，对任何 $\theta'' > \theta'$，最佳临界区域的形式都是 $Y \geq c$——它们恰好是同一个区域！因此这个区域对所有 $\theta'' > \theta'$ 都是最佳的，从而是一致最大功效的。
+
+\textbf{证明思路}：对固定的 $\theta'' > \theta'$，由 Neyman-Pearson 定理，最佳临界区域由似然比 $L(\theta';\mathbf{x}) / L(\theta'';\mathbf{x}) \leq k$ 给出。由于 MLR 性质，这个不等式等价于 $Y \geq g^{-1}(k)$——即只依赖于数据的形状，而不依赖于具体的 $\theta''$ 值。
+\begin{example}[正态方差 UMP 检验]\label{ex:normal-variance-ump}
+设 $X_1, \ldots, X_n \sim N(0, \theta)$，其中 $\theta > 0$ 是方差。考虑检验：
+\[
+H_0: \theta = \theta' \quad \text{versus} \quad H_1: \theta > \theta'.
+\]
+
+似然函数为
+\[
+L(\theta; \mathbf{x}) = \left(\frac{1}{2\pi\theta}\right)^{n/2} \exp\left\{-\frac{1}{2\theta}\sum_{i=1}^n x_i^2\right\}.
+\]
+
+似然比为
+\[
+\frac{L(\theta'; \mathbf{x})}{L(\theta''; \mathbf{x})} = \left(\frac{\theta''}{\theta'}\right)^{n/2} \exp\left[-\left(\frac{\theta'' - \theta'}{2\theta'\theta''}\right)\sum_{i=1}^n x_i^2\right].
+\]
+
+对 $\theta'' > \theta'$，这是 $\sum x_i^2$ 的递减函数，因此似然函数在 $Y = \sum X_i^2$ 中有 MLR。
+
+由 Karlin-Rubin 定理，UMP 检验为：
+\[
+\text{Reject } H_0 \quad \text{if} \quad \sum_{i=1}^n X_i^2 \geq c,
+\]
+其中 $c$ 满足 $\mathbb{P}_{\theta'}(\sum X_i^2 \geq c) = \alpha$。
+
+\textbf{数值示例}：设 $n = 15$，$\alpha = 0.05$，$\theta' = 3$。当 $H_0$ 为真时，$\sum X_i^2 / \theta' \sim \chi^2(n)$，故
+\[
+\frac{c}{3} = \chi^2_{0.95}(15) = 24.996 \quad \Rightarrow \quad c = 74.988.
+\]
+
+即当 $\sum x_i^2 \geq 74.988$ 时拒绝 $H_0: \theta = 3$。\end{example}
+
+\begin{example}[Bernoulli 分布的 UMP 检验]\label{ex:bernoulli-ump}
+设 $X_1, \ldots, X_n \sim \mathrm{Bernoulli}(\theta)$，考虑检验：
+\[
+H_0: \theta \leq \theta' \quad \text{versus} \quad H_1: \theta > \theta'.
+\]
+
+似然比为
+\[
+\frac{L(\theta'; \mathbf{x})}{L(\theta''; \mathbf{x})} = \left[\frac{\theta'(1-\theta'')}{\theta''(1-\theta')}\right]^{\sum x_i} \left(\frac{1-\theta'}{1-\theta''}\right)^n.
+\]
+
+由于 $\theta' < \theta''$ 时 $\theta'(1-\theta'')/\theta''(1-\theta') < 1$，该比值是 $Y = \sum X_i$ 的递减函数。因此似然函数在 $Y = \sum X_i$ 中有 MLR，UMP 检验为：
+\[
+\text{Reject } H_0 \quad \text{if} \quad Y = \sum_{i=1}^n X_i \geq c,
+\]
+其中 $c$ 由 $\mathbb{P}_{\theta'}(Y \geq c) = \alpha$ 确定。
+
+这正是我们直观上期望的：观察到更多的成功次数，就越有理由拒绝"成功率不高"的原假设。\end{example}
+
+\textbf{正规指数族（Regular Exponential Family）}：其实 Bernoulli 分布、正态分布（方差已知）、Poisson 分布都属于一个更广泛的族——正规指数族。在这个族中，只要自然参数是单调的，就存在 UMP 检验。具体地，如果分布有形式
+\[
+f(x;\theta) = \exp[p(\theta)K(x) + H(x) + q(\theta)],
+\]
+且 $p(\theta)$ 是 $\theta$ 的递增函数，则对假设 $H_0: \theta \leq \theta'$ 对 $H_1: \theta > \theta'$，UMP 检验存在，基于统计量 $Y = \sum_{i=1}^n K(X_i)$。
+\section{8.3 Likelihood Ratio Tests}\label{sec:8.3}
+
+\subsection{似然比检验的动机}
+
+前两节给出了最优检验理论中最漂亮的部分：简单假设有 Neyman-Pearson 定理，单向复合假设在 MLR 条件下有 Karlin-Rubin 定理。然而，漂亮理论往往依赖强条件；一旦问题变成双向备择、多参数模型或带有 nuisance parameter 的复合假设，UMP 检验通常不再存在。现实中许多重要问题正落在这些范畴之外：
+
+\begin{itemize}
+\item 检验正态均值 $H_0: \mu = \mu_0$（$\sigma^2$ 未知）对 $H_1: \mu \neq \mu_0$——不存在 UMP 检验（双向备择）；
+\item 检验两正态均值是否相等 $H_0: \mu_1 = \mu_2$——涉及多于一个参数；
+\item 一般复合假设——没有 MLR 性质可供利用。
+\end{itemize}
+
+在这些情况下，我们转向一种通用但不一定最优的构造检验的方法——\textbf{似然比检验（Likelihood Ratio Test，LRT）}。
+
+\textbf{为什么即使 LRT 不是最优的，我们仍然使用它？} Neyman-Pearson 定理告诉我们，在最简单的情形中，似然比就是最佳检验的核心。LRT 保留了这个思想，但把``两个点之间的比较''推广为``约束参数空间与完整参数空间之间的比较''：若 $H_0$ 受到约束后仍能很好解释数据，就没有理由拒绝；若放开约束后似然显著增大，数据就在提醒我们 $H_0$ 可能过于狭窄。虽然一般 LRT 不保证有限样本最优，但它统一、可计算，并且在正则条件下有清晰的渐近理论。
+\subsection{LRT 的定义}
+
+设 $X$ 的密度为 $f(\mathbf{x}; \boldsymbol{\theta})$，参数 $\boldsymbol{\theta} \in \Omega \subset \mathbb{R}^p$。考虑复合假设：
+\[
+H_0: \boldsymbol{\theta} \in \omega \quad \text{versus} \quad H_1: \boldsymbol{\theta} \in \Omega \cap \omega^c, \label{eq:general-hypotheses}
+\]
+其中 $\omega \subset \Omega$ 是参数空间的某个子集。
+
+\begin{definition}[似然比]\label{def:likelihood-ratio}
+\textbf{似然比（Likelihood Ratio）}定义为：
+\[
+\Lambda(\mathbf{x}) = \frac{\sup_{\omega} L(\boldsymbol{\theta}; \mathbf{x})}{\sup_{\Omega} L(\boldsymbol{\theta}; \mathbf{x})} = \frac{L(\hat{\boldsymbol{\omega}}; \mathbf{x})}{L(\hat{\boldsymbol{\Omega}}; \mathbf{x})},
+\]
+其中 $\hat{\boldsymbol{\omega}}$ 是在约束 $\boldsymbol{\theta} \in \omega$ 下的 MLE，$\hat{\boldsymbol{\Omega}}$ 是在无约束 $\boldsymbol{\theta} \in \Omega$ 下的 MLE。
+\end{definition}
+
+\textbf{直观含义}：分子衡量数据在 $H_0$ 约束下能达到的最大似然，分母衡量数据在无约束情况下能达到的最大似然。如果 $H_0$ 为真，这两个值应该差不多，比值接近 1；如果 $H_0$ 为假，无约束的似然会显著大于约束下的似然，比值会变小。因此我们\textbf{在小比值时拒绝 $H_0$}：
+\[
+\text{Reject } H_0 \quad \text{if} \quad \Lambda(\mathbf{x}) \leq \lambda_0 < 1.
+\]
+
+\textbf{LRT 的一个关键性质}：在 $H_0$ 下，$-2\log\Lambda$ 渐近服从 $\chi^2$ 分布，自由度为 $\dim(\Omega) - \dim(\omega)$（在一定正则条件下）。这使得我们可以近似地确定临界值。
+
+\textbf{LRT 与 NP 引理的关系}：当 $\Omega = \{\theta', \theta''\}$（只有两点）时，LRT 还原为 NP 似然比检验，此时它是最优的。但一般来说，LRT 不一定是最优的。
+
+接下来我们把 LRT 应用到几个具体的重要情形——正态均值差和正态方差检验。
+
+\subsection{8.3.1 正态均值差的 LRT}\label{sec:8.3.1}
+
+\begin{example}[两样本 $t$ 检验]\label{ex:two-sample-t-test}
+设 $X_1, \ldots, X_n \sim N(\theta_1, \theta_3)$ 和 $Y_1, \ldots, Y_m \sim N(\theta_2, \theta_3)$，两组样本独立，共同方差 $\theta_3$ 未知。考虑检验：
+\[
+H_0: \theta_1 = \theta_2 \quad \text{versus} \quad H_1: \theta_1 \neq \theta_2.
+\]
+
+\textbf{构造 LRT}：在 $H_0$ 下（$\theta_1 = \theta_2 = \mu$），参数的 MLE 为
+\[
+\hat{\mu} = \frac{n\bar{x} + m\bar{y}}{n+m}, \quad \hat{\sigma}_0^2 = \frac{1}{n+m}\left[\sum_{i=1}^n (x_i - \hat{\mu})^2 + \sum_{i=1}^m (y_i - \hat{\mu})^2\right].
+\]
+
+在无约束下（$H_1$），MLE 分别为 $\bar{x}$、$\bar{y}$ 和
+\[
+\hat{\sigma}^2 = \frac{1}{n+m}\left[\sum_{i=1}^n (x_i - \bar{x})^2 + \sum_{i=1}^m (y_i - \bar{y})^2\right].
+\]
+
+似然比为
+\[
+\Lambda = \frac{L(\hat{\omega})}{L(\hat{\Omega})} = \left(\frac{\hat{\sigma}^2}{\hat{\sigma}_0^2}\right)^{(n+m)/2}.
+\]
+
+\textbf{与 $t$ 统计量的联系}：可以证明
+\[
+\Lambda^{2/(n+m)} = \frac{(n+m-2)}{(n+m-2) + T^2},
+\]
+其中
+\[
+T = \sqrt{\frac{nm}{n+m}} \frac{\bar{x} - \bar{y}}{S_p}, \quad S_p^2 = \frac{(n-1)S_x^2 + (m-1)S_y^2}{n+m-2}.
+\]
+
+$T$ 服从自由度为 $n+m-2$ 的 $t$ 分布（在 $H_0$ 下）。由于 $\Lambda \leq \lambda_0 \Leftrightarrow |T| \geq c$，LRT 就是经典的\textbf{两样本 $t$ 检验}。
+
+\textbf{数值示例}：设 $n = 10$，$m = 6$，$\alpha = 0.05$，则临界值
+\[
+c = t_{0.975}(14) = 2.1448.
+\]
+
+如果 $|t| \geq 2.1448$，拒绝 $H_0$（认为两个总体均值不相等）。\end{example}
+
+\textbf{功效函数}：对于非中心 $t$ 分布，当 $\theta_1 \neq \theta_2$ 时，$T$ 服从非中心 $t$ 分布，非中心参数为
+\[
+\delta = \sqrt{\frac{nm}{n+m}} \frac{\theta_1 - \theta_2}{\sigma}.
+\]
+
+给定 $\theta_3 = 100$、$n = 20$、$m = 15$、$\alpha = 0.05$、$\Delta = 5 = \theta_1 - \theta_2$，临界值 $t_{0.975}(33) = 2.0345$，非中心参数 $\delta_2 = 1.4639$，功效约为
+\[
+1 - \text{pt}(2.0345, 33, \text{ncp}=1.4639) + \text{pt}(-2.0345, 33, \text{ncp}=1.4639) \approx 0.2954.
+\]
+
+即约 $29.5\%$ 的概率检测出均值为 5 的差异。
+\textbf{稳健性注记}：$t$ 检验在正态性假设不满足时表现如何？在大样本下，由 Slutsky 定理，即使底层分布非正态，只要方差有限，$t$ 统计量仍然渐近正态——因此 $t$ 检验是\textbf{渐近正确的}。然而，在有限样本且严重非正态（特别是高度偏态）时，$t$ 检验可能失效——实际显著性水平会偏离名义水平。
+\subsection{8.3.2 正态方差的 LRT}\label{sec:8.3.2}
+
+\begin{example}[两方差相等的 F 检验]\label{ex:f-test-variance}
+设 $X_1, \ldots, X_n \sim N(\theta_1, \theta_3)$ 和 $Y_1, \ldots, Y_m \sim N(\theta_2, \theta_4)$，独立样本，考虑检验：
+\[
+H_0: \theta_3 = \theta_4 \quad \text{versus} \quad H_1: \theta_3 \neq \theta_4.
+\]
+
+可以证明（练习 8.3.11），LRT 统计量可以化为
+\[
+F = \frac{\sum_{i=1}^n (X_i - \bar{X})^2 / (n-1)}{\sum_{i=1}^m (Y_i - \bar{Y})^2 / (m-1)}. \label{eq:f-statistic-variance}
+\]
+
+在 $H_0$ 下，$F \sim F(n-1, m-1)$。因此双向 LRT 为：
+\[
+\text{Reject } H_0 \quad \text{if} \quad F \leq c_1 \quad \text{or} \quad F \geq c_2,
+\]
+其中 $c_1$ 和 $c_2$ 满足 $\mathbb{P}(F \leq c_1) = \mathbb{P}(F \geq c_2) = \alpha_1/2$。
+
+\textbf{重要警告}：与 $t$ 检验不同，$F$ 检验对正态性假设是\textbf{敏感}的。在非正态情况下，$F$ 检验的名义水平和实际水平可能相差甚远（可高达 $0.80$），因此不应在正态性未经检验的情况下使用 $F$ 检验。
+
+这个差异值得记住：$t$ 统计量在大样本下可以借助中心极限定理和 Slutsky 定理获得近似正态性，因此对非正态总体有一定稳健性；而方差比 $F$ 检验依赖的是正态样本方差与 $\chi^2$ 分布的精确关系。若总体重尾或偏态，样本方差本身会非常不稳定，$F$ 检验的水平就可能严重失真。\end{example}
+
+\section{8.4 *Sequential Probability Ratio Test}\label{sec:8.4}
+
+\subsection{固定样本量检验的局限性}
+
+到目前为止，我们讨论的所有检验都有一个共同假设：样本量 $n$ 是预先固定的。但在实际应用中，固定样本量检验存在一个根本性的低效：
+
+\begin{center}
+\textit{为什么要等到收集完所有 $n$ 个样本才做决策？为什么不能边收集边决策？}
+\end{center}
+
+考虑一个质量控制场景：你需要判断一条生产线是否正常（$\theta = \theta_0$）。固定样本量方法要求你先收集 $n$ 个样本，然后做决策。但如果在第 5 个样本时，数据就已经极其强烈地支持 $H_1$（生产线已严重偏离正常状态），继续等待其余 $n-5$ 个样本就是在浪费时间和资源。
+
+1930 年代，Abraham Wald 提出了一个革命性的思想：\textbf{允许样本量根据数据动态确定}——这就是序贯分析（sequential analysis）的诞生。
+
+Wald 的序贯概率比检验（SPRT）不仅在概念上优雅，而且在功效和样本量之间实现了最优权衡。
+
+\subsection{SPRT 的构造}
+
+设 $X_1, X_2, \ldots$ 是 iid 随机变量序列，考虑检验：
+\[
+H_0: \theta = \theta' \quad \text{versus} \quad H_1: \theta = \theta'',
+\]
+其中 $\theta'$ 和 $\theta''$ 是给定的具体值。
+
+\textbf{核心思想}：在每个步骤 $n$，计算似然比
+\[
+\Lambda_n = \frac{L(\theta'; x_1, \ldots, x_n)}{L(\theta''; x_1, \ldots, x_n)} = \prod_{i=1}^n \frac{f(x_i; \theta')}{f(x_i; \theta'')}.
+\]
+
+如果 $\Lambda_n$ 非常小（即数据强烈支持 $H_1$），我们就提前停止并拒绝 $H_0$；如果 $\Lambda_n$ 非常大（即数据强烈支持 $H_0$），我们就提前停止并接受 $H_0$；如果 $\Lambda_n$ 处于中间位置，我们就继续观察下一个样本。
+
+具体地，选取两个常数 $A < B$。若预先给定目标错误概率 $\alpha_a$ 与 $\beta_a$，Hogg 的记号取
+\[
+A = \frac{\alpha_a}{1-\beta_a}, \qquad B = \frac{1-\alpha_a}{\beta_a},
+\]
+SPRT 的决策规则为：
+
+\[
+\text{在第 $n$ 步，停止采样并：}
+\begin{cases}
+\text{拒绝 $H_0$（接受 $H_1$）} & \text{if } \Lambda_n \leq A, \\
+\text{接受 $H_0$（拒绝 $H_1$）} & \text{if } \Lambda_n \geq B, \\
+\text{继续采样} & \text{if } A < \Lambda_n < B.
+\end{cases}
+\label{eq:sprt-rule}
+\]
+
+\textbf{Wald 的误差控制}：教材证明，在连续型情形下若真实错误概率记为 $\alpha$ 与 $\beta$，则
+\[
+\frac{\alpha}{1-\beta} \leq A, \qquad B \leq \frac{1-\alpha}{\beta}.
+\]
+因此取 $A=\alpha_a/(1-\beta_a)$、$B=(1-\alpha_a)/\beta_a$ 时，$\alpha+\beta \leq \alpha_a+\beta_a$，并且实际应用中 $\alpha,\beta$ 通常接近预设值 $\alpha_a,\beta_a$。
+
+\begin{example}[Bernoulli 的 SPRT]\label{ex:bernoulli-sprt}
+设 $X_i \sim \mathrm{Bernoulli}(\theta)$，检验 $H_0: \theta = 1/3$ 对 $H_1: \theta = 2/3$。
+
+似然比为
+\[
+\Lambda_n = \frac{(1/3)^{\sum x_i} (2/3)^{n-\sum x_i}}{(2/3)^{\sum x_i} (1/3)^{n-\sum x_i}} = 2^{n - 2\sum x_i}.
+\]
+
+取对数并整理，不等式 $A < \Lambda_n < B$ 等价于
+\[
+c_0(n) = \frac{n}{2} - \frac{\log_2 B}{2} < \sum_{i=1}^n x_i < \frac{n}{2} - \frac{\log_2 A}{2} = c_1(n).
+\]
+
+\textbf{决策规则}：当 $\sum x_i \geq c_1(n)$ 时，拒绝 $H_0$；当 $\sum x_i \leq c_0(n)$ 时，接受 $H_0$；否则继续采样。
+
+\textbf{序贯抽样的图示}：想象一条随机游走——每观察一次 $X_i = 1$，我们就向右跳 $1$ 个单位；每观察一次 $X_i = 0$，我们就向左跳 $1$ 个单位。只要这条路径处于上下边界之间，我们就继续。一旦路径碰到上界（强烈支持 $H_1$）或下界（强烈支持 $H_0$），我们就停止并做出相应决策。\end{example}
+
+\begin{example}[正态均值的 SPRT]\label{ex:normal-sprt}
+设 $X_1, X_2, \ldots \sim N(\theta, 100)$，检验 $H_0: \theta = 75$ 对 $H_1: \theta = 78$，目标是使 $\alpha \approx \beta \approx 0.10$。
+
+取 $A = 1/9$、$B = 9$。似然比为
+\[
+\Lambda_n = \exp\left(-\frac{6\sum x_i - 459n}{200}\right).
+\]
+
+不等式 $A < \Lambda_n < B$ 化为
+\[
+c_0(n) = \frac{153}{2}n - \frac{100}{3}\log 9 < \sum_{i=1}^n x_i < \frac{153}{2}n + \frac{100}{3}\log 9 = c_1(n).
+\]
+
+决策规则：在第 $n$ 步，当 $\sum x_i \geq c_1(n)$ 时拒绝 $H_0$（认为 $\theta = 78$）；当 $\sum x_i \leq c_0(n)$ 时接受 $H_0$（认为 $\theta = 75$）；否则继续采样。\end{example}
+
+\textbf{SPRT 的吸引力}：为什么 SPRT 如此重要？因为它在固定两类错误概率的同时，通常使用比固定样本量检验更少的样本。Wald 的近似理论表明，当 $H_0$ 或 $H_1$ 为真时，SPRT 的平均样本量（Average Sample Number，ASN）比相应的固定样本量检验小得多——有时能节省 $50\%$ 以上的样本。
+
+\textbf{SPRT 与质量控制}：SPRT 的思想在工业质量控制中有广泛应用。CUSUM（累积和）控制图就是 SPRT 的一个变体——它持续累积标准化后的偏离量 $\sum (Z_i - 0.5)$（其中 $Z_i$ 是标准化后的检验统计量），一旦超出控制限就发出警报。与固定间隔的 Shewhart 控制图相比，CUSUM 能更快检测到过程均值的微小漂移。
+
+\section{8.5 *Minimax and Classification Procedures}\label{sec:8.5}
+
+\subsection{8.5.1 极小化极大检验}
+
+在第 7 章的决策论框架中，我们介绍了极小化极大（minimax）原则：将最大风险最小化。将这个思想应用到假设检验中，会得到一个有趣的结论——\textbf{Neyman-Pearson 最佳检验在某种意义上也是极小化极大的}。
+
+考虑简单假设 $H_0: \theta = \theta'$ 对 $H_1: \theta = \theta''$，损失函数满足 $\mathcal{L}(\theta', \theta') = \mathcal{L}(\theta'', \theta'') = 0$（正确决策无损失），而 $\mathcal{L}(\theta', \theta'') > 0$ 和 $\mathcal{L}(\theta'', \theta') > 0$（错误决策有损失）。
+此时风险函数为：
+\[
+R(\theta', C) = \mathcal{L}(\theta', \theta'') \cdot \alpha, \quad R(\theta'', C) = \mathcal{L}(\theta'', \theta') \cdot \beta,
+\]
+其中 $\alpha$ 是显著性水平，$\beta$ 是 Type II 错误概率。
+
+极小化极大原则要求选择 $C$ 使得 $\max\{R(\theta', C), R(\theta'', C)\}$ 最小。可以证明，当 $k$ 满足
+\[
+\mathcal{L}(\theta', \theta'') \int_C L(\theta') = \mathcal{L}(\theta'', \theta') \int_{C^c} L(\theta'')
+\]
+时（即两类错误造成的风险相等），临界区域 $C$ 是极小化极大的。这个条件与 NP 似然比条件是一致的——本质上，最佳检验同时也是极小化极大检验（当两类错误的相对代价被适当选择时）。
+\begin{example}[正态均值的极小化极大检验]\label{ex:minimax-normal}
+设 $X_1, \ldots, X_{100} \sim N(\theta, 100)$，检验 $H_0: \theta = 75$ 对 $H_1: \theta = 78$，损失为 $\mathcal{L}(75, 78) = 3$、$\mathcal{L}(78, 75) = 1$。
+
+临界区域形如 $\bar{x} \geq c$，其中 $c$ 满足：
+\[
+3 \cdot \mathbb{P}_{\theta=75}(\bar{X} \geq c) = \mathbb{P}_{\theta=78}(\bar{X} < c).
+\]
+由于 $\bar{X} \sim N(\theta, 1)$，这化为
+\[
+3[1 - \Phi(c-75)] = \Phi(c-78).
+\]
+
+求解得 $c \approx 76.8$。此时显著性水平 $\alpha = 1 - \Phi(1.8) \approx 0.036$，功效为 $1 - \Phi(-1.2) \approx 0.885$。\end{example}
+
+\subsection{8.5.2 分类问题}
+
+极小化极大检验理论在分类（classification）问题中有直接应用。考虑一个二分类问题：我们观察到 $(X, Y)$，需要判断它来自分布 $f(x,y;\theta')$ 还是 $f(x,y;\theta'')$。
+
+这本质上就是假设检验问题——如果接受 $H_0$，就把 $(X,Y)$ 分类为来自 $\theta'$ 类；如果拒绝 $H_0$，就分类为来自 $\theta''$ 类。
+
+由 NP 定理，最佳分类规则是似然比规则：
+\[
+\frac{f(x,y;\theta')}{f(x,y;\theta'')} \leq k \quad \Longrightarrow \quad \text{分类为 $\theta''$ 类}.
+\]
+
+若两类的先验概率为 $\pi'$ 和 $\pi''$，则最优规则取 $k = \pi''/\pi'$（当两类等可能时 $k=1$）。
+
+\textbf{Fisher 线性判别函数}：在正态分布的特殊情况下，似然比不等式化为一个线性函数 $ax + by \leq c$——这就是著名的 Fisher 线性判别函数。当参数未知时，用训练样本的均值和方差代替，就得到了 Fisher 判别函数。
+\begin{example}[二元正态的线性判别]\label{ex:bivariate-normal-classification}
+设 $(X,Y)$ 来自二元正态分布，参数为 $(\mu_1', \mu_2', \sigma_1^2, \sigma_2^2, \rho')$ 或 $(\mu_1'', \mu_2'', \sigma_1^2, \sigma_2^2, \rho'')$。则似然比不等式化为
+\[
+ax + by \leq c,
+\]
+其中 $a$ 和 $b$ 是由两个总体的均值向量和协方差矩阵决定的常数。这给出了一个\textbf{线性决策边界}——在二维空间中是一条直线，将平面分为两部分，分别对应两类。\end{example}
+
+\section*{附录：公式推导}\label{sec:appendix-ch8}
+
+本附录包含 Chapter 8 中省略的完整推导。
+
+\subsection{Neyman-Pearson 引理的证明}\label{sec:np-lemma-proof}
+
+\textbf{背景（Background）}：我们需要证明，当临界区域 $C$ 满足 NP 条件（a）-(c) 时，它是在固定显著性水平 $\alpha$ 下功效最高的检验。
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item $L(\theta'; \mathbf{x}) = \prod_{i=1}^n f(x_i; \theta')$ 是 $H_0$ 下的似然函数
+\item $L(\theta''; \mathbf{x}) = \prod_{i=1}^n f(x_i; \theta'')$ 是 $H_1$ 下的似然函数
+\item 临界区域 $C$ 满足：
+\[
+\frac{L(\theta';\mathbf{x})}{L(\theta'';\mathbf{x})} \leq k, \quad \forall \mathbf{x} \in C;
+\quad
+\frac{L(\theta';\mathbf{x})}{L(\theta'';\mathbf{x})} \geq k, \quad \forall \mathbf{x} \in C^c.
+\]
+\item 任意其他满足 $\mathbb{P}_{\theta'}(\mathbf{X} \in A) = \alpha$ 的区域 $A$。
+\end{itemize}
+
+\textbf{目标（Goal）}：证明 $\mathbb{P}_{\theta''}(\mathbf{X} \in C) \geq \mathbb{P}_{\theta''}(\mathbf{X} \in A)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\begin{enumerate}
+\item 写出功效差：
+\[
+\int_C L(\theta'') - \int_A L(\theta'') = \int_{C \cap A^c} L(\theta'') - \int_{A \cap C^c} L(\theta'').
+\label{eq:np-proof-eq1}
+\]
+
+\item 由条件 (a)：在 $C$ 上 $L(\theta'') \geq \frac{1}{k}L(\theta')$，故
+\[
+\int_{C \cap A^c} L(\theta'') \geq \frac{1}{k} \int_{C \cap A^c} L(\theta').
+\label{eq:np-proof-eq2}
+\]
+
+\item 由条件 (b)：在 $C^c$ 上 $L(\theta'') \leq \frac{1}{k}L(\theta')$，故
+\[
+\int_{A \cap C^c} L(\theta'') \leq \frac{1}{k} \int_{A \cap C^c} L(\theta').
+\label{eq:np-proof-eq3}
+\]
+
+\item 将 \cref{eq:np-proof-eq2} 和 \cref{eq:np-proof-eq3} 代入 \cref{eq:np-proof-eq1}：
+\[
+\int_C L(\theta'') - \int_A L(\theta'') \geq \frac{1}{k}\left[\int_{C \cap A^c} L(\theta') - \int_{A \cap C^c} L(\theta')\right].
+\label{eq:np-proof-eq4}
+\]
+
+\item 计算括号内项：
+\[
+\int_{C \cap A^c} L(\theta') - \int_{A \cap C^c} L(\theta') = \int_C L(\theta') - \int_A L(\theta') = \alpha - \alpha = 0.
+\label{eq:np-proof-eq5}
+\]
+
+\item 由 \cref{eq:np-proof-eq4} 和 \cref{eq:np-proof-eq5} 得 $\int_C L(\theta'') - \int_A L(\theta'') \geq 0$，即
+\[
+\mathbb{P}_{\theta''}(\mathbf{X} \in C) \geq \mathbb{P}_{\theta''}(\mathbf{X} \in A).
+\]
+
+证毕。
+\end{enumerate}
+
+\subsection{正态均值 NP 检验的完整推导}\label{sec:normal-np-derivation}
+
+\textbf{背景（Background）}：在例 8.1.2 中，我们构造了正态均值差假设的 NP 检验。本节补充完整推导。
+
+\textbf{目标（Goal）}：对 $X_1, \ldots, X_n \sim N(\theta, 1)$，检验 $H_0: \theta = 0$ 对 $H_1: \theta = 1$，求大小为 $\alpha$ 的最佳检验。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\begin{enumerate}
+\item 写出似然函数：
+\[
+L(\theta; \mathbf{x}) = (2\pi)^{-n/2} \exp\left[-\frac{1}{2}\sum_{i=1}^n (x_i - \theta)^2\right].
+\]
+
+\item 似然比：
+\[
+\frac{L(0; \mathbf{x})}{L(1; \mathbf{x})} = \frac{\exp\left[-\frac{1}{2}\sum x_i^2\right]}{\exp\left[-\frac{1}{2}\sum (x_i-1)^2\right]} = \exp\left[-\sum_{i=1}^n x_i + \frac{n}{2}\right].
+\]
+
+\item 令 $\frac{L(0; \mathbf{x})}{L(1; \mathbf{x})} \leq k$：
+\[
+\exp\left[-\sum x_i + \frac{n}{2}\right] \leq k \quad \Longleftrightarrow \quad \sum_{i=1}^n x_i \geq \frac{n}{2} - \log k = c.
+\]
+
+\item 当 $H_0$ 为真时，$\overline{X} \sim N(0, 1/n)$，故临界值
+\[
+c_1 = \frac{c}{n} = \frac{1}{2} - \frac{\log k}{n} = q_{\alpha}(0, 1/\sqrt{n}).
+\]
+
+\item 功效函数：当 $\theta = 1$ 时，$\overline{X} \sim N(1, 1/n)$，
+\[
+\text{Power}(\theta=1) = \mathbb{P}_{\theta=1}\left(\overline{X} \geq q_{\alpha}(0, 1/\sqrt{n})\right) = 1 - \Phi\left(\frac{q_{\alpha}(0, 1/\sqrt{n}) - 1}{1/\sqrt{n}}\right).
+\]
+
+证毕。
+\end{enumerate}
+
+\subsection{Karlin-Rubin 定理的证明}\label{sec:karlin-rubin-proof}
+
+\textbf{背景（Background）}：证明当似然函数有 MLR 性质时，单向复合假设存在 UMP 检验。
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item 似然函数 $L(\theta, \mathbf{x})$ 在 $Y = u(\mathbf{x})$ 中有 MLR：对 $\theta_1 < \theta_2$，$L(\theta_1;\mathbf{x})/L(\theta_2;\mathbf{x}) = g(Y)$，其中 $g$ 是递减函数。
+\item 单向假设：$H_0: \theta \leq \theta'$ 对 $H_1: \theta > \theta'$。
+\end{itemize}
+
+\textbf{目标（Goal）}：证明检验 $\phi(\mathbf{x}) = 1$ 当 $Y \geq c_Y$，其中 $c_Y$ 满足 $\mathbb{P}_{\theta'}(Y \geq c_Y) = \alpha$，是 UMP level $\alpha$ 检验。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\begin{enumerate}
+\item \textbf{对简单假设 $H_0': \theta = \theta'$ 对 $\theta'' > \theta'$ 的最优性}：由 NP 定理，最佳临界区域由
+\[
+\frac{L(\theta';\mathbf{x})}{L(\theta'';\mathbf{x})} \leq k
+\]
+给出。由于 MLR 性质，$g(Y) \leq k \Longleftrightarrow Y \geq g^{-1}(k)$。取 $c_Y = g^{-1}(k)$，则对任意 $\theta'' > \theta'$，临界区域 $C = \{Y \geq c_Y\}$ 是 $H_0': \theta = \theta'$ 对 $\theta''$ 的最佳检验。
+
+\item \textbf{对所有 $\theta'' > \theta'$ 的一致性}：由于 NP 最佳临界区域的形式只依赖于 $Y \geq c_Y$（而不依赖于具体的 $\theta''$），$C = \{Y \geq c_Y\}$ 对所有 $\theta'' > \theta'$ 都是最佳的。
+
+\item \textbf{无偏性（保证 level 不超过 $\alpha$）}：设 $\gamma_Y(\theta) = \mathbb{P}_\theta(Y \geq c_Y)$ 为功效函数。对 $\theta_1 < \theta_2$，由第 1 步，$C$ 是 $\theta_1$ 对 $\theta_2$ 的最佳检验，故 $\gamma_Y(\theta_2) \geq \gamma_Y(\theta_1)$。因此 $\gamma_Y(\theta)$ 是 $\theta$ 的非降函数，$\max_{\theta \leq \theta'} \gamma_Y(\theta) = \gamma_Y(\theta') = \alpha$。故该检验是 level $\alpha$ 的。
+
+综上，$C = \{Y \geq c_Y\}$ 是 UMP level $\alpha$ 检验。证毕。
+\end{enumerate}
+
+\section*{Exercises}\label{sec:exercises-ch8}
+
+\subsection*{Section 8.1}
+
+\begin{exercise}{\ref{exr:8.1.1} Best Test for Normal Mean ($\theta'' = -1$) -- Hogg 8.1.1}\label{exr:8.1.1}
+In Example 8.1.2 of this section, let the simple hypotheses read $H_0: \theta = \theta' = 0$ and $H_1: \theta = \theta'' = -1$. Show that the best test of $H_0$ against $H_1$ may be carried out by use of the statistic $\overline{X}$, and that if $n = 25$ and $\alpha = 0.05$, the power of the test is 0.9996 when $H_1$ is true.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.2} Best Test for Exponential Distribution -- Hogg 8.1.2}\label{exr:8.1.2}
+Let the random variable $X$ have the pdf $f(x; \theta) = (1/\theta)e^{-x/\theta}$, $0 < x < \infty$, zero elsewhere. Consider the simple hypothesis $H_0: \theta = \theta' = 2$ and the alternative hypothesis $H_1: \theta = \theta'' = 4$. Let $X_1, X_2$ denote a random sample of size 2 from this distribution. Show that the best test of $H_0$ against $H_1$ may be carried out by use of the statistic $X_1 + X_2$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.3} Generalization for Exponential Best Test -- Hogg 8.1.3}\label{exr:8.1.3}
+Repeat Exercise 8.1.2 when $H_1: \theta = \theta'' = 6$. Generalize this for every $\theta'' > 2$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.4} Best Critical Region for Normal Variance -- Hogg 8.1.4}\label{exr:8.1.4}
+Let $X_1, X_2, \ldots, X_{10}$ be a random sample of size 10 from a normal distribution $N(0, \sigma^2)$. Find a best critical region of size $\alpha = 0.05$ for testing $H_0: \sigma^2 = 1$ against $H_1: \sigma^2 = 2$. Is this a best critical region of size 0.05 for testing $H_0: \sigma^2 = 1$ against $H_1: \sigma^2 = 4$? Against $H_1: \sigma^2 = \sigma_1^2 > 1$?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.5} Best Test for Beta Distribution -- Hogg 8.1.5}\label{exr:8.1.5}
+If $X_1, X_2, \ldots, X_n$ is a random sample from a distribution having pdf of the form $f(x; \theta) = \theta x^{\theta-1}$, $0 < x < 1$, zero elsewhere, show that a best critical region for testing $H_0: \theta = 1$ against $H_1: \theta = 2$ is $C = \{(x_1, x_2, \ldots, x_n): c \leq \prod_{i=1}^n x_i\}$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.6} Best Test for Bivariate Normal -- Hogg 8.1.6}\label{exr:8.1.6}
+Let $X_1, X_2, \ldots, X_{10}$ be a random sample from a distribution that is $N(\theta_1, \theta_2)$. Find a best test of the simple hypothesis $H_0: \theta_1 = \theta_1' = 0$, $\theta_2 = \theta_2' = 1$ against the alternative simple hypothesis $H_1: \theta_1 = \theta_1'' = 1$, $\theta_2 = \theta_2'' = 4$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.7} Best Test for Normal Mean with Power Constraint -- Hogg 8.1.7}\label{exr:8.1.7}
+Let $X_1, X_2, \ldots, X_n$ denote a random sample from a normal distribution $N(\theta, 100)$. Show that $C = \{(x_1, x_2, \ldots, x_n): c \leq \overline{x} = \sum_{1}^n x_i / n\}$ is a best critical region for testing $H_0: \theta = 75$ against $H_1: \theta = 78$. Find $n$ and $c$ so that
+\[
+\mathbb{P}_{H_0}((X_1, X_2, \ldots, X_n) \in C) = \mathbb{P}_{H_0}(\bar{X} \geq c) = 0.05
+\]
+and
+\[
+\mathbb{P}_{H_1}((X_1, X_2, \ldots, X_n) \in C) = \mathbb{P}_{H_1}(\bar{X} \geq c) = 0.90,
+\]
+approximately.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.8} Best Test for Beta($\theta$, $\theta$) Distribution -- Hogg 8.1.8}\label{exr:8.1.8}
+If $X_1, X_2, \ldots, X_n$ is a random sample from a beta distribution with parameters $\alpha = \beta = \theta > 0$, find a best critical region for testing $H_0: \theta = 1$ against $H_1: \theta = 2$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.9} Best Test for Bernoulli with CLT Approximation -- Hogg 8.1.9}\label{exr:8.1.9}
+Let $X_1, X_2, \ldots, X_n$ be iid with pmf $f(x; p) = p^x(1-p)^{1-x}$, $x = 0, 1$, zero elsewhere. Show that $C = \{(x_1, \ldots, x_n): \sum_{1}^n x_i \leq c\}$ is a best critical region for testing $H_0: p = 1/2$ against $H_1: p = 1/3$. Use the Central Limit Theorem to find $n$ and $c$ so that approximately $\mathbb{P}_{H_0}(\sum_{1}^n X_i \leq c) = 0.10$ and $\mathbb{P}_{H_1}(\sum_{1}^n X_i \leq c) = 0.80$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.1.10} Best Test for Poisson Distribution -- Hogg 8.1.10}\label{exr:8.1.10}
+Let $X_1, X_2, \ldots, X_{10}$ denote a random sample of size 10 from a Poisson distribution with mean $\theta$. Show that the critical region $C$ defined by $\sum_{1}^{10} x_i \geq 3$ is a best critical region for testing $H_0: \theta = 0.1$ against $H_1: \theta = 0.5$. Determine, for this test, the significance level $\alpha$ and the power at $\theta = 0.5$. Use the R function ppois.
+\end{exercise}
+
+\subsection*{Section 8.2}
+
+\begin{exercise}{\ref{exr:8.2.1} Power Function for Bernoulli Test -- Hogg 8.2.1}\label{exr:8.2.1}
+Let $X$ have the pmf $f(x; \theta) = \theta^x(1-\theta)^{1-x}$, $x = 0, 1$, zero elsewhere. We test the simple hypothesis $H_0: \theta = 1/4$ against the alternative composite hypothesis $H_1: \theta < 1/4$ by taking a random sample of size 10 and rejecting $H_0: \theta = 1/4$ if and only if the observed values $x_1, x_2, \ldots, x_{10}$ of the sample observations are such that $\sum_{1}^{10} x_i \leq 1$. Find the power function $\gamma(\theta)$, $0 < \theta \leq 1/4$, of this test.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.2} Power Function for Uniform Distribution Test -- Hogg 8.2.2}\label{exr:8.2.2}
+Let $X$ have a pdf of the form $f(x; \theta) = 1/\theta$, $0 < x < \theta$, zero elsewhere. Let $Y_1 < Y_2 < Y_3 < Y_4$ denote the order statistics of a random sample of size 4 from this distribution. Let the observed value of $Y_4$ be $y_4$. We reject $H_0: \theta = 1$ and accept $H_1: \theta \neq 1$ if either $y_4 \leq 1/2$ or $y_4 > 1$. Find the power function $\gamma(\theta)$, $0 < \theta$, of the test.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.3} Power Function for Normal Mean Test -- Hogg 8.2.3}\label{exr:8.2.3}
+Consider a normal distribution of the form $N(\theta, 4)$. The simple hypothesis $H_0: \theta = 0$ is rejected, and the alternative composite hypothesis $H_1: \theta > 0$ is accepted if and only if the observed mean $\overline{x}$ of a random sample of size 25 is greater than or equal to $3/5$. Find the power function $\gamma(\theta)$, $0 \leq \theta$, of this test.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.4} Two-Sample Normal Test with Power Constraint -- Hogg 8.2.4}\label{exr:8.2.4}
+Consider the distributions $N(\mu_1, 400)$ and $N(\mu_2, 225)$. Let $\theta = \mu_1 - \mu_2$. Let $\overline{x}$ and $\overline{y}$ denote the observed means of two independent random samples, each of size $n$, from these two distributions. We reject $H_0: \theta = 0$ and accept $H_1: \theta > 0$ if and only if $\overline{x} - \overline{y} \geq c$. If $\gamma(\theta)$ is the power function of this test, find $n$ and $c$ so that $\gamma(0) = 0.05$ and $\gamma(10) = 0.90$, approximately.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.5} MLR and UMP Test for Normal Variance -- Hogg 8.2.5}\label{exr:8.2.5}
+Consider Example 8.2.2. Show that $L(\theta)$ has a monotone likelihood ratio in the statistic $\sum_{i=1}^n X_i^2$. Use this to determine the UMP test for $H_0: \theta = \theta'$, where $\theta'$ is a fixed positive number, versus $H_1: \theta < \theta'$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.6} No UMP Test for Two-Sided Normal Mean -- Hogg 8.2.6}\label{exr:8.2.6}
+If, in Example 8.2.2 of this section, $H_0: \theta = \theta'$, where $\theta'$ is a fixed positive number, and $H_1: \theta \neq \theta'$, show that there is no uniformly most powerful test for testing $H_0$ against $H_1$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.7} UMP Test for Normal Mean -- Hogg 8.2.7}\label{exr:8.2.7}
+Let $X_1, X_2, \ldots, X_{25}$ denote a random sample of size 25 from a normal distribution $N(\theta, 100)$. Find a uniformly most powerful critical region of size $\alpha = 0.10$ for testing $H_0: \theta = 75$ against $H_1: \theta > 75$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.8} UMP Test for Normal Mean (Lower Tail) -- Hogg 8.2.8}\label{exr:8.2.8}
+Let $X_1, X_2, \ldots, X_n$ denote a random sample from a normal distribution $N(\theta, 16)$. Find the sample size $n$ and a uniformly most powerful test of $H_0: \theta = 25$ against $H_1: \theta < 25$ with power function $\gamma(\theta)$ so that approximately $\gamma(25) = 0.10$ and $\gamma(23) = 0.90$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.9} Sample Size for Bernoulli UMP Test -- Hogg 8.2.9}\label{exr:8.2.9}
+Consider a distribution having a pmf of the form $f(x; \theta) = \theta^x(1-\theta)^{1-x}$, $x = 0, 1$, zero elsewhere. Let $H_0: \theta = 1/20$ and $H_1: \theta > 1/20$. Use the Central Limit Theorem to determine the sample size $n$ of a random sample so that a uniformly most powerful test of $H_0$ against $H_1$ has a power function $\gamma(\theta)$, with approximately $\gamma(1/20) = 0.05$ and $\gamma(1/10) = 0.90$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.10} Gamma Distribution SPRT Generalization -- Hogg 8.2.10}\label{exr:8.2.10}
+Illustrative Example 8.2.1 of this section dealt with a random sample of size $n = 2$ from a gamma distribution with $\alpha = 1$, $\beta = \theta$. Thus the mgf of the distribution is $(1 - \theta t)^{-1}$, $t < 1/\theta$, $\theta \geq 2$. Let $Z = X_1 + X_2$. Show that $Z$ has a gamma distribution with $\alpha = 2$, $\beta = \theta$. Express the power function $\gamma(\theta)$ of Example 8.2.1 in terms of a single integral. Generalize this for a random sample of size $n$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.11} MLR and UMP Test for Beta Distribution -- Hogg 8.2.11}\label{exr:8.2.11}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from a distribution with pdf $f(x; \theta) = \theta x^{\theta-1}$, $0 < x < 1$, zero elsewhere, where $\theta > 0$. Show the likelihood has MLR in the statistic $\prod_{i=1}^n X_i$. Use this to determine the UMP test for $H_0: \theta = \theta'$ against $H_1: \theta < \theta'$, for fixed $\theta' > 0$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.12} Randomized UMP Test for Bernoulli -- Hogg 8.2.12}\label{exr:8.2.12}
+Let $X$ have the pdf $f(x; \theta) = \theta^x(1-\theta)^{1-x}$, $x = 0, 1$, zero elsewhere. We test $H_0: \theta = 1/2$ against $H_1: \theta < 1/2$ by taking a random sample $X_1, X_2, \ldots, X_5$ of size $n = 5$ and rejecting $H_0$ if $Y = \sum_{i=1}^n X_i$ is observed to be less than or equal to a constant $c$.
+\begin{enumerate}
+\item[(a)] Show that this is a uniformly most powerful test.
+\item[(b)] Find the significance level when $c = 1$.
+\item[(c)] Find the significance level when $c = 0$.
+\item[(d)] By using a randomized test, as discussed in Example 4.6.4, modify the tests given in parts (b) and (c) to find a test with significance level $\alpha = 2/32$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.13} UMP Test for Gamma Distribution -- Hogg 8.2.13}\label{exr:8.2.13}
+Let $X_1, \ldots, X_n$ denote a random sample from a gamma-type distribution with $\alpha = 2$ and $\beta = \theta$. Let $H_0: \theta = 1$ and $H_1: \theta > 1$.
+\begin{enumerate}
+\item[(a)] Show that there exists a uniformly most powerful test for $H_0$ against $H_1$, determine the statistic $Y$ upon which the test may be based, and indicate the nature of the best critical region.
+\item[(b)] Find the pdf of the statistic $Y$ in part (a). If we want a significance level of 0.05, write an equation that can be used to determine the critical region. Let $\gamma(\theta)$, $\theta \geq 1$, be the power function of the test. Express the power function as an integral.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.2.14} MLR Test is Unbiased -- Hogg 8.2.14}\label{exr:8.2.14}
+Show that the MLR test defined by expression (8.2.3) is an unbiased test for the hypotheses (8.2.1).
+\end{exercise}
+
+\subsection*{Section 8.3}
+
+\begin{exercise}{\ref{exr:8.3.1} Temperature Data Analysis -- Hogg 8.3.1}\label{exr:8.3.1}
+Verzani (2014) discusses a data set on healthy individuals, including their temperatures by gender. The data are in the file tempbygender.rda and the variables of interest are maletemp and femaletemp. Download this file from the site listed in the Preface.
+\begin{enumerate}
+\item[(a)] Obtain comparison boxplots. Comment on the plots. Which, if any, gender seems to have lower temperatures? Based on the width of the boxplots, comment on the assumption of equal variances.
+\item[(b)] As discussed in Example 8.3.3, compute the two-sample, two-sided $t$-test that there is no difference in the true mean temperatures between genders. Obtain the $\text{p}_{}$-value of the test and conclude in terms of the problem at the nominal $\alpha$-level of 0.05.
+\item[(c)] Obtain a 95\% confidence interval for the difference in means. What does it mean in terms of the problem?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.2} Verify LRT Equations -- Hogg 8.3.2}\label{exr:8.3.2}
+Verify Equations (8.3.2) of Example 8.3.1 of this section.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.3} Verify LRT Equations (Continued) -- Hogg 8.3.3}\label{exr:8.3.3}
+Verify Equations (8.3.3) of Example 8.3.1 of this section.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.4} Location Model Two-Sample Test -- Hogg 8.3.4}\label{exr:8.3.4}
+Let $X_1, \ldots, X_n$ and $Y_1, \ldots, Y_m$ follow the location model
+\[
+\begin{array}{l}
+X_i = \theta_1 + Z_i, \quad i = 1, \ldots, n, \\
+Y_i = \theta_2 + Z_{n+i}, \quad i = 1, \ldots, m,
+\end{array}
+\]
+where $Z_1, \ldots, Z_{n+m}$ are iid random variables with common pdf $f(z)$. Assume that $\mathbb{E}(Z_i) = 0$ and $\text{var}(Z_i) = \theta_3 < \infty$.
+\begin{enumerate}
+\item[(a)] Show that $\mathbb{E}(X_i) = \theta_1$, $\mathbb{E}(Y_i) = \theta_2$, and $\text{var}(X_i) = \text{var}(Y_i) = \theta_3$.
+\item[(b)] Consider the hypotheses of Example 8.3.1, i.e.,
+\[
+H_0: \theta_1 = \theta_2 \text{ versus } H_1: \theta_1 \neq \theta_2.
+\]
+Show that under $H_0$, the test statistic $T$ given in expression (8.3.4) has a limiting $N(0,1)$ distribution.
+\item[(c)] Using part (b), determine the corresponding large sample test (decision rule) of $H_0$ versus $H_1$. (This shows that the test in Example 8.3.1 is asymptotically correct.)
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.5} Power Function for One-Sample t-Test -- Hogg 8.3.5}\label{exr:8.3.5}
+In Example 8.3.2, the power function for the one-sample $t$-test is discussed.
+\begin{enumerate}
+\item[(a)] Plot the power function for the following setup: $X$ has a $N(\mu, \sigma^2)$ distribution; $H_0: \mu = 50$ versus $H_1: \mu \neq 50$; $\alpha = 0.05$; $n = 25$; and $\sigma = 10$.
+\item[(b)] Overlay the power curve in (a) with that for $\alpha = 0.01$. Comment.
+\item[(c)] Overlay the power curve in (a) with that for $n = 35$. Comment.
+\item[(d)] Determine the smallest value of $n$ so the power exceeds 0.80 to detect $\mu = 53$. Hint: Modify the R function tpowerg.R so it returns the power for a specified alternative.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.6} Drug Comparison Power Analysis -- Hogg 8.3.6}\label{exr:8.3.6}
+The effect that a certain drug (Drug A) has on increasing blood pressure is a major concern. It is thought that a modification of the drug (Drug B) will lessen the increase in blood pressure. Let $\mu_A$ and $\mu_B$ be the true mean increases in blood pressure due to Drug A and B, respectively. The hypotheses of interest are $H_0: \mu_A = \mu_B = 0$ versus $H_1: \mu_A > \mu_B = 0$. The two-sample $t$-test statistic discussed in Example 8.3.3 is to be used to conduct the analysis. The nominal level is set at $\alpha = 0.05$. For the experimental design assume that the sample sizes are the same; i.e., $m = n$. Also, based on data from Drug A, $\sigma = 30$ seems to be a reasonable selection for the common standard deviation. Determine the common sample size, so that the difference in means $\mu_A - \mu_B = 12$ has an 80\% detection rate. Suppose when the experiment is over, due to patients dropping out, the sample sizes for Drugs A and B are respectively $n = 72$ and $m = 68$. What was the actual power of the experiment to detect the difference of 12?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.7} LRT Equals NP Test for Simple Hypotheses -- Hogg 8.3.7}\label{exr:8.3.7}
+Show that the likelihood ratio principle leads to the same test when testing a simple hypothesis $H_0$ against an alternative simple hypothesis $H_1$, as that given by the Neyman-Pearson theorem. Note that there are only two points in $\Omega$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.8} LRT for Normal Mean (Two-Sided) -- Hogg 8.3.8}\label{exr:8.3.8}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from the normal distribution $N(\theta, 1)$. Show that the likelihood ratio principle for testing $H_0: \theta = \theta'$, where $\theta'$ is specified, against $H_1: \theta \neq \theta'$ leads to the inequality $|\overline{x} - \theta'| \geq c$.
+\begin{enumerate}
+\item[(a)] Is this a uniformly most powerful test of $H_0$ against $H_1$?
+\item[(b)] Is this a uniformly most powerful unbiased test of $H_0$ against $H_1$?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.9} LRT for Normal Variance -- Hogg 8.3.9}\label{exr:8.3.9}
+Let $X_1, X_2, \ldots, X_n$ be iid $N(\theta_1, \theta_2)$. Show that the likelihood ratio principle for testing $H_0: \theta_2 = \theta_2'$ specified, and $\theta_1$ unspecified, against $H_1: \theta_2 \neq \theta_2'$, $\theta_1$ unspecified, leads to a test that rejects when $\sum_{1}^n(x_i - \overline{x})^2 \leq c_1$ or $\sum_{1}^n(x_i - \overline{x})^2 \geq c_2$, where $c_1 < c_2$ are selected appropriately.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.10} Power Function for LRT in Example 8.3.5 -- Hogg 8.3.10}\label{exr:8.3.10}
+For the situation discussed in Example 8.3.5, derive the power function for the likelihood ratio test statistic given in expression (8.3.9).
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.11} LRT for Two Normal Variances -- Hogg 8.3.11}\label{exr:8.3.11}
+Let $X_1, \ldots, X_n$ and $Y_1, \ldots, Y_m$ be independent random samples from the distributions $N(\theta_1, \theta_3)$ and $N(\theta_2, \theta_4)$, respectively.
+\begin{enumerate}
+\item[(a)] Show that the likelihood ratio for testing $H_0: \theta_1 = \theta_2$, $\theta_3 = \theta_4$ against all alternatives is given by
+\[
+\frac{\left[ \sum_{1}^n (x_i - \overline{x})^2 / n \right]^{n/2} \left[ \sum_{1}^m (y_i - \overline{y})^2 / m \right]^{m/2}}{\left\{\left[ \sum_{1}^n (x_i - u)^2 + \sum_{1}^m (y_i - u)^2 \right] / (m + n) \right\}^{(n+m)/2}},
+\]
+where $u = (n\overline{x} + m\overline{y}) / (n + m)$.
+\item[(b)] Show that the likelihood ratio for testing $H_0: \theta_3 = \theta_4$ with $\theta_1$ and $\theta_2$ unspecified can be based on the test statistic $F$ given in expression (8.3.9).
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.12} LRT for Laplace Distribution -- Hogg 8.3.12}\label{exr:8.3.12}
+Let $Y_1 < Y_2 < \cdots < Y_5$ be the order statistics of a random sample of size $n = 5$ from a distribution with pdf $f(x; \theta) = \frac{1}{2}e^{-|x-\theta|}$, $-\infty < x < \infty$, for all real $\theta$. Find the likelihood ratio test $\Lambda$ for testing $H_0: \theta = \theta_0$ against $H_1: \theta \neq \theta_0$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.13} LRT for Uniform vs Exponential -- Hogg 8.3.13}\label{exr:8.3.13}
+A random sample $X_1, X_2, \ldots, X_n$ arises from a distribution given by
+\[
+H_0: f(x; \theta) = \frac{1}{\theta}, \quad 0 < x < \theta, \quad \text{zero elsewhere},
+\]
+or
+\[
+H_1: f(x; \theta) = \frac{1}{\theta}e^{-x/\theta}, \quad 0 < x < \infty, \quad \text{zero elsewhere}.
+\]
+Determine the likelihood ratio ($\Lambda$) test associated with the test of $H_0$ against $H_1$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.14} UMP and LRT for Beta-like Distribution -- Hogg 8.3.14}\label{exr:8.3.14}
+Consider a random sample $X_1, X_2, \ldots, X_n$ from a distribution with pdf $f(x; \theta) = \theta(1-x)^{\theta-1}$, $0 < x < 1$, zero elsewhere, where $\theta > 0$.
+\begin{enumerate}
+\item[(a)] Find the form of the uniformly most powerful test of $H_0: \theta = 1$ against $H_1: \theta > 1$.
+\item[(b)] What is the likelihood ratio $\Lambda$ for testing $H_0: \theta = 1$ against $H_1: \theta \neq 1$?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.15} LRT for Testing Means with Common Variance -- Hogg 8.3.15}\label{exr:8.3.15}
+Let $X_1, X_2, \ldots, X_n$ and $Y_1, Y_2, \ldots, Y_n$ be independent random samples from two normal distributions $N(\mu_1, \sigma^2)$ and $N(\mu_2, \sigma^2)$, respectively, where $\sigma^2$ is the common but unknown variance.
+\begin{enumerate}
+\item[(a)] Find the likelihood ratio $\Lambda$ for testing $H_0: \mu_1 = \mu_2 = 0$ against all alternatives.
+\item[(b)] Rewrite $\Lambda$ so that it is a function of a statistic $Z$ which has a well-known distribution.
+\item[(c)] Give the distribution of $Z$ under both null and alternative hypotheses.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.16} LRT for Bivariate Normal -- Hogg 8.3.16}\label{exr:8.3.16}
+Let $(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)$ be a random sample from a bivariate normal distribution with $\mu_1, \mu_2, \sigma_1^2 = \sigma_2^2 = \sigma^2, \rho = 1/2$, where $\mu_1, \mu_2$, and $\sigma^2 > 0$ are unknown real numbers. Find the likelihood ratio $\Lambda$ for testing $H_0: \mu_1 = \mu_2 = 0$, $\sigma^2$ unknown against all alternatives. The likelihood ratio $\Lambda$ is a function of what statistic that has a well-known distribution?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.17} LRT for Comparing Variances of Laplace Distributions -- Hogg 8.3.17}\label{exr:8.3.17}
+Let $X$ be a random variable with pdf $f_X(x) = (2b_X)^{-1}\exp\{-|x|/b_X\}$, for $-\infty < x < \infty$ and $b_X > 0$. First, show that the variance of $X$ is $\sigma_X^2 = 2b_X^2$. Next, let $Y$, independent of $X$, have pdf $f_Y(y) = (2b_Y)^{-1}\exp\{-|y|/b_Y\}$, for $-\infty < x < \infty$ and $b_Y > 0$. Consider the hypotheses
+\[
+H_0: \sigma_X^2 = \sigma_Y^2 \text{ versus } H_1: \sigma_X^2 > \sigma_Y^2.
+\]
+To illustrate Remark 8.3.2 for testing these hypotheses, consider the following data set (data are also in the file exercise8316.rda). Sample 1 represents the values of a sample drawn on $X$ with $b_X = 1$, while Sample 2 represents the values of a sample drawn on $Y$ with $b_Y = 1$. Hence, in this case $H_0$ is true.
+
+\begin{tabular}{l|ccccccc}
+Sample 1 & $-0.389$ & $-0.110$ & $-2.177$ & $-0.709$ & $0.813$ & $0.456$ & $-0.001$ \\
+& $0.135$ & $0.763$ & $0.403$ & $-0.570$ & $0.778$ & $-2.565$ & $-0.115$ \\
+& $-1.733$ & & & & & & \\
+\hline
+Sample 2 & $-1.067$ & $-0.634$ & $-0.577$ & $-0.996$ & $0.361$ & $-0.181$ & $-0.680$ \\
+& $0.239$ & $-0.775$ & $0.213$ & $-1.421$ & $1.425$ & $-0.818$ & $-0.165$ \\
+& $0.328$ & & & & & & \\
+\end{tabular}
+
+\begin{enumerate}
+\item[(a)] Obtain comparison boxplots of these two samples. Comparison boxplots consist of boxplots of both samples drawn on the same scale. Based on these plots, in particular the interquartile ranges, what do you conclude about $H_0$?
+\item[(b)] Obtain the $F$-test (for a one-sided hypothesis) as discussed in Remark 8.3.2 at level $\alpha = 0.10$. What is your conclusion?
+\item[(c)] The test in part (b) is not exact. Why?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.18} Skewed Contaminated Normal Properties -- Hogg 8.3.18}\label{exr:8.3.18}
+For the skewed contaminated normal random variable $X$ of Example 8.3.4, derive the cdf, pdf, mean, and variance of $X$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.19} Binomial CI Half-Width -- Hogg 8.3.19}\label{exr:8.3.19}
+For Table 8.3.1 of Example 8.3.4, show that the half-width of the 95\% confidence interval for a binomial proportion as given in Chapter 4 is 0.004 at the nominal value of 0.05.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.20} Monte Carlo Study for t-Test under Contaminated Normal -- Hogg 8.3.20}\label{exr:8.3.20}
+If computational facilities are available, perform a Monte Carlo study of the two-sided $t$-test for the skewed contaminated normal situation of Example 8.3.4. The R function \texttt{rscn.R} generates variates from the distribution of $X$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.21} Unbiased Test for Normal Mean with Known Variance -- Hogg 8.3.21}\label{exr:8.3.21}
+Suppose $X_1, \ldots, X_n$ is a random sample on $X$ which has a $N(\mu, \sigma_0^2)$ distribution, where $\sigma_0^2$ is known. Consider the two-sided hypotheses
+\[
+H_0: \mu = 0 \text{ versus } H_1: \mu \neq 0.
+\]
+Show that the test based on the critical region $C = \{|\overline{X}| > \sqrt{\sigma_0^2/n} \, z_{\alpha/2}\}$ is an unbiased level $\alpha$ test.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.3.22} One-Sided Test is Not Unbiased -- Hogg 8.3.22}\label{exr:8.3.22}
+Assume the same situation as in the last exercise but consider the test with critical region $C^* = \{\overline{X} > \sqrt{\sigma_0^2/n} \, z_\alpha\}$. Show that the test based on $C^*$ has significance level $\alpha$ but that it is not an unbiased test.
+\end{exercise}
+
+\subsection*{Section 8.4}
+
+\begin{exercise}{\ref{exr:8.4.1} SPRT for Normal Variance -- Hogg 8.4.1}\label{exr:8.4.1}
+Let $X$ be $N(0, \theta)$ and, in the notation of this section, let $\theta' = 4$, $\theta'' = 9$, $\alpha_a = 0.05$, and $\beta_a = 0.10$. Show that the sequential probability ratio test can be based upon the statistic $\sum_{1}^n X_i^2$. Determine $c_0(n)$ and $c_1(n)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.4.2} SPRT for Poisson Distribution -- Hogg 8.4.2}\label{exr:8.4.2}
+Let $X$ have a Poisson distribution with mean $\theta$. Find the sequential probability ratio test for testing $H_0: \theta = 0.02$ against $H_1: \theta = 0.07$. Show that this test can be based upon the statistic $\sum_{i=1}^n X_i$. If $\alpha_a = 0.20$ and $\beta_a = 0.10$, find $c_0(n)$ and $c_1(n)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.4.3} SPRT for Difference of Normal Means -- Hogg 8.4.3}\label{exr:8.4.3}
+Let the independent random variables $Y$ and $Z$ be $N(\mu_1, 1)$ and $N(\mu_2, 1)$, respectively. Let $\theta = \mu_1 - \mu_2$. Let us observe independent observations from each distribution, say $Y_1, Y_2, \ldots$ and $Z_1, Z_2, \ldots$. To test sequentially the hypothesis $H_0: \theta = 0$ against $H_1: \theta = 1/2$, use the sequence $X_i = Y_i - Z_i$, $i = 1, 2, \ldots$. If $\alpha_a = \beta_a = 0.05$, show that the test can be based upon $\overline{X} = \overline{Y} - \overline{Z}$. Find $c_0(n)$ and $c_1(n)$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.4.4} SPRT for Binomial Process -- Hogg 8.4.4}\label{exr:8.4.4}
+Suppose that a manufacturing process makes about 3\% defective items, which is considered satisfactory for this particular product. The managers would like to decrease this to about 1\% and clearly want to guard against a substantial increase, say to 5\%. To monitor the process, periodically $n = 100$ items are taken and the number $X$ of defectives counted. Assume that $X$ is $b(n = 100, p = \theta)$. Based on a sequence $X_1, X_2, \ldots, X_m, \ldots$, determine a sequential probability ratio test that tests $H_0: \theta = 0.01$ against $H_1: \theta = 0.05$. (Note that $\theta = 0.03$, the present level, is in between these two values.) Write this test in the form
+\[
+h_0 > \sum_{i=1}^m (x_i - nd) > h_1
+\]
+and determine $d$, $h_0$, and $h_1$ if $\alpha_a = \beta_a = 0.02$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.4.5} SPRT for Beta Distribution -- Hogg 8.4.5}\label{exr:8.4.5}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from a distribution with pdf $f(x; \theta) = \theta x^{\theta-1}$, $0 < x < 1$, zero elsewhere.
+\begin{enumerate}
+\item[(a)] Find a complete sufficient statistic for $\theta$.
+\item[(b)] If $\alpha_a = \beta_a = 1/10$, find the sequential probability ratio test of $H_0: \theta = 2$ against $H_1: \theta = 3$.
+\end{enumerate}
+\end{exercise}
+
+\subsection*{Section 8.5}
+
+\begin{exercise}{\ref{exr:8.5.1} Minimax Test for Normal Mean -- Hogg 8.5.1}\label{exr:8.5.1}
+Let $X_1, X_2, \ldots, X_{20}$ be a random sample of size 20 from a distribution that is $N(\theta, 5)$. Let $L(\theta)$ represent the joint pdf of $X_1, X_2, \ldots, X_{20}$. The problem is to test $H_0: \theta = 1$ against $H_1: \theta = 0$. Thus $\Omega = \{\theta: \theta = 0, 1\}$.
+\begin{enumerate}
+\item[(a)] Show that $L(1)/L(0) \leq k$ is equivalent to $\overline{x} \leq c$.
+\item[(b)] Find $c$ so that the significance level is $\alpha = 0.05$. Compute the power of this test if $H_1$ is true.
+\item[(c)] If the loss function is such that $\mathcal{L}(1,1) = \mathcal{L}(0,0) = 0$ and $\mathcal{L}(1,0) = \mathcal{L}(0,1) > 0$, find the minimax test. Evaluate the power function of this test at the points $\theta = 1$ and $\theta = 0$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.2} Minimax Test for Poisson Distribution -- Hogg 8.5.2}\label{exr:8.5.2}
+Let $X_1, X_2, \ldots, X_{10}$ be a random sample of size 10 from a Poisson distribution with parameter $\theta$. Let $L(\theta)$ be the joint pdf of $X_1, X_2, \ldots, X_{10}$. The problem is to test $H_0: \theta = 1/2$ against $H_1: \theta = 1$.
+\begin{enumerate}
+\item[(a)] Show that $L(1/2)/L(1) \leq k$ is equivalent to $y = \sum_{1}^n x_i \geq c$.
+\item[(b)] In order to make $\alpha = 0.05$, show that $H_0$ is rejected if $y > 9$ and, if $y = 9$, reject $H_0$ with probability $1/2$ (using some auxiliary random experiment).
+\item[(c)] If the loss function is such that $\mathcal{L}(1/2,1/2) = \mathcal{L}(1,1) = 0$ and $\mathcal{L}(1/2,1) = 1$ and $\mathcal{L}(1,1/2) = 2$, show that the minimax procedure is to reject $H_0$ if $y > 6$ and, if $y = 6$, reject $H_0$ with probability 0.08 (using some auxiliary random experiment).
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.3} Classification for Bivariate Normal -- Hogg 8.5.3}\label{exr:8.5.3}
+In Example 8.5.2 let $\mu_1' = \mu_2' = 0$, $\mu_1'' = \mu_2'' = 1$, $\sigma_1^2 = 1$, $\sigma_2^2 = 1$, and $\rho = 1/2$.
+\begin{enumerate}
+\item[(a)] Find the distribution of the linear function $aX + bY$.
+\item[(b)] With $k = 1$, compute $\mathbb{P}(aX + bY \leq c; \mu_1' = \mu_2' = 0)$ and $\mathbb{P}(aX + bY > c; \mu_1'' = \mu_2'' = 1)$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.4} Newton's Algorithm for Minimax -- Hogg 8.5.4}\label{exr:8.5.4}
+Determine Newton's algorithm to find the solution of Equation (8.5.2). If software is available, write a program that performs your algorithm and then show that the solution is $c = 76.8$. If software is not available, solve (8.5.2) by ``trial and error''.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.5} Classification Rule for Bivariate Exponential -- Hogg 8.5.5}\label{exr:8.5.5}
+Let $X$ and $Y$ have the joint pdf
+\[
+f(x, y; \theta_1, \theta_2) = \frac{1}{\theta_1\theta_2}\exp\left(-\frac{x}{\theta_1} - \frac{y}{\theta_2}\right), \quad 0 < x < \infty, \quad 0 < y < \infty,
+\]
+zero elsewhere, where $0 < \theta_1$, $0 < \theta_2$. An observation $(x, y)$ arises from the joint distribution with parameters equal to either $(\theta_1' = 1, \theta_2' = 5)$ or $(\theta_1'' = 3, \theta_2'' = 2)$. Determine the form of the classification rule.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.6} Quadratic Classification Rule -- Hogg 8.5.6}\label{exr:8.5.6}
+Let $X$ and $Y$ have a joint bivariate normal distribution. An observation $(x, y)$ arises from the joint distribution with parameters equal to either
+\[
+\mu_1' = \mu_2' = 0, \quad (\sigma_1^2)' = (\sigma_2^2)' = 1, \quad \rho' = 1/2
+\]
+or
+\[
+\mu_1'' = \mu_2'' = 1, \quad (\sigma_1^2)'' = 4, \quad (\sigma_2^2)'' = 9, \quad \rho'' = 1/2.
+\]
+Show that the classification rule involves a second-degree polynomial in $x$ and $y$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:8.5.7} Classification for Bivariate Normal with Different Variances -- Hogg 8.5.7}\label{exr:8.5.7}
+Let $\mathbf{W}' = (W_1, W_2)$ be an observation from one of two bivariate normal distributions, I and II, each with $\mu_1 = \mu_2 = 0$ but with the respective variance-covariance matrices
+\[
+\mathbf{V}_1 = \begin{pmatrix} 1 & 0 \\ 0 & 4 \end{pmatrix} \quad \text{and} \quad \mathbf{V}_2 = \begin{pmatrix} 3 & 0 \\ 0 & 12 \end{pmatrix}.
+\]
+How would you classify $\mathbf{W}$ into I or II?
+\end{exercise}
+
+% === 用户问答记录 ===
+

@@ -1,0 +1,274 @@
+\setcounter{section}{6}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries, then the script}
+
+Rewrite the Rayleigh equation as the weakly forced oscillator
+\begin{equation}
+\label{eq:p6-std}
+\ddot y+y
+=
+\epsilon\Bigl(\dot y-\tfrac13(\dot y)^3\Bigr),
+\qquad
+y(0)=0,\quad \dot y(0)=2a,
+\end{equation}
+with \(\epsilon>0\) small and \(a>0\) fixed. If \(\epsilon=0\), the solution is the circle
+\begin{equation}
+\label{eq:p6-linear}
+y(t)=2a\sin t,
+\qquad
+\dot y(t)=2a\cos t
+\end{equation}
+of radius \(2a\) in the \((y,\dot y)\) plane. Part~(a) asks for an approximation that remains ordered when \(t\) is large, meaning \(t\) of size \(1/\epsilon\), not merely \(t=O(1)\). The force is size \(\epsilon\) at each instant; integrated over a time \(1/\epsilon\) it produces an \(O(1)\) change in amplitude. A regular series in the single variable \(t\) cannot see that change. Two-time multiple scales can.
+
+Two facts are used throughout. The first says the amplitude must move. The second says why a term \(t\sin t\) cannot be tolerated in a first correction.
+
+\begin{lemma}[Energy]
+\label{lem:p6-energy}
+Along solutions of \eqref{eq:p6-std},
+\begin{equation}
+\label{eq:p6-energy}
+\frac{\mathrm{d}E}{\mathrm{d}t}
+=
+\epsilon\,\dot y^2\Bigl(1-\tfrac13\dot y^2\Bigr),
+\qquad
+E
+\coloneqq
+\tfrac12\dot y^2+\tfrac12 y^2.
+\end{equation}
+Thus \(E\) increases wherever \(\lvert\dot y\rvert<\sqrt{3}\) and decreases wherever \(\lvert\dot y\rvert>\sqrt{3}\).
+\end{lemma}
+
+\begin{proof}
+Multiply \eqref{eq:p6-std} by \(\dot y\). The left-hand side is \(\frac{\mathrm{d}}{\mathrm{d}t}(\frac12\dot y^2+\frac12 y^2)\). The right-hand side is \(\epsilon(\dot y^2-\frac13\dot y^4)\).
+\end{proof}
+
+On a nearly circular orbit of radius \(R\), one has \(\lvert\dot y\rvert\) of size \(R\). Small circles grow and large circles shrink, so the amplitude cannot stay at the initial value \(2a\). The time for an \(O(1)\) change is \(T=\epsilon t\), because \(\mathrm{d}E/\mathrm{d}t=O(\epsilon)\).
+
+\begin{lemma}[Resonant forcing]
+\label{lem:p6-resonant}
+The equation \(\ddot u+u=\cos 3t\) has the bounded particular solution \(-\frac18\cos 3t\). The equation \(\ddot u+u=\cos t\) has the particular solution \(\frac12 t\sin t\), and no bounded particular solution of the form \(C\cos t+D\sin t\). The same holds with \(\sin\) in place of \(\cos\), giving \(-\frac12 t\cos t\).
+\end{lemma}
+
+\begin{proof}
+Direct differentiation: \(\frac{\mathrm{d}^2}{\mathrm{d}t^2}(\cos 3t)+\cos 3t=-8\cos 3t\), and \(\frac{\mathrm{d}^2}{\mathrm{d}t^2}(t\sin t)+t\sin t=2\cos t\). A guess \(C\cos t\) lies in the kernel of \(\frac{\mathrm{d}^2}{\mathrm{d}t^2}+1\), so it cannot match \(\cos t\).
+\end{proof}
+
+The factor \(t\) in \cref{lem:p6-resonant} is the secular term. If it appears in \(y_1\), then \(\epsilon y_1\) is \(O(1)\) already at \(t\sim 1/\epsilon\), and the expansion has stopped being ordered.
+
+\subsubsection{(a) An approximation valid for large \(t\)}
+
+\paragraph{The regular expansion, which is not the answer.}
+
+Substitute \(y=y_0(t)+\epsilon y_1(t)+\cdots\) into \eqref{eq:p6-std}, with \(y_0(0)=0\), \(\dot y_0(0)=2a\), and homogeneous data on \(y_1\). Order \(\epsilon^0\) is \(\ddot y_0+y_0=0\), hence
+\[
+y_0(t)=2a\sin t,
+\qquad
+\dot y_0(t)=2a\cos t.
+\]
+Order \(\epsilon^1\) is
+\[
+\ddot y_1+y_1
+=
+\dot y_0-\tfrac13(\dot y_0)^3
+=
+2a\cos t-\tfrac83 a^3\cos^3 t.
+\]
+The identity \(\cos^3 t=(3\cos t+\cos 3t)/4\) rewrites the right-hand side as
+\begin{equation}
+\label{eq:p6-y1-rhs}
+2a(1-a^2)\cos t-\tfrac23 a^3\cos 3t.
+\end{equation}
+By \cref{lem:p6-resonant},
+\begin{equation}
+\label{eq:p6-y1}
+y_1(t)
+=
+a(1-a^2)\,t\sin t
++
+\text{(bounded harmonics)}.
+\end{equation}
+On any interval of \(\epsilon\)-independent length the product \(\epsilon t\sin t\) is \(O(\epsilon)\), and \(y_0+\epsilon y_1\) is consistent. At \(t=c/\epsilon\) the same product is \(O(1)\). The regular expansion is therefore not an approximation valid for large \(t\). (If \(a=1\) the resonant coefficient vanishes and \(y_0=2\sin t\) is already the attractor; that is a special initial value, not the argument for general \(a>0\).)
+
+\begin{remark}[Why the regular expansion is not the answer]
+\label{rem:p6-regular-fails}
+Yes: it is not valid for the large times the exam asks about. The phrase ``valid for large \(t\)'' in part~(a) means a time of size \(1/\epsilon\), not an \(\epsilon\)-independent interval. Write \(T=\epsilon t\) for the slow clock that appears in the next paragraph. Then
+\[
+t=O(1)
+\qquad\Longleftrightarrow\qquad
+T=O(\epsilon),
+\qquad
+t=\frac{c}{\epsilon}
+\qquad\Longleftrightarrow\qquad
+T=c=O(1).
+\]
+The regular series is ordered on the first of those regimes and unordered on the second. It is the second regime that the exam wants. (``Large \(T\)'' in the sense \(T\to\infty\) is later still, \(t\sim 1/\epsilon^2\); that is the horizon of part~(b), not the reason \(y_0+\epsilon y_1\) is discarded.)
+
+Two equivalent readings of the same failure.
+
+\emph{Asymptotic.} The correction is \(\epsilon y_1=\epsilon a(1-a^2)\,t\sin t+\cdots\). A first-order expansion is legitimate only while \(\epsilon y_1=o(y_0)\). On \(t=O(1)\) one has \(\epsilon t=O(\epsilon)\), so the product is a genuine \(O(\epsilon)\) correction. At \(t=c/\epsilon\) one has \(\epsilon t=c\), so
+\[
+\epsilon y_1
+=
+a(1-a^2)\,c\sin t+O(\epsilon).
+\]
+The ``small'' term is now \(O(1)\), the same size as \(y_0=2a\sin t\). The series \(y_0+\epsilon y_1+\cdots\) has stopped being ordered: the first correction is no longer smaller than the leading term. That is what secular means. The bounded harmonics in \eqref{eq:p6-y1} are harmless; only the factor \(t\) is fatal.
+
+\emph{Energetic.} \Cref{lem:p6-energy} says \(\mathrm{d}E/\mathrm{d}t=O(\epsilon)\), so the radius must change by \(O(1)\) once \(t\) has length \(1/\epsilon\). The profile \(y_0=2a\sin t\) freezes the radius at the initial value \(2a\) forever. A uniform-in-\(t\) approximation cannot do that: small circles must grow and large circles must shrink. The regular expansion never moves the amplitude, so it cannot remain close to the true orbit on that interval.
+
+The case \(a=1\) is not a rescue. The resonant coefficient in \eqref{eq:p6-y1-rhs} vanishes, \(y_1\) stays bounded, and \(2\sin t\) happens to be the limit cycle. That is one initial datum. Part~(a) is for general \(a>0\), for which the secular term is present and the radius must run from \(2a\) to \(2\).
+\end{remark}
+
+\paragraph{Two-time expansion.}
+
+The secular product \(\epsilon t\sin t\) is \(T\sin t\) with \(T=\epsilon t\). Absorb it into a slowly varying amplitude by allowing the leading profile to depend on both clocks. Write
+\begin{equation}
+\label{eq:p6-ms-ansatz}
+y(t)=Y_0(t,T)+\epsilon Y_1(t,T)+\cdots,
+\qquad
+T=\epsilon t,
+\end{equation}
+and treat \(t\) and \(T\) as independent arguments until the end. The chain rule on a composite \(Y(t,\epsilon t)\) is
+\begin{equation}
+\label{eq:p6-chain}
+\frac{\mathrm{d}}{\mathrm{d}t}=\partial_t+\epsilon\partial_T,
+\qquad
+\frac{\mathrm{d}^2}{\mathrm{d}t^2}=\partial_{tt}+2\epsilon\partial_{tT}+\epsilon^2\partial_{TT}.
+\end{equation}
+Substitute into \eqref{eq:p6-std}.
+
+\emph{Order \(\epsilon^0\).} \(\partial_{tt}Y_0+Y_0=0\). The general solution may still depend on the unused variable \(T\):
+\begin{equation}
+\label{eq:p6-polar}
+Y_0(t,T)=R(T)\cos\bigl(t+\varphi(T)\bigr).
+\end{equation}
+Write \(\theta\coloneqq t+\varphi(T)\). If \(R\) and \(\varphi\) were constant one would recover the regular expansion.
+
+\emph{Order \(\epsilon^1\).} Differentiating \eqref{eq:p6-polar} at fixed \(T\) gives \(\partial_t Y_0=-R\sin\theta\) and
+\[
+\partial_{tT}Y_0=-R'\sin\theta-R\varphi'\cos\theta.
+\]
+The \(O(\epsilon)\) balance is
+\begin{equation}
+\label{eq:p6-Y1}
+\partial_{tt}Y_1+Y_1
+=
+-2\partial_{tT}Y_0+\partial_t Y_0-\tfrac13(\partial_t Y_0)^3.
+\end{equation}
+The first summand comes from \eqref{eq:p6-chain}; the remaining two are the leading piece of \(\dot y-\frac13\dot y^3\). Using \((\partial_t Y_0)^3=-R^3\sin^3\theta\) and \(\sin^3\theta=(3\sin\theta-\sin 3\theta)/4\), the right-hand side of \eqref{eq:p6-Y1} is
+\begin{equation}
+\label{eq:p6-Y1-rhs}
+\bigl(2R'-R+\tfrac14 R^3\bigr)\sin\theta
++
+2R\varphi'\cos\theta
+-
+\tfrac{1}{12}R^3\sin 3\theta.
+\end{equation}
+The \(\sin 3\theta\) term is nonresonant and produces a bounded piece of \(Y_1\). The \(\sin\theta\) and \(\cos\theta\) terms are resonant. If either coefficient is nonzero, \cref{lem:p6-resonant} puts a factor \(t\) into \(Y_1\), and the same failure as \eqref{eq:p6-y1} reappears. Setting both coefficients to zero is therefore a design condition on \(R\) and \(\varphi\):
+\begin{equation}
+\label{eq:p6-amp}
+R'
+=
+\frac{R}{2}\Bigl(1-\frac{R^2}{4}\Bigr)
+=
+\frac{R}{8}(4-R^2),
+\qquad
+\varphi'=0
+\quad(R\neq 0).
+\end{equation}
+The first equation is the slow energy balance in polar coordinates. The second says there is no \(O(\epsilon)\) frequency correction.
+
+\paragraph{Initial data and the explicit amplitude.}
+
+The equilibria of \(R'=R(4-R^2)/8\) are \(R=0\) and \(R=\pm 2\). The derivative of the right-hand side is \(\frac12-\frac{3R^2}{8}\), equal to \(+\frac12\) at \(0\) and to \(-1\) at \(2\), so \(R=0\) is unstable and \(R=2\) is attracting on \(R>0\).
+
+At \((t,T)=(0,0)\),
+\[
+Y_0(0,0)=R(0)\cos\varphi(0)=0,
+\qquad
+\partial_t Y_0(0,0)=-R(0)\sin\varphi(0)=2a.
+\]
+With \(a>0\) and \(R>0\) this forces \(\varphi(0)=-\pi/2\) and \(R(0)=2a\). Since \(\varphi'=0\),
+\[
+Y_0(t,T)=R(T)\sin t.
+\]
+Separate variables in \eqref{eq:p6-amp}:
+\[
+\frac{8\,\mathrm{d}R}{R(4-R^2)}=\mathrm{d}T,
+\qquad
+\frac{1}{R(4-R^2)}
+=
+\frac14\Bigl(\frac{1}{R}+\frac{R}{4-R^2}\Bigr).
+\]
+Integration gives \(\ln(R^2/\lvert 4-R^2\rvert)=T+C\), or \(R^2/(4-R^2)=Ke^{T}\). The value \(R(0)=2a\) fixes \(K=a^2/(1-a^2)\). Solving for \(R\),
+\begin{equation}
+\label{eq:p6-R}
+R(T)
+=
+\frac{2a}{\sqrt{a^2+(1-a^2)e^{-T}}}.
+\end{equation}
+(The formula remains valid for \(a>1\): the denominator \(a^2+(1-a^2)e^{-T}=a^2(1-e^{-T})+e^{-T}\) stays positive.) As \(T\to\infty\), \(R(T)\to 2\) for every \(a>0\). The approximation requested in (a) is therefore
+\begin{equation}
+\label{eq:p6-approx}
+y(t)
+\sim
+R(\epsilon t)\sin t
+=
+\frac{2a\sin t}{\sqrt{a^2+(1-a^2)e^{-\epsilon t}}}.
+\end{equation}
+
+\begin{warning}[What not to write]
+\label{warn:p6-lindstedt-vs-ms}
+Quoting a limit-cycle theorem in place of \eqref{eq:p6-R} identifies the attractor \(R=2\) and misses the transient from radius \(2a\). Lindstedt--Poincar\'e stretches the clock to correct a period at fixed amplitude; energy is not conserved here, so the amplitude must run. The 2025 Spring twin \(\ddot y+y+\epsilon(\dot y)^3=0\) is the same machine with a decaying \(R\).
+\end{warning}
+
+\begin{examnote}[Part~(a) on a script]
+\label{examnote:p6-script}
+Write \eqref{eq:p6-energy} in one line. Write the regular expansion through \eqref{eq:p6-y1} and the size count at \(t\sim 1/\epsilon\). Then write \eqref{eq:p6-ms-ansatz}--\eqref{eq:p6-polar}, the chain rule, the two coefficients in \eqref{eq:p6-Y1-rhs} set to zero, \(R(0)=2a\), \(\varphi(0)=-\pi/2\), and \eqref{eq:p6-approx}.
+\end{examnote}
+
+\subsubsection{(b) Accuracy}
+
+After one multiple-scale step,
+\begin{equation}
+\label{eq:p6-acc}
+y(t)=R(\epsilon t)\sin t+O(\epsilon)
+\qquad\text{uniformly for}\qquad
+0\le t\le\frac{C}{\epsilon},
+\end{equation}
+for any fixed \(C>0\). Equivalently, the error is \(O(\epsilon)\) on the interval where the slow time \(T\) remains \(O(1)\).
+
+The count is the same one that killed the regular expansion, applied to a residual that is no longer resonant. The conditions \eqref{eq:p6-amp} remove every \(t\sin\theta\) and \(t\cos\theta\) from \(Y_1\). The first omitted terms in \eqref{eq:p6-chain} and in the expansion of the force are \(O(\epsilon^2)\) while \(T=O(1)\). Integrating an \(O(\epsilon^2)\) residual over a time of length \(O(1/\epsilon)\) produces an \(O(\epsilon)\) error. The regular expansion \eqref{eq:p6-y1} still has a resonant \(O(\epsilon)\) residual, so the same integral is \(O(1)\) on that interval.
+
+The claim is not \(O(\epsilon)\) for all \(t\ge 0\). At \(t\sim 1/\epsilon^2\) one has \(T\sim 1/\epsilon\), a new secular obstruction appears, and another slow time would be required. That is the accuracy statement 2025 Spring asked for on the damped twin.
+
+\subsubsection{(c) Orbits in the \((y,\dot y)\) plane}
+
+Differentiating \eqref{eq:p6-approx} at leading order (the \(T\)-derivative of the envelope is \(O(\epsilon)\) and is dropped) gives \(\dot y\sim R(\epsilon t)\cos t\). Eliminating \(t\),
+\[
+y^2+\dot y^2\sim R(\epsilon t)^2.
+\]
+The approximated orbit is a circle whose radius changes slowly from \(R(0)=2a\) to \(2\). If \(0<a<1\) the orbit starts inside the circle of radius \(2\) and spirals out; if \(a>1\) it starts outside and spirals in; if \(a=1\) it sits on the attractor already. Every \(a>0\) forgets the initial radius on the time scale \(t\sim 1/\epsilon\).
+
+\begin{center}
+\begin{tikzpicture}[scale=0.72]
+  \draw[-{Latex}] (-3.4,0) -- (3.6,0) node[right] {\(y\)};
+  \draw[-{Latex}] (0,-3.1) -- (0,3.3) node[above] {\(y'\)};
+  \draw[thick] (0,0) circle (2);
+  \draw[dashed] (0,0) circle (1.1);
+  \draw[dashed] (0,0) circle (2.85);
+  \node[font=\footnotesize] at (2.15,2.15) {\(R=2\)};
+  \node[font=\footnotesize] at (0.55,1.35) {\(a<1\)};
+  \node[font=\footnotesize] at (2.05,2.85) {\(a>1\)};
+  \draw[-{Latex}] (1.1,0) arc (0:40:1.1);
+  \draw[-{Latex}] (2.85,0) arc (0:35:2.85);
+\end{tikzpicture}
+\end{center}
+
+\begin{summary}[Problem~6]
+\label{sum:p6}
+The regular expansion \(y=2a\sin t+\epsilon a(1-a^2)\,t\sin t+\cdots\) fails at \(t\sim 1/\epsilon\). Multiple scales with \(T=\epsilon t\) produces \(y\sim R(\epsilon t)\sin t\) and the explicit radius \eqref{eq:p6-R}. The error is \(O(\epsilon)\) on \(t=O(1/\epsilon)\). Every \(a>0\) is drawn to the circle of radius \(2\).
+\end{summary}

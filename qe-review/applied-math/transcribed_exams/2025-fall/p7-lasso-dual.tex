@@ -1,0 +1,354 @@
+\setcounter{section}{7}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries, then the script}
+
+The problem is unconstrained convex minimization of
+\begin{equation}
+\label{eq:p7-primal}
+f(x)
+\coloneqq
+\|Ax-b\|_{2}+\gamma\|x\|_{1},
+\qquad
+x\in\mathbb{R}^{n}.
+\end{equation}
+The \(\ell_1\) term is not differentiable on the coordinate hyperplanes, and \(\|Ax-b\|_{2}\) is not differentiable on \(\{Ax=b\}\). Part~(a) therefore rewrites the residual as an equality constraint and passes to the Lagrange dual, which is a constrained problem in a multiplier \(\nu\in\mathbb{R}^{m}\) with only ball constraints. Parts~(b) and~(c) are first-order optimality for \(f\) itself. The dictionary is short; each item is used on the next page.
+
+\begin{definition}[The three norms]
+\label{def:p7-lp}
+\[
+\|x\|_{1}=\sum_{i=1}^{n}|x_{i}|,
+\qquad
+\|x\|_{2}=\Bigl(\sum_{i=1}^{n}x_{i}^{2}\Bigr)^{1/2},
+\qquad
+\|x\|_{\infty}=\max_{i}|x_{i}|.
+\]
+The only two pairings needed below are Cauchy--Schwarz and H\"older:
+\begin{equation}
+\label{eq:p7-holder}
+\lvert\nu^{\top}y\rvert\le\|\nu\|_{2}\|y\|_{2},
+\qquad
+\lvert u^{\top}x\rvert
+=
+\Bigl\lvert\sum_{i}u_{i}x_{i}\Bigr\rvert
+\le
+\sum_{i}\lvert u_{i}\rvert\lvert x_{i}\rvert
+\le
+\|u\|_{\infty}\|x\|_{1}.
+\end{equation}
+If \(a_{i}\) is the \(i\)-th column of \(A\), then \((A^{\top}r)_{i}=a_{i}^{\top}r\).
+\end{definition}
+
+\begin{definition}[Lagrangian and Lagrange dual]
+\label{def:p7-dual}
+For \(\min_{z}F(z)\) subject to \(h(z)=0\), the Lagrangian is \(L(z,\nu)=F(z)+\nu^{\top}h(z)\). The dual function is \(g(\nu)=\inf_{z}L(z,\nu)\), and the Lagrange dual problem is \(\sup_{\nu}g(\nu)\). Weak duality is the comparison \(g(\nu)\le F(z)\) for every feasible \(z\) and every \(\nu\). Here \(z=(x,y)\), \(F=\|y\|_{2}+\gamma\|x\|_{1}\), and the exam's constraint \(Ax-b=y\) is written \(h(x,y)=Ax-b-y\).
+\end{definition}
+
+\begin{lemma}[When \(\inf_{z}(\alpha\|z\|-u^{\top}z)\) is finite]
+\label{lem:p7-norm-inf}
+Let \(\alpha>0\). Then
+\[
+\inf_{y}\bigl(\|y\|_{2}-\nu^{\top}y\bigr)
+=
+\begin{cases}
+0, & \|\nu\|_{2}\le 1,\\
+-\infty, & \|\nu\|_{2}>1,
+\end{cases}
+\qquad
+\inf_{x}\bigl(\gamma\|x\|_{1}+u^{\top}x\bigr)
+=
+\begin{cases}
+0, & \|u\|_{\infty}\le\gamma,\\
+-\infty, & \|u\|_{\infty}>\gamma.
+\end{cases}
+\]
+\end{lemma}
+
+\begin{proof}
+If \(\|\nu\|_{2}\le 1\), then \(\|y\|_{2}-\nu^{\top}y\ge\|y\|_{2}-\|\nu\|_{2}\|y\|_{2}\ge 0\), and the value \(0\) is attained at \(y=0\). If \(\|\nu\|_{2}>1\), the ray \(y=t\nu\) with \(t\to+\infty\) gives \(t\|\nu\|_{2}-t\|\nu\|_{2}^{2}=t\|\nu\|_{2}(1-\|\nu\|_{2})\to-\infty\).
+
+If \(\|u\|_{\infty}\le\gamma\), then \(\gamma\|x\|_{1}+u^{\top}x\ge\gamma\|x\|_{1}-\|u\|_{\infty}\|x\|_{1}\ge 0\), attained at \(x=0\). If \(\|u\|_{\infty}>\gamma\), some coordinate satisfies \(\lvert u_{j}\rvert>\gamma\). The ray \(x=-t\,\operatorname{sign}(u_{j})\,e_{j}\) gives \(\gamma t-t\lvert u_{j}\rvert=t(\gamma-\lvert u_{j}\rvert)\to-\infty\).
+\end{proof}
+
+\subsubsection{(a) The Lagrange dual}
+
+The original \(f(x)\) and the constrained problem in the prompt are the same object: given any \(x\), the only feasible \(y\) is \(y=Ax-b\), and the objective becomes \(f(x)\). The reason for introducing \(y\) is that the two norms then act on separate variables, so the dual function splits.
+
+Form the Lagrangian of the written constraint \(Ax-b-y=0\):
+\begin{equation}
+\label{eq:p7-L}
+L(x,y,\nu)
+=
+\|y\|_{2}+\gamma\|x\|_{1}+\nu^{\top}(Ax-b-y).
+\end{equation}
+The dual function is the unconstrained infimum
+\[
+g(\nu)
+=
+\inf_{x\in\mathbb{R}^{n},\,y\in\mathbb{R}^{m}}L(x,y,\nu).
+\]
+There is no \(x\)--\(y\) product in \(L\) except through the already-fixed vector \(\nu\), so the infimum factors:
+\begin{equation}
+\label{eq:p7-g-split}
+g(\nu)
+=
+\inf_{y}\bigl(\|y\|_{2}-\nu^{\top}y\bigr)
++
+\inf_{x}\bigl(\gamma\|x\|_{1}+(A^{\top}\nu)^{\top}x\bigr)
+-
+b^{\top}\nu.
+\end{equation}
+Apply \cref{lem:p7-norm-inf} to each infimum (the second with \(u=A^{\top}\nu\)). Both are \(0\) precisely when
+\[
+\|\nu\|_{2}\le 1
+\qquad\text{and}\qquad
+\|A^{\top}\nu\|_{\infty}\le\gamma;
+\]
+otherwise at least one infimum is \(-\infty\), hence \(g(\nu)=-\infty\). On that set one is left with the linear function \(-b^{\top}\nu\). The Lagrange dual is therefore the explicit program
+\begin{equation}
+\label{eq:p7-dual-prog}
+\sup_{\nu\in\mathbb{R}^{m}}\bigl(-b^{\top}\nu\bigr)
+\qquad\text{subject to}\qquad
+\|\nu\|_{2}\le 1,
+\quad
+\|A^{\top}\nu\|_{\infty}\le\gamma.
+\end{equation}
+Equivalently, after the change of sign \(\lambda=-\nu\) (which is the Lagrangian of the flipped writing \(y-Ax+b=0\)),
+\begin{equation}
+\label{eq:p7-dual-flip}
+\sup_{\lambda\in\mathbb{R}^{m}}\,b^{\top}\lambda
+\qquad\text{subject to}\qquad
+\|\lambda\|_{2}\le 1,
+\quad
+\|A^{\top}\lambda\|_{\infty}\le\gamma.
+\end{equation}
+Either display is a correct answer. Weak duality is \(g(\nu)\le f(x)\) for every \(x\) and every feasible \(\nu\) (\cref{rem:p7-weak}). Strong duality holds because the constraint is affine and a feasible pair always exists (pick any \(x\), set \(y=Ax-b\)): the optimal values of \eqref{eq:p7-primal} and \eqref{eq:p7-dual-prog} coincide (\cref{rem:p7-strong}).
+
+\begin{remark}[Weak duality]
+\label{rem:p7-weak}
+Write
+\[
+p^{*}
+\coloneqq
+\inf_{x\in\mathbb{R}^{n}}f(x)
+=
+\inf_{\substack{x,y\\Ax-b=y}}
+\bigl(\|y\|_{2}+\gamma\|x\|_{1}\bigr)
+\]
+for the primal value, and
+\[
+d^{*}
+\coloneqq
+\sup_{\nu\in\mathbb{R}^{m}}g(\nu)
+\]
+for the dual value. Weak duality is the comparison of these two numbers through a pointwise inequality that does not mention optima.
+
+Take any \(x\in\mathbb{R}^{n}\) and set \(y=Ax-b\), so that \((x,y)\) is feasible for the written constraint. The Lagrangian \eqref{eq:p7-L} then collapses to the primal objective:
+\[
+L(x,y,\nu)
+=
+\|y\|_{2}+\gamma\|x\|_{1}+\nu^{\top}(Ax-b-y)
+=
+f(x).
+\]
+The dual function is an unconstrained infimum over a larger set, hence cannot exceed any particular value of \(L\):
+\[
+g(\nu)
+=
+\inf_{x',y'}L(x',y',\nu)
+\le
+L(x,y,\nu)
+=
+f(x).
+\]
+This holds for every \(x\) and every multiplier \(\nu\), with no convexity assumption and with no restriction that \(\nu\) be dual-feasible \cite[\S5.1.3]{boyd04}. Taking the infimum in \(x\) on the right and the supremum in \(\nu\) on the left yields
+\[
+d^{*}\le p^{*}.
+\]
+The difference \(p^{*}-d^{*}\ge 0\) is the duality gap.
+
+If \(\nu\) fails the two ball constraints of \eqref{eq:p7-dual-prog}, then \(g(\nu)=-\infty\) by \cref{lem:p7-norm-inf}, and the inequality is vacuous. If \(\nu\) is dual-feasible, then \(g(\nu)=-b^{\top}\nu\), and weak duality becomes a concrete numerical bound: every such \(\nu\) lower-bounds every Lasso value,
+\[
+-b^{\top}\nu
+\le
+f(x)
+\qquad
+\text{for all }x\in\mathbb{R}^{n}.
+\]
+In particular \(-b^{\top}\nu\le p^{*}\). That is the whole point of writing a dual even if one never proves that the gap is zero: any feasible \(\nu\) certifies a lower bound, and a better \(\nu\) certifies a tighter one.
+
+Weak duality does not say that \(g(\nu)=f(x)\) at some pair, and it does not say that a minimizer of \(f\) exists. It is only the one-sided comparison \(g\le f\).
+\end{remark}
+
+\begin{remark}[Strong duality]
+\label{rem:p7-strong}
+Strong duality is the statement that the gap vanishes:
+\[
+d^{*}=p^{*}.
+\]
+The best lower bound produced by the dual is then exactly the primal value, so the two programs in \eqref{eq:p7-primal} and \eqref{eq:p7-dual-prog} have the same optimal value. This is not implied by weak duality, and it is not implied by convexity of \(f\) alone.
+
+A standard sufficient condition is Slater's constraint qualification for convex programs. In the form needed here \cite[\S5.2.3]{boyd04}: the objective \(F(x,y)=\|y\|_{2}+\gamma\|x\|_{1}\) is convex, the only constraint \(Ax-b-y=0\) is affine, and there exists a feasible point in the relative interior of \(\operatorname{dom} F\). Under those hypotheses one has \(d^{*}=p^{*}\).
+
+Each hypothesis is immediate. The function \(F\) is a sum of norms, hence convex, and it is finite at every \((x,y)\in\mathbb{R}^{n}\times\mathbb{R}^{m}\), so \(\operatorname{ri}(\operatorname{dom} F)\) is the whole space. The constraint is affine by inspection. A feasible pair always exists: pick any \(x\) and set \(y=Ax-b\). Slater therefore applies, and the optimal values of \eqref{eq:p7-primal} and \eqref{eq:p7-dual-prog} coincide.
+
+(The same conclusion is Fenchel--Rockafellar applied to \(\|A\,\cdot\,-b\|_{2}+\gamma\|\cdot\|_{1}\): the conjugate of \(\|\cdot\|_{2}\) is the indicator of the Euclidean unit ball, the conjugate of \(\gamma\|\cdot\|_{1}\) is the indicator of the \(\ell_{\infty}\) ball of radius \(\gamma\), and both domains are the whole space.)
+
+Attainment is a separate claim. Strong duality equates two numbers; it does not by itself produce a minimizer \(x^{*}\) or a maximizer \(\nu^{*}\). Both happen to exist here. The primal attains because \(f\) is continuous and coercive: \(\gamma>0\) gives \(f(x)\ge\gamma\|x\|_{1}\to\infty\) as \(\|x\|\to\infty\). The dual attains because \(-b^{\top}\nu\) is continuous and the feasible set
+\[
+\bigl\{\nu:\|\nu\|_{2}\le 1\bigr\}
+\cap
+\bigl\{\nu:\|A^{\top}\nu\|_{\infty}\le\gamma\bigr\}
+\]
+is compact (closed subset of a Euclidean ball). Thus there exist \(x^{*}\) and \(\nu^{*}\) with
+\[
+f(x^{*})=g(\nu^{*})=p^{*}=d^{*}.
+\]
+A pair with zero gap is a saddle of \(L\): writing \(y^{*}=Ax^{*}-b\),
+\[
+L(x^{*},y^{*},\nu)
+\le
+L(x^{*},y^{*},\nu^{*})
+\le
+L(x,y,\nu^{*})
+\]
+for every \((x,y)\) and every \(\nu\). The left inequality is primal feasibility (the constraint term vanishes at \((x^{*},y^{*})\), independently of \(\nu\)); the right inequality says that \(\nu^{*}\) attains the infimum that defines \(g\). That saddle reading is the route of \cref{rem:p7-from-dual}. Part~(b) does not need it.
+
+Two statements that are easy to swap. Weak duality is \(g(\nu)\le f(x)\) for every pair, including non-optimal ones. Strong duality is \(d^{*}=p^{*}\), i.e.\ equality of the two optimal values, not equality of \(g\) and \(f\) at a random feasible pair. Equality \(g(\nu)=f(x)\) holds if and only if \(x\) is primal-optimal and \(\nu\) is dual-optimal (and then the gap at that pair is automatically zero).
+\end{remark}
+
+\begin{examnote}[Part~(a) on a script]
+\label{examnote:p7-dual}
+Write \eqref{eq:p7-L} and \eqref{eq:p7-g-split}. Evaluate the two infima by Cauchy--Schwarz and H\"older as in \cref{lem:p7-norm-inf} (the two rays that produce \(-\infty\) must be exhibited). State \eqref{eq:p7-dual-prog} or \eqref{eq:p7-dual-flip}. One sentence on weak duality (\(g\le f\)) and one on Slater (affine constraint, pick \(y=Ax-b\)) is enough; \cref{rem:p7-weak,rem:p7-strong} are not the script. Naming ``the Lagrange dual'' without the constraints on \(\nu\) is not a derivation.
+\end{examnote}
+
+\subsubsection{(b) First-order conditions at \(x^{*}\)}
+
+Let \(x^{*}\) minimize \(f\), and assume \(y^{*}\coloneqq Ax^{*}-b\neq 0\). The exam's vector
+\[
+r
+=
+\frac{y^{*}}{\|y^{*}\|_{2}}
+\]
+is the Euclidean unit vector in the direction of the residual. It is also the gradient of \(\|\cdot\|_{2}\) at \(y^{*}\), which is the only reason it appears.
+
+Because \(x^{*}\) is an unconstrained minimizer, every directional derivative of \(f\) at \(x^{*}\) is nonnegative: for every \(v\in\mathbb{R}^{n}\),
+\begin{equation}
+\label{eq:p7-dir}
+\liminf_{t\downarrow 0}\frac{f(x^{*}+tv)-f(x^{*})}{t}
+\ge 0.
+\end{equation}
+Compute the two pieces of \(f\) separately.
+
+\emph{The residual term.} Write \(y(t)=y^{*}+tAv\). Then
+\[
+\|y(t)\|_{2}^{2}
+=
+\|y^{*}\|_{2}^{2}+2t\,(y^{*})^{\top}Av+t^{2}\|Av\|_{2}^{2},
+\]
+and the first-order expansion of the square root about \(\|y^{*}\|_{2}>0\) is
+\begin{equation}
+\label{eq:p7-res-diff}
+\|y^{*}+tAv\|_{2}
+=
+\|y^{*}\|_{2}+t\,r^{\top}Av+o(t).
+\end{equation}
+(This is the ordinary derivative of \(\|\cdot\|_{2}\) at a nonzero point: \(\nabla\|y\|_{2}=y/\|y\|_{2}\).)
+
+\emph{The \(\ell_1\) term.} For all sufficiently small \(\lvert t\rvert\),
+\begin{equation}
+\label{eq:p7-l1-diff}
+\|x^{*}+tv\|_{1}-\|x^{*}\|_{1}
+=
+t\sum_{x_{i}^{*}\neq 0}\operatorname{sign}(x_{i}^{*})\,v_{i}
++
+\lvert t\rvert\sum_{x_{i}^{*}=0}\lvert v_{i}\rvert.
+\end{equation}
+(On a coordinate with \(x_{i}^{*}\neq 0\), \(\lvert x_{i}^{*}+tv_{i}\rvert=\lvert x_{i}^{*}\rvert+t\operatorname{sign}(x_{i}^{*})v_{i}\) for small \(t\). On a coordinate with \(x_{i}^{*}=0\), one has \(\lvert tv_{i}\rvert\).)
+
+\emph{Coordinatewise tests.} Take \(v=e_{i}\) and \(v=-e_{i}\). Write \(u\coloneqq A^{\top}r\), so that \(r^{\top}Ae_{i}=u_{i}=a_{i}^{\top}r\).
+
+If \(x_{i}^{*}\neq 0\), both directions are admissible and \eqref{eq:p7-l1-diff} is linear in \(t\). Condition \eqref{eq:p7-dir} in both directions forces the derivative to vanish:
+\begin{equation}
+\label{eq:p7-active}
+u_{i}+\gamma\operatorname{sign}(x_{i}^{*})=0,
+\qquad\text{i.e.}\qquad
+\lvert u_{i}\rvert=\gamma.
+\end{equation}
+
+If \(x_{i}^{*}=0\), the \(\ell_1\) contribution is \(\gamma\lvert t\rvert\). The right derivative of \(f\) along \(+e_{i}\) is \(u_{i}+\gamma\), and the right derivative along \(-e_{i}\) is \(-u_{i}+\gamma\). Both are \(\ge 0\), hence
+\begin{equation}
+\label{eq:p7-inactive}
+\lvert u_{i}\rvert\le\gamma.
+\end{equation}
+
+Combining \eqref{eq:p7-active} and \eqref{eq:p7-inactive} over every coordinate,
+\begin{equation}
+\label{eq:p7-inf}
+\|A^{\top}r\|_{\infty}
+=
+\|u\|_{\infty}
+\le\gamma,
+\end{equation}
+which is the first claim. For the second claim, pair \(u\) against \(x^{*}\). On every coordinate with \(x_{i}^{*}=0\) the product \(u_{i}x_{i}^{*}\) is zero. On every coordinate with \(x_{i}^{*}\neq 0\), equation \eqref{eq:p7-active} gives \(u_{i}x_{i}^{*}=-\gamma\lvert x_{i}^{*}\rvert\). Summing,
+\begin{equation}
+\label{eq:p7-comp}
+r^{\top}Ax^{*}+\gamma\|x^{*}\|_{1}
+=
+u^{\top}x^{*}+\gamma\|x^{*}\|_{1}
+=
+0.
+\end{equation}
+
+\begin{remark}[The same argument in subdifferential language]
+\label{rem:p7-subgrad}
+Convexity of \(f\) says that \(x^{*}\) minimizes \(f\) if and only if \(0\in\partial f(x^{*})\). The chain rule and the sum rule give
+\[
+\partial f(x^{*})
+=
+A^{\top}\partial\|\cdot\|_{2}(y^{*})+\gamma\,\partial\|x^{*}\|_{1}.
+\]
+For \(y^{*}\neq 0\) one has \(\partial\|y^{*}\|_{2}=\{r\}\). The set \(\partial\|x\|_{1}\) is exactly the collection of vectors \(s\) with \(\|s\|_{\infty}\le 1\) and \(s_{i}=\operatorname{sign}(x_{i})\) whenever \(x_{i}\neq 0\); in particular \(s^{\top}x=\|x\|_{1}\). Thus \(A^{\top}r+\gamma s=0\) for some such \(s\), which is \eqref{eq:p7-inf}--\eqref{eq:p7-comp} again. This is 2024 Fall Problem~7(ii). The directional-derivative argument above does not require the vocabulary.
+\end{remark}
+
+\begin{remark}[From the dual of (a)]
+\label{rem:p7-from-dual}
+The same two displays are dual feasibility plus zero gap. Differentiability of \(\|y\|_{2}\) at \(y^{*}\neq 0\) forces the optimal multiplier of \eqref{eq:p7-L} to be \(\nu^{*}=r\). Dual feasibility of \(r\) is \(\|r\|_{2}=1\le 1\) and \(\|A^{\top}r\|_{\infty}\le\gamma\). Strong duality (\cref{rem:p7-strong}) then reads \(\|y^{*}\|_{2}+\gamma\|x^{*}\|_{1}=-b^{\top}r\). Substitute \(\|y^{*}\|_{2}=r^{\top}y^{*}=r^{\top}Ax^{*}-b^{\top}r\) to recover \eqref{eq:p7-comp}. This route uses (a); the directional argument does not.
+\end{remark}
+
+\subsubsection{(c) Small columns cannot be used}
+
+The claim does not assume \(Ax^{*}\neq b\). The shortest argument uses only the triangle inequality, and covers both cases.
+
+Suppose \(x_{i}^{*}\neq 0\). For \(0<t<\lvert x_{i}^{*}\rvert\) set \(\sigma=\operatorname{sign}(x_{i}^{*})\) and \(x(t)=x^{*}-t\sigma e_{i}\). Then the \(i\)-th coordinate of \(x(t)\) has absolute value \(\lvert x_{i}^{*}\rvert-t\), and no other coordinate changes, so
+\[
+\|x(t)\|_{1}=\|x^{*}\|_{1}-t.
+\]
+The residual becomes \(y^{*}-t\sigma a_{i}\), hence
+\[
+\|Ax(t)-b\|_{2}
+\le
+\|y^{*}\|_{2}+t\|a_{i}\|_{2}.
+\]
+Adding \(\gamma\|x(t)\|_{1}\),
+\[
+f\bigl(x(t)\bigr)
+\le
+f(x^{*})+t\bigl(\|a_{i}\|_{2}-\gamma\bigr).
+\]
+The hypothesis \(\|a_{i}\|_{2}<\gamma\) makes the right-hand side strictly smaller than \(f(x^{*})\) for every small \(t>0\), contradicting optimality of \(x^{*}\). Therefore \(x_{i}^{*}=0\).
+
+If one has already written (b) and is in the case \(y^{*}\neq 0\), a shorter sentence is available: \(x_{i}^{*}\neq 0\) would force \(\lvert a_{i}^{\top}r\rvert=\gamma\) by \eqref{eq:p7-active}, while Cauchy--Schwarz gives \(\lvert a_{i}^{\top}r\rvert\le\|a_{i}\|_{2}\|r\|_{2}=\|a_{i}\|_{2}<\gamma\).
+
+\begin{examnote}[Parts~(b) and~(c) on a script]
+\label{examnote:p7-bc}
+For (b): expand \(f(x^{*}+te_{i})\) using \eqref{eq:p7-res-diff} and \eqref{eq:p7-l1-diff}, treat \(x_{i}^{*}\neq 0\) and \(x_{i}^{*}=0\) separately, and sum \(u_{i}x_{i}^{*}\). For (c): the triangle argument is one paragraph and does not need \(r\). Do not quote ``soft thresholding'' without writing \(\lvert u_{i}\rvert\le\gamma\).
+\end{examnote}
+
+\begin{summary}[Problem~7]
+\label{sum:p7}
+The Lagrange dual of the residual form is \eqref{eq:p7-dual-prog} (or \eqref{eq:p7-dual-flip}). At a minimizer with nonzero residual, \(A^{\top}r\) lies in the \(\ell_{\infty}\) ball of radius \(\gamma\) and is complementary to \(x^{*}\). A column shorter than \(\gamma\) cannot carry a nonzero coordinate of any minimizer.
+\end{summary}

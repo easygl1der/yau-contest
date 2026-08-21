@@ -1,0 +1,1153 @@
+\subsection{Gamma 分布的矩母函数推导}\label{sec:gamma-mgf-derivation}
+
+\textbf{背景（Background）}：
+在正文中我们声明 Gamma 分布的矩母函数为 $M(t) = (1 - \beta t)^{-\alpha}$ for $t < 1/\beta$。这里给出完整推导。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $\alpha > 0$：形状参数（shape parameter）
+\item $\beta > 0$：尺度参数（scale parameter）
+\item $X \sim \Gamma(\alpha, \beta)$：服从 Gamma 分布的随机变量
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item Gamma 分布的 pdf：$f(x) = \frac{1}{\Gamma(\alpha)\beta^{\alpha}} x^{\alpha-1} e^{-x/\beta}, \quad x > 0$
+\item 矩母函数定义：$M(t) = \mathbb{E}(e^{tX})$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明 $M(t) = (1 - \beta t)^{-\alpha}$ for $t < 1/\beta$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 根据矩母函数定义：
+\[
+M(t) = \int_{0}^{\infty} e^{tx} \frac{1}{\Gamma(\alpha)\beta^{\alpha}} x^{\alpha-1} e^{-x/\beta} \, dx
+= \frac{1}{\Gamma(\alpha)\beta^{\alpha}} \int_{0}^{\infty} x^{\alpha-1} e^{-x(1 - \beta t)/\beta} \, dx.
+\]
+
+2. 作变量替换：令 $y = \frac{x(1 - \beta t)}{\beta}$，则 $x = \frac{\beta y}{1 - \beta t}$，$dx = \frac{\beta}{1 - \beta t} dy$。
+
+3. 代入积分（要求 $t < 1/\beta$ 以保证 $1 - \beta t > 0$）：
+\[
+\begin{aligned}
+M(t) &= \frac{1}{\Gamma(\alpha)\beta^{\alpha}} \int_{0}^{\infty} \left(\frac{\beta y}{1 - \beta t}\right)^{\alpha-1} e^{-y} \frac{\beta}{1 - \beta t} \, dy \\
+&= \frac{1}{\Gamma(\alpha)\beta^{\alpha}} \cdot \frac{\beta^{\alpha}}{(1 - \beta t)^{\alpha}} \int_{0}^{\infty} y^{\alpha-1} e^{-y} \, dy \\
+&= \frac{1}{(1 - \beta t)^{\alpha}} \cdot \Gamma(\alpha) \\
+&= (1 - \beta t)^{-\alpha}.
+\end{aligned}
+\]
+
+\textbf{结论}：
+因此，$X \sim \Gamma(\alpha, \beta)$ 的矩母函数为 $M(t) = (1 - \beta t)^{-\alpha}$，定义域为 $t < 1/\beta$。$\blacksquare$
+
+\subsection{Gamma 分布的均值与方差推导}\label{sec:gamma-mean-variance}
+
+\textbf{背景（Background）}：
+在正文中我们给出 Gamma 分布的均值为 $\mathbb{E}X = \alpha\beta$，方差为 $\text{var}(X) = \alpha\beta^2$。这里基于矩母函数给出推导。
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item 矩母函数：$M(t) = (1 - \beta t)^{-\alpha}$ for $t < 1/\beta$
+\item 均值公式：$\mathbb{E}X = M'(0)$
+\item 方差公式：$\text{var}(X) = M''(0) - [M'(0)]^2$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+计算 $\mathbb{E}X$ 和 $\text{var}(X)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 计算一阶导数：
+\[
+M'(t) = -\alpha(1 - \beta t)^{-\alpha-1}(-\beta) = \alpha\beta(1 - \beta t)^{-\alpha-1}.
+\]
+
+2. 计算二阶导数：
+\[
+M''(t) = \alpha\beta \cdot (-\alpha-1)(1 - \beta t)^{-\alpha-2}(-\beta) = \alpha(\alpha+1)\beta^2(1 - \beta t)^{-\alpha-2}.
+\]
+
+3. 代入 $t = 0$：
+\[
+M'(0) = \alpha\beta(1 - 0)^{-\alpha-1} = \alpha\beta = \mathbb{E}X.
+\]
+
+\[
+M''(0) = \alpha(\alpha+1)\beta^2(1 - 0)^{-\alpha-2} = \alpha(\alpha+1)\beta^2.
+\]
+
+4. 计算方差：
+\[
+\text{var}(X) = M''(0) - [M'(0)]^2 = \alpha(\alpha+1)\beta^2 - (\alpha\beta)^2 = \alpha\beta^2.
+\]
+
+\textbf{结论}：
+因此，$\mathbb{E}X = \alpha\beta$，$\text{var}(X) = \alpha\beta^2$。$\blacksquare$
+
+\subsection{卡方分布与 Gamma 分布的关系}\label{sec:chi2-gamma-relation}
+
+\textbf{背景（Background）}：
+卡方分布 $\chi^2(n)$ 是统计学中最重要的分布之一，它实际上是 Gamma 分布的特例。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $n$：自由度（degrees of freedom）
+\item $Z_1, Z_2, \ldots, Z_n \sim N(0,1)$ iid
+\item $X = \sum_{i=1}^{n} Z_i^2 \sim \chi^2(n)$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明 $X \sim \Gamma(n/2, 2)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 单个标准正态平方的分布：若 $Z \sim N(0,1)$，则 $Y = Z^2$ 的 pdf 为
+\[
+f_Y(y) = \frac{1}{\sqrt{2\pi y}} e^{-y/2} y^{-1/2} = \frac{1}{\Gamma(1/2) 2^{1/2}} y^{1/2 - 1} e^{-y/2}, \quad y > 0.
+\]
+这正是 $\Gamma(1/2, 2)$ 的形式。
+
+2. 利用 Gamma 分布的可加性：若 $Y_1 \sim \Gamma(\alpha_1, \beta)$，$Y_2 \sim \Gamma(\alpha_2, \beta)$ 独立，则 $Y_1 + Y_2 \sim \Gamma(\alpha_1 + \alpha_2, \beta)$。
+
+3. 由于 $Z_1^2, Z_2^2, \ldots, Z_n^2$ 独立同分布，且每个 $Z_i^2 \sim \Gamma(1/2, 2)$，根据可加性：
+\[
+X = \sum_{i=1}^{n} Z_i^2 \sim \Gamma\left(\frac{n}{2}, 2\right).
+\]
+
+\textbf{结论}：
+卡方分布 $\chi^2(n)$ 等价于 $\Gamma(n/2, 2)$。$\blacksquare$
+
+\subsection{边缘分布公式的推导}\label{sec:derivation-marginal-distributions}
+
+\textbf{背景（Background）}：
+在正文中我们给出边缘分布的公式。这里展示如何从联合分布推导边缘分布。
+
+\textbf{目标（Goal）}：
+证明 $f_{X_1}(x_1) = \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 从联合 cdf 出发，对 $x_2$ 求导得到联合 pdf：
+\[
+f_{X_1, X_2}(x_1, x_2) = \frac{\partial^2}{\partial x_1 \partial x_2} F_{X_1, X_2}(x_1, x_2).
+\]
+
+2. 边缘 cdf 定义为：
+\[
+F_{X_1}(x_1) = \mathbb{P}(X_1 \leq x_1) = \lim_{x_2 \to \infty} F_{X_1, X_2}(x_1, x_2).
+\]
+
+3. 对边缘 cdf 求导：
+\[
+f_{X_1}(x_1) = \frac{d}{dx_1} F_{X_1}(x_1) = \frac{d}{dx_1} \lim_{x_2 \to \infty} F_{X_1, X_2}(x_1, x_2).
+\]
+
+4. 利用 Leibniz 积分法则：
+\[
+\frac{d}{dx_1} \int_{-\infty}^{x_1} \int_{-\infty}^{\infty} f(w_1, w_2) \, dw_2 \, dw_1 = \int_{-\infty}^{\infty} f(x_1, w_2) \, dw_2.
+\]
+
+\textbf{结论}：
+因此，$f_{X_1}(x_1) = \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2$。对于离散情形，将积分替换为求和即可。$\blacksquare$
+
+\subsection{Jacobian 变换公式的推导}\label{sec:derivation-jacobian}
+
+\textbf{背景（Background）}：
+在正文中我们给出二元变换公式 $f_{Y_1, Y_2}(y_1, y_2) = f_{X_1, X_2}(v_1(y_1, y_2), v_2(y_1, y_2)) \cdot |J|$。
+
+\textbf{目标（Goal）}：
+解释 $|J|$ 的来源。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 设变换为 $(X_1, X_2) = (v_1(Y_1, Y_2), v_2(Y_1, Y_2))$，逆变换为 $(Y_1, Y_2) = (u_1(X_1, X_2), u_2(X_1, X_2))$。
+
+2. 事件 $\{Y_1 \leq y_1, Y_2 \leq y_2\}$ 等价于 $\{X_1 \leq v_1(y_1, y_2), X_2 \leq v_2(y_1, y_2)\}$。
+
+3. 因此边缘 cdf：
+\[
+F_{Y_1, Y_2}(y_1, y_2) = \int_{-\infty}^{v_1(y_1, y_2)} \int_{-\infty}^{v_2(y_1, y_2)} f_{X_1, X_2}(x_1, x_2) \, dx_2 \, dx_1.
+\]
+
+4. 对两边求混合偏导：
+\[
+f_{Y_1, Y_2}(y_1, y_2) = \frac{\partial^2}{\partial y_1 \partial y_2} F_{Y_1, Y_2}(y_1, y_2).
+\]
+
+5. 应用多元链式法则：
+\[
+f_{Y_1, Y_2}(y_1, y_2) = f_{X_1, X_2}(v_1, v_2) \cdot \left| \frac{\partial x_1}{\partial y_1} \cdot \frac{\partial x_2}{\partial y_2} - \frac{\partial x_1}{\partial y_2} \cdot \frac{\partial x_2}{\partial y_1} \right| = f_{X_1, X_2}(v_1, v_2) \cdot |J|.
+\]
+
+\textbf{结论}：
+$|J|$ 度量了变换下的面积元素缩放比例。$\blacksquare$
+
+\subsection{条件分布公式的推导}\label{sec:derivation-conditional-distribution}
+
+\textbf{背景（Background）}：
+条件分布 $f_{X_2|X_1}(x_2|x_1) = f_{X_1, X_2}(x_1, x_2) / f_{X_1}(x_1)$ 是概率论的核心概念。
+
+\textbf{目标（Goal）}：
+从条件概率的基本定义出发推导出条件 pdf 公式。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 条件概率的基本定义：
+\[
+\mathbb{P}(B \mid A) = \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(A)}.
+\]
+
+2. 对于无穷小事件 $\{X_1 \in [x_1, x_1 + dx_1), X_2 \in [x_2, x_2 + dx_2)\}$：
+\[
+\mathbb{P}(X_2 \in dx_2 \mid X_1 \in dx_1) = \frac{f_{X_1, X_2}(x_1, x_2) \, dx_1 \, dx_2}{f_{X_1}(x_1) \, dx_1} = \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)} \, dx_2.
+\]
+
+3. 因此条件 pdf：
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)}.
+\]
+
+4. 验证：边缘密度公式的逆过程
+\[
+\int_{-\infty}^{\infty} f_{X_2 \mid X_1}(x_2 \mid x_1) f_{X_1}(x_1) \, dx_2 = \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2 = f_{X_1}(x_1),
+\]
+故 $\int f_{X_2 \mid X_1}(x_2 \mid x_1) \, dx_2 = 1$，确实是合法的 pdf。
+
+\textbf{结论}：
+条件 pdf 公式得证。$\blacksquare$
+
+\subsection{全期望公式的推导}\label{sec:derivation-law-total-expectation}
+
+\textbf{背景（Background）}：
+全期望公式 $\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \mathbb{E}(X_2)$ 是连接条件期望与边缘期望的桥梁。
+
+\textbf{目标（Goal）}：
+形式化推导这一公式。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 从条件期望定义出发：
+\[
+\mathbb{E}(X_2 \mid X_1) = \int_{-\infty}^{\infty} x_2 f_{X_2 \mid X_1}(x_2 \mid x_1) \, dx_2.
+\]
+
+2. 对条件期望再取期望（即关于 $X_1$ 求平均）：
+\[
+\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \int_{-\infty}^{\infty} \left( \int_{-\infty}^{\infty} x_2 f_{X_2 \mid X_1}(x_2 \mid x_1) \, dx_2 \right) f_{X_1}(x_1) \, dx_1.
+\]
+
+3. 重新排列积分次序：
+\[
+= \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} x_2 f_{X_2 \mid X_1}(x_2 \mid x_1) f_{X_1}(x_1) \, dx_2 \, dx_1.
+\]
+
+4. 由条件 pdf 定义 $f_{X_2 \mid X_1}(x_2 \mid x_1) f_{X_1}(x_1) = f_{X_1, X_2}(x_1, x_2)$：
+\[
+= \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} x_2 f_{X_1, X_2}(x_1, x_2) \, dx_2 \, dx_1 = \mathbb{E}X_2.
+\]
+
+\textbf{结论}：
+全期望公式得证。$\blacksquare$
+
+\subsection{条件方差不等式的推导}\label{sec:derivation-variance-inequality}
+
+\textbf{背景（Background）}：
+在正文中我们给出 $\text{var}[\mathbb{E}(X_2 \mid X_1)] \leq \text{var}(X_2)$。这里给出证明。
+
+\textbf{目标（Goal）}：
+证明条件方差不等式。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 方差分解：
+\[
+\text{var}(X_2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \text{var}[\mathbb{E}(X_2 \mid X_1)].
+\]
+
+2. 上式等价于全方差公式（Law of Total Variance）：
+\[
+\text{var}(X_2) = \mathbb{E}\{[X_2 - \mathbb{E}(X_2 \mid X_1)]^2 \mid X_1\} + \text{var}[\mathbb{E}(X_2 \mid X_1)].
+\]
+
+3. 展开第一项：
+\[
+\mathbb{E}\{[X_2 - \mathbb{E}(X_2 \mid X_1)]^2 \mid X_1\} \geq 0,
+\]
+因为平方的期望非负。
+
+4. 因此：
+\[
+\text{var}(X_2) \geq \text{var}[\mathbb{E}(X_2 \mid X_1)].
+\]
+
+\textbf{结论}：
+条件均值的方差不超过原变量的方差，等号成立当且仅当 $X_2 \mid X_1$ 的条件方差几乎处处为 0（即 $X_2$ 可由 $X_1$ 确定性决定）。$\blacksquare$
+
+\subsection{独立性判定的推导}\label{sec:derivation-independence}
+
+\textbf{背景（Background）}：
+我们声称 $X_1$ 与 $X_2$ 独立等价于 $f(x_1, x_2) \equiv g(x_1) h(x_2)$（可分离变量）。
+
+\textbf{目标（Goal）}：
+证明这一判定条件。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{（$\Rightarrow$）} 若 $X_1$ 与 $X_2$ 独立，则 $f(x_1, x_2) = f_1(x_1) f_2(x_2)$，显然可分离。
+
+\textbf{（$\Leftarrow$）} 若 $f(x_1, x_2) \equiv g(x_1) h(x_2)$：
+
+1. 由边缘密度定义：
+\[
+f_1(x_1) = \int_{-\infty}^{\infty} g(x_1) h(x_2) \, dx_2 = g(x_1) \int_{-\infty}^{\infty} h(x_2) \, dx_2 = c_1 g(x_1),
+\]
+其中 $c_1 = \int h(x_2) \, dx_2$ 为常数。
+
+2. 同理：
+\[
+f_2(x_2) = h(x_2) \int_{-\infty}^{\infty} g(x_1) \, dx_1 = c_2 h(x_2),
+\]
+其中 $c_2 = \int g(x_1) \, dx_1$ 为常数。
+
+3. 由归一性 $\int\int f(x_1, x_2) \, dx_1 \, dx_2 = 1$，得 $c_1 c_2 = 1$。
+
+4. 因此：
+\[
+f(x_1, x_2) \equiv g(x_1) h(x_2) \equiv c_1 g(x_1) \cdot c_2 h(x_2) \equiv f_1(x_1) f_2(x_2).
+\]
+
+\textbf{结论}：
+故 $f(x_1, x_2) \equiv g(x_1) h(x_2)$ 是独立性的等价条件。$\blacksquare$
+
+\subsection{相关系数范围的推导}\label{sec:derivation-correlation-bounds}
+
+\textbf{背景（Background）}：
+我们声称相关系数满足 $-1 \leq \rho \leq 1$。这里用 Cauchy-Schwarz 不等式证明。
+
+\textbf{目标（Goal）}：
+证明 $|\rho| \leq 1$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. Cauchy-Schwarz 不等式：对任意随机变量 $U, V$，
+\[
+[\mathbb{E}(UV)]^2 \leq \mathbb{E}(U^2) \cdot \mathbb{E}(V^2).
+\]
+
+2. 应用于协方差，令 $U = X_1 - \mu_1$，$V = X_2 - \mu_2$：
+\[
+[\text{cov}(X_1, X_2)]^2 = [\mathbb{E}(X_1 - \mu_1)(X_2 - \mu_2)]^2 \leq \mathbb{E}(X_1 - \mu_1)^2 \cdot \mathbb{E}(X_2 - \mu_2)^2 = \sigma_1^2 \sigma_2^2.
+\]
+
+3. 两边开方：
+\[
+|\text{cov}(X_1, X_2)| \leq \sigma_1 \sigma_2.
+\]
+
+4. 因此：
+\[
+|\rho| = \frac{|\text{cov}(X_1, X_2)|}{\sigma_1 \sigma_2} \leq 1.
+\]
+
+\textbf{结论}：
+故 $-1 \leq \rho \leq 1$。等号成立当且仅当 $X_2 = a X_1 + b$（完美线性关系）。$\blacksquare$
+
+\subsection{二元正态条件分布的推导}\label{sec:derivation-bivariate-normal-conditional}
+
+\textbf{背景（Background）}：
+在正文中给出二元正态的条件分布为
+\[
+X_2 \mid X_1 = x_1 \sim N\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1), \ \sigma_2^2(1-\rho^2)\right).
+\]
+这里给出推导。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $\mu_1, \mu_2$：边缘分布均值
+\item $\sigma_1^2, \sigma_2^2$：边缘分布方差
+\item $\rho$：相关系数
+\item $f(x_1, x_2)$：二元正态联合密度
+\end{itemize}
+
+\textbf{目标（Goal）}：
+求条件分布 $f_{2|1}(x_2|x_1)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 条件密度公式：
+\[
+f_{2|1}(x_2|x_1) = \frac{f(x_1, x_2)}{f_1(x_1)},
+\]
+其中 $f_1(x_1) = \frac{1}{\sigma_1 \sqrt{2\pi}} \exp\left\{-\frac{(x_1-\mu_1)^2}{2\sigma_1^2}\right\}$。
+
+2. 写出联合密度的指数部分（略去归一化常数）：
+\[
+f(x_1, x_2) \propto \exp\left\{ -\frac{1}{2(1-\rho^2)} \left[ \frac{(x_1-\mu_1)^2}{\sigma_1^2} - 2\rho\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} + \frac{(x_2-\mu_2)^2}{\sigma_2^2} \right] \right\}.
+\]
+
+3. 关于 $x_2$ 完全平方配方：
+\[
+\frac{(x_2-\mu_2)^2}{\sigma_2^2} - 2\rho\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} = \left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 - \rho^2\frac{(x_1-\mu_1)^2}{\sigma_1^2}.
+\]
+
+4. 代入并整理：
+\[
+f(x_1, x_2) \propto \exp\left\{ -\frac{(x_1-\mu_1)^2}{2\sigma_1^2} \right\} \cdot \exp\left\{ -\frac{1}{2(1-\rho^2)} \left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 \right\}.
+\]
+
+5. 因此条件密度为：
+\[
+f_{2|1}(x_2|x_1) \propto \exp\left\{ -\frac{1}{2(1-\rho^2)} \left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 \right\}.
+\]
+
+6. 这正是均值为 $\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1)$、方差为 $\sigma_2^2(1-\rho^2)$ 的正态密度。
+
+\textbf{结论}：
+二元正态的条件分布仍是正态分布。$\blacksquare$
+
+\subsection{独立随机变量线性组合 mgf 的推导}\label{sec:derivation-mgf-linear-combination}
+
+\textbf{背景（Background）}：
+在正文中给出若 $X_1, \ldots, X_n$ 相互独立，则 $T = \sum_{i=1}^n k_i X_i$ 的 mgf 为 $M_T(t) = \prod_{i=1}^n M_i(k_i t)$。
+
+\textbf{目标（Goal）}：
+形式化推导这一公式。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 由 mgf 定义：
+\[
+M_T(t) = \mathbb{E}[e^{tT}] = \mathbb{E}\left[\exp\left(t \sum_{i=1}^n k_i X_i\right)\right] = \mathbb{E}\left[\prod_{i=1}^n e^{t k_i X_i}\right].
+\]
+
+2. 由于 $X_1, \ldots, X_n$ 相互独立，$e^{t k_i X_i}$ 也相互独立，因此期望可分解为乘积：
+\[
+\mathbb{E}\left[\prod_{i=1}^n e^{t k_i X_i}\right] = \prod_{i=1}^n \mathbb{E}[e^{t k_i X_i}] = \prod_{i=1}^n M_i(k_i t).
+\]
+
+3. 定义域：由各 $M_i(t)$ 的存在域 $-h_i < t < h_i$，$T$ 的 mgf 定义域为 $-\min_i\{h_i/k_i\} < t < \min_i\{h_i/k_i\}$（假设 $k_i > 0$；若 $k_i < 0$ 则需调整）。
+
+\textbf{结论}：
+故 $M_T(t) = \prod_{i=1}^n M_i(k_i t)$。特别地，若 $X_i$ iid，则 $M_T(t) = [M(k t)]^n$。$\blacksquare$
+
+\subsection{Binomial 分布的矩母函数推导}\label{sec:binomial-mgf-derivation}
+
+\textbf{背景（Background）}：
+在正文中我们声明 Binomial 分布的矩母函数为 $M(t) = [(1-p) + pe^t]^n$。这里给出完整推导。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $n$：试验次数
+\item $p$：成功概率
+\item $X \sim \text{Bin}(n, p)$：成功次数
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明 $M(t) = [(1-p) + pe^t]^n$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 根据矩母函数定义：
+\[
+M(t) = \mathbb{E}[e^{tX}] = \sum_{x=0}^n e^{tx} \binom{n}{x} p^x (1-p)^{n-x}.
+\]
+
+2. 提出公共项并利用二项展开：
+\[
+= \sum_{x=0}^n \binom{n}{x} (pe^t)^x (1-p)^{n-x} = [(1-p) + pe^t]^n.
+\]
+
+3. 均值和方差可由矩母函数求得：
+\[
+M'(t) = n[(1-p) + pe^t]^{n-1} \cdot pe^t,
+\]
+故 $\mathbb{E}X = M'(0) = np$。
+
+\[
+M''(t) = n(n-1)[(1-p) + pe^t]^{n-2} \cdot (pe^t)^2 + n[(1-p) + pe^t]^{n-1} \cdot pe^t,
+\]
+故 $\operatorname{var}(X) = M''(0) - [M'(0)]^2 = np(1-p)$。
+
+\textbf{结论}：
+因此，$X \sim \text{Bin}(n, p)$ 的矩母函数为 $M(t) = [(1-p) + pe^t]^n$，均值为 $np$，方差为 $np(1-p)$。$\blacksquare$
+
+\subsection{Negative Binomial 分布的矩母函数推导}\label{sec:negative-binomial-mgf}
+
+\textbf{背景（Background）}：
+负二项分布描述的是在获得 $r$ 次成功之前所需的失败次数。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $r$：成功次数
+\item $p$：单次成功概率
+\item $Y$：失败次数
+\item $Y \sim \text{NegativeBinomial}(r, p)$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明负二项分布的 mgf 为 $M(t) = \left(\frac{p}{1-(1-p)e^t}\right)^r$，$t < -\log(1-p)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. pmf 为：
+\[
+p_Y(y) = \binom{y+r-1}{r-1} p^r (1-p)^y, \quad y = 0, 1, 2, \ldots
+\]
+
+2. mgf 定义：
+\[
+M(t) = \mathbb{E}[e^{tY}] = \sum_{y=0}^\infty e^{ty} \binom{y+r-1}{r-1} p^r (1-p)^y.
+\]
+
+3. 利用负二项级数展开：
+\[
+(1 - z)^{-r} = \sum_{y=0}^\infty \binom{y+r-1}{r-1} z^y, \quad |z| < 1.
+\]
+
+4. 令 $z = (1-p)e^t$，得：
+\[
+M(t) = p^r \sum_{y=0}^\infty \binom{y+r-1}{r-1} [(1-p)e^t]^y = p^r (1 - (1-p)e^t)^{-r} = \left(\frac{p}{1-(1-p)e^t}\right)^r.
+\]
+
+5. 定义域要求 $| (1-p)e^t | < 1$，即 $t < -\log(1-p)$。
+
+\textbf{结论}：
+负二项分布的 mgf 为 $M(t) = \left(\frac{p}{1-(1-p)e^t}\right)^r$，$t < -\log(1-p)$。$\blacksquare$
+
+\subsection{几何分布的无记忆性推导}\label{sec:geometric-memoryless}
+
+\textbf{背景（Background）}：
+几何分布具有独特的"无记忆"性质，这在离散时间等待问题中非常重要。
+
+\textbf{目标（Goal）}：
+证明 $\mathbb{P}(Y \geq k+j \mid Y \geq k) = \mathbb{P}(Y \geq j)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 几何分布的 pmf：
+\[
+\mathbb{P}(Y = y) = p(1-p)^y, \quad y = 0, 1, 2, \ldots
+\]
+
+2. 计算生存函数：
+\[
+\mathbb{P}(Y \geq y) = \sum_{i=y}^\infty p(1-p)^i = p \cdot \frac{(1-p)^y}{1-(1-p)} = (1-p)^y.
+\]
+
+3. 计算条件概率：
+\[
+\mathbb{P}(Y \geq k+j \mid Y \geq k) = \frac{\mathbb{P}(Y \geq k+j)}{\mathbb{P}(Y \geq k)} = \frac{(1-p)^{k+j}}{(1-p)^k} = (1-p)^j = \mathbb{P}(Y \geq j).
+\]
+
+\textbf{结论}：
+几何分布具有无记忆性：已知前 $k$ 次失败，未来等待时间与最初等待时间分布相同。$\blacksquare$
+
+\subsection{多项分布的协方差推导}\label{sec:multinomial-covariance}
+
+\textbf{背景（Background）}：
+多项分布是二项分布在多类别上的推广。
+
+\textbf{目标（Goal）}：
+求 $\operatorname{cov}(X_i, X_j)$ for $i \neq j$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 多项分布的均值：$X_i \sim \text{Bin}(n, p_i)$，故 $\mathbb{E}X_i = np_i$。
+
+2. 对于 $i \neq j$，考虑 $X_i + X_j \sim \text{Bin}(n, p_i + p_j)$，故
+\[
+\operatorname{var}(X_i + X_j) = n(p_i + p_j)(1 - p_i - p_j).
+\]
+
+3. 另一方面，
+\[
+\operatorname{var}(X_i + X_j) = \operatorname{var}(X_i) + \operatorname{var}(X_j) + 2\operatorname{cov}(X_i, X_j).
+\]
+
+4. 代入 $\operatorname{var}(X_i) = np_i(1-p_i)$ 和 $\operatorname{var}(X_j) = np_j(1-p_j)$：
+\[
+n(p_i + p_j)(1 - p_i - p_j) = np_i(1-p_i) + np_j(1-p_j) + 2\operatorname{cov}(X_i, X_j).
+\]
+
+5. 整理得：
+\[
+\operatorname{cov}(X_i, X_j) = -np_ip_j.
+\]
+
+\textbf{结论}：
+对于多项分布，$\operatorname{cov}(X_i, X_j) = -np_ip_j$（$i \neq j$），这反映了类别之间的竞争关系。$\blacksquare$
+
+\subsection{超几何分布的均值与方差推导}\label{sec:hypergeometric-mean-variance}
+
+\textbf{背景（Background）}：
+超几何分布描述不放回抽样中的成功次数。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $N$：总体容量
+\item $D$：总体中成功元素个数
+\item $n$：抽样个数（不放回）
+\item $X \sim \text{Hypergeometric}(N, D, n)$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+求 $\mathbb{E}X$ 和 $\operatorname{var}(X)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{均值推导}：
+
+1. 使用指示变量法：设 $I_j = 1$ if 第 $j$ 次抽样抽到成功元素，否则为 0。
+
+2. 则 $X = \sum_{j=1}^n I_j$。
+
+3. 由对称性，$\mathbb{E}[I_j] = \mathbb{P}(I_j = 1) = D/N$。
+
+4. 故 $\mathbb{E}X = \sum_{j=1}^n \mathbb{E}[I_j] = n \cdot \frac{D}{N}$。
+
+\textbf{方差推导}：
+
+1. 首先计算 $\mathbb{E}[X(X-1)]$：
+\[
+\mathbb{E}[X(X-1)] = \sum_{j \neq k} \mathbb{P}(I_j = 1, I_k = 1).
+\]
+
+2. 由于抽样不放回，任意两时刻抽取成功的概率为 $\frac{D}{N} \cdot \frac{D-1}{N-1}$。
+
+3. 共有 $n(n-1)$ 对，故
+\[
+\mathbb{E}[X(X-1)] = n(n-1) \cdot \frac{D(D-1)}{N(N-1)}.
+\]
+
+4. 利用 $\operatorname{var}(X) = \mathbb{E}[X^2] - (\mathbb{E}X)^2 = \mathbb{E}[X(X-1)] + \mathbb{E}X - (\mathbb{E}X)^2$：
+\[
+\operatorname{var}(X) = n(n-1)\frac{D(D-1)}{N(N-1)} + n\frac{D}{N} - \left(n\frac{D}{N}\right)^2
+= n\frac{D}{N}\frac{N-D}{N}\frac{N-n}{N-1}.
+\]
+
+\textbf{结论}：
+超几何分布的均值为 $n\frac{D}{N}$，方差为 $n\frac{D}{N}\frac{N-D}{N}\frac{N-n}{N-1}$，其中 $\frac{N-n}{N-1}$ 是有限总体校正因子。$\blacksquare$
+
+\subsection{Poisson 近似二项分布的证明}\label{sec:poisson-approximation-proof}
+
+\textbf{背景（Background）}：
+当 $n$ 很大、$p$ 很小时，二项分布 $\text{Bin}(n, p)$ 近似于 $\text{Poisson}(\lambda = np)$。
+
+\textbf{目标（Goal）}：
+证明若 $X_n \sim \text{Bin}(n, p_n)$ 且 $np_n \to \lambda$，则 $X_n \xrightarrow{d} \text{Poisson}(\lambda)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 二项分布的概率质量函数：
+\[
+\mathbb{P}(X_n = k) = \binom{n}{k} p_n^k (1-p_n)^{n-k}.
+\]
+
+2. 将组合数拆开：
+\[
+= \frac{n(n-1)\cdots(n-k+1)}{k!} \cdot \frac{\lambda^k}{n^k} \cdot \left(1 - \frac{\lambda}{n}\right)^{n-k}.
+\]
+
+3. 当 $n \to \infty$ 时：
+\[
+\frac{n(n-1)\cdots(n-k+1)}{n^k} \to 1,
+\]
+\[
+\left(1 - \frac{\lambda}{n}\right)^{n-k} \to e^{-\lambda}.
+\]
+
+4. 故
+\[
+\mathbb{P}(X_n = k) \to \frac{\lambda^k}{k!} e^{-\lambda},
+\]
+这正是 $\text{Poisson}(\lambda)$ 的 pmf。
+
+\textbf{结论}：
+Poisson 分布是二项分布在"稀有事件"情形下的极限。$\blacksquare$
+
+\subsection{Poisson 分布的矩母函数推导}\label{sec:poisson-mgf-derivation}
+
+\textbf{背景（Background）}：
+Poisson 分布的矩母函数和均值、方差。
+
+\textbf{目标（Goal）}：
+求 $M(t)$ 并计算 $\mathbb{E}X$ 和 $\operatorname{var}(X)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. mgf 定义：
+\[
+M(t) = \mathbb{E}[e^{tX}] = \sum_{x=0}^\infty e^{tx} \frac{\lambda^x e^{-\lambda}}{x!} = e^{-\lambda} \sum_{x=0}^\infty \frac{(\lambda e^t)^x}{x!} = e^{-\lambda} e^{\lambda e^t} = e^{\lambda(e^t - 1)}.
+\]
+
+2. 一阶导数：
+\[
+M'(t) = \lambda e^t \cdot e^{\lambda(e^t - 1)} = \lambda e^t M(t),
+\]
+故 $\mathbb{E}X = M'(0) = \lambda$。
+
+3. 二阶导数：
+\[
+M''(t) = \lambda e^t M(t) + \lambda^2 e^{2t} M(t),
+\]
+故 $\operatorname{var}(X) = M''(0) - [M'(0)]^2 = (\lambda + \lambda^2) - \lambda^2 = \lambda$。
+
+\textbf{结论}：
+Poisson 分布的均值和方差相等，都等于参数 $\lambda$。$\blacksquare$
+
+\subsection{卡方分布与正态分布的关系}\label{sec:chi-square-from-normal}
+
+\textbf{背景（Background）}：
+卡方分布定义为标准正态平方和。
+
+\textbf{目标（Goal）}：
+证明若 $Z \sim N(0,1)$，则 $Z^2 \sim \chi^2(1)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. $Z$ 的 pdf 为 $\phi(z) = \frac{1}{\sqrt{2\pi}} e^{-z^2/2}$。
+
+2. 设 $Y = Z^2$，先求 cdf：
+\[
+F_Y(y) = \mathbb{P}(Y \leq y) = \mathbb{P}(-\sqrt{y} \leq Z \leq \sqrt{y}) = \int_{-\sqrt{y}}^{\sqrt{y}} \phi(z) \, dz.
+\]
+
+3. 求导得 pdf：
+\[
+f_Y(y) = \frac{d}{dy} F_Y(y) = \phi(\sqrt{y}) \cdot \frac{1}{2\sqrt{y}} + \phi(-\sqrt{y}) \cdot \frac{1}{2\sqrt{y}} = \frac{1}{\sqrt{2\pi y}} e^{-y/2}.
+\]
+
+4. 写成标准形式：
+\[
+f_Y(y) = \frac{1}{\Gamma(1/2) 2^{1/2}} y^{1/2 - 1} e^{-y/2},
+\]
+这正是 $\chi^2(1)$ 的 pdf。
+
+\textbf{结论}：
+标准正态变量的平方服从自由度为 1 的卡方分布。$\blacksquare$
+
+\subsection{卡方分布的可加性证明}\label{sec:chi-square-additivity}
+
+\textbf{背景（Background）}：
+卡方分布满足可加性：独立卡方变量之和仍为卡方分布。
+
+\textbf{目标（Goal）}：
+证明若 $X_1 \sim \chi^2(m)$，$X_2 \sim \chi^2(n)$ 独立，则 $X_1 + X_2 \sim \chi^2(m+n)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 由卡方分布与 Gamma 分布的关系：$\chi^2(r) = \Gamma(r/2, 2)$。
+
+2. 利用 Gamma 分布的可加性（见定理 3.3.1）：若 $Y_1 \sim \Gamma(\alpha_1, \beta)$，$Y_2 \sim \Gamma(\alpha_2, \beta)$ 独立，则 $Y_1 + Y_2 \sim \Gamma(\alpha_1 + \alpha_2, \beta)$。
+
+3. 因此：
+\[
+X_1 + X_2 \sim \Gamma(m/2, 2) + \Gamma(n/2, 2) = \Gamma((m+n)/2, 2) = \chi^2(m+n).
+\]
+
+或者直接利用 mgf：$\chi^2(r)$ 的 mgf 为 $M(t) = (1-2t)^{-r/2}$，故
+\[
+M_{X_1+X_2}(t) = (1-2t)^{-m/2} \cdot (1-2t)^{-n/2} = (1-2t)^{-(m+n)/2}.
+\]
+
+\textbf{结论}：
+卡方分布具有可加性，自由度可累加。$\blacksquare$
+
+\subsection{Beta 分布从 Gamma 变量构造的推导}\label{sec:beta-from-gamma}
+
+\textbf{背景（Background）}：
+Beta 分布可由两个独立 Gamma 变量构造而来。
+
+\textbf{目标（Goal）}：
+证明若 $X_1 \sim \Gamma(\alpha, 1)$，$X_2 \sim \Gamma(\beta, 1)$ 独立，令 $Y = X_1/(X_1 + X_2)$，则 $Y \sim \text{Beta}(\alpha, \beta)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 联合 pdf（$x_1 > 0, x_2 > 0$）：
+\[
+h(x_1, x_2) = \frac{1}{\Gamma(\alpha)\Gamma(\beta)} x_1^{\alpha-1} x_2^{\beta-1} e^{-x_1 - x_2}.
+\]
+
+2. 变换：$y_1 = x_1 + x_2$，$y_2 = \frac{x_1}{x_1+x_2}$，则 $x_1 = y_1 y_2$，$x_2 = y_1(1-y_2)$。
+
+3. Jacobian 行列式：$|J| = y_1$。
+
+4. 联合 pdf：
+\[
+g(y_1, y_2) = \frac{1}{\Gamma(\alpha)\Gamma(\beta)} (y_1 y_2)^{\alpha-1} [y_1(1-y_2)]^{\beta-1} e^{-y_1} \cdot y_1 = y_1^{\alpha+\beta-1} e^{-y_1} \cdot \frac{y_2^{\alpha-1} (1-y_2)^{\beta-1}}{\Gamma(\alpha)\Gamma(\beta)}.
+\]
+
+5. 分离变量，可见 $Y_1 = X_1+X_2 \sim \Gamma(\alpha+\beta, 1)$，$Y_2 = \frac{X_1}{X_1+X_2} \sim \text{Beta}(\alpha, \beta)$，且独立。
+
+6. 边缘 pdf：
+\[
+g_2(y_2) = \frac{y_2^{\alpha-1} (1-y_2)^{\beta-1}}{\Gamma(\alpha)\Gamma(\beta)} \int_0^\infty y_1^{\alpha+\beta-1} e^{-y_1} \, dy_1 = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} y_2^{\alpha-1} (1-y_2)^{\beta-1}.
+\]
+
+\textbf{结论}：
+Beta 分布可如此构造，且 $Y_1$ 和 $Y_2$ 独立。$\blacksquare$
+
+\subsection{Beta 分布的均值与方差推导}\label{sec:beta-mean-variance}
+
+\textbf{背景（Background）}：
+Beta 分布的均值和方差的计算。
+
+\textbf{目标（Goal）}：
+求 $\mathbb{E}Y$ 和 $\operatorname{var}(Y)$，其中 $Y \sim \text{Beta}(\alpha, \beta)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 利用 Beta 函数性质：
+\[
+\int_0^1 y^{\alpha-1} (1-y)^{\beta-1} \, dy = B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}.
+\]
+
+2. 均值：
+\[
+\mathbb{E}Y = \int_0^1 y \cdot \frac{1}{B(\alpha,\beta)} y^{\alpha-1} (1-y)^{\beta-1} \, dy = \frac{B(\alpha+1, \beta)}{B(\alpha, \beta)} = \frac{\alpha}{\alpha+\beta}.
+\]
+
+3. 二阶矩：
+\[
+\mathbb{E}[Y^2] = \frac{B(\alpha+2, \beta)}{B(\alpha, \beta)} = \frac{\alpha(\alpha+1)}{(\alpha+\beta)(\alpha+\beta+1)}.
+\]
+
+4. 方差：
+\[
+\operatorname{var}(Y) = \mathbb{E}[Y^2] - (\mathbb{E}Y)^2 = \frac{\alpha(\alpha+1)}{(\alpha+\beta)(\alpha+\beta+1)} - \frac{\alpha^2}{(\alpha+\beta)^2} = \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}.
+\]
+
+\textbf{结论}：
+Beta 分布的均值为 $\frac{\alpha}{\alpha+\beta}$，方差为 $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$。$\blacksquare$
+
+\subsection{正态分布的矩母函数推导}\label{sec:normal-mgf-derivation}
+
+\textbf{背景（Background）}：
+正态分布是最重要的连续分布之一。
+
+\textbf{目标（Goal）}：
+证明 $X \sim N(\mu, \sigma^2)$ 的 mgf 为 $M(t) = \exp\{\mu t + \frac{1}{2}\sigma^2 t^2\}$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. $X = \sigma Z + \mu$，其中 $Z \sim N(0,1)$。
+
+2. 标准正态的 mgf：
+\[
+M_Z(t) = \mathbb{E}[e^{tZ}] = \int_{-\infty}^{\infty} e^{tz} \frac{1}{\sqrt{2\pi}} e^{-z^2/2} \, dz = e^{t^2/2} \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}} e^{-(z-t)^2/2} \, dz = e^{t^2/2}.
+\]
+
+3. 一般正态：
+\[
+M_X(t) = \mathbb{E}[e^{t(\sigma Z + \mu)}] = e^{\mu t} \mathbb{E}[e^{t\sigma Z}] = e^{\mu t} e^{\frac{1}{2}\sigma^2 t^2} = \exp\left\{\mu t + \frac{1}{2}\sigma^2 t^2\right\}.
+\]
+
+4. 验证均值和方差：
+\[
+M'(t) = (\mu + \sigma^2 t) \exp\left\{\mu t + \frac{1}{2}\sigma^2 t^2\right\},
+\]
+\[
+M''(t) = (\sigma^2 + (\mu + \sigma^2 t)^2) \exp\left\{\mu t + \frac{1}{2}\sigma^2 t^2\right\},
+\]
+故 $\mathbb{E}X = M'(0) = \mu$，$\operatorname{var}(X) = M''(0) - \mu^2 = \sigma^2$。
+
+\textbf{结论}：
+正态分布 $N(\mu, \sigma^2)$ 的 mgf 为 $\exp\{\mu t + \frac{1}{2}\sigma^2 t^2\}$。$\blacksquare$
+
+\subsection{标准化变换的推导}\label{sec:normal-z-transform}
+
+\textbf{背景（Background）}：
+任何正态变量都可以通过标准化变换化为标准正态。
+
+\textbf{目标（Goal）}：
+证明若 $X \sim N(\mu, \sigma^2)$，则 $Z = \frac{X-\mu}{\sigma} \sim N(0,1)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 变换 $Z = g(X) = \frac{X-\mu}{\sigma}$，其逆为 $X = \sigma Z + \mu$。
+
+2. 利用 mgf 的性质（或直接积分）：
+\[
+M_Z(t) = \mathbb{E}[e^{tZ}] = \mathbb{E}\left[e^{t\frac{X-\mu}{\sigma}}\right] = e^{-\mu t/\sigma} \mathbb{E}\left[e^{(t/\sigma)X}\right] = e^{-\mu t/\sigma} \cdot \exp\left\{\mu \frac{t}{\sigma} + \frac{1}{2}\sigma^2 \left(\frac{t}{\sigma}\right)^2\right\} = e^{t^2/2}.
+\]
+
+3. 这正是 $N(0,1)$ 的 mgf，故 $Z \sim N(0,1)$。
+
+4. 概率计算：
+\[
+\mathbb{P}(X \leq x) = \mathbb{P}\left(\frac{X-\mu}{\sigma} \leq \frac{x-\mu}{\sigma}\right) = \Phi\left(\frac{x-\mu}{\sigma}\right).
+\]
+
+\textbf{结论}：
+标准化变换将正态分布转化为标准正态分布，从而可用标准正态表计算任意正态概率。$\blacksquare$
+
+\subsection{$t$ 分布的推导}\label{sec:t-distribution-derivation}
+
+\textbf{背景（Background）}：
+$t$ 分布由标准正态和卡方分布构造而来。
+
+\textbf{目标（Goal）}：
+证明若 $Z \sim N(0,1)$，$V \sim \chi^2(n)$ 独立，$T = \frac{Z}{\sqrt{V/n}}$，则 $T \sim t(n)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 变换：$T = \frac{Z}{\sqrt{V/n}}$，$U = V$，逆变换为 $Z = T\sqrt{U/n}$，$V = U$。
+
+2. Jacobian：$|J| = \sqrt{u/n}$。
+
+3. 联合 pdf：
+\[
+h(z, v) = \frac{1}{\sqrt{2\pi}} e^{-z^2/2} \cdot \frac{1}{\Gamma(n/2)2^{n/2}} v^{n/2-1} e^{-v/2}.
+\]
+
+4. 代入变换并对 $u$ 积分：
+\[
+f_T(t) = \int_0^\infty \frac{1}{\sqrt{2\pi}} e^{-t^2 u/(2n)} \cdot \frac{1}{\Gamma(n/2)2^{n/2}} u^{n/2-1} e^{-u/2} \cdot \sqrt{\frac{u}{n}} \, du.
+\]
+
+5. 整理后令 $y = \frac{u}{2}(1 + t^2/n)$，得：
+\[
+f_T(t) = \frac{\Gamma((n+1)/2)}{\sqrt{\pi n} \, \Gamma(n/2)} \cdot \frac{1}{(1 + t^2/n)^{(n+1)/2}}.
+\]
+
+6. 均值为 0（对称性），方差为 $\frac{n}{n-2}$（当 $n > 2$）。
+
+\textbf{结论}：
+$t$ 分布的 pdf 如上所示，当 $n \to \infty$ 时趋于标准正态分布。$\blacksquare$
+
+\subsection{正态分布有界性的证明}\label{sec:normal-bounded}
+
+\textbf{背景（Background）}：
+正态分布的尾部概率可以任意小。
+
+\textbf{目标（Goal）}：
+证明对任意 $\epsilon > 0$，存在 $\eta$ 使得 $\mathbb{P}[|X| > \eta] < \epsilon$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 设 $X \sim N(\mu, \sigma^2)$，考虑尾部概率 $\mathbb{P}(|X| > \eta)$。
+
+2. 利用 Markov 不等式：对任意 $t > 0$，
+\[
+\mathbb{P}(|X - \mu| > \eta) = \mathbb{P}((X - \mu)^2 > \eta^2) \leq \frac{\mathbb{E}[(X - \mu)^2]}{\eta^2} = \frac{\sigma^2}{\eta^2}.
+\]
+
+3. 由 Chebyshev 不等式可直接得出：对于任意 $\epsilon > 0$，取 $\eta > \sigma / \sqrt{\epsilon}$，则
+\[
+\mathbb{P}(|X - \mu| > \eta) \leq \frac{\sigma^2}{\eta^2} < \epsilon.
+\]
+
+4. 进一步，对于标准正态分布 $Z \sim N(0,1)$，尾部概率有更精确的界：由积分不等式
+\[
+\int_\eta^\infty e^{-t^2/2} \, dt \leq \frac{1}{\eta} e^{-\eta^2/2}, \quad \eta > 0,
+\]
+可得 $\mathbb{P}(|Z| > \eta) \leq \sqrt{\frac{2}{\pi}} \frac{e^{-\eta^2/2}}{\eta}$。
+
+5. 因此，无论使用 Chebyshev 的粗略界还是正态分布的精确界，均可证明：对于任意 $\epsilon > 0$，存在 $\eta$ 使得 $\mathbb{P}(|X| > \eta) < \epsilon$。这说明正态分布的尾部概率可以任意小。
+
+\textbf{结论}：
+正态分布的尾部概率可以任意小，即 $\lim_{\eta \to \infty} \mathbb{P}(|X| > \eta) = 0$。这体现了正态分布的**有界性**（tails vanish）。$\blacksquare$
+
+\subsection{卡方分布 $\Delta$ 方法的详细推导}\label{sec:chi-square-delta-method}
+
+\textbf{背景（Background）}：
+将 $\Delta$ 方法应用于卡方变量的标准差。设 $V_n \sim \chi^2(n)$（即 $n$ 个标准正态变量的平方和），则 $V_n / n \xrightarrow{P} 1$，我们希望求 $\sqrt{n}(\sqrt{V_n} - \sqrt{n})$ 的渐近分布。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $V_n \sim \chi^2(n)$：自由度为 $n$ 的卡方分布
+\item $v = n$：卡方分布的均值
+\item $g(x) = \sqrt{x}$：平方根变换函数
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item 由大数定律：$V_n / n \xrightarrow{P} 1$
+\item 由中心极限定理：$\sqrt{n}(V_n/n - 1) \xrightarrow{D} N(0, 2)$
+\item $\Delta$ 方法（Theorem 5.2.9, Hogg）：若 $\sqrt{n}(X_n - \theta) \xrightarrow{D} N(0, \sigma^2)$，且 $g(x)$ 在 $\theta$ 处可导且 $g'(\theta) \neq 0$，则
+\[
+\sqrt{n}(g(X_n) - g(\theta)) \xrightarrow{D} N\left(0, \sigma^2 [g'(\theta)]^2\right).
+\]
+\end{itemize}
+
+\textbf{目标（Goal）}：
+求 $\sqrt{n}(\sqrt{V_n} - \sqrt{n})$ 的渐近分布。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 令 $X_n = V_n / n$，则 $X_n \xrightarrow{P} 1 = \theta$。
+
+2. 计算 $g'(x) = \frac{d}{dx} \sqrt{x} = \frac{1}{2\sqrt{x}}$，因此 $g'(\theta) = g'(1) = \frac{1}{2}$。
+
+3. 验证 $\Delta$ 方法条件：
+   - $X_n = V_n / n$ 依概率收敛到 $\theta = 1$
+   - $g(x) = \sqrt{x}$ 在 $x = 1$ 处可导
+   - 由 CLT：$\sqrt{n}(X_n - 1) = \frac{1}{\sqrt{n}}(V_n - n) \xrightarrow{D} N(0, 2)$
+
+4. 应用 $\Delta$ 方法：
+\[
+\sqrt{n}(g(V_n/n) - g(1)) = \sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right) \xrightarrow{D} N\left(0, 2 \cdot \left(\frac{1}{2}\right)^2\right) = N(0, \tfrac{1}{2}).
+\]
+
+5. 注意到
+\[
+\sqrt{n}(\sqrt{V_n} - \sqrt{n}) = n \cdot \sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right) = n \cdot \sqrt{n}\left(\frac{\sqrt{V_n}}{\sqrt{n}} - 1\right).
+\]
+实际上更直接的方式是：直接对 $g(V_n) = \sqrt{V_n}$ 在 $v = n$ 处应用 $\Delta$ 方法。
+
+6. 设 $Y_n = V_n$，则 $\sqrt{n}(Y_n - n) \xrightarrow{D} N(0, 2n)$。但更好的做法是利用 $V_n / n \xrightarrow{P} 1$：
+
+由步骤 4 的结果，乘以 $\sqrt{n}$：
+\[
+\sqrt{n}(\sqrt{V_n} - \sqrt{n}) = \sqrt{n} \cdot \sqrt{n} \cdot \left(\sqrt{\frac{V_n}{n}} - 1\right) = n \cdot \sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right).
+\]
+
+更直接地：对 $X_n = V_n / n$ 应用 $\Delta$ 方法得
+\[
+\sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right) \xrightarrow{D} N\left(0, \frac{1}{2}\right).
+\]
+
+两边乘以 $\sqrt{n}$：
+\[
+\sqrt{n}(\sqrt{V_n} - \sqrt{n}) = \sqrt{n} \cdot \sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right) \xrightarrow{D} \sqrt{n} \cdot N\left(0, \frac{1}{2}\right).
+\]
+
+但这不是正确的缩放。正确的做法是直接对 $\sqrt{V_n}$ 应用 $\Delta$ 方法到 $\sqrt{n}$：
+
+因为 $\sqrt{n}(\frac{V_n}{n} - 1) \xrightarrow{D} N(0, 2)$，且 $g'(1) = \frac{1}{2}$，所以
+\[
+\sqrt{n}\left(\sqrt{\frac{V_n}{n}} - 1\right) \xrightarrow{D} N\left(0, 2 \cdot \frac{1}{4}\right) = N\left(0, \frac{1}{2}\right).
+\]
+
+即
+\[
+\sqrt{n}\left(\frac{\sqrt{V_n}}{\sqrt{n}} - 1\right) \xrightarrow{D} N\left(0, \frac{1}{2}\right).
+\]
+
+因此
+\[
+\sqrt{n}(\sqrt{V_n} - \sqrt{n}) \xrightarrow{D} N\left(0, \frac{1}{2} \cdot n\right) = N\left(0, \frac{n}{2}\right).
+\]
+
+这表明 $\sqrt{V_n}$ 的渐近方差与 $\sqrt{n}$ 成正比。
+
+\textbf{结论}：
+应用 $\Delta$ 方法于卡方变量的平方根变换，得到
+\[
+\sqrt{n}(\sqrt{V_n} - \sqrt{n}) \xrightarrow{D} N\left(0, \frac{1}{2}\right) \cdot \sqrt{n} = N\left(0, \frac{n}{2}\right).
+\]
+
+更精确地，$\sqrt{n}(\sqrt{V_n} - \sqrt{n}) / \sqrt{n/2} = \sqrt{2}(\sqrt{V_n} - \sqrt{n}) / \sqrt{V_n/2} \xrightarrow{D} N(0, 1)$。$\blacksquare$
+
+\subsection{卡方检验的详细推导}\label{sec:chi-square-test-derivation}
+
+\textbf{背景（Background）}：
+拟合优度 $\chi^2$ 检验（Goodness-of-Fit Test）由 Karl Pearson 于 1900 年提出，是统计推断的早期方法之一。该检验用于检验观测频数与期望频数之间的偏离程度。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+\item $X_i \sim \text{Multinomial}(n, p_1, \ldots, p_k)$：多项分布，$X_i$ 为落入第 $i$ 类的频数
+\item $p_i$：落入第 $i$ 类的真实概率
+\item $p_{i0}$：原假设 $H_0$ 下指定的概率值
+\item $np_{i0}$：原假设下第 $i$ 类的期望频数
+\item $Q_{k-1} = \sum_{i=1}^k \frac{(X_i - np_{i0})^2}{np_{i0}}$：Pearson $\chi^2$ 统计量
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+\item 当 $H_0$ 为真时，$p_i = p_{i0}$，$i = 1, \ldots, k$
+\item 由中心极限定理，当 $n \to \infty$ 且 $np_i > 0$ 时，
+\[
+\frac{X_i - np_i}{\sqrt{np_i(1-p_i)}} \xrightarrow{D} N(0, 1).
+\]
+\item 当 $H_0$ 为真时，$X_i \approx N(np_{i0}, np_{i0}(1-p_{i0}))$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明在 $H_0$ 下，$Q_{k-1} \xrightarrow{D} \chi^2(k-1)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+1. 首先考虑二项分布情形。设 $X_1 \sim b(n, p_1)$，$X_2 = n - X_1$，$p_2 = 1 - p_1$。
+定义标准化变量
+\[
+Z = \frac{X_1 - np_1}{\sqrt{np_1(1-p_1)}}.
+\]
+由 CLT，$Z \xrightarrow{D} N(0, 1)$。
+
+2. 则 $Z^2 \xrightarrow{D} \chi^2(1)$（标准正态变量的平方服从自由度为 1 的卡方分布）。
+
+3. 展开 $Z^2$：
+\[
+Z^2 = \frac{(X_1 - np_1)^2}{np_1(1-p_1)} = \frac{(X_1 - np_1)^2}{np_1} + \frac{(X_1 - np_1)^2}{n(1-p_1)}.
+\]
+
+4. 利用 $X_2 = n - X_1$，有 $(X_1 - np_1)^2 = (n - X_2 - n + np_2)^2 = (X_2 - np_2)^2$。
+因此
+\[
+Z^2 = \frac{(X_1 - np_1)^2}{np_1} + \frac{(X_2 - np_2)^2}{np_2} = Q_1,
+\]
+即二项情形的 Pearson $\chi^2$ 统计量。
+
+5. 推广到多项分布。设 $(X_1, \ldots, X_{k-1}) \sim \text{Multinomial}(n, p_1, \ldots, p_{k-1})$，$X_k = n - \sum_{i=1}^{k-1} X_i$，$p_k = 1 - \sum_{i=1}^{k-1} p_i$。
+
+定义 Pearson 统计量
+\[
+Q_{k-1} = \sum_{i=1}^k \frac{(X_i - np_i)^2}{np_i}.
+\]
+
+6. 关键步骤：将 $Q_{k-1}$ 表示为平方和形式。令
+\[
+Y_i = \frac{X_i - np_i}{\sqrt{np_i}}, \quad i = 1, \ldots, k.
+\]
+则 $Q_{k-1} = \sum_{i=1}^k Y_i^2$。
+
+7. 向量形式：设 $\mathbf{Y} = (Y_1, \ldots, Y_k)$。可以证明（见 Hogg, McKean, Craig Theorem 4.7.1 或更高级课程的证明），当 $n \to \infty$ 时，$\mathbf{Y}$ 的协方差矩阵为
+\[
+\Sigma = I_k - \mathbf{p}\mathbf{p}',
+\]
+其中 $\mathbf{p} = (p_1, \ldots, p_k)'$，$I_k$ 为 $k \times k$ 单位矩阵。
+
+8. 该协方差矩阵 $\Sigma$ 是**幂等矩阵**（idempotent），且 $\text{rank}(\Sigma) = k - 1$。对于幂等矩阵，其特征值为 0 或 1。
+
+9. 因此，$Q_{k-1} = \mathbf{Y}'\mathbf{Y}$ 服从（渐近）$\chi^2(k-1)$ 分布。这基于以下事实：若 $\mathbf{Y} \xrightarrow{D} N(\mathbf{0}, \Sigma)$，且 $\Sigma$ 是幂等的，则 $\mathbf{Y}'\Sigma^-\mathbf{Y} \xrightarrow{D} \chi^2(\text{rank}(\Sigma))$，其中 $\Sigma^-$ 为广义逆。
+
+10. 具体推导（来自 Hogg）：设 $Z_i = (X_i - np_i) / \sqrt{np_i}$，则 $\sum_{i=1}^k \sqrt{p_i} Z_i = 0$（因为 $\sum X_i = n$）。定义
+\[
+Q_{k-1} = \sum_{i=1}^k Z_i^2 = \sum_{i=1}^k (Z_i - \bar{Z}_w)^2 + (\text{某个组合})^2,
+\]
+其中 $\bar{Z}_w = \sum_{i=1}^k p_i Z_i / \sum_{i=1}^k p_i = 0$。
+
+最终得到 $Q_{k-1}$ 可以分解为一个 $\chi^2(1)$ 变量（来自组合约束）和一个 $\chi^2(k-2)$ 变量之和，即 $\chi^2(k-1)$。
+
+\textbf{结论}：
+在原假设 $H_0: p_i = p_{i0}, i = 1, \ldots, k$ 下，当样本量 $n \to \infty$ 时，
+\[
+Q_{k-1} = \sum_{i=1}^k \frac{(X_i - np_{i0})^2}{np_{i0}} \xrightarrow{D} \chi^2(k-1).
+\]
+
+因此，对于大样本，$Q_{k-1}$ 具有近似卡方分布，自由度为 $k-1$（减去一个约束 $\sum p_i = 1$）。这就是 Karl Pearson 于 1900 年提出的拟合优度 $\chi^2$ 检验的理论基础。$\blacksquare$
+
+\subsection{正态分布均值充分性的推导}\label{sec:appendix-ch7}
+
+\textbf{背景（Background）}：
+在第 7 章中，我们用因子分解定理说明正态模型中样本均值保留了关于均值参数的全部信息。这里给出对应的代数展开。
+
+设 $X_1, \ldots, X_n \sim N(\theta, \sigma^2)$，其中 $\sigma^2$ 已知。联合密度为
+\[
+L(\theta;\mathbf{x}) = (2\pi\sigma^2)^{-n/2}\exp\left\{-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i-\theta)^2\right\}.
+\]
+利用恒等式
+\[
+\sum_{i=1}^n (x_i-\theta)^2
+= \sum_{i=1}^n (x_i-\overline{x})^2 + n(\overline{x}-\theta)^2,
+\]
+可将似然写成
+\[
+L(\theta;\mathbf{x})
+= \underbrace{(2\pi\sigma^2)^{-n/2}\exp\left\{-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i-\overline{x})^2\right\}}_{h(\mathbf{x})}
+\underbrace{\exp\left\{-\frac{n}{2\sigma^2}(\overline{x}-\theta)^2\right\}}_{g(\overline{x},\theta)}.
+\]
+第一项不含 $	heta$，第二项只通过 $\overline{x}$ 依赖样本。因此，由因子分解定理，$\overline{X}$ 是 $\theta$ 的充分统计量。$\blacksquare$

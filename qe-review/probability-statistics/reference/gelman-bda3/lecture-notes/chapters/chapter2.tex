@@ -1,0 +1,257 @@
+% Chapter 2: Single-parameter models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{单参数模型}
+
+\section{从二项数据估计概率}
+
+考虑从二项分布 $y \sim \text{Binomial}(n, \theta)$ 中观测到 $y$ 次成功，其中：
+\begin{itemize}
+  \item $y$：$n$ 次伯努利试验中的成功总次数
+  \item $\theta$：总体中的成功比例，或每次试验的成功概率
+\end{itemize}
+
+二项分布的似然函数为：
+\[
+p(y|\theta) = \binom{n}{y} \theta^y (1-\theta)^{n-y}
+\]
+
+为了执行贝叶斯推断，我们必须为 $\theta$ 指定先验分布。作为简单开始，我们假设先验分布是 $[0, 1]$ 上的均匀分布：$\theta \sim \text{Uniform}(0, 1)$，即 $p(\theta) = 1$。
+
+应用贝叶斯定理，得到后验密度：\footnote{推导见附录 \cref{sec:beta-binomial-posterior-derivation}}
+\[
+p(\theta|y) \propto \theta^y (1-\theta)^{n-y}
+\]
+
+这正是 Beta 分布的形式，因此：
+\[
+\theta|y \sim \text{Beta}(y+1, n-y+1)
+\]
+
+\begin{Definition}[Beta 分布]
+  Beta 分布的概率密度函数为：
+  \[
+  p(x|\alpha, \beta) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} x^{\alpha-1}(1-x)^{\beta-1}, \quad 0 \leq x \leq 1
+  \]
+\end{Definition}
+
+在固定 $n$ 和 $y$ 的情况下，组合数 $\binom{n}{y}$ 不依赖于未知参数 $\theta$，因此在计算后验分布时可以视为常数。
+
+\subsection{预测}
+
+在均匀先验下，先验预测分布可以直接计算。在模型下，所有可能的 $y$ 值在先验下同等可能。
+
+令 $\tilde{y}$ 表示与前 $n$ 次试验可交换的一次新试验的结果：\footnote{推导见附录 \cref{sec:laplace-succession-derivation}}
+\[
+P(\tilde{y} = 1 | y) = \int_0^1 \theta \cdot p(\theta|y) \, d\theta = \mathbb{E}(\theta|y) = \frac{y+1}{n+2}
+\]
+
+这就是著名的拉普拉斯继承法则（Laplace's law of succession）。在极端观测 $y=0$ 和 $y=n$ 时，拉普拉斯法则预测概率分别为 $1/(n+2)$ 和 $(n+1)/(n+2)$。
+
+\section{后验作为数据与先验信息的折中}
+
+贝叶斯推断的过程涉及从先验分布 $p(\theta)$ 到后验分布 $p(\theta|y)$ 的转化。以下两个式子描述了先验与后验之间的一般关系：\footnote{推导见附录 \cref{sec:law-of-total-expectation-variance-derivation}}
+
+\[
+\mathbb{E}(\theta) = \mathbb{E}\left[\mathbb{E}(\theta|y)\right]
+\]
+
+\[
+\operatorname{Var}(\theta) = \mathbb{E}\left[\operatorname{Var}(\theta|y)\right] + \operatorname{Var}\left[\mathbb{E}(\theta|y)\right]
+\]
+
+第一个式子（law of total expectation）几乎不足为奇：$\theta$ 的先验均值是所有可能数据上后验均值的平均。
+
+第二个式子（law of total variance）更有趣：后验方差平均上小于先验方差，两者之差取决于后验均值在不同数据上的变化程度。变化越大，我们降低不确定性的潜力越大。
+
+\subsection{二项例子中的折中}
+
+在二项例子中，均匀先验的均值是 $1/2$，方差是 $1/12$。
+
+后验均值 $\frac{y+1}{n+2}$ 是先验均值 $1/2$ 和样本比例 $y/n$ 之间的折中，显然，随着数据样本量增大，先验的作用越来越小。
+
+这是贝叶斯推断的一般特征：\textbf{后验分布位于代表先验信息和数据信息的点之间，折中程度随着样本量增加越来越受数据控制}。
+
+\section{后验推断的汇总}
+
+后验概率分布包含了关于参数 $\theta$ 的所有当前信息。常用的位置汇总包括后验均值、后验中位数、后验众数；变化程度通常用标准差、四分位距和其他分位数来汇总。
+
+当后验分布具有闭式形式时（如当前例子中的 Beta 分布），这些汇总通常可以用闭式形式得到。
+
+\subsection{后验区间}
+
+除了点汇总之外，报告后验不确定性几乎总是重要的。通常的方法是给出后验分布的分位数，或者如果需要区间汇总，则给出一定概率的后验中心区间（如 $100(1-\alpha)\%$ 区间）。这类区间估计称为\textbf{后验区间}（posterior interval）。
+
+\subsection{最高后验密度区间}
+
+另一种汇总后验不确定性的方法是\textbf{最高后验密度区域}（Highest Posterior Density, HPD region）：包含 $100(1-\alpha)\%$ 后验概率的集合，且区域内密度不低于区域外。
+
+对于单峰且对称的后验分布，HPD 区间与后验中心区间相同。但对于非对称分布，两者可能有显著差异——当后验分布有偏时，HPD 区间可以更准确地反映真实的不确定性范围。
+
+\section{信息先验分布}
+
+在二项例子中，到目前为止我们只考虑了 $\theta$ 的均匀先验分布。问题在于：如何证明这种指定的合理性？一般来说，我们如何处理构建先验分布的问题？
+
+对先验分布有两种基本解释：
+\begin{enumerate}
+  \item \textbf{总体解释}：先验分布代表可能参数值的总体，当前感兴趣的 $\theta$ 是从中抽取的。
+  \item \textbf{主观知识状态解释}：指导原则是，我们必须将关于 $\theta$ 的知识（和不确定性）表达得像它的值是先验分布的随机实现一样。
+\end{enumerate}
+
+对于许多问题（如估计新工业过程中失败概率），不存在完全相关的 $\theta$ 的总体。先验分布应包含所有合理的 $\theta$ 值，但分布不必真实集中在真值附近，因为通常数据中关于 $\theta$ 的信息远超过任何合理先验概率规范。
+
+\subsection{共轭先验}
+
+考虑二项模型的似然：$p(y|\theta) \propto \theta^y (1-\theta)^{n-y}$
+
+如果先验密度具有相同形式，则后验密度也具有这种形式。我们将先验密度参数化为：
+\[
+p(\theta) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1}
+\]
+即 $\theta \sim \text{Beta}(\alpha, \beta)$。
+
+将 $p(\theta)$ 与 $p(y|\theta)$ 比较，可以看出这个先验等价于 $\alpha-1$ 次先验成功和 $\beta-1$ 次先验失败。
+
+\textbf{共轭性}：后验分布与先验分布属于同一参数形式。Beta 先验分布是二项似然的共轭族。共轭族在计算上是方便的，因为后验分布遵循已知参数形式。\footnote{推导见附录 \cref{sec:beta-binomial-moments-derivation}}
+
+后验均值：
+\[
+\mathbb{E}(\theta|y) = \frac{\alpha+y}{\alpha+\beta+n}
+\]
+后验方差：
+\[
+\operatorname{Var}(\theta|y) = \frac{(\alpha+y)(\beta+n-y)}{(\alpha+\beta+n)^2(\alpha+\beta+n+1)}
+\]
+
+当 $y$ 和 $n-y$ 变大而 $\alpha$ 和 $\beta$ 固定时：
+\[
+\mathbb{E}(\theta|y) \approx \frac{y}{n}, \quad \operatorname{Var}(\theta|y) \approx \frac{1}{n} \cdot \frac{y}{n}\left(1-\frac{y}{n}\right)
+\]
+方差以 $1/n$ 的速率趋近于零。极限情况下，先验分布的参数对后验分布没有影响。
+
+\section{正态均值的估计（已知方差）}
+
+考虑来自正态分布 $y \sim \text{Normal}(\theta, \sigma^2)$ 的单个标量观测 $y$，其中 $\sigma^2$ 已知。
+
+采样分布：
+\[
+p(y|\theta) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y-\theta)^2}{2\sigma^2}\right)
+\]
+
+作为 $\theta$ 的函数，似然是二次型的指数，因此共轭先验族为：
+\[
+p(\theta) \propto \exp(A\theta^2 + B\theta + C), \quad A < 0
+\]
+
+参数化为 $\theta \sim \text{Normal}(\mu_0, \tau_0^2)$，其中 $\mu_0$ 和 $\tau_0^2$ 是超参数。\footnote{推导见附录 \cref{sec:normal-mean-posterior-derivation}}
+
+经过配方法，得到后验分布 $\theta|y \sim \text{Normal}(\mu_1, \tau_1^2)$，其中：
+\[
+\mu_1 = \frac{\mu_0/\tau_0^2 + y/\sigma^2}{1/\tau_0^2 + 1/\sigma^2}, \quad \frac{1}{\tau_1^2} = \frac{1}{\tau_0^2} + \frac{1}{\sigma^2}
+\]
+
+\textbf{精度}：方差的倒数称为精度。后验精度等于先验精度加上数据精度。
+
+后验均值 $\mu_1$ 可以多种方式解释：
+\begin{itemize}
+  \item 先验均值和观测值 $y$ 的加权平均，权重与精度成正比
+  \item 先验均值向观测值调整：$\mu_1 = \mu_0 + (y-\mu_0)\frac{\tau_0^2}{\sigma^2+\tau_0^2}$
+  \item 数据向先验均值收缩：$\mu_1 = y - (y-\mu_0)\frac{\sigma^2}{\sigma^2+\tau_0^2}$
+\end{itemize}
+
+每种形式都表示后验均值是先验均值和观测值之间的折中。
+
+\subsection{后验预测分布}\footnote{推导见附录 \cref{sec:predictive-mean-variance-derivation}}
+
+未来观测 $\tilde{y}$ 的后验预测分布：
+\[
+\tilde{y}|y \sim \text{Normal}(\mu_1, \sigma^2 + \tau_1^2)
+\]
+
+预测均值等于 $\theta$ 的后验均值；预测方差有两个组成部分：来自模型的方差 $\sigma^2$ 和来自 $\theta$ 后验不确定性的方差 $\tau_1^2$。
+
+\subsection{多观测的正态模型}
+
+上述单观测正态模型可以轻松推广到 $n$ 个独立同分布观测 $y = (y_1, \ldots, y_n)$。因为 $\bar{y}|\theta \sim \text{Normal}(\theta, \sigma^2/n)$，对单观测推导的结果直接适用（将 $\bar{y}$ 视为单观测）:
+\[
+\theta|y_1,\ldots,y_n \sim \text{Normal}(\mu_n, \tau_n^2)
+\]
+其中：
+\[
+\mu_n = \frac{\mu_0/\tau_0^2 + n\bar{y}/\sigma^2}{1/\tau_0^2 + n/\sigma^2}, \quad
+\frac{1}{\tau_n^2} = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}
+\]
+
+\section{非信息先验分布}
+
+当先验分布没有总体基础时，很难构建，长期以来人们渴望得到保证在后验分布中作用最小的先验分布。这类分布有时称为参考先验分布，先验密度被称为模糊、平坦、扩散或非信息的。
+
+使用非信息先验的理由通常是"让数据自己说话"，使推断不受当前数据外部信息的影响。
+
+一个相关想法是\textbf{弱信息先验分布}，它包含一些信息——足以正则化后验分布（即保持它在合理范围内），但不试图完全捕捉关于底层参数的科学知识。
+
+\subsection{正常与非正常先验}
+
+如果先验精度 $1/\tau_0^2$ 相对于数据精度 $n/\sigma^2$ 很小，则后验分布近似于 $\tau_0^2 = \infty$ 的情况：
+\[
+p(\theta|y) \approx \text{Normal}(\bar{y}, \sigma^2/n)
+\]
+
+换句话说，后验分布近似于假设 $p(\theta)$ 与常数成正比的情况。这种分布实际上不可能，因为 $p(\theta)$ 的积分是无穷大，违反了概率总和为 1 的假设。
+
+\begin{Definition}
+  如果先验密度 $p(\theta)$ 不依赖于数据且积分等于 1，则称为正常（proper）先验。如果 $p(\theta)$ 积分到任何正有限值，可以重新归一化使其积分到 1，则称为非归一化密度。如果积分不是有限的，称为非正常（improper）先验。
+\end{Definition}
+
+非正常先验可能导致正常后验分布。使用非正常先验得到的后验分布必须非常小心解释——必须始终检查后验分布的积分是有限的且形式合理。
+
+\section{Jeffreys 不变性原则}
+
+一种有时用于定义非信息先验的方法是由 Jeffreys 提出的，基于考虑参数的一一变换：$\phi = h(\theta)$。
+
+Jeffreys 的一般原则是：任何确定先验密度 $p(\theta)$ 的规则，如果应用于变换后的参数，应该产生等价的结果。
+
+考虑在 $\theta$ 上使用均匀先验 $p(\theta) = 1$，但在 logit 变换 $\phi = \log(\theta/(1-\theta))$ 下，这会导致不均匀的先验。这说明均匀先验在参数变换下不是不变的。
+
+Jeffreys 提出可接受的非信息先验发现原则应该在参数的单调变换下是不变的。他描述了如何基于 Fisher 信息函数构建这样的先验：\footnote{推导见附录 \cref{sec:jeffreys-prior-derivation}}
+
+\[
+p(\theta) \propto [J(\theta)]^{1/2}
+\]
+其中 $J(\theta)$ 是 $\theta$ 的 Fisher 信息：
+\[
+J(\theta) = -E\left[\frac{d^2 \log p(y|\theta)}{d\theta^2}\right]
+\]
+
+对于二项模型，Jeffreys 先验是 $p(\theta) \propto \theta^{-1/2}(1-\theta)^{-1/2}$，即 $\text{Beta}(1/2, 1/2)$。
+
+注意：均匀先验在参数变换下不是不变的——$\theta$ 上的均匀先验在 $\log(\theta/(1-\theta))$ 上不是均匀的。这曾是 20 世纪初对贝叶斯推断的主要批评之一，直到 Jeffreys 在世纪中叶复兴了这一主题。
+
+\section{弱信息先验分布}
+
+弱信息先验是比非信息先验更强的正则化，但仍然比完全信息先验弱得多。它们用于在数据有限时稳定计算，同时允许数据主导推断。
+
+\section{其他标准单参数模型}
+
+见教材。
+
+\section{本章小结}
+
+本章我们学习了：
+\begin{enumerate}
+  \item 二项模型的贝叶斯推断：Beta-Binomial 共轭
+  \item 后验作为数据与先验信息的折中（方差分解公式）
+  \item 后验推断的汇总：点估计（均值、中位数、众数）和区间估计
+  \item 最高后验密度区间（HPD）
+  \item 信息先验与共轭先验
+  \item 正态均值估计（已知方差）：精度加法公式
+  \item 非信息先验与 Jeffreys 先验
+  \item 弱信息先验
+  \item 正常与非正常先验
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习多参数模型，包括如何处理 nuisance 参数和正态模型中均值与方差同时未知的情况。
+
+\endinput

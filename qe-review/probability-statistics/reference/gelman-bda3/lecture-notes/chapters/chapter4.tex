@@ -1,0 +1,313 @@
+% Chapter 4: Asymptotics and connections to non-Bayesian approaches
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{渐近性与非贝叶斯方法的联系}
+
+\section{本章导论}
+
+我们在前三章看到，许多基于非信息先验分布的简单贝叶斯分析给出的结果与标准非贝叶斯方法（例如，均值未知时正态均值的后验 $t$ 区间）相似。
+
+非信息先验分布能在多大程度上被合理地视为客观假设，取决于数据中包含的信息量：在第二、三章讨论的简单情况中，随着样本量 $n$ 的增加，先验分布对后验推断的影响会减小。
+
+这些想法被称为\textbf{渐近理论}——因为它们指的是在 $n$ 趋向无穷大时成立的理论——我们将在本章中进行回顾，同时还将更详细地讨论贝叶斯方法与非贝叶斯方法之间的联系。
+
+大样本结果实际上对于执行贝叶斯数据分析并非必需，但通常作为近似工具和理解工具很有用。
+
+\section{后验分布的正态近似}\label{sec:ch4-normal-approx}
+
+\subsection{联合后验分布的正态近似}
+
+如果后验分布 $p(\theta | y)$ 是单峰的且大致对称，则可以用正态分布近似它；也就是说，后验密度的对数被近似为 $\theta$ 的二次函数。
+
+我们考虑在后验众数 $\hat{\theta}$ 处展开的后验密度对数的二次近似（其中 $\theta$ 可以是向量，且 $\hat{\theta}$ 假定在参数空间内部）；在第十三章中我们将讨论更复杂的近似方法，这些方法在简单基于众数的近似失效的情况下可能有效。
+
+对在 $\hat{\theta}$ 处中心化的后验密度对数 $\log p(\theta | y)$ 进行泰勒级数展开给出
+
+\[
+\log p(\theta | y) = \log p(\hat{\theta} | y) + \frac{1}{2}(\theta - \hat{\theta})^T \left[ \frac{d^2}{d\theta^2} \log p(\theta | y) \right]_{\theta = \hat{\theta}} (\theta - \hat{\theta}) + \dots \label{eq:laplace-approx-taylor}
+\]
+
+其中展开式的线性项为零，因为对数后验密度在其众数处导数为零。
+
+当 $\theta$ 接近 $\hat{\theta}$ 且 $n$ 较大时，高阶余项的相对重要性会减小。考虑 \cref{eq:laplace-approx-taylor} 作为 $\theta$ 的函数，第一项是常数，而第二项与正态密度对数成正比，得到近似
+
+\[
+p(\theta | y) \approx \mathrm{N}(\hat{\theta}, [I(\hat{\theta})]^{-1}), \label{eq:laplace-approx-normal}
+\]
+
+其中 $I(\theta)$ 是观测信息（observed information），
+
+\[
+I(\theta) = -\frac{d^2}{d\theta^2} \log p(\theta | y).
+\]
+
+如果众数 $\hat{\theta}$ 在参数空间的内部，则矩阵 $I(\hat{\theta})$ 是正定的。
+
+\begin{Example}[均值和方差均未知的正态分布]
+  我们用简单的理论例子说明近似正态分布。设 $y_1, \ldots, y_n$ 是来自 $\mathrm{N}(\mu, \sigma^2)$ 分布的独立观测，为简单起见，假设 $(\mu, \log \sigma)$ 上的均匀先验密度。
+
+  我们对 $(\mu, \log \sigma)$ 的后验分布建立正态近似，这在限制 $\sigma$ 为正值方面有优点。为了构建近似，我们需要对数后验密度的二阶导数。
+
+  在众数处，二阶导数矩阵为 $\begin{pmatrix} -n/\hat{\sigma}^2 & 0 \\ 0 & -2n \end{pmatrix}$。从 \cref{eq:laplace-approx-normal}，后验分布可以近似为
+
+  \[
+  p(\mu, \log \sigma | y) \approx \mathrm{N}\left(\left(\begin{array}{c} \mu \\ \log \sigma \end{array}\right) \Big| \left(\begin{array}{c} \bar{y} \\ \log \hat{\sigma} \end{array}\right), \left(\begin{array}{cc} \hat{\sigma}^2/n & 0 \\ 0 & 1/(2n) \end{array}\right)\right).
+  \]
+\end{Example}
+
+\subsection{后验密度函数相对于其最大值的解释}
+
+除了作为近似直接使用外，多元正态分布还为解释后验密度函数和等高线图提供了基准。在 $d$ 维正态分布中，密度函数的对数是一个常数加上 $-2$ 除以的 $\chi_d^2$ 分布。例如，$\chi_{10}^2$ 密度的第 95 百分位是 18.31，因此如果一个问题有 $d = 10$ 个参数，则大约 95\% 的后验概率质量与 $p(\theta | y)$ 不小于在众数处密度的 $\exp(-18.31/2) = 1.1 \times 10^{-4}$ 倍的 $\theta$ 值相关联。
+
+\subsection{用点估计和标准误总结后验分布}
+
+渐近理论表明，如果 $n$ 足够大，后验分布可以用正态分布近似。在许多应用领域中，标准的推断总结是计算点估计 $\hat{\theta}$（如最大似然估计，即均匀先验下的后验众数），加上或减去两个标准误，标准误从估计处的信息 $I(\hat{\theta})$ 估计。
+
+在许多情况下，通过变换可以显著改善 $\theta$ 的后验分布向正态分布的收敛性。如果 $\phi$ 是 $\theta$ 的连续变换，那么 $p(\phi | y)$ 和 $p(\theta | y)$ 都趋向正态分布，但对于有限的 $n$，近似的紧密程度可能随所选变换而大幅变化。
+
+\subsection{数据约简与充分统计量}
+
+在正态近似下，后验分布由其众数 $\hat{\theta}$ 和后验密度的曲率 $I(\hat{\theta})$ 总结；即渐近地，这些是充分统计量。
+
+使用充分统计量的这种方法允许相对容易地将分层建模技术应用于改进每个单独估计。例如，在第 5.5 节中，一组八个实验中的每一个都通过从早期回归分析估计的点估计和标准误来总结。
+
+当后验分布接近正态时，使用汇总统计量的方法最为合理；否则这种方法可能会丢弃重要信息并导致错误的推断。
+
+\subsection{低维正态近似}
+
+对于有限的样本量 $n$，正态近似通常对 $\theta$ 的分量条件分布和边际分布比对完整联合分布更准确。
+
+例如，如果联合分布是多元正态分布，则其所有边际分布都是正态的，但反之不成立。确定 $\theta$ 一个分量的边际分布等同于对 $\theta$ 的所有其他分量进行平均，而平均一族分布通常会使它们更接近正态分布——这与中心极限定理背后的逻辑相同。
+
+\begin{Remark}
+  对于低维 $\theta$，后验分布的正态近似通常是完全可以接受的，特别是在适当的变换之后。
+\end{Remark}
+
+\begin{Example}[生物assay实验（续）]
+  我们用 3.7 节中生物assay实验的模型和数据来说明正态近似。实验中样本量相对较小，只有 20 只动物，我们发现正态近似接近精确后验分布，但存在重要差异。
+
+  $(\alpha, \beta)$ 联合后验分布的正态近似：\cref{fig:bioassay-normal-approx} 显示了二元正态近似的等高线图和从这个近似分布中抽取的 1000 个样本的散点图。
+
+  正态近似的均值 $(\alpha, \beta) = (0.8, 7.7)$ 与实际后验分布的均值 $(\alpha, \beta) = (1.4, 11.9)$ 不同。
+\end{Example}
+
+\section{大样本理论}\label{sec:large-sample-theory}
+
+\subsection{符号与数学设置}
+
+大样本贝叶斯推断的基本工具是后验分布的渐近正态性：随着来自相同底层过程的越来越多数据到达，参数向量的后验分布趋向多元正态分布，即使数据的真实分布不在所考虑的参数族中。
+
+从数学上讲，这些结果最直接地适用于从公共分布 $f(y)$ 中独立抽取的观测 $y_1, \ldots, y_n$。在许多情况下，为数据假设一个"真实"底层分布 $f(y)$ 的概念很难解释，但为了发展渐近理论，这是必要的。
+
+假设数据由参数族 $p(y|\theta)$ 建模，并具有先验分布 $p(\theta)$。如果真实数据分布包含在参数族中——即如果 $f(y) = p(y|\theta_0)$ 对于某个 $\theta_0$——那么除了渐近正态性外，一致性性质也成立：随着 $n \to \infty$，后验分布收敛到在真实参数值 $\theta_0$ 处的点质量。
+
+\subsection{渐近正态性与一致性}
+
+附录 B 中给出的基本数学结果表明，在一些正则性条件下（特别是似然函数是 $\theta$ 的连续函数且 $\theta_0$ 不在参数空间边界上），随着 $n \to \infty$，$\theta$ 的后验分布趋向正态分布，均值为 $\theta_0$，方差为 $(nJ(\theta_0))^{-1}$。
+
+在最简单的层面，这个结果可以从在后验众数处对数后验密度的泰勒级数展开 \cref{eq:laplace-approx-taylor} 来理解。初步结果表明，后验众数对 $\theta_0$ 是一致的，因此随着 $n \to \infty$，后验分布 $p(\theta | y)$ 的质量集中在 $\theta_0$ 越来越小的邻域内，距离 $|\hat{\theta} - \theta_0|$ 趋向零。
+
+\subsection{似然支配先验分布}
+
+渐近结果形式化了先验分布的重要性随着样本量增加而减小的概念。这导致一个结论：在具有大样本量的问题中，我们不必特别努力地制定一个准确反映所有可用信息的先验分布。当样本量较小时，先验分布是模型规范的关键部分。
+
+\section{定理的反例}
+
+理解大样本结果局限性的好方法是考虑定理失效的情况。正态分布通常作为起点近似有帮助，但必须检查偏差，特别是对于不寻常的参数空间和分布极值情况。
+
+\subsection{未识别模型与未识别参数}
+
+如果给定数据 $y$，似然 $p(\theta | y)$ 在一系列 $\theta$ 值上相等，则模型是未识别的（underidentified）。在这样的模型下，没有单一的点 $\theta_0$ 可以使后验分布收敛到它。
+
+\begin{Example}[相关系数的未识别性]
+  考虑模型，其中 $(u, v)^T \sim \mathrm{N}((0, 0)^T, \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix})$，但只从每对 $(u, v)$ 中观测到其中一个。这里参数 $\rho$ 是未识别的。数据不提供关于 $\rho$ 的任何信息，因此 $\rho$ 的后验分布与其先验分布相同，无论数据集有多大。
+\end{Example}
+
+未识别或欠识别参数问题的唯一解决方案是认识到问题存在，如果有更精确估计这些参数的愿望，则需要收集能够实现这些估计的进一步信息（可以是来自未来数据收集的信息，也可以是能够为先验分布提供信息的外部信息）。
+
+\subsection{参数数量随样本量增加}
+
+在复杂问题中，参数数量可能很大，我们需要区分不同类型的渐近性。如果随着 $n$ 增加，模型也发生变化使得参数数量同时增加，那么 \cref{sec:ch4-normal-approx} 和 \cref{sec:large-sample-theory} 中概述的简单结果（假设固定模型类 $p(y_i|\theta)$）并不适用。
+
+例如，有时为研究中的每个采样单位分配一个参数；例如 $y_i \sim \mathrm{N}(\theta_i, \sigma^2)$。一般来说，除非每个采样单位收集的数据量也随着单位数量的增加而增加，否则参数 $\theta_i$ 不能被一致地估计。
+
+\subsection{混叠}
+
+混叠是欠识别参数的一种特殊情况，其中相同的似然函数在一组离散点上重复。例如，考虑具有独立同分布数据 $y_1, \ldots, y_n$ 的正态混合模型。
+
+如果交换 $(\mu_1, \mu_2)$ 和 $(\sigma_1^2, \sigma_2^2)$，并将 $\lambda$ 替换为 $(1-\lambda)$，数据的似然保持不变。
+
+后验分布至少有两个众数，由两个分布的 $(50\%, 50\%)$ 混合组成——它们是彼此的镜像；无论数据集有多大，它都不会收敛到单个点。
+
+通常，通过限制参数空间使没有重复来解决混叠问题。
+
+\subsection{无界似然}
+
+如果似然函数是无界的，则后验众数可能不存在于参数空间中，从而使一致性和正态近似的结果无效。
+
+例如，对于正态混合模型，如果我们设 $\mu_1 = y_i$ 对于任意 $y_i$，并让 $\sigma_1^2 \to 0$，则似然趋向无穷大。随着 $n \to \infty$，似然的众数数量增加。
+
+\subsection{不当后验分布}
+
+如果通过将似然乘以表示不当先验分布的"形式"先验密度获得的无规范化后验密度积分到无穷大，则渐近结果不成立。
+
+当不当先验分布与似然组合具有有限积分时，不当先验分布只是一种方便的近似。
+
+\subsection{排除收敛点的先验分布}
+
+如果对于离散参数空间 $p(\theta_0) = 0$，或者对于连续参数空间在 $\theta_0$ 的邻域内 $p(\theta) = 0$，则一致性结果不成立。
+
+解决方案是在先验分布中给所有甚至略微合理的 $\theta$ 值赋予正概率密度。
+
+\subsection{收敛到参数空间边界}
+
+如果 $\theta_0$ 在参数空间的边界上，则泰勒级数展开必须在某些方向上截断，正态分布不一定合适，即使在极限情况下也是如此。
+
+例如，考虑模型 $y_i \sim \mathrm{N}(\theta, 1)$，限制 $\theta \geq 0$。假设模型是准确的，$\theta = 0$ 是真实值。$\theta$ 的后验分布是正态的，以 $\bar{y}$ 为中心，截断为正值。
+
+这些反例教给我们一个重要教训：渐近定理的成立依赖于若干正则性假设，在实际应用中我们应当时刻检查四点：（1）参数是否可识别；（2）参数的维度是否随样本量增长；（3）似然函数是否有界；（4）先验分布是否为正常分布（proper）。只有当这些条件都满足时，基于大样本近似的推断才是可靠的。
+
+\section{贝叶斯推断的频率评估}
+
+就像贝叶斯范式可以被视为证明简单"经典"技术的合理性一样，频率统计方法提供了一种有用的方法来评估贝叶斯推断的性质——它们的操作特征——当这些被视为嵌入一系列重复样本中时。
+
+\subsection{大样本对应}
+
+假设 $\theta$ 后验分布的正态近似 \cref{eq:laplace-approx-normal} 成立；那么我们可以转换为标准多元正态：
+
+\[
+[I(\hat{\theta})]^{1/2}(\theta - \hat{\theta}) | y \sim \mathrm{N}(0, I), \label{eq:standard-normal-approx}
+\]
+
+其中 $\hat{\theta}$ 是后验众数。如果真实数据分布包含在模型类中，则在重复采样中，渐近地，$100(1-\alpha)\%$ 的中心后验区间将在 $100(1-\alpha)\%$ 的情况下覆盖真值 $\theta_0$。
+
+\subsection{点估计、一致性与有效性}
+
+从贝叶斯框架来看，获得 $\theta$ 的"估计"在大样本中最有意义，此时后验众数 $\hat{\theta}$ 是 $\theta$ 后验分布的明显中心。
+
+一个点估计如果随着样本变大而收敛到它所估计的参数真值，则被称为在采样理论意义上是\textbf{一致的}。
+
+如果对于任何 $\theta_0$ 值，在重复样本中 $C(y)$ 至少以 $100(1-\alpha)\%$ 的概率包含 $\theta_0$，则 $C(y)$ 被称为 $\theta$ 的 $100(1-\alpha)\%$ 置信域。
+
+\section{其他统计方法的贝叶斯解释}
+
+我们考虑贝叶斯统计方法与其他方法比较的三个层次：
+
+\begin{enumerate}
+  \item 首先，正如我们已经指出的，在涉及来自固定概率模型的大样本的问题中，贝叶斯方法通常类似于其他统计方法。
+  \item 其次，即使对于小样本，许多统计方法也可以被视为基于特定先验分布的贝叶斯推断的近似；作为一种理解统计程序的方式，确定隐含的底层先验分布通常很有用。
+  \item 第三，经典统计的一些方法（特别是假设检验）可能给出与贝叶斯方法非常不同的结果。
+\end{enumerate}
+
+\subsection{最大似然与点估计}
+
+从贝叶斯数据分析的角度来看，我们通常可以将经典点估计解释为基于某些隐含完整概率模型的精确或近似后验总结。在大样本量的极限下，事实上我们可以使用渐近理论为经典最大似然推断构建理论贝叶斯论证。
+
+渐近地，最大似然估计 $\hat{\theta}$ 是一个充分统计量——后验众数、均值或中位数也是充分统计量。
+
+对于大的 $n$，先验分布的渐近无关性可以用来为使用方便的非信息先验模型提供理由。
+
+\subsection{无偏估计}
+
+一些非贝叶斯统计方法非常强调无偏性作为估计的可取原则。形式上，如果 $\mathbb{E}(\hat{\theta}(y)|\theta) = \theta$ 对于任何 $\theta$ 值，则估计 $\hat{\theta}(y)$ 被称为无偏的。
+
+从贝叶斯角度来看，无偏性原则在大样本极限中是合理的，但在其他情况下可能具有误导性。主要困难出现在有许多参数要估计的情况下。
+
+\begin{Remark}
+  无偏性原则的一个问题是，通常不可能以甚至近似无偏的方式一次估计几个参数。
+\end{Remark}
+
+\begin{Example}[使用回归进行预测]
+  考虑在已知母亲身高 $y$ 的情况下估计成年女儿身高 $\theta$ 的问题。为简单起见，假设母亲和女儿的身高联合正态分布，均值相等为 160 厘米，方差相等，相关系数为 0.5。
+
+  在已知 $y$ 的条件下，$\theta$ 的后验均值为
+
+  \[
+  \mathbb{E}(\theta | y) = 160 + 0.5(y - 160). \label{eq:regression-mean-posterior}
+  \]
+
+  然而，后验均值在重复采样中并不是 $\theta$ 的无偏估计。
+
+  这个例子说明的重要原则是\textbf{回归均值}的原则：对于任何给定的母亲，她女儿身高的期望值介于她母亲身高和总体均值之间。
+\end{Example}
+
+\section{文献注释}\label{sec:ch4-bib}
+
+本章涉及的渐近理论是贝叶斯统计的核心组成部分，其数学基础可以追溯到 Bernoulli 和 Laplace 的早期工作。Bernstein-von Mises 定理（也称为渐近正态性）是本章理论的核心，该定理在以下经典文献中有系统论述：
+
+\begin{enumerate}
+  \item Lehmann and Casella (1998)，\emph{Theory of Point Estimation}，Chapter 6：对渐近估计理论进行了全面阐述，包括 Fisher 信息、渐近效率和有效性等概念的严格化处理。
+  \item van der Vaart (1998)，\emph{Asymptotic Statistics}，Chapter 7-8：从概率论角度系统介绍了贝叶斯渐近理论，特别是后验浓度的数学证明。
+  \item Birnbaum (1962)：关于似然函数与先验分布的关系，讨论了似然原则的统计学基础。
+  \item Berger (1985)，\emph{Statistical Decision Theory}，Chapter 4-5：对非信息先验分布的渐近性质进行了详细讨论，包括 Jeffreys 先验的渐近最优性。
+\end{enumerate}
+
+关于正态近似（拉普拉斯方法）的数值实现，可参考 Tierney and Kadane (1986)。频率评估与贝叶斯推断的联系在 Rubin (1984) 中有经典论述。
+
+\section{习题}\label{sec:ch4-exercises}
+
+\begin{Exercise}{\ref{exr:ch4-1}  后验分布的正态近似}
+对二项数据 $y \sim \mathrm{Bin}(n, \theta)$，使用 Jeffreys 先验 $p(\theta) \propto \theta^{-1/2}(1-\theta)^{-1/2}$。
+\begin{enumerate}
+  \item 写出后验分布 $p(\theta | y)$ 的精确形式。
+  \item 在后验众数处构造正态近似，并将近似结果与精确后验均值和方差进行比较。
+  \item 对于 $n = 20, y = 8$，分别在 $\theta$ 尺度和对数尺度 $\phi = \log(\theta/(1-\theta))$ 上计算正态近似，比较哪种近似的精度更高。
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch4-2}  大样本理论与 Bernstein-von Mises 定理}
+设 $y_1, \ldots, y_n$ 为来自公共分布 $f(y|\theta_0)$ 的独立观测，似然函数为 $p(y|\theta) = \prod_{i=1}^n f(y_i|\theta)$。
+\begin{enumerate}
+  \item 在适当的正则性条件下，叙述 Bernstein-von Mises 定理的核心结论。
+  \item 证明：在大样本极限下，后验分布的均值 $\hat{\theta}$ 近似满足 $\hat{\theta} \approx \mathrm{N}(\theta_0, (nJ(\theta_0))^{-1})$，其中 $J(\theta_0)$ 是 Fisher 信息。
+  \item 讨论：在什么情况下大样本近似可能失效？举出至少两个反例。
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch4-3}  未识别参数的识别}
+考虑一个实验，其中 $(u, v)^T \sim \mathrm{N}((0,0)^T, \Sigma)$，$\Sigma = \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}$，但对每一对 $(u,v)$ 我们只观测到 $z = \max(u,v)$（即取两者中的较大值）。
+\begin{enumerate}
+  \item 写出数据的似然函数 $p(z_1,\ldots,z_n|\rho)$。
+  \item 说明参数 $\rho$ 是未识别的（给出严格的数学证明）。
+  \item 如果使用先验 $p(\rho) \propto 1$（$-1<\rho<1$ 上的均匀分布），后验分布是什么？这个结果说明了什么？
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch4-4}  似然支配先验原则}
+在什么意义上可以说"随着样本量增加，先验分布变得渐近无关"？请从以下几个方面阐述：
+\begin{enumerate}
+  \item 数学表述：后验分布 $p(\theta|y)$ 在大样本下的渐近形式；
+  \item 频率学派视角：MLE 的一致性；
+  \item 贝叶斯视角：先验熵与数据信息的关系；
+  \item 实际含义：在大样本问题中，我们是否可以使用任何"方便"的先验？
+\end{enumerate}
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:ch4-5}  频率评估与贝叶斯推断}
+设 $\theta$ 的后验分布可以用正态近似 $p(\theta|y) \approx \mathrm{N}(\hat{\theta}, [I(\hat{\theta})]^{-1})$ 很好地近似。
+\begin{enumerate}
+  \item 构造 $\theta$ 的 $95\%$ 后验区间，并说明这个区间在频率学派意义下的覆盖概率。
+  \item 设 $C(y) = [\hat{\theta} - 1.96\sqrt{\text{var}(\theta|y)},\, \hat{\theta} + 1.96\sqrt{\text{var}(\theta|y)}]$，证明：在重复采样下，$C(y)$ 渐近覆盖真值 $\theta_0$ 的概率为 $95\%$。
+  \item 讨论：小样本情况下，后验区间的频率覆盖性质可能会出现什么问题？
+\end{enumerate}
+\end{Exercise}
+
+\section{本章小结}
+
+本章我们学习了：
+
+\begin{enumerate}
+  \item 后验分布的正态近似（基于泰勒级数展开）
+  \item 观测信息矩阵与 Fisher 信息的概念
+  \item 大样本理论：渐近正态性与一致性
+  \item 似然支配先验的原则
+  \item 渐近定理的反例：未识别参数、参数数量随样本增加、混叠、无界似力、不当后验等
+  \item 频率评估与贝叶斯推断的联系
+  \item 其他统计方法的贝叶斯解释：无偏估计、置信区间、回归预测等
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习分层模型（Hierarchical Models），这是贝叶斯统计中非常重要的一类模型，用于处理具有分组结构的复杂数据。
+
+\endinput

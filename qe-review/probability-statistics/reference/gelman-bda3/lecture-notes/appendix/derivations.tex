@@ -1,0 +1,1064 @@
+% Appendix: Formula Derivations
+% Complete derivations for Chapter 1-2
+
+\appendix
+\chapter{公式推导}
+
+\section{概率与推断（Chapter 1）推导}
+
+\subsection{贝叶斯定理的推导}\label{sec:bayes-theorem-derivation}
+
+\textbf{背景（Background）}：
+贝叶斯定理是概率论中最基本的公式之一，它描述了如何根据新的证据更新概率估计。这个推导基于条件概率的定义和基本运算规则。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $A$：某个事件
+  \item $B$：另一个事件（通常代表观测数据或证据）
+  \item $p(A)$：事件 $A$ 的先验概率（prior probability）
+  \item $p(A|B)$：在事件 $B$ 发生的条件下，事件 $A$ 的后验概率（posterior probability）
+  \item $p(B|A)$：在事件 $A$ 发生的条件下，事件 $B$ 的似然（likelihood）
+  \item $p(B)$：事件 $B$ 的边际概率（marginal probability）
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 条件概率定义：$p(A|B) = \dfrac{p(A \cap B)}{p(B)}$，其中 $p(B) > 0$
+  \item 乘法法则：$p(A \cap B) = p(A) \cdot p(B|A) = p(B) \cdot p(A|B)$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+从条件概率的基本定义推导出贝叶斯定理：
+\[
+p(A|B) = \frac{p(A) \cdot p(B|A)}{p(B)}
+\]
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：从条件概率定义出发
+\[
+p(A|B) = \frac{p(A \cap B)}{p(B)}
+\tag*{条件概率定义}
+
+\textbf{步骤 2}：用乘法法则替换联合概率 $p(A \cap B)$
+\[
+p(A \cap B) = p(A) \cdot p(B|A)
+\tag*{乘法法则}
+
+\textbf{步骤 3}：将步骤 2 代入步骤 1
+\[
+p(A|B) = \frac{p(A) \cdot p(B|A)}{p(B)}
+\tag*{代入即得}
+
+\textbf{步骤 4}：对 $p(B)$ 进行边际化（如果 $A_1, A_2, \ldots, A_k$ 是互斥且完备的事件族）
+\[
+p(B) = \sum_{i=1}^{k} p(A_i) \cdot p(B|A_i)
+\tag*{全概率公式}
+
+\textbf{步骤 5}：将步骤 4 代入贝叶斯定理的分母，得到完整形式
+\[
+p(A_j|B) = \frac{p(A_j) \cdot p(B|A_j)}{\sum_{i=1}^{k} p(A_i) \cdot p(B|A_i)}
+\tag*{贝叶斯定理（完整形式）}
+
+\textbf{结论}：贝叶斯定理建立了先验概率与后验概率之间的桥梁——我们通过似然 $p(B|A)$ 将新的观测 $B$ 与先验知识 $p(A)$ 结合起来。
+
+\clearpage
+
+\subsection{先验预测分布与后验预测分布的推导}\label{sec:predictive-distributions-derivation}
+
+\textbf{背景（Background）}：
+在贝叶斯统计中，我们不仅要推断当前参数 $\theta$ 的后验分布，还需要预测未来观测 $\tilde{y}$ 的分布。这涉及对未知参数进行积分（边际化）。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta$：不可观测的参数
+  \item $y$：已观测的数据
+  \item $\tilde{y}$：未来或未观测的数据
+  \item $p(\theta)$：参数的先验分布
+  \item $p(y|\theta)$：数据的似然函数
+  \item $p(\theta|y)$：参数的后验分布
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 贝叶斯定理：$p(\theta|y) \propto p(\theta) \cdot p(y|\theta)$
+  \item 边际概率定义：$p(y) = \int p(\theta) \cdot p(y|\theta) \, d\theta$
+  \item 条件独立性：给定 $\theta$，未来观测 $\tilde{y}$ 与当前观测 $y$ 条件独立
+\end{itemize}
+
+\textbf{目标（Goal）}：
+\begin{enumerate}
+  \item 推导先验预测分布 $p(y)$
+  \item 推导后验预测分布 $p(\tilde{y}|y)$
+\end{enumerate}
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\subsubsection*{先验预测分布的推导}
+
+\textbf{步骤 1}：从边际概率的定义出发
+\[
+p(y) = \int p(\theta) \cdot p(y|\theta) \, d\theta
+\tag*{边际概率定义}
+
+\textbf{步骤 2}：解释其含义——这是对所有可能的 $\theta$ 值加权平均，其中权重是先验概率
+
+\textbf{步骤 3}：先验预测分布表示在我们观测数据之前，所有可能观测结果的分布
+
+\clearpage
+
+\subsubsection*{后验预测分布的推导}
+
+\textbf{步骤 1}：从条件概率定义出发
+\[
+p(\tilde{y}|y) = \int p(\tilde{y}, \theta|y) \, d\theta
+\tag*{条件概率的边际化}
+
+\textbf{步骤 2}：将联合分布分解
+\[
+p(\tilde{y}, \theta|y) = p(\tilde{y}|\theta, y) \cdot p(\theta|y)
+\tag*{链式法则}
+
+\textbf{步骤 3}：利用条件独立性假设（给定 $\theta$，$\tilde{y}$ 与 $y$ 独立）
+\[
+p(\tilde{y}|\theta, y) = p(\tilde{y}|\theta)
+\tag*{条件独立性}
+
+\textbf{步骤 4}：代入得
+\[
+p(\tilde{y}|y) = \int p(\tilde{y}|\theta) \cdot p(\theta|y) \, d\theta
+\tag*{后验预测分布}
+
+\textbf{结论}：后验预测分布是\textbf{在参数后验分布上对条件预测进行平均}。这体现了贝叶斯推断的核心思想：不确定性在两个层次上都存在（参数的不确定性和预测的随机性），我们需要对两者都进行边际化。
+
+\clearpage
+
+\subsection{后验优势比的推导}\label{sec:posterior-odds-derivation}
+
+\textbf{背景（Background）}：
+优势比（odds ratio）是概率的另一种表示方式，在许多应用场景下比概率更直观。贝叶斯定理在优势比形式下有一个特别简洁的表达。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta_1$：某个参数值
+  \item $\theta_2$：另一个参数值
+  \item $p(\theta_1)$：$\theta_1$ 的先验概率
+  \item $p(\theta_1|y)$：$\theta_1$ 的后验概率
+  \item $p(y|\theta_1)$：似然函数在 $\theta_1$ 处的值
+  \item $O(\theta_1,\theta_2) = \dfrac{p(\theta_1)}{p(\theta_2)}$：先验优势比
+  \item $O(\theta_1,\theta_2|y) = \dfrac{p(\theta_1|y)}{p(\theta_2|y)}$：后验优势比
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+贝叶斯定理：
+\[
+p(\theta|y) = \frac{p(\theta) \cdot p(y|\theta)}{p(y)}
+\]
+
+\textbf{目标（Goal）}：
+证明后验优势比 = 先验优势比 × 似然比
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出后验优势比的定义
+\[
+O(\theta_1,\theta_2|y) = \frac{p(\theta_1|y)}{p(\theta_2|y)}
+\tag*{后验优势比定义}
+
+\textbf{步骤 2}：对分子和分母分别应用贝叶斯定理
+\[
+= \frac{\dfrac{p(\theta_1) \cdot p(y|\theta_1)}{p(y)}}{\dfrac{p(\theta_2) \cdot p(y|\theta_2)}{p(y)}}
+\tag*{代入贝叶斯定理}
+
+\textbf{步骤 3}：约去 $p(y)$
+\[
+= \frac{p(\theta_1) \cdot p(y|\theta_1)}{p(\theta_2) \cdot p(y|\theta_2)}
+\tag*{约去边际概率}
+
+\textbf{步骤 4}：重新组合
+\[
+= \frac{p(\theta_1)}{p(\theta_2)} \times \frac{p(y|\theta_1)}{p(y|\theta_2)}
+\tag*{即先验优势比乘以似然比}
+
+\textbf{结论}：这个简洁的关系式告诉我们，\textbf{后验优势比 = 先验优势比 × 似然比}。数据通过似然比来更新优势比——如果 $p(y|\theta_1) > p(y|\theta_2)$，则数据支持 $\theta_1$，后验优势比增大。
+
+\clearpage
+
+\section{单参数模型（Chapter 2）推导}
+
+\subsection{Beta-Binomial 共轭后验分布推导}\label{sec:beta-binomial-posterior-derivation}
+
+\textbf{背景（Background）}：
+在二项模型中，如果我们使用 Beta 先验分布来估计成功概率 $\theta$，则后验分布也是 Beta 分布。这种性质称为共轭性，是贝叶斯统计中最重要的概念之一。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $n$：伯努利试验的总次数
+  \item $y$：$n$ 次试验中成功的次数
+  \item $\theta$：每次试验的成功概率（未知参数）
+  \item $\alpha$：Beta 先验的第一个参数
+  \item $\beta$：Beta 先验的第二个参数
+  \item $p(y|\theta) = \binom{n}{y} \theta^y (1-\theta)^{n-y}$：二项似然函数
+  \item $p(\theta) = \dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} \theta^{\alpha-1}(1-\theta)^{\beta-1}$：Beta 先验
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item Beta 函数定义：$B(\alpha, \beta) = \dfrac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$
+  \item 似然函数：$p(y|\theta) \propto \theta^y (1-\theta)^{n-y}$（忽略不依赖 $\theta$ 的常数 $\binom{n}{y}$）
+  \item 先验分布：$p(\theta) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1}$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明后验分布 $p(\theta|y)$ 也是 Beta 分布，并确定其后验参数。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：应用贝叶斯定理写出非归一化后验分布
+\[
+p(\theta|y) \propto p(\theta) \cdot p(y|\theta)
+\tag*{贝叶斯定理（非归一化形式）}
+
+\textbf{步骤 2}：代入先验和似然
+\[
+p(\theta|y) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1} \cdot \theta^y (1-\theta)^{n-y}
+\tag*{代入先验和似然}
+
+\textbf{步骤 3}：合并同底数指数
+\[
+= \theta^{(\alpha-1)+y} \cdot (1-\theta)^{(\beta-1)+(n-y)}
+= \theta^{\alpha+y-1} \cdot (1-\theta)^{\beta+n-y-1}
+\tag*{合并指数}
+
+\textbf{步骤 4}：识别分布形式
+这正是 Beta 分布的核（kernel），即
+\[
+p(\theta|y) \propto \theta^{\alpha_{\text{post}}-1}(1-\theta)^{\beta_{\text{post}}-1}
+\]
+其中
+\[
+\alpha_{\text{post}} = \alpha + y, \quad \beta_{\text{post}} = \beta + n - y
+\tag*{后验参数}
+
+\textbf{步骤 5}：写出完整的后验分布
+\[
+\theta|y \sim \text{Beta}(\alpha + y, \beta + n - y)
+\tag*{后验分布}
+
+\textbf{结论}：后验分布与先验分布属于同一形式（Beta 分布），这就是\textbf{共轭性}。先验参数 $\alpha$ 可以解释为 $\alpha - 1$ 次"先验成功"，$\beta$ 解释为 $\beta - 1$ 次"先验失败"。
+
+\clearpage
+
+\subsection{Beta-Binomial 后验均值与方差推导}\label{sec:beta-binomial-moments-derivation}
+
+\textbf{背景（Background）}：
+在共轭框架下，我们可以推导出后验分布的均值和方差的闭式表达式。这些表达式展示了先验信息与数据信息如何"折中"。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\alpha_{\text{post}} = \alpha + y$：后验第一个参数
+  \item $\beta_{\text{post}} = \beta + n - y$：后验第二个参数
+  \item $\mathbb{E}(\theta|y)$：后验均值
+  \item $\text{Var}(\theta|y)$：后验方差
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 后验分布：$\theta|y \sim \text{Beta}(\alpha_{\text{post}}, \beta_{\text{post}})$
+  \item Beta 分布均值公式：$\mathbb{E}(X) = \dfrac{\alpha}{\alpha+\beta}$，其中 $X \sim \text{Beta}(\alpha, \beta)$
+  \item Beta 分布方差公式：$\text{Var}(X) = \dfrac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+\begin{enumerate}
+  \item 求后验均值 $\mathbb{E}(\theta|y)$
+  \item 求后验方差 $\text{Var}(\theta|y)$
+\end{enumerate}
+
+\clearpage
+
+\subsubsection*{后验均值推导}
+
+\textbf{步骤 1}：应用 Beta 分布均值公式
+\[
+\mathbb{E}(\theta|y) = \frac{\alpha_{\text{post}}}{\alpha_{\text{post}} + \beta_{\text{post}}}
+\tag*{Beta 分布均值公式}
+
+\textbf{步骤 2}：代入后验参数
+\[
+= \frac{\alpha + y}{\alpha + y + \beta + n - y}
+= \frac{\alpha + y}{\alpha + \beta + n}
+\tag*{代入参数}
+
+\textbf{步骤 3}：改写为加权平均形式
+\[
+= \frac{\alpha + y}{\alpha + \beta + n}
+= \frac{\alpha + \beta}{\alpha + \beta + n} \cdot \frac{\alpha}{\alpha + \beta}
+  + \frac{n}{\alpha + \beta + n} \cdot \frac{y}{n}
+\tag*{加权平均分解}
+
+\textbf{结论 1}：后验均值是先验均值 $\dfrac{\alpha}{\alpha+\beta}$ 和样本比例 $\dfrac{y}{n}$ 的加权平均，权重与样本量和先验强度相关。
+
+\clearpage
+
+\subsubsection*{后验方差推导}
+
+\textbf{步骤 1}：应用 Beta 分布方差公式
+\[
+\text{Var}(\theta|y) = \frac{\alpha_{\text{post}} \cdot \beta_{\text{post}}}{(\alpha_{\text{post}} + \beta_{\text{post}})^2 (\alpha_{\text{post}} + \beta_{\text{post}} + 1)}
+\tag*{Beta 分布方差公式}
+
+\textbf{步骤 2}：代入后验参数
+\[
+= \frac{(\alpha + y)(\beta + n - y)}{(\alpha + \beta + n)^2 (\alpha + \beta + n + 1)}
+\tag*{代入参数}
+
+\textbf{步骤 3}：大样本近似（当 $y$ 和 $n-y$ 较大时）
+当 $n$ 很大而 $\alpha, \beta$ 固定时，
+\[
+\text{Var}(\theta|y) \approx \frac{1}{n} \cdot \frac{y}{n}\left(1 - \frac{y}{n}\right)
+\tag*{大样本近似}
+
+\textbf{结论 2}：后验方差以 $1/n$ 的速率趋近于零，表明随着样本量增大，后验分布越来越集中在真值附近。
+
+\clearpage
+
+\subsection{拉普拉斯继承法则推导}\label{sec:laplace-succession-derivation}
+
+\textbf{背景（Background）}：
+拉普拉斯在 18 世纪研究"明天太阳会升起"这类问题时，提出了一个著名的法则。在均匀先验下，这个法则预测未来成功的概率为 $\dfrac{y+1}{n+2}$。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $n$：已完成的试验次数
+  \item $y$：成功的次数
+  \item $\tilde{y}$：下一次试验的结果（$\tilde{y} = 1$ 表示成功）
+  \item $\theta$：成功概率
+  \item $p(\theta|y) = \text{Beta}(y+1, n-y+1)$：均匀先验下的后验分布
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 均匀先验：$\theta \sim \text{Uniform}(0,1) = \text{Beta}(1,1)$
+  \item 后验分布：$\theta|y \sim \text{Beta}(y+1, n-y+1)$
+  \item 后验预测分布：$p(\tilde{y}=1|y) = \int_0^1 \theta \cdot p(\theta|y) \, d\theta$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+求下一次试验成功的概率 $p(\tilde{y}=1|y)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出后验预测分布的定义
+\[
+p(\tilde{y}=1|y) = \int_0^1 p(\tilde{y}=1|\theta) \cdot p(\theta|y) \, d\theta
+\tag*{后验预测分布定义}
+
+\textbf{步骤 2}：代入 $p(\tilde{y}=1|\theta) = \theta$（给定 $\theta$，成功的条件概率就是 $\theta$）
+\[
+= \int_0^1 \theta \cdot p(\theta|y) \, d\theta
+= \mathbb{E}(\theta|y)
+\tag*{代入条件概率}
+
+\textbf{步骤 3}：识别这是后验均值
+\[
+= \mathbb{E}(\theta|y)
+\tag*{后验均值}
+
+\textbf{步骤 4}：应用 Beta 分布均值公式
+\[
+= \frac{y+1}{(y+1) + (n-y+1)}
+= \frac{y+1}{n+2}
+\tag*{Beta 均值公式}
+
+\textbf{结论}：拉普拉斯继承法则表明，在均匀先验下，已知 $n$ 次试验中 $y$ 次成功，下一次成功的概率是 $\dfrac{y+1}{n+2}$。这推广了"瑞士表匠"问题的直觉——即使观测到 $n$ 次成功，概率也不是 1（因为 $\theta$ 本身可能是变化的）。
+
+\clearpage
+
+\subsection{总期望与总方差公式推导}\label{sec:law-of-total-expectation-variance-derivation}
+
+\textbf{背景（Background）}：
+全期望公式和全方差公式是概率论中的两个基本恒等式，它们描述了如何通过条件分布来计算无条件矩。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta$：随机变量（参数）
+  \item $y$：随机变量（数据）
+  \item $\mathbb{E}(\theta)$：$\theta$ 的无条件（先验）均值
+  \item $\text{Var}(\theta)$：$\theta$ 的无条件（先验）方差
+  \item $\mathbb{E}(\theta|y)$：给定 $y$ 后 $\theta$ 的条件均值
+  \item $\text{Var}(\theta|y)$：给定 $y$ 后 $\theta$ 的条件方差
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 条件期望定义：$\mathbb{E}(\theta|y)$ 是 $y$ 的函数
+  \item 迭代期望法则：$\mathbb{E}[\mathbb{E}(\theta|y)] = \mathbb{E}(\theta)$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+\begin{enumerate}
+  \item 证明全期望公式：$\mathbb{E}(\theta) = \mathbb{E}[\mathbb{E}(\theta|y)]$
+  \item 证明全方差公式：$\text{Var}(\theta) = \mathbb{E}[\text{Var}(\theta|y)] + \text{Var}[\mathbb{E}(\theta|y)]$
+\end{enumerate}
+
+\clearpage
+
+\subsubsection*{全期望公式推导}
+
+\textbf{步骤 1}：从条件期望的定义出发
+\[
+\mathbb{E}[\mathbb{E}(\theta|y)] = \int \mathbb{E}(\theta|y) \cdot p(y) \, dy
+\tag*{外层期望定义}
+
+\textbf{步骤 2}：代入条件期望 $\mathbb{E}(\theta|y) = \int \theta \cdot p(\theta|y) \, d\theta$
+\[
+= \int \left( \int \theta \cdot p(\theta|y) \, d\theta \right) p(y) \, dy
+\tag*{代入条件期望定义}
+
+\textbf{步骤 3}：交换积分次序（由富比尼定理保证）
+\[
+= \int \theta \left( \int p(\theta|y) p(y) \, dy \right) d\theta
+\tag*{交换积分次序}
+
+\textbf{步骤 4}：识别内层积分 $p(\theta) = \int p(\theta|y) p(y) dy$（全概率）
+\[
+= \int \theta \cdot p(\theta) \, d\theta
+= \mathbb{E}(\theta)
+\tag*{边际分布定义}
+
+\textbf{结论 1}：全期望公式表明，$\theta$ 的先验均值等于在所有可能数据上后验均值的加权平均。
+
+\clearpage
+
+\subsubsection*{全方差公式推导}
+
+\textbf{步骤 1}：从方差定义出发
+\[
+\text{Var}(\theta) = \mathbb{E}(\theta^2) - [\mathbb{E}(\theta)]^2
+\tag*{方差定义}
+
+\textbf{步骤 2}：对 $\mathbb{E}(\theta^2)$ 应用全期望公式
+\[
+\mathbb{E}(\theta^2) = \mathbb{E}[\mathbb{E}(\theta^2|y)]
+\tag*{全期望公式应用于 $\theta^2$}
+
+\textbf{步骤 3}：在给定 $y$ 的条件下，方差可以写为
+\[
+\text{Var}(\theta|y) = \mathbb{E}(\theta^2|y) - [\mathbb{E}(\theta|y)]^2
+\tag*{条件方差定义}
+
+\textbf{步骤 4}：解出 $\mathbb{E}(\theta^2|y)$
+\[
+\mathbb{E}(\theta^2|y) = \text{Var}(\theta|y) + [\mathbb{E}(\theta|y)]^2
+\tag*{移项}
+
+\textbf{步骤 5}：代入步骤 2
+\[
+\mathbb{E}(\theta^2) = \mathbb{E}[\text{Var}(\theta|y)] + \mathbb{E}[[\mathbb{E}(\theta|y)]^2]
+\tag*{代入}
+
+\textbf{步骤 6}：对 $[\mathbb{E}(\theta|y)]^2$ 应用方差分解
+\[
+\mathbb{E}[[\mathbb{E}(\theta|y)]^2] = \text{Var}[\mathbb{E}(\theta|y)] + \{\mathbb{E}[\mathbb{E}(\theta|y)]\}^2
+\tag*{方差与均值平方的关系}
+
+\textbf{步骤 7}：代入全期望公式的结果 $\mathbb{E}[\mathbb{E}(\theta|y)] = \mathbb{E}(\theta)$
+\[
+= \text{Var}[\mathbb{E}(\theta|y)] + [\mathbb{E}(\theta)]^2
+\tag*{简化}
+
+\textbf{步骤 8}：代回方差的定义
+\[
+\text{Var}(\theta) = \mathbb{E}(\theta^2) - [\mathbb{E}(\theta)]^2
+= \mathbb{E}[\text{Var}(\theta|y)] + \text{Var}[\mathbb{E}(\theta|y)]
+\tag*{最终结果}
+
+\textbf{结论 2}：全方差公式表明，\textbf{总方差 = 条件方差的均值 + 条件均值的方差}。这在贝叶斯语境下的解释是：参数的总不确定性来自两个方面——（1）给定数据后参数仍有的剩余不确定性（条件方差的均值），以及（2）后验均值随数据变化的不确定性（条件均值的方差）。
+
+\clearpage
+
+\subsection{正态均值估计的后验分布推导}\label{sec:normal-mean-posterior-derivation}
+
+\textbf{背景（Background）}：
+当我们用正态似然估计正态均值时，如果使用正态先验，则后验分布也是正态分布。这个推导展示了共轭先验在正态模型中的应用。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $y \sim \text{Normal}(\theta, \sigma^2)$：观测数据（已知方差 $\sigma^2$）
+  \item $\theta \sim \text{Normal}(\mu_0, \tau_0^2)$：正态先验
+  \item $\mu_0$：先验均值
+  \item $\tau_0^2$：先验方差
+  \item $\sigma^2$：已知的观测方差
+  \item $\mu_1, \tau_1^2$：后验均值和方差
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item 似然函数：$p(y|\theta) \propto \exp\left(-\frac{(y-\theta)^2}{2\sigma^2}\right)$
+  \item 先验密度：$p(\theta) \propto \exp\left(-\frac{(\theta-\mu_0)^2}{2\tau_0^2}\right)$
+  \item 配方法（completing the square）技巧
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明后验分布 $\theta|y \sim \text{Normal}(\mu_1, \tau_1^2)$，并求出 $\mu_1$ 和 $\tau_1^2$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出非归一化后验分布的对数
+\[
+\log p(\theta|y) \propto \log p(\theta) + \log p(y|\theta)
+\tag*{对数后验（忽略常数）}
+
+\textbf{步骤 2}：代入先验和似然的对数
+\[
+= -\frac{(\theta-\mu_0)^2}{2\tau_0^2} - \frac{(y-\theta)^2}{2\sigma^2}
+\tag*{代入}
+
+\textbf{步骤 3}：展开平方项
+\[
+= -\frac{1}{2}\left[\frac{(\theta^2 - 2\mu_0\theta + \mu_0^2)}{\tau_0^2} + \frac{(\theta^2 - 2y\theta + y^2)}{\sigma^2}\right]
+\tag*{展开}
+
+\textbf{步骤 4}：合并 $\theta^2$ 项的系数
+\[
+= -\frac{1}{2}\left[\theta^2\left(\frac{1}{\tau_0^2} + \frac{1}{\sigma^2}\right) - 2\theta\left(\frac{\mu_0}{\tau_0^2} + \frac{y}{\sigma^2}\right) + \text{常数}\right]
+\tag*{合并}
+
+\textbf{步骤 5}：识别后验精度（方差的倒数）
+\[
+\frac{1}{\tau_1^2} = \frac{1}{\tau_0^2} + \frac{1}{\sigma^2}
+\tag*{后验精度}
+
+\textbf{步骤 6}：由配方法，后验均值满足
+\[
+\theta \cdot \frac{1}{\tau_1^2} = \frac{\mu_0}{\tau_0^2} + \frac{y}{\sigma^2}
+\tag*{配方法条件}
+
+\textbf{步骤 7}：解出后验均值
+\[
+\mu_1 = \frac{\mu_0/\tau_0^2 + y/\sigma^2}{1/\tau_0^2 + 1/\sigma^2}
+\tag*{后验均值}
+
+\textbf{步骤 8}：写出完整的后验分布
+\[
+\theta|y \sim \text{Normal}\left(\mu_1, \tau_1^2\right)
+\tag*{后验分布}
+
+\textbf{结论}：
+\begin{enumerate}
+  \item \textbf{精度加法}：后验精度 = 先验精度 + 数据精度
+  \item \textbf{后验均值}：是先验均值 $\mu_0$ 和观测值 $y$ 的加权平均，权重与精度成正比
+\end{enumerate}
+
+\clearpage
+
+\subsection{Jeffreys 先验与 Fisher 信息推导}\label{sec:jeffreys-prior-derivation}
+
+\textbf{背景（Background）}：
+Jeffreys 提出了一种构建非信息先验的系统方法，基于 Fisher 信息的不变性原则。这个先验在参数的单调变换下保持不变。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta$：参数
+  \item $p(y|\theta)$：似然函数
+  \item $J(\theta)$：Fisher 信息
+  \item $L(\theta) = \log p(y|\theta)$：对数似然
+  \item $I(\theta) = -\mathbb{E}\left[\frac{\partial^2 \log p(y|\theta)}{\partial \theta^2}\right]$：Fisher 信息（另一种定义）
+  \item $\phi = h(\theta)$：参数的单调变换
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item Jeffreys 原则：先验应在参数的单调变换下保持不变
+  \item Fisher 信息定义：$J(\theta) = -\mathbb{E}\left[\frac{\partial^2 \log p(y|\theta)}{\partial \theta^2}\right]$
+  \item 变换公式：$p(\phi) = p(\theta) \cdot \left|\frac{d\theta}{d\phi}\right|$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+推导 Jeffreys 先验公式并验证其在变换下的不变性。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\subsubsection*{Jeffreys 先验公式推导}
+
+\textbf{步骤 1}：Jeffreys 提出先验正比于 Fisher 信息的平方根
+\[
+p(\theta) \propto [J(\theta)]^{1/2}
+\tag*{Jeffreys 先验}
+
+\textbf{步骤 2}：验证在变换 $\phi = h(\theta)$ 下的不变性
+
+在新参数 $\phi$ 下，Fisher 信息为
+\[
+J(\phi) = -\mathbb{E}\left[\frac{\partial^2 \log p(y|\phi)}{\partial \phi^2}\right]
+\tag*{Fisher 信息在新参数下}
+
+\textbf{步骤 3}：利用链式法则
+\[
+\frac{\partial \log p(y|\theta)}{\partial \phi}
+= \frac{\partial \log p(y|\theta)}{\partial \theta} \cdot \frac{d\theta}{d\phi}
+\tag*{链式法则}
+
+\textbf{步骤 4}：计算二阶导数
+\[
+\frac{\partial^2 \log p(y|\phi)}{\partial \phi^2}
+= \frac{\partial}{\partial \phi}\left(\frac{\partial \log p(y|\theta)}{\partial \theta} \cdot \frac{d\theta}{d\phi}\right)
+= \frac{\partial^2 \log p(y|\theta)}{\partial \theta^2} \left(\frac{d\theta}{d\phi}\right)^2 + \frac{\partial \log p(y|\theta)}{\partial \theta} \cdot \frac{d^2\theta}{d\phi^2}
+\tag*{求导}
+
+\textbf{步骤 5}：取期望，利用 $\mathbb{E}\left[\frac{\partial \log p(y|\theta)}{\partial \theta}\right] = 0$（得分函数的期望为零）
+\[
+J(\phi) = \left(\frac{d\theta}{d\phi}\right)^2 J(\theta)
+\tag*{Fisher 信息的变换公式}
+
+\textbf{步骤 6}：因此
+\[
+[J(\phi)]^{1/2} = \left|\frac{d\theta}{d\phi}\right| [J(\theta)]^{1/2}
+\tag*{平方根}
+
+\textbf{步骤 7}：新先验为
+\[
+p(\phi) \propto [J(\phi)]^{1/2} \propto [J(\theta)]^{1/2} \left|\frac{d\theta}{d\phi}\right|
+\tag*{变换后的 Jeffreys 先验}
+
+\textbf{结论}：这正是概率密度在变量变换下的标准变换公式，因此 Jeffreys 先验在单调变换下是不变的。
+
+\clearpage
+
+\subsubsection*{二项模型的 Jeffreys 先验推导}
+
+\textbf{步骤 1}：写出二项模型的对数似然
+\[
+\log p(y|\theta) = \log \binom{n}{y} + y\log\theta + (n-y)\log(1-\theta)
+\tag*{对数似然}
+
+\textbf{步骤 2}：计算一阶导数（得分函数）
+\[
+\frac{\partial}{\partial\theta} \log p(y|\theta) = \frac{y}{\theta} - \frac{n-y}{1-\theta}
+\tag*{一阶导数}
+
+\textbf{步骤 3}：计算二阶导数
+\[
+\frac{\partial^2}{\partial\theta^2} \log p(y|\theta) = -\frac{y}{\theta^2} - \frac{n-y}{(1-\theta)^2}
+\tag*{二阶导数}
+
+\textbf{步骤 4}：取负期望（注意 $\mathbb{E}(Y) = n\theta$）
+\[
+J(\theta) = -\mathbb{E}\left[\frac{\partial^2}{\partial\theta^2} \log p(y|\theta)\right]
+= \frac{n\theta}{\theta^2} + \frac{n(1-\theta)}{(1-\theta)^2}
+= \frac{n}{\theta(1-\theta)}
+\tag*{Fisher 信息}
+
+\textbf{步骤 5}：应用 Jeffreys 公式
+\[
+p(\theta) \propto \left[\frac{n}{\theta(1-\theta)}\right]^{1/2}
+\propto \theta^{-1/2}(1-\theta)^{-1/2}
+\tag*{Jeffreys 先验}
+
+\textbf{步骤 6}：识别为 Beta 分布
+\[
+p(\theta) \propto \theta^{(1/2)-1}(1-\theta)^{(1/2)-1}
+\Rightarrow \theta \sim \text{Beta}\left(\frac{1}{2}, \frac{1}{2}\right)
+\tag*{Beta(1/2, 1/2)}
+
+\textbf{结论}：二项模型的 Jeffreys 先验是 $\text{Beta}(1/2, 1/2)$，这是一个弱信息先验，比均匀先验 $\text{Beta}(1,1)$ 在边界处更轻。
+
+\clearpage
+
+\subsection{后验预测分布的均值与方差推导}\label{sec:predictive-mean-variance-derivation}
+
+\textbf{背景（Background）}：
+后验预测分布 $\tilde{y}|y$ 的均值和方差有两个组成部分——一个来自模型本身的随机性，另一个来自参数的后验不确定性。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\tilde{y}$：未来观测
+  \item $y$：当前观测
+  \item $\theta$：参数
+  \item $\mathbb{E}(\tilde{y}|y)$：后验预测均值
+  \item $\text{Var}(\tilde{y}|y)$：后验预测方差
+\end{itemize}
+
+\textbf{已知条件（Given）}：
+\begin{itemize}
+  \item $\tilde{y}|\theta \sim \text{Normal}(\theta, \sigma^2)$
+  \item $\theta|y \sim \text{Normal}(\mu_1, \tau_1^2)$
+  \item 全期望公式：$\mathbb{E}(\tilde{y}|y) = \mathbb{E}[\mathbb{E}(\tilde{y}|\theta, y)]$
+  \item 全方差公式：$\text{Var}(\tilde{y}|y) = \mathbb{E}[\text{Var}(\tilde{y}|\theta, y)] + \text{Var}[\mathbb{E}(\tilde{y}|\theta, y)]$
+\end{itemize}
+
+\textbf{目标（Goal）}：
+求后验预测分布 $\tilde{y}|y$ 的均值和方差。
+
+\clearpage
+
+\subsubsection*{后验预测均值推导}
+
+\textbf{步骤 1}：应用全期望公式
+\[
+\mathbb{E}(\tilde{y}|y) = \mathbb{E}[\mathbb{E}(\tilde{y}|\theta, y)]
+\tag*{全期望公式}
+
+\textbf{步骤 2}：给定 $\theta$，$\tilde{y}$ 与 $y$ 条件独立，且 $\mathbb{E}(\tilde{y}|\theta) = \theta$
+\[
+= \mathbb{E}(\theta|y)
+= \mu_1
+\tag*{后验均值}
+
+\textbf{结论 1}：后验预测均值等于参数的后验均值。
+
+\clearpage
+
+\subsubsection*{后验预测方差推导}
+
+\textbf{步骤 1}：应用全方差公式
+\[
+\text{Var}(\tilde{y}|y) = \mathbb{E}[\text{Var}(\tilde{y}|\theta, y)] + \text{Var}[\mathbb{E}(\tilde{y}|\theta, y)]
+\tag*{全方差公式}
+
+\textbf{步骤 2}：第一项——给定 $\theta$ 下的方差是 $\sigma^2$（模型方差）
+\[
+\mathbb{E}[\text{Var}(\tilde{y}|\theta, y)] = \mathbb{E}(\sigma^2|y) = \sigma^2
+\tag*{模型方差}
+
+\textbf{步骤 3}：第二项——条件均值的方差
+\[
+\text{Var}[\mathbb{E}(\tilde{y}|\theta, y)] = \text{Var}(\theta|y) = \tau_1^2
+\tag*{参数不确定性}
+
+\textbf{步骤 4}：合并
+\[
+\text{Var}(\tilde{y}|y) = \sigma^2 + \tau_1^2
+\tag*{后验预测方差}
+
+\textbf{结论 2}：后验预测方差 = \textbf{模型方差} + \textbf{参数后验方差}。这体现了贝叶斯推断的核心：预测的不确定性来自两个方面——（1）模型本身的随机性（$\sigma^2$），以及（2）参数估计的不确定性（$\tau_1^2$）。
+
+% ================================================
+% Chapter 11 推导：马尔可夫链模拟基础
+% =============================================
+
+\section{拒绝抽样的正确性证明}\label{sec:derivation-rejection-sampling}
+
+\textbf{背景（Background）}：
+拒绝抽样通过随机接受机制从目标分布中抽取样本。我们需要证明被接受的样本确实服从目标分布 $p(\theta)$。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $p(\theta)$：目标（未归一化）分布
+  \item $g(\theta)$：提议分布
+  \item $M$：覆盖常数，满足 $p(\theta) \leq M \cdot g(\theta)$
+  \item $\theta^*$：候选样本
+  \item $u^*$：从 $\mathrm{Uniform}(0,1)$ 抽取的随机数
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明被接受的样本 $\theta_{\text{accept}}$ 服从目标分布 $p(\theta)$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出接受的联合概率
+\[
+\mathbb{P}(\text{接受} \cap \theta^* \in d\theta)
+= \mathbb{P}(\theta^* \in d\theta) \cdot \mathbb{P}(\text{接受} | \theta^*)
+= g(\theta^*) d\theta \cdot \frac{p(\theta^*)}{M g(\theta^*)}
+= \frac{p(\theta^*)}{M} d\theta
+\tag*{接受联合概率}
+\]
+
+\textbf{步骤 2}：计算总接受概率（归一化常数）
+\[
+\mathbb{P}(\text{接受}) = \int \frac{p(\theta^*)}{M} d\theta = \frac{1}{M}
+\tag*{总接受概率}
+\]
+
+\textbf{步骤 3}：计算接受样本的条件分布
+\[
+\mathbb{P}(\theta_{\text{accept}} \in d\theta | \text{接受})
+= \frac{\mathbb{P}(\text{接受} \cap \theta^* \in d\theta)}{\mathbb{P}(\text{接受})}
+= \frac{p(\theta^*)/M}{1/M} d\theta = p(\theta^*) d\theta
+\tag*{条件分布 = 目标分布}
+\]
+
+\textbf{结论}：被接受的样本的条件分布正是目标分布 $p(\theta)$。证明完毕。
+
+\clearpage
+
+\subsection{拒绝抽样期望接受率推导}\label{sec:derivation-rejection-acceptance}
+
+\textbf{背景（Background）}：
+拒绝抽样的期望接受率是衡量算法效率的关键指标。
+
+\textbf{目标（Goal）}：
+推导期望接受率的公式。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：期望接受率定义为
+\[
+\text{accept rate} = \int \mathbb{P}(\text{接受} | \theta) \cdot g(\theta) \, d\theta
+\tag*{期望定义}
+\]
+
+\textbf{步骤 2}：代入接受概率
+\[
+\mathbb{P}(\text{接受} | \theta) = \min\!\left(1, \frac{p(\theta)}{M g(\theta)}\right)
+\tag*{接受概率}
+\]
+
+\textbf{步骤 3}：于是
+\[
+\text{accept rate} = \int \min\!\left(\frac{p(\theta)}{M g(\theta)}, 1\right) \cdot g(\theta) \, d\theta
+= \frac{1}{M} \int \min\!\bigl(p(\theta), M g(\theta)\bigr) \, d\theta
+\tag*{积分结果}
+\]
+
+\textbf{步骤 4}：当覆盖条件 $M g(\theta) \geq p(\theta)$ 对所有 $\theta$ 成立时
+\[
+\text{accept rate} = \frac{1}{M} \int p(\theta) \, d\theta = \frac{1}{M}
+\tag*{简化为 $1/M$}
+\]
+
+\textbf{结论}：期望接受率与 $M$ 成反比，选择尽可能小的 $M$ 可提高接受率。
+
+\clearpage
+
+\subsection{细致平衡条件推导}\label{sec:derivation-detailed-balance}
+
+\textbf{背景（Background）}：
+细致平衡是构造满足特定平稳分布的马尔可夫链的关键条件。
+
+\textbf{目标（Goal）}：
+证明如果转移核 $P$ 满足细致平衡，则其平稳分布就是 $\pi$。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出细致平衡条件
+\[
+P(\theta' | \theta) \cdot \pi(\theta) = P(\theta | \theta') \cdot \pi(\theta')
+\tag*{细致平衡}
+\]
+
+\textbf{步骤 2}：验证 $\pi$ 是平稳分布
+\[
+\int P(\theta' | \theta) \cdot \pi(\theta) \, d\theta
+= \int P(\theta | \theta') \cdot \pi(\theta') \, d\theta
+= \pi(\theta') \int P(\theta | \theta') \, d\theta
+= \pi(\theta') \cdot 1
+= \pi(\theta')
+\tag*{平稳分布验证}
+\]
+
+其中第三步用到 $\int P(\theta | \theta') d\theta = 1$（转移核的归一化性）。
+
+\textbf{结论}：细致平衡是平稳分布的充分条件，但不是必要条件。
+
+\clearpage
+
+\subsection{Metropolis 算法细致平衡证明}\label{sec:derivation-metropolis}
+
+\textbf{背景（Background）}：
+Metropolis 算法的提议分布是对称的，我们需要证明其满足细致平衡。
+
+\textbf{目标（Goal）}：
+证明 Metropolis 算法的转移核以目标分布 $p(\theta)$ 为平稳分布。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：Metropolis 转移核
+\[
+P(\theta' | \theta) = q(\theta' | \theta) \cdot \min\!\left(1, \frac{p(\theta')}{p(\theta)}\right)
+\]
+其中 $q(\theta' | \theta) = q(\theta | \theta')$（对称提议分布）。
+
+\textbf{步骤 2}：验证细致平衡
+\[
+P(\theta' | \theta) \cdot p(\theta)
+= q(\theta' | \theta) \cdot \min(1, \frac{p(\theta')}{p(\theta)}) \cdot p(\theta)
+\]
+
+分两种情况讨论：
+
+\textbf{情况 1}：$p(\theta') \geq p(\theta)$
+\[
+\text{右边} = q(\theta' | \theta) \cdot 1 \cdot p(\theta)
+= q(\theta' | \theta) \cdot p(\theta')
+\]
+
+\textbf{情况 2}：$p(\theta') < p(\theta)$
+\[
+\text{右边} = q(\theta' | \theta) \cdot \frac{p(\theta')}{p(\theta)} \cdot p(\theta)
+= q(\theta' | \theta) \cdot p(\theta')
+\]
+
+由于 $q(\theta' | \theta) = q(\theta | \theta')$，两种情况都满足
+\[
+P(\theta' | \theta) \cdot p(\theta) = P(\theta | \theta') \cdot p(\theta')
+\tag*{细致平衡成立}
+\]
+
+\textbf{结论}：Metropolis 算法的平稳分布正是目标分布 $p(\theta)$。证明完毕。
+
+\clearpage
+
+\subsection{Gibbs 抽样接受率推导}\label{sec:derivation-gibbs-acceptance}
+
+\textbf{背景（Background）}：
+Gibbs 抽样是 Metropolis-Hastings 的特例，其接受率恒为 1。我们来推导这个结论。
+
+\textbf{参数定义（Parameter Definitions）}：
+\begin{itemize}
+  \item $\theta = (\theta_1, \ldots, \theta_d)$：完整参数向量
+  \item $\theta_{-j} = (\theta_1, \ldots, \theta_{j-1}, \theta_{j+1}, \ldots, \theta_d)$：除 $\theta_j$ 外的所有参数
+  \item $p^*(\theta)$：未归一化的目标分布
+  \item $q(\theta_j' | \theta_{-j}) = p(\theta_j' | \theta_{-j}, y)$：提议分布（条件分布）
+\end{itemize}
+
+\textbf{目标（Goal）}：
+证明 Gibbs 抽样的接受率为 1。
+
+\textbf{推导步骤（Derivation Steps）}：
+
+\textbf{步骤 1}：写出 MH 接受比
+\[
+r = \frac{p^*(\theta_j', \theta_{-j})}{p^*(\theta_j, \theta_{-j})}
+\cdot \frac{q(\theta_j | \theta_{-j})}{q(\theta_j' | \theta_{-j})}
+\tag*{MH 接受比}
+\]
+
+\textbf{步骤 2}：代入 Gibbs 的提议分布
+\[
+q(\theta_j | \theta_{-j}) = p(\theta_j | \theta_{-j}, y)
+\]
+\[
+q(\theta_j' | \theta_{-j}) = p(\theta_j' | \theta_{-j}, y)
+\tag*{提议分布 = 条件分布}
+\]
+
+\textbf{步骤 3}：利用链式法则分解联合分布
+\[
+p^*(\theta_j', \theta_{-j}) = p^*(\theta_{-j}) \cdot p^*(\theta_j' | \theta_{-j})
+\]
+\[
+p^*(\theta_j, \theta_{-j}) = p^*(\theta_{-j}) \cdot p^*(\theta_j | \theta_{-j})
+\tag*{链式法则}
+\]
+
+\textbf{步骤 4}：代入接受比
+\[
+r = \frac{p^*(\theta_{-j}) \cdot p^*(\theta_j' | \theta_{-j})}{p^*(\theta_{-j}) \cdot p^*(\theta_j | \theta_{-j})}
+\cdot \frac{p(\theta_j | \theta_{-j}, y)}{p(\theta_j' | \theta_{-j}, y)}
+= \frac{p^*(\theta_j' | \theta_{-j})}{p^*(\theta_j | \theta_{-j})}
+\cdot \frac{p(\theta_j | \theta_{-j}, y)}{p(\theta_j' | \theta_{-j}, y)}
+\tag*{代入}
+\]
+
+\textbf{步骤 5}：注意 $p^*(\theta_j | \theta_{-j}, y) \propto p(\theta_j | \theta_{-j}, y)$，因为 $p^*(\theta_{-j})$ 不依赖于 $\theta_j$。于是两个因子互为倒数，
+\[
+r = 1
+\tag*{接受率为 1}
+\]
+
+\textbf{结论}：Gibbs 抽样的提议分布恰好是条件分布，因此接受率恒为 1，无需拒绝。
+
+\clearpage
+
+\subsection{分层模型条件分布推导}\label{sec:derivation-hierarchical-conditionals}
+
+\textbf{背景（Background）}：
+在分层模型 \cref{eq:hierarchical-model} 中，我们需要推导各个参数的条件后验分布。
+
+\textbf{模型回顾}：
+\[
+y_j | \theta_j \sim \mathrm{N}(\theta_j, \sigma^2), \quad \theta_j | \mu, \tau \sim \mathrm{N}(\mu, \tau^2)
+\]
+其中 $\sigma^2$ 已知。
+
+\textbf{目标（Goal）}：
+推导 $p(\theta_j | \mu, \tau, y)$、$p(\mu | \theta, \tau, y)$ 和 $p(\tau | \theta, \mu, y)$。
+
+\clearpage
+
+\subsubsection*{$p(\theta_j | \mu, \tau, y)$ 推导}
+
+\textbf{步骤 1}：写出条件分布的核
+\[
+p(\theta_j | \mu, \tau, y) \propto p(y_j | \theta_j) \cdot p(\theta_j | \mu, \tau)
+\propto \exp\!\left(-\frac{(y_j - \theta_j)^2}{2\sigma^2}\right)
+\cdot \exp\!\left(-\frac{(\theta_j - \mu)^2}{2\tau^2}\right)
+\tag*{核}
+\]
+
+\textbf{步骤 2}：合并指数
+\[
+= \exp\!\left(-\frac{(y_j - \theta_j)^2}{2\sigma^2} - \frac{(\theta_j - \mu)^2}{2\tau^2}\right)
+\tag*{合并}
+\]
+
+\textbf{步骤 3}：配方得到正态分布形式
+\[
+= \exp\!\left(-\frac{1}{2}\left[\frac{1}{\sigma^2} + \frac{1}{\tau^2}\right]
+\left(\theta_j - \frac{y_j/\sigma^2 + \mu/\tau^2}{1/\sigma^2 + 1/\tau^2}\right)^2\right)
+\tag*{配方}
+\]
+
+因此
+\[
+\theta_j | \mu, \tau, y \sim \mathrm{N}\!\left(\frac{y_j/\sigma^2 + \mu/\tau^2}{1/\sigma^2 + 1/\tau^2},
+\left(\frac{1}{\sigma^2} + \frac{1}{\tau^2}\right)^{-1}\right)
+\tag*{条件后验}
+\]
+
+\clearpage
+
+\subsubsection*{$p(\mu | \theta, \tau, y)$ 推导}
+
+\textbf{步骤 1}：$\mu$ 的条件分布（似然部分只依赖于 $\theta_j$，与 $\mu$ 通过 $\theta_j | \mu, \tau$ 连接）
+\[
+p(\mu | \theta, \tau) \propto p(\theta | \mu, \tau) = \prod_{j=1}^J \exp\!\left(-\frac{(\theta_j - \mu)^2}{2\tau^2}\right)
+\propto \exp\!\left(-\frac{\sum_j (\theta_j - \mu)^2}{2\tau^2}\right)
+\tag*{先验部分}
+\]
+
+\textbf{步骤 2}：展开平方
+\[
+\sum_j (\theta_j - \mu)^2 = \sum_j (\theta_j - \bar{\theta} + \bar{\theta} - \mu)^2
+= \sum_j (\theta_j - \bar{\theta})^2 + J(\bar{\theta} - \mu)^2
+\tag*{平方展开}
+\]
+
+\textbf{步骤 3}：识别为正态核
+\[
+p(\mu | \theta, \tau) \propto \exp\!\left(-\frac{J(\bar{\theta} - \mu)^2}{2\tau^2}\right)
+\tag*{正态核}
+\]
+
+因此
+\[
+\mu | \theta, \tau \sim \mathrm{N}\!\left(\bar{\theta}, \frac{\tau^2}{J}\right)
+\tag*{条件后验}
+\]
+
+其中 $\bar{\theta} = \frac{1}{J}\sum_j \theta_j$。
+
+\clearpage
+
+\subsubsection*{$p(\tau | \theta, \mu, y)$ 的非标准形式}
+
+\textbf{说明}：
+\[
+p(\tau | \theta, \mu, y) \propto p(\theta | \mu, \tau) \cdot p(\tau)
+= \prod_{j=1}^J \frac{1}{\tau} \exp\!\left(-\frac{(\theta_j - \mu)^2}{2\tau^2}\right) \cdot p(\tau)
+\tag*{非标准形式}
+\]
+
+这个分布不是标准形式（不是常见的正态、Gamma 等分布），因此需要使用 Metropolis-Hastings 步骤来抽样。
+
+\textbf{结论}：在 Gibbs 抽样框架下，对 $\tau$ 需要使用 MH 步骤，这正是"混合 MCMC"的典型例子。
+
+% ================================================
+% 问答与注解
+% ================================================
+\input{appendix/qa}
+
+\endinput

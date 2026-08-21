@@ -1,0 +1,510 @@
+\setcounter{section}{4}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: the three words the exam actually asks}
+
+The PDE \(u_t=u_{xx}+u_{yy}\) is well-posed. The exam is not asking whether heat flows. It asks three things about a named difference scheme: write it, decide whether it is consistent with that PDE, and decide whether it is stable. The official CAM names for this circle are finite-difference methods, stability and convergence, and Lax equivalence \cite{gko95,leveque07,strikwerda04,laxrichtmyer56}. Finite elements \cite{brennerscott10} discretize the same Laplacian weakly and are a different language; they are not what ``construct the Du~Fort--Frankel scheme'' means.
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt, font=\small},
+  arr/.style={-{Latex}, thick}
+]
+  \node[box] (pde) at (0,2.35) {PDE \(u_t=\Delta u\)};
+  \node[box] (sch) at (4.55,2.35) {difference scheme};
+  \node[box] (con) at (0,0.55) {consistency\\(truncation \(\to 0\))};
+  \node[box] (sta) at (4.55,0.55) {stability\\(no spurious growth)};
+  \node[box] (cvg) at (2.275,-1.15) {convergence\\(\(U\to u\) as \(h,\tau\to 0\))};
+  \draw[arr] (pde) -- (sch);
+  \draw[arr] (sch) -- (con);
+  \draw[arr] (sch) -- (sta);
+  \draw[arr] (con) -- (cvg);
+  \draw[arr] (sta) -- (cvg);
+\end{tikzpicture}
+\end{center}
+
+Lax equivalence is the arrow into the bottom box: for a linear well-posed IVP, a consistent scheme converges if and only if it is stable. Qiuzhen almost never asks you to quote the theorem. It asks you to compute the two hypotheses. Du~Fort--Frankel is the standard pair in which those hypotheses split: the scheme is unconditionally von Neumann stable, and it is consistent with the heat equation only along certain mesh paths.
+
+\paragraph{The objects on the grid.}
+
+\begin{notation}[Two-dimensional heat grid]
+\label{not:grid-p4}
+Fix mesh sizes \(h_x,h_y>0\) and a time step \(\tau>0\). Write \(x_j=jh_x\), \(y_\ell=\ell h_y\), and \(t_n=n\tau\). The unknown \(U_{j,\ell}^n\) is a grid function intended to approximate \(u(x_j,y_\ell,t_n)\). When a single spatial step is enough one may take \(h_x=h_y=h\). The mesh ratios that appear in every heat-scheme calculation are
+\[
+\mu_x
+\coloneqq
+\frac{\tau}{h_x^2},
+\qquad
+\mu_y
+\coloneqq
+\frac{\tau}{h_y^2},
+\qquad
+\sigma
+\coloneqq
+\frac{1}{h_x^2}+\frac{1}{h_y^2}.
+\]
+The first two are parabolic CFL numbers; \(\sigma\) is the coefficient of the centre point in the five-point Laplacian. A scheme is \emph{explicit} if \(U^{n+1}\) is given by a formula in already-known time levels; it is \emph{implicit} if computing \(U^{n+1}\) requires solving a linear system that couples neighbouring nodes at time \(t_{n+1}\). Du~Fort--Frankel is three-level and explicit.
+\end{notation}
+
+Three objects that are easy to conflate, and that the next definitions keep separate:
+\begin{enumerate}[label=\textup{(\roman*)}]
+    \item \(U_{j,\ell}^n\): the grid function the scheme actually computes.
+    \item \(u_{j,\ell}^n=u(x_j,y_\ell,t_n)\): samples of a smooth PDE solution. In general they do not satisfy the scheme.
+    \item \(e_{j,\ell}^n=U_{j,\ell}^n-u_{j,\ell}^n\): the global error. Consistency is not a statement about \(e\).
+\end{enumerate}
+
+\begin{definition}[Centered second differences; five-point Laplacian]
+\label{def:five-point}
+On a uniform mesh in one variable,
+\[
+\delta_{xx}v_j
+\coloneqq
+\frac{v_{j+1}-2v_j+v_{j-1}}{h_x^2}.
+\]
+If \(v\) is smooth, Taylor expansion at \(x_j\) gives \(\delta_{xx}v=v_{xx}+\frac{1}{12}h_x^2 v_{xxxx}+O(h_x^4)\). Likewise \(\delta_{yy}\) in the \(y\)-variable. The standard five-point Laplacian on the plane is
+\[
+\Delta_h V_{j,\ell}
+\coloneqq
+\delta_{xx}V_{j,\ell}+\delta_{yy}V_{j,\ell}
+=
+\frac{V_{j+1,\ell}+V_{j-1,\ell}}{h_x^2}
++
+\frac{V_{j,\ell+1}+V_{j,\ell-1}}{h_y^2}
+-
+2\sigma\, V_{j,\ell}.
+\]
+This is the spatial operator that FTCS, Richardson, and Du~Fort--Frankel all start from. The adjective ``centered'' means this stencil, not a one-sided second difference and not \((D^0)^2\).
+\end{definition}
+
+\paragraph{The named heat schemes, in the order that produces Du~Fort--Frankel.}
+
+The exam assumes the 1D parent is known. The 2D scheme is the same replacement on \(\Delta_h\).
+
+\begin{definition}[FTCS]
+\label{def:ftcs}
+The forward-time centered-space scheme for \(u_t=\Delta u\) is one-step and explicit:
+\[
+\frac{U_{j,\ell}^{n+1}-U_{j,\ell}^n}{\tau}
+=
+\Delta_h U_{j,\ell}^n.
+\]
+It is consistent of order \(O(\tau+h_x^2+h_y^2)\) with no mesh restriction, and von Neumann stable if and only if \(\mu_x+\mu_y\le 1/2\). That parabolic CFL is the reason one looks for an unconditionally stable alternative.
+\end{definition}
+
+\begin{definition}[Richardson / leapfrog heat]
+\label{def:richardson}
+The Richardson scheme keeps the centered Laplacian and centres the time difference as well:
+\[
+\frac{U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}}{2\tau}
+=
+\Delta_h U_{j,\ell}^n.
+\]
+The scheme is three-level (two-step): \(U^{n+1}\) depends on both \(U^n\) and \(U^{n-1}\). It is consistent of order \(O(\tau^2+h_x^2+h_y^2)\), and it is unconditionally von Neumann \emph{unstable}. The unstable mode is the one that sees the centre coefficient \(-2\sigma U^n\) as a source rather than as dissipation.
+\end{definition}
+
+\begin{definition}[Du~Fort--Frankel replacement]
+\label{def:dff}
+The Du~Fort--Frankel scheme is Richardson with the centre value \(U_{j,\ell}^n\) in \(\Delta_h\) replaced by the time average \(\frac12\bigl(U_{j,\ell}^{n+1}+U_{j,\ell}^{n-1}\bigr)\). Equivalently, the diagonal term \(2\sigma U_{j,\ell}^n\) is replaced by \(\sigma\bigl(U_{j,\ell}^{n+1}+U_{j,\ell}^{n-1}\bigr)\). In 1D this is the classical formula
+\[
+\frac{U_j^{n+1}-U_j^{n-1}}{2\tau}
+=
+\frac{U_{j+1}^n-U_j^{n+1}-U_j^{n-1}+U_{j-1}^n}{h^2}.
+\]
+In 2D, applying the same replacement in each coordinate, the scheme is
+\[
+\frac{U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}}{2\tau}
+=
+\frac{U_{j+1,\ell}^n-U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}+U_{j-1,\ell}^n}{h_x^2}
++
+\frac{U_{j,\ell+1}^n-U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}+U_{j,\ell-1}^n}{h_y^2}.
+\]
+Collecting the unknown \(U_{j,\ell}^{n+1}\) on the left gives the explicit update
+\[
+\bigl(1+2\tau\sigma\bigr)\,U_{j,\ell}^{n+1}
+=
+\frac{2\tau}{h_x^2}\bigl(U_{j+1,\ell}^n+U_{j-1,\ell}^n\bigr)
++
+\frac{2\tau}{h_y^2}\bigl(U_{j,\ell+1}^n+U_{j,\ell-1}^n\bigr)
++
+\bigl(1-2\tau\sigma\bigr)\,U_{j,\ell}^{n-1}.
+\]
+The right-hand side uses only time levels \(n\) and \(n-1\). No linear system is solved: the scheme is explicit, even though it is three-level. Starting the march requires two initial time levels (e.g.\ one FTCS step from \(t=0\)).
+\end{definition}
+
+The algebraic identity that makes the truncation readable is the reason for the replacement, not a second scheme:
+\[
+\begin{aligned}
+&U_{j+1,\ell}^n-U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}+U_{j-1,\ell}^n
+\\
+&\qquad=
+\bigl(U_{j+1,\ell}^n-2U_{j,\ell}^n+U_{j-1,\ell}^n\bigr)
+-
+\bigl(U_{j,\ell}^{n+1}-2U_{j,\ell}^n+U_{j,\ell}^{n-1}\bigr),
+\end{aligned}
+\]
+and likewise in \(y\). Du~Fort--Frankel is therefore Richardson minus a second time difference scaled by \(1/h_x^2\) and \(1/h_y^2\). That extra term is \(O\bigl((\tau/h_x)^2+(\tau/h_y)^2\bigr)\) on smooth solutions, which is the whole consistency story.
+
+\paragraph{Consistency is a residual, not an error.}
+
+\begin{definition}[Local truncation error]
+\label{def:truncation}
+Write a scheme in PDE form as an operator \(\mathcal L_{h,\tau}\) on grid functions, set equal to zero. For Du~Fort--Frankel that operator is the difference between the two sides of \cref{def:dff}. The computed unknown satisfies \(\mathcal L_{h,\tau}U=0\). Let \(u\) be a smooth solution of \(u_t=\Delta u\), and write \(u_{j,\ell}^n=u(x_j,y_\ell,t_n)\) for its samples. The \emph{local truncation error} (or residual) is
+\[
+\mathcal T_{j,\ell}^n
+\coloneqq
+\bigl(\mathcal L_{h,\tau}u\bigr)_{j,\ell}^n.
+\]
+This is an explicit number once \(u\) is given: every term is a value of a known function. The order is the largest \((p,q,r)\) for which \(\mathcal T=O(\tau^p+h_x^q+h_y^r)\) along the family of meshes under consideration. Consistency is the statement that \(\mathcal T\to 0\); it is not a statement about \(e=U-u\), and it is not a statement about an amplification factor \(|g|\).
+\end{definition}
+
+\begin{definition}[Consistency]
+\label{def:consistency}
+The scheme \(\mathcal L_{h,\tau}\) is \emph{consistent} with the PDE if, at every fixed \((x,y,t)\) in the space--time domain,
+\[
+\mathcal T_{j,\ell}^n
+\to
+0
+\qquad
+\text{as }
+(h_x,h_y,\tau)\to(0,0,0),
+\]
+for every sufficiently smooth solution \(u\). Equivalently, in a discrete norm, \(\|\mathcal T^n\|_h\to 0\) uniformly for \(t_n\le T\).
+
+The limit is taken along the family of meshes actually used. If a restriction such as \(\tau/h_x\to 0\) is part of that family, consistency is only claimed under that restriction. If \(h_x,h_y,\tau\to 0\) independently with \(\tau/h_x\) bounded away from zero, the residual of Du~Fort--Frankel need not vanish: the scheme is then consistent with a different PDE (a hyperbolic regularization of heat), not with \(u_t=\Delta u\). That mesh dependence is the reason the exam asks consistency and stability as two separate sentences.
+\end{definition}
+
+\paragraph{Stability is a bound on the computed grid function.}
+
+\begin{definition}[Lax--Richtmyer stability]
+\label{def:lax-richtmyer}
+Write a linear scheme as a marching operator on grid functions (for a two-step scheme, on pairs \((U^n,U^{n-1})\)), with a discrete norm \(\|\cdot\|_h\) (usually \(\ell_2\)). The scheme is \emph{stable} on a time interval \([0,T]\) if there exist \(C,\alpha\), independent of the mesh for all sufficiently small steps (possibly subject to a restriction such as \(\mu_x+\mu_y\le 1/2\)), such that
+\[
+\|U^n\|_h
+\le
+C\,e^{\alpha t_n}\,\|U^0\|_h,
+\qquad
+0\le t_n\le T.
+\]
+What is forbidden is growth like \(|g|^n\) with \(|g|>1\) independent of \(\tau\): that explodes as the mesh is refined with \(t_n\) fixed. Growth of the form \(e^{\alpha T}\) is allowed, because the PDE itself may grow. For the heat equation on the line the PDE does not grow, and the practical test is \(\|U^n\|_h\le C\|U^0\|_h\) with \(C\) independent of \(h,\tau\).
+\end{definition}
+
+On the whole line or a torus, constant-coefficient schemes are diagonalized by spatial exponentials. Checking that no frequency grows is then necessary and sufficient for an \(\ell_2\) bound. That computation is von Neumann analysis; it is not a second definition of stability, and it is not a Fourier transform in time.
+
+\begin{definition}[von Neumann / Fourier criterion]
+\label{def:von-neumann}
+A constant-coefficient linear scheme on \(\mathbb Z^2\) admits Fourier modes
+\[
+U_{j,\ell}^n
+=
+g^n\,e^{\mathrm i(j\xi+\ell\eta)},
+\qquad
+\xi,\eta\in\mathbb R.
+\]
+Here \((\xi,\eta)\) are dimensionless frequencies (one may write \(\xi=\kappa h_x\) with \(\kappa\) the dual variable to \(x\)). Substituting and cancelling the common factor \(g^{n-1}e^{\mathrm i(j\xi+\ell\eta)}\) produces a polynomial in the unknown amplification factor \(g\). For a one-step scheme the polynomial is linear and there is a unique \(g(\xi,\eta)\). For a two-step scheme (Du~Fort--Frankel, Richardson, and the wave scheme of Problem~5) the polynomial is quadratic,
+\[
+A(\xi,\eta)\,g^2+B(\xi,\eta)\,g+C(\xi,\eta)=0,
+\]
+with two roots \(g_\pm\). Both must be controlled: one is the physical mode, the other is a parasitic computational mode created by the extra time level.
+
+The scheme is von Neumann stable if there is \(K\), independent of \(\xi,\eta\) and of the mesh, such that
+\[
+\bigl|g_\pm(\xi,\eta)\bigr|
+\le
+1+K\tau
+\qquad
+\text{for all }\xi,\eta.
+\]
+For heat (dissipative, no exponential PDE growth) this collapses to \(|g_\pm|\le 1\) for all frequencies. The GKO form \(1+K\tau\) is the general statement on the syllabus \cite{gko95}; a factor \(1+K\tau\) per step is \(e^{KT}\) at time \(T\), which is PDE growth, not mesh blow-up.
+\end{definition}
+
+\begin{definition}[Conditional / unconditional von Neumann stability]
+\label{def:cond-uncond}
+After Fourier substitution one has amplification factors \(g(\xi,\eta;h,\tau)\).
+\begin{itemize}
+    \item The scheme is von Neumann stable for a given mesh if \(|g|\le 1\) (or \(|g|\le 1+K\tau\)) for every frequency.
+    \item It is \emph{conditionally stable} if that inequality holds only under an extra restriction, typically a bound on \(\mu=\tau/h^2\). FTCS is the model: stable iff \(\mu_x+\mu_y\le 1/2\).
+    \item It is \emph{unconditionally stable} if the inequality holds for every \(h_x,h_y,\tau>0\). Backward Euler on heat is the model; Du~Fort--Frankel is the explicit three-level analogue.
+    \item It is \emph{unconditionally unstable} if, for every mesh however fine, some frequency has \(|g|>1\). Richardson heat is the model. ``Unconditional'' here modifies the instability: there is no mesh on which the scheme becomes stable.
+\end{itemize}
+Consistency (\cref{def:consistency}) is a different question. A scheme may be consistent and unconditionally unstable (Richardson), or stable and inconsistent along some mesh paths (Du~Fort--Frankel). Neither adjective is implied by ``explicit'' or ``three-level''.
+\end{definition}
+
+\begin{proposition}[Jury's criterion for a real quadratic]
+\label{prop:jury}
+Let \(p(g)=Ag^2+Bg+C\) with \(A>0\) and \(A,B,C\in\mathbb R\). Both roots satisfy \(|g|\le 1\) if and only if
+\[
+p(1)\ge 0,
+\qquad
+p(-1)\ge 0,
+\qquad
+|C|\le A.
+\]
+Roots on the unit circle are permitted for von Neumann stability. This is the test that turns the Du~Fort--Frankel quadratic into three scalar inequalities in \((\tau,h_x,h_y,\xi,\eta)\).
+\end{proposition}
+
+\paragraph{Why the exam asks both.}
+
+\begin{definition}[Convergence]
+\label{def:convergence}
+The scheme converges to a PDE solution \(u\) if, in the same discrete norm used for stability,
+\[
+\|U^n-u(\,\cdot\,,t_n)\|_h
+\to
+0
+\qquad
+\text{as }
+(h_x,h_y,\tau)\to(0,0,0),
+\]
+uniformly for \(t_n\le T\), for every smooth initial datum (and, for two-step schemes, a consistent choice of the second starting level). Convergence is a statement about \(e=U-u\). Consistency is a statement about \(\mathcal T\). They are not synonyms.
+\end{definition}
+
+\begin{theorem}[Lax equivalence]
+\label{thm:lax-eq}
+Consider a linear well-posed evolutionary IVP and a consistent finite-difference approximation, in a discrete norm in which the PDE itself is well-posed. The scheme is convergent if and only if it is stable \cite{laxrichtmyer56,leveque07}.
+\end{theorem}
+
+The hypotheses are not decoration. Linearity produces a marching operator independent of the solution; well-posedness of the PDE makes the exact solution a legitimate comparison object; the same discrete norm is used for stability and for convergence. Von Neumann is the \(\ell_2\) machine. A discrete maximum principle (Problem~5) is the \(\ell_\infty\) machine.
+
+In exam writing one checks consistency by Taylor expansion of \(\mathcal T\) and stability by von Neumann or Jury; Lax then gives convergence for free, \emph{along those mesh families for which both hypotheses hold}. If one refines Du~Fort--Frankel with \(\tau/h_x\) bounded away from zero, consistency with the heat equation fails, so Lax does not yield convergence to heat solutions, even though \(|g|\le 1\) for every \(\tau\). Unconditional stability is not a licence to take \(\tau\) comparable to \(h\).
+
+\begin{remark}[What of this is the exam]
+\label{rem:p4-script}
+``Construct'' means write \cref{def:dff} and the explicit update. ``Consistency'' means expand \(\mathcal T\) and record the mesh restriction \(\tau/h_x\to 0\), \(\tau/h_y\to 0\). ``Stability'' means insert \(g^n e^{\mathrm i(j\xi+\ell\eta)}\), obtain the quadratic, and apply \cref{prop:jury} (or an equivalent \(|g_\pm|\le 1\) argument) for every \(\tau>0\). Lax equivalence is the warrant that those two computations decide convergence; it is not itself an answer.
+\end{remark}
+
+\subsubsection{Solution of Problem 4}
+
+This is the two-dimensional Du~Fort--Frankel scheme for heat. It is not Problem~5 (the wave scheme with weights \(\frac14,\frac12,\frac14\)). The Fourier substitution below is the calculation on the handwritten page: a 2D mode \(g^n e^{\mathrm i(j\xi+\ell\eta)}\), and the centre value of \(\Delta_h\) replaced by \(\frac12(U^{n+1}+U^{n-1})\). The quadratic that appears is \emph{not} palindromic, so \(|g|=1\) is the wrong target. The target is \(|g_\pm|\le 1\) for every frequency and every mesh.
+
+\paragraph{Construct.}
+
+Start from Richardson (leapfrog time, centered Laplacian) for \(u_t=u_{xx}\),
+\[
+\frac{U_j^{n+1}-U_j^{n-1}}{2\tau}
+=
+\frac{U_{j+1}^n-2U_j^n+U_{j-1}^n}{h^2},
+\]
+and replace the centre value \(2U_j^n\) by \(U_j^{n+1}+U_j^{n-1}\). That is Du~Fort--Frankel in one dimension:
+\[
+\frac{U_j^{n+1}-U_j^{n-1}}{2\tau}
+=
+\frac{U_{j+1}^n-U_j^{n+1}-U_j^{n-1}+U_{j-1}^n}{h^2}.
+\]
+Do the same replacement in each coordinate of \(\Delta_h\). The two-dimensional scheme is
+\[
+\frac{U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}}{2\tau}
+=
+\frac{U_{j+1,\ell}^n-U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}+U_{j-1,\ell}^n}{h_x^2}
++
+\frac{U_{j,\ell+1}^n-U_{j,\ell}^{n+1}-U_{j,\ell}^{n-1}+U_{j,\ell-1}^n}{h_y^2}.
+\]
+Write \(\sigma=1/h_x^2+1/h_y^2\). The unknown \(U_{j,\ell}^{n+1}\) appears linearly on both sides. Collecting it gives the explicit update
+\[
+\bigl(1+2\tau\sigma\bigr)\,U_{j,\ell}^{n+1}
+=
+\frac{2\tau}{h_x^2}\bigl(U_{j+1,\ell}^n+U_{j-1,\ell}^n\bigr)
++
+\frac{2\tau}{h_y^2}\bigl(U_{j,\ell+1}^n+U_{j,\ell-1}^n\bigr)
++
+\bigl(1-2\tau\sigma\bigr)\,U_{j,\ell}^{n-1}.
+\]
+The right-hand side uses only time levels \(n\) and \(n-1\). No spatial linear system is solved. The scheme is three-level and explicit. Two initial time levels are required to start.
+
+\paragraph{Consistency.}
+
+Feed a smooth solution \(u\) of \(u_t=u_{xx}+u_{yy}\) into the scheme. The local truncation error is the residual
+\begin{align*}
+\mathcal T_{j,\ell}^n
+&=
+\frac{u_{j,\ell}^{n+1}-u_{j,\ell}^{n-1}}{2\tau}
+-
+\frac{u_{j+1,\ell}^n-u_{j,\ell}^{n+1}-u_{j,\ell}^{n-1}+u_{j-1,\ell}^n}{h_x^2}
+\\
+&\qquad
+-
+\frac{u_{j,\ell+1}^n-u_{j,\ell}^{n+1}-u_{j,\ell}^{n-1}+u_{j,\ell-1}^n}{h_y^2}.
+\end{align*}
+Expand at \((x_j,y_\ell,t_n)\). The centered time difference is
+\[
+\frac{u(t_n+\tau)-u(t_n-\tau)}{2\tau}
+=
+u_t+\frac{\tau^2}{6}u_{ttt}+O(\tau^4)
+=
+u_t+O(\tau^2).
+\]
+(The even powers cancel; the first surviving correction is odd in \(\tau\), hence \(O(\tau^2)\) after dividing by \(2\tau\).)
+
+For the \(x\)-term, expand the four samples separately. Odd powers of \(h_x\) from \(u_{j\pm 1}\) cancel, and odd powers of \(\tau\) from \(u^{n\pm 1}\) cancel, leaving
+\begin{align*}
+u_{j+1,\ell}^n+u_{j-1,\ell}^n-u_{j,\ell}^{n+1}-u_{j,\ell}^{n-1}
+&=
+\bigl(2u+h_x^2 u_{xx}+O(h_x^4)\bigr)
+-
+\bigl(2u+\tau^2 u_{tt}+O(\tau^4)\bigr)
+\\
+&=
+h_x^2 u_{xx}-\tau^2 u_{tt}+O(h_x^4+\tau^4).
+\end{align*}
+Dividing by \(h_x^2\),
+\[
+\frac{u_{j+1,\ell}^n-u_{j,\ell}^{n+1}-u_{j,\ell}^{n-1}+u_{j-1,\ell}^n}{h_x^2}
+=
+u_{xx}-\Bigl(\frac{\tau}{h_x}\Bigr)^2 u_{tt}
++
+O\Bigl(h_x^2+\frac{\tau^4}{h_x^2}\Bigr).
+\]
+The \(y\)-term is the same with \((h_y,u_{yy})\). Subtracting from the time difference,
+\[
+\mathcal T
+=
+\bigl(u_t-u_{xx}-u_{yy}\bigr)
++
+\Biggl[\Bigl(\frac{\tau}{h_x}\Bigr)^2+\Bigl(\frac{\tau}{h_y}\Bigr)^2\Biggr]u_{tt}
++
+O\Bigl(\tau^2+h_x^2+h_y^2+\frac{\tau^4}{h_x^2}+\frac{\tau^4}{h_y^2}\Bigr).
+\]
+On solutions of the heat equation the first parenthesis vanishes, so
+\[
+\mathcal T
+=
+\Biggl[\Bigl(\frac{\tau}{h_x}\Bigr)^2+\Bigl(\frac{\tau}{h_y}\Bigr)^2\Biggr]u_{tt}
++
+O\Bigl(\tau^2+h_x^2+h_y^2+\frac{\tau^4}{h_x^2}+\frac{\tau^4}{h_y^2}\Bigr).
+\]
+Consistency means \(\mathcal T\to 0\) as \((h_x,h_y,\tau)\to(0,0,0)\) along the meshes actually used (\cref{def:consistency}). The displayed leading term does not vanish merely because each of \(h_x,h_y,\tau\) tends to zero: the path \(\tau=h_x=h_y\to 0\) leaves a remainder \(2u_{tt}\). The scheme is consistent with \(u_t=\Delta u\) if and only if, in addition,
+\[
+\frac{\tau}{h_x}\to 0,
+\qquad
+\frac{\tau}{h_y}\to 0.
+\]
+Under that restriction the remainder \(O(\tau^4/h_x^2)=\tau^2\cdot(\tau/h_x)^2\) also tends to zero. Parabolic refinement \(\tau=O(h_x^2)\) (and likewise in \(y\)) implies the restriction, hence consistency. If instead \(\tau/h_x\) stays bounded away from zero, the scheme is consistent with the hyperbolic regularization
+\[
+u_t
++
+\Biggl[\Bigl(\frac{\tau}{h_x}\Bigr)^2+\Bigl(\frac{\tau}{h_y}\Bigr)^2\Biggr]u_{tt}
+=
+u_{xx}+u_{yy},
+\]
+not with the heat equation.
+
+\paragraph{Stability.}
+
+On \(\mathbb Z^2\) (or a torus) substitute the Fourier mode
+\[
+U_{j,\ell}^n
+=
+g^n e^{\mathrm i(j\xi+\ell\eta)},
+\qquad
+\xi,\eta\in\mathbb R.
+\]
+Every shift in \(j\) multiplies by \(e^{\mathrm i\xi}\), every shift in \(\ell\) multiplies by \(e^{\mathrm i\eta}\), and a time step multiplies by \(g\). Cancel the never-vanishing factor \(g^n e^{\mathrm i(j\xi+\ell\eta)}\). The left-hand side of the scheme becomes
+\[
+\frac{g-g^{-1}}{2\tau}.
+\]
+The \(x\)-contribution on the right is
+\[
+\frac{e^{\mathrm i\xi}-g-g^{-1}+e^{-\mathrm i\xi}}{h_x^2}
+=
+\frac{2\cos\xi}{h_x^2}-\frac{g+g^{-1}}{h_x^2},
+\]
+and likewise in \(y\). Adding,
+\[
+\frac{g-g^{-1}}{2\tau}
+=
+C-\sigma\bigl(g+g^{-1}\bigr),
+\]
+where
+\[
+C
+\coloneqq
+\frac{2\cos\xi}{h_x^2}+\frac{2\cos\eta}{h_y^2}.
+\]
+Because \(|\cos\xi|\le 1\) and \(|\cos\eta|\le 1\),
+\[
+|C|
+\le
+\frac{2}{h_x^2}+\frac{2}{h_y^2}
+=
+2\sigma.
+\]
+This bound replaces any further trigonometry.
+
+Multiply the cancelled equation by \(g\) (equivalently: restore \(U^{n+1}=g\cdot U^n\) and \(U^{n-1}=g^{-1}U^n\)):
+\[
+\frac{g^2-1}{2\tau}
+=
+Cg-\sigma(g^2+1).
+\]
+Bring every term to the left:
+\[
+\Bigl(\frac{1}{2\tau}+\sigma\Bigr)g^2
+-
+C g
++
+\Bigl(\sigma-\frac{1}{2\tau}\Bigr)
+=
+0.
+\]
+The coefficient of \(g^2\) is \(1/(2\tau)+\sigma\), not \(1/(2\tau)-\sigma\). The constant term is \(\sigma-1/(2\tau)\), not \(-(\sigma+1/(2\tau))\). Those two sign errors produce a different polynomial, and a modulus computed from that polynomial is not the amplification factor of the scheme.
+
+Clear the remaining \(2\tau\) to obtain the equivalent quadratic
+\[
+(1+2\tau\sigma)\,g^2
+-
+2\tau C\,g
++
+(2\tau\sigma-1)
+=
+0.
+\]
+Write \(A=1+2\tau\sigma>0\), \(B=-2\tau C\), \(C_{\mathrm{poly}}=2\tau\sigma-1\). The product of the roots is \(C_{\mathrm{poly}}/A=(2\tau\sigma-1)/(2\tau\sigma+1)\), which is not \(1\) in general. Heat dissipates: one must prove \(|g|\le 1\), not \(|g|=1\). Do not insert the quadratic formula and expand \(|C\pm\sqrt{\Delta}|/|2A|\).
+
+Apply Jury's criterion (\cref{prop:jury}) to \(p(g)=Ag^2+Bg+C_{\mathrm{poly}}\). Both roots satisfy \(|g|\le 1\) if and only if \(p(1)\ge 0\), \(p(-1)\ge 0\), and \(|C_{\mathrm{poly}}|\le A\).
+
+\[
+p(1)
+=
+A+B+C_{\mathrm{poly}}
+=
+4\tau\sigma-2\tau C
+=
+2\tau(2\sigma-C).
+\]
+The bound \(C\le 2\sigma\) gives \(p(1)\ge 0\), with equality at \((\xi,\eta)=(0,0)\).
+
+\[
+p(-1)
+=
+A-B+C_{\mathrm{poly}}
+=
+4\tau\sigma+2\tau C
+=
+2\tau(2\sigma+C).
+\]
+The bound \(C\ge -2\sigma\) gives \(p(-1)\ge 0\).
+
+Finally \(|2\tau\sigma-1|\le 1+2\tau\sigma\). If \(2\tau\sigma\ge 1\) this is \(2\tau\sigma-1\le 1+2\tau\sigma\), i.e.\ \(-1\le 1\). If \(2\tau\sigma<1\) this is \(1-2\tau\sigma\le 1+2\tau\sigma\), i.e.\ \(0\le 4\tau\sigma\). Both hold for every \(\tau\sigma>0\).
+
+The three Jury inequalities are therefore valid for every \(\xi,\eta\) and every \(\tau,h_x,h_y>0\). The scheme is unconditionally von Neumann stable.
+
+When the discriminant is negative the roots are conjugate and
+\[
+|g|^2
+=
+\frac{|2\tau\sigma-1|}{1+2\tau\sigma}
+<1
+\qquad(\tau\sigma>0),
+\]
+which is dissipation, as expected for heat. When the discriminant is nonnegative the roots are real and Jury already keeps them in \([-1,1]\). Either way, the explicit square root is unnecessary.
+
+\paragraph{Summary.}
+
+The two-dimensional Du~Fort--Frankel scheme is explicit and unconditionally von Neumann stable. It is consistent with \(u_t=u_{xx}+u_{yy}\) if and only if \(\tau/h_x\to 0\) and \(\tau/h_y\to 0\). Unconditional stability does not cancel that mesh restriction. Along meshes with \(\tau/h\) bounded away from zero, Lax equivalence (\cref{thm:lax-eq}) does not yield convergence to heat solutions, because consistency fails.
+
+\begin{examnote}[Script for Problem 4]
+\label{examnote:p4}
+Construct: write the 2D replacement and the explicit factor \(1+2\tau\sigma\). Consistency: Taylor to \(\mathcal T=[(\tau/h_x)^2+(\tau/h_y)^2]u_{tt}+O(\cdots)\), then \(\tau/h_x\to 0\), \(\tau/h_y\to 0\). Stability: the cancelled cosine identity, the quadratic \((1+2\tau\sigma)g^2-2\tau C g+(2\tau\sigma-1)=0\) with \(|C|\le 2\sigma\), then Jury. Do not take moduli of the quadratic formula. Do not quote \(|g|=1\); that is Problem~5.
+\end{examnote}

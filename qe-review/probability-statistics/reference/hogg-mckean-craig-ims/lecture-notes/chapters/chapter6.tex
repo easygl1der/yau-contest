@@ -1,0 +1,1765 @@
+% Chapter 6: Maximum Likelihood Methods
+% Hogg, McKean, Craig - Introduction to Mathematical Statistics
+
+\chapter{Maximum Likelihood Methods}\label{chap:mle}
+
+\section*{Chapter 6 Overview}
+
+前几章已经给出两条通往统计推断的路径：一条从抽样分布出发，研究统计量在重复抽样中的行为；另一条从点估计出发，要求估计量至少具有相合性和较小方差。现在问题反过来了：给定一批已经观测到的数据，我们能否让数据本身告诉我们哪个参数最值得相信？
+
+\begin{center}
+\textit{面对观测数据，怎样把``最能解释数据''这一朴素原则变成系统的估计与检验方法？}
+\end{center}
+
+这正是\textbf{最大似然估计（Maximum Likelihood Estimation, MLE）}的出发点。它不先指定某个矩条件，也不先猜测某个估计公式，而是把参数看成变量，选择使观测样本最可能出现的那个参数值。
+
+\textbf{为什么需要最大似然估计？} Chapter 4 的矩估计法直观而易用，但它只利用若干矩条件，未必充分利用了分布模型的全部信息。最大似然估计的优势在于：在适当正则条件下，它不仅相合，而且渐近达到 Rao-Cramér 下界；换言之，在大样本意义下，似然原则把``合理''和``有效''连接了起来。
+
+本章围绕这条主线建立基于似然的统计推断理论：
+
+\begin{itemize}
+\item \textbf{点估计}：MLE 的定义、性质，以及如何通过似然方程求解
+\item \textbf{方差下界}：Rao-Cramér 不等式揭示任何无偏估计的方差都有下界，而 MLE 渐近达到这个下界
+\item \textbf{假设检验}：似然比检验、Wald 检验、Score 检验构成三大类似然检验方法
+\item \textbf{多参数情形}：将理论推广到参数向量的情形
+\item \textbf{EM 算法}：处理缺失数据或隐变量的强大迭代方法
+\end{itemize}
+
+\textbf{本章路线图}：似然函数 $\to$ MLE 定义 $\to$ Rao-Cramér 下界 $\to$ 渐近有效性 $\to$ 似然比检验 $\to$ 多参数扩展 $\to$ EM 算法
+
+\section{6.1 Maximum Likelihood Estimation}\label{sec:6.1}
+
+\subsection{似然函数的起源}
+
+在 Chapter 4 中，我们已经见过矩估计：先挑出分布的某些矩，再让样本矩去匹配总体矩。这个方法的好处是直接，缺点也很明显——同一组数据中除了矩以外还包含更多分布信息。于是一个自然的问题出现了：给定数据 $x_1, x_2, \ldots, x_n$，哪个参数值最``合理''？
+
+似然原则给出的答案非常朴素：选择\textbf{使得观测到当前数据最容易发生的参数值}。这里的``容易发生''不是对未来样本的预测，而是在已经观测到样本以后，对不同参数解释能力的比较。
+
+设 $X_1, \ldots, X_n$ 是来自分布 $f(x;\theta)$ 的 iid 样本，其中 $\theta \in \Omega$ 是未知参数。则样本的联合密度为
+
+\[
+L(\theta; \mathbf{x}) = \prod_{i=1}^n f(x_i; \theta), \quad \theta \in \Omega.
+\label{eq:likelihood-function}
+\]
+
+\textbf{为什么叫``似然''（likelihood）而不是``概率''（probability）？} 关键区别在于观察角度：概率把参数固定、把数据看成变量；似然把数据固定、把参数看成变量。二者形式相同，但统计含义不同。最大化似然，正是在所有候选参数之间比较它们对这份数据的解释力。
+
+定义 $l(\theta) = \log L(\theta)$ 为对数似然函数。使用对数并不改变最大点，却把乘积变成求和，使求导和渐近分析都更透明。
+
+\subsection{MLE 的定义与存在性}
+
+\textbf{最大似然估计量} $\widehat{\theta}$ 是使得似然函数最大化的参数值：
+
+\[
+\widehat{\theta} = \arg\max_{\theta \in \Omega} L(\theta; \mathbf{x}).
+\label{eq:mle-definition-ch6}
+\]
+
+直观上，这个估计量代表``最有可能产生观测数据的参数值''。
+
+当然，一个最大点的定义本身还不等于统计合理性。我们还需要知道：如果真实参数是 $\theta_0$，那么随着样本量增大，似然函数是否真的会把 $\theta_0$ 与错误参数区分开来？下面的定理给出这一点。
+
+\begin{theorem}[似然函数的渐近支撑]\label{th:likelihood-asymptotic}
+设 $\theta_0$ 是参数真值，在正则条件 (R0)--(R2) 下，\footnote{这里的 (R0)--(R2) 分别要求不同参数给出不同分布、支持集不随参数改变、真参数位于参数空间内部。具体定义见附录 \cref{sec:qa-regularity-conditions}。}
+\[
+\lim_{n \to \infty} \mathbb{P}_{\theta_0}\left[ L(\theta_0; \mathbf{X}) > L(\theta; \mathbf{X}) \right] = 1, \quad \forall \theta \neq \theta_0.
+\label{eq:likelihood-asymptotic}
+\]
+\end{theorem}
+
+\textbf{证明思路}：由于 $\theta_0$ 是内点，存在领域使得似然函数在该领域内取得最大值。随着 $n$ 增大，似然函数在 $\theta_0$ 处超过相邻点的概率趋于 1，因此解序列收敛到 $\theta_0$。\footnote{证明关键：记 $Z_i(\theta) = \log\frac{f(X_i;\theta)}{f(X_i;\theta_0)}$，由 Jensen 不等式得 $\mathbb{E}_{\theta_0}[Z_1(\theta)] < 0$，从而似然比以概率1趋向 $\theta_0$。该定理的完整证明见附录 \cref{sec:proof-likelihood-asymptotic}。}
+
+在正则条件下，MLE 可以通过求解\textbf{似然方程（likelihood equation）}得到：
+
+\[
+\frac{\partial l(\theta)}{\partial \theta} = 0.
+\label{eq:likelihood-equation}
+\]
+
+但要注意：\textbf{MLE 不唯一存在，且可能没有解析解}。
+
+\subsection{经典例子}
+
+\begin{example}[正态分布的 MLE]\label{ex:normal-mle}
+设 $X_1, \ldots, X_n \sim N(\theta, \sigma^2)$，其中 $\sigma^2$ 已知，$\theta$ 未知。此时最大化似然等价于最小化平方损失
+\[
+\sum_{i=1}^n (x_i-\theta)^2,
+\]
+因此 MLE 为 $\widehat{\theta}=\bar{x}$。
+
+\textbf{意义}：在正态模型中，样本均值同时由两个原则推出：它既匹配一阶矩，也是让观测样本最可能出现的参数值。这说明矩估计与似然估计有时会重合，但这种重合来自模型结构，而不是一般规律。
+\end{example}
+
+\textbf{定理 6.1.2 的 Invariance 性质}：若 $\widehat{\theta}$ 是 $\theta$ 的 MLE，则对任意函数 $g(\theta)$，$g(\widehat{\theta})$ 是 $g(\theta)$ 的 MLE。
+
+\begin{example}[约束参数空间的 MLE]\label{ex:constrained-mle}
+设 $X_1, \ldots, X_n \sim \text{Bernoulli}(\theta)$，但已知 $\theta \in [0, 1/3]$。若样本均值 $\bar{x} > 1/3$，则 MLE 为 $\widehat{\theta} = 1/3$。
+
+这是因为对数似然在 $\theta < \bar{x}$ 时单调递增，所以在约束边界处取得最大值。
+
+\textbf{启示}：当参数空间有约束时，MLE 可能在边界取得。
+\end{example}
+
+\begin{example}[Cauchy 分布的 MLE]\label{ex:cauchy-mle}
+设 $X_1, \ldots, X_5$ 来自标准 Cauchy 分布 $f(x;\theta) = \frac{1}{\pi[1+(x-\theta)^2]}$。对于数据 $(-1.94, 0.59, -5.98, -0.08, -0.77)$，MLE 需要数值方法求解。
+
+Cauchy 分布的似然函数无解析解，需通过数值优化（如 Newton 法）获得 $\widehat{\theta}$。这在实际应用中很常见。
+
+\textbf{注}：Cauchy 分布不满足某些正则条件，但其 MLE 仍然是一致的。
+\end{example}
+
+\subsection{MLE 的一致性}
+
+下面证明在正则条件下，MLE 是真值的相合估计量。
+
+\begin{theorem}[MLE 的相合性]\label{th:mle-consistency}
+在正则条件 (R0)-(R2) 下，设 $\widehat{\theta}_n$ 是似然方程的解序列。则
+\[
+\widehat{\theta}_n \xrightarrow{P} \theta_0.
+\]
+\end{theorem}
+
+\textbf{证明思路}：由于 $\theta_0$ 是内点，存在领域使得似然函数在该领域内取得最大值。随着 $n$ 增大，似然函数在 $\theta_0$ 处超过相邻点的概率趋于 1，因此解序列收敛到 $\theta_0$。\footnote{证明关键：记 $Z_i(\theta) = \log\frac{f(X_i;\theta)}{f(X_i;\theta_0)}$，由 Jensen 不等式得 $\mathbb{E}_{\theta_0}[Z_1(\theta)] < 0$，从而似然比以概率1趋向 $\theta_0$。该定理的完整证明见附录 \cref{sec:proof-likelihood-asymptotic}。}
+
+这一定理保证了：在大样本下，MLE 任意接近真值的概率趋于 1。
+
+\subsection{Summary of Section 6.1}
+
+\begin{itemize}
+\item 似然函数 $L(\theta) = \prod_{i=1}^n f(x_i; \theta)$ 衡量参数 $\theta$ 产生观测数据的``可能性''
+\item MLE $\widehat{\theta}$ 最大化似然函数，是``最可能''产生数据的参数值
+\item 在正则条件下，MLE 是一致的（$\widehat{\theta}_n \xrightarrow{P} \theta_0$）
+\item MLE 可以通过求解似然方程 $\partial l(\theta)/\partial \theta = 0$ 得到
+\item MLE 具有不变性：若 $\widehat{\theta}$ 是 $\theta$ 的 MLE，则 $g(\widehat{\theta})$ 是 $g(\theta)$ 的 MLE
+\end{itemize}
+
+\section{6.2 Rao-Cramér Lower Bound and Efficiency}\label{sec:6.2}
+
+\subsection{为什么估计量的方差有下界？}
+
+相合性解决的是方向问题：样本量足够大时，估计量会不会靠近真值？但统计推断还关心速度问题：同样都能靠近真值，谁靠得更快，谁的波动更小？
+
+这就引出一个自然问题：\textbf{在给定模型中，任意无偏估计量的方差是否存在不可突破的下界？} 如果存在这样的下界，那么它就给出了估计精度的理论标尺；若某个估计量达到它，我们就知道这个估计量已经没有无偏改进空间。
+
+Rao-Cramér 下界回答了这个问题。
+
+\subsection{Fisher 信息量}
+
+要描述这个下界，需要先量化一个样本中到底含有多少关于 $\theta$ 的信息。这就是\textbf{Fisher 信息量}。它的出发点是：如果参数微小变化会让对数密度剧烈变化，那么数据就容易分辨不同参数；反之，若对数密度变化迟钝，任何估计量都难以精确。
+
+设 $X \sim f(x;\theta)$，定义\textbf{得分函数（score function）}为
+
+\[
+S(X; \theta) = \frac{\partial \log f(X; \theta)}{\partial \theta}.
+\label{eq:score-function}
+\]
+
+在使用下面这些公式时，正则条件的角色非常具体：不同参数必须对应不同分布，支持集不能随参数改变，真参数要落在参数空间内部，并且对密度积分可以在积分号下求导。没有这些条件，得分函数未必期望为零，Fisher 信息也未必能写成二阶导数的负期望。也就是说，正则条件不是形式主义，而是在保证``微分似然''可以合法地代表模型中的信息。
+
+得分函数的期望为零（这是正则条件的直接结果）：
+
+\[
+\mathbb{E}_\theta[S(X; \theta)] = 0.
+\label{eq:score-expectation-zero}
+\]
+
+\textbf{Fisher 信息量}定义为得分函数的方差：
+
+\[
+I(\theta) = \text{var}(S(X; \theta)) = \mathbb{E}_\theta\left[ \left( \frac{\partial \log f(X; \theta)}{\partial \theta} \right)^2 \right].
+\label{eq:fisher-information}
+\]
+
+直观上理解：若 $\theta$ 的微小变化会导致密度函数较大的变化，则我们对 $\theta$ 的了解就更多，信息量就越大。
+
+等价的计算公式（通常更方便）是
+
+\[
+I(\theta) = -\mathbb{E}_\theta\left[ \frac{\partial^2 \log f(X; \theta)}{\partial \theta^2} \right].
+\label{eq:fisher-information-negative-hessian}
+\]
+
+对于样本 $X_1, \ldots, X_n$（iid），Fisher 信息为单个样本信息的 $n$ 倍：
+
+\[
+I_n(\theta) = n I(\theta).
+\label{eq:fisher-information-sample}
+\]
+
+\begin{example}[Bernoulli 分布的 Fisher 信息]\label{ex:bernoulli-fisher-info}
+设 $X \sim \text{Bernoulli}(\theta)$。直接计算得
+\[
+I(\theta)=\frac{1}{\theta(1-\theta)}.
+\]
+
+\textbf{含义}：当 $\theta$ 接近 $0$ 或 $1$ 时，分布几乎确定，少量样本就能提供强烈信息；当 $\theta=1/2$ 时，成功与失败最难区分，信息量最小。这个例子说明 Fisher 信息不是抽象符号，而是在量化模型对参数变化的敏感程度。
+\end{example}
+
+\begin{example}[位置族的 Fisher 信息]\label{ex:location-family-fisher}
+设 $X = \theta + e$，其中 $e$ 的密度为 $f(z)$，与 $\theta$ 无关。则
+
+\[
+f_X(x;\theta) = f(x-\theta).
+\]
+
+可以验证，Fisher 信息 $I(\theta)$ 与 $\theta$ 无关，仅由误差分布 $f$ 决定。\footnote{对于 Bernoulli 分布 $f(x;p) = p^x(1-p)^{1-x}$，信息量 $I(p) = 1/[p(1-p)]$；对于位置族 $f(x-\theta)$，$I(\theta) = \mathbb{E}[(\partial\log f/\partial\theta)^2]$。详细推导见附录 \cref{sec:rao-cramer-proof}。}
+
+对于 Laplace 分布 $f(z) = \frac{1}{2}e^{-|z|}$，信息 $I(\theta) = 1$。
+\end{example}
+
+\subsection{Rao-Cramér 不等式}
+
+现在我们可以陈述主要结果。
+
+\begin{theorem}[Rao-Cramér 下界]\label{th:rao-cramer-bound}
+设 $X_1, \ldots, X_n$ iid $\sim f(x;\theta)$，满足正则条件 (R0)-(R4)。令 $Y = u(X_1, \ldots, X_n)$ 是任意统计量，其期望为 $\mathbb{E}_\theta[Y] = k(\theta)$。则
+
+\[
+\text{var}(Y) \geq \frac{[k'(\theta)]^2}{n I(\theta)}.
+\label{eq:rao-cramer-bound}
+\]
+
+特别地，若 $Y$ 是 $\theta$ 的无偏估计（$k(\theta) = \theta$），则
+
+\[
+\text{var}(Y) \geq \frac{1}{n I(\theta)}.
+\label{eq:rao-cramer-bound-unbiased}
+\]
+\end{theorem}
+
+\textbf{证明思路}：利用 Cauchy-Schwarz 不等式和得分函数的性质。令 $Z = \sum_{i=1}^n \frac{\partial \log f(X_i;\theta)}{\partial \theta}$，则 $\mathbb{E}(Z) = 0$，$\text{var}(Z) = nI(\theta)$。由 $k'(\theta) = \mathbb{E}(YZ)$ 和 $|\text{corr}(Y,Z)| \leq 1$ 可得结论。\footnote{由 Cauchy-Schwarz：$[k'(\theta)]^2 \leq \text{var}(Y) \cdot nI(\theta)$，即 $\text{var}(\widehat{\theta}) \geq 1/[nI(\theta)]$。Rao-Cramér 下界的完整证明见附录 \cref{sec:rao-cramer-proof}。}
+
+\textbf{直观理解}：Fisher 信息量 $I(\theta)$ 决定了估计精度能达到的极限。信息量越大，下界越低，我们能越精确地估计 $\theta$。
+
+\subsection{有效估计量}
+
+\begin{definition}[有效估计量]\label{def:efficient-estimator}
+若无偏估计量 $\widehat{\theta}$ 的方差达到 Rao-Cramér 下界，即
+\[
+\text{var}(\widehat{\theta}) = \frac{1}{n I(\theta)},
+\]
+则称 $\widehat{\theta}$ 为 $\theta$ 的\textbf{有效估计量（efficient estimator）}。
+\end{definition}
+
+\begin{example}[Bernoulli 分布的有效估计]\label{ex:bernoulli-efficient}
+对于 Bernoulli 分布，我们有 $I(\theta) = 1/[\theta(1-\theta)]$，因此 Rao-Cramér 下界为 $\theta(1-\theta)/n$。
+
+样本均值 $\bar{X}$ 是 $\theta$ 的无偏估计，其方差为 $\text{var}(\bar{X}) = \theta(1-\theta)/n$。
+
+因此 $\bar{X}$ 是有效估计量！
+
+\textbf{这意味着}：对于 Bernoulli 分布，不存在任何无偏估计量比样本均值更有效。
+\end{example}
+
+\begin{example}[正态分布的样本均值]\label{ex:normal-efficient}
+对于 $N(\theta, \sigma^2)$（$\sigma^2$ 已知），Fisher 信息 $I(\theta) = 1/\sigma^2$，Rao-Cramér 下界为 $\sigma^2/n$。
+
+样本均值 $\bar{X}$ 的方差为 $\sigma^2/n$，因此 $\bar{X}$ 是有效估计量。
+\end{example}
+
+但有效估计量并不总是存在。
+
+\begin{example}[Beta($\theta$, 1) 分布]\label{ex:beta-not-efficient}
+设 $X_1, \ldots, X_n \sim \text{beta}(\theta, 1)$，密度为 $f(x;\theta) = \theta x^{\theta-1}$，$0 < x < 1$。
+
+MLE 为 $\widehat{\theta} = -n / \sum_{i=1}^n \log X_i$。
+
+该估计量是有偏的，其方差为 $\text{var}(\widehat{\theta}) = \theta^2 n^2 / [(n-1)^2(n-2)]$，而 Rao-Cramér 下界为 $\theta^2/n$。
+
+因此 $\widehat{\theta}$ 不是有效的，但修正偏后的估计量 $[(n-1)/n]\widehat{\theta}$ 是渐近有效的。\footnote{Beta$(\theta,1)$ 分布的 MLE 为 $\widehat{\theta}=-n/\sum_{i=1}^n\log X_i$，其方差为 $\theta^2 n^2/[(n-1)^2(n-2)]$，Rao-Cramér 下界为 $\theta^2/n$。Beta 分布 MLE 方差的推导见附录 \cref{sec:mle-asymptotic-proof}。}
+\end{example}
+
+\subsection{渐近有效性}
+
+由于有效估计量在有限样本下并不总是存在，我们引入渐近有效的概念。
+
+\begin{definition}[渐近有效性]\label{def:asymptotic-efficiency}
+设 $\widehat{\theta}_n$ 是估计量序列，满足
+\[
+\sqrt{n}(\widehat{\theta}_n - \theta_0) \xrightarrow{D} N(0, \sigma^2_{\widehat{\theta}}).
+\]
+
+则 $\widehat{\theta}_n$ 的\textbf{渐近效率（asymptotic efficiency）}定义为
+\[
+e(\widehat{\theta}_n) = \frac{1/I(\theta_0)}{\sigma^2_{\widehat{\theta}}}.
+\label{eq:asymptotic-efficiency}
+\]
+
+若 $e(\widehat{\theta}_n) = 1$，则称 $\widehat{\theta}_n$ 是\textbf{渐近有效的}。
+\end{definition}
+
+下面定理表明，在正则条件下，MLE 是渐近有效的。
+
+\begin{theorem}[MLE 的渐近正态性和有效性]\label{th:mle-asymptotic}
+在正则条件 (R0)-(R5) 下，设 $\widehat{\theta}_n$ 是似然方程的一致解序列。则
+
+\[
+\sqrt{n}(\widehat{\theta}_n - \theta_0) \xrightarrow{D} N\left(0, \frac{1}{I(\theta_0)}\right).
+\label{eq:mle-asymptotic-normal}
+\]
+\end{theorem}
+
+\textbf{证明思路}：对数似然函数在 $\theta_0$ 处 Taylor 展开，利用大数定律和中心极限定理。\footnote{关键步骤：$\sqrt{n}(\widehat{\theta}-\theta_0) \Rightarrow N(0, I(\theta_0)^{-1})$，其中 $I(\theta_0)$ 为 Fisher 信息量。MLE 渐近正态性的完整证明见附录 \cref{sec:mle-asymptotic-proof}。}
+
+这一定理意味着：\textbf{MLE 渐近地达到 Rao-Cramér 下界}。这是最大似然估计最重要的最优性结果。
+
+\subsection{渐近相对效率}
+
+在比较两个估计量时，渐近相对效率（ARE）提供了统一的标准。
+
+\begin{definition}[渐近相对效率]\label{def:are}
+设 $\widehat{\theta}_{1n}$ 和 $\widehat{\theta}_{2n}$ 是两个渐近正态估计量，满足
+\[
+\sqrt{n}(\widehat{\theta}_{in} - \theta_0) \xrightarrow{D} N(0, \sigma_i^2), \quad i=1,2.
+\]
+
+则 $\widehat{\theta}_{1n}$ 相对于 $\widehat{\theta}_{2n}$ 的 ARE 定义为
+\[
+\text{ARE}(\widehat{\theta}_{1n}, \widehat{\theta}_{2n}) = \frac{\sigma_2^2}{\sigma_1^2}.
+\label{eq:are-definition}
+\]
+\end{definition}
+
+\begin{example}[中位数与均值的 ARE]\label{ex:median-mean-are}
+考虑位置模型 $X_i = \theta + e_i$：
+
+\begin{itemize}
+\item[(a)] 若 $e_i \sim \text{Laplace}(0,1)$，则 MLE 是样本中位数 $Q_2$，信息 $I(\theta) = 1$，因此 $\text{ARE}(Q_2, \bar{X}) = 2$。这意味着在大样本下，中位数比均值更有效一倍！
+\item[(b)] 若 $e_i \sim N(0,1)$，则 $\text{ARE}(Q_2, \bar{X}) = 2/\pi \approx 0.636$。此时均值更有效。
+\end{itemize}
+
+\textbf{启示}：没有``最优''的估计量——估计量的效率完全由真实分布决定。选择估计量时应该考虑数据的特点。
+\end{example}
+
+\subsection{Summary of Section 6.2}
+
+\begin{itemize}
+\item Fisher 信息量 $I(\theta) = \text{var}(\partial \log f/\partial \theta)$ 衡量分布携带的关于 $\theta$ 的信息
+\item Rao-Cramér 下界：任何无偏估计量 $\widehat{\theta}$ 的方差满足 $\text{var}(\widehat{\theta}) \geq 1/[nI(\theta)]$
+\item 达到下界的估计量称为有效估计量（如正态均值、二项比例的样本均值）
+\item 在正则条件下，MLE 是一致且渐近有效的：$\sqrt{n}(\widehat{\theta} - \theta_0) \xrightarrow{D} N(0, 1/I(\theta_0))$
+\item ARE 允许我们比较不同估计量的渐近效率
+\end{itemize}
+
+\section{6.3 Maximum Likelihood Tests}\label{sec:6.3}
+
+\subsection{从估计到检验}
+
+似然函数不仅能指出哪个参数最能解释数据，也能衡量一个被指定的原假设解释数据的能力。于是，估计问题自然过渡到检验问题：如果 $H_0$ 限定了参数值，而不受限制的 MLE 给出了另一个更高的似然值，那么二者差距有多大时，我们才认为 $H_0$ 已经不可信？
+
+设 $X_1, \ldots, X_n \sim f(x;\theta)$，考虑双边假设
+
+\[
+H_0: \theta = \theta_0 \quad \text{vs} \quad H_1: \theta \neq \theta_0.
+\label{eq:simple-hypothesis-test}
+\]
+
+直觉告诉我们：若 $H_0$ 为真，则似然函数在 $\theta_0$ 处应该接近最大值；若 $H_1$ 为真，似然函数在 $\theta_0$ 处应该明显小于在 $\widehat{\theta}$ 处。
+
+定义\textbf{似然比（likelihood ratio）}：
+
+\[
+\Lambda = \frac{L(\theta_0)}{L(\widehat{\theta})}.
+\label{eq:likelihood-ratio}
+\]
+
+显然 $\Lambda \leq 1$。若 $\Lambda$ 太小（即 $L(\theta_0)$ 远小于 $L(\widehat{\theta})$），则拒绝 $H_0$。
+
+\subsection{似然比检验}
+
+\fbox{
+\parbox{0.9\textwidth}{
+\textbf{似然比检验（LRT）}：拒绝 $H_0$ 当且仅当 $\Lambda \leq c$，其中 $c$ 满足 $\alpha = \sup_{\theta \in \omega} \mathbb{P}_{\theta}(\Lambda \leq c)$。
+}
+}
+
+但通常我们关注简单原假设 $H_0: \theta = \theta_0$，此时临界值由 $\mathbb{P}_{\theta_0}(\Lambda \leq c) = \alpha$ 确定。
+
+\begin{example}[指数分布的 LRT]\label{ex:exponential-lrt}
+设 $X_1, \ldots, X_n \sim \text{Exp}(\theta)$，密度 $f(x;\theta) = \theta^{-1}e^{-x/\theta}$，$x > 0$。
+
+似然函数 $L(\theta) = \theta^{-n}\exp\{-n\bar{x}/\theta\}$。MLE 为 $\widehat{\theta} = \bar{x}$。
+
+似然比
+\[
+\Lambda = e^n \left(\frac{\bar{x}}{\theta_0}\right)^n \exp\{-n\bar{x}/\theta_0\}.
+\]
+
+可以证明，$\Lambda \leq c$ 等价于 $\bar{x}/\theta_0 \leq c_1$ 或 $\bar{x}/\theta_0 \geq c_2$。
+
+\textbf{注意}：当 $H_0$ 为真时，$2n\bar{X}/\theta_0 \sim \chi^2(2n)$。因此临界值可从 $\chi^2$ 分布获得。
+\end{example}
+
+\begin{example}[正态均值的 LRT]\label{ex:normal-lrt}
+设 $X_1, \ldots, X_n \sim N(\theta, \sigma^2)$，$\sigma^2$ 已知。则
+
+\[
+-2\log\Lambda = \left( \frac{\bar{X} - \theta_0}{\sigma/\sqrt{n}} \right)^2 \sim \chi^2(1) \quad (H_0 \text{ 下}).
+\]
+
+因此拒绝域为 $-2\log\Lambda \geq \chi_\alpha^2(1)$。
+
+\textbf{这正是} Chapter 4 中的 $z$ 检验！似然比检验统一了许多经典检验。
+\end{example}
+
+\subsection{三大似然检验}
+
+定理 6.3.1 揭示了似然比统计量在正则条件下的渐近分布。
+
+\begin{theorem}[似然比检验的渐近分布]\label{th:lrt-asymptotic}
+在正则条件下，若 $H_0: \theta = \theta_0$ 为真，则
+
+\[
+-2\log\Lambda \xrightarrow{D} \chi^2(1).
+\label{eq:lrt-asymptotic}
+\]
+\end{theorem}
+
+这一定理意味着：\textbf{在正则条件下，似然比检验可以用 $\chi^2(1)$ 临界值构造渐近水平 $\alpha$ 的检验}。
+
+除了似然比检验，还有两种常用的似然型检验：
+
+\begin{enumerate}
+\item \textbf{Wald 检验}：基于 $\widehat{\theta}$ 与 $\theta_0$ 的距离
+\[
+\chi_W^2 = n I(\widehat{\theta})(\widehat{\theta} - \theta_0)^2 \xrightarrow{D} \chi^2(1).
+\label{eq:wald-statistic}
+\]
+
+\item \textbf{Score 检验}：基于得分函数在 $\theta_0$ 处的值
+\[
+\chi_R^2 = \frac{[l'(\theta_0)]^2}{n I(\theta_0)} \xrightarrow{D} \chi^2(1).
+\label{eq:score-statistic}
+\]
+\end{enumerate}
+
+\begin{remark}
+\textbf{三个统计量的关系}：当 $n$ 足够大时，$\chi_L^2 \approx \chi_W^2 \approx \chi_R^2$。这三种检验在大样本下是等价的。
+
+这种等价的底层原因，是它们都在同一个点 $\theta_0$ 附近对对数似然曲线做二阶近似。LRT 比较的是``约束最大值''和``无约束最大值''的高度差；Wald 检验看的是无约束 MLE 离 $\theta_0$ 有多远；Score 检验看的是在 $\theta_0$ 处曲线斜率是否已经明显不为零。有限样本下三者可能给出不同数值，但在正则条件下，它们捕捉的是同一个局部二次形。
+
+在实际中：
+\begin{itemize}
+\item 若已有 MLE，使用 Wald 检验最方便
+\item 若求 MLE 困难，但可计算得分，使用 Score 检验
+\item 若两种都不方便，使用似然比检验（需要分别求限制和未限制的 MLE）
+\end{itemize}
+\end{remark}
+
+\begin{example}[正态方差的 Score 检验]\label{ex:normal-variance-score}
+设 $X_1, \ldots, X_n \sim N(\mu, \theta)$，$\mu$ 已知。要检验 $H_0: \theta = \theta_0$。
+
+得分函数
+\[
+S(\theta)=\frac{\partial l(\theta)}{\partial \theta}
+= -\frac{n}{2\theta}+\frac{1}{2\theta^2}\sum_{i=1}^n (X_i-\mu)^2,
+\]
+信息 $I(\theta)=1/(2\theta^2)$。
+
+Score 统计量 $\chi_R^2 = \frac{[\sum(X_i-\mu)^2 - n\theta_0]^2}{2n\theta_0^2}$。
+
+当 $H_0$ 为真时，$\chi_R^2 \xrightarrow{D} \chi^2(1)$。
+\end{example}
+
+\subsection{Summary of Section 6.3}
+
+\begin{itemize}
+\item 似然比检验拒绝 $H_0$ 当 $\Lambda = L(\theta_0)/L(\widehat{\theta}) \leq c$
+\item 三大似然检验：LRT、Wald 检验、Score 检验，在大样本下都渐近服从 $\chi^2(1)$
+\item 对于正态均值检验，Wald 检验化为我们熟悉的 $z$ 检验
+\item 选择哪种检验取决于计算的便利性
+\end{itemize}
+
+\section{6.4 Multiparameter Case: Estimation}\label{sec:6.4}
+
+\subsection{为什么要考虑多参数？}
+
+到目前为止，我们把 $\theta$ 看成一个实数。这个假设让公式简洁，却不是实际模型的常态。真实模型往往同时包含位置、尺度、形状或混合比例等多个未知量；如果只估计其中一个而忽略其他参数，似然理论就无法完整描述估计量之间的相互影响。
+
+实际统计问题中，多数分布有多个参数。例如：
+
+\begin{itemize}
+\item 正态分布 $N(\mu, \sigma^2)$ 有两个参数：$\mu$ 和 $\sigma^2$
+\item Gamma 分布 $\Gamma(\alpha, \beta)$ 有两个参数
+\item 多项分布有 $k-1$ 个参数
+\end{itemize}
+
+将 MLE 理论推广到多参数情形，是理论完整性和实际应用的必然要求。
+
+\subsection{多参数似然函数}
+
+设 $\boldsymbol{\theta} = (\theta_1, \ldots, \theta_p)' \in \Omega \subset \mathbb{R}^p$。似然函数为
+
+\[
+L(\boldsymbol{\theta}) = \prod_{i=1}^n f(x_i; \boldsymbol{\theta}), \quad l(\boldsymbol{\theta}) = \sum_{i=1}^n \log f(x_i; \boldsymbol{\theta}).
+\label{eq:multiparameter-likelihood}
+\]
+
+MLE $\widehat{\boldsymbol{\theta}}$ 通过求解 Score 向量方程组得到：
+
+\[
+\frac{\partial l(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}} = \mathbf{0}.
+\label{eq:score-equation-multiparameter}
+\]
+
+\begin{example}[正态分布的 MLE]\label{ex:normal-mle-multiparameter}
+设 $X_1, \ldots, X_n \sim N(\mu, \sigma^2)$，参数 $\boldsymbol{\theta} = (\mu, \sigma^2)'$。
+
+对数似然：
+\[
+l(\mu, \sigma^2) = -\frac{n}{2}\log(2\pi) - \frac{n}{2}\log\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2.
+\]
+
+求偏导并令为零：
+\[
+\frac{\partial l}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^n (x_i - \mu) = 0 \Rightarrow \widehat{\mu} = \bar{x},
+\]
+\[
+\frac{\partial l}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2(\sigma^2)^2}\sum_{i=1}^n (x_i - \mu)^2 = 0 \Rightarrow \widehat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2.
+\]
+
+\textbf{结论}：样本均值和样本方差（除以 $n$）是 MLE。
+\end{example}
+
+\begin{example}[Laplace 分布的 MLE]\label{ex:laplace-mle-multiparameter}
+设 $X_1, \ldots, X_n \sim \text{Laplace}(a, b)$，密度 $f(x) = \frac{1}{2b}\exp\{-|x-a|/b\}$，参数 $\boldsymbol{\theta} = (a, b)'$。
+
+MLE：
+\begin{itemize}
+\item 位置参数 $a$：$\widehat{a} = Q_2$（样本中位数），与 $b$ 无关
+\item 尺度参数 $b$：$\widehat{b} = \frac{1}{n}\sum_{i=1}^n |X_i - Q_2|$
+\end{itemize}
+
+\textbf{启示}：对于某些分布，参数的 MLE 可以分别求解。
+\end{example}
+
+\subsection{信息矩阵}
+
+在多参数情形，Fisher 信息由一个矩阵——\textbf{信息矩阵（information matrix）}给出：
+
+\[
+\mathbf{I}(\boldsymbol{\theta}) = \text{Cov}\left( \nabla \log f(X; \boldsymbol{\theta}) \right),
+\label{eq:information-matrix}
+\]
+
+其中 $\nabla \log f = (\partial \log f/\partial \theta_1, \ldots, \partial \log f/\partial \theta_p)'$。
+
+信息矩阵的第 $(j,k)$ 个元素为
+
+\[
+I_{jk}(\boldsymbol{\theta}) = \mathbb{E}_\theta\left[ \frac{\partial \log f}{\partial \theta_j} \cdot \frac{\partial \log f}{\partial \theta_k} \right] = -\mathbb{E}_\theta\left[ \frac{\partial^2 \log f}{\partial \theta_j \partial \theta_k} \right].
+\label{eq:information-matrix-elements}
+\]
+
+对于样本，信息矩阵是单个样本信息的 $n$ 倍：$\mathbf{I}_n(\boldsymbol{\theta}) = n\mathbf{I}(\boldsymbol{\theta})$。
+
+\begin{example}[正态分布的信息矩阵]\label{ex:normal-information-matrix}
+设 $X \sim N(\mu, \sigma^2)$，记 $\theta_1 = \mu$，$\theta_2 = \sigma^2$。
+
+对数似然偏导数：
+\[
+\frac{\partial \log f}{\partial \mu} = \frac{x-\mu}{\sigma^2}, \quad
+\frac{\partial \log f}{\partial \sigma^2} = -\frac{1}{2\sigma^2} + \frac{(x-\mu)^2}{2(\sigma^2)^2}.
+\]
+
+计算二阶偏导数的期望，可得信息矩阵
+
+\[
+\mathbf{I}(\mu, \sigma^2) = \begin{pmatrix} \frac{1}{\sigma^2} & 0 \\ 0 & \frac{1}{2(\sigma^2)^2} \end{pmatrix}.
+\label{eq:normal-information-matrix}
+\]
+
+注意对角线元素，这意味着 $\mu$ 和 $\sigma^2$ 的信息在正态分布下是独立的！\footnote{正态信息矩阵为对角阵：$I_{11} = 1/\sigma^2$，$I_{22} = 1/[2(\sigma^2)^2]$，$I_{12} = 0$。这意味着 $\mu$ 和 $\sigma^2$ 的估计互不影响。正态分布信息矩阵的详细计算见附录 \cref{sec:normal-information-matrix-derivation}。}
+\end{example}
+
+\subsection{多参数 Rao-Cramér 下界}
+
+在多参数情形，单个参数 $\theta_j$ 的无偏估计量 $\widehat{\theta}_j$ 满足
+
+\[
+\text{var}(\widehat{\theta}_j) \geq \frac{1}{n} [\mathbf{I}^{-1}(\boldsymbol{\theta})]_{jj}.
+\label{eq:multiparameter-rao-cramer}
+\]
+
+特别地，当信息矩阵是对角矩阵时，每个参数的 Rao-Cramér 下界与其单参数情形相同。
+
+\begin{example}[正态方差估计的效率]\label{ex:normal-variance-efficiency}
+对于 $N(\mu, \sigma^2)$，由信息矩阵可知 $\sigma^2$ 的 Rao-Cramér 下界为 $2(\sigma^2)^2/n$。
+
+样本方差 $S^2$（无偏估计）的方差为 $2(\sigma^2)^2/(n-1)$，因此不是有效的，但渐近有效。
+\end{example}
+
+\subsection{多参数 MLE 的渐近性质}
+
+\begin{theorem}[多参数 MLE 的渐近分布]\label{th:multiparameter-mle-asymptotic}
+在正则条件下，设 $\widehat{\boldsymbol{\theta}}_n$ 是一致解序列。则
+
+\[
+\sqrt{n}(\widehat{\boldsymbol{\theta}}_n - \boldsymbol{\theta}_0) \xrightarrow{D} N_p(\mathbf{0}, \mathbf{I}^{-1}(\boldsymbol{\theta}_0)).
+\label{eq:multiparameter-mle-asymptotic}
+\]
+\end{theorem}
+
+\textbf{含义}：每个参数分量 $\widehat{\theta}_{nj}$ 满足
+\[
+\sqrt{n}(\widehat{\theta}_{nj} - \theta_{0j}) \xrightarrow{D} N(0, [\mathbf{I}^{-1}(\boldsymbol{\theta}_0)]_{jj}),
+\]
+即 $\widehat{\theta}_{nj}$ 是渐近有效的。
+
+对于参数函数 $g(\boldsymbol{\theta})$，由 Delta 方法可得类似结论。
+
+\begin{example}[正态协方差矩阵估计]\label{ex:covariance-estimation}
+设 $X_1, \ldots, X_n \sim N_p(\boldsymbol{\mu}, \boldsymbol{\Sigma})$。MLE 为样本均值 $\bar{X}$ 和样本协方差矩阵 $\mathbf{S} = \frac{1}{n}\sum(X_i - \bar{X})(X_i - \bar{X})'$。
+
+可以证明 $\bar{X}$ 和 $\mathbf{S}$ 联合渐近正态，且达到信息矩阵下界。
+\end{example}
+
+\subsection{Summary of Section 6.4}
+
+\begin{itemize}
+\item 多参数情形下，MLE 通过同时求解所有参数的 Score 方程得到
+\item 信息矩阵 $\mathbf{I}(\boldsymbol{\theta})$ 是 Fisher 信息在多参数情形下的推广
+\item Rao-Cramér 下界由信息矩阵的逆给出：$\text{var}(\widehat{\theta}_j) \geq \frac{1}{n}[\mathbf{I}^{-1}]_{jj}$
+\item 在正则条件下，多参数 MLE 联合渐近正态：$\sqrt{n}(\widehat{\boldsymbol{\theta}} - \boldsymbol{\theta}) \xrightarrow{D} N_p(\mathbf{0}, \mathbf{I}^{-1})$
+\item 信息矩阵的对角元素给出每个参数的独立信息
+\end{itemize}
+
+\section{6.5 Multiparameter Case: Testing}\label{sec:6.5}
+
+\subsection{多参数假设检验的框架}
+
+多参数检验的本质，是比较两个优化问题：一个允许参数在整个空间中自由选择，另一个强迫参数满足若干约束。若约束后的最大似然几乎没有下降，数据就没有反对这些约束；若下降显著，约束就难以解释观测数据。
+
+在多参数情形，假设通常规定参数属于参数空间的某个子集。
+
+设 $\Omega \subset \mathbb{R}^p$ 是完整的参数空间，$\omega \subset \Omega$ 是由 $q$ 个约束定义的子空间。考虑假设
+
+\[
+H_0: \boldsymbol{\theta} \in \omega \quad \text{vs} \quad H_1: \boldsymbol{\theta} \in \Omega \cap \omega^c.
+\label{eq:multiparameter-hypothesis}
+\]
+
+例如，对于 $N(\mu, \sigma^2)$，检验 $H_0: \mu = \mu_0$ 相当于检验约束 $\mu = \mu_0$ 下的子空间。
+
+似然比检验推广为
+
+\[
+\Lambda = \frac{\max_{\boldsymbol{\theta} \in \omega} L(\boldsymbol{\theta})}{\max_{\boldsymbol{\theta} \in \Omega} L(\boldsymbol{\theta})}.
+\label{eq:multiparameter-lrt}
+\]
+
+定理 6.5.1 给出了其渐近分布。
+
+\begin{theorem}[多参数似然比检验的渐近分布]\label{th:multiparameter-lrt}
+在正则条件下，若 $H_0$ 由 $q$ 个独立约束定义，则
+
+\[
+-2\log\Lambda \xrightarrow{D} \chi^2(q).
+\label{eq:multiparameter-lrt-asymptotic}
+\]
+\end{theorem}
+
+\textbf{含义}：渐近分布的自由度等于约束的个数，而不是原始参数的个数。
+
+\begin{example}[正态均值的检验]\label{ex:normal-mean-test-multiparameter}
+设 $X_1, \ldots, X_n \sim N(\mu, \sigma^2)$，检验 $H_0: \mu = \mu_0$（$\sigma^2$ 未知）。
+
+全空间 $\Omega = \{(\mu, \sigma^2): \mu \in \mathbb{R}, \sigma^2 > 0\}$，约束子空间 $\omega = \{(\mu_0, \sigma^2): \sigma^2 > 0\}$。
+
+似然比统计量简化为
+
+\[
+\Lambda = \left( \frac{\sum(X_i - \bar{X})^2}{\sum(X_i - \mu_0)^2} \right)^{n/2}.
+\]
+
+经过推导，$-2\log\Lambda$ 等价于 $t$ 统计量的平方：
+
+\[
+-2\log\Lambda = \frac{n(\bar{X} - \mu_0)^2}{\sum(X_i - \bar{X})^2/(n-1)} \cdot (n-1) \sim \chi^2(1).
+\]
+
+这与 $t$ 检验 完全一致！
+
+\textbf{启示}：对于正态分布，似然比检验就是我们熟悉的 $t$ 检验。
+\end{example}
+
+\begin{example}[二项比例的检验]\label{ex:binomial-proportion-test}
+比较两个独立二项分布的比例 $p_1$ 和 $p_2$。设 $X \sim \text{Binomial}(n_1, p_1)$，$Y \sim \text{Binomial}(n_2, p_2)$，检验 $H_0: p_1 = p_2$。
+
+Wald 检验统计量：
+\[
+\chi_W^2 = \frac{(\widehat{p}_1 - \widehat{p}_2)^2}{\widehat{p}(1-\widehat{p})(1/n_1 + 1/n_2)} \xrightarrow{D} \chi^2(1),
+\]
+其中 $\widehat{p} = (n_1\widehat{p}_1 + n_2\widehat{p}_2)/(n_1 + n_2)$ 是合并后的比例估计。
+
+渐近置信区间：
+\[
+\widehat{p}_1 - \widehat{p}_2 \pm z_{\alpha/2}\sqrt{\frac{\widehat{p}_1(1-\widehat{p}_1)}{n_1} + \frac{\widehat{p}_2(1-\widehat{p}_2)}{n_2}}.
+\]
+\end{example}
+
+\begin{remark}
+\textbf{三大检验的多参数推广}：LRT、Wald、Score 检验都可以推广到多参数情形，在大样本下都渐近服从 $\chi^2(q)$，其中 $q$ 是约束个数。
+\end{remark}
+
+\subsection{Summary of Section 6.5}
+
+\begin{itemize}
+\item 多参数假设检验考虑参数空间 $\Omega$ 的子空间 $\omega$
+\item 似然比统计量渐近服从 $\chi^2(q)$，自由度 $q$ 等于约束个数
+\item 正态均值的 $t$ 检验是似然比检验的特例
+\item Wald 和 Score 检验提供渐近等价的替代方法
+\item 信息矩阵用于构造 Wald 统计量和置信域
+\end{itemize}
+
+\section{6.6 The EM Algorithm}\label{sec:6.6}
+
+\subsection{缺失数据问题的起源}
+
+最大似然方法的最后一个困难来自计算本身。许多模型的似然函数并非概念上复杂，而是因为数据没有被完全观测到，导致观测似然包含求和或积分，直接最大化十分困难。EM 算法的思想是：与其直接处理难看的观测似然，不如想象有一份更完整的数据；在当前参数下补足它的条件平均行为，再做一次容易的最大化。
+
+在许多实际统计问题中，数据并非完全观测到。例如：
+
+\begin{itemize}
+\item \textbf{截断数据}：只观测到 $X > a$ 的个体
+\item \textbf{区间删失}：只知道 $L < X < R$，而不知道具体值
+\item \textbf{隐变量}：观测到 $X$，但 $X$ 依赖于某个不可观测的隐变量 $Z$
+\item \textbf{混合模型}：数据来自多个群体的混合，但我们不知道每个观测来自哪个群体
+\end{itemize}
+
+这些情况下的似然函数往往难以直接最大化。\textbf{EM 算法}提供了一种通用的迭代策略。
+
+\subsection{EM 算法的思想}
+
+EM 算法通过引入``缺失数据''（可以是真正的缺失值，也可以是隐变量）来简化似然函数。
+
+设 $\mathbf{X}$ 是观测数据，$\mathbf{Z}$ 是缺失数据。完整数据 $(\mathbf{X}, \mathbf{Z})$ 的似然函数记为 $L^c(\theta|\mathbf{x}, \mathbf{z})$。
+
+设 $\theta^{(m)}$ 是第 $m$ 步的估计值。EM 算法执行两步迭代：
+
+\begin{enumerate}
+\item \textbf{E 步（Expectation）}：计算完整数据对数似然在当前估计 $\theta^{(m)}$ 下的条件期望
+\[
+Q(\theta|\theta^{(m)}, \mathbf{x}) = \mathbb{E}_{\theta^{(m)}}\left[ \log L^c(\theta|\mathbf{x}, \mathbf{Z}) \mid \theta^{(m)}, \mathbf{x} \right].
+\label{eq:em-e-step}
+\]
+
+\item \textbf{M 步（Maximization）}：找到使 $Q$ 最大化的 $\theta$
+\[
+\theta^{(m+1)} = \arg\max_{\theta} Q(\theta|\theta^{(m)}, \mathbf{x}).
+\label{eq:em-m-step}
+\]
+\end{enumerate}
+
+\fbox{
+\parbox{0.9\textwidth}{
+\textbf{EM 算法保证}：每一步迭代都使观测似然单调递增，即 $L(\theta^{(m+1)}|\mathbf{x}) \geq L(\theta^{(m)}|\mathbf{x})$。
+}
+}
+
+\begin{theorem}[EM 算法的单调性]\label{th:em-monotonicity}
+设 $\theta^{(m+1)}$ 由 E 步和 M 步得到。则
+\[
+L(\theta^{(m+1)}|\mathbf{x}) \geq L(\theta^{(m)}|\mathbf{x}).
+\label{eq:em-monotonicity}
+\]
+\end{theorem}
+
+\textbf{证明思路}：利用 $Q$ 函数的定义和 Jensen 不等式。\footnote{关键：$Q(\theta|\theta^{(t)}) = \mathbb{E}_{Z|\theta^{(t)}}[\log L(\theta;X,Z)]$，由 Jensen 不等式可得 $L(\theta^{(t+1)}) \geq L(\theta^{(t)})$。EM 算法单调性的完整证明见附录 \cref{sec:em-monotonicity-proof}。}
+
+这一性质保证了算法的稳定性——不会发散到局部最大值以外。
+
+\begin{remark}
+\textbf{EM 算法的直观理解}：E 步``想象''缺失数据可能取的值，M 步在假设这些值已知的情况下更新参数估计。这两个步骤交替进行，直到收敛。
+\end{remark}
+
+\begin{example}[正态分布的 EM 算法——缺失数据]\label{ex:em-normal-missing}
+设 $X_1, \ldots, X_{n_1} \sim N(\theta, 1)$ 观测到，同时 $Z_1, \ldots, Z_{n_2} \sim N(\theta, 1)$ 截断于 $a$（即只知 $Z_j > a$）。
+
+完整数据似然：
+\[
+L^c(\theta) = \prod_{i=1}^{n_1} \phi(x_i - \theta) \prod_{j=1}^{n_2} \phi(z_j - \theta),
+\]
+其中 $\phi$ 是标准正态密度。
+
+E 步：需要计算 $\mathbb{E}[Z_j - \theta | Z_j > a, \theta^{(m)}]$。
+
+设 $Y \sim N(\theta, 1)$ 截尾于 $a$，则
+\[
+\mathbb{E}[Y - \theta | Y > a] = \frac{\phi(a-\theta)}{1-\Phi(a-\theta)}.
+\]
+
+因此
+\[
+\theta^{(m+1)} = \frac{n_1\bar{x} + n_2\theta^{(m)} + n_2\frac{\phi(a-\theta^{(m)})}{1-\Phi(a-\theta^{(m)})}}{n_1+n_2}.
+\label{eq:em-normal-missing-update}
+\]
+
+\textbf{解释}：新估计是样本均值、当前估计和截尾部分期望的加权平均。\footnote{E 步：计算截尾正态的条件期望；M 步：最大化完整数据对数似然。正态截尾数据的 EM 算法详细推导见附录 \cref{sec:em-monotonicity-proof}。}
+\end{example}
+
+\begin{example}[正态混合模型的 EM 算法]\label{ex:em-normal-mixture}
+设观测数据来自两个正态分布的混合：
+\[
+X_i \sim (1-\epsilon) N(\mu_1, \sigma_1^2) + \epsilon N(\mu_2, \sigma_2^2),
+\]
+参数 $\boldsymbol{\theta} = (\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \epsilon)'$。
+
+引入隐变量 $W_i$：若 $X_i$ 来自第一个分布则 $W_i = 0$，否则 $W_i = 1$。
+
+完整数据对数似然：
+\[
+\log L^c = \sum_{i=1}^n \left[ (1-w_i)\log f_1(x_i) + w_i\log f_2(x_i) \right].
+\label{eq:mixture-complete-loglikelihood}
+\]
+
+E 步：计算 $w_i$ 的后验概率
+\[
+\gamma_i^{(m)} = \mathbb{P}(W_i=1|\theta^{(m)}, x_i) = \frac{\epsilon^{(m)} f_2(x_i|\theta^{(m)})}{(1-\epsilon^{(m)}) f_1(x_i|\theta^{(m)}) + \epsilon^{(m)} f_2(x_i|\theta^{(m)})}.
+\label{eq:mixture-e-step}
+\]
+
+M 步：更新参数
+\[
+\widehat{\mu}_1 = \frac{\sum_{i=1}^n (1-\gamma_i) x_i}{\sum_{i=1}^n (1-\gamma_i)}, \quad
+\widehat{\mu}_2 = \frac{\sum_{i=1}^n \gamma_i x_i}{\sum_{i=1}^n \gamma_i},
+\]
+\[
+\widehat{\sigma}_1^2 = \frac{\sum_{i=1}^n (1-\gamma_i)(x_i - \widehat{\mu}_1)^2}{\sum_{i=1}^n (1-\gamma_i)}, \quad
+\widehat{\sigma}_2^2 = \frac{\sum_{i=1}^n \gamma_i(x_i - \widehat{\mu}_2)^2}{\sum_{i=1}^n \gamma_i},
+\]
+\[
+\widehat{\epsilon} = \frac{1}{n}\sum_{i=1}^n \gamma_i.
+\label{eq:mixture-m-step}
+\]
+
+\textbf{直观解释}：E 步根据当前参数估计每个观测来自各成分的概率；M 步根据这些概率重新估计各成分的参数。这等价于``软聚类''然后重新估计。
+\end{example}
+
+\subsection{EM 算法的收敛性}
+
+EM 算法的收敛性由以下事实保证：
+
+\begin{itemize}
+\item 观测似然 $L(\theta|\mathbf{x})$ 在每一步都单调不降
+\item $L(\theta|\mathbf{x})$ 有上界，因此必收敛到某个极限
+\item 收敛点满足 Score 方程 $\partial l/\partial \theta = 0$（即 MLE 的条件）
+\end{itemize}
+
+在正则条件下，EM 算法收敛到 MLE。
+
+\begin{remark}
+\textbf{EM 算法的优点}：
+\begin{itemize}
+\item 简单：每一步只需要计算条件期望
+\item 稳定：单调收敛，不会发散
+\item 灵活：适用于各种缺失数据或隐变量问题
+\end{itemize}
+
+\textbf{EM 算法的缺点}：
+\begin{itemize}
+\item 可能收敛到局部最大值（而非全局最优）
+\item 收敛速度可能很慢
+\item 需要显式计算条件期望，可能很困难
+\end{itemize}
+\end{remark}
+
+\begin{example}[遗传连锁的 EM 算法]\label{ex:em-genetics}
+在遗传学中，估计两个基因座之间的重组率 $\theta$ 是一个经典问题。
+
+设四类后代观测个数为 $(X_1, X_2, X_3, X_4)$，概率分别为 $(\frac{1}{2}+\frac{\theta}{4}, \frac{1}{4}-\frac{\theta}{4}, \frac{1}{4}-\frac{\theta}{4}, \frac{\theta}{4})$。
+
+通过引入隐变量（将第一类拆分为两个子类别），EM 算法给出迭代公式
+
+\[
+\theta^{(m+1)} = \frac{x_1\theta^{(m)} + 2x_4 + x_4\theta^{(m)}}{n\theta^{(m)} + 2(x_2 + x_3 + x_4)}.
+\label{eq:genetics-em-update}
+\]
+
+该公式收敛到重组率 $\theta$ 的 MLE。
+\end{example}
+
+\subsection{Summary of Section 6.6}
+
+\begin{itemize}
+\item EM 算法适用于缺失数据或隐变量问题
+\item E 步：计算完整数据对数似然在当前估计下的条件期望
+\item M 步：最大化条件期望得到新估计
+\item EM 算法保证观测似然单调递增
+\item 在正则条件下收敛到 MLE
+\item 典型应用：截尾数据、混合模型、缺失数据填充
+\end{itemize}
+
+% === 习题 ===
+
+\begin{exercise}{\ref{exr:6.1} MLE 的有效性 (Efficiency) – Hogg 6.2.1}\label{exr:6.1}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $N(\theta, \sigma^2)$ 分布的随机样本，其中 $\sigma^2$ 已知。
+
+证明 $\bar{X}$ 是 $\theta$ 的有效估计量（efficient estimator），即其方差达到了 Rao-Cramér 下界。
+
+\hint{根据 \eqref{eq:rao-cramer-bound}，Rao-Cramér 下界为 $[nI(\theta)]^{-1}$。先计算 Fisher 信息 $I(\theta)$，再验证 $\text{var}(\bar{X}) = \sigma^2/n$ 是否等于下界。}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2} Cauchy 分布的 Rao-Cramér 下界 – Hogg 6.1.8}\label{exr:6.2}
+设随机样本 $X_1, \ldots, X_n$ 来自标准 Cauchy 分布，其 pdf 为
+\[
+f(x; \theta) = \frac{1}{\pi[1+(x-\theta)^2]}, \quad -\infty < x < \infty, \quad -\infty < \theta < \infty .
+\]
+
+证明 Rao-Cramér 下界为 $2/n$。若 $\widehat{\theta}$ 是 $\theta$ 的 MLE，求 $\sqrt{n}(\widehat{\theta} - \theta)$ 的渐近分布。
+
+\hint{利用 \eqref{eq:fisher-information} 计算 Fisher 信息。注意 Cauchy 分布的位置参数 $\theta$ 的信息为 $I(\theta) = 1/2$。}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3} 指数分布的似然比检验 – Hogg 6.3.1}\label{exr:6.3}
+设 $X_1, \ldots, X_n$ 是来自指数分布 $f(x; \theta) = \theta^{-1}\exp\{-x/\theta\}$，$x, \theta > 0$ 的 iid 样本。
+
+考虑检验问题 $H_0: \theta = \theta_0$ vs $H_1: \theta \neq \theta_0$。
+
+证明似然比检验统计量可以简化为
+\[
+\Lambda = e^n \left(\frac{\bar{x}}{\theta_0}\right)^n \exp\{-n\bar{x}/\theta_0\},
+\]
+并说明该检验在原假设下可基于 $\chi^2$ 分布进行。
+
+\hint{根据 \eqref{eq:likelihood-function} 和 \eqref{eq:lrt-asymptotic}，似然比检验统计量 $\Lambda = L(\theta_0)/L(\widehat{\theta})$。注意 MLE 为 $\widehat{\theta} = \bar{X}$。}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4} 两正态总体的似然比检验 – Hogg 6.4.2}\label{exr:6.4}
+设 $X_1, \ldots, X_n \sim N(\theta_1, \theta_3)$ 和 $Y_1, \ldots, Y_m \sim N(\theta_2, \theta_4)$ 为两个独立随机样本。
+
+\begin{enumerate}
+\item 写出原假设 $H_0: \theta_1 = \theta_2$（均值相等）且 $\theta_3 = \theta_4$（方差相等）下的似然比检验统计量 $\Lambda$。
+\item 证明检验可以基于 $F$ 统计量进行。
+\end{enumerate}
+
+\hint{根据 \eqref{eq:multiparameter-lrt}，似然比检验统计量涉及在原假设和备择假设下的 MLE 比较。当方差相等时，合并方差估计与个别方差估计之比服从 $F$ 分布。}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5} EM 算法与遗传学连锁估计 – Hogg 6.6.1}\label{exr:6.5}
+Rao（1973）考虑过一个遗传学中的连锁估计问题，可归结为以下多项式模型。设观测频数为 $\mathbf{X} = (X_1, X_2, X_3, X_4)'$，样本量为 $n = \sum_{i=1}^4 X_i$，概率模型为：
+
+\[
+\begin{array}{c|cccc}
+\text{类别} & C_1 & C_2 & C_3 & C_4 \\ \hline
+\text{概率} & \frac{1}{2} + \frac{1}{4}\theta & \frac{1}{4} - \frac{1}{4}\theta & \frac{1}{4} - \frac{1}{4}\theta & \frac{1}{4}\theta
+\end{array}
+\]
+
+其中参数 $\theta \in [0,1]$。
+
+\begin{enumerate}
+\item 写出似然函数 $L(\theta | \mathbf{x})$，并推导对数似然。
+\item 设立 EM 算法：将 $C_1$ 拆分为两个子类别 $C_{11}$ 和 $C_{12}$（概率分别为 $1/2$ 和 $\theta/4$），设 $Z_{11}$ 和 $Z_{12}$ 为相应不可观测频数。证明完整数据的似然为 $L^c(\theta | \mathbf{x}, \mathbf{z})$。
+\item 推导 E 步和 M 步的更新公式。
+\end{enumerate}
+
+\hint{根据 \eqref{eq:em-e-step} 和 \eqref{eq:em-m-step}，EM 算法的 E 步计算条件期望，M 步最大化完整数据对数似然。注意不可观测数据 $Z_{11}$ 在给定观测时的条件分布。}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.6} 多参数正态模型的信息矩阵 – Hogg 6.4.6}\label{exr:6.6}
+设 $X_1, \ldots, X_n \sim N(\mu, \sigma^2)$，参数向量为 $\boldsymbol{\theta} = (\mu, \sigma^2)'$。
+
+\begin{enumerate}
+\item 根据 \eqref{eq:information-matrix} 和 \eqref{eq:information-matrix-elements}，求 Fisher 信息矩阵 $\mathbf{I}(\boldsymbol{\theta})$。
+\item 验证 $\widehat{\mu} = \bar{X}$ 和 $\widehat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2$ 的方差是否达到了信息矩阵逆对应元素的下界。
+\item 根据 \eqref{eq:multiparameter-mle-asymptotic}，写出 $(\widehat{\mu}, \widehat{\sigma}^2)$ 的渐近联合分布。
+\end{enumerate}
+
+\hint{对数似然为 $l(\mu, \sigma^2) = -\frac{n}{2}\log(2\pi) - n\log\sigma - \frac{1}{2\sigma^2}\sum_{i=1}^n (x_i-\mu)^2$。计算二阶偏导数并取负期望。}
+\end{exercise}
+
+% === 6.1 节习题 ===
+
+\begin{exercise}{\ref{exr:6.1.1} Gamma 分布的 MLE – Hogg 6.1.1}\label{exr:6.1.1}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $X \sim \Gamma(\alpha=4, \beta=\theta)$ 分布的随机样本，其中 $0 < \theta < \infty$。
+
+\begin{enumerate}
+\item 求 $\theta$ 的 MLE $\widehat{\theta}$。
+\item 假设以下数据是来自 $X$ 的随机样本实现（已四舍五入）。绘制直方图并将 $4\widehat{\theta}$ 标注在图上。
+\item 对于该样本，将 $\Gamma(\alpha=4, \beta=\widehat{\theta})$ 的 pdf 叠加到直方图上。数据是否与此 pdf 一致？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.2} 多种分布的 MLE – Hogg 6.1.2}\label{exr:6.1.2}
+设 $X_1, X_2, \ldots, X_n$ 表示来自以下分布的随机样本：
+
+\begin{enumerate}
+\item[(a)] $f(x;\theta) = \theta x^{\theta-1}$，$0 < x < 1$，$0 < \theta < \infty$，其他情形为零。
+\item[(b)] $f(x;\theta) = e^{-(x-\theta)}$，$\theta \leq x < \infty$，$-\infty < \theta < \infty$，其他情形为零。注意这是一个非正则情形。
+\end{enumerate}
+
+每种情况求 $\theta$ 的 MLE $\widehat{\theta}$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.3} 均匀分布的 MLE（Nonregular case）– Hogg 6.1.3}\label{exr:6.1.3}
+设 $Y_1 < Y_2 < \ldots < Y_n$ 是来自分布 $f(x;\theta) = 1$，$\theta - \frac{1}{2} \leq x \leq \theta + \frac{1}{2}$，$-\infty < \theta < \infty$ 的随机样本的顺序统计量。这是一个非正则情形。证明每个满足
+
+\[
+Y_n - \frac{1}{2} \leq u(X_1, X_2, \ldots, X_n) \leq Y_1 + \frac{1}{2}
+\]
+
+的统计量 $u(X_1, X_2, \ldots, X_n)$ 都是 $\theta$ 的 MLE。特别地，$(4Y_1 + 2Y_n + 1)/6$，$(Y_1 + Y_n)/2$ 和 $(2Y_1 + 4Y_n - 1)/6$ 是三个这样的统计量。因此，MLE 不具有唯一性。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.4} 三角分布的 MLE – Hogg 6.1.4}\label{exr:6.1.4}
+设 $X_1, \ldots, X_n$ iid，pdf 为 $f(x;\theta) = 2x/\theta^2$，$0 < x \leq \theta$，其他情形为零。注意这是非正则情形。求：
+
+\begin{enumerate}
+\item[(a)] $\theta$ 的 MLE $\widehat{\theta}$。
+\item[(b)] 使得 $E(c\widehat{\theta}) = \theta$ 的常数 $c$。
+\item[(c)] 该分布中位数的 MLE。证明它是一致的估计量。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.5} 三角分布的数据分析 – Hogg 6.1.5}\label{exr:6.1.5}
+考虑 Exercise 6.1.4 中的 pdf。
+
+\begin{enumerate}
+\item[(a)] 使用定理 4.8.1 说明如何从此 pdf 生成观测值。
+\item[(b)] 以下数据从此 pdf 生成。求 $\theta$ 和中位数的 MLE。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.6} 指数分布的 MLE – Hogg 6.1.6}\label{exr:6.1.6}
+设 $X_1, X_2, \ldots, X_n$ iid，pdf 为 $f(x;\theta) = (1/\theta)e^{-x/\theta}$，$0 < x < \infty$，其他情形为零。求 $P(X \leq 2)$ 的 MLE 并证明它是一致的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.7} 二项分布的 MLE – Hogg 6.1.7}\label{exr:6.1.7}
+设表格
+
+\begin{center}
+\begin{tabular}{c|cccccc}
+$x$ & 0 & 1 & 2 & 3 & 4 & 5 \\ \hline
+Frequency & 6 & 10 & 14 & 13 & 6 & 1
+\end{tabular}
+\end{center}
+
+表示来自 $n=5$ 的二项分布的样本量为 50 的样本摘要。求 $P(X \geq 3)$ 的 MLE。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.9} Poisson 分布的 MLE – Hogg 6.1.9}\label{exr:6.1.9}
+设表格
+
+\[
+\begin{array}{c c c c c c c}
+x & 0 & 1 & 2 & 3 & 4 & 5 \\ \hline
+\text{Frequency} & 7 & 14 & 12 & 13 & 6 & 3
+\end{array}
+\]
+
+表示来自 Poisson 分布的样本量为 55 的随机样本的摘要。求 $P(X=2)$ 的最大似然估计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.10} Bernoulli 分布的约束 MLE – Hogg 6.1.10}\label{exr:6.1.10}
+设 $X_1, X_2, \ldots, X_n$ 是来自参数为 $p$ 的 Bernoulli 分布的随机样本。如果 $p$ 被限制为 $\frac{1}{2} \leq p \leq 1$，求该参数的 MLE。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.11} 正态分布的约束 MLE – Hogg 6.1.11}\label{exr:6.1.11}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $N(\theta, \sigma^2)$ 分布的随机样本，其中 $\sigma^2$ 固定但 $-\infty < \theta < \infty$。
+
+\begin{enumerate}
+\item[(a)] 证明 $\theta$ 的 MLE 是 $\bar{X}$。
+\item[(b)] 如果 $\theta$ 被限制为 $0 \leq \theta < \infty$，证明 $\theta$ 的 MLE 是 $\widehat{\theta} = \max\{0, \bar{X}\}$。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.12} Poisson 分布的约束 MLE – Hogg 6.1.12}\label{exr:6.1.12}
+设 $X_1, X_2, \ldots, X_n$ 是来自 Poisson 分布的随机样本，其中 $0 < \theta \leq 2$。证明 $\theta$ 的 MLE 是 $\widetilde{\theta} = \min\{\bar{X}, 2\}$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.1.13} 混合模型的 MLE – Hogg 6.1.13}\label{exr:6.1.13}
+设 $X_1, X_2, \ldots, X_n$ 是来自两种 pdf 之一的分布的随机样本。如果 $\theta=1$，则 $f(x;\theta=1) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}$，$-\infty < x < \infty$。如果 $\theta=2$，则 $f(x;\theta=2) = 1/[\pi(1+x^2)]$，$-\infty < x < \infty$。求 $\theta$ 的 MLE。
+\end{exercise}
+
+% === 6.2 节习题 ===
+
+\begin{exercise}{\ref{exr:6.2.2} 均匀分布的信息量 – Hogg 6.2.2}\label{exr:6.2.2}
+给定 $f(x;\theta) = 1/\theta$，$0 < x < \theta$，其他情形为零，其中 $\theta > 0$，形式上计算
+
+\[
+n E\left\{\left[ \frac{\partial \log f(X;\theta)}{\partial \theta} \right]^2\right\}
+\]
+
+的倒数。与 $(n+1)Y_n/n$ 的方差进行比较，其中 $Y_n$ 是该分布随机样本的最大观测值。评论。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.3} Cauchy 分布的 Rao-Cramér 下界 – Hogg 6.2.3}\label{exr:6.2.3}
+给定 pdf
+
+\[
+f(x;\theta) = \frac{1}{\pi[1+(x-\theta)^2]}, \quad -\infty < x < \infty, \quad -\infty < \theta < \infty,
+\]
+
+证明 Rao-Cramér 下界为 $2/n$，其中 $n$ 是来自此 Cauchy 分布的随机样本的大小。如果 $\widehat{\theta}$ 是 $\theta$ 的 MLE，$\sqrt{n}(\widehat{\theta}-\theta)$ 的渐近分布是什么？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.4} 位置模型的信息量 – Hogg 6.2.4}\label{exr:6.2.4}
+考虑 Example 6.2.2 中讨论的位置模型。
+
+\begin{enumerate}
+\item[(a)] 当 $e_i$ 具有 logistic pdf 时写出位置模型。
+\item[(b)] 使用表达式 (6.2.8)，证明 (a) 中模型的信息 $I(\theta) = 1/3$。提示：在表达式 (6.2.8) 的积分中，使用代换 $u = (1+e^{-z})^{-1}$。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.5} Logistic 位置模型的中位数效率 – Hogg 6.2.5}\label{exr:6.2.5}
+使用与 Exercise 6.2.4 (a) 中相同的位置模型，求样本中位数相对于模型 MLE 的 ARE。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.6} 污染正态分布的 ARE – Hogg 6.2.6}\label{exr:6.2.6}
+考虑位置模型（Example 6.2.2），其中误差 pdf 是污染正态分布 (3.4.17)，$\epsilon$ 为污染比例，$\sigma_c^2$ 为污染部分的方差。证明样本中位数相对于样本均值的 ARE 由
+
+\[
+e(Q_2, \bar{X}) = \frac{2[1+\epsilon(\sigma_c^2-1)][1-\epsilon+(\epsilon/\sigma_c)]^2}{\pi}
+\]
+
+给出。
+
+\begin{enumerate}
+\item[(a)] 如果 $\sigma_c^2 = 9$，使用上式填充表格：
+\begin{center}
+\begin{tabular}{c|cccc}
+$\epsilon$ & 0 & 0.05 & 0.10 & 0.15 \\ \hline
+$e(Q_2, \bar{X})$ & & & &
+\end{tabular}
+\end{center}
+\item[(b)] 注意从表格中当 $\epsilon$ 从 0.10 增加到 0.15 时，样本中位数变得``更好''。确定这发生的 $\epsilon$ 值。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.7} Gamma 分布的有效性 – Hogg 6.2.7}\label{exr:6.2.7}
+回顾 Exercise 6.1.1，其中 $X_1, X_2, \ldots, X_n$ 是来自 $X \sim \Gamma(\alpha=4, \beta=\theta)$ 分布的随机样本，$0 < \theta < \infty$。
+
+\begin{enumerate}
+\item[(a)] 求 Fisher 信息 $I(\theta)$。
+\item[(b)] 证明 $\theta$ 的 MLE（已在 Exercise 6.1.1 中导出）是 $\theta$ 的有效估计量。
+\item[(c)] 使用定理 6.2.2，求 $\sqrt{n}(\widehat{\theta}-\theta)$ 的渐近分布。
+\item[(d)] 对于 Example 6.1.1 的数据，求 $\theta$ 的渐近 95\% 置信区间。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.8} 正态分布（方差）的有效性 – Hogg 6.2.8}\label{exr:6.2.8}
+设 $X \sim N(0,\theta)$，$0 < \theta < \infty$。
+
+\begin{enumerate}
+\item[(a)] 求 Fisher 信息 $I(\theta)$。
+\item[(b)] 如果 $X_1, X_2, \ldots, X_n$ 是来自此分布的随机样本，证明 $\theta$ 的 MLE 是 $\theta$ 的有效估计量。
+\item[(c)] $\sqrt{n}(\widehat{\theta}-\theta)$ 的渐近分布是什么？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.9} Pareto 型分布的估计 – Hogg 6.2.9}\label{exr:6.2.9}
+如果 $X_1, X_2, \ldots, X_n$ 是来自 pdf
+
+\[
+f(x;\theta) = \left\{ \begin{array}{l l}
+\frac{3\theta^3}{(x+\theta)^4} & 0 < x < \infty, 0 < \theta < \infty \\
+0 & \text{elsewhere},
+\end{array} \right.
+\]
+
+的随机样本，证明 $Y = 2\bar{X}$ 是 $\theta$ 的无偏估计量并求其效率。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.10} 正态标准差的无偏估计 – Hogg 6.2.10}\label{exr:6.2.10}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $N(0,\theta)$ 分布的随机样本。我们想估计标准差 $\sqrt{\theta}$。求常数 $c$ 使得 $Y = c\sum_{i=1}^n |X_i|$ 是 $\sqrt{\theta}$ 的无偏估计量，并确定其效率。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.11} 正态均值平方的估计 – Hogg 6.2.11}\label{exr:6.2.11}
+设 $\bar{X}$ 是来自 $N(\theta, \sigma^2)$ 分布的样本量为 $n$ 的随机样本的均值，$-\infty < \theta < \infty$，$\sigma^2 > 0$。假设 $\sigma^2$ 已知。证明 $\bar{X}^2 - \sigma^2/n$ 是 $\theta^2$ 的无偏估计量并求其效率。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.12} Beta 分布的置信区间 – Hogg 6.2.12}\label{exr:6.2.12}
+回想 $\widehat{\theta} = -n/\sum_{i=1}^n \log X_i$ 是 beta$(\theta,1)$ 分布的 $\theta$ 的 MLE。并且 $W = -\sum_{i=1}^n \log X_i$ 服从 $\Gamma(n, 1/\theta)$ 分布。
+
+\begin{enumerate}
+\item[(a)] 证明 $2\theta W$ 服从 $\chi^2(2n)$ 分布。
+\item[(b)] 使用 (a)，求 $c_1$ 和 $c_2$ 使得
+
+\[
+P\left(c_1 < \frac{2\theta n}{\widehat{\theta}} < c_2\right) = 1-\alpha,
+\]
+
+然后求 $\theta$ 的 $(1-\alpha)100\%$ 置信区间。
+\item[(c)] 对于 $\alpha = 0.05$ 和 $n=10$，将此区间的长度与 Example 6.2.6 中找到的区间长度进行比较。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.13} Beta 分布的数据分析 – Hogg 6.2.13}\label{exr:6.2.13}
+数据文件 beta30.rda 包含从 beta$(\theta,1)$ 分布生成的 30 个观测值，其中 $\theta=4$。
+
+\begin{enumerate}
+\item[(a)] 使用参数 $\mathsf{pr}=\mathsf{T}$ 获取数据的直方图。叠加 $\beta(4,1)$ pdf。评论。
+\item[(b)] 使用 Exercise 6.2.12 的结果，基于数据计算最大似然估计。
+\item[(c)] 使用 Exercise 6.2.12 (c) 中找到的置信区间，基于数据计算 $\theta$ 的 95\% 置信区间。置信区间成功吗？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.14} Pareto 型分布的模拟 – Hogg 6.2.14}\label{exr:6.2.14}
+考虑对 Exercise 6.2.9 中给定 pdf 的随机变量 $X$ 进行采样。
+
+\begin{enumerate}
+\item[(a)] 获取相应的 cdf 及其逆函数。说明如何从此分布生成观测值。
+\item[(b)] 编写一个生成 $X$ 样本的 R 函数。
+\item[(c)] 生成大小为 50 的样本，计算 Exercise 6.2.9 中讨论的 $\theta$ 的无偏估计量。使用它和中心极限定理计算 $\theta$ 的 95\% 置信区间。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.15} One-Step 估计量的渐近分布 – Hogg 6.2.15}\label{exr:6.2.15}
+使用表达式 (6.2.21) 和 (6.2.22)，获得本节末尾讨论的 one-step 估计量的结果。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.2.16} 正态方差估计的效率 – Hogg 6.2.16}\label{exr:6.2.16}
+设 $S^2$ 是来自 $N(\mu,\theta)$，$0 < \theta < \infty$（其中 $\mu$ 已知）的样本量为 $n>1$ 的随机样本的样本方差。我们知道 $E(S^2) = \theta$。
+
+\begin{enumerate}
+\item[(a)] $S^2$ 的效率是多少？
+\item[(b)] 在这些条件下，$\theta$ 的 MLE $\widehat{\theta}$ 是什么？
+\item[(c)] $\sqrt{n}(\widehat{\theta}-\theta)$ 的渐近分布是什么？
+\end{enumerate}
+\end{exercise}
+
+% === 6.3 节习题 ===
+
+\begin{exercise}{\ref{exr:6.3.2} 指数分布 LRT 的功效函数 – Hogg 6.3.2}\label{exr:6.3.2}
+考虑 Example 6.3.1 中导出的决策规则 (6.3.5)。获取检验统计量在一般备择假设下的分布，并使用它获取检验的功效函数。使用 R 绘制当 $\theta_0=1$，$n=10$，$\alpha=0.05$ 时的功效曲线。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.3} 正态均值检验与第四章的关系 – Hogg 6.3.3}\label{exr:6.3.3}
+证明决策规则 (6.3.6) 给出的检验类似于 Example 4.6.1 中的检验，只是这里 $\sigma^2$ 已知。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.4} 正态均值检验的功效函数 – Hogg 6.3.4}\label{exr:6.3.4}
+获取一个 R 函数，绘制 Example 6.3.2 末尾讨论的功效函数。运行该函数当 $\theta_0=0$，$n=10$，$\sigma^2=1$，$\alpha=0.05$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.5} Laplace 位置模型的 Score 检验 – Hogg 6.3.5}\label{exr:6.3.5}
+考虑 Example 6.3.4。
+
+\begin{enumerate}
+\item[(a)] 证明我们可以写成 $S^* = 2T - n$，其中 $T = \#\{X_i > \theta_0\}$。
+\item[(b)] 证明此模型的 Score 检验等价于当 $T < c_1$ 或 $T > c_2$ 时拒绝 $H_0$。
+\item[(c)] 证明在 $H_0$ 下，$T$ 服从二项分布 $b(n,1/2)$；因此，确定使检验具有大小 $\alpha$ 的 $c_1$ 和 $c_2$。
+\item[(d)] 作为 $\theta$ 的函数，确定基于 $T$ 的检验的功效函数。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.6} 正态方差检验 – Hogg 6.3.6}\label{exr:6.3.6}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $N(\mu_0, \sigma^2=\theta)$ 分布的随机样本，其中 $0 < \theta < \infty$，$\mu_0$ 已知。证明 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$ 的似然比检验可以基于统计量 $W = \sum_{i=1}^n (X_i-\mu_0)^2/\theta_0$ 进行。确定 $W$ 在原假设下的分布，并给出显式的拒绝规则。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.7} 正态方差检验的功效函数 – Hogg 6.3.7}\label{exr:6.3.7}
+对于 Exercise 6.3.6 中描述的检验，获取检验统计量在一般备择假设下的分布。如果有计算条件，当 $\theta_0=1$，$n=10$，$\mu=0$，$\alpha=0.05$ 时绘制此功效曲线。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.8} Beta 分布的精确检验 – Hogg 6.3.8}\label{exr:6.3.8}
+使用 Example 6.2.4 的结果，求假设 (6.3.21) 的精确大小 $\alpha$ 检验。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.9} Poisson 分布的似然比检验 – Hogg 6.3.9}\label{exr:6.3.9}
+设 $X_1, X_2, \ldots, X_n$ 是来自均值为 $\theta > 0$ 的 Poisson 分布的随机样本。
+
+\begin{enumerate}
+\item[(a)] 证明 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$ 的似然比检验可以基于统计量 $Y = \sum_{i=1}^n X_i$ 进行。获取 $Y$ 在原假设下的分布。
+\item[(b)] 对于 $\theta_0=2$ 和 $n=5$，求当 $Y \leq 4$ 或 $Y \geq 17$ 时拒绝 $H_0$ 的检验的显著性水平。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.10} Bernoulli 分布的似然比检验 – Hogg 6.3.10}\label{exr:6.3.10}
+设 $X_1, X_2, \ldots, X_n$ 是来自 Bernoulli $b(1,\theta)$ 分布的随机样本，其中 $0 < \theta < 1$。
+
+\begin{enumerate}
+\item[(a)] 证明 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$ 的似然比检验可以基于统计量 $Y = \sum_{i=1}^n X_i$ 进行。获取 $Y$ 在原假设下的分布。
+\item[(b)] 对于 $n=100$ 和 $\theta_0=1/2$，求 $c_1$ 使得当 $Y \leq c_1$ 或 $Y \geq c_2 = 100-c_1$ 时拒绝 $H_0$ 具有近似显著性水平 $\alpha=0.05$。提示：使用中心极限定理。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.11} Gamma 分布的似然比检验 – Hogg 6.3.11}\label{exr:6.3.11}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $\Gamma(\alpha=4, \beta=\theta)$ 分布的随机样本，其中 $0 < \theta < \infty$。
+
+\begin{enumerate}
+\item[(a)] 证明 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$ 的似然比检验可以基于统计量 $W = \sum_{i=1}^n X_i$ 进行。获取 $2W/\theta_0$ 在原假设下的分布。
+\item[(b)] 对于 $\theta_0=3$ 和 $n=5$，求 $c_1$ 和 $c_2$ 使得当 $W \leq c_1$ 或 $W \geq c_2$ 时拒绝 $H_0$ 具有显著性水平 0.05。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.12} 正态与双指数分布的检验 – Hogg 6.3.12}\label{exr:6.3.12}
+设 $X_1, X_2, \ldots, X_n$ 是来自 pdf $f(x;\theta) = \theta\exp\{-|x|^\theta\}/[2\Gamma(1/\theta)]$，$-\infty < x < \infty$ 的分布，其中 $\theta > 0$。假设 $\Omega = \{\theta: \theta=1,2\}$。考虑假设 $H_0: \theta=2$（正态分布）vs $H_1: \theta=1$（双指数分布）。证明似然比检验可以基于统计量 $W = \sum_{i=1}^n (X_i^2 - |X_i|)$ 进行。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.13} Beta 分布的似然比检验 – Hogg 6.3.13}\label{exr:6.3.13}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $\alpha=\beta=\theta$ 的 Beta 分布的随机样本，$\Omega = \{\theta: \theta=1,2\}$。证明检验 $H_0: \theta=1$ vs $H_1: \theta=2$ 的似然比统计量 $\Lambda$ 是统计量 $W = \sum_{i=1}^n \log X_i + \sum_{i=1}^n \log(1-X_i)$ 的函数。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.14} 位置模型的几何解释 – Hogg 6.3.14}\label{exr:6.3.14}
+考虑位置模型
+
+\[
+X_i = \theta + e_i, \quad i=1,\ldots,n,
+\]
+
+其中 $e_1, e_2, \ldots, e_n$ iid，pdf 为 $f(z)$。估计 $\theta$ 有一个很好的几何解释。设 $\mathbf{X} = (X_1, \ldots, X_n)'$ 和 $\mathbf{e} = (e_1, \ldots, e_n)'$ 分别为观测向量和随机误差向量，设 $\boldsymbol{\mu} = \theta\mathbf{1}$，其中 $\mathbf{1}$ 是所有分量等于 1 的向量。设 $V$ 是形如 $\boldsymbol{\mu}$ 的向量的子空间；即 $V = \{\mathbf{v}: \mathbf{v}=a\mathbf{1}, a \in \mathbb{R}\}$。则在向量记号中我们可以将模型写成
+
+\[
+\mathbf{X} = \boldsymbol{\mu} + \mathbf{e}, \quad \boldsymbol{\mu} \in V.
+\]
+
+\begin{enumerate}
+\item[(a)] 如果误差 pdf 是 Laplace，(2.2.4)，证明 (6.3.27) 中的最小化等价于当范数是 $l_1$ 范数时的似然最大化。
+\item[(b)] 如果误差 pdf 是 $N(0,1)$，证明 (6.3.27) 中的最小化等价于当范数是 $l_2$ 范数平方时的似然最大化。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.15} 位置模型检验的几何解释 – Hogg 6.3.15}\label{exr:6.3.15}
+继续 Exercise 6.3.14，除了估计还有检验的几何解释。对于模型 (6.3.26)，考虑假设
+
+\[
+H_0: \theta = \theta_0 \quad \text{vs} \quad H_1: \theta \neq \theta_0,
+\]
+
+其中 $\theta_0$ 是指定的。
+
+\begin{enumerate}
+\item[(a)] 如果误差 pdf 是 Laplace，证明表达式 (6.3.31) 等价于当范数由 (6.3.28) 给出时的似然比检验。
+\item[(b)] 如果误差 pdf 是 $N(0,1)$，证明表达式 (6.3.31) 等价于当范数由 $l_2$ 范数平方 (6.3.29) 给出时的似然比检验。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.16} Bernoulli 分布的三种似然检验 – Hogg 6.3.16}\label{exr:6.3.16}
+设 $X_1, X_2, \ldots, X_n$ 是来自 pmf $p(x;\theta) = \theta^x(1-\theta)^{1-x}$，$x=0,1$ 的分布，其中 $0 < \theta < 1$。我们想检验 $H_0: \theta=1/3$ vs $H_1: \theta \neq 1/3$。
+
+\begin{enumerate}
+\item[(a)] 求 $\Lambda$ 和 $-2\log\Lambda$。
+\item[(b)] 确定 Wald 型检验。
+\item[(c)] 什么是 Rao 的 score 统计量？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.17} Poisson 分布的 Wald 型检验 – Hogg 6.3.17}\label{exr:6.3.17}
+设 $X_1, X_2, \ldots, X_n$ 是来自均值为 $\theta > 0$ 的 Poisson 分布的随机样本。考虑检验 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$。
+
+\begin{enumerate}
+\item[(a)] 获取表达式 (6.3.13) 的 Wald 型检验。
+\item[(b)] 编写一个 R 函数来计算此检验统计量。
+\item[(c)] 对于 $\theta_0=23$，计算检验统计量并对以下数据确定 $p$ 值。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.18} Gamma 分布的似然比检验 – Hogg 6.3.18}\label{exr:6.3.18}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $\Gamma(\alpha,\beta)$ 分布的随机样本，其中 $\alpha$ 已知，$\beta > 0$。求 $H_0: \beta=\beta_0$ vs $H_1: \beta \neq \beta_0$ 的似然比检验。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.3.19} 均匀分布的似然比检验（非正则情形）– Hogg 6.3.19}\label{exr:6.3.19}
+设 $Y_1 < Y_2 < \ldots < Y_n$ 是来自 $(0,\theta)$ 上均匀分布的随机样本的顺序统计量，其中 $\theta > 0$。
+
+\begin{enumerate}
+\item[(a)] 证明检验 $H_0: \theta=\theta_0$ vs $H_1: \theta \neq \theta_0$ 的 $\Lambda$ 为 $\Lambda = (Y_n/\theta_0)^n$，$Y_n \leq \theta_0$，如果 $Y_n > \theta_0$ 则 $\Lambda=0$。
+\item[(b)] 当 $H_0$ 成立时，证明 $-2\log\Lambda$ 具有精确的 $\chi^2(2)$ 分布，而不是 $\chi^2(1)$。注意正则条件不满足。
+\end{enumerate}
+\end{exercise}
+
+% === 6.4 节习题 ===
+
+\begin{exercise}{\ref{exr:6.4.1} 多项分布的 MLE – Hogg 6.4.1}\label{exr:6.4.1}
+对市民进行了一项调查，内容是他们是否支持市议会正在考虑的分区计划。回答有：是、否、无所谓和其他。用 $p_1, p_2, p_3$ 和 $p_4$ 表示这些回答的相应真实概率。调查结果为：
+
+\begin{center}
+\begin{tabular}{c|cccc}
+是 & 否 & 无所谓 & 其他 \\ \hline
+60 & 45 & 70 & 25
+\end{tabular}
+\end{center}
+
+\begin{enumerate}
+\item[(a)] 获取 $p_i$，$i=1,\ldots,4$ 的 MLE。
+\item[(b)] 获取 $p_i$，$i=1,\ldots,4$ 的 95\% 置信区间，(4.2.7)。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.3} 指数分布的双参数 MLE – Hogg 6.4.3}\label{exr:6.4.3}
+设 $X_1, X_2, \ldots, X_n$ iid，每个都具有 pdf $f(x;\theta_1,\theta_2) = (1/\theta_2)e^{-(x-\theta_1)/\theta_2}$，$\theta_1 \leq x < \infty$，$-\infty < \theta_2 < \infty$，其他情形为零。求 $\theta_1$ 和 $\theta_2$ 的最大似然估计量。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.4} Pareto 分布的 MLE（非正则情形）– Hogg 6.4.4}\label{exr:6.4.4}
+Pareto 分布是收入研究中经常使用的模型，其分布函数为
+
+\[
+F(x;\theta_1,\theta_2) = \left\{ \begin{array}{l l}
+1-(\theta_1/x)^{\theta_2} & \theta_1 \leq x \\
+0 & \text{elsewhere},
+\end{array} \right.
+\]
+
+其中 $\theta_1 > 0$ 和 $\theta_2 > 0$。如果 $X_1, X_2, \ldots, X_n$ 是来自此分布的随机样本，求 $\theta_1$ 和 $\theta_2$ 的最大似然估计量。（提示：此练习处理非正则情形。）
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.5} 均匀分布的 MLE – Hogg 6.4.5}\label{exr:6.4.5}
+设 $Y_1 < Y_2 < \ldots < Y_n$ 是来自在闭区间 $[\theta-\rho, \theta+\rho]$ 上均匀分布的随机样本的顺序统计量。求 $\theta$ 和 $\rho$ 的最大似然估计量。这两个估计量是无偏的吗？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.7} 正态数据的分析 – Hogg 6.4.7}\label{exr:6.4.7}
+数据文件 normal50.rda 包含 Exercise 6.4.6 中描述的情况的样本量为 $n=50$ 的随机样本。在 R 中下载此数据并获取观测值的直方图。
+
+\begin{enumerate}
+\item[(a)] 在 Exercise 6.4.6 (b) 中，设 $c=58$，$\xi = P(X \leq c)$。基于数据，计算 $\xi$ 的 MLE 的估计值。将此估计值与数据中小于等于 58 的样本比例 $\hat{p}$ 进行比较。
+\item[(b)] R 函数 bootstraps64.R 计算 MLE 的 bootstrap 置信区间。使用此函数计算 $\xi$ 的 95\% 置信区间。将您的区间与基于 $\hat{p}$ 的表达式 (4.2.7) 的区间进行比较。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.8} 第 90 百分位数的 MLE – Hogg 6.4.8}\label{exr:6.4.8}
+考虑 Exercise 6.4.6 (a)。
+
+\begin{enumerate}
+\item[(a)] 使用 Exercise 6.4.7 的数据，计算 $b$ 的 MLE。同时获取基于数据第 90 百分位数的估计值。
+\item[(b)] 编辑 R 函数 bootstrapcis64.R 以计算 $b$ 的 bootstrap 置信区间。然后在 Exercise 6.4.7 的数据上运行您的 R 函数，计算 $b$ 的 95\% 置信区间。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.9} Bernoulli 分布的约束 MLE – Hogg 6.4.9}\label{exr:6.4.9}
+考虑两个具有未知参数 $p_1$ 和 $p_2$ 的 Bernoulli 分布。如果 $Y$ 和 $Z$ 等于两个独立随机样本（每个样本量为 $n$）中成功次数，分别来自相应分布，求 $p_1$ 和 $p_2$ 的 MLE（如果我们知道 $0 \leq p_1 \leq p_2 \leq 1$）。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.10} 位置和尺度族的 pdf – Hogg 6.4.10}\label{exr:6.4.10}
+证明如果 $X_i$ 服从模型 (6.4.14)，则其 pdf 为 $b^{-1}f((x-a)/b)$。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.11} 位置和尺度族的信息矩阵 – Hogg 6.4.11}\label{exr:6.4.11}
+验证 Example 6.4.4 中位置和尺度族的偏导数和信息矩阵的 元素。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.12} 对称分布的信息矩阵 – Hogg 6.4.12}\label{exr:6.4.12}
+假设 $X$ 的 pdf 是 Example 6.4.4 中定义的位置和尺度族。证明如果 $f(z) = f(-z)$，则信息矩阵的 entry $I_{12}=0$。然后论证在这种情况下 $a$ 和 $b$ 的 MLE 渐近独立。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.4.13} 正态分布作为位置和尺度族 – Hogg 6.4.13}\label{exr:6.4.13}
+假设 $X_1, X_2, \ldots, X_n$ iid $N(\mu,\sigma^2)$。证明 $X_i$ 服从 Example 6.4.4 中给出的位置和尺度族。获取此 example 中给出的信息矩阵的 元素，并证明它们与 Example 6.4.3 中确定的信息矩阵一致。
+\end{exercise}
+
+% === 6.5 节习题 ===
+
+\begin{exercise}{\ref{exr:6.5.1} 正态均值检验（地球-月球质量比）– Hogg 6.5.1}\label{exr:6.5.1}
+在 Hollander 和 Wolfe (1999) 的第 80 页，他们展示了由 7 艘不同航天器（5 艘 Mariner 型和 2 艘 Pioneer 型）对地球质量与月球质量之比的测量值。这些测量值如下（也在文件 earthmoon.rda 中）。根据早期的 Ranger 航行，科学家们将此比率设定为 81.3035。假设正态分布，检验假设 $H_0: \mu = 81.3035$ vs $H_1: \mu \neq 81.3035$，其中 $\mu$ 是这些后续航行的真实平均比率。使用 $p$ 值在名义 $\alpha$ 水平 0.05 下得出结论。
+
+\begin{center}
+\begin{tabular}{ccccccc}
+81.3001 & 81.3015 & 81.3006 & 81.3011 & 81.2997 & 81.3005 & 81.3021
+\end{tabular}
+\end{center}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.2} 箱线图和置信区间 – Hogg 6.5.2}\label{exr:6.5.2}
+获取 Exercise 6.5.1 中数据的箱线图。在图上标注值 81.3035。计算 $\mu$ 的 95\% 置信区间，(4.2.3)，并将其端点标注在图上。评论。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.3} 两比例相等的检验 – Hogg 6.5.3}\label{exr:6.5.3}
+考虑 Exercise 6.4.1 中讨论的市民调查。假设感兴趣的假设是 $H_0: p_1 = p_2$ vs $H_1: p_1 \neq p_2$。
+
+\begin{enumerate}
+\item[(a)] 使用检验 (6.5.20) 在水平 $\alpha=0.05$ 下检验这些假设。结合问题得出结论。
+\item[(b)] 获取 $p_1 - p_2$ 的 95\% 置信区间，(6.5.21)。置信区间在问题背景下意味着什么？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.4} 正态方差检验 – Hogg 6.5.4}\label{exr:6.5.4}
+设 $X_1, X_2, \ldots, X_n$ 是来自 $N(\theta_1,\theta_2)$ 分布的随机样本。证明对于检验 $H_0: \theta_2 = \theta_2'$（指定）和 $\theta_1$ 未指定 相对于 $H_1: \theta_2 \neq \theta_2'$，$\theta_1$ 未指定，似然比原则导致当 $\sum_{1}^n(x_i-\bar{x})^2 \leq c_1$ 或 $\sum_{1}^n(x_i-\bar{x})^2 \geq c_2$ 时拒绝，其中 $c_1 < c_2$ 是适当选择的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.5} 两正态均值的似然比检验 – Hogg 6.5.5}\label{exr:6.5.5}
+设 $X_1,\ldots,X_n$ 和 $Y_1,\ldots,Y_m$ 是分别来自 $N(\theta_1,\theta_3)$ 和 $N(\theta_2,\theta_4)$ 分布的独立随机样本。
+
+\begin{enumerate}
+\item[(a)] 证明检验 $H_0: \theta_1 = \theta_2$，$\theta_3 = \theta_4$ 相对于所有备择 的似然比为
+
+\[
+\frac{\left[ \sum_1^n (x_i-\bar{x})^2/n \right]^{n/2} \left[ \sum_1^m (y_i-\bar{y})^2/m \right]^{m/2}}{\left\{\left[ \sum_1^n (x_i-u)^2 + \sum_1^m (y_i-u)^2 \right] / (m+n) \right\}^{(n+m)/2}},
+\]
+
+其中 $u = (n\bar{x}+m\bar{y})/(n+m)$。
+
+\item[(b)] 证明检验 $H_0: \theta_3 = \theta_4$，$\theta_1$ 和 $\theta_2$ 未指定 相对于 $H_1: \theta_3 \neq \theta_4$，$\theta_1$ 和 $\theta_2$ 未指定的似然比检验可以基于随机变量
+
+\[
+F = \frac{\sum_1^n (X_i-\bar{X})^2/(n-1)}{\sum_1^m (Y_i-\bar{Y})^2/(m-1)}
+\]
+
+进行。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.6} 两正态方差的似然比检验 – Hogg 6.5.6}\label{exr:6.5.6}
+设 $X_1, X_2, \ldots, X_n$ 和 $Y_1, Y_2, \ldots, Y_m$ 是分别来自 $N(0,\theta_1)$ 和 $N(0,\theta_2)$ 分布的独立随机样本。
+
+\begin{enumerate}
+\item[(a)] 求检验复合假设 $H_0: \theta_1 = \theta_2$ 相对于复合备择假设 $H_1: \theta_1 \neq \theta_2$ 的似然比 $\Lambda$。
+\item[(b)] 此 $\Lambda$ 是实际用于此检验的什么 $F$ 统计量的函数？
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.7} 两指数分布的似然比检验 – Hogg 6.5.7}\label{exr:6.5.7}
+设 $X$ 和 $Y$ 是两个具有相应 pdf
+
+\[
+f(x;\theta_i) = \left\{ \begin{array}{l l}
+(1/\theta_i)e^{-x/\theta_i} & 0 < x < \infty, 0 < \theta_i < \infty \\
+0 & \text{elsewhere},
+\end{array} \right.
+\]
+
+的独立随机变量，$i=1,2$。为了检验 $H_0: \theta_1 = \theta_2$ 相对于 $H_1: \theta_1 \neq \theta_2$，分别从这些分布中抽取样本量为 $n_1$ 和 $n_2$ 的两个独立样本。求似然比 $\Lambda$ 并证明在 $H_0$ 下 $\Lambda$ 可以写成具有 $F$ 分布的统计量的函数。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.8} 指数分布的 $F$ 检验数值例子 – Hogg 6.5.8}\label{exr:6.5.8}
+对于 Exercise 6.5.7 导出的 $F$ 检验的数值例子，以下是两个生成的数据集。第一个由 R 调用 rexp(10,1/20) 生成，即来自 $\Gamma(1,20)$ 分布的 10 个观测值。第二个由 rexp(12,1/40) 生成。数据已四舍五入，也可以在文件 genexpd.rda 中找到。
+
+\begin{enumerate}
+\item[(a)] 获取数据集合的比较箱线图。评论。
+\item[(b)] 执行 Exercise 6.5.7 的 $F$ 检验。在水平 0.05 下结合问题得出结论。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.9} 两均匀分布的似然比检验（非正则）– Hogg 6.5.9}\label{exr:6.5.9}
+考虑两个均匀分布，相应 pdf 为
+
+\[
+f(x;\theta_i) = \left\{ \begin{array}{l l}
+\frac{1}{2\theta_i} & -\theta_i < x < \theta_i, -\infty < \theta_i < \infty \\
+0 & \text{elsewhere},
+\end{array} \right.
+\]
+
+$i=1,2$。原假设是 $H_0: \theta_1 = \theta_2$，而备择假设是 $H_1: \theta_1 \neq \theta_2$。设 $X_1 < X_2 < \ldots < X_{n_1}$ 和 $Y_1 < Y_2 < \ldots < Y_{n_2}$ 是分别来自相应分布的两个独立随机样本的顺序统计量。使用似然比 $\Lambda$，求用于检验 $H_0$ 相对于 $H_1$ 的统计量。当 $H_0$ 成立时，求 $-2\log\Lambda$ 的分布。注意在这种非正则情形下，自由度是 $\Omega$ 和 $\omega$ 维数之差的两倍。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.10} 双正态分布的似然比检验 – Hogg 6.5.10}\label{exr:6.5.10}
+设 $(X_1,Y_1),(X_2,Y_2),\ldots,(X_n,Y_n)$ 是来自双正态分布的随机样本，$\mu_1,\mu_2,\sigma_1^2=\sigma_2^2=\sigma^2,\rho=1/2$，其中 $\mu_1,\mu_2$ 和 $\sigma^2>0$ 是未知的实数。求检验 $H_0: \mu_1=\mu_2=0$，$\sigma^2$ 未知 相对于所有备择 的似然比 $\Lambda$。似然比 $\Lambda$ 是具有什么分布的统计量的函数？
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.11} 多项分布的似然比检验 – Hogg 6.5.11}\label{exr:6.5.11}
+设 $n$ 次独立试验的实验使得 $x_1, x_2, \ldots, x_k$ 是实验以互斥且穷举的事件 $C_1, C_2, \ldots, C_k$ 结束的相应次数。如果 $p_i = P(C_i)$ 在整个 $n$ 次试验中恒定，则该特定试验序列的概率为 $L = p_1^{x_1}p_2^{x_2}\cdots p_k^{x_k}$。
+
+\begin{enumerate}
+\item[(a)] 回忆 $p_1 + p_2 + \cdots + p_k = 1$，证明检验 $H_0: p_i = p_{i0} > 0, i=1,2,\ldots,k,$ 相对于所有备择 的似然比由
+
+\[
+\Lambda = \prod_{i=1}^k \left( \frac{(p_{i0})^{x_i}}{(x_i/n)^{x_i}} \right)
+\]
+
+给出。
+
+\item[(b)] 证明
+
+\[
+-2\log\Lambda = \sum_{i=1}^k \frac{x_i(x_i - np_{i0})^2}{(np_i')^2},
+\]
+
+其中 $p_i'$ 在 $p_{i0}$ 和 $x_i/n$ 之间。
+
+\item[(c)] 对于大的 $n$，论证 $x_i/(np_i')^2$ 被 $1/(np_{i0})$ 近似，因此
+
+\[
+-2\log\Lambda \approx \sum_{i=1}^k \frac{(x_i - np_{i0})^2}{np_{i0}} \quad \text{当 } H_0 \text{成立时}.
+\]
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.12} 两二项比例的 LRT – Hogg 6.5.12}\label{exr:6.5.12}
+完成 Example 6.5.3 中找到的 LRT 的推导。尽可能简化。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.13} 两二项比例的 Wald 统计量 – Hogg 6.5.13}\label{exr:6.5.13}
+证明 Example 6.5.3 的表达式 (6.5.25) 是正确的。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.14} 两二项比例的备择估计 – Hogg 6.5.14}\label{exr:6.5.14}
+如 Example 6.5.3 中所讨论的，$Z$，(6.5.27)，可以用作检验统计量，前提是我们有在 $H_0$ 成立时 $p_1(1-p_1)$ 和 $p_2(1-p_2)$ 的一致估计量。然而，在 $H_0$ 下，$p_1(1-p_1) = p_2(1-p_2) = p(1-p)$，其中 $p = p_1 = p_2$。证明统计量 (6.5.24) 是 $p$ 在 $H_0$ 下的一致估计量。因此，确定 $H_0$ 的另一个检验。
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.15} 两比例的检验（制造业应用）– Hogg 6.5.15}\label{exr:6.5.15}
+一家机器店生产 toggle lever。白天和夜班都有。如果标准螺母不能拧入螺纹，则 toggle lever 有缺陷。设 $p_1$ 和 $p_2$ 分别为白天和夜班生产的缺陷 lever 的比例。我们将基于分别从两个班的生产中抽取的每个 1000 个 lever 的两个随机样本，检验原假设 $H_0: p_1 = p_2$，相对于双侧备择假设。使用 Example 6.5.3 中给出的检验统计量 $Z^*$。
+
+\begin{enumerate}
+\item[(a)] 绘制说明具有 $\alpha=0.05$ 的临界区域的标注临界值的标准正态 pdf 图。
+\item[(b)] 如果分别为白天和夜班观察到 $y_1=37$ 和 $y_2=53$ 个缺陷，计算检验统计量的值和近似 $p$ 值（注意这是双侧检验）。在 (a) 的图上定位计算的检验统计量并陈述您的结论。获取检验的近似 $p$ 值。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{\ref{exr:6.5.16} 三种检验的比较 – Hogg 6.5.16}\label{exr:6.5.16}
+对于 Exercise 6.5.15 (b) 中给出的情况，计算 Exercises 6.5.12 和 6.5.14 中定义的检验。获取所有三个检验的近似 $p$ 值。讨论结果。
+\end{exercise}
+
+% === 附录：公式推导 ===
+
+\section{附录：公式推导}\label{sec:appendix-ch6}
+
+\subsection{定理 6.1.1 的证明（似然函数的渐近支撑）}\label{sec:proof-likelihood-asymptotic}
+
+\textbf{背景}：我们需要证明当样本量 $n \to \infty$ 时，似然函数 $L(\theta_0; \mathbf{X})$ 以概率1大于任何 $\theta \neq \theta_0$ 处的似然值。
+
+\textbf{证明}：记 $Z_i(\theta) = \log\frac{f(X_i;\theta)}{f(X_i;\theta_0)}$。则
+
+\[
+\log \frac{L(\theta_0; \mathbf{X})}{L(\theta; \mathbf{X})} = \sum_{i=1}^n \log\frac{f(X_i;\theta_0)}{f(X_i;\theta)} = -\sum_{i=1}^n Z_i(\theta).
+\]
+
+由弱大数定律，
+\[
+\frac{1}{n}\sum_{i=1}^n Z_i(\theta) \xrightarrow{P} \mathbb{E}_{\theta_0}[Z_1(\theta)].
+\]
+
+由 Jensen 不等式和 $\mathbb{E}_{\theta_0}[f(X;\theta)/f(X;\theta_0)] = 1$，
+
+\[
+\mathbb{E}_{\theta_0}[Z_1(\theta)] = \mathbb{E}_{\theta_0}\left[\log\frac{f(X;\theta)}{f(X;\theta_0)}\right] < \log\mathbb{E}_{\theta_0}\left[\frac{f(X;\theta)}{f(X;\theta_0)}\right] = \log 1 = 0.
+\]
+
+因此 $\frac{1}{n}\sum Z_i(\theta) \xrightarrow{P} \text{负数}$，从而
+
+\[
+\mathbb{P}_{\theta_0}\left[ \frac{1}{n}\sum Z_i(\theta) < 0 \right] \to 1.
+\]
+
+即 $\mathbb{P}_{\theta_0}[L(\theta_0; \mathbf{X}) > L(\theta; \mathbf{X})] \to 1$。
+
+\textbf{证毕。}
+
+\subsection{Rao-Cramér 下界的推导}\label{sec:rao-cramer-proof}
+
+\textbf{背景}：证明任何无偏估计量 $\widehat{\theta}$ 的方差满足 $\text{var}(\widehat{\theta}) \geq 1/[nI(\theta)]$。
+
+\textbf{证明思路}：利用 Cauchy-Schwarz 不等式。
+
+设 $Y = \widehat{\theta}$，$Z = \sum_{i=1}^n \frac{\partial \log f(X_i;\theta)}{\partial \theta}$。则 $\mathbb{E}(Z) = 0$，$\text{var}(Z) = nI(\theta)$。
+
+对 $k'(\theta) = \frac{d}{d\theta}\mathbb{E}(Y) = \frac{d}{d\theta}\int yL(y)dy$ 利用微分与积分可交换（正则条件），得
+
+\[
+k'(\theta) = \mathbb{E}\left( Y \cdot \frac{\partial \log L}{\partial \theta} \right) = \mathbb{E}(YZ).
+\]
+
+由 Cauchy-Schwarz 不等式，
+
+\[
+|\text{corr}(Y,Z)|^2 = \frac{[\text{cov}(Y,Z)]^2}{\text{var}(Y)\text{var}(Z)} \leq 1.
+\]
+
+即 $[k'(\theta)]^2 \leq \text{var}(Y) \cdot nI(\theta)$，整理得 Rao-Cramér 不等式。
+
+\textbf{证毕。}
+
+\subsection{MLE 渐近正态性的证明}\label{sec:mle-asymptotic-proof}
+
+\textbf{背景}：证明 $\sqrt{n}(\widehat{\theta}_n - \theta_0) \xrightarrow{D} N(0, 1/I(\theta_0))$。
+
+\textbf{证明思路}：对数似然在 $\theta_0$ 处 Taylor 展开。
+
+记 $l'(\theta) = \partial l/\partial \theta$，$l''(\theta) = \partial^2 l/\partial \theta^2$。
+
+由 $l'(\widehat{\theta}_n) = 0$（MLE 条件）和 Taylor 展开：
+
+\[
+0 = l'(\theta_0) + (\widehat{\theta}_n - \theta_0)l''(\theta_0) + \frac{1}{2}(\widehat{\theta}_n - \theta_0)^2 l'''(\theta_n^*),
+\]
+
+其中 $\theta_n^*$ 在 $\theta_0$ 和 $\widehat{\theta}_n$ 之间。
+
+整理得
+
+\[
+\sqrt{n}(\widehat{\theta}_n - \theta_0) = \frac{n^{-1/2}l'(\theta_0)}{-n^{-1}l''(\theta_0) - \frac{1}{2}(\widehat{\theta}_n - \theta_0) \cdot n^{-1}l'''(\theta_n^*)}.
+\]
+
+由中心极限定理，$n^{-1/2}l'(\theta_0) \xrightarrow{D} N(0, I(\theta_0))$。
+
+由大数定律，$-n^{-1}l''(\theta_0) \xrightarrow{P} I(\theta_0)$。
+
+由一致性 $\widehat{\theta}_n \xrightarrow{P} \theta_0$ 和条件 (R5)，第三项依概率趋于0。
+
+因此分子分母分别收敛，极限分布为 $N(0, 1/I(\theta_0))$。
+
+\textbf{证毕。}
+
+\subsection{正态分布信息矩阵的推导}\label{sec:normal-information-matrix-derivation}
+
+设 $X \sim N(\mu, \sigma^2)$，记 $\theta_1 = \mu$，$\theta_2 = \sigma^2$。
+
+对数密度：
+\[
+\log f = -\frac{1}{2}\log(2\pi) - \frac{1}{2}\log\theta_2 - \frac{(x-\theta_1)^2}{2\theta_2}.
+\]
+
+一阶偏导数：
+\[
+\frac{\partial \log f}{\partial \theta_1} = \frac{x-\theta_1}{\theta_2}, \quad
+\frac{\partial \log f}{\partial \theta_2} = -\frac{1}{2\theta_2} + \frac{(x-\theta_1)^2}{2\theta_2^2}.
+\]
+
+二阶偏导数：
+\[
+\frac{\partial^2 \log f}{\partial \theta_1^2} = -\frac{1}{\theta_2}, \quad
+\frac{\partial^2 \log f}{\partial \theta_2^2} = \frac{1}{2\theta_2^2} - \frac{(x-\theta_1)^2}{\theta_2^3}, \quad
+\frac{\partial^2 \log f}{\partial \theta_1\partial\theta_2} = -\frac{x-\theta_1}{\theta_2^2}.
+\]
+
+计算 Fisher 信息矩阵元素（取负期望）：
+
+\[
+I_{11} = -\mathbb{E}\left[\frac{\partial^2 \log f}{\partial \theta_1^2}\right] = \frac{1}{\theta_2},
+\]
+\[
+I_{22} = -\mathbb{E}\left[\frac{\partial^2 \log f}{\partial \theta_2^2}\right] = \frac{1}{2\theta_2^2},
+\]
+\[
+I_{12} = -\mathbb{E}\left[\frac{\partial^2 \log f}{\partial \theta_1\partial\theta_2}\right] = -\mathbb{E}\left[-\frac{X-\theta_1}{\theta_2^2}\right] = 0.
+\]
+
+因此
+\[
+\mathbf{I}(\theta) = \begin{pmatrix} \frac{1}{\sigma^2} & 0 \\ 0 & \frac{1}{2(\sigma^2)^2} \end{pmatrix}.
+\]
+
+注意到 $I_{12} = 0$，这表明 $\mu$ 和 $\sigma^2$ 的信息在正态分布下是独立的。
+
+\textbf{证毕。}
+
+\subsection{EM 算法单调性的证明}\label{sec:em-monotonicity-proof}
+
+\textbf{背景}：证明 EM 算法的每一步都使观测似然单调递增。
+
+\textbf{证明}：由条件概率定义，
+
+\[
+L(\theta|\mathbf{x}) = \frac{h(\mathbf{x}, \mathbf{z}|\theta)}{k(\mathbf{z}|\theta, \mathbf{x})},
+\]
+
+其中 $h$ 是完整数据联合密度，$k$ 是缺失数据 $\mathbf{Z}$ 给定观测数据 $\mathbf{x}$ 和参数 $\theta$ 的条件密度。
+
+取对数并在给定 $\theta^{(m)}$ 和 $\mathbf{x}$ 的条件下对 $\mathbf{Z}$ 求期望：
+
+\[
+\log L(\theta|\mathbf{x}) = \mathbb{E}_{\theta^{(m)}}\left[\log h(\mathbf{x}, \mathbf{Z}|\theta) | \theta^{(m)}, \mathbf{x}\right] - \mathbb{E}_{\theta^{(m)}}\left[\log k(\mathbf{Z}|\theta, \mathbf{x}) | \theta^{(m)}, \mathbf{x}\right].
+\]
+
+第一项正是 $Q(\theta|\theta^{(m)}, \mathbf{x})$。第二项由 Jensen 不等式可得
+
+\[
+\mathbb{E}_{\theta^{(m)}}\left[\log \frac{k(\mathbf{Z}|\theta^{(m)}, \mathbf{x})}{k(\mathbf{Z}|\theta, \mathbf{x})}\right] \leq \log \mathbb{E}_{\theta^{(m)}}\left[\frac{k(\mathbf{Z}|\theta^{(m)}, \mathbf{x})}{k(\mathbf{Z}|\theta, \mathbf{x})}\right] = \log 1 = 0.
+\]
+
+因此
+
+\[
+\log L(\theta|\mathbf{x}) \geq Q(\theta|\theta^{(m)}, \mathbf{x}) - Q(\theta^{(m)}|\theta^{(m)}, \mathbf{x}).
+\]
+
+由于 $\theta^{(m+1)}$ 最大化 $Q$，即 $Q(\theta^{(m+1)}|\theta^{(m)}, \mathbf{x}) \geq Q(\theta^{(m)}|\theta^{(m)}, \mathbf{x})$，代入得
+
+\[
+\log L(\theta^{(m+1)}|\mathbf{x}) \geq \log L(\theta^{(m)}|\mathbf{x}).
+\]
+
+\textbf{证毕。}
+
+% === 用户问答记录 ===
+% \section*{附录：问答记录}
+% 此章节内容由 QA Specialist 管理

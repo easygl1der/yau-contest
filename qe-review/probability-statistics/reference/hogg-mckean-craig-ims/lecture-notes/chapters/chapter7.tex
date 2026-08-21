@@ -1,0 +1,1265 @@
+% Chapter 7: Sufficiency and Quality of Estimators
+% Hogg, McKean, Craig - Introduction to Mathematical Statistics
+
+\chapter{Sufficiency and Quality of Estimators}\label{chap:sufficiency}
+
+\section*{Chapter 7 Overview}
+
+在第 4 章和第 6 章中，我们已经学会了如何从似然出发构造点估计、置信区间和假设检验。最大似然估计给出了一个强有力的原则：先写下数据在参数下出现的可能性，再选择使其最大的参数值。可是，这套原则仍然留下一个更深层的问题：
+
+\begin{center}
+\textit{给定一个参数 $\theta$，在所有可能的估计量中，是否存在一个``最好''的？如何找到它？}
+\end{center}
+
+要回答这个问题，我们首先需要理解什么叫``信息保留''。当我们收集数据 $X_1, X_2, \ldots, X_n$ 后，原始样本当然包含了关于 $\theta$ 的信息；但统计推断很少直接操作整份样本，而是把它压缩成样本均值 $\overline{X}$、样本方差 $S^2$ 或极值这样的统计量。这里的压缩不是为了节省纸面，而是为了把推断中真正起作用的部分提炼出来。
+
+\textbf{关键问题是}：这种压缩是否丢失了关于 $\theta$ 的信息？如果没有丢失，我们就可以放心地把后续估计、检验和区间构造都建立在这个统计量之上；如果丢失了，后续再精巧的估计也可能只是对残缺信息的加工。
+
+这正是\textbf{充分性（sufficiency）}理论要回答的问题。一个充分统计量 $T(X_1, \ldots, X_n)$ 保留了原始数据中关于 $\theta$ 的全部信息：给定 $T$ 的值以后，样本还怎样排列、哪些观测取了哪些具体位置，其条件分布都不再依赖 $\theta$。换言之，剩下的随机性只描述数据的形状，而不再携带关于参数的新信息。
+
+本章我们将学习：
+\begin{itemize}
+\item 如何定义和判断充分统计量（因子分解定理）
+\item Rao-Blackwell 定理：如何利用充分性改进估计量
+\item 完备性（completeness）与唯一最小方差无偏估计（MVUE）的关系
+\item 指数族分布（exponential class）的优良性质
+\item Basu 定理：完备充分统计量与辅助统计量的独立性
+\end{itemize}
+
+\textbf{本章路线图}：充分性定义 $\to$ 因子分解定理 $\to$ Rao-Blackwell $\to$ 完备性 $\to$ 指数族 $\to$ Basu 定理
+
+\section{7.1 Measures of Quality of Estimators}\label{sec:7.1}
+
+在寻找``最好''的估计量之前，我们需要先说清楚什么叫``好''。第 4 章给了我们无偏性：估计量在平均意义上击中目标；第 5 章给了我们一致性：样本量增大时估计量靠近目标；第 6 章又说明 MLE 在正则条件下通常有良好的渐近性质。本节的任务，是把这些性质放到同一条问题线上：在有限样本中，我们如何比较两个都看起来合理的估计量？这个问题看似只是排序估计量，实际上会把我们引向本章的主线：要比较所有估计量，必须先知道数据中哪些部分真正携带参数信息。
+
+\subsection{最小方差无偏估计量（MVUE）}
+
+如果坚持无偏性，那么一个自然而优雅的标准是：在所有无偏估计量中，选择方差最小的。这里的思想很朴素：既然大家都在平均意义上击中 $\theta$，那就选择波动最小、最稳定的那个。
+
+\begin{definition}[最小方差无偏估计量（MVUE）]\label{def:mvue}
+设 $Y = u(X_1, X_2, \ldots, X_n)$ 是基于容量为 $n$ 的随机样本的 $\theta$ 的点估计量。若 $Y$ 是无偏的，即 $\mathbb{E}(Y) = \theta$，且对 $\theta$ 的任何其他无偏估计量 $Y'$，都有 $\text{var}(Y) \leq \text{var}(Y')$，则称 $Y$ 是 $\theta$ 的\textbf{最小方差无偏估计量（minimum variance unbiased estimator, MVUE）}。
+\end{definition}
+
+这个定义的诱人之处在于它的自然性：如果两个估计量都是 $\theta$ 的无偏估计，那么方差较小的那个在平均意义上更接近 $\theta$。
+
+\begin{example}[正态分布的样本均值 vs 单个观测值]\label{ex:mvue-normal}
+设 $X_1, X_2, \ldots, X_9$ 是来自 $N(\theta, \sigma^2)$ 分布的随机样本，其中 $-\infty < \theta < \infty$。
+
+统计量 $\overline{X} = (X_1 + X_2 + \cdots + X_9)/9$ 服从 $N(\theta, \sigma^2/9)$，因此是无偏的。而 $X_1$ 服从 $N(\theta, \sigma^2)$，也是无偏的。
+
+虽然 $\overline{X}$ 的方差 $\sigma^2/9$ 小于 $X_1$ 的方差 $\sigma^2$，但定义要求比较的对象是\textbf{所有}无偏估计量，而不仅仅是这两个。我们不能仅凭两个例子就宣称 $\overline{X}$ 是 MVUE。
+
+真正的问题在于：我们无法枚举所有可能的无偏估计量。这促使我们发展更系统的方法来寻找 MVUE。
+\end{example}
+
+\subsection{风险函数与决策论视角}
+
+另一种比较估计量的框架是决策论（decision theory）。设 $\mathcal{L}[\theta, \delta(y)]$ 是损失函数（loss function），衡量估计值 $\delta(y)$ 与真实参数 $\theta$ 之间的差距。常见的损失函数是平方误差损失 $\mathcal{L}[\theta, \delta(y)] = [\theta - \delta(y)]^2$。
+
+风险函数（risk function）定义为损失的期望：$R(\theta, \delta) = \mathbb{E}[\mathcal{L}(\theta, \delta(Y))]$。这把``估计好不好''转化为一个清楚的优化问题：损失越小，决策越好。不过这里有一个根本困难：$R(\theta, \delta)$ 本身仍依赖未知的 $\theta$，于是一个决策函数可能在某些 $\theta$ 附近很好，在另一些 $\theta$ 处很差。一般情况下，不存在对所有 $\theta$ 同时最小的估计量（见下例）。
+
+\begin{example}[最小化风险函数的困难]\label{ex:risk-difficulty}
+设 $X_1, \ldots, X_{25}$ 是来自 $N(\theta, 1)$ 的样本。考虑平方损失函数 $\mathcal{L}[\theta, \delta(y)] = [\theta - \delta(y)]^2$。
+
+比较两个决策函数：
+\begin{enumerate}
+\item $\delta_1(y) = y = \overline{x}$，风险 $R(\theta, \delta_1) = 1/25$；
+\item $\delta_2(y) = 0$，风险 $R(\theta, \delta_2) = \theta^2$。
+\end{enumerate}
+
+当 $\theta = 0$ 时，$\delta_2$ 表现完美（$R(0, \delta_2) = 0$）；但当 $\theta = 2$ 时，$R(2, \delta_2) = 4 > R(2, \delta_1) = 1/25$。一般地，当 $|\theta| < 1/5$ 时 $\delta_2$ 更好，否则 $\delta_1$ 更好。
+
+这说明没有一个决策函数能在所有 $\theta$ 值下同时最优。\textbf{ minimax 原则}提供了一种折中：选择使 $\max_\theta R(\theta, \delta)$ 最小的决策函数。
+\end{example}
+
+如果没有对决策函数的限制（如要求无偏），很难找到统一最优的估计量。这促使我们聚焦于 MVUE——在无偏估计量的类中寻找方差最小者。
+
+\textbf{充分性的引入}：如果我们有一个充分统计量 $T$，那么所有无偏估计量都可以通过 Rao-Blackwell 过程改进为 $T$ 的函数。这大大简化了 MVUE 的搜索。
+
+\begin{remark}
+\textbf{风险观点与 MVUE 观点的分工}：风险函数把估计问题放进完整的决策论框架中，允许有偏估计量，也允许按最大风险、平均风险或其他准则比较规则；MVUE 则先固定无偏性，再在这个较小的类中最小化方差。前者更一般，后者更可操作。本章选择 MVUE 作为主线，不是因为风险观点不重要，而是因为充分性、Rao-Blackwell 化和完备性恰好给出了一套可以闭环的求解机制。
+\end{remark}
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item MVUE 在无偏估计量类中方差最小
+\item 寻找 MVUE 的困难在于无法枚举所有无偏估计量
+\item 充分统计量为这一问题提供了系统性的解决方案
+\end{itemize}
+
+\section{7.1 Measures of Quality of Estimators — Exercises}\label{sec:7.1-exercises}
+
+\begin{exercise}{\ref{exr:7.1.1} Unbiasedness and Variance of Sample Mean – Hogg 7.1.1}\label{exr:7.1.1}
+Show that the mean $\overline{X}$ of a random sample of size $n$ from a distribution having pdf $f(x;\theta) = (1 / \theta)e^{-(x / \theta)}$ , $0 < x < \infty$ , $0 < \theta < \infty$ , zero elsewhere, is an unbiased estimator of $\theta$ and has variance $\theta^2 / n$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.2} Unbiased Estimator for Normal Variance – Hogg 7.1.2}\label{exr:7.1.2}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a normal distribution with mean zero and variance $\theta$ , $0 < \theta < \infty$ . Show that $\sum_{1}^{n} X_{i}^{2} / n$ is an unbiased estimator of $\theta$ and has variance $2\theta^{2} / n$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.3} Unbiased Estimators from Uniform Order Statistics – Hogg 7.1.3}\label{exr:7.1.3}
+Let $Y_{1} < Y_{2} < Y_{3}$ be the order statistics of a random sample of size 3 from the uniform distribution having pdf $f(x; \theta) = 1 / \theta$ , $0 < x < \theta$ , $0 < \theta < \infty$ , zero elsewhere. Show that $4Y_{1}$ , $2Y_{2}$ , and $\frac{4}{3}Y_{3}$ are all unbiased estimators of $\theta$ . Find the variance of each of these unbiased estimators.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.4} Optimal Linear Combination of Unbiased Estimators – Hogg 7.1.4}\label{exr:7.1.4}
+Let $Y_{1}$ and $Y_{2}$ be two independent unbiased estimators of $\theta$ . Assume that the variance of $Y_{1}$ is twice the variance of $Y_{2}$ . Find the constants $k_{1}$ and $k_{2}$ so that $k_{1}Y_{1} + k_{2}Y_{2}$ is an unbiased estimator with the smallest possible variance for such a linear combination.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.5} Risk Comparison for Absolute Loss – Hogg 7.1.5}\label{exr:7.1.5}
+In Example 7.1.2 of this section, take $\mathcal{L}[\theta, \delta(y)] = |\theta - \delta(y)|$ . Show that $R(\theta, \delta_1) = \frac{1}{5}\sqrt{2/\pi}$ and $R(\theta, \delta_2) = |\theta|$ . Of these two decision functions $\delta_1$ and $\delta_2$ , which yields the smaller maximum risk?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.6} Risk Function for Poisson with Linear Decision – Hogg 7.1.6}\label{exr:7.1.6}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a Poisson distribution with parameter $\theta$ , $0 < \theta < \infty$ . Let $Y = \sum_{1}^{n} X_{i}$ and let $\mathcal{L}[\theta, \delta(y)] = [\theta - \delta(y)]^2$ . If we restrict our considerations to decision functions of the form $\delta(y) = b + y/n$ , where $b$ does not depend on $y$ , show that $R(\theta, \delta) = b^2 + \theta / n$ . What decision function of this form yields a uniformly smaller risk than every other decision function of this form? With this solution, say $\delta$ , and $0 < \theta < \infty$ , determine $\max_{\theta} R(\theta, \delta)$ if it exists.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.7} Minimum Risk under Squared Error for Normal Variance – Hogg 7.1.7}\label{exr:7.1.7}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a distribution that is $N(\mu, \theta)$ , $0 < \theta < \infty$ , where $\mu$ is unknown. Let $Y = \sum_{1}^{n}(X_{i} - \overline{X})^{2} / n$ and let $\mathcal{L}[\theta, \delta(y)] = [\theta - \delta(y)]^{2}$ . If we consider decision functions of the form $\delta(y) = by$ , where $b$ does not depend upon $y$ , show that $R(\theta, \delta) = (\theta^{2} / n^{2})[(n^{2} - 1)b^{2} - 2n(n - 1)b + n^{2}]$ . Show that $b = n / (n + 1)$ yields a minimum risk decision function of this form. Note that $nY / (n + 1)$ is not an unbiased estimator of $\theta$ . With $\delta(y) = ny / (n + 1)$ and $0 < \theta < \infty$ , determine $\max_{\theta} R(\theta, \delta)$ if it exists.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.8} Risk Function for Bernoulli with Linear Decision – Hogg 7.1.8}\label{exr:7.1.8}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a distribution that is $b(1, \theta)$ , $0 \leq \theta \leq 1$ . Let $Y = \sum_{1}^{n} X_{i}$ and let $\mathcal{L}[\theta, \delta(y)] = [\theta - \delta(y)]^2$ . Consider decision functions of the form $\delta(y) = by$ , where $b$ does not depend upon $y$ . Prove that $R(\theta, \delta) = b^2 n\theta (1 - \theta) + (bn - 1)^2\theta^2$ . Show that
+\[
+\max _{\theta} R(\theta, \delta) = \frac{b^4 n^2}{4[b^2 n - (bn - 1)^2]},
+\]
+provided that the value $b$ is such that $b^{2}n > (bn - 1)^{2}$ . Prove that $b = 1 / n$ does not minimize $\max_{\theta} R(\theta, \delta)$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.1.9} MLE and Fake Observations for Poisson – Hogg 7.1.9}\label{exr:7.1.9}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a Poisson distribution with mean $\theta > 0$ .
+
+(a) Statistician $A$ observes the sample to be the values $x_{1}, x_{2}, \ldots, x_{n}$ with sum $y = \sum x_{i}$ . Find the mle of $\theta$ .
+
+(b) Statistician $B$ loses the sample values $x_{1}, x_{2}, \ldots, x_{n}$ but remembers the sum $y_{1}$ and the fact that the sample arose from a Poisson distribution. Thus $B$ decides to create some fake observations, which he calls $z_{1}, z_{2}, \ldots, z_{n}$ (as he knows they will probably not equal the original $x$-values) as follows. He notes that the conditional probability of independent Poisson random variables $Z_{1}, Z_{2}, \ldots, Z_{n}$ being equal to $z_{1}, z_{2}, \ldots, z_{n}$ , given $\sum z_{i} = y_{1}$ , is
+\[
+\frac{\frac{\theta^{z_1} e^{-\theta}}{z_1!} \frac{\theta^{z_2} e^{-\theta}}{z_2!} \cdots \frac{\theta^{z_n} e^{-\theta}}{z_n!}}{\frac{(n\theta)^{y_1} e^{-n\theta}}{y_1!}} = \frac{y_1!}{z_1! z_2! \cdots z_n!} \left(\frac{1}{n}\right)^{z_1} \left(\frac{1}{n}\right)^{z_2} \dots \left(\frac{1}{n}\right)^{z_n}
+\]
+since $Y_{1} = \sum Z_{i}$ has a Poisson distribution with mean $n\theta$ . The latter distribution is multinomial with $y_{1}$ independent trials, each terminating in one of $n$ mutually exclusive and exhaustive ways, each of which has the same probability $1 / n$ . Accordingly, $B$ runs such a multinomial experiment $y_{1}$ independent trials and obtains $z_{1}, z_{2}, \ldots, z_{n}$ . Find the likelihood function using these $z$-values. Is it proportional to that of statistician $A$?
+\end{exercise}
+
+\section{7.2 A Sufficient Statistic for a Parameter}\label{sec:7.2}
+
+上一节把困难暴露出来了：MVUE 的定义要求与所有无偏估计量比较，而决策论的风险函数又很难在所有 $\theta$ 上同时最优。因此我们不能只问``哪个公式更漂亮''，还要问``估计量到底用了数据中的哪一部分信息''。本节正式引入充分统计量，并建立判断充分性的核心工具——因子分解定理（Factorization Theorem）。
+
+\subsection{为什么需要充分统计量？}
+
+统计量 $Y = u(X_1, X_2, \ldots, X_n)$ 本质上是对样本空间的一种划分（partition）。例如，$\overline{X} = 8.32$ 意味着所有满足 $\sum x_i = (8.32)n$ 的点 $(x_1, \ldots, x_n)$ 被归入同一类。
+
+给定一个统计量 $Y_1 = u_1(X_1, \ldots, X_n)$，如果我们知道 $(X_1, \ldots, X_n)$ 落在由 $Y_1 = y_1$ 确定的集合中，那么 $X_1, \ldots, X_n$ 的条件分布可能仍然依赖于 $\theta$。如果这个条件分布\textbf{完全不含 $\theta$}，则 $Y_1$ 包含了样本中关于 $\theta$ 的全部信息——这就是充分性的直觉。
+
+\begin{example}[二项分布的充分统计量]\label{ex:binomial-sufficient}
+设 $X_1, X_2, \ldots, X_n$ 是来自 Bernoulli($\theta$) 分布的随机样本，即
+\[
+f(x; \theta) = \theta^x (1-\theta)^{1-x},\quad x = 0,1.
+\]
+
+统计量 $Y_1 = \sum_{i=1}^n X_i$ 服从二项分布 $b(n, \theta)$。考虑条件概率
+\[
+\mathbb{P}(X_1 = x_1, \ldots, X_n = x_n \mid Y_1 = y_1).
+\]
+
+当且仅当 $\sum x_i = y_1$ 时该条件概率非零，此时
+\[
+\frac{\theta^{x_1}(1-\theta)^{1-x_1} \cdots \theta^{x_n}(1-\theta)^{1-x_n}}{\binom{n}{y_1}\theta^{y_1}(1-\theta)^{n-y_1}} = \frac{1}{\binom{n}{y_1}},
+\]
+该式不含 $\theta$。因此给定 $Y_1 = y_1$，数据的条件分布与 $\theta$ 无关——$Y_1$ 是 $\theta$ 的充分统计量。
+\end{example}
+
+这个例子的含义是：只要知道``成功次数'' $Y_1$ 是多少，就不再需要知道具体是哪几次试验成功了。$Y_1$ 已经包含了所有关于 $\theta$ 的信息。
+
+\subsection{充分统计量的正式定义}
+
+\begin{definition}[充分统计量]\label{def:sufficient-statistic}
+设 $X_1, X_2, \ldots, X_n$ 是来自 pdf 或 pmf $f(x; \theta)$，$\theta \in \Omega$ 的随机样本。设 $Y_1 = u_1(X_1, \ldots, X_n)$ 是统计量，其 pdf 或 pmf 为 $f_{Y_1}(y_1; \theta)$。则 $Y_1$ 是 $\theta$ 的\textbf{充分统计量}，当且仅当
+\[
+\frac{f(x_1; \theta)f(x_2; \theta)\cdots f(x_n; \theta)}{f_{Y_1}[u_1(x_1, \ldots, x_n); \theta]} = H(x_1, \ldots, x_n),
+\]
+其中 $H(x_1, \ldots, x_n)$ 不依赖于 $\theta$。
+\end{definition}
+
+这个定义的要点是：分子是联合 pdf/pmf，分母是充分统计量的 pdf，比值只与原始数据有关而与 $\theta$ 无关。
+
+\subsection{因子分解定理（Factorization Theorem）}
+
+直接使用定义需要知道充分统计量的分布，这往往很困难。Neyman 的因子分解定理提供了一个更实用的判定方法。
+
+\begin{theorem}[Neyman 因子分解定理]\label{th:factorization}
+设 $X_1, \ldots, X_n$ 是来自 pdf 或 pmf $f(x; \theta)$，$\theta \in \Omega$ 的随机样本。统计量 $Y_1 = u_1(X_1, \ldots, X_n)$ 是 $\theta$ 的充分统计量，当且仅当存在两个非负函数 $k_1$ 和 $k_2$，使得
+\[
+f(x_1; \theta)f(x_2; \theta)\cdots f(x_n; \theta) = k_1[u_1(x_1, \ldots, x_n); \theta] \cdot k_2(x_1, \ldots, x_n),
+\]
+其中 $k_2(x_1, \ldots, x_n)$ 不依赖于 $\theta$。
+\end{theorem}
+
+\textbf{核心思想}：联合 pdf/pmf 可以分解为两部分——一部分只通过 $u_1(x_1, \ldots, x_n)$ 依赖于 $\theta$，另一部分与 $\theta$ 无关。能完成这种分解的统计量就是充分的。也就是说，我们不必先求出 $Y_1$ 的边缘分布；只要在联合密度里看清参数依赖如何通过 $Y_1$ 进入即可。
+
+\begin{example}[正态分布 $\overline{X}$ 的充分性]\label{ex:normal-sufficient}
+设 $X_1, \ldots, X_n$ 是来自 $N(\theta, \sigma^2)$ 的样本，其中 $\sigma^2$ 已知。则
+\[
+f(x_i; \theta) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left[-\frac{(x_i - \theta)^2}{2\sigma^2}\right].
+\]
+
+联合 pdf 为
+\[
+\prod_{i=1}^n f(x_i; \theta) = \left(\frac{1}{\sigma\sqrt{2\pi}}\right)^n \exp\left[-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \theta)^2\right].
+\]
+
+利用恒等式 $\sum (x_i - \theta)^2 = \sum (x_i - \overline{x})^2 + n(\overline{x} - \theta)^2$，可得
+\[
+\prod_{i=1}^n f(x_i; \theta) = \underbrace{\exp\left[-\frac{n(\overline{x} - \theta)^2}{2\sigma^2}\right]}_{k_1[\overline{x}; \theta]} \cdot \underbrace{\frac{\exp\left[-\frac{1}{2\sigma^2}\sum(x_i - \overline{x})^2\right]}{(\sigma\sqrt{2\pi})^n}}_{k_2(x_1, \ldots, x_n)}.
+\]
+
+因此 $\overline{X}$ 是 $\theta$ 的充分统计量。\footnote{正态分布充分性的详细推导见附录 \cref{sec:appendix-ch7}。}
+\end{example}
+
+\begin{example}[指数分布的充分统计量]\label{ex:exponential-sufficient}
+设 $X_1, \ldots, X_n$ 是来自 $\Gamma(2, \theta)$ 分布的样本。已知 $\Gamma(\alpha, \beta)$ 分布的 mgf 为 $M(t) = (1 - \beta t)^{-\alpha}$，$t < 1/\beta$。
+
+$Y_1 = \sum_{i=1}^n X_i$ 的 mgf 为 $[(1 - \theta t)^{-2}]^n = (1 - \theta t)^{-2n}$，因此 $Y_1 \sim \Gamma(2n, \theta)$。
+
+联合 pdf 为
+\[
+\prod_{i=1}^n \frac{x_i e^{-x_i/\theta}}{\theta^2} = \frac{(\prod x_i) \exp(-\sum x_i/\theta)}{\theta^{2n}}.
+\]
+
+给定 $Y_1 = y_1$ 时，条件概率的比值为
+\[
+\frac{\prod_{i=1}^n \frac{x_i e^{-x_i/\theta}}{\theta^2}}{\frac{y_1^{2n-1} e^{-y_1/\theta}}{\Gamma(2n)\theta^{2n}}} = \frac{\Gamma(2n) \prod x_i}{y_1^{2n-1}},
+\]
+不含 $\theta$。故 $Y_1 = \sum X_i$ 是 $\theta$ 的充分统计量。
+\end{example}
+
+\begin{example}[乘积 $\prod X_i$ 的充分性]\label{ex:product-sufficient}
+设 $X_1, \ldots, X_n$ 是来自 pdf
+\[
+f(x; \theta) = \theta x^{\theta-1},\quad 0 < x < 1,\quad \theta > 0
+\]
+的样本。这是参数化形式的 Beta 分布。
+
+联合 pdf 为
+\[
+\theta^n \left(\prod_{i=1}^n x_i\right)^{\theta-1} = \underbrace{\theta^n \left(\prod_{i=1}^n x_i\right)^\theta}_{k_1[\prod x_i; \theta]} \cdot \underbrace{\frac{1}{\prod x_i}}_{k_2(x_1, \ldots, x_n)}.
+\]
+
+因此 $\prod_{i=1}^n X_i$ 是 $\theta$ 的充分统计量。
+\end{example}
+
+\textbf{注意}：使用因子分解定理时，必须正确处理支撑集（support）对参数的依赖。很多错误并不出在指数项的代数化简，而出在把指示函数当成常数忽略。
+
+\begin{example}[支撑集依赖参数的情况]\label{ex:support-dependence}
+设 $X_1, \ldots, X_n$ 来自 pdf
+\[
+f(x; \theta) = e^{-(x-\theta)} \mathbb{I}_{(\theta, \infty)}(x).
+\]
+
+一种错误的分解可能是：
+\[
+\prod e^{-(x_i-\theta)} = [e^{3\theta}] [e^{-x_1-x_2-x_3}],
+\]
+从而声称 $\max X_i$ 是充分的。但这是错误的，因为支撑集的交集必须满足 $\theta < \min x_i$，即
+\[
+\prod \mathbb{I}_{(\theta, \infty)}(x_i) = \mathbb{I}_{(\theta, \infty)}(\min x_i).
+\]
+
+正确的分解导致 $\min X_i$ 是充分统计量，而非 $\max X_i$。
+\end{example}
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 充分统计量 $T$ 保留了样本中关于 $\theta$ 的全部信息
+\item 因子分解定理是判断充分性的实用工具
+\item 注意支撑集对参数的依赖情况
+\end{itemize}
+
+\section{7.3 Properties of a Sufficient Statistic}\label{sec:7.3}
+
+充分统计量告诉我们哪些数据压缩没有丢失参数信息。下一步自然是：如果一个估计量还依赖于充分统计量之外的随机细节，能否把这些无关波动平均掉？Rao-Blackwell 定理正是这个问题的答案。
+
+\subsection{Rao-Blackwell 定理}
+
+给定一个充分统计量 $T$，我们可以把任意无偏估计量 $Y_2$ 条件化为 $\varphi(T)=\mathbb{E}(Y_2\mid T)$。这一步的直觉很清楚：在 $T$ 已经固定、参数信息已经全部保留的前提下，$Y_2$ 剩下的起伏只是无关噪声；对这些噪声取平均，会保留无偏性并降低方差。
+
+\begin{theorem}[Rao-Blackwell 定理]\label{th:rao-blackwell}
+设 $X_1, \ldots, X_n$ 是来自 pdf 或 pmf $f(x; \theta)$，$\theta \in \Omega$ 的随机样本。设 $Y_1 = u_1(X_1, \ldots, X_n)$ 是 $\theta$ 的充分统计量。设 $Y_2 = u_2(X_1, \ldots, X_n)$（不是 $Y_1$ 的函数）是 $\theta$ 的无偏估计量。
+
+则 $\mathbb{E}(Y_2 \mid y_1) = \varphi(y_1)$ 定义了一个统计量 $\varphi(Y_1)$。该统计量 $\varphi(Y_1)$：
+\begin{enumerate}
+\item 是 $\theta$ 的无偏估计量
+\item 是充分统计量的函数
+\item 方差不超过 $Y_2$ 的方差
+\end{enumerate}
+\end{theorem}
+
+\textbf{证明思路}：利用全概率公式 $\mathbb{E}(Y_2) = \mathbb{E}[\mathbb{E}(Y_2 \mid Y_1)]$ 和条件方差不增性质 $\text{var}(Y_2) \geq \text{var}[\mathbb{E}(Y_2 \mid Y_1)]$。
+
+这个定理的战略意义是：\textbf{在寻找 MVUE 时，只需在充分统计量的函数中搜索}。
+
+\begin{example}[指数分布的 MVUE]\label{ex:exponential-mvue}
+设 $X_1, \ldots, X_n$ 是来自 pdf
+\[
+f(x; \theta) = \theta e^{-\theta x},\quad x > 0,\quad \theta > 0
+\]
+的样本（这是 $\Gamma(1, 1/\theta)$ 分布）。
+
+联合 pdf 为 $L(\theta) = \theta^n e^{-\theta \sum x_i}$，故 $Y_1 = \sum_{i=1}^n X_i$ 是充分统计量。
+
+MLE 为 $Y_2 = 1/\overline{X} = n/Y_1$。由于 MLE 渐近无偏，我们计算其期望。$Y_1 \sim \Gamma(n, 1/\theta)$，因此
+\[
+\mathbb{E}(Y_2) = n \cdot \mathbb{E}(1/Y_1) = n \int_0^\infty \frac{\theta^n}{n!} t^{-1} t^{n-1} e^{-\theta t} dt = \frac{n}{n-1}\theta,\quad n > 1.
+\]
+
+故 $(n-1)/n \cdot Y_2 = (n-1)/Y_1$ 是 $\theta$ 的无偏估计量，且是充分统计量的函数，因此是 MVUE。
+\end{example}
+
+\subsection{充分性与 MLE 的关系}
+
+\begin{theorem}[充分性与 MLE]\label{th:sufficient-mle}
+设 $X_1, \ldots, X_n$ 是来自 pdf 或 pmf $f(x; \theta)$，$\theta \in \Omega$ 的随机样本。若 $\theta$ 的 MLE $\hat{\theta}$ 存在且唯一，则 $\hat{\theta}$ 是充分统计量的函数。
+\end{theorem}
+
+\textbf{直觉}：若 $T$ 是充分的，则似然函数 $L(\theta) = f_{T}(t; \theta) \cdot H(\mathbf{x})$。$L(\theta)$ 和 $f_{T}(t; \theta)$ 作为 $\theta$ 的函数同时达到最大值，故 $\hat{\theta}$ 必为 $T$ 的函数。
+
+这一结果具有重要的实践意义：对于指数族分布，MLE 通常可以解析地写成充分统计量的函数。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item Rao-Blackwell 定理：将任意无偏估计量改进为充分统计量的函数
+\item 充分性搜索范围：从所有统计量缩小到充分统计量的函数
+\item 若 MLE 存在且唯一，则必为充分统计量的函数
+\end{itemize}
+
+\section{7.4 Completeness and Uniqueness}\label{sec:7.4}
+
+有了 Rao-Blackwell 定理，我们知道 MVUE（若存在）必是充分统计量的函数。但充分统计量的函数可能有很多个：同一个充分统计量可以经过不同函数变换，得到许多不同的无偏估计。Rao-Blackwell 只告诉我们应当到哪里寻找，却还没有告诉我们如何保证答案唯一。
+
+这就需要引入\textbf{完备性（completeness）}的概念。它的作用不是再压缩数据，而是排除``看起来不同、期望却总是相同''的函数自由度。
+
+\subsection{完备性的定义}
+
+\begin{definition}[完备族]\label{def:complete-family}
+设随机变量 $Z$（连续型或离散型）的 pdf 或 pmf 是族 $\{h(z; \theta): \theta \in \Omega\}$ 的一员。若条件 $\mathbb{E}[u(Z)] = 0$ 对所有 $\theta \in \Omega$ 成立能够推出 $u(z) = 0$（除了一个对每个 $h(z; \theta)$ 概率为零的点集），则称该族为\textbf{完备族（complete family）}。
+\end{definition}
+
+简言之：\textbf{只有零函数才能期望为零}。
+
+\begin{example}[泊松分布族的完备性]\label{ex:poisson-complete}
+设 $X_1, \ldots, X_n$ 是来自 Poisson$(\theta)$ 分布的样本。已知 $Y_1 = \sum X_i$ 是充分统计量，其 pmf 为
+\[
+g(y_1; \theta) = \frac{(n\theta)^{y_1} e^{-n\theta}}{y_1!},\quad y_1 = 0,1,2,\ldots
+\]
+
+设 $\mathbb{E}[u(Y_1)] = 0$ 对所有 $\theta > 0$ 成立，即
+\[
+\sum_{y_1=0}^\infty u(y_1) \frac{(n\theta)^{y_1} e^{-n\theta}}{y_1!} = 0.
+\]
+
+由于 $e^{-n\theta} \neq 0$，可得
+\[
+u(0) + n u(1) \theta + \frac{n^2 u(2)}{2!} \theta^2 + \cdots = 0,\quad \forall \theta > 0.
+\]
+
+无穷幂级数对所有 $\theta > 0$ 为零，意味着所有系数必为零：
+\[
+u(0) = u(1) = u(2) = \cdots = 0.
+\]
+
+故泊松充分统计量族是完备的。
+\end{example}
+
+\begin{example}[指数分布族的完备性]\label{ex:exponential-complete}
+设 $Z \sim \text{Exp}(\theta)$，即 pdf 为 $h(z; \theta) = \frac{1}{\theta} e^{-z/\theta}$，$z > 0$。
+
+设 $\mathbb{E}[u(Z)] = 0$ 对所有 $\theta > 0$ 成立：
+\[
+\int_0^\infty u(z) \frac{1}{\theta} e^{-z/\theta} dz = 0,\quad \forall \theta > 0.
+\]
+
+令 $t = z/\theta$，则 $\theta dt = dz$：
+\[
+\int_0^\infty u(\theta t) e^{-t} dt = 0,\quad \forall \theta > 0.
+\]
+
+对 $\theta$ 求导并利用积分号内可微（假设 $u$ 满足适当条件），可得 $u(\theta t) \equiv 0$。由拉普拉斯变换的唯一性，$u \equiv 0$。故该族是完备的。
+\end{example}
+
+\subsection{完备充分统计量与 MVUE 的唯一性}
+
+\begin{theorem}[Lehmann-Scheffé 定理]\label{th:lehmann-scheffe}
+设 $X_1, \ldots, X_n$ 是来自 pdf 或 pmf $f(x; \theta)$，$\theta \in \Omega$ 的随机样本。设 $Y_1 = u_1(X_1, \ldots, X_n)$ 是 $\theta$ 的充分统计量，且族 $\{f_{Y_1}(y_1; \theta): \theta \in \Omega\}$ 是完备的。
+
+若存在 $Y_1$ 的一个函数是 $\theta$ 的无偏估计量，则该函数是唯一的 MVUE。
+\end{theorem}
+
+\textbf{证明思路}：设 $\varphi(Y_1)$ 和 $\psi(Y_1)$ 都是 $Y_1$ 的无偏估计量函数。则 $\mathbb{E}[\varphi(Y_1) - \psi(Y_1)] = 0$ 对所有 $\theta$ 成立。由完备性，$\varphi(y_1) - \psi(y_1) = 0$ 几乎处处成立，即两个估计量函数几乎处处相等——这就是``唯一''含义。
+
+\textbf{战略意义}：\textbf{完备充分统计量的无偏函数就是 MVUE}。
+
+\begin{example}[均匀分布最大值的 MVUE]\label{ex:uniform-max-mvue}
+设 $X_1, \ldots, X_n$ 是来自 Uniform$(0, \theta)$ 的样本。$Y_n = \max\{X_i\}$ 是充分统计量（习题 7.2.3），其 pdf 为
+\[
+g(y_n; \theta) = \frac{n y_n^{n-1}}{\theta^n},\quad 0 < y_n < \theta.
+\]
+
+验证完备性：设 $\mathbb{E}[u(Y_n)] = 0$ 对所有 $\theta > 0$ 成立，
+\[
+\int_0^\theta u(t) \frac{n t^{n-1}}{\theta^n} dt = 0.
+\]
+等价于 $\int_0^\theta u(t) t^{n-1} dt = 0$。对 $\theta$ 求导得 $u(\theta)\theta^{n-1} = 0$，故 $u(\theta) = 0$ 对所有 $\theta > 0$ 成立。故 $Y_n$ 是完备充分的。
+
+计算 $\mathbb{E}(Y_n) = \frac{n}{n+1}\theta$，故 $(n+1)/n \cdot Y_n$ 是 $\theta$ 的 MVUE。
+\end{example}
+
+\begin{example}[非完备的情况]\label{ex:not-complete}
+设 $X \sim N(0, \theta)$，$\theta > 0$。则 $Y = \sum X_i^2$ 是充分统计量，但族 $\{f_Y(y; \theta)\}$ 不是完备的（因为 $\chi^2$ 分布的自由度参数不依赖于 $\theta$ 的形式）。
+
+实际上，若 $Z \sim \chi^2_{n-1}$（与 $Y$ 独立），则 $\mathbb{E}(Z) = n-1$，但这并不能推出关于 $Y$ 的任何约束。
+\end{example}
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 完备性：只有零函数才能期望为零
+\item Lehmann-Scheffé 定理：完备充分统计量的无偏函数是唯一的 MVUE
+\item 寻找 MVUE 的策略：先找完备充分统计量，再在其函数中找无偏估计量
+\end{itemize}
+
+\section{7.5 The Exponential Class of Distributions}\label{sec:7.5}
+
+在前几节中，我们看到充分性和完备性是找到 MVUE 的关键。但如果每遇到一个模型都从定义开始验证充分性、再单独证明完备性，方法就显得过于零散。统计学中一个重要的经验是：许多常见分布共享同一种指数形式，而这种形式会自动把样本中的参数信息集中到若干个求和统计量里。本节介绍的\textbf{指数族分布（exponential class）}正是这样一个具有优良性质的大类。
+
+\subsection{正则指数族的定义}
+
+\begin{definition}[正则指数族]\label{def:regular-exponential}
+设 $f(x; \theta)$ 具有如下形式：
+\[
+f(x; \theta) = \exp[p(\theta)K(x) + H(x) + q(\theta)],\quad x \in \mathcal{S},
+\]
+其中 $\mathcal{S}$ 是 $X$ 的支撑集。若满足：
+\begin{enumerate}
+\item $\mathcal{S}$ 不依赖于 $\theta$
+\item $p(\theta)$ 是 $\theta \in \Omega$ 的非线性连续函数
+\item 若 $X$ 连续，则 $K'(x) \neq 0$ 且 $H(x)$ 在 $\mathcal{S}$ 上连续；若 $X$ 离散，则 $K(x)$ 在 $\mathcal{S}$ 上非线性
+\end{enumerate}
+则称 $f(x; \theta)$ 属于\textbf{正则指数族（regular exponential class）}。
+\end{definition}
+
+\textbf{直觉}：指数形式 $e^{p(\theta)K(x)}$ 使得对数似然函数是 $K(x)$ 的线性函数，从而 $\sum K(X_i)$ 自然成为充分统计量。
+
+\begin{example}[正态分布 $N(0, \theta)$ 是指数族]\label{ex:normal-exponential}
+$N(0, \theta)$ 的 pdf 可写为
+\[
+f(x; \theta) = \frac{1}{\sqrt{2\pi\theta}} e^{-x^2/(2\theta)} = \exp\left[-\frac{1}{2\theta}x^2 - \frac{1}{2}\log(2\pi\theta)\right].
+\]
+
+对应 $p(\theta) = -1/(2\theta)$，$K(x) = x^2$，$H(x) = -\frac{1}{2}\log(2\pi)$，$q(\theta) = -\frac{1}{2}\log(2\pi\theta)$。故 $N(0, \theta)$ 属于正则指数族。
+
+若 $X_1, \ldots, X_n \sim N(0, \theta)$，则 $\sum X_i^2$ 是充分统计量。
+\end{example}
+
+\begin{example}[泊松分布是指数族]\label{ex:poisson-exponential}
+泊松分布的 pmf 为
+\[
+f(x; \theta) = e^{-\theta} \frac{\theta^x}{x!} = \exp[(\log\theta)x - \theta - \log(x!)].
+\]
+
+对应 $p(\theta) = \log\theta$，$K(x) = x$，$q(\theta) = -\theta$，$H(x) = -\log(x!)$。故泊松分布属于正则指数族，$\sum X_i$ 是充分统计量。
+\end{example}
+
+\textbf{反例}：均匀分布 $f(x; \theta) = 1/\theta$，$0 < x < \theta$ 的支撑集依赖于 $\theta$，因此不是正则指数族。
+
+\subsection{指数族的核心定理}
+
+\begin{theorem}[指数族充分统计量的性质]\label{th:exponential-sufficient}
+设 $X_1, \ldots, X_n$ 来自正则指数族，pdf/pmf 如定义所示。设 $Y_1 = \sum_{i=1}^n K(X_i)$。则：
+\begin{enumerate}
+\item $Y_1$ 的 pdf/pmf 具有形式
+\[
+f_{Y_1}(y_1; \theta) = R(y_1) \exp[p(\theta)y_1 + nq(\theta)],\quad y_1 \in \mathcal{S}_{Y_1},
+\]
+其中 $\mathcal{S}_{Y_1}$ 和 $R(y_1)$ 不依赖于 $\theta$
+\item $\mathbb{E}(Y_1) = -n \frac{q'(\theta)}{p'(\theta)}$
+\item $\text{var}(Y_1) = n \cdot \frac{p''(\theta)q'(\theta) - q''(\theta)p'(\theta)}{[p'(\theta)]^3}$
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[指数族统计量的完备性]\label{th:exponential-complete}
+在正则指数族条件下，$Y_1 = \sum_{i=1}^n K(X_i)$ 是 $\theta$ 的\textbf{完备充分统计量}。
+\end{theorem}
+
+\textbf{证明思路}：设 $\mathbb{E}[u(Y_1)] = 0$ 对所有 $\theta$ 成立。利用 $Y_1$ 的分布形式，可得
+\[
+\int u(y_1)R(y_1) \exp[p(\theta)y_1] dy_1 = 0,\quad \forall \theta.
+\]
+
+由于 $p(\theta)$ 是非线性连续函数，该积分本质上是 $u(y_1)R(y_1)$ 的拉普拉斯变换。拉普拉斯变换为零意味着 $u(y_1)R(y_1) \equiv 0$。由于 $R(y_1) > 0$（它是 pdf 的因子），故 $u(y_1) \equiv 0$。
+
+\begin{example}[正态均值 $\theta$ 的 MVUE]\label{ex:normal-mean-mvue}
+设 $X_1, \ldots, X_n \sim N(\theta, \sigma^2)$，其中 $\sigma^2$ 已知。则
+\[
+f(x; \theta) = \exp\left[\frac{\theta}{\sigma^2}x - \frac{x^2}{2\sigma^2} - \log\sqrt{2\pi\sigma^2} - \frac{\theta^2}{2\sigma^2}\right].
+\]
+
+故 $p(\theta) = \theta/\sigma^2$，$K(x) = x$，$q(\theta) = -\frac{\theta^2}{2\sigma^2}$。$Y_1 = \sum X_i = n\overline{X}$ 是完备充分统计量。
+
+$\mathbb{E}(Y_1) = n\theta$，故 $\varphi(Y_1) = Y_1/n = \overline{X}$ 是 $\theta$ 的唯一 MVUE。
+\end{example}
+
+\textbf{指数族的战略价值}：对于指数族，完备充分统计量可以通过观察直接写出，MVUE 也容易通过期望计算得到。它把``找充分统计量''和``证明完备性''这两步合并成一个可重复使用的模板。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 正则指数族具有形式 $e^{p(\theta)K(x) + H(x) + q(\theta)}$
+\item $\sum K(X_i)$ 是指数族的充分统计量
+\item 指数族统计量是完备充分的
+\item 指数族的 MVUE 可通过期望计算直接得到
+\end{itemize}
+
+\section{7.6 Functions of a Parameter}\label{sec:7.6}
+
+很多时候，我们关心的不是参数 $\theta$ 本身，而是其某个函数 $\delta = g(\theta)$。例如，在 Bernoulli 模型中，$\theta$ 是成功概率，但方差 $\theta(1-\theta)$ 也常常是实际问题中更直接的目标。前面建立的完备充分框架并不只服务于 $\theta$ 本身；只要能找到 $g(\theta)$ 的无偏函数，Lehmann-Scheffé 定理同样给出唯一 MVUE。
+
+\subsection{技术一：观察法}
+
+如果能通过观察 $\mathbb{E}[\varphi(Y_1)] = g(\theta)$ 解出 $\varphi$ 就可直接得到 MVUE。
+
+\begin{example}[二项分布方差的 MVUE]\label{ex:binomial-variance-mvue}
+设 $X_1, \ldots, X_n \sim \text{Bernoulli}(\theta)$。$Y = \sum X_i$ 是完备充分统计量。样本比例 $Y/n$ 是 $\theta$ 的 MVUE。
+
+现欲估计 $\delta = \theta(1-\theta)$，即 $\text{var}(Y/n) = \theta(1-\theta)/n$。
+
+MLE 为 $\tilde{\delta} = (Y/n)(1 - Y/n)$。计算期望：
+\[
+\mathbb{E}[\tilde{\delta}] = \mathbb{E}\left[\frac{Y}{n}\left(1 - \frac{Y}{n}\right)\right] = \frac{n-1}{n}\theta(1-\theta).
+\]
+
+故 $\hat{\delta} = \frac{n}{n-1}\tilde{\delta} = \frac{Y(n-Y)}{n(n-1)}$ 是 $\delta$ 的 MVUE。
+\end{example}
+
+\subsection{技术二：条件期望法}
+
+若 $Z$ 是 $\theta$ 的无偏估计量，则 $\varphi(Y_1) = \mathbb{E}(Z \mid Y_1)$ 是 MVUE。
+
+\begin{example}[正态分布累积概率的 MVUE]\label{ex:normal-cdf-mvue}
+设 $X_1, \ldots, X_n \sim N(\theta, 1)$。欲估计 $\mathbb{P}(X \leq c) = \Phi(c - \theta)$。
+
+取 $Z = \mathbb{I}(X_1 \leq c)$，则 $\mathbb{E}(Z) = \Phi(c - \theta)$，是无偏的。
+
+$(X_1, \overline{X})$ 的联合分布是二元正态，条件分布 $X_1 \mid \overline{X} = \overline{x}$ 是正态，均值为 $\overline{x}$，方差为 $(n-1)/n$。
+
+计算条件期望：
+\[
+\mathbb{E}[Z \mid \overline{X} = \overline{x}] = \mathbb{P}(X_1 \leq c \mid \overline{X} = \overline{x}) = \Phi\left[\frac{\sqrt{n}(c - \overline{x})}{\sqrt{n-1}}\right].
+\]
+
+这是 $\Phi(c - \theta)$ 的 MVUE。
+\end{example}
+
+\subsection{7.6.1 Bootstrap 标准误}
+
+对于 MVUE，我们通常没有像 MLE 那样的渐近理论。但可以使用 Bootstrap 来获得标准误。
+
+设 $\hat{\theta}$ 是基于原始样本的估计量。从经验分布 $\hat{F}_n$ 中有放回地抽取 $B$ 个 Bootstrap 样本，计算每个样本的估计值 $\hat{\theta}_1^*, \ldots, \hat{\theta}_B^*$。则 Bootstrap 标准误为
+\[
+\text{SE}_{\text{boot}} = \sqrt{\frac{1}{B-1}\sum_{b=1}^B (\hat{\theta}_b^* - \overline{\hat{\theta}})^2},\quad \overline{\hat{\theta}} = \frac{1}{B}\sum_{b=1}^B \hat{\theta}_b^*.
+\]
+
+这在 MVUE 的解析标准误难以获得时特别有用。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 估计 $g(\theta)$ 时，先找 $\theta$ 的完备充分统计量
+\item MVUE 或者是 $T$ 的函数的期望，或者通过条件期望改进
+\item Bootstrap 可用于估计 MVUE 的标准误
+\end{itemize}
+
+\section{7.7 The Case of Several Parameters}\label{sec:7.7}
+
+前面的讨论聚焦于单个参数。但许多基本模型天然含有多个参数，例如正态分布同时有均值和方差。此时一个统计量往往无法承载全部信息，我们需要把充分性的思想推广到向量形式：用一组统计量共同保留关于整个参数向量的信息。
+
+\subsection{联合充分统计量}
+
+\begin{definition}[联合充分统计量]\label{def:joint-sufficient}
+设 $X_1, \ldots, X_n$ 是来自 $f(x; \boldsymbol{\theta})$ 的样本，其中 $\boldsymbol{\theta} \in \Omega \subset \mathbb{R}^p$。设 $\mathbf{Y} = (Y_1, \ldots, Y_m)$ 是统计量向量。则 $\mathbf{Y}$ 是 $\boldsymbol{\theta}$ 的\textbf{联合充分统计量}，当且仅当
+\[
+\frac{\prod_{i=1}^n f(x_i; \boldsymbol{\theta})}{f_{\mathbf{Y}}(\mathbf{y}; \boldsymbol{\theta})} = H(x_1, \ldots, x_n),
+\]
+其中 $H$ 不依赖于 $\boldsymbol{\theta}$。
+\end{definition}
+
+因子分解定理同样适用：联合似然函数可分解为仅依赖 $\mathbf{y}$ 的因子和与参数无关的因子。
+
+\begin{example}[双参数正态分布]\label{ex:normal-two-param}
+设 $X_1, \ldots, X_n \sim N(\theta_1, \theta_2)$，其中 $\theta_1$ 是均值，$\theta_2$ 是方差。
+
+联合 pdf 为
+\[
+\prod_{i=1}^n \frac{1}{\sqrt{2\pi\theta_2}} \exp\left[-\frac{(x_i - \theta_1)^2}{2\theta_2}\right].
+\]
+
+利用恒等式 $\sum (x_i - \theta_1)^2 = \sum x_i^2 - n\overline{x}^2 + n(\overline{x} - \theta_1)^2$，可得
+\[
+\prod f(x_i; \boldsymbol{\theta}) = \exp\left[-\frac{n(\overline{x} - \theta_1)^2}{2\theta_2}\right] \cdot \frac{\exp\left[-\frac{1}{2\theta_2}\sum(x_i - \overline{x})^2\right]}{(\sqrt{2\pi\theta_2})^n}.
+\]
+
+因此 $(\overline{X}, \sum X_i^2)$ 或等价地 $(\overline{X}, S^2)$ 是 $(\theta_1, \theta_2)$ 的联合完备充分统计量。
+\end{example}
+
+\begin{example}[均匀分布的双参数]\label{ex:uniform-two-param}
+设 $X_1, \ldots, X_n$ 来自 pdf
+\[
+f(x; \theta_1, \theta_2) = \frac{1}{2\theta_2} \mathbb{I}_{(\theta_1 - \theta_2, \theta_1 + \theta_2)}(x).
+\]
+
+这是区间长度为 $2\theta_2$、中心为 $\theta_1$ 的均匀分布。充分统计量为 $(Y_1, Y_n) = (\min X_i, \max X_i)$。
+\end{example}
+
+\subsection{多参数指数族}
+
+\begin{definition}[$m$ 参数指数族]\label{def:multi-exponential}
+设 $f(x; \boldsymbol{\theta})$ 具有形式
+\[
+f(x; \boldsymbol{\theta}) = \exp\left[\sum_{j=1}^m p_j(\boldsymbol{\theta})K_j(x) + H(x) + q(\boldsymbol{\theta})\right],\quad x \in \mathcal{S}.
+\]
+
+在正则条件下，统计量
+\[
+Y_j = \sum_{i=1}^n K_j(X_i),\quad j = 1, \ldots, m
+\]
+是 $\boldsymbol{\theta}$ 的\textbf{联合完备充分统计量}（当 $n > m$ 时）。
+\end{definition}
+
+\begin{example}[双参数指数族]\label{ex:normal-exponential-two}
+$N(\theta_1, \theta_2)$ 可写为指数形式：
+\[
+f(x; \theta_1, \theta_2) = \exp\left[-\frac{1}{2\theta_2}x^2 + \frac{\theta_1}{\theta_2}x - \frac{\theta_1^2}{2\theta_2} - \frac{1}{2}\log(2\pi\theta_2)\right].
+\]
+
+取 $K_1(x) = x^2$，$K_2(x) = x$，则联合充分统计量为 $(\sum X_i^2, \sum X_i)$，与之前的结论一致。
+\end{example}
+
+\textbf{多参数情况下的 MVUE}：设 $\delta = g(\boldsymbol{\theta})$ 是感兴趣的参数函数。若 $\mathbf{Y}$ 是联合完备充分统计量，则 $\mathbb{E}[\delta \mid \mathbf{Y}]$ 是 $\delta$ 的 MVUE。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 多参数时需要联合充分统计量
+\item 双参数正态：$(\overline{X}, S^2)$ 是联合完备充分统计量
+\item 多参数指数族具有联合完备充分统计量
+\end{itemize}
+
+\section{7.8 Minimal Sufficiency and Ancillary Statistics}\label{sec:7.8}
+
+充分统计量不唯一——任何一一变换（one-to-one transformation）还是充分统计量。因此，``充分''本身并不等于``简洁''：把充分统计量旁边再附加一堆无关统计量，仍然充分，却显然没有完成数据压缩的目标。我们总希望找到``最小''的充分统计量，用最少的统计量包含全部信息。
+
+\subsection{最小充分统计量}
+
+\begin{definition}[最小充分统计量]\label{def:minimal-sufficient}
+设 $T$ 是充分统计量。若对任何其他充分统计量 $T'$，$T$ 都是 $T'$ 的函数，则称 $T$ 是\textbf{最小充分统计量（minimal sufficient statistic）}。
+\end{definition}
+
+直观理解：最小充分统计量是``最压缩''的充分统计量——无法在保持充分性的前提下进一步压缩。
+
+\textbf{一个关键洞察}：若 MLE $\hat{\theta}$ 是充分的，则 $\hat{\theta}$ 必是最小充分统计量（因为任何其他充分统计量都能导出 $\hat{\theta}$）。
+
+\begin{example}[均匀分布 $(\theta-1, \theta+1)$ 的最小充分统计量]\label{ex:uniform-location-minimal}
+设 $X_1, \ldots, X_n$ 来自 Uniform$(\theta-1, \theta+1)$ 分布。
+
+联合 pdf 中出现的指示函数要求 $\theta - 1 < \min x_i \leq x_j \leq \max x_i < \theta + 1$。因此 $(Y_1, Y_n) = (\min X_i, \max X_i)$ 是充分统计量。
+
+由于无法进一步压缩（两个统计量缺一不可），它们是最小充分统计量。注意这与单参数情况不同——无法用一个统计量替代两个。
+\end{example}
+
+\textbf{一般位置模型}：若 $X_i = \theta + W_i$，其中 $W_i$ iid，则顺序统计量 $(Y_1, \ldots, Y_n)$ 是最小充分的。但有时也可以进一步压缩——例如正态分布时 $\overline{X}$ 就足够了。
+
+\subsection{辅助统计量（Ancillary Statistics）}
+
+充分统计量包含关于参数的全部信息。辅助统计量的分布则完全不含参数信息——看似是充分性的``对立面''。
+
+\begin{definition}[辅助统计量]\label{def:ancillary}
+设 $Z = u(X_1, \ldots, X_n)$ 是统计量。若 $Z$ 的分布不依赖于 $\boldsymbol{\theta}$，则称 $Z$ 是\textbf{辅助统计量（ancillary statistic）}。
+\end{definition}
+
+\textbf{例子}：
+\begin{itemize}
+\item $N(\theta, 1)$ 分布中，$S^2$ 是辅助统计量（其分布不依赖于 $\theta$）
+\item 尺度模型 $X_i = \theta W_i$ 中，$X_1/X_2$ 是辅助统计量
+\item 同时具有位置与尺度不变性的统计量，例如 $(X_i-\overline{X})/S$ 的函数，通常也不依赖于位置和尺度参数
+\end{itemize}
+
+辅助统计量揭示了数据中与参数无关的部分。虽然看似无用，但它们在构建置信区间和检验中很有价值：不含参数的分布往往可以作为枢轴量，帮助我们把未知参数从概率陈述中消去。
+
+\begin{example}[位置不变统计量]\label{ex:location-invariant}
+设 $X_i = \theta + W_i$，$W_i$ iid。统计量 $Z = u(X_1, \ldots, X_n)$ 若满足
+\[
+u(x_1+d, \ldots, x_n+d) = u(x_1, \ldots, x_n),\quad \forall d,
+\]
+则是位置不变的。直观上，这意味着 $Z$ 只描述 $W_i$ 的性质，因此与 $\theta$ 无关。
+
+常见的例子包括：样本方差 $S^2$、样本极差 $\max X_i - \min X_i$、以及 $\sum_{i=1}^{n-1}(X_{i+1} - X_i)^2$。
+\end{example}
+
+\begin{example}[尺度不变统计量]\label{ex:scale-invariant}
+设 $X_i = \theta W_i$，$\theta > 0$，$W_i$ iid。若 $Z$ 满足
+\[
+u(cx_1, \ldots, cx_n) = u(x_1, \ldots, x_n),\quad \forall c > 0,
+\]
+则是尺度不变的。
+
+例子：$X_1/(X_1+X_2)$、$X_1^2/\sum X_i^2$、$\min X_i/\max X_i$。
+\end{example}
+
+辅助统计量与充分统计量的关系将在下节的 Basu 定理中揭示。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item 最小充分统计量是充分统计量的一一变换后仍保持充分性
+\item 若 MLE 是充分的，则它必是最小充分的
+\item 辅助统计量的分布不含参数信息
+\item 位置/尺度不变统计量是常见的辅助统计量
+\end{itemize}
+
+\section{7.9 Sufficiency, Completeness, and Independence}\label{sec:7.9}
+
+本节揭示充分性、完备性与独立性之间的深刻联系——Basu 定理。前面我们把数据分成两类：一类统计量携带关于参数的信息，另一类统计量的分布完全不含参数。Basu 定理说明，在完备充分的条件下，这两类信息不仅概念上分离，而且在概率意义下独立。
+
+\subsection{Basu 定理的动机}
+
+我们已经知道：
+\begin{itemize}
+\item 若 $T$ 是充分的，则 $Z$ 的条件分布 $h(z \mid t)$ 不依赖于 $\theta$
+\item 若 $T$ 和 $Z$ 独立，则 $Z$ 的边际分布 $g_2(z) = h(z \mid t)$ 不依赖于 $\theta$——即 $Z$ 是辅助的
+\end{itemize}
+
+反过来：若 $Z$ 是辅助的（分布不含 $\theta$），$T$ 是充分的，$T$ 和 $Z$ 是否独立？
+
+直觉上似乎应该独立——但这需要证明。
+
+\subsection{Basu 定理}
+
+\begin{theorem}[Basu 定理]\label{th:basu}
+设 $X_1, \ldots, X_n$ 是来自 $f(x; \theta)$ 的样本，$\theta \in \Omega$（$\Omega$ 是区间）。设 $T$ 是 $\theta$ 的\textbf{完备充分统计量}。设 $Z = u(X_1, \ldots, X_n)$ 是另一个统计量。
+
+若 $Z$ 的分布不依赖于 $\theta$（即 $Z$ 是辅助的），则 $T$ 与 $Z$ 独立。
+\end{theorem}
+
+\textbf{证明思路}：考虑 $T$ 和 $Z$ 的联合 pdf $g_1(t; \theta)h(z \mid t)$。$Z$ 的边际分布为
+\[
+\int g_1(t; \theta)h(z \mid t) dt = g_2(z),
+\]
+不依赖于 $\theta$。同时 $g_2(z) = \int g_2(z)g_1(t; \theta) dt$。两式相减得
+\[
+\int [g_2(z) - h(z \mid t)] g_1(t; \theta) dt = 0,\quad \forall \theta.
+\]
+
+由于 $T$ 是完备的，上式意味着 $g_2(z) - h(z \mid t) = 0$ 几乎处处成立，即 $h(z \mid t) = g_2(z)$，故 $T$ 与 $Z$ 独立。
+
+\textbf{核心洞察}：\textbf{完备性是独立性的关键——它保证了期望为零的函数必为零函数}。
+
+\begin{example}[正态分布中 $\overline{X}$ 与 $S^2$ 的独立性]\label{ex:normal-xbar-s2}
+设 $X_1, \ldots, X_n \sim N(\theta, \sigma^2)$，其中 $\sigma^2$ 已知。则 $\overline{X}$ 是 $\theta$ 的完备充分统计量。
+
+样本方差 $S^2$ 是位置不变的——其分布不依赖于 $\theta$。由 Basu 定理，$\overline{X}$ 与 $S^2$ 独立。
+
+这与我们在第 3 章用到的结果一致。
+\end{example}
+
+\begin{example}[指数分布中 $T$ 与尺度不变量的独立性]\label{ex:exp-ancillary}
+设 $X_1, X_2 \sim \text{Exp}(\theta)$。则 $Y_1 = X_1 + X_2$ 是完备充分统计量。
+
+考虑比值 $Z = X_1/(X_1+X_2)$。这是尺度不变的（$Z(cX_1, cX_2) = Z(X_1, X_2)$），因此 $Z$ 的分布不含 $\theta$。
+
+由 Basu 定理，$Y_1$ 与 $Z$ 独立。实际上，$Z \sim \text{Beta}(1,1)$（均匀分布），与指数分布的参数无关。
+\end{example}
+
+\begin{example}[正态双参数中 $\overline{X}$、$S^2$ 与辅助量的独立性]\label{ex:normal-joint-independent}
+设 $X_1, \ldots, X_n \sim N(\theta_1, \theta_2)$。则 $(\overline{X}, S^2)$ 是 $(\theta_1, \theta_2)$ 的联合完备充分统计量。
+
+考虑统计量
+\[
+Z = \frac{\sum_{i=1}^{n-1}(X_{i+1} - X_i)^2}{\sum_{i=1}^n (X_i - \overline{X})^2}.
+\]
+
+该统计量满足位置-尺度不变性，因此其分布不含 $(\theta_1, \theta_2)$。由 Basu 定理，$Z$ 与 $(\overline{X}, S^2)$ 独立。
+\end{example}
+
+\subsection{Basu 定理的应用}
+
+Basu 定理的价值在于：
+\begin{enumerate}
+\item 提供独立性证明的简洁方法（无需计算联合分布）
+\item 揭示了``信息对立''：完备充分统计量与辅助统计量正交
+\item 辅助统计量虽然不含参数信息，但可用于构建置信区间（如枢轴量）
+\end{enumerate}
+
+\textbf{重要注记}：若充分统计量不是完备的，Basu 定理不适用——此时辅助统计量可能与充分统计量不独立，辅助统计量中可能仍包含关于参数的\textbf{条件信息}。
+
+\begin{example}[非完备情况下的条件信息]\label{ex:noncomplete-conditional}
+在均匀分布 $(\theta-1, \theta+1)$ 例子中，充分统计量是 $(Y_1, Y_n) = (\min X_i, \max X_i)$，但它们不是完备的。
+
+令 $T_1 = (Y_1+Y_n)/2$（$\theta$ 的无偏估计）和 $T_2 = Y_n - Y_1$（辅助的）。虽然 $T_2$ 是辅助的，但给定 $T_2 = t_2$ 的条件下，$T_1$ 的方差为 $(2-t_2)^2/12$——较小的 $t_2$ 意味着 $T_1$ 有更大的方差。
+
+这说明 $T_2$ 虽然是边缘意义下的辅助统计量，但在条件意义下仍提供关于估计精度的信息。
+\end{example}
+
+这种情况在实际中很重要：当样本来自非正态分布时，样本均值 $\overline{X}$ 和样本方差 $S^2$ 可能相关，$S^2$ 的值能提供关于 $\overline{X}$ 精度的信息。
+
+\subsection*{本节小结}
+
+\begin{itemize}
+\item Basu 定理：完备充分统计量与任何辅助统计量独立
+\item 独立性证明的新工具：无需计算联合分布
+\item 若充分统计量非完备，辅助统计量可能携带条件信息
+\item 这解释了为什么正态分布中 $\overline{X}$ 与 $S^2$ 的独立性如此特别
+\end{itemize}
+
+\section*{本章习题}
+
+\begin{exercise}{\ref{exr:7.2.1} Sufficient Statistic for Normal Variance – Hogg 7.2.1}\label{exr:7.2.1}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be iid $N(0, \theta)$, $0 < \theta < \infty$. Show that $\sum_{i=1}^{n} X_{i}^{2}$ is a sufficient statistic for $\theta$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.2} Poisson Sufficient Statistic – Hogg 7.2.2}\label{exr:7.2.2}
+Prove that the sum of the observations of a random sample of size $n$ from a Poisson distribution having parameter $\theta$ , $0 < \theta < \infty$ , is a sufficient statistic for $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.3} Uniform Maximum Sufficient Statistic – Hogg 7.2.3}\label{exr:7.2.3}
+Show that the $n$th order statistic of a random sample of size $n$ from the uniform distribution having pdf $f(x; \theta) = 1 / \theta$ , $0 < x < \theta$ , $0 < \theta < \infty$ , zero elsewhere, is a sufficient statistic for $\theta$ . Generalize this result by considering the pdf $f(x; \theta) = Q(\theta) M(x)$ , $0 < x < \theta$ , $0 < \theta < \infty$ , zero elsewhere. Here, of course,
+\[
+\int_{0}^{\theta} M(x) dx = \frac{1}{Q(\theta)}.
+\]
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.4} Geometric Distribution Sufficiency – Hogg 7.2.4}\label{exr:7.2.4}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample of size $n$ from a geometric distribution that has pmf $f(x; \theta) = (1 - \theta)^{x}\theta$, $x = 0, 1, 2, \ldots$, $0 < \theta < 1$, zero elsewhere. Show that $\sum_{i=1}^{n} X_{i}$ is a sufficient statistic for $\theta$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.5} Gamma Sufficient Statistic – Hogg 7.2.5}\label{exr:7.2.5}
+Show that the sum of the observations of a random sample of size $n$ from a gamma distribution that has pdf $f(x; \theta) = (1 / \theta)e^{-x / \theta}$ , $0 < x < \infty$ , $0 < \theta < \infty$ , zero elsewhere, is a sufficient statistic for $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.6} Beta Product Sufficient Statistic – Hogg 7.2.6}\label{exr:7.2.6}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample of size $n$ from a beta distribution with parameters $\alpha = \theta$ and $\beta = 5$ . Show that the product $X_{1}X_{2}\dots X_{n}$ is a sufficient statistic for $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.7} Gamma Product Sufficient Statistic – Hogg 7.2.7}\label{exr:7.2.7}
+Show that the product of the sample observations is a sufficient statistic for $\theta > 0$ if the random sample is taken from a gamma distribution with parameters $\alpha = \theta$ and $\beta = 6$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.8} Beta($\theta$, $\theta$) Sufficient Statistic – Hogg 7.2.8}\label{exr:7.2.8}
+What is the sufficient statistic for $\theta$ if the sample arises from a beta distribution in which $\alpha = \beta = \theta > 0$ ?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.2.9} Truncated Exponential MLE and Sufficiency – Hogg 7.2.9}\label{exr:7.2.9}
+We consider a random sample $X_{1}, X_{2}, \ldots, X_{n}$ from a distribution with pdf $f(x; \theta) = (1 / \theta) \exp(-x / \theta)$ , $0 < x < \infty$ , zero elsewhere, where $0 < \theta$ . Possibly, in a life-testing situation, however, we only observe the first $r$ order statistics $Y_{1} < Y_{2} < \dots < Y_{r}$ .
+
+(a) Record the joint pdf of these order statistics and denote it by $L(\theta)$ .
+
+(b) Under these conditions, find the mle, $\hat{\theta}$ , by maximizing $L(\theta)$ .
+
+(c) Find the mgf and pdf of $\hat{\theta}$ .
+
+(d) With a slight extension of the definition of sufficiency, is $\hat{\theta}$ a sufficient statistic?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.1} MLE as Function of Sufficient Statistic – Hogg 7.3.1}\label{exr:7.3.1}
+In each of Exercises 7.2.1-7.2.4, show that the mle of $\theta$ is a function of the sufficient statistic for $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.2} Rao-Blackwell for Uniform Order Statistics – Hogg 7.3.2}\label{exr:7.3.2}
+Let $Y_{1} < Y_{2} < Y_{3} < Y_{4} < Y_{5}$ be the order statistics of a random sample of size 5 from the uniform distribution having pdf $f(x; \theta) = 1 / \theta$ , $0 < x < \theta$ , $0 < \theta < \infty$ , zero elsewhere. Show that $2Y_{3}$ is an unbiased estimator of $\theta$ . Determine the joint pdf of $Y_{3}$ and the sufficient statistic $Y_{5}$ for $\theta$ . Find the conditional expectation $\mathbb{E}(2Y_{3}|y_{5}) = \varphi(y_{5})$ . Compare the variances of $2Y_{3}$ and $\varphi(Y_{5})$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.3} Rao-Blackwell for Exponential Distribution – Hogg 7.3.3}\label{exr:7.3.3}
+If $X_{1}, X_{2}$ is a random sample of size 2 from a distribution having pdf $f(x; \theta) = (1/\theta)e^{-x/\theta}$, $0 < x < \infty$, $0 < \theta < \infty$, zero elsewhere, find the joint pdf of the sufficient statistic $Y_{1} = X_{1} + X_{2}$ for $\theta$ and $Y_{2} = X_{2}$. Show that $Y_{2}$ is an unbiased estimator of $\theta$ with variance $\theta^{2}$. Find $\mathbb{E}(Y_{2} \mid y_{1}) = \varphi(y_{1})$ and the variance of $\varphi(Y_{1})$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.4} Joint Distribution and Conditional Expectation – Hogg 7.3.4}\label{exr:7.3.4}
+Let $f(x,y) = (2 / \theta^2)e^{-(x + y) / \theta}$ , $0 < x < y < \infty$ , zero elsewhere, be the joint pdf of the random variables $X$ and $Y$ .
+
+(a) Show that the mean and the variance of $Y$ are, respectively, $3\theta / 2$ and $5\theta^{2} / 4$ .
+
+(b) Show that $\mathbb{E}(Y|x) = x + \theta$ . In accordance with the theory, the expected value of $X + \theta$ is that of $Y$ , namely, $3\theta / 2$ , and the variance of $X + \theta$ is less than that of $Y$ . Show that the variance of $X + \theta$ is in fact $\theta^2 / 4$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.5} Unbiased Estimators via Sufficient Statistics – Hogg 7.3.5}\label{exr:7.3.5}
+In each of Exercises 7.2.1-7.2.3, compute the expected value of the given sufficient statistic and, in each case, determine an unbiased estimator of $\theta$ that is a function of that sufficient statistic alone.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.3.6} Conditional Expectation for Poisson – Hogg 7.3.6}\label{exr:7.3.6}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a Poisson distribution with mean $\theta$ . Find the conditional expectation $\mathbb{E}(X_{1} + 2X_{2} + 3X_{3} \mid \sum_{1}^{n} X_{i})$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.1} Completeness of Binomial Family – Hogg 7.4.1}\label{exr:7.4.1}
+If $az^{2} + bz + c = 0$ for more than two values of $z$, then $a = b = c = 0$. Use this result to show that the family $\{b(2, \theta): 0 < \theta < 1\}$ is complete.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.2} Non-Complete Families – Hogg 7.4.2}\label{exr:7.4.2}
+Show that each of the following families is not complete by finding at least one nonzero function $u(x)$ such that $\mathbb{E}[u(X)] = 0$ , for all $\theta > 0$ .
+
+(a) $f(x; \theta) = \frac{1}{2\theta}$ for $-\theta < x < \theta$ , zero elsewhere, where $0 < \theta < \infty$
+
+(b) $N(0,\theta)$ , where $0 < \theta < \infty$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.3} Binomial Complete Sufficient Statistic – Hogg 7.4.3}\label{exr:7.4.3}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ represent a random sample from the discrete distribution having the pmf
+\[
+f(x; \theta) = \left\{ \begin{array}{l l} \theta^{x} (1 - \theta)^{1 - x} & x = 0, 1, 0 < \theta < 1 \\ 0 & \text{elsewhere.} \end{array} \right.
+\]
+Show that $Y_{1} = \sum_{1}^{n}X_{i}$ is a complete sufficient statistic for $\theta$ . Find the unique function of $Y_{1}$ that is the MVUE of $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.4} Completeness of Uniform Family – Hogg 7.4.4}\label{exr:7.4.4}
+Consider the family of probability density functions $\{h(z;\theta):\theta \in \Omega \}$ , where $h(z;\theta) = 1 / \theta$ , $0 < z < \theta$ , zero elsewhere.
+
+(a) Show that the family is complete provided that $\Omega = \{\theta : 0 < \theta < \infty\}$ .
+
+Hint: For convenience, assume that $u(z)$ is continuous and note that the derivative of $\mathbb{E}[u(Z)]$ with respect to $\theta$ is equal to zero also.
+
+(b) Show that this family is not complete if $\Omega = \{\theta : 1 < \theta < \infty\}$ .
+
+Hint: Concentrate on the interval $0 < z < 1$ and find a nonzero function $u(z)$ on that interval such that $\mathbb{E}[u(Z)] = 0$ for all $\theta > 1$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.5} Complete Sufficient Statistic for Shifted Exponential – Hogg 7.4.5}\label{exr:7.4.5}
+Show that the first order statistic $Y_{1} = \min(X_{i})$ of a random sample of size $n$ from the distribution having pdf $f(x; \theta) = e^{-(x-\theta)}$, $\theta < x < \infty$, $-\infty < \theta < \infty$, zero elsewhere, is a complete sufficient statistic for $\theta$. Find the unique function of this statistic which is the MVUE of $\theta$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.6} Discrete Uniform MVUE – Hogg 7.4.6}\label{exr:7.4.6}
+Let a random sample of size $n$ be taken from a distribution of the discrete type with pmf $f(x; \theta) = 1 / \theta$ , $x = 1, 2, \ldots, \theta$ , zero elsewhere, where $\theta$ is an unknown positive integer.
+
+(a) Show that the largest observation, say $Y$ , of the sample is a complete sufficient statistic for $\theta$ .
+
+(b) Prove that
+\[
+[Y^{n+1} - (Y - 1)^{n+1}] / [Y^{n} - (Y - 1)^{n}]
+\]
+is the unique MVUE of $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.7} Absolute Value Sufficiency and Completeness – Hogg 7.4.7}\label{exr:7.4.7}
+Let $X$ have the pdf $f_{X}(x;\theta) = 1 / (2\theta)$ , for $-\theta < x < \theta$ , zero elsewhere, where $\theta > 0$ .
+
+(a) Is the statistic $Y = |X|$ a sufficient statistic for $\theta$ ? Why?
+
+(b) Let $f_{Y}(y;\theta)$ be the pdf of $Y$ . Is the family $\{f_{Y}(y;\theta):\theta >0\}$ complete? Why?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.8} Symmetric Distribution Completeness – Hogg 7.4.8}\label{exr:7.4.8}
+Let $X$ have the pmf $p(x; \theta) = \frac{1}{2} \binom{n}{|x|} \theta^{|x|} (1 - \theta)^{n - |x|}$ , for $x = \pm 1, \pm 2, \ldots, \pm n$ , $p(0, \theta) = (1 - \theta)^n$ , and zero elsewhere, where $0 < \theta < 1$ .
+
+(a) Show that this family $\{p(x;\theta):0 < \theta < 1\}$ is not complete.
+
+(b) Let $Y = |X|$ . Show that $Y$ is a complete and sufficient statistic for $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.9} Triangular Distribution MLE and MVUE – Hogg 7.4.9}\label{exr:7.4.9}
+Let $X_{1},\ldots ,X_{n}$ be iid with pdf $f(x;\theta) = 1 / (3\theta)$ , $-\theta < x < 2\theta$ , zero elsewhere, where $\theta >0$ .
+
+(a) Find the mle $\widehat{\theta}$ of $\theta$
+
+(b) Is $\widehat{\theta}$ a sufficient statistic for $\theta$ ? Why?
+
+(c) Is $(n + 1)\widehat{\theta} / n$ the unique MVUE of $\theta$ ? Why?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.4.10} Asymptotics of Scaled Uniform Maximum – Hogg 7.4.10}\label{exr:7.4.10}
+Let $Y_{1} < Y_{2} < \dots < Y_{n}$ be the order statistics of a random sample of size $n$ from a distribution with pdf $f(x; \theta) = 1 / \theta$ , $0 < x < \theta$ , zero elsewhere. By Example 7.4.2, the statistic $Y_{n}$ is a complete sufficient statistic for $\theta$ and it has pdf
+\[
+g(y_n; \theta) = \frac{n y_n^{n-1}}{\theta^n}, \quad 0 < y_n < \theta ,
+\]
+and zero elsewhere.
+
+(a) Find the distribution function $H_{n}(z;\theta)$ of $Z = n(\theta - Y_{n})$
+
+(b) Find the $\lim_{n\to \infty}H_n(z;\theta)$ and thus the limiting distribution of $Z$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.1} Gamma Distribution in Exponential Form – Hogg 7.5.1}\label{exr:7.5.1}
+Write the pdf
+\[
+f(x; \theta) = \frac{1}{6\theta^4} x^3 e^{-x/\theta}, \quad 0 < x < \infty, \quad 0 < \theta < \infty ,
+\]
+zero elsewhere, in the exponential form. If $X_{1}, X_{2}, \ldots, X_{n}$ is a random sample from this distribution, find a complete sufficient statistic $Y_{1}$ for $\theta$ and the unique function $\varphi(Y_{1})$ of this statistic that is the MVUE of $\theta$ . Is $\varphi(Y_{1})$ itself a complete sufficient statistic?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.2} MVUE via Exponential Class – Hogg 7.5.2}\label{exr:7.5.2}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample of size $n > 1$ from a distribution with pdf $f(x; \theta) = \theta e^{-\theta x}$, $0 < x < \infty$, zero elsewhere, and $\theta > 0$. Then $Y = \sum_{i=1}^{n} X_{i}$ is a sufficient statistic for $\theta$. Prove that $(n-1)/Y$ is the MVUE of $\theta$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.3} Beta Distribution Complete Sufficient Statistic – Hogg 7.5.3}\label{exr:7.5.3}
+Let $X_1, X_2, \ldots, X_n$ denote a random sample of size $n$ from a distribution with pdf $f(x; \theta) = \theta x^{\theta - 1}$ , $0 < x < 1$ , zero elsewhere, and $\theta > 0$ .
+
+(a) Show that the geometric mean $(X_{1}X_{2}\dots X_{n})^{1 / n}$ of the sample is a complete sufficient statistic for $\theta$
+
+(b) Find the maximum likelihood estimator of $\theta$ , and observe that it is a function of this geometric mean.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.4} Conditional Expectation for Gamma Mean – Hogg 7.5.4}\label{exr:7.5.4}
+Let $\overline{X}$ denote the mean of the random sample $X_{1}, X_{2}, \ldots, X_{n}$ from a gamma-type distribution with parameters $\alpha > 0$ and $\beta = \theta > 0$ . Compute $\mathbb{E}[X_1|\overline{x}]$ .
+
+Hint: Can you find directly a function $\psi(\overline{X})$ of $\overline{X}$ such that $\mathbb{E}[\psi(\overline{X})] = \theta$ ? Is $\mathbb{E}(X_1|\overline{x}) = \psi(\overline{x})$ ? Why?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.5} Mean and Variance of Exponential Class – Hogg 7.5.5}\label{exr:7.5.5}
+Let $X$ be a random variable with the pdf of a regular case of the exponential class, given by $f(x; \theta) = \exp[\theta K(x) + H(x) + q(\theta)]$ , $a < x < b$ , $\gamma < \theta < \delta$ . Show that $\mathbb{E}[K(X)] = -q'(\theta) / p'(\theta)$ , provided these derivatives exist, by differentiating both members of the equality
+\[
+\int_a^b \exp[p(\theta)K(x) + H(x) + q(\theta)] dx = 1
+\]
+with respect to $\theta$ . By a second differentiation, find the variance of $K(X)$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.6} MGF of Exponential Class – Hogg 7.5.6}\label{exr:7.5.6}
+Given that $f(x; \theta) = \exp[\theta K(x) + H(x) + q(\theta)]$ , $a < x < b$ , $\gamma < \theta < \delta$ , represents a regular case of the exponential class, show that the moment-generating function $M(t)$ of $Y = K(X)$ is $M(t) = \exp[q(\theta) - q(\theta + t)]$ , $\gamma < \theta + t < \delta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.7} Normal from Exponential Class – Hogg 7.5.7}\label{exr:7.5.7}
+In the preceding exercise, given that $\mathbb{E}(Y) = \mathbb{E}[K(X)] = \theta$ , prove that $Y$ is $N(\theta, 1)$ .
+
+Hint: Consider $M'(0) = \theta$ and solve the resulting differential equation.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.8} Distribution of Sum in Exponential Class – Hogg 7.5.8}\label{exr:7.5.8}
+If $X_{1}, X_{2}, \ldots, X_{n}$ is a random sample from a distribution that has a pdf which is a regular case of the exponential class, show that the pdf of $Y_{1} = \sum_{1}^{n} K(X_{i})$ is of the form $f_{Y_1}(y_1; \theta) = R(y_1) \exp[p(\theta) y_1 + n q(\theta)]$ .
+
+Hint: Let $Y_{2} = X_{2}, \ldots, Y_{n} = X_{n}$ be $n - 1$ auxiliary random variables. Find the joint pdf of $Y_{1}, Y_{2}, \ldots, Y_{n}$ and then the marginal pdf of $Y_{1}$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.9} Conditional Expectation of Median given Mean – Hogg 7.5.9}\label{exr:7.5.9}
+Let $Y$ denote the median and let $\overline{X}$ denote the mean of a random sample of size $n = 2k + 1$ from a distribution that is $N(\mu, \sigma^2)$ . Compute $\mathbb{E}(Y|\overline{X} = \overline{x})$ .
+
+Hint: See Exercise 7.5.4.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.10} Gamma(2, $\theta$) Complete Sufficient Statistic – Hogg 7.5.10}\label{exr:7.5.10}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from a distribution with pdf $f(x; \theta) = \theta^2 x e^{-\theta x}$ , $0 < x < \infty$ , where $\theta > 0$ .
+
+(a) Argue that $Y = \sum_{1}^{n} X_{i}$ is a complete sufficient statistic for $\theta$ .
+
+(b) Compute $\mathbb{E}(1 / Y)$ and find the function of $Y$ that is the unique MVUE of $\theta$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.11} Binomial MVUE via Rao-Blackwell – Hogg 7.5.11}\label{exr:7.5.11}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ , $n > 2$ , be a random sample from the binomial distribution $b(1, \theta)$ .
+
+(a) Show that $Y_{1} = X_{1} + X_{2} + \dots + X_{n}$ is a complete sufficient statistic for $\theta$ .
+
+(b) Find the function $\varphi(Y_1)$ that is the MVUE of $\theta$ .
+
+(c) Let $Y_{2} = (X_{1} + X_{2}) / 2$ and compute $\mathbb{E}(Y_{2})$ .
+
+(d) Determine $\mathbb{E}(Y_{2}|Y_{1} = y_{1})$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.5.12} Zero-Truncated Geometric MVUE – Hogg 7.5.12}\label{exr:7.5.12}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from a distribution with pmf $p(x; \theta) = \theta^x (1 - \theta)$ , $x = 0, 1, 2, \ldots$ , zero elsewhere, where $0 \leq \theta \leq 1$ .
+
+(a) Find the mle, $\hat{\theta}$ , of $\theta$ .
+
+(b) Show that $\sum_{1}^{n}X_{i}$ is a complete sufficient statistic for $\theta$
+
+(c) Determine the MVUE of $\theta$
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.1} MVUE of $\theta^{2}$ for Normal – Hogg 7.6.1}\label{exr:7.6.1}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a distribution that is $N(\theta, 1)$, $-\infty < \theta < \infty$. Find the MVUE of $\theta^{2}$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.2} MVUE of $\theta^{2}$ for Normal(0, $\theta$) – Hogg 7.6.2}\label{exr:7.6.2}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a distribution that is $N(0, \theta)$ . Then $Y = \sum X_{i}^{2}$ is a complete sufficient statistic for $\theta$ . Find the MVUE of $\theta^{2}$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.3} Bootstrap SE for Normal CDF MVUE – Hogg 7.6.3}\label{exr:7.6.3}
+Consider Example 7.6.3 where the parameter of interest is $\mathbb{P}(X < c)$ for $X$ distributed $N(\theta, 1)$ . Modify the R function bootse1.R so that for a specified value of $c$ it returns the MVUE of $\mathbb{P}(X < c)$ and the bootstrap standard error of the estimate. Run your function on the data in ex763data.rda with $c = 11$ and 3,000 bootstraps. These data are generated from a $N(10,1)$ distribution. Report (a) the true parameter, (b) the MVUE, and (c) the bootstrap standard error.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.4} Bootstrap SE for Median MVUE – Hogg 7.6.4}\label{exr:7.6.4}
+For Example 7.6.4, modify the R function bootse1.R so that the estimate is the median not the mean. Using 3,000 bootstraps, run your function on the data set discussed in the example and report (a) the estimate and (b) the bootstrap standard error.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.5} Uniform$(0, \theta)$ MVUEs – Hogg 7.6.5}\label{exr:7.6.5}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a uniform $(0, \theta)$ distribution. Continuing with Example 7.6.2, find the MVUEs for the following functions of $\theta$ .
+
+(a) $g(\theta) = \frac{\theta^2}{12}$ , i.e., the variance of the distribution.
+
+(b) $g(\theta) = \frac{1}{\theta}$ , i.e., the pdf of the distribution.
+
+(c) For $t$ real, $g(\theta) = \frac{e^{t\theta} - 1}{t\theta}$ , i.e., the mgf of the distribution.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.6} Poisson MVUE for $\mathbb{P}(X \leq 1)$ – Hogg 7.6.6}\label{exr:7.6.6}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a Poisson distribution with parameter $\theta > 0$ .
+
+(a) Find the MVUE of $\mathbb{P}(X\leq 1) = (1 + \theta)e^{-\theta}$
+
+Hint: Let $u(x_{1}) = 1$ , $x_{1} \leq 1$ , zero elsewhere, and find $\mathbb{E}[u(X_1)|Y = y]$ where $Y = \sum_{1}^{n}X_{i}$ .
+
+(b) Express the MVUE as a function of the mle of $\theta$
+
+(c) Determine the asymptotic distribution of the mle of $\theta$
+
+(d) Obtain the mle of $\mathbb{P}(X \leq 1)$ . Then use Theorem 5.2.9 to determine its asymptotic distribution.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.7} Poisson Conditional Expectation with $(-1)^{X_{1}}$ – Hogg 7.6.7}\label{exr:7.6.7}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ denote a random sample from a Poisson distribution with parameter $\theta > 0$ . From Remark 7.6.1, we know that $\mathbb{E}[(-1)^{X_1}] = e^{-2\theta}$ .
+
+(a) Show that $\mathbb{E}[(-1)^{X_1}|Y_1 = y_1] = (1 - 2/n)^{y_1}$ , where $Y_1 = X_1 + X_2 + \dots + X_n$ . Hint: First show that the conditional pdf of $X_1, X_2, \ldots, X_{n-1}$ , given $Y_1 = y_1$ , is multinomial, and hence that of $X_1$ , given $Y_1 = y_1$ , is $b(y_1, 1/n)$ .
+
+(b) Show that the mle of $e^{-2\theta}$ is $e^{-2\overline{X}}$
+
+(c) Since $y_{1} = n\overline{x}$ , show that $(1 - 2 / n)^{y_1}$ is approximately equal to $e^{-2\overline{x}}$ when $n$ is large.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.8} Bivariate Normal Distribution of $(X_{1}, \overline{X})$ – Hogg 7.6.8}\label{exr:7.6.8}
+As in Example 7.6.3, let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample of size $n > 1$ from a distribution that is $N(\theta, 1)$ . Show that the joint distribution of $X_{1}$ and $\overline{X}$ is bivariate normal with mean vector $(\theta, \theta)$ , variances $\sigma_{1}^{2} = 1$ and $\sigma_{2}^{2} = 1/n$ , and correlation coefficient $\rho = 1/\sqrt{n}$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.9} Exponential MLE and MVUE of $\mathbb{P}(X \leq 2)$ – Hogg 7.6.9}\label{exr:7.6.9}
+Let a random sample of size $n$ be taken from a distribution that has the pdf $f(x; \theta) = (1 / \theta) \exp(-x / \theta) \mathbb{I}_{(0, \infty)}(x)$ . Find the mle and MVUE of $\mathbb{P}(X \leq 2)$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.10} Gamma$(1, \theta)$ MLE and MVUE – Hogg 7.6.10}\label{exr:7.6.10}
+Let $X_1, X_2, \ldots, X_n$ be a random sample with the common pdf $f(x) = \theta^{-1} e^{-x / \theta}$ , for $x > 0$ , zero elsewhere; that is, $f(x)$ is a $\Gamma(1, \theta)$ pdf.
+
+(a) Show that the statistic $\overline{X} = n^{-1}\sum_{i=1}^{n} X_i$ is a complete and sufficient statistic for $\theta$ .
+
+(b) Determine the MVUE of $\theta$
+
+(c) Determine the mle of $\theta$
+
+(d) Often, though, this pdf is written as $f(x) = \tau e^{-\tau x}$ , for $x > 0$ , zero elsewhere. Thus $\tau = 1 / \theta$ . Use Theorem 6.1.2 to determine the mle of $\tau$ .
+
+(e) Show that the statistic $\overline{X} = n^{-1}\sum_{i=1}^{n} X_i$ is a complete and sufficient statistic for $\tau$ . Show that $(n-1)/(n\overline{X})$ is the MVUE of $\tau = 1/\theta$ . Hence, as usual, the reciprocal of the mle of $\theta$ is the mle of $1/\theta$ , but, in this situation, the reciprocal of the MVUE of $\theta$ is not the MVUE of $1/\theta$ .
+
+(f) Compute the variances of each of the unbiased estimators in parts (b) and (e).
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.11} Two-Sample $F$-Distribution for $\theta^{2}$ – Hogg 7.6.11}\label{exr:7.6.11}
+Consider the situation of the last exercise, but suppose we have the following two independent random samples: (1) $X_{1}, X_{2}, \ldots, X_{n}$ is a random sample with the common pdf $f_{X}(x) = \theta^{-1} e^{-x / \theta}$ , for $x > 0$ , zero elsewhere, and (2) $Y_{1}, Y_{2}, \ldots, Y_{n}$ is a random sample with common pdf $f_{Y}(y) = \theta e^{-\theta y}$ , for $y > 0$ , zero elsewhere. The last exercise suggests that, for some constant $c$ , $Z = c \overline{X / Y}$ might be an unbiased estimator of $\theta^2$ . Find this constant $c$ and the variance of $Z$ .
+
+Hint: Show that $\overline{X} /(\theta^2\overline{Y})$ has an $F$-distribution.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.6.12} Asymptotics of Normal Variance MVUE at $\theta = 1/2$ – Hogg 7.6.12}\label{exr:7.6.12}
+Obtain the asymptotic distribution of the MVUE in Example 7.6.1 for the case $\theta = 1/2$ .
+\end{exercise}
+
+\section{7.7 The Case of Several Parameters — Exercises}\label{sec:7.7-exercises}
+
+\begin{exercise}{\ref{exr:7.7.1} Joint Sufficient Statistics for Gumbel Distribution – Hogg 7.7.1}\label{exr:7.7.1}
+Let $Y_{1} < Y_{2} < Y_{3}$ be the order statistics of a random sample of size 3 from the distribution with pdf
+\[
+f(x; \theta_1, \theta_2) = \left\{ \begin{array}{l l} \frac{1}{\theta_2} \exp\left(-\frac{x - \theta_1}{\theta_2}\right) & \theta_1 < x < \infty , -\infty < \theta_1 < \infty , 0 < \theta_2 < \infty \\ 0 & \text{elsewhere.} \end{array} \right.
+\]
+Find the joint pdf of $Z_{1} = Y_{1}, Z_{2} = Y_{2}$ , and $Z_{3} = Y_{1} + Y_{2} + Y_{3}$ . The corresponding transformation maps the space $\{(y_{1}, y_{2}, y_{3}) : \theta_{1} < y_{1} < y_{2} < y_{3} < \infty\}$ onto the space
+\[
+\{(z_1, z_2, z_3): \theta_1 < z_1 < z_2 < (z_3 - z_1) / 2 < \infty\}.
+\]
+Show that $Z_{1}$ and $Z_{3}$ are joint sufficient statistics for $\theta_{1}$ and $\theta_{2}$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.2} Exponential Class Joint Sufficient Statistics – Hogg 7.7.2}\label{exr:7.7.2}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a distribution that has a pdf of the form (7.7.2) of this section. Show that $Y_{1} = \sum_{i=1}^{n} K_{1}(X_{i}), \ldots, Y_{m} = \sum_{i=1}^{m} K_{m}(X_{i})$ have a joint pdf of the form (7.7.4) of this section.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.3} Bivariate Normal Joint Complete Sufficient Statistics – Hogg 7.7.3}\label{exr:7.7.3}
+Let $(X_{1},Y_{1}),(X_{2},Y_{2}),\ldots ,(X_{n},Y_{n})$ denote a random sample of size $n$ from a bivariate normal distribution with means $\mu_{1}$ and $\mu_{2}$ , positive variances $\sigma_1^2$ and $\sigma_2^2$ , and correlation coefficient $\rho$ . Show that $\sum_{1}^{n}X_{i}$ , $\sum_{1}^{n}Y_{i}$ , $\sum_{1}^{n}X_{i}^{2}$ , $\sum_{1}^{n}Y_{i}^{2}$ , and $\sum_{1}^{n}X_{i}Y_{i}$ are joint complete sufficient statistics for the five parameters. Are $\overline{X} = \sum_{1}^{n}X_{i} / n$ , $\overline{Y} = \sum_{1}^{n}Y_{i} / n$ , $S_1^2 = \sum_{1}^{n}(X_i - \overline{X})^2 /(n - 1)$ , $S_2^2 = \sum_{1}^{n}(Y_i - \overline{Y})^2 /(n - 1)$ , and $\sum_{1}^{n}(X_{i} - \overline{X})(Y_{i} - \overline{Y}) / (n - 1)S_{1}S_{2}$ also joint complete sufficient statistics for these parameters?
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.4} Reparameterization of Exponential Class – Hogg 7.7.4}\label{exr:7.7.4}
+Let the pdf $f(x; \theta_1, \theta_2)$ be of the form
+\[
+\exp\left[p_1(\theta_1, \theta_2) K_1(x) + p_2(\theta_1, \theta_2) K_2(x) + H(x) + q_1(\theta_1, \theta_2)\right], a < x < b,
+\]
+zero elsewhere. Suppose that $K_1'(x) = cK_2'(x)$ . Show that $f(x; \theta_1, \theta_2)$ can be written in the form
+\[
+\exp\left[p(\theta_1, \theta_2) K_2(x) + H(x) + q(\theta_1, \theta_2)\right], a < x < b,
+\]
+zero elsewhere. This is the reason why it is required that no one $K_{j}^{\prime}(x)$ be a linear homogeneous function of the others, that is, so that the number of sufficient statistics equals the number of parameters.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.5} MVUE of Standard Deviation for Normal – Hogg 7.7.5}\label{exr:7.7.5}
+In Example 7.7.2:
+
+(a) Find the MVUE of the standard deviation $\sqrt{\theta_2}$ .
+
+(b) Modify the R function bootse1.R so that it returns the estimate in (a) and its bootstrap standard error. Run it on the Bavarian forest data discussed in Example 4.1.3, where the response is the concentration of sulfur dioxide. Using 3,000 bootstraps, report the estimate and its bootstrap standard error.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.6} Uniform$(\theta_{1} - \theta_{2}, \theta_{1} + \theta_{2})$ Complete Sufficient – Hogg 7.7.6}\label{exr:7.7.6}
+Let $X_1, X_2, \ldots, X_n$ be a random sample from the uniform distribution with pdf $f(x; \theta_1, \theta_2) = 1 / (2\theta_2)$ , $\theta_1 - \theta_2 < x < \theta_1 + \theta_2$ , where $-\infty < \theta_1 < \infty$ and $\theta_2 > 0$ , and the pdf is equal to zero elsewhere.
+
+(a) Show that $Y_{1} = \min(X_{i})$ and $Y_{n} = \max(X_{i})$ , the joint sufficient statistics for $\theta_{1}$ and $\theta_{2}$ , are complete.
+
+(b) Find the MVUEs of $\theta_{1}$ and $\theta_{2}$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.7} MVUE of Normal Quantile – Hogg 7.7.7}\label{exr:7.7.7}
+Let $X_{1},X_{2},\ldots ,X_{n}$ be a random sample from $N(\theta_1,\theta_2)$
+
+(a) If the constant $b$ is defined by the equation $\mathbb{P}(X \leq b) = p$ where $p$ is specified, find the mle and the MVUE of $b$ .
+
+(b) Modify the R function bootse1.R so that it returns the MVUE of Part (a) and its bootstrap standard error.
+
+(c) Run your function in Part (b) on the data set discussed in Example 7.6.4 for $p = 0.75$ and 3,000 bootstraps.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.8} MLE of Multinomial Cell Probability Product – Hogg 7.7.8}\label{exr:7.7.8}
+In the notation of Example 7.7.3, show that the mle of $p_j p_l$ is $n^{-2} Y_j Y_l$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.9} MVUE of Covariance Parameters for Multivariate Normal – Hogg 7.7.9}\label{exr:7.7.9}
+Refer to Example 7.7.4 on sufficiency for the multivariate normal model.
+
+(a) Determine the MVUE of the covariance parameters $\sigma_{ij}$ .
+
+(b) Let $g = \sum_{i=1}^{k} a_i \mu_i$ , where $a_1, \ldots, a_k$ are specified constants. Find the MVUE for $g$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.10} Inverse Gaussian Complete Sufficient Statistics – Hogg 7.7.10}\label{exr:7.7.10}
+In a personal communication, LeRoy Folks noted that the inverse Gaussian pdf
+\[
+f(x; \theta_1, \theta_2) = \left(\frac{\theta_2}{2\pi x^3}\right)^{1/2} \exp\left\{\frac{-\theta_2(x - \theta_1)^2}{2\theta_1^2 x}\right\}, \quad 0 < x < \infty ,
+\]
+where $\theta_{1} > 0$ and $\theta_{2} > 0$ , is often used to model lifetimes. Find the complete sufficient statistics for $(\theta_{1},\theta_{2})$ if $X_{1},X_{2},\ldots,X_{n}$ is a random sample from the distribution having this pdf.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.11} MVUE of $3\theta_{2}^{2}$ for Normal – Hogg 7.7.11}\label{exr:7.7.11}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be a random sample from a $N(\theta_{1}, \theta_{2})$ distribution.
+
+(a) Show that $\mathbb{E}[(X_1 - \theta_1)^4] = 3\theta_2^2$ .
+
+(b) Find the MVUE of $3\theta_2^2$
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.12} MVUE of Mean for Continuous Distribution – Hogg 7.7.12}\label{exr:7.7.12}
+Let $X_{1},\ldots ,X_{n}$ be a random sample from a distribution of the continuous type with cdf $F(x)$ . Suppose the mean, $\mu = \mathbb{E}(X_1)$ , exists. Using Example 7.7.5, show that the sample mean, $\overline{X} = n^{-1}\sum_{i = 1}^{n}X_{i}$ , is the MVUE of $\mu$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.7.13} MVUE of CDF at Known Point – Hogg 7.7.13}\label{exr:7.7.13}
+Let $X_{1}, \ldots, X_{n}$ be a random sample from a distribution of the continuous type with cdf $F(x)$ . Let $\theta = \mathbb{P}(X_{1} \leq a) = F(a)$ , where $a$ is known. Show that the proportion $n^{-1} \# \{X_{i} \leq a\}$ is the MVUE of $\theta$ .
+\end{exercise}
+
+\section{7.9 Sufficiency, Completeness, and Independence — Exercises}\label{sec:7.9-exercises}
+
+\begin{exercise}{\ref{exr:7.9.2} Basu for Normal Order Statistics and Sample Mean – Hogg 7.9.2}\label{exr:7.9.2}
+Let $Y_{1} < Y_{2} < \dots < Y_{n}$ be the order statistics of a random sample from a $N(\theta, \sigma^{2})$ , $-\infty < \theta < \infty$ , distribution. Show that the distribution of $Z = Y_{n} - \overline{X}$ does not depend upon $\theta$ . Thus $\overline{Y} = \sum_{1}^{n} Y_{i} / n$ , a complete sufficient statistic for $\theta$ is independent of $Z$ .
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.9.1} Basu's Theorem for Uniform Distribution – Hogg 7.9.1}\label{exr:7.9.1}
+Let $Y_{1} < Y_{2} < Y_{3} < Y_{4}$ denote the order statistics of a random sample of size $n = 4$ from a distribution having pdf $f(x; \theta) = 1/\theta$, $0 < x < \theta$, zero elsewhere, where $0 < \theta < \infty$. Argue that the complete sufficient statistic $Y_{4}$ for $\theta$ is independent of each of the statistics $Y_{1}/Y_{4}$ and $(Y_{1} + Y_{2})/(Y_{3} + Y_{4})$.
+\end{exercise}
+
+\begin{exercise}{\ref{exr:7.9.3} Independence Condition for Linear Statistics – Hogg 7.9.3}\label{exr:7.9.3}
+Let $X_{1}, X_{2}, \ldots, X_{n}$ be iid with the distribution $N(\theta, \sigma^2)$ , $-\infty < \theta < \infty$ . Prove that a necessary and sufficient condition that the statistics $Z = \sum_{1}^{n} a_{i} X_{i}$ and $Y = \sum_{1}^{n} X_{i}$ , a complete sufficient statistic for $\theta$ , are independent is that $\sum_{1}^{n} a_{i} = 0$ .
+\end{exercise}
+
+% === 用户问答记录 ===
+% 此处预留 QA 记录区域

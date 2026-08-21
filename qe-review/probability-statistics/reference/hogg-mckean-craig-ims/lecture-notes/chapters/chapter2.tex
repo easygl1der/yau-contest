@@ -1,0 +1,1642 @@
+\chapter{多元随机变量及其分布}\label{chap:multivariate-distributions}
+
+\section*{Chapter 2 概述}
+
+在一元情形，我们用 cdf $F_X(x) = \mathbb{P}(X \leq x)$ 描述单个随机变量的行为。但在许多场景中，\emph{单个变量的分布并不能回答我们的问题}——我们需要知道多个变量如何共同变化。
+
+\textbf{为什么需要联合分布？} 例如，在经济学中，我们关心收入与教育年限的共同分布；在医学中，我们关心血压与胆固醇的联合水平；在金融中，资产收益率之间的相关性是风险管理的核心。这些问题都涉及多个随机变量的联合行为。
+
+统计推断的核心任务——从样本推断总体——本质上也是多元的：样本是多个观测值的向量，而统计量是这些观测值的函数。第 4 章将看到，点估计、置信区间、假设检验全部建立在多元分布理论之上。
+
+\textbf{本章路线图}：联合分布 $\to$ 边缘分布 $\to$ 条件分布 $\to$ 独立性 $\to$ 相关性 $\to$ 多元正态 $\to$ 多元推广
+
+\section{2.1 从一元到多元：联合分布}\label{sec:2.1}
+
+\subsection{为什么需要联合分布？}
+
+在一元情形，我们学会了用 cdf、pmf/pdf 描述单个随机变量的行为。但在真实世界中，变量很少孤立存在。
+
+\textbf{核心问题}：给定两个随机变量 $X_1$ 和 $X_2$，如何描述它们的联合行为？
+
+例如，设 $X_1$ 为身高，$X_2$ 为体重。知道身高分布和体重分布当然有用，但知道两者如何"共同变化"——高个子是否倾向于更重——显然更有价值。这种"共同变化"的数学表达，正是联合分布。
+
+\textbf{历史注记}：多元分析的思想可以追溯到 Francis Galton（1822-1911）的工作。他研究遗传问题时发现，单个特征的分布不足以描述遗传规律——必须考虑特征之间的相关性。他发明的"相关系数"（correlation coefficient）正是本章的核心概念之一。
+
+\subsection{随机向量与联合分布}
+
+\begin{definition}[随机向量]\label{def:random-vector-ch2}
+设样本空间为 $\mathcal{C}$，$X_1$ 和 $X_2$ 为定义在 $\mathcal{C}$ 上的两个随机变量。则 $(X_1, X_2)$ 称为随机向量，其取值空间为 $\mathcal{D} = \{(x_1, x_2) : x_1 = X_1(c), x_2 = X_2(c), c \in \mathcal{C}\}$。
+\end{definition}
+
+\textbf{联合 cdf} 是一元 cdf 的自然推广：
+\begin{equation}\label{eq:joint-cdf-ch2}
+F_{X_1, X_2}(x_1, x_2) = \mathbb{P}(X_1 \leq x_1, X_2 \leq x_2).
+\end{equation}
+
+注意：这里的"且"（$,$）表示两个事件同时发生。
+
+\textbf{离散型} 用 pmf 描述：
+\begin{equation}\label{eq:joint-pmf-ch2}
+p_{X_1, X_2}(x_1, x_2) = \mathbb{P}(X_1 = x_1, X_2 = x_2),
+\end{equation}
+满足 $p \geq 0$ 且 $\sum\sum_{\mathcal{D}} p = 1$。
+
+\textbf{连续型} 用 pdf 描述：
+\begin{equation}\label{eq:joint-pdf-ch2}
+F_{X_1, X_2}(x_1, x_2) = \int_{-\infty}^{x_1} \int_{-\infty}^{x_2} f(w_1, w_2) \, dw_1 \, dw_2,
+\end{equation}
+其中 $f \geq 0$ 且 $\int\int_{\mathcal{D}} f = 1$。
+
+\begin remark
+\label{rmk:pdf-greater-than-one-ch2}
+\textbf{警告}：与一元情形不同，这里的 $f(x_1, x_2)$ 可以大于 1！因为它是"密度"而非概率值。
+\end remark
+
+几何直观：若把联合 pdf $z = f(x_1, x_2)$ 视作一张曲面，则 $\mathbb{P}((X_1, X_2) \in A)$ 就是该曲面下区域 $A$ 上的体积。这是一元情形"曲线下面积"在二维的推广。
+
+\subsection{R 计算：联合分布}
+
+\begin{example}[二元正态概率计算]\label{ex:bivariate-normal-probability-ch2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.5)$。求 $\mathbb{P}(X_1 \leq 0, X_2 \leq 0)$。
+
+在 R 中使用 \texttt{mvtnorm} 包：
+\begin{verbatim}
+install.packages("mvtnorm")
+library(mvtnorm)
+
+# 二元正态 CDF
+pmvnorm(lower = c(-Inf, -Inf), upper = c(0, 0),
+        mean = c(0, 0), sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2))
+\end{verbatim}
+\end{example}
+
+\begin{example}[生成二元正态样本]\label{ex:bivariate-normal-simulation-ch2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.8)$。生成 $n = 1000$ 的样本并可视化。
+
+\begin{verbatim}
+library(mvtnorm)
+n <- 1000
+rho <- 0.8
+sigma <- matrix(c(1, rho, rho, 1), nrow = 2)
+set.seed(42)
+sample <- rmvnorm(n, mean = c(0, 0), sigma = sigma)
+
+# 绘制散点图
+plot(sample, xlab = expression(X[1]), ylab = expression(X[2]),
+     main = bquote(rho == .(rho)), pch = 20, cex = 0.5)
+
+# 计算样本相关系数
+cor(sample[,1], sample[,2])
+\end{verbatim}
+\end{example}
+
+不同 $\rho$ 值的散点图形态：
+\begin{itemize}
+\item $\rho = 0$：分布呈圆形，变量独立
+\item $\rho > 0$：分布沿主对角线 ($x_2 = x_1$) 拉伸
+\item $\rho < 0$：分布沿副对角线 ($x_2 = -x_1$) 拉伸
+\item $|\rho| \to 1$：分布越来越集中在一条直线附近
+\end{itemize}
+
+\section{2.2 边缘分布：积分即求和}\label{sec:2.2}
+
+\subsection{核心问题：如何从联合分布得到边缘分布？}
+
+我们已经知道 $(X_1, X_2)$ 的联合分布，自然会问：如何得到单个 $X_1$ 的分布？
+
+直觉上，我们需要"忽略" $X_2$ 的信息。具体做法是：
+\begin{itemize}
+\item \textbf{离散型}：对 $x_2$ 求和
+\item \textbf{连续型}：对 $x_2$ 积分
+\end{itemize}
+
+这引导我们得到边缘分布公式。\footnote{推导见附录 \cref{sec:derivation-marginal-distributions}。}
+
+\textbf{边缘 pmf}：
+\begin{equation}\label{eq:marginal-pmf-ch2}
+p_{X_1}(x_1) = \sum_{x_2} p_{X_1, X_2}(x_1, x_2).
+\end{equation}
+
+\textbf{边缘 pdf}：
+\begin{equation}\label{eq:marginal-pdf-ch2}
+f_{X_1}(x_1) = \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2.
+\end{equation}
+
+\begin remark
+\label{rmk:marginal-name-ch2}
+\textbf{为什么叫"边缘"？} 在二维离散情形，将联合 pmf 列表，边缘分布恰好是每行（或每列）的"边缘"之和。这解释了名称的由来。
+\end remark
+
+\textbf{一个重要发现}：已知联合分布可以推出边缘分布，但反过来不成立——边缘分布丢失了变量之间的依赖信息。例如，两个不同的联合分布可能有相同的边缘分布。
+
+\begin{example}[不同联合分布有相同边缘分布]\label{ex:same-marginals-different-joint}
+设 $(X_1, X_2)$ 和 $(Y_1, Y_2)$ 有相同的边缘分布，但不同的联合结构。实际上，如果不知道联合分布，就无法回答"两个变量是否相关"这样的问题。
+\end{example}
+
+\subsection{R 计算：边缘分布}
+
+边缘分布在 R 中通过逐行或逐列求和（离散）或积分（连续）计算。
+
+\begin{example}[离散边缘分布]\label{ex:marginal-discrete-ch2}
+设 $(X_1, X_2)$ 的联合 pmf 如下（列联表形式）：
+
+\[
+\begin{array}{c|cccc|c}
+X_2 \backslash X_1 & 1 & 2 & 3 & 4 & \text{边缘} \\ \hline
+1 & 0.05 & 0.10 & 0.05 & 0.02 & ? \\
+2 & 0.08 & 0.15 & 0.12 & 0.05 & ? \\
+3 & 0.02 & 0.08 & 0.10 & 0.08 & ? \\ \hline
+\text{边缘} & ? & ? & ? & ? & 1.00
+\end{array}
+\]
+
+则 $X_1$ 的边缘 pmf 为每列之和：
+\[
+p_{X_1}(1) = 0.05 + 0.08 + 0.02 = 0.15, \quad
+p_{X_1}(2) = 0.10 + 0.15 + 0.08 = 0.33, \quad \text{等等}
+\]
+
+R 计算：
+\begin{verbatim}
+# 联合 pmf（矩阵形式）
+joint <- matrix(c(0.05, 0.08, 0.02,  # X1=1
+                  0.10, 0.15, 0.08,  # X1=2
+                  0.05, 0.12, 0.10,  # X1=3
+                  0.02, 0.05, 0.08), # X1=4
+                nrow = 3, byrow = FALSE)
+colnames(joint) <- c("X1=1", "X1=2", "X1=3", "X1=4")
+rownames(joint) <- c("X2=1", "X2=2", "X2=3")
+
+# 边缘分布（按行、按列求和）
+margin_x1 <- colSums(joint)  # X1 的边缘 pmf
+margin_x2 <- rowSums(joint)  # X2 的边缘 pmf
+
+# 验证：边缘分布之和为 1
+sum(margin_x1)  # = 1
+sum(margin_x2)  # = 1
+\end{verbatim}
+\end{example}
+
+\begin{example}[连续边缘分布]\label{ex:marginal-continuous-ch2}
+设 $(X_1, X_2)$ 的联合 pdf 为
+\[
+f(x_1, x_2) = \begin{cases}
+8x_1 x_2 & 0 < x_1 < x_2 < 1, \\
+0 & \text{otherwise}.
+\end{cases}
+\]
+
+求 $X_1$ 的边缘 pdf。
+
+由于 $0 < x_1 < x_2 < 1$，$x_2$ 的取值范围是 $x_1 < x_2 < 1$，因此：
+\[
+f_{X_1}(x_1) = \int_{x_1}^{1} 8x_1 x_2 \, dx_2 = 8x_1 \left[\frac{x_2^2}{2}\right]_{x_2=x_1}^{x_2=1} = 8x_1 \cdot \frac{1 - x_1^2}{2} = 4x_1(1 - x_1^2),
+\]
+其中 $0 < x_1 < 1$。
+
+验证：
+\[
+\int_0^1 4x_1(1 - x_1^2) \, dx_1 = 4\left[\frac{x_1^2}{2} - \frac{x_1^4}{4}\right]_0^1 = 4\left(\frac{1}{2} - \frac{1}{4}\right) = 1.
+\]
+
+R 数值验证：
+\begin{verbatim}
+# 验证边缘 pdf 的数值积分
+f_marginal_x1 <- function(x1) {
+  f <- function(x2) 8 * x1 * x2
+  integrate(f, lower = x1, upper = 1)$value
+}
+
+# 在几个点验证
+x1_vals <- c(0.2, 0.5, 0.8)
+sapply(x1_vals, f_marginal_x1)  # 应该接近 4*x1*(1-x1^2)
+4 * x1_vals * (1 - x1_vals^2)
+\end{verbatim}
+\end{example}
+
+\subsection{边缘分布的深度理解}
+
+\textbf{为什么边缘分布重要？} 边缘分布在实际应用中有广泛用途：
+
+\textbf{1. 人口统计学}：当我们研究"收入"与"教育年限"的联合分布时，边缘分布给出了各变量的边缘分布——即不考虑另一变量时该变量的分布。这相当于"总体"的分布。
+
+\textbf{2. 保险精算}：在汽车保险中，我们关心"理赔次数"与"理赔金额"的联合分布，但边缘分布分别给出了理赔次数的分布和理赔金额的分布——这两个分布本身就有独立的应用价值。
+
+\textbf{3. 信号处理}：在处理二元信号时，边缘分布给出了各分量信号的分布，这在单独分析各分量时有用。
+
+\textbf{信息损失}：一个关键事实是，从联合分布到边缘分布会丢失信息。如果只知道边缘分布，则无法恢复联合分布——因为这需要知道变量之间的依赖结构。
+
+\textbf{Clayton 模型}：在金融保险中，Clayton copula 正是用来说明：相同的边缘分布可以对应于不同的联合分布。这个事实在风险管理中非常重要——仅知道各变量的边缘分布是不够的。
+\section{2.3 条件分布：信息的价值}\label{sec:2.3}
+
+\subsection{条件分布的核心思想}
+
+\textbf{核心问题}：已知 $X_1$ 的值，$X_2$ 的分布会如何变化？
+
+这就是条件分布要回答的问题。条件分布本质上是在 $X_1 = x_1$ 的条件下，重新审视 $X_2$ 的行为——这是贝叶斯思维在随机变量层面的延伸。
+
+\textbf{离散型条件 pmf}：\footnote{推导见附录 \cref{sec:derivation-conditional-distribution}。}
+\begin{equation}\label{eq:conditional-pmf-ch2}
+p_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{p_{X_1, X_2}(x_1, x_2)}{p_{X_1}(x_1)}, \quad p_{X_1}(x_1) > 0.
+\end{equation}
+
+\textbf{连续型条件 pdf}：
+\begin{equation}\label{eq:conditional-pdf-ch2}
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)}, \quad f_{X_1}(x_1) > 0.
+\end{equation}
+
+分子是联合密度，分母是边缘密度。这个比值衡量的是，在 $X_1 = x_1$ 的条件下，$(x_1, x_2)$ 这个"点"有多"典型"。
+
+\textbf{注意}：在连续情形，$\mathbb{P}(X_1 = x_1) = 0$，所以不能直接用条件概率定义。这里用条件密度代替——条件密度的定义源自 Radon-Nikodym 定理，它是条件期望存在性的数学基础。\footnote{详细讨论见附录 \cref{sec:derivation-conditional-distribution}。}
+
+由此定义条件期望：
+\begin{equation}\label{eq:conditional-expectation-ch2}
+\mathbb{E}[u(X_2) \mid x_1] = \int_{-\infty}^{\infty} u(x_2) f_{X_2 \mid X_1}(x_2 \mid x_1) \, dx_2.
+\end{equation}
+
+条件期望 $\mathbb{E}[X_2 \mid X_1 = x_1]$ 是 $x_1$ 的函数，可以理解为 $X_1$ 取某个值时 $X_2$ 的最佳预测。
+
+\subsection{全期望公式与方差分解}
+
+这里有一个深刻的定理，它连接了条件与边缘。\footnote{推导见附录 \cref{sec:derivation-law-total-expectation}。}
+
+\begin{theorem}[全期望公式]\label{th:law-total-expectation-ch2}
+\begin{equation}\label{eq:law-total-expectation}
+\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \mathbb{E}(X_2).
+
+\end{equation}
+\end{theorem}
+
+\textbf{含义}：对条件均值再取期望，等于无条件期望。这看起来显而易见，但它是概率论中最强大的工具之一。
+
+更惊人的是方差的不等式：\footnote{推导见附录 \cref{sec:derivation-variance-inequality}。}
+
+\begin{theorem}[条件方差公式]\label{th:law-total-variance-ch2}
+\begin{equation}\label{eq:law-total-variance}
+\text{var}(X_2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \text{var}[\mathbb{E}(X_2 \mid X_1)].
+
+\end{equation}
+\end{theorem}
+
+\textbf{直观理解}：总方差等于"平均条件方差"加上"条件均值的方差"。第一项度量 $X_2$ 在给定 $X_1$ 后的残余不确定性；第二项度量 $X_1$ 带来的不确定性。
+
+\textbf{Rao-Blackwell 定理}：若用 $X_2$ 估计 $\mu_2 = \mathbb{E}X_2$，则条件均值 $\mathbb{E}(X_2 \mid x_1)$ 比 $X_2$ 本身更精确（方差更小）。这在统计推断中极其重要——它告诉我们如何利用辅助信息改进估计。
+
+\subsection{R 计算：条件分布}
+
+\begin{example}[离散条件分布]\label{ex:conditional-distribution-discrete-ch2}
+设 $(X_1, X_2)$ 的联合 pmf 如下：
+
+\[
+p_{X_1, X_2}(x_1, x_2) = \frac{1}{8}, \quad x_1 = 1,2, \quad x_2 = 1,2,3,4.
+\]
+
+求条件分布 $\mathbb{P}(X_2 = x_2 \mid X_1 = 1)$。
+
+边缘分布 $p_{X_1}(1) = \sum_{x_2=1}^4 \frac{1}{8} = \frac{4}{8} = \frac{1}{2}$。
+
+条件分布：
+\[
+\mathbb{P}(X_2 = x_2 \mid X_1 = 1) = \frac{p_{X_1,X_2}(1,x_2)}{p_{X_1}(1)} = \frac{1/8}{1/2} = \frac{1}{4}, \quad x_2 = 1,2,3,4.
+\]
+
+因此，给定 $X_1 = 1$ 时，$X_2$ 均匀分布于 $\{1,2,3,4\}$。
+\end{example}
+
+\begin{example}[连续条件分布]\label{ex:conditional-distribution-continuous-ch2}
+设 $(X_1, X_2)$ 服从二元正态 $N(0, 0, 1, 1, 0.5)$。求条件分布 $f_{X_2|X_1}(x_2 \mid x_1 = 0.5)$。
+
+由公式 \eqref{eq:bivariate-normal-conditional}：
+\[
+X_2 \mid X_1 = 0.5 \sim N\left(0 + 0.5 \cdot \frac{1}{1}(0.5 - 0), 1 \cdot (1-0.5^2)\right) = N(0.25, 0.75).
+\]
+
+R 验证：
+\begin{verbatim}
+# 条件分布参数
+mu2_given_x1 <- 0 + 0.5 * (0.5 - 0)  # = 0.25
+sigma2_sq <- 1 * (1 - 0.5^2)  # = 0.75
+
+# 在 R 中绘制条件密度
+curve(dnorm(x, mu2_given_x1, sqrt(sigma2_sq)),
+      from = -2, to = 2,
+      xlab = expression(x[2]), ylab = "Density",
+      main = expression(paste("Conditional density of ", X[2], " | ", X[1], " = 0.5")))
+\end{verbatim}
+\end{example}
+
+\subsection{条件分布的实际应用}
+
+条件分布在统计建模中有广泛应用：
+
+\textbf{1. 回归分析}：条件均值 $\mathbb{E}(Y \mid X = x)$ 正是回归函数。线性回归假设 $\mathbb{E}(Y \mid X = x) = \alpha + \beta x$，但更一般地，任何条件均值函数都可以作为回归目标。
+
+\textbf{2. 分层抽样}：在抽样设计中，我们经常按子群（strata）分组。子群内的条件分布描述了组内变异，而边缘分布描述了总体变异。方差分解公式 \eqref{eq:law-total-variance} 正是这种思想的数学表达。
+
+\textbf{3. 贝叶斯统计}：后验分布 $f(\theta \mid x)$ 是在观测数据 $x$ 的条件下参数 $\theta$ 的条件分布。整个贝叶斯推断都建立在条件分布的理论之上。
+
+
+\subsection{R 计算：条件分布的应用}
+
+继续展示条件分布在 R 中的实际计算。
+
+\begin{example}[二元正态条件分布可视化]\label{ex:bivariate-normal-conditional-visualization-ch2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.7)$。绘制不同 $x_1$ 条件下 $X_2$ 的条件密度。
+
+\begin{verbatim}
+library(mvtnorm)
+library ggplot2)
+
+# 设置参数
+mu1 <- mu2 <- 0
+sigma1 <- sigma2 <- 1
+rho <- 0.7
+
+# 条件分布参数
+cond_mean <- function(x1) mu2 + rho * (sigma2/sigma1) * (x1 - mu1)
+cond_var <- sigma2^2 * (1 - rho^2)
+
+# 绘制条件密度
+x1_vals <- c(-2, -1, 0, 1, 2)
+colors <- c("blue", "green", "red", "orange", "purple")
+
+plot(NULL, xlim = c(-4, 4), ylim = c(0, 0.5),
+     xlab = expression(x[2]), ylab = "Density",
+     main = "Conditional densities of X2 given X1")
+
+for (i in seq_along(x1_vals)) {
+  curve(dnorm(x, cond_mean(x1_vals[i]), sqrt(cond_var)),
+        add = TRUE, col = colors[i], lwd = 2)
+  abline(v = cond_mean(x1_vals[i]), col = colors[i], lty = 2)
+}
+
+legend("topright", legend = paste("X1 =", x1_vals),
+       col = colors, lwd = 2, cex = 0.8)
+\end{verbatim}
+
+观察：条件均值随 $x_1$ 线性变化（回归效应），条件方差保持不变（正态分布的特殊性质）。
+\end{example}
+
+\begin{example}[分层抽样的方差分解]\label{ex:stratified-sampling-variance-ch2}
+设某大学有 10000 名学生，按专业分为 5 个阶层（strata）。我们想估计学生的平均每周学习时间。
+
+假设各阶层的样本均值和方差如下：
+
+\[
+\begin{array}{c|c|c|c}
+\text{专业} & n_h & \bar{X}_h & s_h^2 \\ \hline
+\text{理工} & 3000 & 20 & 25 \\
+\text{文科} & 2500 & 25 & 20 \\
+\text{商科} & 2000 & 22 & 30 \\
+\text{法学} & 1500 & 18 & 15 \\
+\text{医学} & 1000 & 28 & 35
+\end{array}
+\]
+
+边缘分布的方差分解：
+\[
+\text{var}(\bar{X}) = \mathbb{E}[\text{var}(X \mid H)] + \text{var}[\mathbb{E}(X \mid H)].
+\]
+
+第一项（层内方差）是各阶层方差的加权平均：
+\[
+\mathbb{E}[\text{var}(X \mid H)] = \sum_h \frac{n_h}{N} s_h^2.
+\]
+
+第二项（层间方差）是各阶层均值方差的加权平均：
+\[
+\text{var}[\mathbb{E}(X \mid H)] = \sum_h \frac{n_h}{N} (\bar{X}_h - \bar{X})^2,
+\]
+其中 $\bar{X}$ 是总体均值。
+
+R 计算：
+\begin{verbatim}
+# 阶层数据
+n_h <- c(3000, 2500, 2000, 1500, 1000)
+Xbar_h <- c(20, 25, 22, 18, 28)
+s2_h <- c(25, 20, 30, 15, 35)
+N <- sum(n_h)
+
+# 总体均值
+Xbar <- sum(n_h * Xbar_h) / N
+
+# 层内方差期望
+within_var <- sum(n_h * s2_h) / N
+
+# 层间方差
+between_var <- sum(n_h * (Xbar_h - Xbar)^2) / N
+
+# 总方差
+total_var <- within_var + between_var
+
+# 分层抽样估计的方差
+# 简单随机抽样的方差（比较基准）
+srs_var <- total_var / N  # 简单随机抽样
+
+# 分层抽样的效率
+strat_efficiency <- srs_var / (within_var/N)
+cat("层内方差期望:", within_var, "\n")
+cat("层间方差:", between_var, "\n")
+cat("总方差:", total_var, "\n")
+cat("分层抽样相对效率:", round(strat_efficiency, 2), "倍\n")
+\end{verbatim}
+\end{example}
+
+\subsection{条件分布的贝叶斯视角}
+
+贝叶斯统计的核心思想是：参数 $\theta$ 也是随机变量，我们应该用条件分布来描述我们对参数的认知。
+
+\textbf{先验分布}：$\theta$ 在观测数据之前的分布，记作 $f(\theta)$。
+
+\textbf{似然函数}：$L(\theta \mid x) = f(x \mid \theta)$，描述数据如何更新我们对 $\theta$ 的认知。
+
+\textbf{后验分布}：\footnote{详细推导见附录 \cref{sec:derivation-ch2-bayes-theorem}。}
+\[
+f(\theta \mid x) = \frac{f(x \mid \theta) f(\theta)}{f(x)},
+\]
+其中 $f(x) = \int f(x \mid \theta) f(\theta) \, d\theta$ 是归一化常数。
+
+\textbf{后验均值}：$\mathbb{E}(\theta \mid x)$ 是贝叶斯估计量，它优于普通样本均值——尤其在样本量较小时。
+
+\textbf{后验方差}：$\text{var}(\theta \mid x)$ 度量了参数估计的不确定性。它在统计决策理论和置信区间构建中都有重要应用。
+
+\textbf{历史注记}：Thomas Bayes（1702-1761）在其论文《An Essay Towards Solving a Problem in the Doctrine of Chances》中首次提出了贝叶斯公式。拉普拉斯（Laplace）后来独立发展了贝叶斯方法，并将其应用于天文学、人口统计等领域。贝叶斯方法在 20 世纪经历了从被忽视到复兴的过程——部分原因是计算限制（马尔可夫链蒙特卡洛方法解决了这个问题），部分原因是哲学层面的争论。\footnote{详细历史讨论见附录 \cref{sec:derivation-ch2-bayes-history}。}
+
+\begin{example}[Beta-Binomial 共轭]\label{ex:beta-binomial-conjugate-ch2}
+设 $X \mid \theta \sim \text{Binomial}(n, \theta)$，$\theta \sim \text{Beta}(\alpha, \beta)$。
+
+则后验分布为
+\[
+\theta \mid X = x \sim \text{Beta}(\alpha + x, \beta + n - x).
+\]
+
+后验均值为
+\[
+\mathbb{E}(\theta \mid X = x) = \frac{\alpha + x}{\alpha + \beta + n}.
+\]
+
+这个估计量是样本比例 $\hat{p} = x/n$ 和先验均值 $\frac{\alpha}{\alpha+\beta}$ 的加权平均——数据越多，权重越倾向于数据一方。
+
+R 验证：
+\begin{verbatim}
+# 先验参数
+alpha <- 2
+beta <- 3
+
+# 观测数据
+n <- 10
+x <- 7
+
+# 后验参数
+alpha_post <- alpha + x
+beta_post <- beta + n - x
+
+# 后验均值
+post_mean <- alpha_post / (alpha_post + beta_post)
+
+# 样本比例
+sample_prop <- x / n
+
+# 先验均值
+prior_mean <- alpha / (alpha + beta)
+
+# 贝叶斯估计量（后验均值）
+cat("先验均值:", prior_mean, "\n")
+cat("样本比例:", sample_prop, "\n")
+cat("后验均值:", post_mean, "\n")
+cat("后验均值 = (n/(n+α+β)) * 样本比例 + ((α+β)/(n+α+β)) * 先验均值\n")
+cat("= (10/15)*0.7 + (5/15)*0.4 =", 10/15*0.7 + 5/15*0.4, "\n")
+\end{verbatim}
+\end{example}
+\section{2.4 独立性：变量间的"无关系"}\label{sec:2.4}
+
+\subsection{什么时候 $X_1$ 和 $X_2$ 互不影响？}
+
+若 $X_1$ 与 $X_2$ 独立，则知道 $X_1$ 的值不会改变我们对 $X_2$ 的认知。用条件分布的语言：
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = f_{X_2}(x_2) \quad \text{（不依赖于 } x_1 \text{）}.
+\]
+
+由此推出联合密度可分离。\footnote{推导见附录 \cref{sec:derivation-independence}。}
+
+\begin{theorem}[独立性]\label{th:independence-ch2}
+\begin{equation}\label{eq:independence-factorization}
+X_1 \text{ 与 } X_2 \text{ 独立} \iff f(x_1, x_2) \equiv f_1(x_1) f_2(x_2).
+
+\end{equation}
+\end{theorem}
+
+一个实用的判据：
+
+\begin{theorem}[独立性因子化判据]\label{th:independence-factorization-ch2}
+\begin{equation}\label{eq:independence-factorization-practical}
+X_1 \text{ 与 } X_2 \text{ 独立} \iff f(x_1, x_2) \equiv g(x_1) h(x_2) \quad \text{（可分离变量）}.
+
+\end{equation}
+\end{theorem}
+
+\textbf{独立性的后果}：
+\begin{itemize}
+\item $\mathbb{E}[g(X_1) h(X_2)] = \mathbb{E}[g(X_1)] \cdot \mathbb{E}[h(X_2)]$
+\item $\text{cov}(X_1, X_2) = 0$
+\end{itemize}
+
+\begin remark
+\label{rmk:cov-zero-not-independence-ch2}
+\textbf{逆命题不成立！} $\text{cov}(X_1, X_2) = 0$ 并不意味着独立性（除二元正态分布外）。
+\end remark
+
+这提醒我们：\textbf{不相关}（uncorrelated）和\textbf{独立}（independent）是两个不同概念。不相关只说明没有线性关系，但变量间可能存在非线性依赖。
+
+\textbf{一个经典反例}：设 $X \sim \text{Uniform}(-1, 1)$，$Y = X^2$。则 $\text{cov}(X, Y) = 0$（因为 $X$ 对称），但 $Y$ 完全由 $X$ 决定——它们显然不独立。\footnote{更多反例见附录 \cref{sec:derivation-independence}。}
+
+\subsection{独立的实际意义}
+
+独立性在统计推断中极其重要，因为：
+
+\textbf{1. 简化计算}：若 $X_1 \Perp X_2$，则
+\[
+\mathbb{E}[g(X_1)h(X_2)] = \mathbb{E}[g(X_1)] \cdot \mathbb{E}[h(X_2)],
+\]
+这大大简化了期望的计算。
+
+\textbf{2. 分解问题}：在许多统计问题中，我们假设观测独立。这使得复杂问题可以分解为简单问题的组合。
+
+\textbf{3. 乘积分布}：若 $X_1 \Perp X_2$，则联合分布是边缘分布的乘积——这是一个优雅的结构性陈述。
+
+\subsection{R 计算：独立性检验}
+
+在实际数据分析中，我们经常需要检验两个变量是否独立。
+
+\begin{example}[独立性检验]\label{ex:independence-test-ch2}
+使用卡方检验检验两个分类变量的独立性：
+\begin{verbatim}
+# 创建列联表
+smoking <- c(rep("Yes", 45), rep("No", 105))
+cancer <- c(rep("Yes", 20), rep("No", 25), rep("Yes", 15), rep("No", 90))
+table <- matrix(c(20, 25, 15, 90), nrow = 2, byrow = TRUE)
+colnames(table) <- c("Cancer Yes", "Cancer No")
+rownames(table) <- c("Smoking Yes", "Smoking No")
+
+# 卡方检验
+chisq.test(table)
+\end{verbatim}
+\end{example}
+
+\textbf{Fisher 精确检验}：当样本量较小时，使用 Fisher 精确检验比卡方检验更可靠：
+\begin{verbatim}
+fisher.test(table)
+\end{verbatim}
+
+
+\subsection{独立性的深入理解}
+
+\textbf{为什么独立性如此重要？} 独立性假设是现代统计推断的基石之一。
+
+\textbf{1. 计算简化}：若 $X_1 \Perp X_2$，则
+\[
+\mathbb{E}[g(X_1)h(X_2)] = \mathbb{E}[g(X_1)] \cdot \mathbb{E}[h(X_2)].
+\]
+这大大简化了期望的计算。
+
+\textbf{2. 分解简化}：在许多统计问题中，我们假设观测独立。这使得复杂问题可以分解为简单问题的组合。例如，样本均值 $\bar{X} = n^{-1}\sum X_i$ 的方差，当 $X_i$ 独立同分布时，为 $\text{var}(\bar{X}) = \sigma^2/n$。没有独立性，这个公式不成立。
+
+\textbf{3. 乘积分布}：若 $X_1 \Perp X_2$，则联合分布是边缘分布的乘积——这是一个优雅的结构性陈述。
+
+\textbf{独立性的判别}：在实际问题中，我们如何判断两个变量是否独立？
+
+\textbf{1. 因子化判据}：若联合 pdf/pmf 可以写成 $f(x_1, x_2) = g(x_1)h(x_2)$ 的形式，则 $X_1$ 与 $X_2$ 独立。
+
+\textbf{2. 条件分布判据}：若条件分布等于边缘分布 $f_{X_2|X_1}(x_2|x_1) = f_{X_2}(x_2)$，则独立。
+
+\textbf{3. 协方差判据（反向）}：若 $\text{cov}(X_1, X_2) \neq 0$，则一定不独立。但 $\text{cov}(X_1, X_2) = 0$ 不能推出独立（除特殊情况外）。
+
+\textbf{独立 vs 不相关}：这是一个极其重要的区别。
+
+不相关（uncorrelated）只说明没有线性关系：$\text{cov}(X_1, X_2) = 0$。
+
+独立（independent）意味着知道一个变量的值对另一个变量的分布没有任何影响。
+
+独立 $\Rightarrow$ 不相关，但反过来一般不成立。
+
+\textbf{二元正态的特殊性}：在二元正态分布中，不相关 $\iff$ 独立。这是因为二元正态的联合分布完全由一阶矩和二阶矩决定。
+
+\textbf{在其他分布中}：对于非正态分布，$\text{cov} = 0$ 但不独立是可能的。
+
+\textbf{反例：$X$ 与 $Y = X^2$}：设 $X \sim \text{Uniform}(-1, 1)$，$Y = X^2$。则 $\text{cov}(X, Y) = 0$，但显然 $Y$ 完全由 $X$ 决定，不独立。\footnote{详细计算见附录 \cref{sec:derivation-independence}。}
+
+\begin{example}[独立性检验的更多方法]\label{ex:independence-tests-more-ch2}
+在实际数据分析中，独立性检验方法的选择取决于数据。
+
+\textbf{1. 连续变量的 Pearson 相关系数检验}：
+\begin{verbatim}
+# 检验 X 和 Y 是否独立（假设二元正态）
+x <- rnorm(100, mean = 0, sd = 1)
+y <- 0.5 * x + rnorm(100, mean = 0, sd = sqrt(1 - 0.5^2))
+cor.test(x, y, method = "pearson")
+\end{verbatim}
+
+\textbf{2. 秩相关（Spearman 和 Kendall）}：对非正态数据更鲁棒：
+\begin{verbatim}
+# Spearman 秩相关
+cor.test(x, y, method = "spearman")
+
+# Kendall tau 相关
+cor.test(x, y, method = "kendall")
+\end{verbatim}
+
+\textbf{3. 互信息}：度量变量的整体依赖关系（包括非线性）：
+\begin{verbatim}
+# 计算互信息（需要 infotheo 包）
+library(infotheo)
+discretize(cbind(x, y))
+mutualinformation(discretize(cbind(x, y)))
+\end{verbatim}
+
+\textbf{4. $\chi^2$ 检验}：适用于分类变量：
+\begin{verbatim}
+# 创建列联表
+smoke <- c(rep("Yes", 45), rep("No", 105))
+cancer <- c(rep("Yes", 20), rep("No", 25), rep("Yes", 15), rep("No", 90))
+table <- matrix(c(20, 25, 15, 90), nrow = 2, byrow = TRUE)
+
+# 卡方检验
+chisq.test(table)
+
+# Fisher 精确检验（样本量小时更可靠）
+fisher.test(table)
+\end{verbatim}
+\end{example}
+
+\textbf{独立性的实际应用}：
+
+\textbf{1. 金融风险管理的核心假设}：在金融工程中，资产收益率的独立性假设是 Black-Scholes 公式的基础。虽然这个假设在实践中经常被违反（存在"波动率聚集"等现象），但它提供了一个有用的基准模型。
+
+\textbf{2. 信号处理}：在噪声模型中，我们通常假设信号与噪声独立。这使得我们可以从噪声观测中恢复信号。
+
+\textbf{3. 机器学习}：许多算法假设训练样本独立同分布（i.i.d.）。当这个假设被违反时（如时间序列数据），需要使用专门的模型（如 RNN、LSTM）。
+\section{2.5 相关性：线性关联的度量}\label{sec:2.5}
+
+我们已经知道 $\text{cov}(X_1, X_2) = 0$ 不能完全刻画独立性。那么如何量化 $X_1$ 与 $X_2$ 之间的"关联程度"？
+
+协方差 $\text{cov}(X_1, X_2)$ 存在一个问题：它依赖于 $X_1, X_2$ 的量纲。例如，身高（cm）和体重（kg）的协方差与换算成英寸和磅时不同。
+
+\textbf{解决方案}：先标准化，再求协方差：
+
+\begin{equation}\label{eq:correlation-definition}
+\rho_{12} = \text{corr}(X_1, X_2) = \frac{\text{cov}(X_1, X_2)}{\sqrt{\text{var}(X_1)} \sqrt{\text{var}(X_2)}} = \frac{\text{cov}(X_1, X_2)}{\sigma_1 \sigma_2}.
+
+\end{equation}
+
+这就是相关系数（correlation coefficient）。
+
+\textbf{核心性质}：\footnote{推导见附录 \cref{sec:derivation-correlation-bounds}。}
+\begin{itemize}
+\item $-1 \leq \rho_{12} \leq 1$
+\item $|\rho_{12}| = 1 \iff X_2 = aX_1 + b$（完美线性关系）
+\item $\rho_{12} = 0$ 称\textbf{不相关}
+\end{itemize}
+
+为什么是 $[-1, 1]$？这来自 Cauchy-Schwarz 不等式：
+\begin{equation}\label{eq:cauchy-schwarz-application}
+|\text{cov}(X_1, X_2)| = |\mathbb{E}[(X_1-\mu_1)(X_2-\mu_2)]| \leq \sqrt{\mathbb{E}[(X_1-\mu_1)^2] \cdot \mathbb{E}[(X_2-\mu_2)^2]} = \sigma_1 \sigma_2.
+
+\end{equation}
+
+\begin remark
+\label{rmk:corr-vs-cov-ch2}
+\textbf{相关 vs 协方差}：协方差取决于量纲（"米的协方差"vs"厘米的协方差"数值不同）；相关系数是无量纲的，消除了单位影响。因此，相关系数是更通用的"关联程度"度量。
+\end remark
+
+\subsection{历史注记：Pearson 与相关系数}
+
+相关系数的概念由 Francis Galton（1888）在研究遗传问题时首次提出，但 Karl Pearson（1896）给出了严格的数学定义和估计方法。Pearson 的工作奠定了生物计量学的基础，也使得相关性成为统计学中最广泛使用的概念之一。
+
+\textbf{Galton 的发现}：Galton 研究双胞胎身高时发现，父亲身高与子女身高之间存在"回归"（regression）现象——极端身高（非常高或非常矮）的父母，其子女的身高倾向于向平均值"回归"。这种"向均值回归"的现象正是相关性的体现。
+
+\textbf{Pearson 的贡献}：Pearson 给出了相关系数的精确数学定义：
+\[
+\rho_{XY} = \frac{\text{cov}(X, Y)}{\sigma_X \sigma_Y},
+\]
+并推导了其统计性质。他发展的矩估计方法至今仍是估计相关系数的主要方法之一。
+
+\subsection{R 计算：相关分析}
+
+R 提供了丰富的相关分析功能：
+
+\begin{example}[样本相关系数]\label{ex:sample-correlation-ch2}
+计算两组数据的 Pearson 相关系数：
+\begin{verbatim}
+# 数据：父亲身高与儿子身高（模拟 Galton 数据）
+father <- c(65, 63, 67, 64, 68, 62, 70, 66, 68, 65)
+son <- c(68, 66, 68, 65, 69, 63, 71, 67, 69, 66)
+
+# 计算样本相关系数
+cor(father, son)
+
+# 计算置信区间（使用 Fisher z 变换）
+n <- length(father)
+r <- cor(father, son)
+z <- 0.5 * log((1+r)/(1-r))  # Fisher z 变换
+se <- 1/sqrt(n-3)
+z_ci <- c(z - 1.96*se, z + 1.96*se)
+r_ci <- (exp(2*z_ci) - 1)/(exp(2*z_ci) + 1)
+r_ci
+\end{verbatim}
+\end{example}
+
+\textbf{相关性的解释}：
+\begin{itemize}
+\item $|\rho| = 0$：无线性关系
+\item $|\rho| \in (0, 0.3)$：弱相关
+\item $|\rho| \in [0.3, 0.7)$：中等相关
+\item $|\rho| \in [0.7, 1)$：强相关
+\item $|\rho| = 1$：完美线性关系
+\end{itemize}
+
+\textbf{注意事项}：
+\begin{enumerate}
+\item 相关系数只度量线性关系，非线性关系可能表现出 $\rho = 0$
+\item 相关系数对异常值敏感（可以使用 Spearman 或 Kendall 相关系数作为鲁棒替代）
+\item 相关不等于因果——两个变量相关可能是因为它们共同受第三个变量影响
+\end{enumerate}
+
+\begin{example}[相关与因果]\label{ex:correlation-causation-ch2}
+冰淇淋销量与溺水死亡人数呈正相关（$\rho \approx 0.9$）。但这并不意味着吃冰淇淋导致溺水——两者都与夏季气温正相关。正确的解释是：夏季（共同原因）导致冰淇淋销量增加和更多人游泳（从而溺水增加）。
+\end{example}
+
+\section{2.6 二元正态：最重要的二元分布}\label{sec:2.6}
+
+在所有二元分布中，二元正态分布占据核心地位。它是一元正态分布在二维的自然推广，也是计量经济学、信号处理等领域的基石。
+
+\textbf{为什么重要？}
+\begin{enumerate}
+\item 边缘分布和条件分布都是正态的
+\item 线性组合仍是正态
+\item 不相关 $\iff$ 独立（这是正态独有的优雅性质）
+\item 多元正态是计量经济学、信号处理等领域的基石
+\end{enumerate}
+
+历史注记：二元正态分布由 Francis Galton 和 Karl Pearson 在 19 世纪末独立发展。Pearson 发展的多元相关理论为现代统计学奠定了重要基础。
+
+\begin{definition}[二元正态分布]\label{def:bivariate-normal-ch2}
+$(X_1, X_2)$ 服从二元正态分布，若其联合 pdf 为
+\[
+f(x_1, x_2) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}} \exp\left\{ -\frac{1}{2(1-\rho^2)} \left[ \frac{(x_1-\mu_1)^2}{\sigma_1^2} - 2\rho\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} + \frac{(x_2-\mu_2)^2}{\sigma_2^2} \right] \right\},
+\]
+记作 $(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$。
+\end{definition}
+
+\textbf{五个参数的含义}：
+\begin{itemize}
+\item $\mu_1, \mu_2$：边缘分布的均值
+\item $\sigma_1^2, \sigma_2^2$：边缘分布的方差
+\item $\rho$：相关系数
+\end{itemize}
+
+\textbf{关键性质}：
+
+\begin{enumerate}
+\item 边缘分布：$X_1 \sim N(\mu_1, \sigma_1^2)$，$X_2 \sim N(\mu_2, \sigma_2^2)$
+\item 条件分布：\footnote{推导见附录 \cref{sec:derivation-bivariate-normal-conditional}。}
+\begin{equation}\label{eq:bivariate-normal-conditional}
+X_2 \mid X_1 = x_1 \sim N\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1), \ \sigma_2^2(1-\rho^2)\right)
+
+\end{equation}
+\item $X_1 \Perp X_2 \iff \rho = 0$（正态独有的"不相关 $\Rightarrow$ 独立"）
+\item 任意线性组合 $aX_1 + bX_2 \sim N(a\mu_1 + b\mu_2, \text{var}(aX_1 + bX_2))$
+\end{enumerate}
+
+\begin remark
+\label{rmk:bivariate-normal-conditional-ch2}
+\textbf{条件分布的几何直觉}：条件均值
+\[
+\mathbb{E}(X_2 \mid x_1) = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1)
+\]
+是 $x_1$ 的线性函数。这意味着：给定 $X_1 = x_1$，$X_2$ 的最佳预测也是线性的，其斜率由相关系数 $\rho$ 决定。
+\end remark
+
+条件分布的方差 $\sigma_2^2(1-\rho^2)$ 小于无条件方差 $\sigma_2^2$——知道 $X_1$ 的值减少了我们对 $X_2$ 的不确定性。当 $|\rho| = 1$ 时，方差为零，意味着 $X_2$ 可以完全由 $X_1$ 线性决定。
+
+\subsection{R 计算：二元正态}
+
+R 中处理二元正态分布的核心函数包括 \texttt{mvtnorm} 包中的函数。
+
+\begin{example}[二元正态概率计算]\label{ex:bivariate-normal-prob-ch2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.7)$。求 $\mathbb{P}(X_1 \leq 0.5, X_2 \leq 0.5)$。
+
+在 R 中：
+\begin{verbatim}
+# 安装和加载 mvtnorm 包
+install.packages("mvtnorm")
+library(mvtnorm)
+
+# 计算二元正态 CDF
+pmvnorm(lower = c(-Inf, -Inf), upper = c(0.5, 0.5),
+        mean = c(0, 0), sigma = matrix(c(1, 0.7, 0.7, 1), nrow = 2))
+\end{verbatim}
+\end{example}
+
+\begin{example}[生成二元正态样本]\label{ex:bivariate-normal-simulation-ch2b}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, 0.8)$。生成 $n = 1000$ 的样本并可视化。
+
+\begin{verbatim}
+library(mvtnorm)
+n <- 1000
+rho <- 0.8
+sigma <- matrix(c(1, rho, rho, 1), nrow = 2)
+set.seed(123)
+sample <- rmvnorm(n, mean = c(0, 0), sigma = sigma)
+
+# 绘制散点图
+plot(sample, xlab = expression(X[1]), ylab = expression(X[2]),
+     main = paste("Bivariate Normal, rho =", rho), pch = 20, cex = 0.5)
+
+# 添加相关系数
+cor(sample[,1], sample[,2])
+\end{verbatim}
+\end{example}
+
+\textbf{不同 $\rho$ 值的效果}：
+\begin{itemize}
+\item $\rho = 0$：$X_1$ 和 $X_2$ 独立，分布呈圆形对称
+\item $\rho > 0$：正相关，分布沿主对角线 ($y=x$) 拉伸
+\item $\rho < 0$：负相关，分布沿副对角线 ($y=-x$) 拉伸
+\item $|\rho| = 1$：分布退化为一条直线（完美线性关系）
+\end{itemize}
+
+\subsection{条件均值与预测}
+
+二元正态的一个核心应用是\textbf{最优线性预测}。给定 $X_1 = x_1$，$X_2$ 的最佳预测是条件均值：
+
+\[
+\widehat{X}_2 = \mathbb{E}(X_2 \mid x_1) = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1).
+\]
+
+\textbf{为什么是"最优"？} 考虑预测误差 $e = X_2 - \widehat{X}_2$。可以证明，在所有线性预测中，这个条件均值预测的均方误差最小。\footnote{推导见附录 \cref{sec:derivation-bivariate-normal-conditional}。}
+
+\textbf{预测误差的方差}：$\text{var}(e) = \sigma_2^2(1-\rho^2)$。当 $|\rho| = 1$ 时，误差方差为零——$X_2$ 可以完全由 $X_1$ 预测。
+
+\begin{example}[身高与体重预测]\label{ex:height-weight-prediction-ch2}
+设 $(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$，其中 $X_1$ 为父亲身高（英寸），$X_2$ 为儿子身高（英寸）。根据 Galton 的经典数据：
+\[
+\mu_1 = \mu_2 = 68.2, \quad \sigma_1 = \sigma_2 = 2.7, \quad \rho = 0.5.
+\]
+
+给定父亲身高 $x_1 = 72$ 英寸，儿子的预测身高为：
+\[
+\mathbb{E}(X_2 \mid X_1 = 72) = 68.2 + 0.5 \cdot \frac{2.7}{2.7}(72 - 68.2) = 68.2 + 1.9 = 70.1 \text{ 英寸}.
+\]
+
+预测误差的标准差为 $\sigma_2\sqrt{1-\rho^2} = 2.7 \cdot \sqrt{0.75} \approx 2.34$ 英寸。
+\end{example}
+
+\subsection{回归与条件均值}
+
+从条件均值公式，我们可以写出"回归方程"：
+\[
+X_2 = \alpha + \beta X_1 + \varepsilon,
+\]
+其中 $\beta = \rho \frac{\sigma_2}{\sigma_1}$，$\alpha = \mu_2 - \beta \mu_1$，$\varepsilon \sim N(0, \sigma_2^2(1-\rho^2))$ 与 $X_1$ 独立。
+
+\textbf{最小二乘法的联系}：在统计学中，我们通常从数据估计回归系数。样本回归系数 $\widehat{\beta} = \widehat{\rho} \frac{s_2}{s_1}$ 依概率收玫到真实的 $\beta$。\footnote{详细讨论见附录 \cref{sec:derivation-bivariate-normal-conditional}。}
+
+\section{2.7 多元推广}\label{sec:2.7}
+
+前述概念可以推广到 $n$ 个随机变量。记随机向量 $\mathbf{X} = (X_1, \ldots, X_n)'$，其联合 cdf 为
+\[
+F_{\mathbf{X}}(\mathbf{x}) = \mathbb{P}(X_1 \leq x_1, \ldots, X_n \leq x_n).
+\]
+
+\subsection{边缘与条件分布}
+
+边缘 pdf 通过 $n-1$ 重积分得到：
+\[
+f_1(x_1) = \int_{-\infty}^{\infty} \cdots \int_{-\infty}^{\infty} f(x_1, x_2, \ldots, x_n) \, dx_2 \cdots dx_n.
+\]
+
+条件分布定义为联合密度与边缘密度之比：
+\[
+f_{2,\ldots,n|1}(x_2,\ldots,x_n \mid x_1) = \frac{f(x_1, x_2, \ldots, x_n)}{f_1(x_1)}.
+\]
+
+\subsection{多元独立性}
+
+$n$ 个随机变量 $X_1, \ldots, X_n$ 相互独立，当且仅当
+\begin{equation}\label{eq:multivariate-independence}
+f(x_1, x_2, \ldots, x_n) \equiv f_1(x_1) f_2(x_2) \cdots f_n(x_n).
+
+\end{equation}
+
+\textbf{注意}：两两独立（pairwise independence）不一定推出相互独立（mutual independence）。Bernstein 的例子说明了这一点。
+
+\subsection{线性组合的 mgf}
+
+若 $X_1, \ldots, X_n$ 相互独立，$T = \sum_{i=1}^n k_i X_i$ 的 mgf 为
+\[
+M_T(t) = \prod_{i=1}^n M_i(k_i t).
+\]\footnote{推导见附录 \cref{sec:derivation-mgf-linear-combination}。}
+
+特别地，若 $X_1, \ldots, X_n$ iid（独立同分布），则 $T = \sum_{i=1}^n X_i$ 的 mgf 为
+\begin{equation}\label{eq:mgf-sum-iid}
+M_T(t) = [M(t)]^n.
+
+\end{equation}
+
+这个性质在研究样本和的分布时极为有用——它是一切大样本理论的起点。
+
+\subsection{多元正态分布}
+
+多元正态分布是二元正态的自然推广，在统计学中占据核心地位。
+
+\begin{definition}[$n$ 元正态分布]\label{def:multivariate-normal-ch2}
+随机向量 $\mathbf{X} = (X_1, \ldots, X_n)'$ 服从 $n$ 元正态分布，若其联合 pdf 为
+\[
+f(\mathbf{x}) = \frac{1}{(2\pi)^{n/2} |\Sigma|^{1/2}} \exp\left\{ -\frac{1}{2} (\mathbf{x} - \boldsymbol{\mu})' \Sigma^{-1} (\mathbf{x} - \boldsymbol{\mu}) \right\},
+\]
+记作 $\mathbf{X} \sim N(\boldsymbol{\mu}, \Sigma)$，其中 $\boldsymbol{\mu}$ 是均值向量，$\Sigma$ 是协方差矩阵。
+\end{definition}
+
+\textbf{关键性质}：
+\begin{enumerate}
+\item 任意边缘分布都是正态的
+\item 任意线性组合 $a_1 X_1 + \cdots + a_n X_n \sim N(\mathbf{a}'\boldsymbol{\mu}, \mathbf{a}'\Sigma\mathbf{a})$
+\item 若 $\Sigma$ 对角线之外所有元素为零（即变量独立），则 $\mathbf{X}$ 的分量独立
+\item 条件分布仍是正态的
+\end{enumerate}
+
+\textbf{协方差矩阵的性质}：
+\begin{itemize}
+\item $\Sigma$ 是对称的（$\Sigma' = \Sigma$）
+\item $\Sigma$ 是半正定的（所有特征值 $\geq 0$）
+\item $|\Sigma|^{1/2}$ 是 $\Sigma$ 的行列式的平方根
+\end{itemize}
+
+\subsection{复相关系数与偏相关}
+
+在多元分析中，我们经常关心一个变量与一组变量整体的相关性。
+
+\textbf{复相关系数（Multiple Correlation Coefficient）}：度量 $X_1$ 与 $(X_2, \ldots, X_n)$ 整体之间的相关性：
+\[
+R_{1\cdot 23\ldots n} = \sqrt{\frac{\text{var}(\mathbb{E}(X_1 \mid X_2, \ldots, X_n))}{\text{var}(X_1)}}.
+\]
+
+\textbf{偏相关系数（Partial Correlation Coefficient）}：在控制其他变量的影响后，$X_1$ 与 $X_2$ 之间的相关性：
+\[
+\rho_{12\cdot 3\ldots n} = \frac{\text{cov}(X_1, X_2 \mid X_3, \ldots, X_n)}{\sqrt{\text{var}(X_1 \mid X_3, \ldots, X_n) \cdot \text{var}(X_2 \mid X_3, \ldots, X_n)}}.
+\]
+
+偏相关在因果推断中特别重要——它度量了在控制一组混杂变量后，两个变量之间的"直接"相关性。
+
+\section{本章总结}\label{sec:chapter2-summary}
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{概念} & \textbf{公式/描述} \\ \hline
+联合 cdf & $F_{X_1,X_2}(x_1,x_2) = \mathbb{P}(X_1\leq x_1, X_2\leq x_2)$ \\ \hline
+边缘 pmf & $p_{X_1}(x_1) = \sum_{x_2} p_{X_1,X_2}(x_1,x_2)$ \\ \hline
+边缘 pdf & $f_{X_1}(x_1) = \int_{-\infty}^{\infty} f(x_1,x_2)\,dx_2$ \\ \hline
+条件 pmf & $p_{X_2|X_1}(x_2|x_1) = p(x_1,x_2)/p_{X_1}(x_1)$ \\ \hline
+条件 pdf & $f_{X_2|X_1}(x_2|x_1) = f(x_1,x_2)/f_{X_1}(x_1)$ \\ \hline
+全期望 & $\mathbb{E}[\mathbb{E}(X_2|X_1)] = \mathbb{E}X_2$ \\ \hline
+方差分解 & $\text{var}(X_2) = \mathbb{E}[\text{var}(X_2|X_1)] + \text{var}[\mathbb{E}(X_2|X_1)]$ \\ \hline
+独立性 & $f(x_1,x_2) = f_1(x_1)f_2(x_2)$ \\ \hline
+协方差 & $\text{cov} = \mathbb{E}(X_1X_2) - \mathbb{E}X_1\mathbb{E}X_2$ \\ \hline
+相关系数 & $\rho = \text{cov}/(\sigma_1\sigma_2)$，$-1 \leq \rho \leq 1$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{本章内部脉络}：联合分布（描述共同行为） $\to$ 边缘分布（提取单个变量信息） $\to$ 条件分布（利用已知变量更新未知变量） $\to$ 独立性（无关系时的简化） $\to$ 相关性（量化关联程度）。
+
+\textbf{为下一章铺垫}：第 3 章将系统研究最重要的几类分布，这些分布在多元情形下自然出现。第 4 章则利用这些分布建立统计推断的基本工具。
+
+\section*{习题}\label{sec:exercises-ch2}
+
+\begin{exercise}{2.1.1}
+设 $X_1$ 和 $X_2$ 的联合 pdf 为 $f(x_1, x_2) = x_1 + x_2$，$0 < x_1 < 1$，$0 < x_2 < 1$，其他位置为零。求 $X_1$ 的边缘 pdf。
+\end{exercise}
+
+\begin{exercise}{2.2.1}
+设 $(X_1, X_2)$ 的联合 pdf 为 $f(x_1, x_2) = 2$，$0 < x_1 < x_2 < 1$，其他位置为零。
+\begin{enumerate}
+\item 求边缘 pdf $f_{X_1}(x_1)$ 和 $f_{X_2}(x_2)$
+\item 验证 $\int\int f = 1$
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{2.3.1}
+设 $X_1$ 和 $X_2$ 具有联合 pdf $f(x_1, x_2) = x_1 + x_2$，$0 < x_1 < 1$，$0 < x_2 < 1$。求给定 $X_1 = x_1$ 时 $X_2$ 的条件均值和条件方差。
+\end{exercise}
+
+\begin{exercise}{2.3.2}
+证明全期望公式：$\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \mathbb{E}X_2$。（提示：对离散和连续两种情形分别证明）
+\end{exercise}
+
+\begin{exercise}{2.4.1}
+证明：若 $X_1$ 和 $X_2$ 独立，则 $\mathbb{E}[g(X_1) h(X_2)] = \mathbb{E}[g(X_1)] \cdot \mathbb{E}[h(X_2)]$。
+\end{exercise}
+
+\begin{exercise}{2.4.2}
+设 $(X, Y)$ 具有联合 pdf $f(x, y) = x + y$，$0 < x < 1$，$0 < y < 1$。$X$ 与 $Y$ 是否独立？为什么？
+\end{exercise}
+
+\begin{exercise}{2.5.1}
+设 $(X, Y)$ 具有联合 pdf $f(x, y) = x + y$，$0 < x < 1$，$0 < y < 1$。求相关系数 $\rho$。
+\end{exercise}
+
+\begin{exercise}{2.5.2}
+证明：$-1 \leq \text{corr}(X, Y) \leq 1$。（提示：使用 Cauchy-Schwarz 不等式）
+\end{exercise}
+
+\begin{exercise}{2.6.1}
+设 $(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$。证明条件分布 $X_2 \mid X_1 = x_1 \sim N(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1), \sigma_2^2(1-\rho^2))$。
+\end{exercise}
+
+\begin{exercise}{2.6.2}
+设 $(X_1, X_2) \sim N(0, 0, 1, 1, \rho)$（相关系数为 $\rho$ 的二元标准正态）。求 $X_1 + X_2$ 的分布。
+\end{exercise}
+
+\begin{exercise}{2.7.1}
+设 $X_1, X_2, X_3$ 为三个独立同分布的随机变量，每个的 pdf 为 $f(x) = 2x$，$0 < x < 1$。求 $Y = \max\{X_1, X_2, X_3\}$ 的分布。
+\end{exercise}
+
+\begin{exercise}{2.7.2}
+设 $X_1, \ldots, X_n$ iid $\sim N(\mu, \sigma^2)$。令 $\bar{X} = n^{-1}\sum X_i$。利用 mgf 证明 $\bar{X} \sim N(\mu, \sigma^2/n)$。
+\end{exercise}
+
+\section{附录：公式推导}\label{sec:appendix-ch2}
+
+\subsection{边缘分布公式推导}\label{sec:derivation-ch2-marginal-distributions}
+
+\textbf{背景}：已知联合分布，如何得到单个变量的边缘分布？
+
+\textbf{目标}：从联合 pmf/pdf 推导边缘 pmf/pdf 的计算公式。
+
+\textbf{推导步骤}：
+
+\textbf{离散型}：设 $(X_1, X_2)$ 的联合 pmf 为 $p_{X_1, X_2}(x_1, x_2)$。
+
+1. 由边缘 pmf 的定义，$X_1$ 的边缘 pmf 为 $p_{X_1}(x_1) = \mathbb{P}(X_1 = x_1)$。
+
+2. 事件 $\{X_1 = x_1\}$ 可以分解为与 $X_2$ 的联合事件：
+\[
+\mathbb{P}(X_1 = x_1) = \sum_{x_2} \mathbb{P}(X_1 = x_1, X_2 = x_2).
+\]
+
+3. 因此边缘 pmf 公式为
+\[
+p_{X_1}(x_1) = \sum_{x_2} p_{X_1, X_2}(x_1, x_2).
+\]
+
+\textbf{连续型}：设 $(X_1, X_2)$ 的联合 pdf 为 $f_{X_1, X_2}(x_1, x_2)$。
+
+1. 由边缘 pdf 的定义，$X_1$ 的边缘 pdf 满足
+\[
+\mathbb{P}(a \leq X_1 \leq b) = \int_a^b f_{X_1}(x_1) \, dx_1.
+\]
+
+2. 另一方面，
+\[
+\mathbb{P}(a \leq X_1 \leq b) = \int_a^b \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2 \, dx_1.
+\]
+
+3. 比较两式，由微积分基本定理，得到边缘 pdf 公式：
+\[
+f_{X_1}(x_1) = \int_{-\infty}^{\infty} f_{X_1, X_2}(x_1, x_2) \, dx_2.
+\]
+
+\textbf{几何直观}：联合 pdf 是二维"概率密度曲面"，边缘 pdf 是该曲面对 $x_2$ 方向"压扁"后得到的、一维曲线下的面积。
+
+\subsection{条件分布公式推导}\label{sec:derivation-ch2-conditional-distribution}
+
+\textbf{背景}：已知联合分布，如何描述"已知 $X_1$ 的值时 $X_2$ 的分布"？
+
+\textbf{目标}：推导条件 pmf/pdf 的计算公式。
+
+\textbf{推导步骤}：
+
+\textbf{离散型}：
+
+1. 条件概率的基本定义：
+\[
+\mathbb{P}(X_2 = x_2 \mid X_1 = x_1) = \frac{\mathbb{P}(X_1 = x_1, X_2 = x_2)}{\mathbb{P}(X_1 = x_1)}.
+\]
+
+2. 代入联合 pmf 和边缘 pmf：
+\[
+p_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{p_{X_1, X_2}(x_1, x_2)}{p_{X_1}(x_1)}.
+\]
+
+3. 验证归一性：$\sum_{x_2} p_{X_2 \mid X_1}(x_2 \mid x_1) = 1$。
+
+\textbf{连续型}：
+
+1. 连续情形不能直接用条件概率定义，因为 $\mathbb{P}(X_1 = x_1) = 0$。我们用极限思想：
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \lim_{\Delta \to 0} \frac{\mathbb{P}(x_1 \leq X_1 < x_1 + \Delta, X_2 \in dx_2)}{\mathbb{P}(x_1 \leq X_1 < x_1 + \Delta) \cdot dx_2}.
+\]
+
+2. 分子分母同除以 $\Delta$ 并取极限，得到
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)}.
+\]
+
+3. 验证归一性：$\int_{-\infty}^{\infty} f_{X_2 \mid X_1}(x_2 \mid x_1) \, dx_2 = 1$。
+
+\textbf{直觉理解}：条件密度是联合密度在固定 $x_1$ 处的"切片"，再除以该切片下的总面积（边缘密度）进行归一化。
+
+\subsection{条件密度与 Radon-Nikodym 定理}\label{sec:derivation-ch2-conditional-density}
+
+\textbf{背景}：连续情形下条件密度 $f_{X_2|X_1}(x_2|x_1) = f(x_1,x_2)/f_{X_1}(x_1)$ 的严格数学基础是什么？
+
+\textbf{已知条件}：
+\begin{itemize}
+\item 联合 pdf $f_{X_1,X_2}(x_1,x_2)$ 存在
+\item 边缘 pdf $f_{X_1}(x_1) > 0$
+\end{itemize}
+
+\textbf{目标}：严格论证条件密度的存在性与定义。
+
+\textbf{推导步骤}：
+
+1. 条件分布函数定义为
+\[
+F_{X_2 \mid X_1}(x_2 \mid x_1) = \mathbb{P}(X_2 \leq x_2 \mid X_1 = x_1).
+\]
+
+2. 由 Radon-Nikodym 定理：若 $\mathbb{P}_c(\cdot \mid X_1)$ 是给定 $X_1$ 时的条件概率测度，则存在 Radon-Nikodym 导数（即条件密度）：
+\[
+\mathbb{P}(X_2 \leq x_2 \mid X_1 = x_1) = \int_{-\infty}^{x_2} f_{X_2 \mid X_1}(x_2' \mid x_1) \, dx_2'.
+\]
+
+3. 验证条件密度的公式：
+\[
+\int_{-\infty}^{x_2} \frac{f_{X_1, X_2}(x_1, x_2')}{f_{X_1}(x_1)} \, dx_2' = \frac{1}{f_{X_1}(x_1)} \int_{-\infty}^{x_2} f_{X_1, X_2}(x_1, x_2') \, dx_2' = \frac{F_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)}.
+\]
+
+4. 对 $x_2$ 求导得到条件密度表达式：
+\[
+\frac{\partial}{\partial x_2} F_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)}.
+\]
+
+\textbf{注}：Radon-Nikodym 定理保证了在 $\sigma$-有限条件下，条件密度（条件期望的 Radon-Nikodym 导数）的存在性，这是现代概率论的基础结果之一。
+
+\subsection{全期望公式推导}\label{sec:derivation-ch2-law-total-expectation}
+
+\textbf{背景}：全期望公式 $\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \mathbb{E}(X_2)$ 是概率论中最强大的工具之一。
+
+\textbf{目标}：严格推导全期望公式。
+
+\textbf{推导步骤}：
+
+\textbf{离散型}：
+
+1. 条件期望的定义：
+\[
+\mathbb{E}(X_2 \mid X_1 = x_1) = \sum_{x_2} x_2 \cdot p_{X_2 \mid X_1}(x_2 \mid x_1) = \sum_{x_2} x_2 \cdot \frac{p_{X_1, X_2}(x_1, x_2)}{p_{X_1}(x_1)}.
+\]
+
+2. 外层期望是对 $X_1$ 求平均：
+\[
+\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \sum_{x_1} \left[ \sum_{x_2} x_2 \cdot \frac{p_{X_1, X_2}(x_1, x_2)}{p_{X_1}(x_1)} \right] p_{X_1}(x_1).
+\]
+
+3. 约去 $p_{X_1}(x_1)$：
+\[
+= \sum_{x_1} \sum_{x_2} x_2 \cdot p_{X_1, X_2}(x_1, x_2) = \sum_{x_2} x_2 \left[ \sum_{x_1} p_{X_1, X_2}(x_1, x_2) \right].
+\]
+
+4. 内层和是边缘 pmf：$= \sum_{x_2} x_2 \cdot p_{X_2}(x_2) = \mathbb{E}(X_2)$。
+
+\textbf{连续型}：类似地，
+\[
+\mathbb{E}[\mathbb{E}(X_2 \mid X_1)] = \int_{-\infty}^{\infty} \left[ \int_{-\infty}^{\infty} x_2 \frac{f_{X_1, X_2}(x_1, x_2)}{f_{X_1}(x_1)} dx_2 \right] f_{X_1}(x_1) dx_1 = \iint x_2 f_{X_1, X_2}(x_1, x_2) dx_1 dx_2 = \mathbb{E}(X_2).
+\]
+
+\textbf{意义}：全期望公式本质上是"加权平均的加权平均"——先在每个 $X_1$ 条件下计算 $X_2$ 的条件均值，再对条件均值按 $X_1$ 的分布加权平均，结果等于全体平均。
+
+\subsection{方差分解公式推导}\label{sec:derivation-ch2-variance-inequality}
+
+\textbf{背景}：条件方差公式 $\text{var}(X_2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \text{var}[\mathbb{E}(X_2 \mid X_1)]$ 是统计学中最重要的恒等式之一。
+
+\textbf{目标}：证明总方差等于"平均条件方差"加上"条件均值的方差"。
+
+\textbf{推导步骤}：
+
+1. 由方差的定义：
+\[
+\text{var}(X_2) = \mathbb{E}(X_2^2) - [\mathbb{E}(X_2)]^2.
+\]
+
+2. 对第一项应用全期望公式：
+\[
+\mathbb{E}(X_2^2) = \mathbb{E}[\mathbb{E}(X_2^2 \mid X_1)].
+\]
+
+3. 在每个 $X_1 = x_1$ 条件下，$\mathbb{E}(X_2^2 \mid X_1 = x_1) = \text{var}(X_2 \mid X_1 = x_1) + [\mathbb{E}(X_2 \mid X_1 = x_1)]^2$。
+
+4. 因此
+\[
+\mathbb{E}(X_2^2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \mathbb{E}[[\mathbb{E}(X_2 \mid X_1)]^2].
+\]
+
+5. 代入方差公式：
+\[
+\text{var}(X_2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \mathbb{E}[[\mathbb{E}(X_2 \mid X_1)]^2] - [\mathbb{E}(X_2)]^2.
+\]
+
+6. 注意最后两项恰好是 $\mathbb{E}(X_2 \mid X_1)$ 的方差：
+\[
+\text{var}[\mathbb{E}(X_2 \mid X_1)] = \mathbb{E}[[\mathbb{E}(X_2 \mid X_1)]^2] - [\mathbb{E}(X_2)]^2.
+\]
+
+7. 代入即得方差分解公式：
+\[
+\text{var}(X_2) = \mathbb{E}[\text{var}(X_2 \mid X_1)] + \text{var}[\mathbb{E}(X_2 \mid X_1)].
+\]
+
+\textbf{直观理解}：第一项是"组内方差的平均"（知道 $X_1$ 后 $X_2$ 的残余变异），第二项是"组间方差"（不同 $X_1$ 条件下条件均值的变化）。
+
+\subsection{Rao-Blackwell 定理}\label{sec:derivation-ch2-rao-blackwell}
+
+\textbf{背景}：Rao-Blackwell 定理是统计决策理论的核心结果，说明了如何利用条件化改进估计量。
+
+\textbf{已知条件}：
+\begin{itemize}
+\item $T$ 是 $\theta$ 的无偏估计量：$\mathbb{E}_\theta(T) = \theta$
+\item $S = \mathbb{E}(T \mid U)$ 是 $T$ 关于充分统计量 $U$ 的条件期望
+\end{itemize}
+
+\textbf{目标}：证明 $\mathbb{E}[(S - \theta)^2] \leq \mathbb{E}[(T - \theta)^2]$，即 $S$ 比 $T$ 更好（均方误差更小）。
+
+\textbf{推导步骤}：
+
+1. 由全方差公式：
+\[
+\text{var}_\theta(T) = \mathbb{E}[\text{var}_\theta(T \mid U)] + \text{var}_\theta[\mathbb{E}_\theta(T \mid U)].
+\]
+
+2. 由于 $S = \mathbb{E}(T \mid U)$，有 $\mathbb{E}_\theta(S) = \mathbb{E}_\theta(T) = \theta$（$S$ 仍是无偏的）。
+
+3. 由方差分解式两边减去 $\theta^2$（注意 $S$ 无偏），得
+\[
+\mathbb{E}[(T - \theta)^2] = \underbrace{\mathbb{E}[\text{var}(T \mid U)]}_{\geq 0} + \mathbb{E}[(S - \theta)^2] \geq \mathbb{E}[(S - \theta)^2].
+\]
+
+\textbf{结论}：条件化（于充分统计量）不会增加均方误差，且在 $T$ 不是充分统计量的函数时严格减少。这为用条件期望改进任意估计量提供了理论依据。
+
+\subsection{贝叶斯公式推导}\label{sec:derivation-ch2-bayes-theorem}
+
+\textbf{背景}：贝叶斯公式是连接先验、似然和后验的桥梁。
+
+\textbf{已知条件}：
+\begin{itemize}
+\item 先验分布：$\theta \sim \pi(\theta)$
+\item 似然函数：$X \mid \theta \sim f(x \mid \theta)$
+\end{itemize}
+
+\textbf{目标}：求后验分布 $\pi(\theta \mid x)$。
+
+\textbf{推导步骤}：
+
+1. 由条件概率的定义：
+\[
+\pi(\theta \mid x) = \frac{f(x, \theta)}{f(x)} = \frac{f(x \mid \theta) \pi(\theta)}{f(x)}.
+\]
+
+2. 其中归一化常数（边际似然）为
+\[
+f(x) = \int f(x \mid \theta') \pi(\theta') \, d\theta'.
+\]
+
+3. 因此贝叶斯公式为
+\[
+\pi(\theta \mid x) = \frac{f(x \mid \theta) \pi(\theta)}{\int f(x \mid \theta') \pi(\theta') \, d\theta'}.
+\]
+
+\textbf{后验均值}：作为点估计，
+\[
+\mathbb{E}(\theta \mid x) = \int \theta \cdot \pi(\theta \mid x) \, d\theta = \frac{\int \theta f(x \mid \theta) \pi(\theta) \, d\theta}{\int f(x \mid \theta) \pi(\theta) \, d\theta}.
+\]
+
+\textbf{共轭先验}：若先验 $\pi$ 与似然 $f(\cdot \mid \theta)$ 共轭，则后验与先验有相同形式，计算大为简化。
+
+\subsection{贝叶斯方法历史概述}\label{sec:derivation-ch2-bayes-history}
+
+\textbf{背景}：理解贝叶斯方法的历史脉络有助于认识其哲学内涵。
+
+\textbf{历史时间线}：
+
+\textbf{1761 年}：Thomas Bayes（1702-1761）发表《An Essay Towards Solving a Problem in the Doctrine of Chances》，首次提出贝叶斯公式。贝叶斯的证明使用了"逆概率"思想——从观测数据反推原因的概率。
+
+\textbf{1774 年}：Pierre-Simon Laplace（1749-1827）独立发展了贝叶斯方法，并将其系统化。拉普拉斯使用贝叶斯方法估计太阳系行星的质量和轨道参数。
+
+\textbf{19 世纪}：贝叶斯方法在统计界占据主导地位，但 Frequentist 学派（Fisher、Pearson、Neyman）对其"主观先验"提出了批评。
+
+\textbf{1930-1950 年代}： Frequentist 方法成为主流，贝叶斯方法被边缘化。Fisher 的显著性检验和 Neyman 的置信区间理论主导了统计实践。
+
+\textbf{1980 年代至今}：由于计算革命（尤其是 MCMC 方法的发展），贝叶斯方法复兴。如今它与 Frequentist 方法并列为统计学的两大流派。
+
+\textbf{哲学争论}：贝叶斯方法的核心争议在于先验分布的选择——
+\begin{itemize}
+\item \textbf{客观贝叶斯学派}：选择无信息先验（如 Jeffreys 先验），使后验主要由数据决定
+\item \textbf{主观贝叶斯学派}：先验分布应反映研究者的真实信念
+\end{itemize}
+
+\textbf{现代应用}：贝叶斯方法在机器学习（贝叶斯神经网络）、生物统计（药物试验）、金融（风险建模）等领域有广泛应用。
+
+\subsection{独立性因子化判据推导}\label{sec:derivation-ch2-independence}
+
+\textbf{背景}：独立性 $X_1 \Perp X_2$ 的定义是 $F(x_1, x_2) = F_1(x_1)F_2(x_2)$，但这在应用中不方便。因子化判据提供了更实用的检验方法。
+
+\textbf{目标}：证明 $X_1 \Perp X_2 \iff f(x_1, x_2) \equiv g(x_1)h(x_2)$（对某些 $g, h$）。
+
+\textbf{推导步骤}：
+
+\textbf{($\Rightarrow$)} 若 $X_1 \Perp X_2$：
+
+1. 由独立性，$f_{X_1, X_2}(x_1, x_2) = f_{X_1}(x_1) \cdot f_{X_2}(x_2)$。
+
+2. 取 $g(x_1) = f_{X_1}(x_1)$，$h(x_2) = f_{X_2}(x_2)$，则 $f(x_1, x_2) = g(x_1)h(x_2)$。
+
+\textbf{($\Leftarrow$)} 若 $f(x_1, x_2) = g(x_1)h(x_2)$：
+
+1. 对两边积分求边缘：
+\[
+f_{X_1}(x_1) = \int_{-\infty}^{\infty} g(x_1) h(x_2) \, dx_2 = g(x_1) \underbrace{\int h(x_2) \, dx_2}_{C_2} = C_2 g(x_1).
+\]
+同理 $f_{X_2}(x_2) = C_1 h(x_2)$。
+
+2. 由归一性 $\iint f = 1$，得 $C_1 C_2 \iint g(x_1) h(x_2) \, dx_1 dx_2 = 1$，故 $C_1 C_2 \cdot C_2 C_1 = 1$，即 $C_1 C_2 = 1$（假设 $C_1, C_2 > 0$）。
+
+3. 因此
+\[
+f_{X_1}(x_1) f_{X_2}(x_2) = (C_2 g(x_1)) \cdot (C_1 h(x_2)) = C_1 C_2 g(x_1) h(x_2) = f(x_1, x_2).
+\]
+
+4. 故 $X_1 \Perp X_2$。
+
+\textbf{注}：这个判据对于离散型同样适用，只需把积分换成求和。
+
+\subsection{独立 $\Rightarrow$ 不相关的反例}\label{sec:derivation-ch2-independent-implies-uncorrelated}
+
+\textbf{背景}：已知独立一定推出不相关（$\text{cov} = 0$），但逆命题一般不成立。这里给出经典反例。
+
+\textbf{目标}：构造 $\text{cov}(X, Y) = 0$ 但 $X$ 与 $Y$ 不独立的例子。
+
+\textbf{推导步骤}：
+
+设 $X \sim \text{Uniform}(-1, 1)$，$Y = X^2$。
+
+1. 验证 $\text{cov}(X, Y) = 0$：
+
+\[
+\text{cov}(X, Y) = \mathbb{E}(X \cdot X^2) - \mathbb{E}(X) \cdot \mathbb{E}(X^2) = \mathbb{E}(X^3) - 0 \cdot \mathbb{E}(X^2).
+\]
+
+由于 $X$ 对称分布（Uniform $( -1, 1)$ 对称于 0），$\mathbb{E}(X^3) = \int_{-1}^1 x^3 \cdot \frac{1}{2} dx = 0$（奇函数在对称区间积分为零）。
+
+故 $\text{cov}(X, Y) = 0$。
+
+2. 验证 $X$ 与 $Y$ 不独立：
+
+给定 $X = 0.5$，则 $Y = 0.25$ 是确定值。给定 $X = -0.5$，则 $Y = 0.25$ 也是确定值。
+
+但 $Y$ 的取值完全由 $X$ 决定——知道 $X$ 就完全知道 $Y$，这说明两者不独立。
+
+更精确地，$\mathbb{P}(Y > 0.5) \neq \mathbb{P}(Y > 0.5 \mid X > 0)$，因为 $Y = X^2$。
+
+\textbf{结论}：不相关只说明没有线性关系，但不排除非线性依赖。在这个例子中，$Y$ 是 $X$ 的二次函数，它们之间存在明确的函数关系（非线性），但协方差为零。
+
+\subsection{相关系数范围推导}\label{sec:derivation-ch2-correlation-bounds}
+
+\textbf{背景}：相关系数满足 $-1 \leq \rho \leq 1$，这一性质源自 Cauchy-Schwarz 不等式。
+
+\textbf{目标}：严格证明 $|\rho| \leq 1$。
+
+\textbf{已知条件}：
+\[
+\rho = \frac{\text{cov}(X_1, X_2)}{\sqrt{\text{var}(X_1)} \sqrt{\text{var}(X_2)}} = \frac{\mathbb{E}[(X_1 - \mu_1)(X_2 - \mu_2)]}{\sigma_1 \sigma_2}.
+\]
+
+\textbf{推导步骤}：
+
+1. 考虑随机变量 $Y = (X_1 - \mu_1) - t(X_2 - \mu_2)$，其中 $t \in \mathbb{R}$ 待定。
+
+2. 由方差的非负性：
+\[
+0 \leq \text{var}(Y) = \mathbb{E}(Y^2) = \sigma_1^2 - 2t\text{cov}(X_1, X_2) + t^2 \sigma_2^2.
+\]
+
+3. 将 $\text{cov}(X_1, X_2) = \rho \sigma_1 \sigma_2$ 代入：
+\[
+0 \leq \sigma_1^2 - 2t\rho \sigma_1 \sigma_2 + t^2 \sigma_2^2.
+\]
+
+4. 这是关于 $t$ 的二次不等式，要使对所有 $t$ 成立，判别式必须 $\leq 0$：
+\[
+(2\rho \sigma_1 \sigma_2)^2 - 4 \sigma_1^2 \sigma_2^2 \leq 0.
+\]
+
+5. 化简得
+\[
+4\rho^2 \sigma_1^2 \sigma_2^2 \leq 4\sigma_1^2 \sigma_2^2 \implies \rho^2 \leq 1.
+\]
+
+6. 即 $-1 \leq \rho \leq 1$。
+
+\textbf{等号条件}：$|\rho| = 1$ 当且仅当存在 $t$ 使 $\text{var}(Y) = 0$，即 $Y$ 几乎处处为零：$X_1 - \mu_1 = t(X_2 - \mu_2)$，此时 $X_1$ 与 $X_2$ 有完美线性关系。
+
+\subsection{二元正态条件分布推导}\label{sec:derivation-ch2-bivariate-normal-conditional}
+
+\textbf{背景}：二元正态分布的条件分布仍是正态的，这是其最重要的性质之一。
+
+\textbf{已知条件}：$(X_1, X_2) \sim N(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$，联合 pdf 为
+\[
+f(x_1, x_2) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}} \exp\left\{ -\frac{Q(x_1,x_2)}{2(1-\rho^2)} \right\},
+\]
+其中 $Q = \frac{(x_1-\mu_1)^2}{\sigma_1^2} - 2\rho\frac{(x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} + \frac{(x_2-\mu_2)^2}{\sigma_2^2}$。
+
+\textbf{目标}：求条件分布 $X_2 \mid X_1 = x_1$。
+
+\textbf{推导步骤}：
+
+1. 条件分布的 pdf 为
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{f(x_1, x_2)}{f_{X_1}(x_1)} = \frac{f(x_1, x_2)}{\frac{1}{\sigma_1}\phi\!\left(\frac{x_1-\mu_1}{\sigma_1}\right)}.
+\]
+
+2. 将 $Q$ 整理成关于 $x_2$ 的二次函数：
+\[
+Q = \frac{1}{1-\rho^2}\left[ \left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 + (1-\rho^2)\frac{(x_1-\mu_1)^2}{\sigma_1^2} \right].
+\]
+
+3. 因此
+\[
+f(x_1, x_2) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}} \exp\left\{ -\frac{1}{2(1-\rho^2)}\left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 \right\} \cdot \exp\left\{ -\frac{(x_1-\mu_1)^2}{2\sigma_1^2} \right\}.
+\]
+
+4. 除以边缘密度 $f_{X_1}(x_1) = \frac{1}{\sigma_1}\phi\!\left(\frac{x_1-\mu_1}{\sigma_1}\right)$，消去与 $x_2$ 无关的因子：
+\[
+f_{X_2 \mid X_1}(x_2 \mid x_1) = \frac{1}{\sigma_2\sqrt{2\pi(1-\rho^2)}} \exp\left\{ -\frac{1}{2(1-\rho^2)}\left(\frac{x_2-\mu_2}{\sigma_2} - \rho\frac{x_1-\mu_1}{\sigma_1}\right)^2 \right\}.
+\]
+
+5. 这正是均值为 $\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1)$、方差为 $\sigma_2^2(1-\rho^2)$ 的正态分布密度。
+
+6. 故
+\[
+X_2 \mid X_1 = x_1 \sim N\!\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1),\ \sigma_2^2(1-\rho^2)\right).
+\]
+
+\textbf{最优线性预测}：条件均值 $\mathbb{E}(X_2 \mid x_1) = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1)$ 是 $x_1$ 的线性函数，它在均方误差意义下是 $X_2$ 的最优预测。
+
+\subsection{回归理论的简要推导}\label{sec:derivation-ch2-regression}
+
+\textbf{背景}：回归分析的核心是找到使预测误差最小的线性预测器。
+
+\textbf{目标}：在所有线性预测 $\widehat{X}_2 = \alpha + \beta X_1$ 中，找到均方误差最小的预测。
+
+\textbf{推导步骤}：
+
+1. 均方预测误差（MSE）为
+\[
+\mathbb{E}[(X_2 - \alpha - \beta X_1)^2] = \mathbb{E}(X_2^2) + \alpha^2 + \beta^2 \mathbb{E}(X_1^2) - 2\alpha\mathbb{E}(X_2) - 2\beta\mathbb{E}(X_1 X_2) + 2\alpha\beta\mathbb{E}(X_1).
+\]
+
+2. 对 $\alpha$ 求偏导并设为零：
+\[
+\frac{\partial \text{MSE}}{\partial \alpha} = 2\alpha + 2\beta\mathbb{E}(X_1) - 2\mathbb{E}(X_2) = 0 \implies \alpha^* = \mathbb{E}(X_2) - \beta \mathbb{E}(X_1).
+\]
+
+3. 对 $\beta$ 求偏导并设为零：
+\[
+\frac{\partial \text{MSE}}{\partial \beta} = 2\beta\mathbb{E}(X_1^2) + 2\alpha\mathbb{E}(X_1) - 2\mathbb{E}(X_1 X_2) = 0.
+\]
+
+4. 代入 $\alpha^*$：
+\[
+\beta^*\mathbb{E}(X_1^2) + [\mathbb{E}(X_2) - \beta^*\mathbb{E}(X_1)]\mathbb{E}(X_1) - \mathbb{E}(X_1 X_2) = 0.
+\]
+
+5. 整理得
+\[
+\beta^* = \frac{\mathbb{E}(X_1 X_2) - \mathbb{E}(X_1)\mathbb{E}(X_2)}{\mathbb{E}(X_1^2) - [\mathbb{E}(X_1)]^2} = \frac{\text{cov}(X_1, X_2)}{\text{var}(X_1)} = \rho \frac{\sigma_2}{\sigma_1}.
+\]
+
+6. 最优线性预测为
+\[
+\widehat{X}_2^* = \mathbb{E}(X_2) + \rho\frac{\sigma_2}{\sigma_1}(X_1 - \mathbb{E}(X_1)).
+\]
+
+7. 对二元正态分布，这就是条件均值。
+
+\textbf{最小二乘法}：在样本情形，用样本矩代替总体矩，得到 $\widehat{\beta} = \widehat{\rho} \frac{s_2}{s_1}$，其中 $s_1^2, s_2^2$ 是样本方差，$\widehat{\rho}$ 是样本相关系数。
+
+\subsection{两两独立不推出相互独立反例}\label{sec:derivation-ch2-pairwise-not-mutual}
+
+\textbf{背景}：对于多个随机变量，两两独立不一定推出相互独立，这是一个经典反例。
+
+\textbf{目标}：构造三个事件 $A, B, C$，使得两两独立但三者不相互独立。
+
+\textbf{推导步骤}：
+
+考虑抛两枚公平硬币的样本空间 $\{HH, HT, TH, TT\}$，每个结果等概率 $1/4$。
+
+定义事件：
+\begin{itemize}
+\item $A$：第一枚硬币正面（$HH$ 或 $HT$）
+\item $B$：第二枚硬币正面（$HH$ 或 $TH$）
+\item $C$：两面相同（$HH$ 或 $TT$）
+\end{itemize}
+
+1. 验证两两独立：
+\[
+\mathbb{P}(A) = \mathbb{P}(B) = \mathbb{P}(C) = \frac{1}{2}.
+\]
+\[
+\mathbb{P}(A \cap B) = \mathbb{P}(HH) = \frac{1}{4} = \mathbb{P}(A)\mathbb{P}(B) = \frac{1}{2} \cdot \frac{1}{2}.
+\]
+同理 $\mathbb{P}(A \cap C) = \mathbb{P}(B \cap C) = \frac{1}{4} = \frac{1}{2} \cdot \frac{1}{2}$。故 $A, B, C$ 两两独立。
+
+2. 验证三者不相互独立：
+\[
+\mathbb{P}(A \cap B \cap C) = \mathbb{P}(HH) = \frac{1}{4}.
+\]
+但 $\mathbb{P}(A)\mathbb{P}(B)\mathbb{P}(C) = \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{8} \neq \frac{1}{4}$。
+
+3. 不独立性体现：给定 $A$ 和 $B$ 都发生（即两面都是正面），则 $C$ 必然发生（两面相同），即
+\[
+\mathbb{P}(C \mid A \cap B) = 1 \neq \mathbb{P}(C) = \frac{1}{2}.
+\]
+
+\textbf{结论}：两两独立只保证任意两个变量之间的依赖关系被消除，但不能保证多个变量之间的整体依赖结构。这个反例提醒我们，在处理多元随机变量时需要小心。
+
+\subsection{独立随机变量线性组合的 mgf 推导}\label{sec:derivation-ch2-mgf-linear-combination}
+
+\textbf{背景}：若 $X_1, \ldots, X_n$ 相互独立，$T = \sum_{i=1}^n k_i X_i$，则 $M_T(t) = \prod_{i=1}^n M_i(k_i t)$。
+
+\textbf{目标}：推导独立随机变量线性组合的矩母函数。
+
+\textbf{推导步骤}：
+
+1. 由 mgf 的定义：
+\[
+M_T(t) = \mathbb{E}[e^{tT}] = \mathbb{E}\!\left[e^{t\sum_{i=1}^n k_i X_i}\right] = \mathbb{E}\!\left[\prod_{i=1}^n e^{t k_i X_i}\right].
+\]
+
+2. 由于 $X_1, \ldots, X_n$ 相互独立，$e^{t k_1 X_1}, \ldots, e^{t k_n X_n}$ 也相互独立。
+
+3. 对独立随机变量的乘积取期望，等于各自期望的乘积：
+\[
+M_T(t) = \prod_{i=1}^n \mathbb{E}[e^{t k_i X_i}] = \prod_{i=1}^n M_{X_i}(k_i t).
+\]
+
+\textbf{特别情形}：若 $X_1, \ldots, X_n$ iid，则 $M_T(t) = [M_X(t)]^n$。
+
+例如，若 $X_i \sim N(\mu, \sigma^2)$，$M_X(t) = \exp\{\mu t + \frac{1}{2}\sigma^2 t^2\}$，则
+\[
+M_{\bar{X}}(t) = M_X(t/n)^n = \exp\!\left\{ n\left(\mu \frac{t}{n} + \frac{1}{2}\sigma^2 \frac{t^2}{n^2}\right)\right\} = \exp\!\left\{\mu t + \frac{1}{2}\frac{\sigma^2}{n} t^2\right\},
+\]
+这正是 $N(\mu, \sigma^2/n)$ 的 mgf。
+
+\subsection{中心极限定理概述}\label{sec:derivation-ch2-clt}
+
+\textbf{背景}：中心极限定理（CLT）是概率论和统计学中最重要的结果之一。
+
+\textbf{已知条件}：
+\begin{itemize}
+\item $X_1, \ldots, X_n$ iid（独立同分布）
+\item $\mathbb{E}X_i = \mu$，$\text{var}(X_i) = \sigma^2 < \infty$
+\item $\bar{X} = n^{-1}\sum X_i$
+\end{itemize}
+
+\textbf{目标}：描述 $\bar{X}$（或标准化后的 $\bar{X}$）的极限分布。
+
+\textbf{推导思路}：
+
+1. 考虑标准化和 $Z_n = \frac{\sum_{i=1}^n X_i - n\mu}{\sqrt{n\sigma^2}} = \frac{\sqrt{n}(\bar{X} - \mu)}{\sigma}$。
+
+2. 由独立随机变量和的 mgf 性质，$Z_n$ 的 mgf 为
+\[
+M_{Z_n}(t) = \left[M_X\!\left(\frac{t}{\sqrt{n}\sigma}\right)\right]^n e^{-\sqrt{n}\mu t/\sigma}.
+\]
+
+3. 对 $M_X(t/\sqrt{n}\sigma)$ 在 $t=0$ 处 Taylor 展开：
+\[
+M_X\!\left(\frac{t}{\sqrt{n}\sigma}\right) = 1 + \frac{t^2}{2n} + o\!\left(\frac{1}{n}\right).
+\]
+
+4. 代入得
+\[
+M_{Z_n}(t) = \left(1 + \frac{t^2}{2n} + o\!\left(\frac{1}{n}\right)\right)^n e^{-\sqrt{n}\mu t/\sigma} \xrightarrow{n\to\infty} e^{t^2/2}.
+\]
+
+5. 标准正态分布 $\mathcal{N}(0,1)$ 的 mgf 正是 $e^{t^2/2}$。
+
+6. 由 mgf 的唯一性（若随机变量的 mgf 收敛到某个分布的 mgf，则该随机变量的分布收敛到该分布），得
+\[
+Z_n \Rightarrow \mathcal{N}(0,1), \quad \text{即} \quad \sqrt{n}(\bar{X} - \mu)/\sigma \Rightarrow \mathcal{N}(0,1).
+\]
+
+\textbf{核心洞察}：无论 $X_i$ 原来是什么分布（只要方差有限），其样本均值经适当标准化后都收敛到标准正态分布。这使得正态分布在统计推断中具有核心地位。

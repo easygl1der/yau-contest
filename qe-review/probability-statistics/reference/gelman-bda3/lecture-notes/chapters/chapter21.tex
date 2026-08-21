@@ -1,0 +1,293 @@
+% Chapter 21: Gaussian Process Models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{高斯过程模型}
+
+\section{本章导论}
+
+在前两章中，我们分别探讨了参数非线性模型（Chapter 19）和基函数模型（Chapter 20）。基函数模型通过线性组合一组固定的基函数（如样条基、小波基）来近似未知函数。这种方法的核心假设是：函数可以用少数基函数的加权线性组合很好地逼近。然而，基函数的选择——无论是样条节点的位置还是小波基的层次——本质上仍然是一种参数化决定。当数据的特征尺度事先未知时，选择恰当的基函数往往并不容易。
+
+高斯过程（Gaussian Process，简称 GP）提供了一种原则上不同的思路：\textbf{我们不再指定基函数的形式，而是直接对函数空间本身施加概率结构}。换言之，我们把整个函数 $f(x)$ 视为一个随机对象，假设它的值（在任意有限多个点上）服从联合正态分布。这种假设的自然之处在于：正态分布是概率论中最自然的"默认"分布——在只知道均值和方差的条件下，正态分布是在所有分布中熵最大的分布，因此代表了最大的不确定性。
+
+从历史脉络看，高斯过程的研究可追溯到Kolmogorov（1940年代）在平稳过程方面的工作，但在统计学中的广泛应用主要始于1990年代。O'Hagan（1978）首次在贝叶斯分析中系统使用高斯过程；Neal（1997）揭示了高斯过程与神经网络的深层联系；Rasmussen 和 Williams（2006）的专著将高斯过程塑造为机器学习的核心工具之一。在贝叶斯数据分析的框架下，高斯过程既是灵活的先验分布，又是可计算的后验推断对象——这是本章要揭示的核心主题。
+
+\section{高斯过程回归}
+
+\subsection{高斯过程的定义}
+
+设 $f(x)$ 是定义在输入空间 $\mathcal{X}$ 上的函数。称 $f$ 服从高斯过程，如果对于任意有限的输入点 $x_1, \ldots, x_n \in \mathcal{X}$，向量
+\[
+\bigl(f(x_1), f(x_2), \ldots, f(x_n)\bigr)^\top
+\]
+的联合分布是多元正态分布。这个定义的核心是：\textbf{我们不对函数形式做参数化假设，而是对函数值之间的协方差结构做假设}。
+
+高斯过程由两个函数完全确定：
+
+\begin{enumerate}
+  \item \textbf{均值函数（Mean function）}：$m(x) = \mathbb{E}[f(x)]$
+  \item \textbf{协方差函数（Covariance function / Kernel）}：$k(x, x') = \mathrm{cov}(f(x), f(x'))$
+\end{enumerate}
+
+我们记作 $f(x) \sim \mathrm{GP}(m(x), k(x, x'))$。
+
+协方差函数 $k(x, x')$ 编码了关于函数的重要先验假设。最常用的协方差函数是\textbf{平方指数（Squared Exponential，SE）}核：
+
+\begin{equation}
+k_{\mathrm{SE}}(x, x') = \sigma^2 \exp\left(-\frac{(x - x')^2}{2\ell^2}\right), \label{eq:se-kernel}
+\end{equation}
+
+其中 $\sigma^2$ 是信号的方差幅度（amplitude），$\ell$ 是长度尺度（length scale），控制函数变化的特征距离。\footnote{平方指数核的数学性质及与其他核函数的比较见附录 \cref{sec:gp-kernel-properties}。}
+
+\subsection{回归模型与先验}
+
+给定观测数据 $(x_i, y_i)$，$i = 1, \ldots, n$，我们假设
+
+\begin{equation}
+y_i = f(x_i) + \epsilon_i, \quad \epsilon_i \sim \mathrm{N}(0, \sigma_y^2), \label{eq:gp-observation-model}
+\end{equation}
+
+其中 $f(x) \sim \mathrm{GP}(m(x), k(x, x'))$ 是潜在函数，$\epsilon_i$ 是独立测量误差。
+
+对于先验均值函数，我们通常取 $m(x) = 0$（中心化先验），这对应于假设 $f$ 在零附近波动。更信息化的先验可以通过设置非零均值函数来实现。
+
+\textbf{超参数}：协方差函数中的参数 $\theta = (\sigma^2, \ell, \sigma_y^2)$ 称为高斯过程的超参数。它们的取值直接影响后验函数的平滑性和尺度。在贝叶斯框架下，我们既可以对这些超参数指定先验并同时推断，也可以在经验贝叶斯框架下通过边缘似然最大化来选择它们的值。
+
+\subsection{后验预测}
+
+设 $f_* = f(x_*)$ 是新输入点 $x_*$ 处的函数值，$y_*$ 是对应的观测。给定训练数据 $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$，后验预测分布可以通过解析计算得到——这是高斯过程最重要的计算优势。
+
+设 $K$ 是 $n \times n$ 协方差矩阵，$K_i = k(x_i, x_*)$ 是训练点与新点之间的协方差向量。则后验预测分布为
+
+\begin{equation}
+f_* \mid \mathcal{D}, x_* \sim \mathrm{N}\bigl(\mu_*(x_*), \sigma_*^2(x_*)\bigr), \label{eq:gp-posterior-predictive}
+\end{equation}
+
+其中
+
+\begin{align}
+\mu_*(x_*) &= K_*^\top (K + \sigma_y^2 I)^{-1} y, \label{eq:gp-posterior-mean} \\
+\sigma_*^2(x_*) &= k(x_*, x_*) - K_*^\top (K + \sigma_y^2 I)^{-1} K_*. \label{eq:gp-posterior-variance}
+\end{align}
+
+后验均值 $\mu_*(x_*)$ 给出了在 $x_*$ 处对函数值的预测；后验方差 $\sigma_*^2(x_*)$ 量化了预测的不确定性——注意它由两项构成：$k(x_*, x_*)$ 是先验方差（$x_*$ 远离所有训练点时的最大不确定性），减去一项由数据带来的信息。\footnote{后验预测分布的完整推导见附录 \cref{sec:gp-posterior-derivation}。}
+
+预测均值的计算涉及一个 $n \times n$ 矩阵的求逆，计算复杂度为 $O(n^3)$。这在高斯过程文献中称为"exact GP"方法，是精度与计算成本之间的基本权衡。
+
+\begin{Remark}
+  后验预测方差的解析表达式 \eqref{eq:gp-posterior-variance} 有一个值得注意的性质：即使我们只观测了 $y$ 而非 $f$ 本身，方差公式中的减项（即数据带来的信息）也自动反映了数据对 $f_*$ 预测精度的提升。换言之，\textbf{后验方差的衰减速度由核函数的局部相关性结构决定}，而不是由观测值本身决定。
+\end{Remark}
+
+\section{生日与出生日期的例子}\label{sec:gp-birthday-example}
+
+我们用一个人口统计学例子来说明高斯过程回归的实际应用。
+
+\subsection{数据背景}
+
+考虑美国1981-1988年间每日出生人数的数据。设 $y_t$ 是在第 $t$ 天的新生儿数量，$t$ 是从1981年1月1日起的天数。这个数据集有若干有趣的特征：
+
+\begin{enumerate}
+  \item \textbf{年度周期}：夏季出生人数通常高于冬季
+  \item \textbf{周内周期}：周末出生人数显著低于工作日
+  \item \textbf{长期趋势}：出生人数有轻微的逐年下降趋势
+  \item \textbf{异常日期}：某些日期（如圣诞节、新年）出生人数异常低
+\end{enumerate}
+
+传统的参数化方法需要为上述每个特征单独建模。高斯过程提供了一种更灵活的选择：我们可以选择合适的协方差函数来同时捕捉这些结构。
+
+\subsection{周期协方差函数}
+
+为了捕捉年度周期，我们可以构造一个周期协方差函数：
+
+\begin{equation}
+k_{\mathrm{periodic}}(d, d') = \sigma_p^2 \exp\left(-\frac{2 \sin^2(\pi |d - d'| / 365)}{\ell_p^2}\right), \label{eq:periodic-kernel}
+\end{equation}
+
+其中 $d$ 是日期（天数），$\ell_p$ 控制周期效应的衰减速度，$\sigma_p^2$ 是周期成分的方差。\footnote{周期协方差函数的构造及与傅里叶分析的关联见附录 \cref{sec:periodic-kernel-derivation}。}
+
+将周期核与其他协方差函数（如SE核捕捉长期趋势、线性核捕捉线性趋势）组合，可以得到一个灵活的多成分协方差函数：
+
+\begin{equation}
+k(x, x') = k_{\mathrm{SE}}(x, x') + k_{\mathrm{periodic}}(x, x') + k_{\mathrm{linear}}(x, x') + \sigma_y^2 \delta_{xx'}, \label{eq:gp-composite-kernel}
+\end{equation}
+
+其中 $k_{\mathrm{linear}}(x, x') = \sigma_b^2 (x - \bar{x})(x' - \bar{x})$ 是一个线性核，捕捉线性趋势；$\delta_{xx'}$ 是克罗内克 delta 项，对应于观测噪声。
+
+\subsection{后验推断与结果}
+
+通过最大化边缘似然或使用MCMC，我们可以同时估计所有超参数和潜在函数值 $f(t)$。后验预测给出了每日潜在出生趋势的平滑估计，其后验方差在数据稀疏区域（如年末）显著增大。
+
+\begin{Example}[生日数据的验证]\label{ex:gp-birthday-results}
+  在上述模型下，圣诞节前后的预测出生人数显著低于其他日期——这反映在潜在函数 $f(t)$ 的负偏移上。后验置信区间自动包含了这一不确定性。周期成分的最大后验估计对应的周期长度约为365天，与经验观察一致。
+\end{Example}
+
+\section{潜变量高斯过程模型}\label{sec:latent-gp-models}
+
+高斯过程的一个重要推广是将它作为\textbf{潜变量（latent variable）}嵌入更复杂的模型结构中。这种思路在分类、计数数据和空间建模中有着广泛应用。
+
+\subsection{分类问题中的应用}
+
+设 $y_i \in \{0, 1\}$ 是二元分类结果，$x_i$ 是 $p$ 维协变量。我们可以构造以下潜变量模型：
+
+\begin{align}
+f_i &= f(x_i) \sim \mathrm{GP}(0, k(x_i, x_j)), \label{eq:gp-class-latent} \\
+\mathbb{P}(y_i = 1) &= \mathrm{logit}^{-1}(f_i), \label{eq:gp-class-link}
+\end{align}
+
+其中 $f(x)$ 是潜在高斯过程，logistic 变换将实数值 $f_i$ 映射到概率。这个模型称为\textbf{高斯过程分类（Gaussian Process Classification，GPC）}。
+
+由于 logistic 变换的非线性性，后验分布 $p(f | y)$ 不再有解析形式。近似方法包括：
+
+\begin{enumerate}
+  \item \textbf{拉普拉斯近似（Laplace approximation）}：用高斯分布近似后验
+  \item \textbf{期望传播（Expectation Propagation，EP）}：迭代地近似每个数据点的似然贡献
+  \item \textbf{马尔科夫链蒙特卡洛（MCMC）}：对潜变量和超参数进行后验抽样
+\end{enumerate}
+
+\textbf{后验预测}：给定新点 $x_*$，我们需要计算
+\[
+\mathbb{P}(y_* = 1 | y) = \int \mathrm{logit}^{-1}(f_*) p(f_* | f, y) p(f | y) \, df_* \, df.
+\]
+这个积分同样没有解析解，需要使用近似方法。
+
+\begin{Remark}
+  GPC 的一个关键计算瓶颈是：每次超参数更新都需要重新计算协方差矩阵 $K$ 和它的逆。对于大规模数据集，$O(n^3)$ 的计算复杂度成为瓶颈。稀疏近似（sparse approximation）通过引入 $m \ll n$ 个诱导点（inducing points）将计算复杂度降为 $O(n m^2)$。详见附录 \cref{sec:sparse-gp-derivation}。
+\end{Remark}
+
+\subsection{计数数据的应用}
+
+对于计数数据 $y_i \in \{0, 1, 2, \ldots\}$，我们可以使用对数线性模型：
+
+\begin{align}
+\lambda_i &= \exp(f(x_i)), \quad f \sim \mathrm{GP}(0, k), \label{eq:gp-poisson-link} \\
+y_i &\sim \mathrm{Poisson}(\lambda_i). \label{eq:gp-poisson-likelihood}
+\end{align}
+
+这个模型等价于将高斯过程置于对数-link 函数之后。在生态学中，这称为\textbf{对数高斯 Cox 过程（Log-Gaussian Cox Process）}，用于空间点格局（spatial point pattern）的建模。
+
+\section{函数数据分析}\label{sec:functional-data-analysis}
+
+高斯过程为函数数据分析（Functional Data Analysis，FDA）提供了一种自然的贝叶斯框架。在 FDA 中，每个观测单位（如一个患者）记录的是整个函数曲线 $y_i(t)$，而非单个标量值。
+
+\subsection{函数数据的层级模型}
+
+设 $y_i(t)$ 是第 $i$ 个个体的函数型观测，$t$ 通常是时间或空间坐标。我们假设
+
+\begin{align}
+y_i(t) &= f_i(t) + \epsilon_i(t), \label{eq:fda-observation} \\
+f_i(t) &= \mu(t) + g_i(t), \label{eq:fda-mean-decomposition} \\
+g_i(t) &\sim \mathrm{GP}(0, k_g), \quad \epsilon_i(t) \sim \mathrm{GP}(0, \sigma_\epsilon^2 \delta), \label{eq:fda-gp-prior}
+\end{align}
+
+其中 $\mu(t)$ 是总体均值函数，$g_i(t)$ 是个体随机效应（捕获个体间的变异），$\epsilon_i(t)$ 是测量误差。
+
+这个模型的优势在于：\textbf{高斯过程先验同时提供了函数空间的平滑性约束和数据驱动的平滑度估计}。个体效应 $g_i(t)$ 的后验均值给出了每个个体的平滑轨迹估计，其后验方差自动反映了样本量（观测时间点数量）对估计精度的影响。
+
+\subsection{主成分分析与高斯过程的联系}
+
+在经典的 FDA 中，主成分分析（PCA）用于降维——将无限维函数投影到少数主成分方向上。有趣的是，\textbf{高斯过程协方差函数的主成分分解与经典 PCA 之间存在深层对应关系}。
+
+具体而言，协方差算子 $K(s, t) = \mathrm{cov}(f(s), f(t))$ 的特征函数给出了函数空间中最主要的变异模式。这在函数型数据的降维表示中有着直接应用。\footnote{高斯过程与函数型PCA的数学联系见附录 \cref{sec:gp-fda-connection}。}
+
+\section{密度估计与回归}\label{sec:gp-density-estimation}
+
+高斯过程的灵活性还体现在密度估计和回归问题中。通过对潜在函数施加适当的约束，高斯过程可以用于建模非负函数（密度）和单调函数。
+
+\subsection{变换高斯过程}
+
+设我们希望估计一个未知的一维密度函数 $p(x)$。一个自然的想法是先对 $\log p(x)$ 建模：
+
+\[
+\log p(x) = f(x), \quad f \sim \mathrm{GP}(m(x), k(x, x')).
+\]
+
+为保证 $p(x) \geq 0$ 且 $\int p(x) dx = 1$，我们需要对 $f$ 施加约束。一种方法是在有限网格上离散化，然后用 softmax 变换确保归一化：
+
+\[
+p_j = \frac{\exp(f_j)}{\sum_{k} \exp(f_k)}.
+\]
+
+在贝叶斯框架下，我们可以对 $f$ 指定高斯过程先验，然后使用 MCMC 抽样后验分布。\footnote{变换高斯过程密度估计的完整推断算法见附录 \cref{sec:gp-density-estimation-derivation}。}
+
+另一种更直接的方法是对累积分布函数（CDF）建模：对 $F(x) = \mathbb{P}(X \leq x)$ 假设高斯过程先验（保证 $F$ 单调和取值于 $[0,1]$），然后通过微分得到密度 $p(x) = F'(x)$。
+
+\subsection{高斯过程回归的边界约束}
+
+在某些应用中，我们需要对回归函数施加单调性约束（$f'(x) \geq 0$）或其他边界约束。高斯过程的条件约束可以通过\textbf{镜像技术（reflection method）}或\textbf{回归方法（regression method）}实现。\footnote{单调高斯过程的构造与计算见附录 \cref{sec:monotone-gp-derivation}。}
+
+\section{高斯过程的计算复杂度}\label{sec:gp-computation}
+
+高斯过程的核心计算瓶颈是协方差矩阵的求逆。对于 $n$ 个训练点，精确计算需要 $O(n^3)$ 时间和 $O(n^2)$ 存储。
+
+\subsection{大规模数据的稀疏近似}
+
+当 $n$ 达到数万甚至更多时，精确高斯过程变得不可行。稀疏近似方法的核心思想是用 $m$ 个代表性诱导点（inducing points）来近似完整协方差矩阵，从而将 $O(n^3)$ 降为 $O(n m^2)$。具体而言，我们引入诱导输入点 $Z = \{z_j\}_{j=1}^m$ 和对应的函数值 $u_j = f(z_j)$，然后通过 $p(f_* | y) \approx \int p(f_* | u) q(u | y) \, du$ 来近似后验预测。\footnote{稀疏高斯过程近似的详细推导见附录 \cref{sec:sparse-gp-derivation}。}
+
+代表性方法包括 FITC（Fully Independent Training Conditional）、PITC（Partially Independent Training Conditional）和 Nystr\"om 近似。
+
+\subsection{梯度优化与超参数估计}
+
+超参数 $\theta$ 的边缘似然（log-marginal likelihood）为
+
+\begin{equation}
+\log p(y | \theta) = -\frac{1}{2} y^\top (K_\theta + \sigma_y^2 I)^{-1} y - \frac{1}{2} \log |K_\theta + \sigma_y^2 I| - \frac{n}{2} \log 2\pi. \label{eq:gp-marginal-likelihood}
+\end{equation}
+
+边缘似然对超参数 $\theta$ 的梯度可以通过自动微分或有限差分计算。最大化边缘似然等价于经验贝叶斯估计。\footnote{边缘似然的梯度推导见附录 \cref{sec:gp-marginal-gradient}。}
+
+\section{高斯过程与神经网络的联系}\label{sec:gp-nn-connection}
+
+一个引人注目的理论结果是：\textbf{宽度趋于无穷的神经网络（neural network）收敛于一个高斯过程}。这一发现由Neal（1997）首先证明，随后在无限宽极限与神经网络的贝叶斯后验之间建立了精确对应。
+
+具体而言，设一个全连接神经网络的权重和偏置独立同分布，当网络宽度（每层神经元数）趋于无穷时，网络输出的先验分布趋向于高斯过程。这意味着：
+
+\begin{enumerate}
+  \item 无限宽神经网络的函数空间先验等价于某个高斯过程先验
+  \item 网络权重的贝叶斯后验预测在无限宽极限下等价于对应 GP 的预测
+  \item GP 的协方差函数由网络的激活函数和权重初始化方差决定
+\end{enumerate}
+
+这个联系为理解神经网络的函数空间动力学提供了概率论框架，也为使用 GP 作为神经网络不确定性的替代模型提供了理论基础。
+
+\section{本章小结}
+
+本章我们系统介绍了高斯过程模型：
+
+\begin{enumerate}
+  \item 高斯过程是对函数空间的正态分布建模，为回归、分类、密度估计等问题提供了灵活的先验分布
+  \item 协方差函数（核函数）编码了关于函数平滑性、周期性和尺度等重要先验假设
+  \item 高斯过程回归的后验预测分布有解析形式，这是其最重要的计算优势
+  \item 周期核、SE 核等可以组合成复合协方差函数，捕捉数据中的多尺度结构
+  \item 潜变量高斯过程模型可以推广到分类、计数等非高斯数据
+  \item 函数数据分析可以从高斯过程的视角统一理解
+  \item 变换高斯过程可以用于密度估计和单调回归
+  \item 计算复杂度 $O(n^3)$ 是精确高斯过程的主要瓶颈，稀疏近似方法在大规模数据中广泛应用
+  \item 高斯过程与神经网络的深层联系揭示了无限宽网络的函数空间结构
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习有限混合模型（Finite Mixture Models），这是另一类灵活的非参数化方法。混合模型通过将分布表示为若干成分的加权混合来捕捉数据的异质性——这与高斯过程关注函数空间的连续建模形成互补。
+
+\section{习题}\label{sec:chapter21-exercises}
+
+\begin{Exercise}{\ref{exr:21-1} 高斯过程后验}\label{exr:21-1}
+设 $f \sim \mathrm{GP}(0, k)$，观测模型为 $y = f + \epsilon$，其中 $\epsilon \sim \mathrm{N}(0, \sigma_y^2 I)$。证明后验预测分布的均值和方差满足 \cref{eq:gp-posterior-mean} 和 \cref{eq:gp-posterior-variance}。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:21-2} 协方差函数的性质}\label{exr:21-2}
+证明平方指数核 $k_{\mathrm{SE}}(x, x')$ 是正定的，即对任意实数 $a_1, \ldots, a_n$ 和点 $x_1, \ldots, x_n$，有 $\sum_{i,j} a_i a_j k_{\mathrm{SE}}(x_i, x_j) \geq 0$。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:21-3} 周期核的构造}\label{exr:21-3}
+设 $k_{\mathrm{base}}(x, x')$ 是一个协方差函数。证明 $k_{\mathrm{periodic}}(x, x') = k_{\mathrm{base}}(\sin(\pi (x - x') / T), \cos(\pi (x - x') / T))$ 产生一个以 $T$ 为周期的协方差函数。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:21-4} 边缘似然的梯度}\label{exr:21-4}
+推导边缘似然 \cref{eq:gp-marginal-likelihood} 对超参数 $\theta$ 的梯度公式，并说明如何在实际计算中利用协方差矩阵的 Cholesky 分解提高数值稳定性。
+\end{Exercise}
+
+\begin{Exercise}{\ref{exr:21-5} 稀疏近似}\label{exr:21-5}
+描述诱导点（inducing points）方法的直觉，并比较 FITC 和 PITC 两种稀疏近似策略在计算复杂度和近似精度上的差异。
+\end{Exercise}
+
+\endinput

@@ -1,0 +1,236 @@
+\setcounter{section}{1}
+\setcounter{theorem}{0}
+\setcounter{definition}{0}
+\setcounter{remark}{0}
+\setcounter{note}{0}
+
+\subsubsection{Preliminaries: LU-type inversion, the method the first sentence excludes}
+
+The exam opens with a split of the numerical linear algebra syllabus, not with a definition of the recurrence. Direct methods invert \(A\) by factoring it into matrices that are cheap to invert, then reversing the product. Iterative methods start from a seed \(X_{0}\) and refine it. Problem~1 scores the second family (Newton--Schulz). The first family is the default algorithm, and the sentence is unintelligible until ``LU-type'' is a two-phase template rather than a slogan. The official CAM references for that template are Golub--Van~Loan \cite{golub96} and Trefethen--Bau \cite{trefethen97}.
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt, font=\small, minimum height=1.05cm},
+  arr/.style={-{Latex}, thick}
+]
+  \node[font=\small\bfseries, anchor=east] at (-0.15,1.55) {direct};
+  \node[box] (A) at (1.35,1.55) {\(A\)};
+  \node[box] (F) at (4.55,1.55) {easy factors};
+  \node[box] (inv) at (7.85,1.55) {\(A^{-1}\)};
+  \draw[arr] (A) -- node[above, font=\footnotesize] {Phase~I} (F);
+  \draw[arr] (F) -- node[above, font=\footnotesize] {Phase~II} (inv);
+
+  \node[font=\small\bfseries, anchor=east] at (-0.15,-0.15) {iterative};
+  \node[box] (AX) at (1.35,-0.15) {\((A,X_{0})\)};
+  \node[box] (S) at (4.55,-0.15) {Schulz};
+  \node[box] (inv2) at (7.85,-0.15) {\(A^{-1}\)};
+  \draw[arr] (AX) -- (S);
+  \draw[arr] (S) -- (inv2);
+\end{tikzpicture}
+\end{center}
+
+\paragraph{The two-phase template.}
+
+Every factorization whose factors are triangular, orthogonal, diagonal, or a permutation inverts \(A\) by the same skeleton. The name ``LU-type'' in the exam sentence is this skeleton, not the single identity \(A=LU\).
+
+\begin{construction}[LU-type inversion template]
+\label{con:lu-type}
+Let \(A\in\mathbb{R}^{n\times n}\) be nonsingular. An \emph{LU-type} inversion is any algorithm of the following two-phase form.
+
+\emph{Phase~I (factor).} Compute
+
+\[
+A = F_{1} F_{2} \cdots F_{m}
+\]
+
+in which each \(F_{i}\) belongs to a class whose inverse is \(O(n^{2})\) (or cheaper): unit lower or upper triangular, orthogonal or unitary, diagonal, or a permutation.
+
+\emph{Phase~II (apply).} Do not form the dense matrices \(F_{i}^{-1}\) and multiply them. For each column \(e_{j}\) of \(I\), solve
+
+\[
+F_{1} F_{2} \cdots F_{m}\, x_{j} = e_{j}
+\]
+
+by applying the easy inverse of \(F_{1}\), then of \(F_{2}\), and so on. Assemble
+
+\[
+A^{-1}
+=
+\bigl[ x_{1} \mid \cdots \mid x_{n} \bigr].
+\]
+
+Equivalently, in product language,
+
+\[
+A^{-1}
+=
+F_{m}^{-1} \cdots F_{2}^{-1} F_{1}^{-1},
+\]
+
+with each \(F_{i}^{-1}\) realized by substitution, transposition, reciprocal of a diagonal, or a row swap---not by a second factorization.
+\end{construction}
+
+The cheap inverses are completely explicit.
+
+\begin{lemma}[Easy inverses]
+\label{lem:easy-inv}
+Let \(P\) be a permutation matrix, \(Q\) orthogonal, \(D=\operatorname{diag}(d_{1},\ldots,d_{n})\) with every \(d_{i}\neq 0\), \(L\) unit lower triangular, and \(U\) upper triangular with nonzero diagonal. Then \(P^{-1}=P^{T}\), \(Q^{-1}=Q^{T}\), and \(D^{-1}=\operatorname{diag}(d_{1}^{-1},\ldots,d_{n}^{-1})\). The triangular inverses are the substitution maps: given \(b\in\mathbb{R}^{n}\), the unique \(y\) with \(Ly=b\) is
+
+\[
+y_{i}
+=
+b_{i}
+-
+\sum_{j=1}^{i-1} \ell_{ij} y_{j},
+\qquad
+i=1,\ldots,n
+\]
+
+(forward substitution; no division, because \(\ell_{ii}=1\)), and the unique \(x\) with \(Ux=b\) is
+
+\[
+x_{i}
+=
+\frac{1}{u_{ii}}
+\Biggl(
+b_{i}
+-
+\sum_{j=i+1}^{n} u_{ij} x_{j}
+\Biggr),
+\qquad
+i=n,\ldots,1
+\]
+
+(back substitution). Each map is \(n^{2}\) flops.
+\end{lemma}
+
+\begin{proof}
+Permutation and orthogonal matrices satisfy \(P^{T}P=I\) and \(Q^{T}Q=I\) by definition. The diagonal claim is entrywise. For \(L\), the \(i\)-th equation of \(Ly=b\) is \(y_{i}+\sum_{j<i}\ell_{ij}y_{j}=b_{i}\), which rearranges to the displayed recurrence; well-definedness and uniqueness are immediate by induction on \(i\). For \(U\), start from row \(n\) and induct downwards; each division is legal because \(u_{ii}\neq 0\). Counting: the \(i\)-th forward step does \(i-1\) fused multiply-adds, so \(\sum_{i=1}^{n}(i-1)=\frac12 n(n-1)\) multiplications and as many additions, i.e.\ \(n^{2}\) flops in the usual model. Back substitution is the same count plus \(n\) divisions.
+\end{proof}
+
+\paragraph{LU as the prototype.}
+
+Gaussian elimination with partial pivoting is the default Phase~I for a general square matrix. Every nonsingular \(A\) admits it \cite{trefethen97}.
+
+\begin{definition}[GEPP / \(PA=LU\)]
+\label{def:gepp}
+A \emph{PLU factorization} of \(A\in\mathbb{R}^{n\times n}\) is a permutation matrix \(P\), a unit lower triangular matrix \(L\), and an upper triangular matrix \(U\) with
+
+\[
+PA = LU.
+\]
+
+Gaussian elimination with partial pivoting (GEPP) produces one. At step \(k=1,\ldots,n-1\): among rows \(k,\ldots,n\) of the current \(A\), swap the row whose pivot-column entry has largest absolute value into position \(k\); record the swap in \(P\); then, for each \(i>k\), store the multiplier \(\ell_{ik}=a_{ik}/a_{kk}\) in \(L\) and replace row \(i\) by row \(i-\ell_{ik}\cdot(\text{row }k)\). The remaining upper triangle is \(U\). The algorithm succeeds with every \(u_{kk}\neq 0\) if and only if \(A\) is nonsingular. Without pivoting, \(A=LU\) exists if and only if every leading principal minor is nonzero; the standard obstruction is
+
+\[
+\begin{pmatrix}
+0 & 1 \\
+1 & 0
+\end{pmatrix}.
+\]
+\end{definition}
+
+\begin{construction}[Inversion via GEPP]
+\label{con:gepp-inv}
+Input: nonsingular \(A\in\mathbb{R}^{n\times n}\). Output: \(X=A^{-1}\).
+
+\begin{enumerate}[label=\textup{(\arabic*)}]
+    \item \emph{Phase~I.} Compute \(PA=LU\) by \cref{def:gepp}.
+    \item \emph{Phase~II.} For \(j=1,\ldots,n\), with \(e_{j}\) the \(j\)-th column of \(I\):
+    \begin{enumerate}[label=\textup{(\alph*)}]
+        \item permute the right-hand side: \(b \coloneqq P e_{j}\);
+        \item forward substitution: solve \(L y = b\) by \cref{lem:easy-inv};
+        \item back substitution: solve \(U x_{j} = y\) by \cref{lem:easy-inv}.
+    \end{enumerate}
+    \item Assemble \(X=\bigl[x_{1}\mid\cdots\mid x_{n}\bigr]\).
+\end{enumerate}
+
+In product language this is \(A^{-1}=U^{-1}L^{-1}P\). The \(n\) right-hand sides are the columns of \(P\), not of \(I\), because the factorization is of \(PA\). Equivalently one solves the matrix equation \(LUX=P\) by a single blocked forward substitution \(LY=P\) followed by a single blocked back substitution \(UX=Y\).
+\end{construction}
+
+The arithmetic is \(\frac23 n^{3}\) flops for Phase~I plus \(n\cdot n^{2}=n^{3}\) for the \(n\) triangular pairs, hence \(\frac53 n^{3}\) flops to form the inverse. Solving one linear system \(Ax=b\) after the same factorization is only \(O(n^{2})\) more. Forming \(A^{-1}\) to compute \(A^{-1}b\) is therefore both more expensive and, in floating point, typically less accurate than \cref{con:gepp-inv} stopped after a single pair of substitutions \cite{golub96,trefethen97}.
+
+\begin{example}[\(2\times 2\), no pivoting required]
+\label{ex:lu-2x2}
+Take
+
+\[
+A
+=
+\begin{pmatrix}
+2 & 1 \\
+4 & 3
+\end{pmatrix}.
+\]
+
+The \((2,1)\) multiplier is \(\ell_{21}=4/2=2\), so
+
+\[
+L
+=
+\begin{pmatrix}
+1 & 0 \\
+2 & 1
+\end{pmatrix},
+\qquad
+U
+=
+\begin{pmatrix}
+2 & 1 \\
+0 & 1
+\end{pmatrix},
+\qquad
+P=I.
+\]
+
+Column \(j=1\), right-hand side \(e_{1}=(1,0)^{T}\). Forward: \(y_{1}=1\), \(y_{2}=0-2\cdot 1=-2\). Back: \(x_{2}=-2\), then \(2x_{1}+1\cdot(-2)=1\), so \(x_{1}=\frac32\). Column \(j=2\), right-hand side \(e_{2}=(0,1)^{T}\). Forward: \(y_{1}=0\), \(y_{2}=1\). Back: \(x_{2}=1\), then \(2x_{1}+1=0\), so \(x_{1}=-\frac12\). Hence
+
+\[
+A^{-1}
+=
+\begin{pmatrix}
+\tfrac32 & -\tfrac12 \\
+-2 & 1
+\end{pmatrix}.
+\]
+
+The same two substitution pairs, with \(P\neq I\), are the whole of \cref{con:gepp-inv} in every dimension.
+\end{example}
+
+\paragraph{The rest of the family.}
+
+The other named factorizations are the same template with a different list of easy factors. Gauss--Jordan---row-reducing \(\bigl[A\mid I\bigr]\) to \(\bigl[I\mid A^{-1}\bigr]\)---is the same elimination family: still direct, still not iterative, and not more stable than \cref{con:gepp-inv}.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.55cm}
+                   >{\raggedright\arraybackslash}p{2.85cm}
+                   >{\raggedright\arraybackslash}p{3.15cm}
+                   >{\raggedright\arraybackslash}p{4.15cm}@{}}
+\toprule
+Phase~I & Hypothesis & Inverse formula & Phase~II \\
+\midrule
+\(PA=LU\) (GEPP) & \(A\) nonsingular & \(U^{-1}L^{-1}P\) & permute; \(n\) forward/back solves \\
+\(A=R^{T}R\) (Cholesky) & \(A\) SPD & \(R^{-1}R^{-T}\) & two triangular solves per column \\
+\(A=QR\) (Householder) & \(A\) nonsingular & \(R^{-1}Q^{T}\) & multiply by \(Q^{T}\); one back-sub \\
+\(A=U\Sigma V^{T}\) (SVD) & \(A\) nonsingular & \(V\Sigma^{-1}U^{T}\) & reciprocal of singular values; two products \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+Householder QR always exists. Cholesky exists if and only if \(A\) is symmetric positive definite; it is the SPD special case of LU, with \(P=I\) and \(L=R^{T}\) (up to the conventional unit-diagonal scaling of \(L\)). The SVD always exists, and is the stable way to invert a matrix that is close to singular: one discards or regularizes tiny \(\sigma_{i}\) instead of dividing by them. In all four rows, the inverse of an orthogonal factor is a transpose, the inverse of a triangular factor is \cref{lem:easy-inv}, and the inverse of a diagonal factor is entrywise reciprocal. That is the entire content of ``LU-type''.
+
+\begin{remark}[What one actually computes]
+\label{rem:dont-invert}
+If the task is a linear system \(Ax=b\), stop after Phase~I plus one application of Phase~II to \(b\). The object \(A^{-1}\) is needed only when many right-hand sides are not known in advance, or when the inverse itself is the output (condition-number estimates, bilinear forms, the present exam). The 2026 Spring Kronecker / Gram-matrix warning is the same principle: factor \(A\), do not form \((A^{T}A)^{-1}\) by a second inversion \cite{trefethen97}.
+\end{remark}
+
+\paragraph{Where the iteration sits.}
+
+The recurrence in the exam is the other machine. It never factors \(A\). It uses \(A\) only through the products \(AX_{k}\) and \(X_{k}(AX_{k})\), and it is Newton applied to \(X\mapsto X^{-1}-A\) (equivalently, Schulz's residual-squaring map \(E_{k+1}=E_{k}^{2}\) for \(E_{k}=I-AX_{k}\)). That is why the opening sentence is an exception clause: given a seed with \(\|I-AX_{0}\|<1\), one can invert without LU. The marks are (a)--(b) of that iteration, not a request to execute \cref{con:gepp-inv} on the script.
+
+\begin{examnote}[What of this belongs on a script]
+\label{examnote:p1-lu}
+\Cref{con:lu-type,con:gepp-inv} are orientation for the first sentence. A grader scoring Problem~1 is reading the residual identity \(I-AX_{k+1}=(I-AX_{k})^{2}\), the Neumann argument that \(\|I-AX_{0}\|<1\) forces \(A\) nonsingular, and the quadratic rate. Writing GEPP in full is not required. The template is the reason the sentence mentions LU at all: every named dense factorization inverts \(A\) by Phase~I then \(n\) easy solves, and Schulz is what remains when that route is set aside.
+\end{examnote}

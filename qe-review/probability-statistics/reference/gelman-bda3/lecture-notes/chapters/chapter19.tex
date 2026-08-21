@@ -1,0 +1,440 @@
+% Chapter 19: Parametric Nonlinear Models
+% Bayesian Data Analysis - Gelman et al.
+
+\chapter{参数非线性模型}
+
+\section{本章导论}
+
+在前几章中，我们主要关注线性模型——那些将参数以线性组合形式出现在均值函数中的模型。线性模型之所以被广泛使用，部分原因是它们易于解释：系数可以直接解读为"当自变量增加一个单位时，因变量期望值的变化"。然而，现实世界中的许多现象本质上是非线性的。
+
+考虑几个简单的问题：光合作用如何随光照强度增加而变化？药物在体内的浓度如何随时间衰减？死亡率如何随年龄增长而变化？这些问题都无法用简单的线性关系来描述——它们涉及饱和效应、指数衰减、S形曲线等非线性现象。这就引出了本章的核心问题：\textbf{如何对这类非线性现象进行贝叶斯建模和推断？}
+
+参数非线性模型为这个问题提供了一个优雅的解决方案。与非参数方法不同，我们仍然使用有限个参数来描述数据的生成机制；但与线性模型不同的是，这些参数以非线性方式出现在均值函数中。这种介于"完全参数化"与"完全非参数化"之间的方法，在许多科学领域有着悠久的应用历史，并在贝叶斯框架下获得了新的生命力。
+
+\section{非线性模型的实例}
+
+\subsection{光合作用与饱和效应}
+
+在生态学中，研究光合作用速率如何随光照强度变化是一个经典问题。1975年，Jassby和Platform提出了以下模型来描述这一关系：
+
+\begin{equation}
+f(x) = \alpha \left(1 - \exp\left(-\frac{x}{\alpha}\right)\right), \label{eq:photosynthesis-model}
+\end{equation}
+
+其中 $x$ 是光照强度，$f(x)$ 是对应的光合作用速率，$\alpha$ 是最大光合作用速率。\footnote{光合作用模型的推导及生理学解释见附录 \cref{sec:nonlinear-photosynthesis-derivation}。}
+
+这个模型捕捉了一个关键的非线性特征：\textbf{饱和效应}。当光照较弱时，光合作用速率近似线性增长；但随着光照强度的增加，增长速度逐渐放缓，最终趋于一个渐近值 $\alpha$。线性模型无法捕捉这种"边际效用递减"的特征——无论光照多强，线性模型总是预测线性增长。\footnote{线性模型与饱和效应的对比分析见附录 \cref{sec:linear-vs-saturation}。}
+
+这种"饱和"现象在许多领域都有出现：药物疗效随剂量增加而饱和、学习曲线随练习增加而趋于平缓、化学反应速率随底物浓度增加而达到Plateau等。
+
+\subsection{药物动力学：一室模型}
+
+在药理学中，描述药物浓度随时间变化的模型是临床用药的基础。考虑最简单的一室模型：药物通过静脉注射进入血液，然后以固定速率从体内清除。设 $y$ 表示在时间 $t$ 测量的药物浓度，模型为
+
+\begin{equation}
+y = \frac{D}{V} \exp\left(-\frac{t}{\tau}\right) + \epsilon, \label{eq:pharmacokinetics-one-compartment}
+\end{equation}
+
+其中 $D$ 是给药剂量，$V$ 是表观分布容积，$\tau = V/k$ 是平均滞留时间（$k$ 是清除率），$\epsilon \sim \mathrm{N}(0, \sigma^2)$ 是测量误差。\footnote{一室模型的药代动力学推导见附录 \cref{sec:pharmacokinetics-derivation}。}
+
+这个模型的非线性性来源于指数函数中的 $\tau$ 参数。指数衰减是非线性的：参数 $\tau$ 出现在指数的指数位置，而不是作为简单的乘法系数。
+
+\subsection{Bioassay 实验}\label{sec:bioassay}
+
+在毒理学中，生物测定（bioassay）是一个经典的应用场景。实验者对不同剂量 $x_i$ 的受试动物给予某种化合物，然后观察存活或死亡的比例。表19.1展示了一个典型的Bioassay数据集。
+
+\begin{Example}[Bioassay 实验]\label{ex:bioassay}
+设 $x_i$ 是第 $i$ 组的剂量（单位：gm/kg），$n_i$ 是该组的动物数量，$y_i$ 是存活的动物数量。假设每只动物的存活概率相互独立，则 $(y_i | \pi_i) \sim \mathrm{Bin}(n_i, \pi_i)$，其中 $\pi_i$ 是存活的概率。
+
+我们使用逻辑斯谛模型描述剂量与存活概率的关系：
+
+\begin{equation}
+\pi_i = \mathrm{logit}^{-1}(\alpha + \beta x_i) = \frac{1}{1 + \exp(-(\alpha + \beta x_i))}. \label{eq:bioassay-logistic}
+\end{equation}
+
+参数 $\alpha$ 控制曲线的位置（中点），参数 $\beta$ 控制曲线的陡峭程度（斜率）。
+
+\textbf{为何线性概率模型失效？}如果使用线性模型 $\pi_i = \alpha + \beta x_i$，当 $x_i$ 足够大时，预测值会超过1；当 $x_i$ 足够小时，预测值会小于0。这在概率意义上是不合理的。逻辑斯谛函数将整个实数轴映射到 $(0,1)$ 区间，自然地解决了这个问题。
+
+表19.2展示了经典估计与贝叶斯估计的结果对比。\footnote{Bioassay 实验的完整数据分析包括 Tables 19.1 和 19.2，见附录 \cref{sec:bioassay-analysis}。}
+\end{Example}
+
+图 19.1 展示了后验分布的散点图以及对应的剂量-反应曲线（详见附录 \cref{sec:bioassay-rcode}）。
+
+\subsection{种群动力学模型}
+
+生物学中描述种群增长的经典模型也具有非线性结构。
+
+\textbf{逻辑斯谛模型（Logistic growth）}假设种群增长率随种群规模增加而下降：
+
+\begin{equation}
+\frac{dN}{dt} = rN\left(1 - \frac{N}{K}\right), \label{eq:logistic-growth}
+\end{equation}
+
+其中 $N(t)$ 是时间 $t$ 的种群规模，$r$ 是固有增长率，$K$ 是环境容纳量。解这个微分方程得到
+
+\begin{equation}
+N(t) = \frac{K}{1 + \exp(-rt + \phi)}, \label{eq:logistic-solution}
+\end{equation}
+
+其中 $\phi$ 是与初始条件相关的参数。
+
+\textbf{Ricker模型}是另一个经典的离散时间种群模型：
+
+\begin{equation}
+N_{t+1} = N_t \exp\left(r\left(1 - \frac{N_t}{K}\right)\right), \label{eq:ricker-model}
+\end{equation}
+
+这个模型用于描述鱼类等水产资源的种群动态，其中产卵量与亲代数量呈指数关系，但环境阻力导致幼鱼存活率下降。
+
+\textbf{Lotka-Volterra 捕食者-猎物模型}描述两个物种的相互作用：
+
+\begin{align}
+\frac{dx}{dt} &= \alpha x - \beta xy, \label{eq:lotka-prey} \\
+\frac{dy}{dt} &= \delta xy - \gamma y, \label{eq:lotka-predator}
+\end{align}
+
+其中 $x$ 是猎物数量，$y$ 是捕食者数量。\footnote{Lotka-Volterra 模型的详细推导及平衡点分析见附录 \cref{sec:lotka-volterra-derivation}。}
+
+\section{非线性最小二乘估计}
+
+\subsection{最小二乘框架}
+
+对于非线性模型，估计参数的标准方法是最小二乘法。给定观测数据 $(t_i, y_i)$，$i = 1, \ldots, n$，我们最小化残差平方和
+
+\begin{equation}
+\mathrm{SSE}(\theta) = \sum_{i=1}^{n} [y_i - f(t_i, \theta)]^2. \label{eq:nonlinear-sse}
+\end{equation}
+
+其中 $f(t, \theta)$ 是非线性均值函数，$\theta$ 是 $k$ 维参数向量。
+
+\textbf{最小二乘与最大似然的联系}：在正态误差假设下，即 $y_i \sim \mathrm{N}(f(t_i, \theta), \sigma^2)$，对数似然函数为
+
+\[
+\log p(y | \theta, \sigma) = -\frac{n}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\mathrm{SSE}(\theta).
+\]
+
+由此可见，\textbf{最小化 $\mathrm{SSE}(\theta)$ 等价于最大化正态似然}——非线性最小二乘估计正是正态误差假设下的 MLE。\footnote{最小二乘与 MLE 联系的详细推导见附录 \cref{sec:ls-mle-derivation}。}
+
+与线性回归不同，非线性最小二乘估计没有闭式解，必须通过迭代优化算法求解。\footnote{非线性最小二乘估计为何没有闭式解的解释见附录 \cref{sec:nonlinear-no-closed-form}。}常用的算法包括：
+
+\begin{enumerate}
+  \item \textbf{高斯-牛顿法（Gauss-Newton）}：使用一阶导数近似 Hessian 矩阵
+    \[
+    H \approx J^T J, \quad \text{其中 } J_{ij} = \frac{\partial f(t_i, \theta)}{\partial \theta_j}. \label{eq:gauss-newton}
+    \]
+  \item \textbf{Levenberg-Marquardt法}：在高斯-牛顿法与最速下降法之间插值，通过调节参数 $\lambda$ 实现
+  \item \textbf{牛顿法}：使用二阶导数，更精确但计算成本更高
+\end{enumerate}
+
+\textbf{迭代加权最小二乘（IRLS）}是拟合逻辑斯谛回归等广义线性模型的常用算法。对于逻辑斯谛回归，每次迭代求解：
+
+\begin{equation}
+\theta^{(t+1)} = (X^T W^{(t)} X)^{-1} X^T W^{(t)} z^{(t)}, \label{eq:irls-logistic}
+\end{equation}
+
+其中 $X$ 是设计矩阵（第1列为截距1，第2列为协变量 $x_i$），$z^{(t)}$ 是调整后的响应变量，$W^{(t)}$ 是权重矩阵。\footnote{IRLS 算法的详细推导见附录 \cref{sec:irls-derivation}。}
+
+在 R 中，可以使用 \texttt{nls()} 函数实现这些算法。
+
+\subsection{初始值与迭代收敛}
+
+非线性最小二乘估计的一个关键挑战是\textbf{初始值的选择}。与线性模型不同，非线性优化通常不是凸的，可能存在多个局部极小值。因此，初始值的选择对最终估计有重要影响。
+
+在实际应用中，初始值通常通过以下方式确定：
+
+\begin{enumerate}
+  \item \textbf{物理或生物学直觉}：基于对问题域的理解，估计参数的大致范围
+  \item \textbf{数据可视化}：绘制数据图，估算渐近值、增长率等参数
+  \item \textbf{简化模型拟合}：先拟合简化（线性化）的模型，获取参数初始估计
+  \item \textbf{网格搜索}：在参数空间中搜索，找到使 SSE 全局最小的区域
+\end{enumerate}
+
+在 R 中实现带 bootstrap 的非线性最小二乘：
+
+\begin{verbatim}
+# R 代码示例：光合作用模型的非线性最小二乘拟合
+library(nls)
+
+# 数据
+x <- c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500)
+y <- c(4.2, 11.1, 19.5, 25.8, 30.2, 33.5, 35.8, 37.2, 38.1, 38.9, 39.2)
+
+# 非线性最小二乘拟合
+fit <- nls(y ~ alpha * (1 - exp(-x/alpha)),
+           start = list(alpha = 50),
+           algorithm = "port")
+
+# Bootstrap 获取标准误
+boot.se <- function(data, indices) {
+  d <- data[indices, ]
+  tryCatch(
+    coef(nls(y ~ alpha * (1 - exp(-x/alpha)),
+           data = d, start = list(alpha = 50))),
+    error = function(e) NA
+  )
+}
+\end{verbatim}
+
+\section{非线性模型的贝叶斯推断}
+
+\subsection{后验分布的计算}
+
+在贝叶斯框架下，非线性模型的后验分布为
+
+\begin{equation}
+p(\theta | y) \propto p(\theta) p(y | \theta), \label{eq:nonlinear-posterior}
+\end{equation}
+
+其中 $p(\theta)$ 是先验分布，$p(y | \theta)$ 是似然函数，$y$ 是观测数据。
+
+对于非线性模型，后验分布通常没有闭式表达。原因在于：非线性均值函数 $f(t, \theta)$ 使得似然函数 $p(y | \theta)$ 关于 $\theta$ 不是共轭的，也无法通过积分获得解析解。这就导致了后验分布的复杂非正态形状。\footnote{为何非线性模型后验没有闭式解的直觉解释见附录 \cref{sec:nonlinear-posterior-intuition}。}
+
+我们使用马尔科夫链蒙特卡洛方法（MCMC）进行后验抽样。对于本章中的模型，一个有效的策略是使用 Metropolis 算法结合 Gibbs 抽样的混合方法。\footnote{Metropolis-Hastings 算法的详细推导见附录 \cref{sec:metropolis-hastings-derivation}。}
+
+具体而言，我们可以采用以下步骤：
+
+\begin{enumerate}
+  \item 对每个参数 $\theta_j$，给定当前其他参数值 $\theta_{-j}$ 和数据 $y$，计算条件后验分布 $p(\theta_j | \theta_{-j}, y)$
+  \item 使用 Metropolis-Hastings 步骤从条件后验分布中抽样
+  \item 重复直到收敛，获得后验样本
+\end{enumerate}
+
+\subsection{Bioassay 模型的贝叶斯分析}\label{sec:bioassay-bayesian}
+
+我们用 Bioassay 模型来说明贝叶斯推断的实际应用。设
+
+\begin{align}
+y_i &\sim \mathrm{Bin}(n_i, \pi_i), \label{eq:bioassay-likelihood} \\
+\pi_i &= \mathrm{logit}^{-1}(\alpha + \beta x_i). \label{eq:bioassay-pi}
+\end{align}
+
+我们使用无信息先验：
+
+\begin{equation}
+p(\alpha, \beta) \propto 1. \label{eq:bioassay-prior}
+\end{equation}
+
+后验分布为
+
+\begin{equation}
+p(\alpha, \beta | y) \propto \prod_{i=1}^{n} \left(\frac{1}{1 + \exp(-(\alpha + \beta x_i))}\right)^{y_i} \left(\frac{1}{1 + \exp(\alpha + \beta x_i)}\right)^{n_i - y_i}. \label{eq:bioassay-posterior}
+\end{equation}
+
+在 R 中使用 JAGS 进行贝叶斯估计：
+
+\begin{verbatim}
+# R 代码示例：Bioassay 模型的贝叶斯分析
+library(rjags)
+
+model_string <- "
+model {
+  for (i in 1:n) {
+    y[i] ~ dbin(p[i], n[i])
+    logit(p[i]) <- alpha + beta * x[i]
+  }
+  alpha ~ dnorm(0, 0.0001)
+  beta ~ dnorm(0, 0.0001)
+}
+"
+
+# 准备数据
+data <- list(y = c(0, 1, 3, 5, 6, 6),
+              n = c(6, 6, 6, 6, 6, 6),
+              x = c(-0.86, -0.30, -0.05, 0.73, 1.17, 1.80),
+              n = 6)
+
+# MCMC 抽样
+model <- jags.model(textConnection(model_string), data = data)
+samples <- coda.samples(model, c("alpha", "beta"), n.iter = 5000)
+\end{verbatim}
+
+\section{边缘似然与模型选择}\label{sec:marginal-likelihood}
+
+\subsection{边缘似然的定义}
+
+在贝叶斯框架下，模型比较的核心工具是边缘似然（marginal likelihood）。给定模型 $\mathcal{M}$ 和数据 $y$，边缘似然定义为
+
+\begin{equation}
+p(y | \mathcal{M}) = \int p(\theta | \mathcal{M}) p(y | \theta, \mathcal{M}) \, d\theta, \label{eq:marginal-likelihood}
+\end{equation}
+
+其中 $p(\theta | \mathcal{M})$ 是模型 $\mathcal{M}$ 的先验分布，$p(y | \theta, \mathcal{M})$ 是似然函数。
+
+边缘似然衡量的是\textbf{在模型 $\mathcal{M}$ 下观察到数据 $y$ 的概率}。它自动实现了奥卡姆剃刀原则：复杂度较高的模型会被先验和似然的惩罚所平衡。
+
+\textbf{为何边缘似然重要？}在非线性模型中，不同的参数化方式可能对应不同的物理或生物学意义。边缘似然提供了一种客观比较这些模型的方法。
+
+\subsection{贝叶斯因子}
+
+两个模型 $\mathcal{M}_1$ 和 $\mathcal{M}_2$ 的贝叶斯因子定义为
+
+\begin{equation}
+\mathrm{BF}_{12} = \frac{p(y | \mathcal{M}_1)}{p(y | \mathcal{M}_2)}. \label{eq:bayes-factor}
+\end{equation}
+
+当 $\mathrm{BF}_{12} > 1$ 时，数据更支持模型 $\mathcal{M}_1$。Jeffreys 提出了以下解释标准：
+
+\begin{enumerate}
+  \item $\log_{10} \mathrm{BF}_{12} \in (0, 0.5)$：微弱证据
+  \item $\log_{10} \mathrm{BF}_{12} \in (0.5, 1)$：中等证据
+  \item $\log_{10} \mathrm{BF}_{12} \in (1, 2)$：强证据
+  \item $\log_{10} \mathrm{BF}_{12} > 2$：决定性证据
+\end{enumerate}
+
+对于非线性模型，边缘似然的计算通常需要使用变分近似或 MCMC 方法。Chib (1995) 提出的方法利用 MCMC 样本计算精确的边缘似然：\footnote{Chib (1995) 边缘似然计算方法的详细推导见附录 \cref{sec:chib-marginal-likelihood}。}
+
+\begin{equation}
+\log p(y) = \log p(y | \theta^*) + \log p(\theta^*) - \log p(\theta^* | y), \label{eq:chib-method}
+\end{equation}
+
+其中 $\theta^*$ 是后验众数或后验均值。
+
+\subsection{嵌套模型检验}
+
+在许多应用中，我们需要检验一个模型是否是另一个模型的特例。例如，在 Bioassay 模型中，检验 $\beta = 0$ 相当于检验剂量是否对存活率有影响。
+
+\textbf{精确贝叶斯检验}：对于 Bioassay 模型，检验 $H_0: \beta = 0$（剂量无效应）的后验概率为
+
+\begin{equation}
+\mathbb{P}(\beta > 0 | y) = \frac{1}{B} \sum_{b=1}^{B} \mathbb{I}(\beta^{(b)} > 0), \label{eq:bioassay-exact-test}
+\end{equation}
+
+其中 $\beta^{(b)}$ 是从后验分布中抽取的样本。\footnote{嵌套模型检验的详细讨论见 Gelman et al. (2003) 第19.5节。}
+
+在 R 中计算：
+
+\begin{verbatim}
+# 计算 P(beta > 0 | y)
+library(rjags)
+# ... (接上面的 JAGS 代码)
+
+# 从后验样本中计算
+beta_samples <- as.matrix(samples[, "beta"])
+prob_positive <- mean(beta_samples > 0)
+cat("P(beta > 0 | y) =", prob_positive, "\n")
+\end{verbatim}
+
+\section{模型不确定性}\label{sec:model-uncertainty}
+
+在实际应用中，我们通常面临\textbf{模型不确定性}：我们不知道哪个模型真正生成了数据。这种不确定性可以通过模型平均来量化。
+
+\subsection{过度拟合与偏差-方差权衡}
+
+非线性模型的一个核心问题是\textbf{过度拟合（overfitting）}。当模型过于复杂时，它会拟合数据中的噪声而非真实信号。
+
+对于非线性模型，偏差-方差分解仍然成立：
+
+\begin{equation}
+\mathbb{E}[( \hat{y} - y )^2] = \text{bias}^2 + \text{variance} + \sigma^2. \label{eq:bias-variance-nonlinear}
+\end{equation}
+
+在非线性模型中，偏差来源于模型形式本身的局限性（例如，用指数模型拟合逻辑斯谛型数据），而方差则随模型复杂度的增加而增加。
+
+\subsection{模拟交叉验证}
+
+评估模型预测能力的一种方法是\textbf{模拟交叉验证（simulation cross-validation）}：
+
+\begin{enumerate}
+  \item 将数据分为训练集和测试集
+  \item 在训练集上拟合模型
+  \item 在测试集上评估预测性能
+  \item 重复多次，取平均
+\end{enumerate}
+
+对于非线性模型，由于参数估计的不确定性，预测区间应包含参数不确定性：
+
+\begin{verbatim}
+# 模拟交叉验证示例
+n_folds <- 10
+pred_errors <- numeric(n_folds)
+
+for (k in 1:n_folds) {
+  # 分割数据
+  test_idx <- sample(1:n, n * 0.2)
+  train_data <- data[-test_idx, ]
+  test_data <- data[test_idx, ]
+
+  # 在训练集上拟合
+  fit <- nls(y ~ alpha * (1 - exp(-x/alpha)),
+             data = train_data, start = list(alpha = 50))
+
+  # 在测试集上预测
+  y_pred <- predict(fit, newdata = test_data)
+  pred_errors[k] <- mean((test_data$y - y_pred)^2)
+}
+
+cat("平均预测误差:", mean(pred_errors), "\n")
+cat("预测误差标准误:", sd(pred_errors), "\n")
+\end{verbatim}
+
+\section{逻辑斯谛回归作为非线性模型}
+
+逻辑斯谛回归是广义线性模型的一个特例，但也可以从非线性参数模型的角度来理解。设 $y_i \in \{0, 1\}$ 是二元结果，$x_i$ 是协变量。逻辑斯谛模型假设
+
+\begin{equation}
+\mathbb{P}(y_i = 1 | x_i) = \mathrm{logit}^{-1}(\beta_0 + \beta_1 x_i)
+= \frac{1}{1 + \exp(-(\beta_0 + \beta_1 x_i))}. \label{eq:logistic-model}
+\end{equation}
+
+虽然这个模型通常通过最大似然方法拟合，但它确实具有非线性结构：参数出现在 logistic 函数的非线性变换中。
+
+从贝叶斯角度，逻辑斯谛回归的后验分布没有闭式表达，需要使用 Metropolis 算法或拉普拉斯近似进行推断。\footnote{逻辑斯谛回归的贝叶斯推断细节见附录 \cref{sec:logistic-bayesian-derivation}。}
+
+在 R 中使用 \texttt{glm()} 拟合逻辑斯谛回归：
+
+\begin{verbatim}
+# 逻辑斯谛回归示例
+fit <- glm(y ~ x, data = data, family = binomial)
+summary(fit)
+
+# 置信区间
+confint(fit)
+\end{verbatim}
+
+\section{非线性模型的选择与比较}
+
+在非线性模型中，模型选择比线性模型更加复杂，因为不同的参数化方式可能对应不同的物理或生物学意义。常用的模型比较方法包括：
+
+\begin{enumerate}
+  \item \textbf{残差分析}：检查拟合残差的模式，识别模型偏差
+  \item \textbf{信息准则}：AIC、BIC 等，考虑拟合优度与模型复杂度的平衡
+  \item \textbf{交叉验证}：留出部分数据用于验证模型的预测能力
+  \item \textbf{贝叶斯因子}：比较两个模型的边缘似然比
+\end{enumerate}
+
+\begin{Remark}
+  在使用信息准则比较非线性模型时，必须注意参数数量的计算。对于非线性模型，"有效参数数量"可能小于显式参数数量，因为某些参数对拟合的贡献可能受到函数非线性结构的限制。
+\end{Remark}
+
+\section{非线性模型的诊断}
+
+非线性模型拟合相关的诊断包括：
+
+\begin{enumerate}
+  \item \textbf{残差图}：绘制残差 vs 拟合值、残差 vs 协变量的图形
+  \item \textbf{影响点分析}：识别对参数估计影响较大的异常观测
+  \item \textbf{非线性性检验}：检验模型是否真正需要非线性结构
+  \item \textbf{异方差性检验}：检查误差方差是否随均值变化
+\end{enumerate}
+
+\section{本章小结}
+
+本章我们学习了参数非线性模型的贝叶斯分析方法：
+
+\begin{enumerate}
+  \item 非线性模型用于描述具有饱和效应、指数衰减、S形曲线等非线性特征的数据
+  \item 常见的非线性模型包括光合作用模型、药物动力学模型、种群动力学模型、Bioassay 模型等
+  \item Bioassay 示例展示了逻辑斯谛模型与贝叶斯分析的实际应用
+  \item 非线性最小二乘估计通过迭代优化完成，需要合理选择初始值
+  \item 在正态误差假设下，最小二乘估计等价于 MLE
+  \item 边缘似然和贝叶斯因子是模型比较的核心工具
+  \item 模型不确定性通过模型平均来量化
+  \item 非线性模型的选择和诊断需要特别小心
+\end{enumerate}
+
+\section{下节预告}
+
+下一章我们将学习基函数模型（Basis Function Models），这是另一类灵活的非参数化方法，通过线性组合基函数来近似复杂的函数关系。这类方法在函数估计、信号处理等领域有着重要应用。
+
+\endinput
