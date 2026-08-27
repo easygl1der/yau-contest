@@ -1,0 +1,102 @@
+\section{Markov chains and Poisson processes}
+\label{sec:stoch}
+
+\paragraph{Why these still need a script.}
+Reviewed papers used Galton--Watson as a Markov chain, and used Brownian motion and random walks as path objects. They never asked for a finite-state stationary distribution, never asked for the representation theorem \(X_{n}=f(X_{n-1},Z_{n})\), and never wrote a Poisson process. The heading ``basic properties of Poisson processes'' has no past-paper landing in all six papers.
+
+\subsection{Lineage}
+
+Markov (1906) isolated one-step dependence. The finite irreducible aperiodic chain has a unique stationary distribution, obtained by solving \(\pi P=\pi\) with \(\pi\mathbf{1}=1\), or by the ergodic theorem. The representation \(X_{n}=f(X_{n-1},Z_{n})\) is the simulation theorem: every time-homogeneous chain on a Borel space is a randomized dynamical system. Poisson (1837) and then Khinchin / L\'evy isolated the counting process with independent stationary increments; the modern QE object is Durrett's Chapter~3 package \cite{durrett10}: increment law, exponential waits, Gamma arrival times, and conditional uniformity.
+
+\subsection{Concepts that belong on a script}
+
+\begin{definition}[Time-homogeneous Markov chain]
+\label{def:mc}
+A process \((X_{n})\) on a countable set \(S\) is a Markov chain with transition matrix \(P\) if
+\[
+\mathbb{P}(X_{n+1}=j\mid X_{n}=i,X_{n-1},\ldots,X_{0})=P_{ij}.
+\]
+A row vector \(\pi\) is stationary if \(\pi P=\pi\) and \(\pi\mathbf{1}=1\). If \(S\) is finite and \(P\) is irreducible and aperiodic, then a unique stationary \(\pi\) exists, \(P^{n}(i,\cdot)\to\pi\), and \(\pi_{j}\) is the reciprocal of the mean return time to \(j\).
+\end{definition}
+
+The 2023 Fall P3 chain ( \(N\) coins, one chosen uniformly and flipped) is finite, irreducible, and aperiodic on \(\{0,1\}^{N}\). The unique stationary law is uniform (or product-Bernoulli\((1/2)\)), which one checks by detailed balance or by noting that the chain is a random walk on the hypercube.
+
+\begin{theorem}[Representation]
+\label{thm:mc-rep}
+If \((X_{n})\) is time-homogeneous on a Borel space, there exist a measurable \(f\) and i.i.d.\ uniforms \(Z_{n}\) (or any i.i.d.\ innovators with a continuous law) such that \(X_{n}=f(X_{n-1},Z_{n})\) almost surely. Conversely, any such recursion is a Markov chain. This is 2024 Spring P5.
+\end{theorem}
+
+The proof of the converse is the definition. The proof of the direct statement is: regular conditional probabilities \(P(x,dy)\) may be realised as \(x\mapsto F^{-1}(x,U)\) on a convenient space. On a finite \(S\) one may take \(Z_{n}\) uniform on \([0,1]\) and let \(f(i,u)\) read the inverse-CDF table of row \(i\).
+
+Tree random walk (2024 Fall P4) is a different Markov object. On the infinite \(d\)-regular tree every vertex has \(d\) neighbours, so the walk is a birth--death chain on generations: from generation \(k\ge 1\) one steps toward the root with probability \(1/d\) and away with probability \((d-1)/d\). The chain on \(\mathbb{N}\) is transient for \(d\ge 3\) because the drift is strictly outward (or: the effective resistance to infinity is a convergent geometric series). The rooted \(b\)-ary tree is the same computation with \(d=b+1\) at non-root vertices; it is transient for every \(b\ge 2\) and recurrent only for \(b=1\) (the line). Do not quote the 2026 Spring GW-tree percolation \(p_{c}=1/m\) as a substitute: that is Bernoulli percolation on a random tree, not a walk. 2023 Fall P5 is the percolation sibling on a deterministic \(d\)-regular tree: \(p_{c}=1/(d-1)\), and the subcritical cluster has an exponential tail.
+
+\begin{definition}[Poisson process]
+\label{def:pp}
+A counting process \(N(t)\), \(t\ge 0\), is a rate-\(\lambda\) Poisson process if \(N(0)=0\), paths are c\`adl\`ag unit jumps, increments are independent, and \(N(t)-N(s)\sim\mathrm{Poisson}(\lambda(t-s))\). Equivalent characterisations, all writeable:
+\begin{itemize}
+    \item interarrival times \(E_{i}\) are i.i.d.\ \(\mathrm{Exp}(\lambda)\), and \(T_{n}=E_{1}+\cdots+E_{n}\sim\mathrm{Gamma}(n,\lambda)\);
+    \item \(\mathbb{P}(\text{one jump in }(t,t+h])=\lambda h+o(h)\) and \(\mathbb{P}(\ge 2\text{ jumps})=o(h)\);
+    \item conditional on \(N(t)=n\), the arrival times \((T_{1},\ldots,T_{n})\) are distributed as the order statistics of \(n\) i.i.d.\ uniforms on \([0,t]\).
+\end{itemize}
+Thinning with success probability \(p\) produces a Poisson process of rate \(p\lambda\), independent of the complementary process. Superposition of independent Poisson processes is Poisson with summed rates.
+\end{definition}
+
+The three derivations that belong on a script, starting from independent stationary Poisson increments.
+
+\paragraph{Waits.}
+The event \(\{T_{1}>t\}\) is \(\{N(t)=0\}\), hence \(\mathbb{P}(T_{1}>t)=e^{-\lambda t}\). By the strong Markov property at \(T_{n}\) (or by independent increments after \(T_{n}\)), the next wait is an independent copy, so \(T_{n}\) is the sum of \(n\) i.i.d.\ exponentials.
+
+\paragraph{Conditional uniformity.}
+The joint density of \((T_{1},\ldots,T_{n})\) on \(0<t_{1}<\cdots<t_{n}<t\) is \(\lambda^{n}e^{-\lambda t}\), because the waits are exponential. The law of \(N(t)\) is \(\mathrm{Poisson}(\lambda t)\), so
+\[
+f(t_{1},\ldots,t_{n}\mid N(t)=n)
+=
+\frac{n!}{t^{n}},
+\qquad
+0<t_{1}<\cdots<t_{n}<t,
+\]
+which is the joint density of the order statistics of \(n\) i.i.d.\ uniforms on \([0,t]\).
+
+\paragraph{Thinning.}
+Colour each jump independently red with probability \(p\). The finite-dimensional increment calculation is the binomial split of a Poisson: a red increment on an interval of length \(h\) is \(\mathrm{Poisson}(p\lambda h)\) and independent of the blue increment. That is the increment definition of two independent Poisson processes.
+
+\subsection{Connections}
+
+\begin{itemize}
+    \item Galton--Watson generation sizes are a Markov chain on \(\mathbb{N}\) whose transition is a convolution. Extinction probabilities use a PGF, not \(\pi P=\pi\).
+    \item Exponential waiting times already appeared as a sampling model (2025 Fall P1). That is not a Poisson process: there is no counting process in time.
+    \item Brownian hitting (2025 Spring P5) is a continuous-path Markov process. Its generator is \(\tfrac12\Delta\), not a rate matrix.
+    \item The optional-stopping arguments already reviewed remain available on a Poisson process (the compensated \(N(t)-\lambda t\) is a martingale). That is a useful one-line, not a substitute for \cref{def:pp}.
+\end{itemize}
+
+\subsection{How it is examined}
+
+A finite-chain problem: write \(P\), check irreducibility / aperiodicity, solve \(\pi P=\pi\). A representation problem: both directions of \cref{thm:mc-rep}. A Poisson problem, if it appears, will ask two equivalent definitions, the Gamma law of \(T_{n}\), and conditional uniformity. A tree-walk problem asks recurrence versus transience as a function of the branching number.
+
+\subsection{Possible questions}
+
+\begin{itemize}
+    \item \(N\) coins, flip one at random. Write \(P\). Find the unique stationary law.
+    \item Prove that \(X_{n}=f(X_{n-1},Z_{n})\) is Markov, and that every finite-state chain has such an \(f\).
+    \item From the increment definition, derive that waits are exponential and that \(T_{n}\) is Gamma.
+    \item Prove the conditional-uniformity statement.
+    \item Thinning: write the rate and prove independence of the two colours.
+    \item Simple walk on the \(b\)-ary tree: transient or recurrent?
+\end{itemize}
+
+\subsection{Anchor problems}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}L{2.7cm}L{5.4cm}L{6.1cm}@{}}
+\toprule
+Anchor & What the paper wants & Near-miss \\
+\midrule
+\gap{2023 Fall P3} & finite chain, unique \(\pi\) & GW generation chain \\
+\gap{2024 Spring P5} & \(X_{n}=f(X_{n-1},Z_{n})\) both ways & --- \\
+\gap{2024 Fall P4} & RW on a regular tree & 2026 Spring P6 is percolation on a GW tree \\
+(no paper) & Poisson process package & exponential samples, Poisson r.v.\ \\
+\bottomrule
+\end{tabular}
+\end{center}
+}

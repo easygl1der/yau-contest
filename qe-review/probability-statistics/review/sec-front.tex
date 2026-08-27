@@ -1,0 +1,103 @@
+\section{What this note is}
+\label{sec:what}
+
+This file is the review map for the Qiuzhen Probability \& Statistics qualifying exam. Compile it from this directory:
+
+\begin{center}
+\texttt{xelatex -synctex=1 -interaction=nonstopmode review.tex}
+\end{center}
+
+The objects of comparison are the official syllabus (June 2026; linear models printed in red) and the six transcribed papers under \texttt{transcribed\_exams/}. A topic counts as reviewed only when the corresponding paper contains definitions, theorems, and a complete solution. Official books are cited at the end.
+
+The note is written for an examinee who already has 2025 Spring, 2025 Fall, and 2026 Spring in hand. Those three papers put conditional expectation, multivariate normals, martingales, hitting times, Galton--Watson, sufficiency / UMVUE, MLE asymptotics, MLR--UMP, and several Bayes / admissibility arguments onto a script. What remains is not ``statistics never seen''. It is the heading the syllabus printed in red, plus the process and testing objects those three papers never forced: linear models, Poisson processes, finite-state Markov chains, likelihood-ratio / Wilks, conjugate Bayes, Basu, and the characteristic-function route to a CLT with infinite variance.
+
+\section{How the syllabus is one graph}
+\label{sec:graph}
+
+The syllabus is printed as two lists. The papers treat it as a small number of recurring machines.
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3.2pt,
+    font=\small, minimum height=0.8cm, text width=3.05cm},
+  arr/.style={-{Latex}, thick},
+  lab/.style={font=\footnotesize, text=black!55}
+]
+  \node[box, fill=blue!8] (found) at (0,4.35) {Foundations\\$X$, $\mathbb{E}$, CF / pgf};
+  \node[box, fill=blue!8] (limit) at (3.65,4.35) {Limits\\LLN / CLT / modes};
+  \node[box, fill=blue!8] (cond) at (7.3,4.35) {Conditioning\\$\mathbb{E}[\,\cdot\mid\mathcal{F}]$};
+  \node[box, fill=orange!12] (mart) at (0,2.5) {Martingales\\OST, exp.\ mart.};
+  \node[box, fill=orange!12] (mark) at (3.65,2.5) {Markov / GW\\stationary, $f(X,Z)$};
+  \node[box, fill=orange!12] (proc) at (7.3,2.5) {BM / RW / Poisson\\hits, thinning};
+  \node[box, fill=green!10] (red) at (0,0.65) {Reduction\\suff.\ / complete};
+  \node[box, fill=green!10] (est) at (3.65,0.65) {Estimation\\MLE / UMVUE};
+  \node[box, fill=green!10] (test) at (7.3,0.65) {Testing\\MLR / LRT};
+  \node[box, fill=purple!8] (lm) at (1.85,-1.2) {Linear models\\BLUE / $I(\beta)$};
+  \node[box, fill=purple!8] (bayes) at (5.5,-1.2) {Bayes\\conjugate / $L_1,L_2$};
+  \draw[arr] (found) -- (limit);
+  \draw[arr] (cond) -- (mart);
+  \draw[arr] (mart) -- (proc);
+  \draw[arr] (mark) -- (proc);
+  \draw[arr] (red) -- (est);
+  \draw[arr] (est) -- (test);
+  \draw[arr] (est) -- (lm);
+  \draw[arr] (est) -- (bayes);
+  \node[lab] at (3.65,5.15) {probability objects feed stopping, then feed estimation};
+  \node[lab] at (3.65,-1.95) {red syllabus item: a design matrix, not another exponential family};
+\end{tikzpicture}
+\end{center}
+
+The official headings sit on this graph as follows.
+
+\begin{itemize}
+    \item \textbf{Foundations.} Random variables, moments, common laws, multivariate distributions, characteristic and generating functions, modes of convergence, Bayes' formula, conditional expectation. The 2025--2026 papers already force most of these as tools. Remaining named objects: a characteristic-function CLT with infinite variance, and the distinction ``convergence in probability is a ring / \(L^{1}\) is not''.
+    \item \textbf{Limit theorems.} SLLN / WLLN are background; 2025 Fall P4 is an SLLN \emph{failure}. CLT appears as a non-i.i.d.\ truncation (2026 Spring P2), not as a CF argument.
+    \item \textbf{Processes.} Martingales, hitting of random walks and Brownian motion, Galton--Watson, and one tree-percolation argument are done. Finite-state Markov chains, the representation \(X_{n}=f(X_{n-1},Z_{n})\), Poisson processes, and the one-sided BM Laplace transform are not.
+    \item \textbf{Data reduction and estimation.} Sufficiency, completeness, UMVUE, MLE (including nonregular support), delta method, consistency, and asymptotic normality are done. Method of moments, Fisher information as a matrix one writes, a Wald interval, and the named \(t/F/\mathrm{Beta}\) calculus are the remaining estimation objects (\cref{sec:est}). Ancillary statistics and Basu's theorem were never named.
+    \item \textbf{Testing.} Neyman--Pearson / MLR / Karlin--Rubin / UMP (and a no-UMP example) are done. The likelihood-ratio statistic and Wilks' \(\chi^{2}\) have never appeared.
+    \item \textbf{Bayes.} Improper priors, a lognormal MAP, a two-point prior, and several admissibility / minimax arguments are done. A conjugate calculation (Beta--Binomial, Gamma--Poisson, normal--normal) has not.
+    \item \textbf{Linear models (printed in red).} Zero exposure on 2025--2026. The only past-paper landings are \paper{2024 Fall P8} and \paper{2024 Spring P11}.
+\end{itemize}
+
+\section{How this exam writes a question}
+\label{sec:format}
+
+Across 2023--2026 the same eight examination formats recur. A new paper is more likely to reuse a format on a new object than to invent a ninth format.
+
+\begin{enumerate}
+    \item \textbf{Name the \(\sigma\)-algebra, then compute.} Conditional expectation given \(\sigma(Y)\), independence from a functional equation, or a Bayes posterior. The script is: identify the measurable functions, use the defining identity \(\mathbb{E}[Z\mathbf{1}_{A}]=\mathbb{E}[W\mathbf{1}_{A}]\).
+    \item \textbf{Build a martingale, stop it.} Exponential martingale, optional stopping, or ``if \(X^{2}\) is a martingale then \(X\) is constant''. Do not quote OST without checking integrability and the boundedness / uniform-integrability hypothesis the paper actually gives.
+    \item \textbf{A generating function closes the problem.} PGF of a Galton--Watson generation, MGF of a hitting time, Laplace transform of \(T_{a}\). Differentiate at \(1\) or invert a transform; do not stop at ``the transform exists''.
+    \item \textbf{Data reduction to a UMVUE.} Exhibit a complete sufficient statistic (often exponential family), write an unbiased function of it, and invoke Lehmann--Scheffé. Completeness without an unbiased estimator is not a solution.
+    \item \textbf{MLE plus regularity.} Write the likelihood, check whether the support depends on the parameter, state the asymptotic (or explain why \(\sqrt{n}\) fails). 2025 Spring P11 and 2024 Fall P11 are the nonregular templates.
+    \item \textbf{MLR, then UMP --- or prove there is none.} Karlin--Rubin for a one-sided exponential-family (or Pareto, after a monotone reparametrisation). Two-sided tests and two-sided Gamma (2025 Spring P8) are the usual no-UMP examples.
+    \item \textbf{A Bayes object with a named prior.} Posterior, MAP, posterior mean or median, consistency of the posterior, or a two-point minimax comparison. The missing sibling is a conjugate table, not another improper-prior calculation.
+    \item \textbf{A design matrix.} Least squares, estimability, Gauss--Markov, Fisher information of a Gaussian linear model, or a linear constraint \(\mathbf{1}^{\top}\theta=1\). This format has not appeared on a reviewed paper.
+\end{enumerate}
+
+\section{What 2025--2026 already put on a script}
+\label{sec:covered}
+
+The following objects are no longer gaps. They are the near-misses that must not be substituted for the blocks below.
+
+\begin{itemize}
+    \item Conditional expectation, multivariate Gaussians, order statistics of uniforms, independence from a quadratic identity.
+    \item Symmetric and weighted random-walk hitting, Brownian two-sided hitting and independence of sign, geometric Brownian motion, Galton--Watson means / extinction / inherited \(0\)--\(1\) laws, one tree-percolation \(p_{c}\).
+    \item Sufficiency, completeness, UMVUE (including Bernoulli \(g(p)\) and \(\mathrm{Poisson}(\sqrt{\lambda})\)), MLE and nonregular asymptotics, delta method for a correlation, sample quantiles on a discrete law.
+    \item MLR and one-sided UMP; a Gamma two-sided test with no UMP; size of a \(t\)-type test on a skewed density.
+    \item Improper flat prior on \(U(0,\theta)\), lognormal prior MAP, two-point prior under \(L_{1}\), several admissibility arguments.
+\end{itemize}
+
+\section{Suggested order}
+\label{sec:order}
+
+\begin{enumerate}
+    \item Linear models: Wu--Wang, then \paper{2024 Fall P8} and \paper{2024 Spring P11}. Write the \(t\) interval, Scheff\'e, and the extra-sum-of-squares \(F\) once.
+    \item Estimation leftovers: MoM on \paper{2024 Fall P11}; inverted UMP interval on \paper{2024 Fall P7}; Fisher / Wald as a named computation.
+    \item Poisson processes: Durrett (or Brze\'zniak--Zastawniak); derive waits, conditional uniformity, and thinning from increments. There is no past-paper landing.
+    \item Markov chains: \paper{2023 Fall P3}, \paper{2024 Spring P5}, then the regular-tree walk \paper{2024 Fall P4}.
+    \item Testing: write Wilks once from a book, then \paper{2023 Fall P7} and \paper{2024 Spring P10}.
+    \item Conjugate Bayes: write the three posterior updates, including the normal--normal precision formula.
+    \item Probability extras: \paper{2024 Spring P1} (CF, infinite variance), \paper{2024 Spring P3} (modes), \paper{2024 Spring P6} (one-sided BM Laplace).
+    \item Bonus, not syllabus holes: Cauchy MLE, dice strategy, GFF / Brownian bridge, Stein / moment method.
+\end{enumerate}

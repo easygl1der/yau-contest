@@ -5,6 +5,8 @@ Local sources used while preparing the Qiuzhen QE. Canonical syllabus: [qzc-qe-p
 | Package | What it is |
 | --- | --- |
 | [hogg-mckean-craig-ims](./hogg-mckean-craig-ims/structure.md) | Hogg, McKean, Craig, *Introduction to Mathematical Statistics*, 8th ed. PDF + chapter-split MinerU transcript + aca-reader lecture notes (Ch. 0–9). Primary statistics textbook on this shelf. Bayesian point estimation is Hogg Ch. 11. |
+| [ding-linear-model](./ding-linear-model/README.md) | Peng Ding, *Linear Model and Extensions* (Berkeley 应用回归分析; arXiv `2401.00649v2`, 433 pp.). Full PDF. CAM keeps only the vector-calculus excerpt of the same book. |
+| [ding-causal-inference](./ding-causal-inference/README.md) | Peng Ding, *A First Course in Causal Inference* (arXiv `2305.18793`, 490 pp.). Copied from Mac Mini `aca-workflow/PDFs/causal-inference/`. Not an official QE syllabus book. |
 | [yau-final-prep](./yau-final-prep/README.md) | Personal 2025 Yau-final notes from `~/Downloads/`: `yau-stat.pdf` (theory review, Bayesian = Ch. 5), `yau-final.pdf` (worked 2012–2024 finals), `stat-final.pdf` (Hogg Ch. 1–9 cram sheet; no Ch. 11). |
 | [gelman-bda3](./gelman-bda3/structure.md) | Gelman, Carlin, Stern, Dunson, Vehtari, Rubin, *Bayesian Data Analysis*, 3rd ed. PDF + chapter-split MinerU transcript + aca-reader lecture notes (Ch. 0–23). Core Bayesian textbook. For QE: Ch. 1 (posterior), Ch. 2 (conjugacy), Ch. 9 (decision / \(L_1\)). Minimax is not a BDA topic — use Hogg Ch. 7. |
 | [qingshu-11th-contest-notes](../../common/reference/qingshu-11th-contest-notes/README.md) | 清疏《大学生数学竞赛班第十一届讲义》full 1028-page book (common shelf). |

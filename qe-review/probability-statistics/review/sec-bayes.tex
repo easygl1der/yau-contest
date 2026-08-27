@@ -1,0 +1,113 @@
+\section{Conjugate Bayes, exponential families, Basu}
+\label{sec:bayes}
+
+\paragraph{Why these still need a script.}
+Reviewed Bayes problems used an improper flat prior, a lognormal prior (MAP), and a two-point prior under absolute error. They never asked you to recognise a conjugate pair and write the posterior in closed form. Completeness has been used for UMVUE; ancillary statistics and Basu's theorem have never been named. Exponential families have been used implicitly; the natural-form definition has not been demanded.
+
+\subsection{Lineage}
+
+Conjugacy is the computational observation that, for an exponential family, a prior in the same family stays in that family \cite{gelman13,hogg19}. The decision-theoretic layer is: under \(L_{2}\) the Bayes estimator is the posterior mean; under \(L_{1}\) it is a posterior median. Basu (1955) is the independence of a complete sufficient statistic and an ancillary statistic; it is the usual way to see \(\bar X\perp S^{2}\) in a normal sample without computing a joint density. The natural exponential family packages sufficiency, completeness, and the Cram\'er--Rao variance in one Hessian \cite{casella02}.
+
+\subsection{Concepts that belong on a script}
+
+\begin{definition}[Natural exponential family]
+\label{def:nef}
+A density (or mass function) of the form
+\[
+f_{\eta}(x)=h(x)\exp\bigl(\eta^{\top}T(x)-A(\eta)\bigr)
+\]
+is a natural exponential family with natural parameter \(\eta\) and sufficient statistic \(T\). The cumulant function satisfies \(\nabla A=\mathbb{E}_{\eta}[T]\) and \(\nabla^{2}A=\Var_{\eta}(T)\). If the natural parameter space has nonempty interior, \(T\) is complete (and minimal sufficient). The Cram\'er--Rao bound for unbiased estimation of \(\nabla A(\eta)\) is \(\nabla^{2}A(\eta)/n\).
+\end{definition}
+
+\begin{definition}[Conjugate prior]
+\label{def:conj}
+A family \(\Pi\) of priors is conjugate for a sampling model if \(\pi\in\Pi\) implies that the posterior \(\pi(\,\cdot\mid x)\) stays in \(\Pi\). The three writeable pairs, with the posterior written out.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Sampling & Prior & Posterior \\
+\midrule
+\(\mathrm{Binomial}(n,p)\) & \(\mathrm{Beta}(\alpha,\beta)\) & \(\mathrm{Beta}(\alpha+x,\,\beta+n-x)\) \\
+\(\mathrm{Poisson}(\lambda)\) & \(\mathrm{Gamma}(\alpha,\beta)\) & \(\mathrm{Gamma}(\alpha+\sum x_{i},\,\beta+n)\) \\
+\(N(\mu,\sigma^{2})\), \(\sigma^{2}\) known & \(N(\mu_{0},\tau^{2})\) & precision-weighted Gaussian \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The normal--normal update is
+\[
+\frac{\mu_{n}}{\tau_{n}^{2}}
+=
+\frac{\mu_{0}}{\tau^{2}}+\frac{n\bar X}{\sigma^{2}},
+\qquad
+\frac{1}{\tau_{n}^{2}}
+=
+\frac{1}{\tau^{2}}+\frac{n}{\sigma^{2}}.
+\]
+The \(L_{2}\) Bayes estimator is the posterior mean
+\[
+\mu_{n}
+=
+\frac{\tau^{-2}\mu_{0}+n\sigma^{-2}\bar X}{\tau^{-2}+n\sigma^{-2}},
+\]
+a convex combination of the prior mean and the MLE. The \(L_{1}\) Bayes estimator is a posterior median. For \(\mathrm{Beta}(\alpha',\beta')\) that median has no elementary closed form; the mean \(\alpha'/(\alpha'+\beta')\) is the \(L_{2}\) answer. The Poisson--Gamma posterior predictive is negative binomial: a new \(X_{n+1}\) has
+\[
+\mathbb{P}(X_{n+1}=k\mid\text{data})
+=
+\binom{k+\alpha'-1}{k}
+\Bigl(\frac{\beta'}{\beta'+1}\Bigr)^{\alpha'}
+\Bigl(\frac{1}{\beta'+1}\Bigr)^{k}
+\]
+in the shape--rate convention \(\mathrm{Gamma}(\alpha',\beta')\) with mean \(\alpha'/\beta'\) \cite{gelman13}.
+\end{definition}
+
+2026 Spring P9 already used the \(L_{1}\) rule on a two-point parameter space. The missing calculation is the Beta--Binomial (or Gamma--Poisson) update written in one line, plus the statement that the posterior mean is consistent if the prior charge of a neighbourhood of the true \(p\) is positive.
+
+\begin{theorem}[Basu]
+\label{thm:basu}
+If \(T\) is a complete sufficient statistic for \(\theta\) and \(A\) is ancillary (its law does not depend on \(\theta\)), then \(T\) and \(A\) are independent for every \(\theta\).
+\end{theorem}
+
+The usual application: in \(N(\mu,\sigma^{2})\) with both parameters unknown, \((\bar X,S^{2})\) is complete sufficient and \(\bar X/S\) is not the example --- rather, for \(\mu\) unknown and \(\sigma^{2}\) known, \(S^{2}\) is ancillary for \(\mu\) after a location family argument, and Basu gives \(\bar X\perp S^{2}\). The 2024 Fall P10 paper asks that independence by a direct computation (mgf or rotational invariance). Basu is the named theorem that makes the computation a citation.
+
+An ancillary example that belongs on a script: in a location family \(f(x-\theta)\), the spacings \(X_{(n)}-X_{(1)}\) (or the configuration \(X_{i}-\bar X\)) are ancillary.
+
+\subsection{Connections}
+
+\begin{itemize}
+    \item Improper \(\pi(\theta)=1\) on \(U(0,\theta)\) (2025 Spring P7) is not conjugate. The posterior is proper for \(n\ge 2\); consistency is a separate argument.
+    \item A lognormal prior MAP (2025 Fall P10) is a mode, not a posterior mean. Do not call it the Bayes estimator under \(L_{2}\).
+    \item UMVUE arguments already use completeness. Basu is completeness plus ancillarity, used for independence, not for unbiased estimation.
+    \item Fisher information of an exponential family is \(\nabla^{2}A\). Fisher information of a Gaussian linear model is \(Z^{\top}Z/\sigma^{2}\) (\cref{sec:lm}); same name, different Gram matrix.
+\end{itemize}
+
+\subsection{How it is examined}
+
+A conjugate problem: name the pair, update the hyperparameters, write the posterior mean (and, if asked, the posterior median). A Basu problem: name \(T\) and \(A\), check completeness and ancillarity, conclude independence. An exponential-family problem: write \((\eta,T,A)\), read sufficiency and the CR bound from \(A\).
+
+\subsection{Possible questions}
+
+\begin{itemize}
+    \item \(X_{i}\sim\mathrm{Bernoulli}(p)\), \(\mathrm{Beta}(\alpha,\beta)\) prior. Write the posterior and the \(L_{2}\) / \(L_{1}\) Bayes estimators.
+    \item Poisson with a Gamma prior; predict a new \(X_{n+1}\) (posterior predictive is negative binomial).
+    \item Prove \(\bar X\perp S^{2}\) in a normal sample by Basu, then by a density argument.
+    \item Write the natural form of \(\mathrm{Gamma}(\alpha,\beta)\) with \(\alpha\) known. Identify \(T\) and \(A''\).
+\end{itemize}
+
+\subsection{Anchor problems}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}L{2.7cm}L{5.4cm}L{6.1cm}@{}}
+\toprule
+Anchor & What the paper wants & Near-miss \\
+\midrule
+(no paper) & conjugate update + posterior mean / median & improper / lognormal / two-point \\
+(no paper) & Basu named & 2025 Spring P9 asked completeness only \\
+(no paper) & natural exponential form & implicit in UMVUE papers \\
+\done{2024 Fall P10} & \(\bar X\perp S^{2}\); UMVUE of \(\mu/\sigma\); admissibility of \(\bar X\) & draft in \texttt{p10-normal-mean-var.tex} \\
+\bottomrule
+\end{tabular}
+\end{center}
+}

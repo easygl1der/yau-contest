@@ -1,0 +1,108 @@
+\section{Testing: LRT / Wilks, and the UMP variants still unwritten}
+\label{sec:testing}
+
+\paragraph{Why this block is still thin.}
+The reviewed papers already force MLR and one-sided UMP, and they already exhibit a two-sided test with no UMP. They never wrote a likelihood-ratio statistic, never quoted Wilks, and never ran Neyman--Pearson on a simple-versus-simple normal mean \emph{and} a simple-versus-simple normal variance in the same problem. Those are the remaining testing objects.
+
+\subsection{Lineage}
+
+Neyman--Pearson (1933) characterises the most powerful test of a simple null against a simple alternative by a likelihood-ratio threshold (with randomisation on the level set). Karlin--Rubin extends that to a one-sided composite problem when the family has monotone likelihood ratio in a one-dimensional sufficient statistic. The generalised likelihood ratio, and Wilks' \(\chi^{2}\) approximation for a regular parametric restriction of dimension \(r\), are the large-sample siblings \cite{casella02}. The 2025--2026 papers stayed on the first two names.
+
+\subsection{Concepts that belong on a script}
+
+\begin{theorem}[Neyman--Pearson]
+\label{thm:np}
+For simple \(H_{0}:\theta=\theta_{0}\) versus \(H_{1}:\theta=\theta_{1}\), any most powerful test of size \(\alpha\) rejects for large \(\Lambda=f_{\theta_{1}}/f_{\theta_{0}}\) (randomising when \(\Lambda=c\) to hit size \(\alpha\)).
+\end{theorem}
+
+\begin{theorem}[Karlin--Rubin]
+\label{thm:kr}
+If the density has MLR in a statistic \(T\), then the one-sided test that rejects for large \(T\) is UMP of its size for \(H_{0}:\theta\le\theta_{0}\) versus \(H_{1}:\theta>\theta_{0}\).
+\end{theorem}
+
+Both are already on a 2025--2026 script. The remaining writeable object is the likelihood ratio.
+
+\begin{definition}[Generalised LRT and Wilks]
+\label{def:lrt}
+For \(H_{0}:\theta\in\Theta_{0}\) versus \(H_{1}:\theta\in\Theta\setminus\Theta_{0}\),
+\[
+\lambda(X)=\frac{\sup_{\theta\in\Theta_{0}}L(\theta)}{\sup_{\theta\in\Theta}L(\theta)},
+\qquad
+\Lambda=-2\log\lambda(X).
+\]
+Reject for large \(\Lambda\). Under standard regularity, if \(H_{0}\) is a regular restriction of dimension \(r\) (the unrestricted parameter is identifiable, the Fisher information is nonsingular, and \(\theta_{0}\) is interior), then
+\[
+\Lambda\ \Rightarrow\ \chi^{2}_{r}
+\]
+under \(H_{0}\). This is Wilks' theorem. The usual \(r\) is \(\dim\Theta-\dim\Theta_{0}\).
+\end{definition}
+
+A script-size derivation of the \(\chi^{2}\). Write \(\ell_{n}\) for the log-likelihood, \(\hat\theta\) for the unrestricted MLE, and \(\hat\theta_{0}\) for the maximiser on \(\Theta_{0}\). Regularity gives \(\nabla\ell_{n}(\hat\theta)=0\) and \(n^{-1}\nabla^{2}\ell_{n}(\hat\theta)\to -I(\theta^{\star})\). Taylor around \(\hat\theta\) produces
+\[
+\Lambda
+=
+n(\hat\theta_{0}-\hat\theta)^{\top}I(\theta^{\star})(\hat\theta_{0}-\hat\theta)
++
+o_{P}(1).
+\]
+Under a regular restriction of dimension \(r\), \(\sqrt{n}(\hat\theta_{0}-\hat\theta)\) is asymptotically Gaussian in an \(r\)-dimensional subspace, and the quadratic form is \(\chi^{2}_{r}\). Boundary parameters (a variance on \(\{0\}\), a simplex vertex) and nonregular supports (already reviewed) break the interior Taylor; say so, and do not quote Wilks.
+
+2023 Fall P7 is the NP / UMP package on a normal sample, and the likelihood ratios are writeable.
+
+\paragraph{Mean shift, common variance.}
+\(H_{0}:(\mu,\sigma^{2})=(\mu_{0},\sigma_{0}^{2})\) versus \(H_{1}:(\mu_{1},\sigma_{0}^{2})\) with \(\mu_{1}>\mu_{0}\). The Neyman--Pearson ratio is monotone in \(\bar X\). The size-\(\alpha\) test rejects for
+\[
+\bar X
+>
+\mu_{0}
++
+\sigma_{0}\,n^{-1/2}z_{1-\alpha}.
+\]
+MLR in \(\bar X\) upgrades the same critical region to a UMP test of the one-sided composite in \(\mu\).
+
+\paragraph{Variance shift, common mean.}
+The ratio is monotone in \(\sum(X_{i}-\mu_{0})^{2}\). Reject for a large residual sum; the null law is \(\sigma_{0}^{2}\chi^{2}_{n}\).
+
+\paragraph{Composite one-sided mean.}
+With \(\sigma^{2}=1\), \(H_{0}:\mu\ge 1\) versus \(H_{1}:\mu<1\) is Karlin--Rubin in \(\bar X\), rejecting for small \(\bar X\). The least favourable null is \(\mu=1\).
+
+2024 Spring P10 is Karlin--Rubin after a monotone reparametrisation of a Pareto mean. The density \(f(x\mid\theta)=100^{\theta}\theta x^{-(1+\theta)}\) on \(x>100\) is an exponential family in \(\theta\), not in \(\mu=\mathbb{E}X=100\theta/(\theta-1)\). Since \(\mu\) is decreasing in \(\theta\), the one-sided problem in \(\mu\) is a one-sided problem in \(\theta\) with the inequality reversed. The sufficient statistic is \(\sum\log X_{i}\); write the critical region in that statistic, then translate back to \(\mu_{0}\).
+
+\subsection{Connections}
+
+\begin{itemize}
+    \item 2025 Spring P8 (two-sided Gamma) is the standard ``MLR does not give a UMP two-sided test''. Wilks still applies to that two-sided problem as a large-sample substitute; the papers never asked for that substitute.
+    \item 2026 Spring P7 is Karlin--Rubin in abstract form. Doing 2023 Fall P7 is the same theorem on a named law.
+    \item A confidence interval obtained by inverting a UMP family (2024 Fall P7) is not Wilks and not a \(t\)-interval from a linear model.
+    \item Bayes factors are not \(\Lambda\). Do not import a posterior odds as a likelihood ratio.
+\end{itemize}
+
+\subsection{How it is examined}
+
+UMP problems: write the likelihood ratio as a monotone function of \(T\), quote Karlin--Rubin or Neyman--Pearson, and describe the critical region (including randomisation if \(T\) is discrete; 2025 Fall P11 already did that). LRT problems, if they appear: write \(\lambda\) and \(\Lambda\), count \(r\), quote Wilks, and refuse Wilks on a boundary or a support-dependent family.
+
+\subsection{Possible questions}
+
+\begin{itemize}
+    \item \(N(\mu,1)\): UMP for \(H_{0}:\mu=\mu_{0}\) versus \(H_{1}:\mu=\mu_{1}>\mu_{0}\); then versus the composite \(H_{1}:\mu>\mu_{0}\).
+    \item \(N(0,\sigma^{2})\): UMP for a simple variance pair.
+    \item Pareto incomes: UMP for \(H_{0}:\mu=\mu_{0}\) versus \(H_{1}:\mu>\mu_{0}\).
+    \item (Unseen.) Two-sample Gaussian, \(H_{0}:\mu_{1}=\mu_{2}\). Write \(\Lambda\) and state the Wilks limit.
+    \item (Unseen.) \(U(0,\theta)\), \(H_{0}:\theta=\theta_{0}\). Why is Wilks the wrong theorem?
+\end{itemize}
+
+\subsection{Anchor problems}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}L{2.7cm}L{5.4cm}L{6.1cm}@{}}
+\toprule
+Anchor & What the paper wants & Near-miss \\
+\midrule
+\gap{2023 Fall P7} & normal simple / simple UMP, then \(\mu\ge 1\) & 2026 Spring P7 is abstract MLR \\
+\gap{2024 Spring P10} & Pareto UMP for the mean & exponential-family appearance \\
+(no paper) & LRT + Wilks \(\chi^{2}_{r}\) & two-sided no-UMP examples \\
+\bottomrule
+\end{tabular}
+\end{center}
+}

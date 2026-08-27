@@ -1,0 +1,149 @@
+\section{Estimation leftovers and named families}
+\label{sec:est}
+
+\paragraph{Why this block is still thin.}
+The reviewed papers already force MLE, UMVUE, the delta method, and several nonregular supports. The official heading still lists three objects that never appeared as named calculations: the method of moments, Fisher information as a matrix one actually writes, and a confidence interval that is not the inversion of a UMP family. The distribution-theory list (\(t\), \(F\), Beta, multinomial, negative binomial) was only pointed at. None of these is a red-syllabus hole; they are the reason a new paper can ask a short named computation without inventing a ninth format.
+
+\subsection{Lineage}
+
+Pearson isolated the method of moments as matching \(\mathbb{E}_{\theta}[X^{k}]\) to sample moments. Fisher replaced that by maximising the likelihood and by the information matrix that governs the \(\sqrt{n}\) law. Neyman constructed confidence intervals by inverting a family of tests. The named continuous families are the orthogonal / ratio calculus on Gaussians: \(\chi^{2}\) is a squared norm, \(t\) is a Gaussian over an independent root-\(\chi^{2}\), \(F\) is a ratio of independent \(\chi^{2}\)s. Casella--Berger is the official book for the whole block \cite{casella02}.
+
+\subsection{Named families that belong on a script}
+
+\begin{definition}[Gaussian calculus]
+\label{def:named}
+If \(Z_{1},\ldots,Z_{\nu}\) are i.i.d.\ \(N(0,1)\), then \(\sum Z_{i}^{2}\sim\chi^{2}_{\nu}\). Independently of a further \(Z\sim N(0,1)\),
+\[
+t_{\nu}
+=
+\frac{Z}{\sqrt{\chi^{2}_{\nu}/\nu}},
+\qquad
+F_{\nu_{1},\nu_{2}}
+=
+\frac{\chi^{2}_{\nu_{1}}/\nu_{1}}{\chi^{2}_{\nu_{2}}/\nu_{2}}.
+\]
+A \(\mathrm{Beta}(\alpha,\beta)\) law is the Dirichlet-\(2\) coordinate \(U/(U+V)\) for independent Gammas, and is the law of a uniform order statistic \(U_{(k)}\) when \(\alpha=k\), \(\beta=n-k+1\). A multinomial is the exponential family with sufficient statistic the count vector and cumulant \(\log(\sum e^{\eta_{j}})\). A negative binomial is the number of failures before \(r\) successes, or the Gamma--Poisson mixture.
+\end{definition}
+
+The only identities that have been forced already are the \(\chi^{2}\) density (quoted on 2024 Fall P10) and a \(t\)-type size calculation on a skewed density (2026 Spring P11). The missing one-line uses: \(S^{2}(n-1)/\sigma^{2}\sim\chi^{2}_{n-1}\) in a Gaussian sample; a \(t\) interval for a mean; an \(F\) extra-sum-of-squares in a linear model (\cref{sec:lm}).
+
+\subsection{Method of moments, Fisher information, intervals}
+
+\begin{definition}[Method of moments]
+\label{def:mom}
+If \(\mathbb{E}_{\theta}[X]=\mu(\theta)\) is injective, the moment estimator solves \(\mu(\hat\theta_{\mathrm{MoM}})=\bar X\). With \(k\) parameters one matches the first \(k\) moments. The estimator is typically \(\sqrt{n}\)-consistent by the delta method whenever \(\mu\) is \(C^{1}\) and the moments exist; it need not be efficient, and it can leave the parameter space.
+\end{definition}
+
+Two past-paper landings exist and were never reviewed.
+
+\begin{itemize}
+    \item \paper{2024 Fall P11.} \(X_{i}\sim\mathrm{Uniform}[\theta,\theta+\lvert\theta\rvert]\), \(\theta\neq 0\). The mean is \(\theta+\lvert\theta\rvert/2\), so
+    \[
+    \hat\theta_{\mathrm{MoM}}
+    =
+    \begin{cases}
+    \tfrac23\bar X, & \bar X>0,\\
+    2\bar X, & \bar X<0.
+    \end{cases}
+    \]
+    The support jumps with \(\operatorname{sign}(\theta)\). The MLE is \(\hat\theta=X_{(n)}/2\) on \(\{0<X_{(n)}/2\le X_{(1)}\}\) and \(\hat\theta=X_{(1)}\) on \(\{X_{(n)}\le 0,\,X_{(1)}<0\}\). That switched estimator is consistent for every \(\theta\neq 0\); the unswitched formula \(X_{(n)}/2\) is inconsistent for \(\theta<0\).
+    \item \paper{2024 Spring P8.} \(\mathrm{Uniform}(\theta,\theta+10)\). The moment map is not the efficient object: \(X_{(1)}\) is consistent for \(\theta\) (the excess is \(\mathrm{Exp}\) of rate \(n/10\)), while \(\bar X\) estimates \(\theta+5\). The displayed \(\sqrt{n}\) ratio is a Slutsky-plus-delta-method calculation, not a new theorem.
+\end{itemize}
+
+\begin{definition}[Fisher information]
+\label{def:fisher}
+For a regular parametric family with density \(f(x\mid\theta)\),
+\[
+I(\theta)
+=
+\mathbb{E}_{\theta}\bigl[\nabla_{\theta}\log f(X\mid\theta)\,
+\nabla_{\theta}\log f(X\mid\theta)^{\top}\bigr]
+=
+-\mathbb{E}_{\theta}\bigl[\nabla^{2}_{\theta}\log f(X\mid\theta)\bigr].
+\]
+Under i.i.d.\ sampling the information is \(nI(\theta)\). In a natural exponential family, \(I(\eta)=\nabla^{2}A(\eta)\) (\cref{def:nef}). In the Gaussian linear model with known \(\sigma^{2}\), \(I(\beta)=Z^{\top}Z/\sigma^{2}\) (\cref{sec:lm}). Cram\'er--Rao: an unbiased \(\hat g\) of \(g(\theta)\) satisfies \(\Var(\hat g)\ge \nabla g^{\top}I(\theta)^{-1}\nabla g\).
+\end{definition}
+
+A script-size regularity list: the support does not depend on \(\theta\); one may differentiate under the integral; \(I(\theta)\) is positive definite in a neighbourhood. 2025 Spring P11 (shifted exponential) and 2024 Fall P11 violate the first item; do not quote \(\sqrt{n}\) normality there.
+
+\begin{definition}[Confidence interval by inversion]
+\label{def:ci}
+A family of tests \(\phi_{\theta_{0}}\) of \(H_{0}:\theta=\theta_{0}\), each of size \(\alpha\), produces the interval
+\[
+C(X)
+=
+\bigl\{\theta_{0}:\phi_{\theta_{0}}(X)=0\bigr\}.
+\]
+Then \(\mathbb{P}_{\theta}(\theta\in C(X))\ge 1-\alpha\). Inverting a UMP one-sided family gives a one-sided interval; inverting a two-sided equal-tailed family gives the usual Wald or equal-tailed interval. Under regularity the Wald interval is
+\[
+\hat\theta
+\pm
+z_{1-\alpha/2}\,
+\bigl(nI(\hat\theta)\bigr)^{-1/2}.
+\]
+\end{definition}
+
+The reviewed papers inverted UMP once as language (2024 Fall P7, signs of a Gaussian). They never wrote a Wald interval from \(I(\theta)\). 2024 Fall P7 is the remaining writeable object: \(Y_{i}=\mathbf{1}_{\{X_{i}<0\}}\) with \(X_{i}\sim N(\mu,1)\) is i.i.d.\ Bernoulli\(\bigl(\Phi(-\mu)\bigr)\). The MLE of \(\mu\) is \(-\Phi^{-1}(\bar Y)\); the UMP test of \(\mu\le\mu_{0}\) versus \(\mu>\mu_{0}\) is Karlin--Rubin in \(\bar Y\) (small \(\bar Y\)); the interval is the inversion of that family.
+
+\subsection{Two more estimation templates from unreviewed papers}
+
+\paragraph{Minimax for a Gaussian vector.}
+\paper{2024 Spring P7.} Independent \(X_{i}\sim N(\mu_{i},1)\), loss \(\|a-\mu\|_{2}^{2}\). The estimator \(\delta(X)=X\) is minimax. The script is: the risk is constantly \(n\); for any competitor, the Bayes risk against \(N(0,\tau^{2}I)\) tends to \(n\) as \(\tau\to\infty\) (or use the fact that a constant-risk estimator that is extended Bayes is minimax). This is not the two-point \(L_{1}\) calculation of 2026 Spring P9, and it is not Stein's shrinkage: Stein says \(X\) is inadmissible for \(n\ge 3\), which is compatible with minimaxity.
+
+\paragraph{Cauchy location.}
+\paper{2023 Fall P8.} The joint density of an i.i.d.\ Cauchy sample is a function of \((X_{1},\ldots,X_{n})\) that does not factor through a low-dimensional \(T\). By the factorisation theorem the whole order statistic (equivalently the whole sample) is minimal sufficient. For \(n=2\), write \(\Delta=(x_{1}-x_{2})/2\). The likelihood as a function of \(\theta\) has a unique critical point at the mid-point if \(\lvert\Delta\rvert\le 1\), and two maximisers if \(\lvert\Delta\rvert>1\). Do not quote exponential-family completeness.
+
+\paragraph{Log-normal mean--variance lock.}
+\paper{2024 Spring P9.} \(\log X_{i}\sim N(\theta,\theta)\) is a one-parameter curved exponential family. The MLE solves a quadratic in \(\bar Y\) and \(S_{Y}^{2}\) after \(Y_{i}=\log X_{i}\); the information is a scalar, and \(\sqrt{n}(\hat\theta-\theta)\Rightarrow N\bigl(0,I(\theta)^{-1}\bigr)\) under the usual interior regularity (\(\theta>0\)).
+
+\subsection{Laws of large numbers, as a writeable pair}
+
+\begin{theorem}[WLLN / SLLN]
+\label{thm:lln}
+If \(X_{i}\) are i.i.d.\ with \(\mathbb{E}\lvert X_{1}\rvert<\infty\), then \(\bar X_{n}\to\mathbb{E}X_{1}\) almost surely (Kolmogorov) and in \(L^{1}\). Finite variance gives the weak law with rate \(\Var(\bar X_{n})=\sigma^{2}/n\), but is not needed for the strong law. If \(\mathbb{E}\lvert X_{1}\rvert=\infty\), then \(\limsup\lvert\bar X_{n}\rvert=\infty\) a.s.
+\end{theorem}
+
+2025 Fall P4 is an SLLN \emph{failure} for non-i.i.d.\ sums. 2024 Fall P5 is the harmonic-sum sibling: \(M_{n}=\sum_{k=1}^{n}X_{k}/k\) with \(X_{k}\) i.i.d.\ exponential satisfies \(M_{n}-\log n\to Y\) a.s.\ (Kolmogorov three-series, or comparison with the harmonic series of means), and \(e^{pM_{n}}/n^{p}\) converges in \(L^{1}\) for \(p\in(0,1)\).
+
+\subsection{Connections}
+
+\begin{itemize}
+    \item UMVUE via Lehmann--Scheff\'e is a finite-sample exact object. Wald intervals and MoM are large-sample. Do not quote one as the other.
+    \item A \(t\) interval in a linear model (\cref{sec:lm}) is an exact Gaussian calculation, not a Wald interval.
+    \item Inverting a UMP family (2024 Fall P7) is \cref{def:ci}. Wilks inversion is a large-sample sibling and lives in \cref{sec:testing}.
+    \item Stein / moment-method CLT for a quadratic form (2023 Fall P6) is a bonus probability technique, not Fisher information.
+\end{itemize}
+
+\subsection{How it is examined}
+
+MoM: write \(\mu(\theta)=\bar X\) and check the parameter space. Fisher: write the log-likelihood, differentiate twice, take the expectation; or read \(\nabla^{2}A\) from an exponential family. Interval: invert a named test, or write the Wald formula and the regularity that justifies it. Named families: identify \(\chi^{2}/t/F\) from a ratio of Gaussians.
+
+\subsection{Possible questions}
+
+\begin{itemize}
+    \item \(\mathrm{Uniform}[\theta,\theta+\lvert\theta\rvert]\): write the moment estimator on each sign; discuss consistency of the MLE.
+    \item \(Y_{i}=\mathbf{1}_{\{X_{i}<0\}}\), \(X_{i}\sim N(\mu,1)\): MLE, UMP, inverted interval.
+    \item Compute \(I(\theta)\) for \(\mathrm{Poisson}(\theta)\) and write the Wald interval.
+    \item Prove that \(\delta(X)=X\) is minimax for independent \(N(\mu_{i},1)\) under squared error.
+    \item Cauchy location: why is the whole sample minimal sufficient? For \(n=2\), when is the MLE unique?
+\end{itemize}
+
+\subsection{Anchor problems}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}L{2.7cm}L{5.4cm}L{6.1cm}@{}}
+\toprule
+Anchor & What the paper wants & Near-miss \\
+\midrule
+\gap{2024 Fall P11} & MoM / MLE / consistency on a jumping support & 2025 Spring P11 is a one-sided shift \\
+\done{2024 Fall P7} & MLE / UMP / CI from Bernoulli signs & draft in \texttt{p7-signs-mle.tex} \\
+\gap{2024 Spring P8} & \(X_{(1)}\) consistent; delta method on a ratio & 2025 Spring P9 is a correlation \\
+\gap{2024 Spring P7} & \(\delta(X)=X\) minimax & 2026 Spring P9 is two-point \(L_{1}\) \\
+\gap{2023 Fall P8} & Cauchy: minimal sufficiency; \(n=2\) MLE & exponential-family \(T\) \\
+\gap{2024 Spring P9} & \(\log X\sim N(\theta,\theta)\), MLE and \(I(\theta)\) & ordinary normal MLE \\
+(no paper) & named \(t/F/\mathrm{Beta}\) calculus & a \(\chi^{2}\) density was quoted once \\
+\bottomrule
+\end{tabular}
+\end{center}
+}

@@ -1,0 +1,152 @@
+\section{Linear models}
+\label{sec:lm}
+
+\paragraph{Why this block is empty.}
+The official syllabus prints the heading in red. The three reviewed papers never produced a design matrix. Two older papers do: \paper{2024 Fall P8} (Gauss--Markov plus Fisher information) and \paper{2024 Spring P11} (UMVUE under a linear constraint). Wu--Wang is the official book \cite{wuwang24}. Ding's \emph{Linear Model and Extensions} is the working English text on the local shelf \cite{ding25lm}. This is not ``another exponential family'' and not the \(AXB\) least-squares problem from the CAM paper.
+
+\subsection{Lineage}
+
+Gauss (1809) and Markov (1900) isolated the linear unbiased estimator of smallest variance without assuming Gaussian errors. Fisher information and the normal equations appear once the errors are Gaussian. Estimability is the linear-algebra fact that a functional \(\lambda^{\top}\beta\) has an unbiased linear estimator if and only if \(\lambda\) lies in the row space of the design. Simultaneous confidence regions (Scheff\'e, Bonferroni) and lack-of-fit tests are the inference layer the syllabus lists after Gauss--Markov; they have never been a Qiuzhen problem, but they are the natural one-line extensions.
+
+\subsection{Concepts that belong on a script}
+
+\begin{definition}[Linear model]
+\label{def:lm}
+Observations \(Y\in\mathbb{R}^{n}\) satisfy
+\[
+Y=Z\beta+\varepsilon,
+\qquad
+Z\in\mathbb{R}^{n\times d}\text{ fixed},
+\quad
+\mathbb{E}[\varepsilon]=0,
+\quad
+\Var(\varepsilon)=\sigma^{2}I.
+\]
+The last two displays are the Gauss--Markov second-moment assumptions (uncorrelated, equal variance). Full column rank of \(Z\) is a convenience, not part of the definition; without it one works with estimable functionals.
+\end{definition}
+
+If \(Z\) has full column rank, the least-squares estimator is
+\[
+\hat\beta=(Z^{\top}Z)^{-1}Z^{\top}Y.
+\]
+It is the orthogonal projection formula: \(\hat\mu=P_{Z}Y\) with \(P_{Z}=Z(Z^{\top}Z)^{-1}Z^{\top}\), and \(\hat\beta\) is the coordinate of that projection in the columns of \(Z\).
+
+\begin{definition}[Estimability]
+\label{def:estimable}
+A functional \(\theta=\lambda^{\top}\beta\) is estimable if there exists \(c\in\mathbb{R}^{n}\) with \(\mathbb{E}[c^{\top}Y]=\lambda^{\top}\beta\) for every \(\beta\), equivalently \(Z^{\top}c=\lambda\), equivalently \(\lambda\in\operatorname{col}(Z^{\top}Z)\).
+\end{definition}
+
+\begin{theorem}[Gauss--Markov]
+\label{thm:gm}
+If \(\theta=b^{\top}\beta\) is estimable, then \(\hat\theta=b^{\top}\hat\beta\) is unbiased with
+\[
+\mathbb{E}[\hat\theta]=b^{\top}\beta,
+\qquad
+\Var(\hat\theta)=\sigma^{2}\,b^{\top}(Z^{\top}Z)^{+}b,
+\]
+and among all linear unbiased estimators \(c^{\top}Y\) it has the smallest variance. (If \(Z\) has full rank, replace the Moore--Penrose inverse by \((Z^{\top}Z)^{-1}\).)
+\end{theorem}
+
+The script-size proof: unbiasedness is \(c^{\top}Z=b^{\top}\). Write \(c=Z(Z^{\top}Z)^{-1}b+r\) with \(Z^{\top}r=0\). Then
+\[
+\Var(c^{\top}Y)-\Var(\hat\theta)=\sigma^{2}\|r\|_{2}^{2}\ge 0.
+\]
+That is the whole argument. Do not assume Gaussian errors for \cref{thm:gm}.
+
+Under \(\varepsilon\sim N(0,\sigma^{2}I)\) with \(\sigma^{2}\) known, the model is a full-rank exponential family in \(\beta\) and the Fisher information is
+\[
+I(\beta)=\frac{1}{\sigma^{2}}Z^{\top}Z.
+\]
+That is 2024 Fall P8(b). If \(\sigma^{2}\) is unknown one adjoins \(S^{2}=\|Y-Z\hat\beta\|_{2}^{2}/(n-d)\) and, for Gaussian errors, \(\hat\beta\perp S^{2}\). \(t\) and \(F\) intervals, prediction intervals, and lack-of-fit tests all start from that independence.
+
+\begin{definition}[Constrained linear model]
+\label{def:lm-con}
+The 2024 Spring P11 model is three Gaussian samples with a simplex constraint:
+\[
+X_{ik}=\theta_{k}+\varepsilon_{ik},
+\qquad
+\varepsilon_{ik}\sim N(0,1)\ \mathrm{i.i.d.},
+\qquad
+\theta_{1}+\theta_{2}+\theta_{3}=1,\quad \theta_{k}\ge 0.
+\]
+This is \(Y=Z\theta+\varepsilon\) with a linear restriction \(A\theta=1\). The UMVUE of \(\theta_{1}\) is the constrained least-squares coordinate. Writing \(\bar X_{\cdot k}\) for the sample means,
+\[
+\hat\theta_{k}
+=
+\bar X_{\cdot k}-\frac13\bigl(\bar X_{\cdot 1}+\bar X_{\cdot 2}+\bar X_{\cdot 3}-1\bigr).
+\]
+The vector \((\bar X_{\cdot 1},\bar X_{\cdot 2},\bar X_{\cdot 3})\) is complete sufficient for the unrestricted Gaussian model; the restriction is a linear subspace; Lehmann--Scheffé on that subspace gives uniqueness.
+\end{definition}
+
+The remaining syllabus nouns are writeable, not slogans. Under Gaussian errors with unknown \(\sigma^{2}\), write \(s^{2}=\|Y-Z\hat\beta\|_{2}^{2}/(n-d)\) and \(\nu=n-d\).
+
+\begin{definition}[Intervals, regions, prediction]
+\label{def:lm-inf}
+A single estimable functional has the exact interval
+\[
+b^{\top}\hat\beta
+\pm
+t_{\nu,1-\alpha/2}\,
+s\sqrt{b^{\top}(Z^{\top}Z)^{-1}b}.
+\]
+A new independent observation \(Y_{0}=z_{0}^{\top}\beta+\varepsilon_{0}\) has prediction variance \(\sigma^{2}\bigl(1+z_{0}^{\top}(Z^{\top}Z)^{-1}z_{0}\bigr)\); replace \(b\) by \(z_{0}\) and insert the extra \(1\). Scheff\'e's simultaneous region for every linear image is the ellipsoid
+\[
+\frac{(b^{\top}(\hat\beta-\beta))^{2}}{d\,s^{2}\,b^{\top}(Z^{\top}Z)^{-1}b}
+\le
+F_{d,\nu,1-\alpha}
+\qquad\text{for all }b,
+\]
+equivalently \(\|Z(\hat\beta-\beta)\|_{2}^{2}/(d s^{2})\le F_{d,\nu,1-\alpha}\). Bonferroni on a finite list \(\{b_{1},\ldots,b_{m}\}\) replaces \(\alpha\) by \(\alpha/m\).
+\end{definition}
+
+\begin{definition}[Extra-sum-of-squares and lack of fit]
+\label{def:ess}
+To test \(H_{0}:C\beta=0\) (or a nested submodel \(Z_{0}\)), compare residual sums of squares:
+\[
+F
+=
+\frac{(\mathrm{RSS}_{0}-\mathrm{RSS})/q}{\mathrm{RSS}/(n-d)}
+\sim
+F_{q,n-d}
+\quad\text{under \(H_{0}\) and Gaussian errors},
+\]
+where \(q=\rank C\). If the design has genuine replicates, split \(\mathrm{RSS}\) into pure error and lack of fit; the same \(F\) with those degrees of freedom is the official goodness-of-fit test. Model selection on the syllabus is this \(F\), or a one-line AIC/BIC comparison of the same residual squares; it is not LASSO.
+\end{definition}
+
+\subsection{Connections}
+
+\begin{itemize}
+    \item UMVUE in an exponential family (2025 Fall P8, 2026 Spring P10) uses completeness of \(T\). Gauss--Markov uses only second moments and linearity. Do not quote Lehmann--Scheffé as a substitute for \cref{thm:gm}, and do not quote \cref{thm:gm} for a nonlinear functional.
+    \item The CAM problem \(\min\|AXB-C\|_{F}\) is a matrix least-squares calculation. It has no errors, no estimability, and no BLUE.
+    \item Ridge / LASSO (AI and CAM convex papers) change the objective. They are not Gauss--Markov.
+    \item Fisher information of a one-parameter MLE (already reviewed) is a scalar. Here \(I(\beta)\) is a Gram matrix.
+\end{itemize}
+
+\subsection{How it is examined}
+
+2024 Fall P8 is the template: write \(\mathbb{E}[\hat\theta]\) and \(\Var(\hat\theta)\); prove BLUE by the residual decomposition; then, under Gaussian errors, write \(I(\beta)\). 2024 Spring P11 is the constrained sibling: reduce the parameter, produce an unbiased function of the complete sufficient statistic, and stop. Unseen syllabus-legal extensions: a Scheff\'e region in one sentence; a prediction interval; an extra-sum-of-squares \(F\) for \(H_{0}:C\beta=0\).
+
+\subsection{Possible questions}
+
+\begin{itemize}
+    \item State Gauss--Markov. Prove it without Gaussian errors.
+    \item When is \(\lambda^{\top}\beta\) estimable? Give a \(Z\) of rank \(d-1\) and a non-estimable \(\lambda\).
+    \item Compute \(I(\beta)\) for \(Y\sim N(Z\beta,\sigma^{2}I)\) with \(\sigma^{2}\) known.
+    \item Under \(\theta_{1}+\theta_{2}+\theta_{3}=1\), write the UMVUE of \(\theta_{1}\) in terms of the three sample means.
+    \item (Unseen.) Write a Scheff\'e simultaneous interval for all \(b^{\top}\beta\). Write a prediction interval for \(z_{0}^{\top}\beta+\varepsilon_{0}\).
+\end{itemize}
+
+\subsection{Anchor problems}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{@{}L{2.7cm}L{5.4cm}L{6.1cm}@{}}
+\toprule
+Anchor & What the paper wants & Near-miss \\
+\midrule
+\done{2024 Fall P8} & mean / variance of \(b^{\top}\hat\beta\); BLUE; \(I(\beta)\) & draft in \texttt{p8-gauss-markov.tex} \\
+\gap{2024 Spring P11} & UMVUE of \(\theta_{1}\) on the simplex & two-point Bayes (2026 Spring P9) \\
+\bottomrule
+\end{tabular}
+\end{center}
+}

@@ -1,5 +1,11 @@
 # 概统博资考复习清单
 
+缺口复习的 LaTeX 版（全英文：概念、联系、考法、来龙去脉；含线性模型推断公式、估计剩余块、Poisson 三推导）在子目录里，从该目录编译：
+
+- 源：[review/review.tex](review/review.tex)
+- PDF：[review/review.pdf](review/review.pdf)
+- 编译：`cd review && xelatex -synctex=1 -interaction=nonstopmode review.tex`
+
 对照对象：
 
 - 大纲：[syllabus/qzc-qe-probability-statistics-syllabus-2026-06.md](syllabus/qzc-qe-probability-statistics-syllabus-2026-06.md)
@@ -100,7 +106,8 @@
 
 - [ ] **线性模型整块（最高优先级，大纲红字）**  
   最小二乘、可估性、Gauss–Markov、参数的点 / 区间 / 检验、预测、置信域与同时置信区间、模型比较与选择、正态误差下 GOF。  
-  教材：吴密霞、王松桂《线性模型引论》。卷面最低完成线见下面 2024 秋 P8、2024 春 P11。
+  教材：吴密霞、王松桂《线性模型引论》。卷面最低完成线见下面 2024 秋 P8、2024 春 P11。  
+  `review/sec-lm.tex` 里已有 \(t\) 区间、Scheffé、ESS \(F\) 的可默写公式；勾选表示闭卷能写。
 - [ ] **Poisson 过程基本性质**  
   独立增量、平稳增量、到达时间 \(\sim\mathrm{Gamma}\)、与指数的关系、条件均匀性。六套卷都没有独立大题。
 - [ ] **似然比检验 + Wilks \(\chi^2\)**  
@@ -112,6 +119,10 @@
   2025 春 P9 问过完备性，但没有点名 Basu。
 - [ ] **指数族的形式定义**  
   自然形式、充分统计、Cramér–Rao / 完备性从指数族直接读出。
+- [ ] **矩估计 / Fisher 矩阵 / Wald 区间**  
+  可默写对象在 `review/sec-est.tex`。锚点：2024 秋 P11（跳跃支撑 MoM）、2024 秋 P7（符号反演区间）。
+- [ ] **\(t\) / \(F\) / Beta 点名演算**  
+  高斯二次型比；线性模型区间用，不是新定理。
 
 ---
 
@@ -121,7 +132,7 @@
 
 ### 线性模型
 
-- [ ] **2024 秋 P8** — Gauss–Markov：\(\hat\theta=\mathbf{b}^T\hat\beta\) 的均值方差，BLUE，再加 \(I(\beta)\)。  
+- [x] **2024 秋 P8** — Gauss–Markov：\(\hat\theta=\mathbf{b}^T\hat\beta\) 的均值方差，BLUE，再加 \(I(\beta)\)。稿在 `transcribed_exams/2024-fall/p8-gauss-markov.tex`。  
   源：[transcribed_exams/2024-fall/qzc-qe-probstat-2024-fall.tex](transcribed_exams/2024-fall/qzc-qe-probstat-2024-fall.tex)
 - [ ] **2024 春 P11** — \(\theta_1+\theta_2+\theta_3=1\) 的正态线性模型，\(\theta_1\) 的 UMVUE。  
   源：[transcribed_exams/2024-spring/qzc-qe-probstat-2024-spring.tex](transcribed_exams/2024-spring/qzc-qe-probstat-2024-spring.tex)
@@ -153,11 +164,11 @@
 - [ ] **2023 秋 P1** — 二维正态密度、边缘、独立性，再变到 \((R,\Phi)\)。
 - [ ] **2023 秋 P5** — \(d\) 正则树 Bernoulli 渗流 \(p_c=1/(d-1)\) 与亚临界指数尾。（2026 春 P6 是随机 GW 树，论证不同。）
 - [ ] **2024 秋 P3** — 指数尾 \(\Leftrightarrow\) 矩界 \(\Leftrightarrow\) MGF 在某点有限。
-- [ ] **2024 秋 P1** — \(\mathbb{E}S_n^4\) 与 \(S_3\) 的 Irwin–Hall 精确分布。
-- [ ] **2024 秋 P5** — \(M_n=\sum X_k/k\)，\(M_n-\ln n\) a.s. 收敛，\(e^{pM_n}/n^p\) 的 \(L^1\) 收敛。
+- [x] **2024 秋 P1** — \(\mathbb{E}S_n^4\) 与 \(S_3\) 的 Irwin–Hall 精确分布。稿在 `transcribed_exams/2024-fall/p1-irwin-hall.tex`。
+- [x] **2024 秋 P5** — \(M_n=\sum X_k/k\)，\(M_n-\ln n\) a.s. 收敛，\(e^{pM_n}/n^p\) 的 \(L^1\) 收敛。稿在 `transcribed_exams/2024-fall/p5-harmonic-exp.tex`。
 - [ ] **2023 秋 P4** — 三颗骰子重掷的最优策略与 \(\mathbb{E}T\)。
 - [ ] **2023 秋 P6** — \(n\times n\) 高斯矩阵正交不变、二次型 CLT；提示 Stein / 矩方法。（2025 秋 P6 只是 \(2\times 2\)。）
-- [ ] **2024 秋 P6** — BM 不击中 0 的条件分布；Brownian bridge = 一维 GFF。大纲只写 basic BM，这是加分难度。
+- [x] **2024 秋 P6** — BM 不击中 0 的条件分布；Brownian bridge = 一维 GFF。大纲只写 basic BM，这是加分难度。稿在 `transcribed_exams/2024-fall/p6-bm-gff.tex`。
 
 ---
 
@@ -165,13 +176,13 @@
 
 - [ ] **2024 春 P7** — 独立 \(N(\mu_i,1)\)，平方损失下 \(\delta(X)=X\) 是 minimax。（2026 春 P9 是两点参数空间，推不过去。）
 - [ ] **2023 秋 P8** — Cauchy 位置族：最小充分统计是整个次序统计量；\(n=2\) 时 MLE 何时唯一。
-- [ ] **2024 秋 P7** — 只观测 \(Y_i=\mathbf{1}_{\{X_i<0\}}\)：MLE、UMP、置信区间。
-- [ ] **2024 秋 P10** — \(N(\mu,\sigma^2)\)、\(\mu\ge 0\)：\(\bar X\perp S^2\)，\(\mu/\sigma\) 的 UMVUE，\(\bar X\) 可容许性。
+- [x] **2024 秋 P7** — 只观测 \(Y_i=\mathbf{1}_{\{X_i<0\}}\)：MLE、UMP、置信区间。稿在 `transcribed_exams/2024-fall/p7-signs-mle.tex`。
+- [x] **2024 秋 P10** — \(N(\mu,\sigma^2)\)、\(\mu\ge 0\)：\(\bar X\perp S^2\)，\(\mu/\sigma\) 的 UMVUE，\(\bar X\) 可容许性。稿在 `transcribed_exams/2024-fall/p10-normal-mean-var.tex`。
 - [ ] **2024 春 P8** — \(\mathrm{Uniform}(\theta,\theta+10)\)：\(\min X_i\) 相合，再对比值做 delta method。
 - [ ] **2024 春 P9** — \(\log X_i\sim N(\theta,\theta)\) 的 MLE 与渐近。
-- [ ] **2024 秋 P11** — \(\mathrm{Uniform}[\theta,\theta+|\theta|]\)：矩估计、MLE、相合性。支撑随 \(\theta\) 符号跳变。
+- [x] **2024 秋 P11** — \(\mathrm{Uniform}[\theta,\theta+|\theta|]\)：矩估计、MLE、相合性。稿在 `transcribed_exams/2024-fall/p11-uniform-mom.tex`。
 - [ ] **2024 秋 P9** — \(U[0,\theta]\) 上 \(F_n(t)\) 对 \(t/(2\bar X)\) 的渐近方差，再加边界 \(nF_n(n^{-1/2})\)。
-- [ ] **2024 秋 P2** — 标准 delta method + \(\sqrt n(\log(Z_n/n)-\log p)\)。若 2025 春 P9 已经很顺，可只扫。
+- [x] **2024 秋 P2** — 标准 delta method + \(\sqrt n(\log(Z_n/n)-\log p)\)。稿在 `transcribed_exams/2024-fall/p2-delta-method.tex`。
 
 ---
 

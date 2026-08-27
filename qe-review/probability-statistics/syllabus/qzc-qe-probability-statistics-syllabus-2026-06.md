@@ -67,6 +67,9 @@
 - Testing: Null and alternative hypotheses, simple and composite hypotheses, type I and type II errors, power, uniformly most powerful test, likelihood ratio test, Neyman-Pearson Lemma, Karlin-Rubin Theorem, generalized likelihood ratio test.
 - Bayesian Statistics: Prior, posterior, conjugate priors, Bayesian estimator.
 - 工作教材：Hogg, McKean, Craig, *Introduction to Mathematical Statistics* (8th ed., Pearson 2019)。本地包：[`reference/hogg-mckean-craig-ims`](../reference/hogg-mckean-craig-ims/structure.md)。QE 大纲书仍是 Casella–Berger / 茆诗松等；Hogg 覆盖大纲 Statistics 的主体，Bayesian 在 Hogg Ch. 11（尚无 aca-reader 讲义）。
+- 线性模型工作教材：Peng Ding, *Linear Model and Extensions*（应用回归分析；arXiv `2401.00649`）。本地包：[`reference/ding-linear-model`](../reference/ding-linear-model/README.md)。QE 大纲书仍是吴密霞、王松桂（红字）。
+- 因果推断工作教材：Peng Ding, *A First Course in Causal Inference*（arXiv `2305.18793`）。本地包：[`reference/ding-causal-inference`](../reference/ding-causal-inference/README.md)。**不是**大纲书；来自 Mac Mini ACA `PDFs/causal-inference/`。
+- 概率工作讲义：任佳刚、刘继成《概率论教程》(2024)。本地包：[`reference/ren-jiagang-probability-course`](../reference/ren-jiagang-probability-course/README.md)。QE 大纲书仍是 Durrett / Chung。
 - 丘赛 / final 备考笔记（`~/Downloads/`）：[`reference/yau-final-prep`](../reference/yau-final-prep/README.md)。`yau-stat.pdf` Ch. 5 是 Bayes 步骤（Def. 5.1 / 5.4，Thm. 5.5：\(L_1\) → 后验中位数）；`stat-final.pdf` 只覆盖 Hogg Ch. 1–9，没有 Ch. 11；minimax 不在这套笔记里，看 Hogg §7.1。
 - 贝叶斯核心教材：Gelman, Carlin, Stern, Dunson, Vehtari, Rubin, *Bayesian Data Analysis* (3rd ed., CRC 2013)。本地包：[`reference/gelman-bda3`](../reference/gelman-bda3/structure.md)（PDF + MinerU 分章 + aca-reader 讲义 Ch. 0–23）。QE 用 Ch. 1 后验 / Ch. 2 共轭 / Ch. 9 决策（\(L_1\) → 后验中位数）。频率派 risk / minimax 仍看 Hogg Ch. 7，不是 BDA 的主线。
 
